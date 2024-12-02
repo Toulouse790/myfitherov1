@@ -86,19 +86,25 @@ export const sampleWorkouts: WorkoutData[] = [
     muscleGroup: "fullBody",
     difficulty: "beginner",
     duration: 45,
-    location: "home",
+    location: "gym",
     exercises: [
       {
-        name: "Pompes",
+        name: "Leg Press",
         sets: 3,
-        reps: 10,
-        calories: 30
+        reps: 12,
+        calories: 40
       },
       {
-        name: "Squats",
+        name: "Machine Chest Press",
         sets: 3,
-        reps: 15,
-        calories: 45
+        reps: 12,
+        calories: 35
+      },
+      {
+        name: "Lat Pulldown",
+        sets: 3,
+        reps: 12,
+        calories: 30
       }
     ]
   },
@@ -111,38 +117,56 @@ export const sampleWorkouts: WorkoutData[] = [
     location: "gym",
     exercises: [
       {
-        name: "Développé couché",
+        name: "Machine Chest Press",
         sets: 4,
-        reps: 8,
+        reps: 10,
+        calories: 45
+      },
+      {
+        name: "Machine Shoulder Press",
+        sets: 3,
+        reps: 12,
         calories: 40
       },
       {
-        name: "Dips",
+        name: "Machine Pec Fly",
         sets: 3,
-        reps: 12,
+        reps: 15,
         calories: 35
       }
     ]
   },
   {
     id: "3",
-    title: "Cardio HIIT",
-    muscleGroup: "fullBody",
+    title: "Leg Day",
+    muscleGroup: "legs",
     difficulty: "advanced",
-    duration: 30,
-    location: "outdoor",
+    duration: 45,
+    location: "gym",
     exercises: [
       {
-        name: "Burpees",
-        sets: 5,
-        reps: 20,
-        calories: 100
+        name: "Leg Press",
+        sets: 4,
+        reps: 12,
+        calories: 50
       },
       {
-        name: "Mountain Climbers",
-        sets: 5,
-        reps: 30,
-        calories: 80
+        name: "Leg Extension Machine",
+        sets: 3,
+        reps: 15,
+        calories: 40
+      },
+      {
+        name: "Leg Curl Machine",
+        sets: 3,
+        reps: 15,
+        calories: 40
+      },
+      {
+        name: "Machine Calf Raises",
+        sets: 4,
+        reps: 20,
+        calories: 30
       }
     ]
   },
