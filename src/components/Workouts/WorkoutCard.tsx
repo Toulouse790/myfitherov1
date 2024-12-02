@@ -11,7 +11,7 @@ interface WorkoutCardProps {
 
 export const WorkoutCard = ({ title, duration, exercises, onClick }: WorkoutCardProps) => {
   return (
-    <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer animate-fade-up" onClick={onClick}>
+    <Card className="p-6 hover:shadow-lg transition-shadow animate-fade-up">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-lg">{title}</h3>
