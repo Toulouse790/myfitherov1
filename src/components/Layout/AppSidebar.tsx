@@ -1,54 +1,11 @@
-import {
-  Dumbbell,
-  LayoutDashboard,
-  Utensils,
-  Moon,
-  User,
-  Menu,
-} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { Menu } from "lucide-react";
+import { navigationItems } from "./navigationItems";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenuButton, SidebarTrigger, useSidebarContext } from "@/components/ui/sidebar";
 
-const menuItems = [
-  {
-    title: "Tableau de bord",
-    icon: LayoutDashboard,
-    path: "/",
-  },
-  {
-    title: "Entraînements",
-    icon: Dumbbell,
-    path: "/workouts",
-  },
-  {
-    title: "Nutrition",
-    icon: Utensils,
-    path: "/nutrition",
-  },
-  {
-    title: "Sommeil",
-    icon: Moon,
-    path: "/sleep",
-  },
-  {
-    title: "Profil",
-    icon: User,
-    path: "/profile",
-  },
-];
-
-export function AppSidebar() {
+export const AppSidebar = () => {
   const location = useLocation();
+  const { isOpen } = useSidebarContext();
 
   return (
     <>
@@ -61,28 +18,29 @@ export function AppSidebar() {
       <Sidebar className="z-50 bg-white shadow-md">
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel className="md:block hidden">Menu</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {menuItems.map((item) => (
-                  <SidebarMenuItem key={item.path}>
+            <SidebarGroupLabel className="md:block hidden text-gray-900 font-medium">Menu</SidebarGroupLabel>
+            {navigationItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <div key={item.path}>
+                  {item.divider && <div className="h-px bg-gray-200 my-2" />}
+                  {!item.hidden && (
                     <SidebarMenuButton
-                      asChild
                       isActive={location.pathname === item.path}
                       tooltip={item.title}
                     >
-                      <Link to={item.path} className="flex items-center gap-3 px-3 py-3 md:px-4 w-full">
+                      <Link to={item.path} className="flex items-center gap-3 px-3 py-3 md:px-4 w-full text-gray-900">
                         <item.icon className="w-6 h-6 md:w-5 md:h-5" />
-                        <span className="hidden md:block">{item.title}</span>
+                        <span className="hidden md:block font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
+                  )}
+                </div>
+              );
+            })}
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>
     </>
   );
-}
+};
