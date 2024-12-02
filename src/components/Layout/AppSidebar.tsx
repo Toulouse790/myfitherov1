@@ -53,12 +53,12 @@ export function AppSidebar() {
   return (
     <>
       <SidebarTrigger>
-        <button className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-md bg-background border">
-          <Menu className="w-6 h-6" />
+        <button className="fixed top-4 left-4 z-50 md:hidden p-3 rounded-md bg-white border shadow-sm">
+          <Menu className="w-7 h-7" />
         </button>
       </SidebarTrigger>
       
-      <Sidebar className="z-50">
+      <Sidebar className="z-50 bg-white shadow-md">
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel className="md:block hidden">Menu</SidebarGroupLabel>
@@ -71,8 +71,8 @@ export function AppSidebar() {
                       isActive={location.pathname === item.path}
                       tooltip={item.title}
                     >
-                      <Link to={item.path} className="flex items-center gap-2 px-2 py-2 md:px-4 w-full">
-                        <item.icon className="w-5 h-5" />
+                      <Link to={item.path} className="flex items-center gap-3 px-3 py-3 md:px-4 w-full">
+                        <item.icon className="w-6 h-6 md:w-5 md:h-5" />
                         <span className="hidden md:block">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
