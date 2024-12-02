@@ -17,27 +17,25 @@ export const NutritionGoals = () => {
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Objectifs journaliers</CardTitle>
+    <Card className="w-full sm:w-auto">
+      <CardHeader className="p-3">
+        <CardTitle className="text-sm sm:text-base">Objectifs journaliers</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {goals.map((goal) => (
-            <div key={goal.name} className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>{goal.name}</span>
-                <span className="text-muted-foreground">
-                  {goal.current}/{goal.target} {goal.unit}
-                </span>
-              </div>
-              <Progress
-                value={(goal.current / goal.target) * 100}
-                className="h-2"
-              />
+      <CardContent className="p-3 space-y-2">
+        {goals.map((goal) => (
+          <div key={goal.name} className="space-y-1">
+            <div className="flex justify-between text-xs sm:text-sm">
+              <span>{goal.name}</span>
+              <span className="text-muted-foreground">
+                {goal.current}/{goal.target} {goal.unit}
+              </span>
             </div>
-          ))}
-        </div>
+            <Progress
+              value={(goal.current / goal.target) * 100}
+              className="h-1.5"
+            />
+          </div>
+        ))}
       </CardContent>
     </Card>
   );
