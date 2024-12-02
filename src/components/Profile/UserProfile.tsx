@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
-import { UserProfileType } from "@/types/user";
+import { UserProfile as UserProfileType } from "@/types/user";
 import { ProfileHeader } from "./ProfileHeader";
 import { ColorCustomization } from "./ColorCustomization";
 import { ThemeSelector } from "@/components/Theme/ThemeSelector";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 const mockUserProfile: UserProfileType = {
   id: "1",
@@ -58,6 +59,7 @@ const mockUserProfile: UserProfileType = {
 export const UserProfile = () => {
   const [profile] = useState<UserProfileType>(mockUserProfile);
   const [isEditing, setIsEditing] = useState(false);
+  const { toast } = useToast();
 
   const handlePreferenceChange = (preference: string, value: boolean) => {
     toast({

@@ -2,6 +2,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Save } from "lucide-react";
 import { useState } from "react";
 
 interface ColorScheme {
@@ -24,13 +26,20 @@ export const ColorCustomization = () => {
 
   const handleColorChange = (key: keyof ColorScheme, value: string) => {
     setColors((prev) => ({ ...prev, [key]: value }));
-    
+  };
+
+  const handleSave = () => {
     // Mettre à jour les variables CSS
-    document.documentElement.style.setProperty(`--${key}`, value);
+    Object.entries(colors).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(`--${key}`, value);
+    });
+    
+    // Sauvegarder dans le localStorage
+    localStorage.setItem('theme-colors', JSON.stringify(colors));
     
     toast({
-      title: "Couleur mise à jour",
-      description: "Les changements ont été appliqués avec succès.",
+      title: "Couleurs sauvegardées",
+      description: "Vos préférences de couleurs ont été enregistrées avec succès.",
     });
   };
 
@@ -92,6 +101,10 @@ export const ColorCustomization = () => {
             />
           </div>
         </div>
+        <Button onClick={handleSave} className="w-full mt-4">
+          <Save className="mr-2" />
+          Enregistrer les couleurs
+        </Button>
       </CardContent>
     </Card>
   );

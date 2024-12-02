@@ -42,3 +42,6 @@ export interface Achievement {
   unlockedAt?: Date;
   type: "workout" | "nutrition" | "sleep" | "streak" | "special";
 }
+
+// Alias for backward compatibility
+export type UserProfileType = UserProfile;

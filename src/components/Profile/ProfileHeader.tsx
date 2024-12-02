@@ -4,10 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Camera } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import { UserProfileType } from "@/types/user";
+import { UserProfile } from "@/types/user";
 
 interface ProfileHeaderProps {
-  profile: UserProfileType;
+  profile: UserProfile;
 }
 
 export const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
