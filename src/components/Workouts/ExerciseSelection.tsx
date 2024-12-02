@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Exercise } from "./exerciseLibrary";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -43,14 +43,19 @@ export const ExerciseSelection = ({ exercises, onClose }: ExerciseSelectionProps
       return;
     }
 
+    // Récupérer la durée depuis le localStorage
+    const userPreferences = JSON.parse(localStorage.getItem("userPreferences") || "{}");
+    const workoutDuration = userPreferences.workoutDuration || "45";
+
     const workout = {
       id: Date.now().toString(),
       name: workoutName,
       exercises: selectedExercises,
+      duration: parseInt(workoutDuration),
       createdAt: new Date().toISOString(),
     };
 
-    // Sauvegarder dans le localStorage pour l'instant
+    // Sauvegarder dans le localStorage
     const savedWorkouts = JSON.parse(localStorage.getItem("savedWorkouts") || "[]");
     localStorage.setItem("savedWorkouts", JSON.stringify([...savedWorkouts, workout]));
 
