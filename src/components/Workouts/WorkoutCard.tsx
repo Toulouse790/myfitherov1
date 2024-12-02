@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Dumbbell, Flame, Check } from "lucide-react";
+import { Clock, Dumbbell, Flame, Check, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,6 +26,7 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
   const [completedSets, setCompletedSets] = useState<{ [key: number]: number }>({});
   const [restTimer, setRestTimer] = useState<number | null>(null);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [restDuration, setRestDuration] = useState<number>(90);
 
   const handleSetCompletion = (exerciseIndex: number) => {
     const currentSets = completedSets[exerciseIndex] || 0;
@@ -37,15 +38,13 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
         [exerciseIndex]: currentSets + 1
       }));
 
-      // Si ce n'était pas la dernière série, démarrer le timer de repos
       if (currentSets + 1 < totalSets) {
         startRestTimer();
         toast({
           title: "Série complétée !",
-          description: "Repos de 90 secondes avant la prochaine série.",
+          description: `Repos de ${restDuration} secondes avant la prochaine série.`,
         });
       } else {
-        // Si c'était la dernière série
         setActiveExercise(null);
         toast({
           title: "Exercice terminé !",
@@ -55,14 +54,23 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
     }
   };
 
+  const adjustRestDuration = (adjustment: number) => {
+    const newDuration = restDuration + adjustment;
+    if (newDuration >= 45 && newDuration <= 180) {
+      setRestDuration(newDuration);
+      toast({
+        title: "Temps de repos ajusté",
+        description: `Nouveau temps de repos : ${newDuration} secondes`,
+      });
+    }
+  };
+
   const startRestTimer = () => {
-    // Nettoyer l'ancien timer s'il existe
     if (intervalId) {
       clearInterval(intervalId);
     }
 
-    // Démarrer un nouveau timer de 90 secondes
-    setRestTimer(90);
+    setRestTimer(restDuration);
     const newIntervalId = setInterval(() => {
       setRestTimer(prev => {
         if (prev === null || prev <= 1) {
@@ -99,6 +107,30 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
           <div className="flex items-center gap-2">
             <Flame className="h-4 w-4 text-primary" />
             <span className="text-sm">{totalCalories} kcal</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => adjustRestDuration(-15)}
+                disabled={restDuration <= 45}
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <span className="text-sm min-w-[4rem] text-center">{restDuration}s repos</span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => adjustRestDuration(15)}
+                disabled={restDuration >= 180}
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
           </div>
         </div>
         
