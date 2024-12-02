@@ -62,7 +62,12 @@ export interface WorkoutFormData {
 export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercises'> {
   id: string;
   duration: number;
-  exercises: number;
+  exercises: Array<{
+    name: string;
+    sets?: number;
+    reps?: number;
+    calories?: number;
+  }>;
 }
 
 export const initialFormData: WorkoutFormData = {
