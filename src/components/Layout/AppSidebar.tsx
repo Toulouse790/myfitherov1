@@ -70,9 +70,8 @@ export function AppSidebar() {
                       asChild
                       isActive={location.pathname === item.path}
                       tooltip={item.title}
-                      className="w-full"
                     >
-                      <Link to={item.path} className="flex items-center gap-2 px-2 py-2 md:px-4">
+                      <Link to={item.path} className="flex items-center gap-2 px-2 py-2 md:px-4 w-full">
                         <item.icon className="w-5 h-5" />
                         <span className="hidden md:block">{item.title}</span>
                       </Link>
