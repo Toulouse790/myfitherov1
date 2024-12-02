@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Play, CheckCircle } from "lucide-react";
 
 interface ExerciseHeaderProps {
   name: string;
@@ -13,12 +14,20 @@ export const ExerciseHeader = ({ name, isActive, onStart }: ExerciseHeaderProps)
       <Button
         variant={isActive ? "default" : "outline"}
         size="sm"
-        className="flex-shrink-0"
+        className="flex-shrink-0 transition-all duration-300"
         onClick={onStart}
       >
-        <span className="text-xs sm:text-sm">
-          {isActive ? "En cours" : "Commencer"}
-        </span>
+        {isActive ? (
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            <span className="text-xs sm:text-sm">En cours</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Play className="h-4 w-4" />
+            <span className="text-xs sm:text-sm">Commencer</span>
+          </div>
+        )}
       </Button>
     </div>
   );

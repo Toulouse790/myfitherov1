@@ -19,13 +19,13 @@ export const ExerciseSet = ({
   onComplete,
 }: ExerciseSetProps) => {
   return (
-    <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border">
+    <div className="flex flex-col gap-2 p-3 bg-card rounded-lg border transition-all duration-300 hover:border-primary/50">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">
           Série {setIndex + 1} - {reps} répétitions
         </span>
         {restTimer !== null && isNext && (
-          <div className="flex items-center gap-2 text-primary">
+          <div className="flex items-center gap-2 text-primary animate-pulse">
             <Timer className="h-4 w-4" />
             <span className="text-sm font-medium">{restTimer}s</span>
           </div>
@@ -35,7 +35,9 @@ export const ExerciseSet = ({
       <Button
         variant={isCompleted ? "default" : "outline"}
         size="sm"
-        className="w-full"
+        className={`w-full transition-all duration-300 ${
+          isCompleted ? 'bg-primary hover:bg-primary/90' : ''
+        }`}
         onClick={onComplete}
         disabled={!isNext || restTimer !== null}
       >

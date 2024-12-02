@@ -28,8 +28,8 @@ export const Exercise = ({
   
   return (
     <div
-      className={`p-4 rounded-lg border transition-colors ${
-        isActive ? 'border-primary bg-primary/5' : ''
+      className={`p-4 rounded-lg border transition-all duration-300 ${
+        isActive ? 'border-primary bg-primary/5 shadow-lg' : 'hover:border-primary/50'
       }`}
     >
       <div className="flex flex-col gap-4">
@@ -40,7 +40,7 @@ export const Exercise = ({
         />
 
         {isActive && (
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4 animate-fade-in">
             {Array.from({ length: exercise.sets }).map((_, setIndex) => (
               <ExerciseSet
                 key={setIndex}

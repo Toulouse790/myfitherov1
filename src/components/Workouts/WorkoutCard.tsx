@@ -89,16 +89,16 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
   };
 
   return (
-    <Card className="w-full animate-fade-up">
-      <CardHeader className="p-4 sm:p-6">
+    <Card className="w-full animate-fade-up bg-card hover:bg-accent/5 transition-colors">
+      <CardHeader className="p-4 sm:p-6 bg-primary/5 rounded-t-lg">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <CardTitle className="text-lg sm:text-xl font-bold">{title}</CardTitle>
+          <CardTitle className="text-lg sm:text-xl font-bold text-primary">{title}</CardTitle>
           <Badge variant="outline" className="bg-primary text-primary-foreground">
             {exercises.length} exercices
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-4 sm:p-6 space-y-4">
+      <CardContent className="p-4 sm:p-6 space-y-6">
         <WorkoutStats
           exerciseCount={exercises.length}
           totalCalories={totalCalories}
