@@ -28,7 +28,7 @@ export const SleepTracker = () => {
     setEntries([...entries, newEntry]);
     toast({
       title: "Sommeil enregistré",
-      description: `${hours}h${minutes > 0 ? minutes + 'm' : ''} de sommeil ajoutées`,
+      description: `${formatTime(hours, minutes)} de sommeil ajoutées`,
     });
   };
 
@@ -43,7 +43,7 @@ export const SleepTracker = () => {
   };
 
   const formatTime = (hours: number, minutes: number) => {
-    return `${hours}h${minutes > 0 ? minutes + 'm' : ''}`;
+    return `${hours}:${minutes.toString().padStart(2, '0')}`;
   };
 
   const average = getAverageHours();

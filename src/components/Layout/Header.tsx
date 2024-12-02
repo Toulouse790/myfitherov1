@@ -14,7 +14,7 @@ export const Header = () => {
           <Link to="/stats" className="p-2 hover:text-primary transition-colors">
             <BarChart className="w-5 h-5" />
           </Link>
-          <Link to="/profile" className="p-2 hover:text-primary transition-colors">
+          <Link to="/signin" className="p-2 hover:text-primary transition-colors">
             <User className="w-5 h-5" />
           </Link>
         </nav>
