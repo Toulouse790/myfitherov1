@@ -4,6 +4,8 @@ import { WorkoutList } from "@/components/Workouts/WorkoutList";
 import { useToast } from "@/components/ui/use-toast";
 import { exercises } from "@/components/Workouts/exerciseLibrary";
 import { muscleGroups } from "@/components/Workouts/workoutConstants";
+import { SportPrograms } from "@/components/Workouts/SportPrograms";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Workouts = () => {
   const { toast } = useToast();
@@ -41,23 +43,32 @@ const Workouts = () => {
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 space-y-8">
-      <div className="flex flex-col gap-6">
-        <h1 className="text-2xl sm:text-3xl font-bold">Séances proposées</h1>
+      <Tabs defaultValue="custom" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="custom" className="flex-1">
+            Séances personnalisées
+          </TabsTrigger>
+          <TabsTrigger value="programs" className="flex-1">
+            Programmes sportifs
+          </TabsTrigger>
+        </TabsList>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {muscleGroups.map((group) => (
-            <Button
-              key={group.id}
-              variant="outline"
-              className="h-auto py-4 flex flex-col gap-2"
-              onClick={() => generateWorkout(group.id)}
-            >
-              <span className="text-sm font-medium">{group.name}</span>
-            </Button>
-          ))}
-        </div>
+        <TabsContent value="custom" className="space-y-6">
+          <h1 className="text-2xl sm:text-3xl font-bold">Séances personnalisées</h1>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {muscleGroups.map((group) => (
+              <Button
+                key={group.id}
+                variant="outline"
+                className="h-auto py-4 flex flex-col gap-2"
+                onClick={() => generateWorkout(group.id)}
+              >
+                <span className="text-sm font-medium">{group.name}</span>
+              </Button>
+            ))}
+          </div>
 
-        {selectedWorkout && (
+          {selectedWorkout && (
           <div className="space-y-4 animate-fade-in">
             <h2 className="text-xl font-semibold">{selectedWorkout.title}</h2>
             <div className="grid gap-4">
@@ -145,8 +156,14 @@ const Workouts = () => {
               Sauvegarder la séance
             </Button>
           </div>
-        )}
-      </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="programs" className="space-y-6">
+          <h1 className="text-2xl sm:text-3xl font-bold">Programmes sportifs</h1>
+          <SportPrograms />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
