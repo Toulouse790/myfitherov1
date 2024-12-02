@@ -16,45 +16,52 @@ const Nutrition = () => {
     allergies: [],
   };
 
+  const handleTabClick = (tabValue: string) => {
+    const element = document.querySelector(`[value="${tabValue}"]`) as HTMLElement;
+    if (element) {
+      element.click();
+    }
+  };
+
   return (
-    <div className="container mx-auto p-4 animate-fade-up">
-      <h1 className="text-3xl font-bold mb-6">Nutrition</h1>
+    <div className="container mx-auto p-2 sm:p-4 animate-fade-up">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Nutrition</h1>
       
-      <div className="grid grid-cols-2 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
         <Button
           variant="outline"
-          className="flex items-center justify-center gap-2 h-20"
-          onClick={() => document.querySelector('[value="overview"]')?.click()}
+          className="flex items-center justify-center gap-2 h-16 sm:h-20"
+          onClick={() => handleTabClick("overview")}
         >
-          <Target className="h-5 w-5" />
+          <Target className="h-4 w-4 sm:h-5 sm:w-5" />
           <div className="text-left">
-            <div className="font-semibold">Objectifs</div>
-            <div className="text-sm text-muted-foreground">Suivez vos objectifs</div>
+            <div className="font-semibold text-sm sm:text-base">Objectifs</div>
+            <div className="text-xs sm:text-sm text-muted-foreground">Suivez vos objectifs</div>
           </div>
         </Button>
         <Button
           variant="outline"
-          className="flex items-center justify-center gap-2 h-20"
-          onClick={() => document.querySelector('[value="overview"]')?.click()}
+          className="flex items-center justify-center gap-2 h-16 sm:h-20"
+          onClick={() => handleTabClick("overview")}
         >
-          <LineChart className="h-5 w-5" />
+          <LineChart className="h-4 w-4 sm:h-5 sm:w-5" />
           <div className="text-left">
-            <div className="font-semibold">Suivi</div>
-            <div className="text-sm text-muted-foreground">Visualisez vos progrès</div>
+            <div className="font-semibold text-sm sm:text-base">Suivi</div>
+            <div className="text-xs sm:text-sm text-muted-foreground">Visualisez vos progrès</div>
           </div>
         </Button>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="w-full justify-start">
+      <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
+        <TabsList className="w-full justify-start overflow-x-auto">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="journal">Journal alimentaire</TabsTrigger>
           <TabsTrigger value="meal-plan">Plan repas</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-6">
+        <TabsContent value="overview" className="space-y-4 sm:space-y-6">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+            <div className="space-y-4 sm:space-y-6">
               <NutritionGoals />
               <NutritionChart />
             </div>
