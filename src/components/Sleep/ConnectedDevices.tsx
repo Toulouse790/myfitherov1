@@ -4,6 +4,26 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Watch } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+// Add type declarations for Web Bluetooth API
+declare global {
+  interface Navigator {
+    bluetooth: {
+      requestDevice(options: {
+        filters: Array<{
+          services?: string[];
+          namePrefix?: string;
+        }>;
+        optionalServices?: string[];
+      }): Promise<{
+        name: string;
+        gatt?: {
+          connect(): Promise<any>;
+        };
+      }>;
+    };
+  }
+}
+
 export const ConnectedDevices = () => {
   const [isConnected, setIsConnected] = useState(false);
   const { toast } = useToast();
