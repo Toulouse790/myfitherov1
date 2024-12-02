@@ -11,6 +11,7 @@ import Nutrition from "./pages/Nutrition";
 import Sleep from "./pages/Sleep";
 import { SignIn } from "@/components/Auth/SignIn";
 import { UserProfile } from "@/components/Profile/UserProfile";
+import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
                 <Route path="/sleep" element={<Sleep />} />
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/profile" element={<UserProfile />} />
+                <Route path="/questionnaire" element={<InitialQuestionnaire />} />
               </Routes>
             </main>
           </div>
