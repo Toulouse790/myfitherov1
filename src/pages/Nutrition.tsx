@@ -5,8 +5,6 @@ import { MealPlanGenerator } from "@/components/Nutrition/MealPlanGenerator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Target, LineChart } from "lucide-react";
-import { muscleGroups } from "@/components/Workouts/workoutConstants";
-import { Card, CardContent } from "@/components/ui/card";
 
 const Nutrition = () => {
   const mockUserData = {
@@ -28,18 +26,8 @@ const Nutrition = () => {
   return (
     <div className="container mx-auto p-2 animate-fade-up">
       <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-3">Nutrition</h1>
-      
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-        {muscleGroups.map((muscle) => (
-          <Card key={muscle.id} className="p-2">
-            <CardContent className="p-0 text-center">
-              <p className="text-xs sm:text-sm font-medium">{muscle.name}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
 
-      <Tabs defaultValue="overview" className="space-y-3 mt-4">
+      <Tabs defaultValue="overview" className="space-y-3">
         <div className="w-full overflow-x-auto pb-1">
           <TabsList className="w-full justify-start min-w-max">
             <TabsTrigger value="overview" className="text-xs sm:text-sm">Vue d'ensemble</TabsTrigger>
