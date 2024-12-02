@@ -18,14 +18,23 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
     
     return () => {
       if (codeReaderRef.current) {
-        codeReaderRef.current.reset();
+        // Stop any ongoing video stream
+        const videoElement = videoRef.current;
+        if (videoElement && videoElement.srcObject) {
+          const stream = videoElement.srcObject as MediaStream;
+          stream.getTracks().forEach(track => track.stop());
+        }
+        // Reset the code reader
+        codeReaderRef.current = undefined;
       }
     };
   }, []);
 
   const startScanning = async () => {
     try {
-      if (!codeReaderRef.current) return;
+      if (!codeReaderRef.current) {
+        codeReaderRef.current = new BrowserMultiFormatReader();
+      }
 
       const devices = await BrowserMultiFormatReader.listVideoInputDevices();
       
@@ -47,9 +56,14 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
           (result, err) => {
             if (result) {
               onScan(result.getText());
-              if (codeReaderRef.current) {
-                codeReaderRef.current.reset();
+              // Stop the video stream
+              const videoElement = videoRef.current;
+              if (videoElement && videoElement.srcObject) {
+                const stream = videoElement.srcObject as MediaStream;
+                stream.getTracks().forEach(track => track.stop());
               }
+              // Reset the code reader
+              codeReaderRef.current = undefined;
               toast({
                 title: "Code-barres scanné",
                 description: "Le produit a été trouvé",
