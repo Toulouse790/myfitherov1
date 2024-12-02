@@ -13,6 +13,7 @@ interface QuestionnaireData {
   weight: string;
   height: string;
   workoutsPerWeek: string;
+  workoutDuration: string;
   hasAllergies: boolean;
   allergies: string[];
   dietaryRestrictions: string[];
@@ -28,6 +29,7 @@ export const InitialQuestionnaire = () => {
     weight: "",
     height: "",
     workoutsPerWeek: "",
+    workoutDuration: "",
     hasAllergies: false,
     allergies: [],
     dietaryRestrictions: [],
@@ -36,6 +38,10 @@ export const InitialQuestionnaire = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Save workout duration to localStorage
+    localStorage.setItem("userPreferences", JSON.stringify({
+      workoutDuration: formData.workoutDuration
+    }));
     toast({
       title: "Profil complété !",
       description: "Vos préférences ont été enregistrées avec succès.",
@@ -74,6 +80,8 @@ export const InitialQuestionnaire = () => {
           <TrainingFrequencyStep
             workoutsPerWeek={formData.workoutsPerWeek}
             onWorkoutsPerWeekChange={(value) => updateFormData("workoutsPerWeek", value)}
+            workoutDuration={formData.workoutDuration}
+            onWorkoutDurationChange={(value) => updateFormData("workoutDuration", value)}
           />
         );
       case 4:
