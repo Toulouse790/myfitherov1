@@ -13,6 +13,12 @@ const Sleep = () => {
     { name: 'Dim', hours: 8 },
   ];
 
+  const formatTime = (hours: number) => {
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    return `${h}h${m > 0 ? ` ${m}min` : ''}`;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -22,7 +28,7 @@ const Sleep = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
             <h3 className="text-xl font-semibold mb-4">Moyenne de sommeil</h3>
-            <p className="text-4xl font-bold text-primary">7.8h</p>
+            <p className="text-4xl font-bold text-primary">{formatTime(7.8)}</p>
             <p className="text-sm text-muted-foreground mt-2">Cette semaine</p>
           </div>
 
