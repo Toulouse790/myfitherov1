@@ -2,10 +2,11 @@ import { useState, useMemo } from "react";
 import { WorkoutList } from "@/components/Workouts/WorkoutList";
 import { CreateWorkoutDialog } from "@/components/Workouts/CreateWorkoutDialog";
 import { WorkoutFilters } from "@/components/Workouts/WorkoutFilters";
-import { sampleWorkouts } from "@/components/Workouts/workoutConstants";
+import { sampleWorkouts, muscleGroups } from "@/components/Workouts/workoutConstants";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Workouts = () => {
   const [muscleGroup, setMuscleGroup] = useState("all");
@@ -49,6 +50,22 @@ const Workouts = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold">Entraînements</h1>
         <CreateWorkoutDialog />
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+        {muscleGroups.map((muscle) => (
+          <Card 
+            key={muscle.id} 
+            className={`p-2 cursor-pointer transition-colors hover:bg-accent ${
+              muscleGroup === muscle.id ? "bg-accent" : ""
+            }`}
+            onClick={() => setMuscleGroup(muscle.id === muscleGroup ? "all" : muscle.id)}
+          >
+            <CardContent className="p-0 text-center">
+              <p className="text-xs sm:text-sm font-medium">{muscle.name}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Tabs defaultValue="workouts" className="space-y-6">
