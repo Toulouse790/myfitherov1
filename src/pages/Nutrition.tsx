@@ -4,6 +4,7 @@ import { FoodJournal } from "@/components/Nutrition/FoodJournal";
 import { NutritionChart } from "@/components/Nutrition/NutritionChart";
 import { WaterTracker } from "@/components/Nutrition/WaterTracker";
 import { NutritionGoals } from "@/components/Nutrition/NutritionGoals";
+import { SleepTracker } from "@/components/Sleep/SleepTracker";
 import { Flame, Beef, Droplets } from "lucide-react";
 
 const Nutrition = () => {
@@ -31,14 +32,17 @@ const Nutrition = () => {
           />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="space-y-6">
-            <NutritionChart />
-            <WaterTracker />
-          </div>
-          <div className="space-y-6">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
+            <div className="grid gap-6 md:grid-cols-2">
+              <NutritionChart />
+              <WaterTracker />
+            </div>
             <NutritionGoals />
             <FoodJournal />
+          </div>
+          <div>
+            <SleepTracker />
           </div>
         </div>
       </main>
