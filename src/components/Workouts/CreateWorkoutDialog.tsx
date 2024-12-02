@@ -20,13 +20,13 @@ import {
 } from "@/components/ui/select";
 
 const muscleGroups = [
-  { id: "chest", name: "Pectoraux" },
-  { id: "back", name: "Dos" },
-  { id: "legs", name: "Jambes" },
-  { id: "shoulders", name: "Épaules" },
-  { id: "arms", name: "Bras" },
-  { id: "abs", name: "Abdominaux" },
-  { id: "fullBody", name: "Full Body" },
+  { id: "chest", name: "Pectoraux", color: "bg-red-100" },
+  { id: "back", name: "Dos", color: "bg-blue-100" },
+  { id: "legs", name: "Jambes", color: "bg-green-100" },
+  { id: "shoulders", name: "Épaules", color: "bg-yellow-100" },
+  { id: "arms", name: "Bras", color: "bg-purple-100" },
+  { id: "abs", name: "Abdominaux", color: "bg-orange-100" },
+  { id: "fullBody", name: "Full Body", color: "bg-gray-100" },
 ];
 
 export const CreateWorkoutDialog = () => {
@@ -43,6 +43,8 @@ export const CreateWorkoutDialog = () => {
     setOpen(false);
   };
 
+  const selectedColor = muscleGroups.find(group => group.id === muscleGroup)?.color || "";
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -51,7 +53,7 @@ export const CreateWorkoutDialog = () => {
           Nouvelle séance
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className={`sm:max-w-[425px] ${selectedColor}`}>
         <DialogHeader>
           <DialogTitle>Créer une nouvelle séance</DialogTitle>
         </DialogHeader>
@@ -72,7 +74,11 @@ export const CreateWorkoutDialog = () => {
               </SelectTrigger>
               <SelectContent>
                 {muscleGroups.map((group) => (
-                  <SelectItem key={group.id} value={group.id}>
+                  <SelectItem 
+                    key={group.id} 
+                    value={group.id}
+                    className={group.color}
+                  >
                     {group.name}
                   </SelectItem>
                 ))}
