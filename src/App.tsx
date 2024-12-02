@@ -10,6 +10,7 @@ import Workouts from "./pages/Workouts";
 import Nutrition from "./pages/Nutrition";
 import Sleep from "./pages/Sleep";
 import { SignIn } from "@/components/Auth/SignIn";
+import { UserProfile } from "@/components/Profile/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
                 <Route path="/nutrition" element={<Nutrition />} />
                 <Route path="/sleep" element={<Sleep />} />
                 <Route path="/signin" element={<SignIn />} />
+                <Route path="/profile" element={<UserProfile />} />
               </Routes>
             </main>
           </div>

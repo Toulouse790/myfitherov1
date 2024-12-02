@@ -10,8 +10,8 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -37,6 +37,11 @@ const menuItems = [
     title: "Sommeil",
     icon: Moon,
     path: "/sleep",
+  },
+  {
+    title: "Profil",
+    icon: User,
+    path: "/profile",
   },
 ];
 
