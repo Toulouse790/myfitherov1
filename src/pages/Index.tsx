@@ -13,10 +13,10 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="container max-w-full p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-6">
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center sm:text-left">Tableau de bord</h1>
+    <div className="container max-w-full p-3 space-y-4">
+      <h1 className="text-xl font-bold text-center">Tableau de bord</h1>
       
-      <div className="w-full -mx-3 sm:mx-0 px-3 sm:px-0">
+      <div className="w-full">
         <DashboardStats />
       </div>
       
