@@ -40,7 +40,7 @@ export const Exercise = ({
         />
 
         {isActive && (
-          <div className="grid gap-4">
+          <div className="flex flex-col gap-4">
             {Array.from({ length: exercise.sets }).map((_, setIndex) => (
               <ExerciseSet
                 key={setIndex}
