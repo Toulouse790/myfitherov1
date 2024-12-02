@@ -1,5 +1,5 @@
-export type SportLevel = "beginner" | "intermediate" | "advanced" | "expert";
-export type SeasonPhase = "preseason" | "midseason" | "endseason" | "offseason";
+import { LucideIcon } from "lucide-react";
+
 export type SportType = "team" | "individual";
 
 export interface SportProgram {
@@ -7,10 +7,10 @@ export interface SportProgram {
   name: string;
   sport: string;
   type: SportType;
-  level: SportLevel;
-  phase: SeasonPhase;
+  level: string;
+  phase: string;
   description: string;
-  duration: number; // en semaines
+  duration: number;
   sessionsPerWeek: number;
   exercises: Array<{
     name: string;
@@ -20,5 +20,6 @@ export interface SportProgram {
     notes?: string;
   }>;
   goals: string[];
-  requirements?: string[];
+  requirements: string[];
+  icon: LucideIcon;
 }

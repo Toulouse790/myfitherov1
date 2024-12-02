@@ -1,4 +1,5 @@
 import { SportProgram } from "@/types/sports";
+import { Activity, Award } from "lucide-react";
 
 export const tennisPrograms: SportProgram[] = [
   {
@@ -11,6 +12,7 @@ export const tennisPrograms: SportProgram[] = [
     description: "Programme de préparation physique pour la reprise de saison de tennis",
     duration: 4,
     sessionsPerWeek: 3,
+    icon: Activity,
     exercises: [
       {
         name: "Déplacements latéraux",
@@ -63,6 +65,7 @@ export const runningPrograms: SportProgram[] = [
     description: "Programme de préparation pour la reprise de la course à pied",
     duration: 8,
     sessionsPerWeek: 3,
+    icon: Award,
     exercises: [
       {
         name: "Course d'endurance",
