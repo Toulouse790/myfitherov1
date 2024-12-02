@@ -10,14 +10,26 @@ interface BarcodeScannerProps {
 
 export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const codeReaderRef = useRef<BrowserMultiFormatReader>();
   const { toast } = useToast();
+
+  useEffect(() => {
+    codeReaderRef.current = new BrowserMultiFormatReader();
+    
+    return () => {
+      if (codeReaderRef.current) {
+        codeReaderRef.current.stopStreams();
+      }
+    };
+  }, []);
 
   const startScanning = async () => {
     try {
-      const codeReader = new BrowserMultiFormatReader();
-      const videoInputDevices = await codeReader.listVideoInputDevices();
+      if (!codeReaderRef.current) return;
+
+      const devices = await BrowserMultiFormatReader.listVideoInputDevices();
       
-      if (videoInputDevices.length === 0) {
+      if (devices.length === 0) {
         toast({
           title: "Erreur",
           description: "Aucune caméra détectée",
@@ -26,19 +38,25 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
         return;
       }
 
-      const selectedDeviceId = videoInputDevices[0].deviceId;
+      const selectedDeviceId = devices[0].deviceId;
       
       if (videoRef.current) {
-        codeReader.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
-          if (result) {
-            onScan(result.getText());
-            codeReader.reset();
-            toast({
-              title: "Code-barres scanné",
-              description: "Le produit a été trouvé",
-            });
+        await codeReaderRef.current.decodeFromVideoDevice(
+          selectedDeviceId, 
+          videoRef.current, 
+          (result, err) => {
+            if (result) {
+              onScan(result.getText());
+              if (codeReaderRef.current) {
+                codeReaderRef.current.stopStreams();
+              }
+              toast({
+                title: "Code-barres scanné",
+                description: "Le produit a été trouvé",
+              });
+            }
           }
-        });
+        );
       }
     } catch (error) {
       toast({
@@ -48,13 +66,6 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
       });
     }
   };
-
-  useEffect(() => {
-    return () => {
-      const codeReader = new BrowserMultiFormatReader();
-      codeReader.reset();
-    };
-  }, []);
 
   return (
     <div className="space-y-4">

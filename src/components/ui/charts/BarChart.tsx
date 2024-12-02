@@ -9,6 +9,7 @@ interface BarChartProps {
   colors?: string[]
   valueFormatter?: (value: number) => string
   yAxisWidth?: number
+  ticks?: number[]
 }
 
 export const BarChart = ({
@@ -18,6 +19,7 @@ export const BarChart = ({
   colors = ["#0ea5e9"],
   valueFormatter = (value: number) => value.toString(),
   yAxisWidth = 56,
+  ticks,
 }: BarChartProps) => {
   return (
     <ChartContainer
@@ -45,6 +47,7 @@ export const BarChart = ({
           axisLine={false}
           width={yAxisWidth}
           tickFormatter={valueFormatter}
+          ticks={ticks}
         />
         <RechartsPrimitive.Tooltip />
         {categories.map((category, i) => (
