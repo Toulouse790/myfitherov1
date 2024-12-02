@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { muscleGroups, difficultyLevels } from "./workoutConstants";
 import { Filter, SortAsc, SortDesc } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface WorkoutFiltersProps {
   muscleGroup: string;
@@ -32,11 +33,13 @@ export const WorkoutFilters = ({
   onSortOrderChange,
   onReset,
 }: WorkoutFiltersProps) => {
+  const isMobile = useIsMobile();
+
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-wrap gap-4">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
         <Select value={muscleGroup} onValueChange={onMuscleGroupChange}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Groupe musculaire" />
           </SelectTrigger>
           <SelectContent>
@@ -50,7 +53,7 @@ export const WorkoutFilters = ({
         </Select>
 
         <Select value={difficulty} onValueChange={onDifficultyChange}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Difficulté" />
           </SelectTrigger>
           <SelectContent>
@@ -64,7 +67,7 @@ export const WorkoutFilters = ({
         </Select>
 
         <Select value={location} onValueChange={onLocationChange}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Lieu d'entraînement" />
           </SelectTrigger>
           <SelectContent>
@@ -76,7 +79,7 @@ export const WorkoutFilters = ({
         </Select>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-end">
         <Button
           variant="outline"
           size="icon"
@@ -95,7 +98,7 @@ export const WorkoutFilters = ({
           onClick={onReset}
         >
           <Filter className="h-4 w-4" />
-          Réinitialiser
+          {!isMobile && "Réinitialiser"}
         </Button>
       </div>
     </div>

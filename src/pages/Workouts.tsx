@@ -5,12 +5,14 @@ import { WorkoutFilters } from "@/components/Workouts/WorkoutFilters";
 import { sampleWorkouts } from "@/components/Workouts/workoutConstants";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Workouts = () => {
   const [muscleGroup, setMuscleGroup] = useState("all");
   const [difficulty, setDifficulty] = useState("all");
   const [location, setLocation] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const isMobile = useIsMobile();
 
   const filteredWorkouts = useMemo(() => {
     let filtered = [...sampleWorkouts];
@@ -44,15 +46,19 @@ const Workouts = () => {
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Entraînements</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold">Entraînements</h1>
         <CreateWorkoutDialog />
       </div>
 
       <Tabs defaultValue="workouts" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="workouts">Mes séances</TabsTrigger>
-          <TabsTrigger value="exercises">Exercices</TabsTrigger>
+        <TabsList className="w-full flex-wrap h-auto">
+          <TabsTrigger value="workouts" className="flex-1">
+            {isMobile ? "Séances" : "Mes séances"}
+          </TabsTrigger>
+          <TabsTrigger value="exercises" className="flex-1">
+            Exercices
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="workouts" className="space-y-6">

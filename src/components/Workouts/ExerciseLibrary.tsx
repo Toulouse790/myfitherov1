@@ -45,7 +45,7 @@ export const ExerciseLibrary = () => {
         }}
       />
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {filteredExercises.map((exercise) => (
           <ExerciseCard key={exercise.id} exercise={exercise} />
         ))}
@@ -63,23 +63,23 @@ const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
 
   return (
     <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="text-xl">{exercise.name}</CardTitle>
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-lg sm:text-xl line-clamp-2">{exercise.name}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-muted-foreground">{exercise.description}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2">{exercise.description}</p>
         <div className="space-y-2">
-          <p><strong>Difficulté :</strong> {
+          <p className="text-sm"><strong>Difficulté :</strong> {
             difficultyLevels.find(d => d.id === exercise.difficulty)?.name
           }</p>
-          <p><strong>Équipement :</strong> {exercise.equipment}</p>
-          <p><strong>Lieu :</strong> {exercise.location.map(loc => locationLabels[loc as keyof typeof locationLabels]).join(", ")}</p>
+          <p className="text-sm"><strong>Équipement :</strong> {exercise.equipment}</p>
+          <p className="text-sm"><strong>Lieu :</strong> {exercise.location.map(loc => locationLabels[loc as keyof typeof locationLabels]).join(", ")}</p>
         </div>
         <div className="space-y-2">
-          <p className="font-semibold">Instructions :</p>
-          <ul className="list-disc pl-4 space-y-1">
+          <p className="text-sm font-semibold">Instructions :</p>
+          <ul className="list-disc pl-4 space-y-1 text-sm">
             {exercise.instructions.map((instruction, index) => (
-              <li key={index} className="text-sm text-muted-foreground">
+              <li key={index} className="text-muted-foreground line-clamp-2">
                 {instruction}
               </li>
             ))}
