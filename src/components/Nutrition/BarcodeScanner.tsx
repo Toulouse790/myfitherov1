@@ -18,7 +18,7 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
     
     return () => {
       if (codeReaderRef.current) {
-        codeReaderRef.current.stopStreams();
+        codeReaderRef.current.reset();
       }
     };
   }, []);
@@ -48,7 +48,7 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
             if (result) {
               onScan(result.getText());
               if (codeReaderRef.current) {
-                codeReaderRef.current.stopStreams();
+                codeReaderRef.current.reset();
               }
               toast({
                 title: "Code-barres scanné",
