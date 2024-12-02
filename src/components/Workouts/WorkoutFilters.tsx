@@ -11,6 +11,10 @@ import { Filter, SortAsc, SortDesc } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ExerciseSelection } from "./ExerciseSelection";
+import { exercises } from "./exerciseLibrary";
 
 interface WorkoutFiltersProps {
   muscleGroup: string;
@@ -36,6 +40,18 @@ export const WorkoutFilters = ({
   onReset,
 }: WorkoutFiltersProps) => {
   const isMobile = useIsMobile();
+  const [showExerciseSelection, setShowExerciseSelection] = useState(false);
+  const [selectedMuscleExercises, setSelectedMuscleExercises] = useState<typeof exercises>([]);
+
+  const handleMuscleGroupClick = (muscleId: string) => {
+    if (muscleId === muscleGroup) {
+      const filteredExercises = exercises.filter(ex => ex.muscleGroup === muscleId);
+      setSelectedMuscleExercises(filteredExercises);
+      setShowExerciseSelection(true);
+    } else {
+      onMuscleGroupChange(muscleId);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -46,7 +62,7 @@ export const WorkoutFilters = ({
             className={`cursor-pointer transition-colors hover:bg-accent overflow-hidden ${
               muscleGroup === muscle.id ? "ring-2 ring-primary" : ""
             }`}
-            onClick={() => onMuscleGroupChange(muscle.id === muscleGroup ? "all" : muscle.id)}
+            onClick={() => handleMuscleGroupClick(muscle.id)}
           >
             <CardContent className="p-0">
               <AspectRatio ratio={3/2}>
@@ -116,6 +132,15 @@ export const WorkoutFilters = ({
           {!isMobile && "Réinitialiser"}
         </Button>
       </div>
+
+      <Dialog open={showExerciseSelection} onOpenChange={setShowExerciseSelection}>
+        <DialogContent className="sm:max-w-[800px]">
+          <ExerciseSelection
+            exercises={selectedMuscleExercises}
+            onClose={() => setShowExerciseSelection(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
