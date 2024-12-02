@@ -13,19 +13,19 @@ export const NutritionChart = () => {
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Suivi hebdomadaire</CardTitle>
+    <Card className="w-full sm:w-auto">
+      <CardHeader className="p-3">
+        <CardTitle className="text-sm sm:text-base">Suivi hebdomadaire</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
+      <CardContent className="p-3">
+        <div className="h-[250px]">
           <BarChart
             data={data}
             index="name"
             categories={["calories"]}
             colors={["#8B5CF6"]}
             valueFormatter={(value: number) => `${value} kcal`}
-            yAxisWidth={56}
+            yAxisWidth={48}
           />
         </div>
       </CardContent>
