@@ -1,10 +1,20 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Camera } from "lucide-react";
+import { Camera, Edit2 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { UserProfile } from "@/types/user";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+const AVATAR_OPTIONS = [
+  "/placeholder.svg",
+  "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde",
+  "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e",
+];
 
 interface ProfileHeaderProps {
   profile: UserProfile;
@@ -12,11 +22,33 @@ interface ProfileHeaderProps {
 
 export const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
   const { toast } = useToast();
+  const [username, setUsername] = useState(profile.username);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState(profile.avatar || "/placeholder.svg");
 
-  const handleAvatarUpload = () => {
+  const handleUsernameSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (username.trim().length < 3) {
+      toast({
+        title: "Erreur",
+        description: "Le pseudo doit contenir au moins 3 caractères",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     toast({
-      title: "Fonctionnalité à venir",
-      description: "Le changement d'avatar sera bientôt disponible",
+      title: "Pseudo mis à jour",
+      description: "Votre pseudo a été modifié avec succès",
+    });
+    setIsEditingUsername(false);
+  };
+
+  const handleAvatarSelect = (avatarUrl: string) => {
+    setSelectedAvatar(avatarUrl);
+    toast({
+      title: "Avatar mis à jour",
+      description: "Votre avatar a été modifié avec succès",
     });
   };
 
@@ -27,25 +59,72 @@ export const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
           <PopoverTrigger asChild>
             <Button variant="ghost" className="relative h-20 w-20 rounded-full">
               <Avatar className="h-20 w-20">
-                <AvatarImage src={profile.avatar} alt={profile.username} />
-                <AvatarFallback>{profile.username[0]}</AvatarFallback>
+                <AvatarImage src={selectedAvatar} alt={username} />
+                <AvatarFallback>{username[0]}</AvatarFallback>
               </Avatar>
               <div className="absolute bottom-0 right-0 rounded-full bg-primary p-1">
                 <Camera className="h-4 w-4 text-primary-foreground" />
               </div>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-60">
-            <div className="space-y-2">
-              <h4 className="font-medium">Photo de profil</h4>
-              <Button onClick={handleAvatarUpload} className="w-full">
-                Changer l'avatar
-              </Button>
+          <PopoverContent className="w-80">
+            <div className="space-y-4">
+              <h4 className="font-medium">Choisir un avatar</h4>
+              <div className="grid grid-cols-4 gap-2">
+                {AVATAR_OPTIONS.map((avatar) => (
+                  <Button
+                    key={avatar}
+                    variant="ghost"
+                    className="p-0"
+                    onClick={() => handleAvatarSelect(avatar)}
+                  >
+                    <Avatar>
+                      <AvatarImage src={avatar} />
+                      <AvatarFallback>Avatar</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                ))}
+              </div>
             </div>
           </PopoverContent>
         </Popover>
         <div>
-          <h2 className="text-2xl font-bold">{profile.username}</h2>
+          <div className="flex items-center gap-2">
+            {isEditingUsername ? (
+              <form onSubmit={handleUsernameSubmit} className="flex items-center gap-2">
+                <Input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="h-8"
+                  placeholder="Nouveau pseudo"
+                />
+                <Button type="submit" size="sm">Sauvegarder</Button>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => {
+                    setUsername(profile.username);
+                    setIsEditingUsername(false);
+                  }}
+                >
+                  Annuler
+                </Button>
+              </form>
+            ) : (
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                {username}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsEditingUsername(true)}
+                  className="h-6 w-6"
+                >
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+              </h2>
+            )}
+          </div>
           <div className="flex gap-2 mt-2">
             <Badge variant="secondary">Niveau {profile.stats.level}</Badge>
             {profile.isPremium && <Badge variant="default">Premium</Badge>}
