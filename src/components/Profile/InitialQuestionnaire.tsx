@@ -5,15 +5,39 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface QuestionnaireData {
   objective: string;
   activityLevel: string;
   weight: string;
   height: string;
+  age: string;
+  workoutsPerWeek: string;
   sleepHours: string;
+  hasAllergies: boolean;
+  allergies: string[];
   dietaryRestrictions: string[];
 }
+
+const commonAllergies = [
+  "Arachides",
+  "Fruits à coque",
+  "Lait",
+  "Œufs",
+  "Poisson",
+  "Crustacés",
+  "Soja",
+  "Blé",
+  "Gluten",
+];
 
 export const InitialQuestionnaire = () => {
   const { toast } = useToast();
@@ -23,7 +47,11 @@ export const InitialQuestionnaire = () => {
     activityLevel: "",
     weight: "",
     height: "",
+    age: "",
+    workoutsPerWeek: "",
     sleepHours: "",
+    hasAllergies: false,
+    allergies: [],
     dietaryRestrictions: [],
   });
 
@@ -34,6 +62,15 @@ export const InitialQuestionnaire = () => {
       title: "Profil complété !",
       description: "Vos préférences ont été enregistrées avec succès.",
     });
+  };
+
+  const handleAllergyChange = (allergy: string) => {
+    setFormData(prev => ({
+      ...prev,
+      allergies: prev.allergies.includes(allergy)
+        ? prev.allergies.filter(a => a !== allergy)
+        : [...prev.allergies, allergy]
+    }));
   };
 
   const renderStep = () => {
@@ -66,32 +103,30 @@ export const InitialQuestionnaire = () => {
       case 2:
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Quel est votre niveau d'activité ?</h3>
-            <RadioGroup
-              value={formData.activityLevel}
-              onValueChange={(value) =>
-                setFormData({ ...formData, activityLevel: value })
-              }
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="sedentary" id="sedentary" />
-                <Label htmlFor="sedentary">Sédentaire</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="moderate" id="moderate" />
-                <Label htmlFor="moderate">Modérément actif</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="active" id="active" />
-                <Label htmlFor="active">Très actif</Label>
-              </div>
-            </RadioGroup>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
+            <h3 className="font-medium">Informations personnelles</h3>
             <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="age">Âge</Label>
+                <Input
+                  id="age"
+                  type="number"
+                  value={formData.age}
+                  onChange={(e) =>
+                    setFormData({ ...formData, age: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="workoutsPerWeek">Entraînements par semaine</Label>
+                <Input
+                  id="workoutsPerWeek"
+                  type="number"
+                  value={formData.workoutsPerWeek}
+                  onChange={(e) =>
+                    setFormData({ ...formData, workoutsPerWeek: e.target.value })
+                  }
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="weight">Poids (kg)</Label>
                 <Input
@@ -115,17 +150,47 @@ export const InitialQuestionnaire = () => {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="sleep">Heures de sommeil moyennes</Label>
-              <Input
-                id="sleep"
-                type="number"
-                value={formData.sleepHours}
-                onChange={(e) =>
-                  setFormData({ ...formData, sleepHours: e.target.value })
+          </div>
+        );
+      case 3:
+        return (
+          <div className="space-y-4">
+            <h3 className="font-medium">Allergies et restrictions alimentaires</h3>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="hasAllergies"
+                checked={formData.hasAllergies}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, hasAllergies: checked as boolean })
                 }
               />
+              <Label htmlFor="hasAllergies">J'ai des allergies alimentaires</Label>
             </div>
+            
+            {formData.hasAllergies && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Sélectionner mes allergies</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Allergies alimentaires</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid grid-cols-2 gap-4">
+                    {commonAllergies.map((allergy) => (
+                      <div key={allergy} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={allergy}
+                          checked={formData.allergies.includes(allergy)}
+                          onCheckedChange={() => handleAllergyChange(allergy)}
+                        />
+                        <Label htmlFor={allergy}>{allergy}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
         );
     }
