@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CommonFood } from "@/types/food";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface FoodSearchProps {
   selectedCategory: string;
@@ -32,52 +33,61 @@ export const FoodSearch = ({
     )
   );
 
+  const categories = [
+    { value: "all", label: "Toutes les catégories" },
+    { value: "Protéines", label: "Protéines" },
+    { value: "Féculents", label: "Féculents" },
+    { value: "Légumes", label: "Légumes" },
+    { value: "Fruits", label: "Fruits" },
+    { value: "Produits laitiers", label: "Produits laitiers" },
+    { value: "Autres", label: "Autres" }
+  ];
+
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
-        <Select
-          value={selectedCategory}
-          onValueChange={onCategoryChange}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Catégorie" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Toutes les catégories</SelectItem>
-            <SelectItem value="Protéines">Protéines</SelectItem>
-            <SelectItem value="Féculents">Féculents</SelectItem>
-            <SelectItem value="Légumes">Légumes</SelectItem>
-            <SelectItem value="Fruits">Fruits</SelectItem>
-            <SelectItem value="Produits laitiers">Produits laitiers</SelectItem>
-            <SelectItem value="Autres">Autres</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <ScrollArea className="h-[200px] rounded-md border p-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {displayedFoods.map((food) => (
-            <Button
-              key={food.id}
-              variant="ghost"
-              className="justify-start h-auto py-2"
-              onClick={() => onSelectFood(food.id)}
+      <Tabs defaultValue={selectedCategory} onValueChange={onCategoryChange}>
+        <TabsList className="w-full flex-wrap h-auto">
+          {categories.map((category) => (
+            <TabsTrigger 
+              key={category.value} 
+              value={category.value}
+              className="flex-1"
             >
-              <div className="text-left">
-                <div className="font-medium">{food.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {food.calories} kcal | {food.proteins}g protéines
-                </div>
-              </div>
-            </Button>
+              {category.label}
+            </TabsTrigger>
           ))}
-          {displayedFoods.length === 0 && (
-            <p className="text-center text-muted-foreground col-span-2 py-4">
-              Aucun aliment disponible dans cette catégorie
-            </p>
-          )}
-        </div>
-      </ScrollArea>
+        </TabsList>
+        {categories.map((category) => (
+          <TabsContent key={category.value} value={category.value}>
+            <ScrollArea className="h-[200px] rounded-md border p-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {displayedFoods
+                  .filter(food => category.value === "all" || food.category === category.value)
+                  .map((food) => (
+                    <Button
+                      key={food.id}
+                      variant="ghost"
+                      className="justify-start h-auto py-2"
+                      onClick={() => onSelectFood(food.id)}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium">{food.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {food.calories} kcal | {food.proteins}g protéines
+                        </div>
+                      </div>
+                    </Button>
+                  ))}
+                {displayedFoods.length === 0 && (
+                  <p className="text-center text-muted-foreground col-span-2 py-4">
+                    Aucun aliment disponible dans cette catégorie
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 };
