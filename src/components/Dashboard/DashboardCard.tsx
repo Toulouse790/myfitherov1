@@ -10,11 +10,11 @@ interface DashboardCardProps {
 
 export const DashboardCard = ({ title, value, icon, className }: DashboardCardProps) => {
   return (
-    <Card className={cn("p-6 animate-fade-up", className)}>
+    <Card className={cn("p-4 md:p-6 animate-fade-up", className)}>
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground">{title}</p>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-xl md:text-2xl font-bold">{value}</p>
         </div>
         <div className="text-primary">{icon}</div>
       </div>

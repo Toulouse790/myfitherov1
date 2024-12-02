@@ -14,17 +14,23 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Tableau de bord</h1>
+    <div className="container mx-auto p-4 md:p-6 space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Tableau de bord</h1>
         <ThemeSelector />
       </div>
       
-      <DashboardStats />
+      <div className="w-full overflow-x-hidden">
+        <DashboardStats />
+      </div>
       
-      <WidgetGrid />
+      <div className="w-full">
+        <WidgetGrid />
+      </div>
       
-      <PersonalizedRecommendations />
+      <div className="w-full">
+        <PersonalizedRecommendations />
+      </div>
     </div>
   );
 };
