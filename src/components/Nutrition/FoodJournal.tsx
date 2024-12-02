@@ -7,7 +7,11 @@ import { FoodEntryForm } from "./FoodEntryForm";
 import { FoodEntryList } from "./FoodEntryList";
 import { FoodEntry } from "@/types/food";
 
-export const FoodJournal = () => {
+interface FoodJournalProps {
+  userAllergies?: string[];
+}
+
+export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
   const [entries, setEntries] = useState<FoodEntry[]>([]);
   const [newFood, setNewFood] = useState("");
   const [calories, setCalories] = useState("");
@@ -75,6 +79,7 @@ export const FoodJournal = () => {
           onCategoryChange={setSelectedCategory}
           filteredFoods={filteredFoods}
           onSelectFood={handleSelectFood}
+          userAllergies={userAllergies}
         />
         
         <FoodEntryForm
