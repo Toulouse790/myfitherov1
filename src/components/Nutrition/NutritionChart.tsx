@@ -26,6 +26,7 @@ export const NutritionChart = () => {
             colors={["#8B5CF6"]}
             valueFormatter={(value: number) => `${value} kcal`}
             yAxisWidth={48}
+            ticks={[0, 500, 1000, 1500, 2000, 2500, 3000]}
           />
         </div>
       </CardContent>
