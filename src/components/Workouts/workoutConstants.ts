@@ -25,6 +25,12 @@ export interface WorkoutFormData {
   equipment: string;
 }
 
+export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercises'> {
+  id: string;
+  duration: number;
+  exercises: number;
+}
+
 export const initialFormData: WorkoutFormData = {
   title: "",
   description: "",
@@ -34,3 +40,36 @@ export const initialFormData: WorkoutFormData = {
   difficulty: "",
   equipment: "",
 };
+
+export const sampleWorkouts: WorkoutData[] = [
+  {
+    id: "1",
+    title: "Full Body Débutant",
+    description: "Une séance complète pour débuter la musculation",
+    muscleGroup: "fullBody",
+    difficulty: "beginner",
+    duration: 45,
+    exercises: 8,
+    equipment: "Haltères, Tapis",
+  },
+  {
+    id: "2",
+    title: "Push Day",
+    description: "Séance focalisée sur les muscles de la poussée",
+    muscleGroup: "chest",
+    difficulty: "intermediate",
+    duration: 60,
+    exercises: 6,
+    equipment: "Banc de musculation, Haltères, Élastiques",
+  },
+  {
+    id: "3",
+    title: "Cardio HIIT",
+    description: "Entraînement par intervalles de haute intensité",
+    muscleGroup: "fullBody",
+    difficulty: "advanced",
+    duration: 30,
+    exercises: 10,
+    equipment: "Tapis, Corde à sauter",
+  },
+];
