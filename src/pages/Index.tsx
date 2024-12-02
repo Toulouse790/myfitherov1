@@ -1,6 +1,7 @@
 import { ThemeSelector } from "@/components/Theme/ThemeSelector";
 import { WidgetGrid } from "@/components/Widgets/WidgetGrid";
 import { PersonalizedRecommendations } from "@/components/Recommendations/PersonalizedRecommendations";
+import { DashboardStats } from "@/components/Dashboard/DashboardStats";
 import { useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 
@@ -18,6 +19,8 @@ const Index = () => {
         <h1 className="text-3xl font-bold">Tableau de bord</h1>
         <ThemeSelector />
       </div>
+      
+      <DashboardStats />
       
       <WidgetGrid />
       
