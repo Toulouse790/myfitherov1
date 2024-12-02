@@ -7,6 +7,7 @@ import { WorkoutFilters } from "./WorkoutFilters";
 export const ExerciseLibrary = () => {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
+  const [selectedLocation, setSelectedLocation] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const filteredExercises = exercises.filter((exercise) => {
@@ -14,6 +15,9 @@ export const ExerciseLibrary = () => {
       return false;
     }
     if (selectedDifficulty !== "all" && exercise.difficulty !== selectedDifficulty) {
+      return false;
+    }
+    if (selectedLocation !== "all" && !exercise.location.includes(selectedLocation)) {
       return false;
     }
     return true;
@@ -27,13 +31,16 @@ export const ExerciseLibrary = () => {
       <WorkoutFilters
         muscleGroup={selectedMuscleGroup}
         difficulty={selectedDifficulty}
+        location={selectedLocation}
         sortOrder={sortOrder}
         onMuscleGroupChange={setSelectedMuscleGroup}
         onDifficultyChange={setSelectedDifficulty}
+        onLocationChange={setSelectedLocation}
         onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
         onReset={() => {
           setSelectedMuscleGroup("all");
           setSelectedDifficulty("all");
+          setSelectedLocation("all");
           setSortOrder("asc");
         }}
       />
@@ -48,6 +55,12 @@ export const ExerciseLibrary = () => {
 };
 
 const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
+  const locationLabels = {
+    home: "Maison",
+    gym: "Salle de sport",
+    outdoor: "Extérieur"
+  };
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -60,6 +73,7 @@ const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
             difficultyLevels.find(d => d.id === exercise.difficulty)?.name
           }</p>
           <p><strong>Équipement :</strong> {exercise.equipment}</p>
+          <p><strong>Lieu :</strong> {exercise.location.map(loc => locationLabels[loc as keyof typeof locationLabels]).join(", ")}</p>
         </div>
         <div className="space-y-2">
           <p className="font-semibold">Instructions :</p>

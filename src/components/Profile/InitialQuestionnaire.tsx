@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
 import { PersonalInfoStep } from "./QuestionnaireSteps/PersonalInfoStep";
 import { TrainingFrequencyStep } from "./QuestionnaireSteps/TrainingFrequencyStep";
+import { TrainingLocationStep } from "./QuestionnaireSteps/TrainingLocationStep";
 
 interface QuestionnaireData {
   objective: string;
@@ -15,6 +16,7 @@ interface QuestionnaireData {
   hasAllergies: boolean;
   allergies: string[];
   dietaryRestrictions: string[];
+  trainingLocation: string;
 }
 
 export const InitialQuestionnaire = () => {
@@ -29,6 +31,7 @@ export const InitialQuestionnaire = () => {
     hasAllergies: false,
     allergies: [],
     dietaryRestrictions: [],
+    trainingLocation: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -73,6 +76,13 @@ export const InitialQuestionnaire = () => {
             onWorkoutsPerWeekChange={(value) => updateFormData("workoutsPerWeek", value)}
           />
         );
+      case 4:
+        return (
+          <TrainingLocationStep
+            trainingLocation={formData.trainingLocation}
+            onTrainingLocationChange={(value) => updateFormData("trainingLocation", value)}
+          />
+        );
       default:
         return null;
     }
@@ -95,10 +105,10 @@ export const InitialQuestionnaire = () => {
             >
               Précédent
             </Button>
-            {currentStep < 3 ? (
+            {currentStep < 4 ? (
               <Button
                 type="button"
-                onClick={() => setCurrentStep(Math.min(3, currentStep + 1))}
+                onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
               >
                 Suivant
               </Button>

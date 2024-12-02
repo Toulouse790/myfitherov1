@@ -12,9 +12,11 @@ import { Filter, SortAsc, SortDesc } from "lucide-react";
 interface WorkoutFiltersProps {
   muscleGroup: string;
   difficulty: string;
+  location: string;
   sortOrder: "asc" | "desc";
   onMuscleGroupChange: (value: string) => void;
   onDifficultyChange: (value: string) => void;
+  onLocationChange: (value: string) => void;
   onSortOrderChange: () => void;
   onReset: () => void;
 }
@@ -22,9 +24,11 @@ interface WorkoutFiltersProps {
 export const WorkoutFilters = ({
   muscleGroup,
   difficulty,
+  location,
   sortOrder,
   onMuscleGroupChange,
   onDifficultyChange,
+  onLocationChange,
   onSortOrderChange,
   onReset,
 }: WorkoutFiltersProps) => {
@@ -56,6 +60,18 @@ export const WorkoutFilters = ({
                 {level.name}
               </SelectItem>
             ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={location} onValueChange={onLocationChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Lieu d'entraînement" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous</SelectItem>
+            <SelectItem value="home">Maison</SelectItem>
+            <SelectItem value="gym">Salle de sport</SelectItem>
+            <SelectItem value="outdoor">Extérieur</SelectItem>
           </SelectContent>
         </Select>
       </div>
