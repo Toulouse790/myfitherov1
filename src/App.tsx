@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Workouts from "./pages/Workouts";
 import Nutrition from "./pages/Nutrition";
 import Sleep from "./pages/Sleep";
+import Admin from "./pages/Admin";
 import { SignIn } from "@/components/Auth/SignIn";
 import { UserProfile } from "@/components/Profile/UserProfile";
 import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
@@ -32,6 +33,7 @@ const App = () => (
                   <Route path="/workouts" element={<Workouts />} />
                   <Route path="/nutrition" element={<Nutrition />} />
                   <Route path="/sleep" element={<Sleep />} />
+                  <Route path="/admin" element={<Admin />} />
                   <Route path="/signin" element={<SignIn />} />
                   <Route path="/profile" element={<UserProfile />} />
                   <Route path="/questionnaire" element={<InitialQuestionnaire />} />
