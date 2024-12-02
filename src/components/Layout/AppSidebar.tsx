@@ -52,7 +52,7 @@ export function AppSidebar() {
 
   return (
     <>
-      <SidebarTrigger asChild>
+      <SidebarTrigger>
         <button className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-md bg-background border">
           <Menu className="w-6 h-6" />
         </button>
