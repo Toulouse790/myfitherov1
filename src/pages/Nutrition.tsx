@@ -1,51 +1,28 @@
-import { Header } from "@/components/Layout/Header";
-import { DashboardCard } from "@/components/Dashboard/DashboardCard";
-import { FoodJournal } from "@/components/Nutrition/FoodJournal";
-import { NutritionChart } from "@/components/Nutrition/NutritionChart";
-import { WaterTracker } from "@/components/Nutrition/WaterTracker";
 import { NutritionGoals } from "@/components/Nutrition/NutritionGoals";
-import { SleepTracker } from "@/components/Sleep/SleepTracker";
-import { Flame, Beef, Droplets } from "lucide-react";
+import { NutritionChart } from "@/components/Nutrition/NutritionChart";
+import { FoodJournal } from "@/components/Nutrition/FoodJournal";
+import { MealPlanGenerator } from "@/components/Nutrition/MealPlanGenerator";
 
 const Nutrition = () => {
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto px-4 pt-24 pb-12 space-y-8">
-        <h1 className="text-3xl font-bold">Nutrition</h1>
-        
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <DashboardCard
-            title="Calories journalières"
-            value="2000 kcal"
-            icon={<Flame className="w-8 h-8" />}
-          />
-          <DashboardCard
-            title="Protéines"
-            value="150g"
-            icon={<Beef className="w-8 h-8" />}
-          />
-          <DashboardCard
-            title="Eau"
-            value="2.5L"
-            icon={<Droplets className="w-8 h-8" />}
-          />
-        </div>
+  // Ces valeurs devraient venir du questionnaire initial
+  const mockUserData = {
+    workoutsPerWeek: 4,
+    goal: "muscle_gain" as const,
+    weight: 75,
+    height: 175,
+    age: 30,
+    allergies: [],
+  };
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
-            <div className="grid gap-6 md:grid-cols-2">
-              <NutritionChart />
-              <WaterTracker />
-            </div>
-            <NutritionGoals />
-            <FoodJournal />
-          </div>
-          <div>
-            <SleepTracker />
-          </div>
-        </div>
-      </main>
+  return (
+    <div className="container mx-auto p-4 space-y-6">
+      <h1 className="text-3xl font-bold">Nutrition</h1>
+      <div className="grid gap-6 md:grid-cols-2">
+        <NutritionGoals />
+        <NutritionChart />
+      </div>
+      <MealPlanGenerator {...mockUserData} />
+      <FoodJournal />
     </div>
   );
 };
