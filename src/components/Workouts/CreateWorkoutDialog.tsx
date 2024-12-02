@@ -30,11 +30,54 @@ const muscleGroups = [
   { id: "fullBody", name: "Full Body", color: "bg-primary" },
 ];
 
+const difficultyLevels = [
+  { id: "beginner", name: "Débutant" },
+  { id: "intermediate", name: "Intermédiaire" },
+  { id: "advanced", name: "Avancé" },
+  { id: "expert", name: "Expert" },
+];
+
+interface WorkoutFormData {
+  title: string;
+  description: string;
+  muscleGroup: string;
+  duration: string;
+  exercises: string;
+  difficulty: string;
+  equipment: string;
+}
+
+const initialFormData: WorkoutFormData = {
+  title: "",
+  description: "",
+  muscleGroup: "",
+  duration: "",
+  exercises: "",
+  difficulty: "",
+  equipment: "",
+};
+
 export const CreateWorkoutDialog = () => {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const [muscleGroup, setMuscleGroup] = useState("");
-  const [description, setDescription] = useState("");
+  const [formData, setFormData] = useState<WorkoutFormData>(initialFormData);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleSelectChange = (value: string, field: keyof WorkoutFormData) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,11 +86,10 @@ export const CreateWorkoutDialog = () => {
       description: "Votre nouvelle séance a été créée avec succès.",
     });
     setOpen(false);
-    setDescription("");
-    setMuscleGroup("");
+    setFormData(initialFormData);
   };
 
-  const selectedColor = muscleGroups.find(group => group.id === muscleGroup)?.color || "";
+  const selectedColor = muscleGroups.find(group => group.id === formData.muscleGroup)?.color || "";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -64,23 +106,29 @@ export const CreateWorkoutDialog = () => {
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
             <Label htmlFor="title">Nom de la séance</Label>
-            <Input id="title" placeholder="Ex: Full Body" required />
+            <Input 
+              id="title" 
+              placeholder="Ex: Full Body" 
+              required 
+              value={formData.title}
+              onChange={handleChange}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea 
               id="description" 
               placeholder="Décrivez votre séance..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={formData.description}
+              onChange={handleChange}
               className="min-h-[100px]"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="muscleGroup">Groupe musculaire</Label>
             <Select
-              value={muscleGroup}
-              onValueChange={setMuscleGroup}
+              value={formData.muscleGroup}
+              onValueChange={(value) => handleSelectChange(value, "muscleGroup")}
               required
             >
               <SelectTrigger>
@@ -99,6 +147,37 @@ export const CreateWorkoutDialog = () => {
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="difficulty">Niveau de difficulté</Label>
+            <Select
+              value={formData.difficulty}
+              onValueChange={(value) => handleSelectChange(value, "difficulty")}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionnez un niveau" />
+              </SelectTrigger>
+              <SelectContent>
+                {difficultyLevels.map((level) => (
+                  <SelectItem 
+                    key={level.id} 
+                    value={level.id}
+                  >
+                    {level.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="equipment">Équipement nécessaire</Label>
+            <Input
+              id="equipment"
+              placeholder="Ex: Haltères, Tapis, Barre de traction"
+              value={formData.equipment}
+              onChange={handleChange}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="duration">Durée (min)</Label>
@@ -108,6 +187,8 @@ export const CreateWorkoutDialog = () => {
                 min="1"
                 placeholder="Ex: 45"
                 required
+                value={formData.duration}
+                onChange={handleChange}
               />
             </div>
             <div className="space-y-2">
@@ -118,6 +199,8 @@ export const CreateWorkoutDialog = () => {
                 min="1"
                 placeholder="Ex: 8"
                 required
+                value={formData.exercises}
+                onChange={handleChange}
               />
             </div>
           </div>
