@@ -1,11 +1,46 @@
 export const muscleGroups = [
-  { id: "chest", name: "Pectoraux", color: "bg-primary" },
-  { id: "back", name: "Dos", color: "bg-primary" },
-  { id: "legs", name: "Jambes", color: "bg-primary" },
-  { id: "shoulders", name: "Épaules", color: "bg-primary" },
-  { id: "arms", name: "Bras", color: "bg-primary" },
-  { id: "abs", name: "Abdominaux", color: "bg-primary" },
-  { id: "fullBody", name: "Full Body", color: "bg-primary" },
+  { 
+    id: "chest", 
+    name: "Pectoraux", 
+    color: "bg-primary",
+    image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=300&h=200&fit=crop"
+  },
+  { 
+    id: "back", 
+    name: "Dos", 
+    color: "bg-primary",
+    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&h=200&fit=crop"
+  },
+  { 
+    id: "legs", 
+    name: "Jambes", 
+    color: "bg-primary",
+    image: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=300&h=200&fit=crop"
+  },
+  { 
+    id: "shoulders", 
+    name: "Épaules", 
+    color: "bg-primary",
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=300&h=200&fit=crop"
+  },
+  { 
+    id: "arms", 
+    name: "Bras", 
+    color: "bg-primary",
+    image: "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=300&h=200&fit=crop"
+  },
+  { 
+    id: "abs", 
+    name: "Abdominaux", 
+    color: "bg-primary",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop"
+  },
+  { 
+    id: "fullBody", 
+    name: "Full Body", 
+    color: "bg-primary",
+    image: "https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=300&h=200&fit=crop"
+  },
 ];
 
 export const difficultyLevels = [

@@ -9,6 +9,8 @@ import {
 import { muscleGroups, difficultyLevels } from "./workoutConstants";
 import { Filter, SortAsc, SortDesc } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent } from "@/components/ui/card";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface WorkoutFiltersProps {
   muscleGroup: string;
@@ -37,21 +39,34 @@ export const WorkoutFilters = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
-        <Select value={muscleGroup} onValueChange={onMuscleGroupChange}>
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="Groupe musculaire" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tous</SelectItem>
-            {muscleGroups.map((group) => (
-              <SelectItem key={group.id} value={group.id}>
-                {group.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+        {muscleGroups.map((muscle) => (
+          <Card 
+            key={muscle.id} 
+            className={`cursor-pointer transition-colors hover:bg-accent overflow-hidden ${
+              muscleGroup === muscle.id ? "ring-2 ring-primary" : ""
+            }`}
+            onClick={() => onMuscleGroupChange(muscle.id === muscleGroup ? "all" : muscle.id)}
+          >
+            <CardContent className="p-0">
+              <AspectRatio ratio={3/2}>
+                <img 
+                  src={muscle.image} 
+                  alt={muscle.name}
+                  className="object-cover w-full h-full brightness-75"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="text-xs sm:text-sm font-medium text-white drop-shadow-lg">
+                    {muscle.name}
+                  </p>
+                </div>
+              </AspectRatio>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
+      <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
         <Select value={difficulty} onValueChange={onDifficultyChange}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Difficulté" />
