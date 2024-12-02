@@ -26,7 +26,7 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
   const [completedSets, setCompletedSets] = useState<{ [key: number]: number }>({});
   const [restTimer, setRestTimer] = useState<number | null>(null);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-  const [restDuration, setRestDuration] = useState<number>(90);
+  const [restDuration, setRestDuration] = useState<number>(90); // 1min30 par défaut
 
   const handleSetCompletion = (exerciseIndex: number) => {
     const currentSets = completedSets[exerciseIndex] || 0;
@@ -142,20 +142,9 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
                 activeExercise === index ? 'border-primary bg-primary/5' : ''
               }`}
             >
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
                   <h3 className="font-medium">{exercise.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {completedSets[index] || 0}/{exercise.sets} séries × {exercise.reps} répétitions
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {activeExercise === index && restTimer !== null && (
-                    <div className="flex items-center gap-2 text-primary">
-                      <Clock className="h-4 w-4" />
-                      <span>{restTimer}s</span>
-                    </div>
-                  )}
                   {(activeExercise === null || activeExercise === index) && (
                     <Button
                       variant={activeExercise === index ? "default" : "outline"}
@@ -163,23 +152,51 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
                       onClick={() => {
                         if (activeExercise === null) {
                           setActiveExercise(index);
-                        } else if (activeExercise === index) {
-                          handleSetCompletion(index);
                         }
                       }}
-                      disabled={restTimer !== null}
                     >
-                      {activeExercise === index ? (
-                        <>
-                          <Check className="h-4 w-4 mr-2" />
-                          Valider la série
-                        </>
-                      ) : (
-                        "Commencer"
-                      )}
+                      {activeExercise === index ? "En cours" : "Commencer"}
                     </Button>
                   )}
                 </div>
+
+                {activeExercise === index && (
+                  <div className="grid grid-cols-[auto,1fr] gap-4">
+                    {Array.from({ length: exercise.sets }).map((_, setIndex) => {
+                      const isCompleted = (completedSets[index] || 0) > setIndex;
+                      const isNext = (completedSets[index] || 0) === setIndex;
+                      
+                      return (
+                        <div key={setIndex} className="contents">
+                          <Button
+                            variant={isCompleted ? "default" : "outline"}
+                            size="sm"
+                            className="w-20"
+                            onClick={() => isNext && handleSetCompletion(index)}
+                            disabled={!isNext || restTimer !== null}
+                          >
+                            {isCompleted ? (
+                              <Check className="h-4 w-4" />
+                            ) : (
+                              `Série ${setIndex + 1}`
+                            )}
+                          </Button>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm">
+                              {exercise.reps} répétitions
+                            </span>
+                            {isNext && restTimer !== null && (
+                              <div className="flex items-center gap-2 text-primary">
+                                <Clock className="h-4 w-4" />
+                                <span>{restTimer}s</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           ))}
