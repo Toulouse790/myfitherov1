@@ -5,6 +5,7 @@ import { commonFoods } from "@/data/commonFoods";
 import { FoodSearch } from "./FoodSearch";
 import { FoodEntryForm } from "./FoodEntryForm";
 import { FoodEntryList } from "./FoodEntryList";
+import { BarcodeScanner } from "./BarcodeScanner";
 import { FoodEntry } from "@/types/food";
 
 interface FoodJournalProps {
@@ -56,6 +57,24 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
     }
   };
 
+  const handleBarcodeScan = async (barcode: string) => {
+    // Ici, vous pourriez appeler une API pour obtenir les informations nutritionnelles
+    // Pour l'exemple, nous allons simuler une recherche dans commonFoods
+    const scannedFood = commonFoods.find((food) => food.id === barcode);
+    
+    if (scannedFood) {
+      setNewFood(scannedFood.name);
+      setCalories(scannedFood.calories.toString());
+      setProteins(scannedFood.proteins.toString());
+    } else {
+      toast({
+        title: "Produit non trouvé",
+        description: "Ce produit n'est pas dans notre base de données",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleDeleteEntry = (id: string) => {
     setEntries(entries.filter((entry) => entry.id !== id));
     toast({
@@ -74,6 +93,8 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
         <CardTitle>Journal alimentaire</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <BarcodeScanner onScan={handleBarcodeScan} />
+        
         <FoodSearch
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
