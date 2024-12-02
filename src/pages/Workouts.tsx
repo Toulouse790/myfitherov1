@@ -3,6 +3,8 @@ import { WorkoutList } from "@/components/Workouts/WorkoutList";
 import { CreateWorkoutDialog } from "@/components/Workouts/CreateWorkoutDialog";
 import { WorkoutFilters } from "@/components/Workouts/WorkoutFilters";
 import { sampleWorkouts } from "@/components/Workouts/workoutConstants";
+import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Workouts = () => {
   const [muscleGroup, setMuscleGroup] = useState("all");
@@ -41,17 +43,30 @@ const Workouts = () => {
         <CreateWorkoutDialog />
       </div>
 
-      <WorkoutFilters
-        muscleGroup={muscleGroup}
-        difficulty={difficulty}
-        sortOrder={sortOrder}
-        onMuscleGroupChange={setMuscleGroup}
-        onDifficultyChange={setDifficulty}
-        onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
-        onReset={handleReset}
-      />
+      <Tabs defaultValue="workouts" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="workouts">Mes séances</TabsTrigger>
+          <TabsTrigger value="exercises">Exercices</TabsTrigger>
+        </TabsList>
 
-      <WorkoutList workouts={filteredWorkouts} />
+        <TabsContent value="workouts" className="space-y-6">
+          <WorkoutFilters
+            muscleGroup={muscleGroup}
+            difficulty={difficulty}
+            sortOrder={sortOrder}
+            onMuscleGroupChange={setMuscleGroup}
+            onDifficultyChange={setDifficulty}
+            onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
+            onReset={handleReset}
+          />
+
+          <WorkoutList workouts={filteredWorkouts} />
+        </TabsContent>
+
+        <TabsContent value="exercises">
+          <ExerciseLibrary />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
