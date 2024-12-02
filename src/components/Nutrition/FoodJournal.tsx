@@ -12,7 +12,7 @@ export const FoodJournal = () => {
   const [newFood, setNewFood] = useState("");
   const [calories, setCalories] = useState("");
   const [proteins, setProteins] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { toast } = useToast();
 
   const handleAddEntry = () => {
@@ -60,9 +60,9 @@ export const FoodJournal = () => {
     });
   };
 
-  const filteredFoods = selectedCategory
-    ? commonFoods.filter((food) => food.category === selectedCategory)
-    : commonFoods;
+  const filteredFoods = selectedCategory === "all"
+    ? commonFoods
+    : commonFoods.filter((food) => food.category === selectedCategory);
 
   return (
     <Card>

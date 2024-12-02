@@ -33,7 +33,7 @@ export const FoodSearch = ({
             <SelectValue placeholder="Catégorie" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Toutes les catégories</SelectItem>
+            <SelectItem value="all">Toutes les catégories</SelectItem>
             <SelectItem value="Protéines">Protéines</SelectItem>
             <SelectItem value="Féculents">Féculents</SelectItem>
             <SelectItem value="Légumes">Légumes</SelectItem>
