@@ -1,5 +1,6 @@
 import { Header } from "@/components/Layout/Header";
 import { BarChart } from "@/components/ui/chart";
+import { ConnectedDevices } from "@/components/Sleep/ConnectedDevices";
 
 const Sleep = () => {
   const sleepData = [
@@ -38,19 +39,24 @@ const Sleep = () => {
           </div>
         </div>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold mb-4">Historique du sommeil</h2>
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-            <div className="h-[300px]">
-              <BarChart
-                data={sleepData}
-                index="name"
-                categories={['hours']}
-                colors={['#8B5CF6']}
-                valueFormatter={(value) => `${value}h`}
-                yAxisWidth={40}
-              />
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+              <h2 className="text-2xl font-semibold mb-4">Historique du sommeil</h2>
+              <div className="h-[300px]">
+                <BarChart
+                  data={sleepData}
+                  index="name"
+                  categories={['hours']}
+                  colors={['#8B5CF6']}
+                  valueFormatter={(value) => `${value}h`}
+                  yAxisWidth={40}
+                />
+              </div>
             </div>
+          </div>
+          <div>
+            <ConnectedDevices />
           </div>
         </div>
       </main>
