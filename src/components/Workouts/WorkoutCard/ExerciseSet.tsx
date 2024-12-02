@@ -19,11 +19,11 @@ export const ExerciseSet = ({
   onComplete,
 }: ExerciseSetProps) => {
   return (
-    <div className="contents">
+    <>
       <Button
         variant={isCompleted ? "default" : "outline"}
         size="sm"
-        className="w-20"
+        className="w-24"
         onClick={() => isNext && onComplete()}
         disabled={!isNext || restTimer !== null}
       >
@@ -38,6 +38,6 @@ export const ExerciseSet = ({
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };

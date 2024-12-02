@@ -38,17 +38,18 @@ export const Exercise = ({
         />
 
         {activeExercise === index && (
-          <div className="grid grid-cols-[auto,1fr] gap-4">
+          <div className="flex flex-col space-y-4">
             {Array.from({ length: exercise.sets }).map((_, setIndex) => (
-              <ExerciseSet
-                key={setIndex}
-                setIndex={setIndex}
-                isCompleted={(completedSets[index] || 0) > setIndex}
-                isNext={(completedSets[index] || 0) === setIndex}
-                reps={exercise.reps}
-                restTimer={restTimer}
-                onComplete={() => onSetComplete(index)}
-              />
+              <div key={setIndex} className="flex items-center gap-4">
+                <ExerciseSet
+                  setIndex={setIndex}
+                  isCompleted={(completedSets[index] || 0) > setIndex}
+                  isNext={(completedSets[index] || 0) === setIndex}
+                  reps={exercise.reps}
+                  restTimer={restTimer}
+                  onComplete={() => onSetComplete(index)}
+                />
+              </div>
             ))}
           </div>
         )}
