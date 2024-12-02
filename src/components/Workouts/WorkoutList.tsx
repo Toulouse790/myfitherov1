@@ -1,10 +1,22 @@
 import { WorkoutCard } from "./WorkoutCard";
-import { sampleWorkouts } from "./workoutConstants";
+import { WorkoutData } from "./workoutConstants";
 
-export const WorkoutList = () => {
+interface WorkoutListProps {
+  workouts: WorkoutData[];
+}
+
+export const WorkoutList = ({ workouts }: WorkoutListProps) => {
+  if (workouts.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        Aucune séance ne correspond à vos critères.
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {sampleWorkouts.map((workout) => (
+      {workouts.map((workout) => (
         <WorkoutCard key={workout.id} workout={workout} />
       ))}
     </div>
