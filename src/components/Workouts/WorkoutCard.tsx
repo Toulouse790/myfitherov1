@@ -8,7 +8,7 @@ interface WorkoutCardProps {
 }
 
 export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
-  const { title, description, muscleGroup, difficulty, duration, exercises, equipment } = workout;
+  const { title, muscleGroup, difficulty, duration, exercises } = workout;
 
   return (
     <Card className="w-full animate-fade-up">
@@ -21,7 +21,6 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-muted-foreground">{description}</p>
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
             <Target className="h-4 w-4 text-primary" />
@@ -36,13 +35,6 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
             <span className="text-sm">{exercises} exercices</span>
           </div>
         </div>
-        {equipment && (
-          <div className="pt-2">
-            <p className="text-sm text-muted-foreground">
-              Équipement : {equipment}
-            </p>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

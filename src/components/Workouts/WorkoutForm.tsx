@@ -1,7 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -14,7 +13,7 @@ import { WorkoutFormData, muscleGroups, difficultyLevels } from "./workoutConsta
 interface WorkoutFormProps {
   formData: WorkoutFormData;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (value: string, field: keyof WorkoutFormData) => void;
   selectedColor: string;
 }
@@ -36,16 +35,6 @@ export const WorkoutForm = ({
           required 
           value={formData.title}
           onChange={handleChange}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea 
-          id="description" 
-          placeholder="Décrivez votre séance..."
-          value={formData.description}
-          onChange={handleChange}
-          className="min-h-[100px]"
         />
       </div>
       <div className="space-y-2">
@@ -92,15 +81,6 @@ export const WorkoutForm = ({
             ))}
           </SelectContent>
         </Select>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="equipment">Équipement nécessaire</Label>
-        <Input
-          id="equipment"
-          placeholder="Ex: Haltères, Tapis, Barre de traction"
-          value={formData.equipment}
-          onChange={handleChange}
-        />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
