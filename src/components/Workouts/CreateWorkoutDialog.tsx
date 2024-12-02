@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const muscleGroups = [
   { id: "chest", name: "Pectoraux", color: "bg-primary" },
@@ -33,6 +34,7 @@ export const CreateWorkoutDialog = () => {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const [muscleGroup, setMuscleGroup] = useState("");
+  const [description, setDescription] = useState("");
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,6 +43,8 @@ export const CreateWorkoutDialog = () => {
       description: "Votre nouvelle séance a été créée avec succès.",
     });
     setOpen(false);
+    setDescription("");
+    setMuscleGroup("");
   };
 
   const selectedColor = muscleGroups.find(group => group.id === muscleGroup)?.color || "";
@@ -61,6 +65,16 @@ export const CreateWorkoutDialog = () => {
           <div className="space-y-2">
             <Label htmlFor="title">Nom de la séance</Label>
             <Input id="title" placeholder="Ex: Full Body" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea 
+              id="description" 
+              placeholder="Décrivez votre séance..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="min-h-[100px]"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="muscleGroup">Groupe musculaire</Label>
@@ -85,25 +99,27 @@ export const CreateWorkoutDialog = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="duration">Durée (en minutes)</Label>
-            <Input
-              id="duration"
-              type="number"
-              min="1"
-              placeholder="Ex: 45"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="exercises">Nombre d'exercices</Label>
-            <Input
-              id="exercises"
-              type="number"
-              min="1"
-              placeholder="Ex: 8"
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="duration">Durée (min)</Label>
+              <Input
+                id="duration"
+                type="number"
+                min="1"
+                placeholder="Ex: 45"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="exercises">Exercices</Label>
+              <Input
+                id="exercises"
+                type="number"
+                min="1"
+                placeholder="Ex: 8"
+                required
+              />
+            </div>
           </div>
           <Button type="submit" className="w-full">
             Créer la séance
