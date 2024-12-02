@@ -11,10 +11,28 @@ import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const muscleGroups = [
+  { id: "chest", name: "Pectoraux" },
+  { id: "back", name: "Dos" },
+  { id: "legs", name: "Jambes" },
+  { id: "shoulders", name: "Épaules" },
+  { id: "arms", name: "Bras" },
+  { id: "abs", name: "Abdominaux" },
+  { id: "fullBody", name: "Full Body" },
+];
 
 export const CreateWorkoutDialog = () => {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const [muscleGroup, setMuscleGroup] = useState("");
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,6 +59,25 @@ export const CreateWorkoutDialog = () => {
           <div className="space-y-2">
             <Label htmlFor="title">Nom de la séance</Label>
             <Input id="title" placeholder="Ex: Full Body" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="muscleGroup">Groupe musculaire</Label>
+            <Select
+              value={muscleGroup}
+              onValueChange={setMuscleGroup}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionnez un groupe musculaire" />
+              </SelectTrigger>
+              <SelectContent>
+                {muscleGroups.map((group) => (
+                  <SelectItem key={group.id} value={group.id}>
+                    {group.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="duration">Durée (en minutes)</Label>
