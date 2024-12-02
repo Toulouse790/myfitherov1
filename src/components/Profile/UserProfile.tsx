@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { ThemeSelector } from "@/components/Theme/ThemeSelector";
 
 const mockUserProfile: UserProfileType = {
   id: "1",
@@ -120,6 +121,7 @@ export const UserProfile = () => {
             </Button>
           </div>
         </CardHeader>
+
         <CardContent>
           <div className="space-y-6">
             {/* Progression */}
@@ -185,6 +187,10 @@ export const UserProfile = () => {
                       checked={profile.preferences.useTutorial}
                       onCheckedChange={(checked) => handlePreferenceChange('tutorial', checked)}
                     />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label>Thème</Label>
+                    <ThemeSelector />
                   </div>
                 </CardContent>
               </Card>

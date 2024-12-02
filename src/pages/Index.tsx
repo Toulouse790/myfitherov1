@@ -1,4 +1,3 @@
-import { ThemeSelector } from "@/components/Theme/ThemeSelector";
 import { WidgetGrid } from "@/components/Widgets/WidgetGrid";
 import { PersonalizedRecommendations } from "@/components/Recommendations/PersonalizedRecommendations";
 import { DashboardStats } from "@/components/Dashboard/DashboardStats";
@@ -15,12 +14,7 @@ const Index = () => {
 
   return (
     <div className="container max-w-full p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center sm:text-left">Tableau de bord</h1>
-        <div className="self-center sm:self-auto">
-          <ThemeSelector />
-        </div>
-      </div>
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center sm:text-left">Tableau de bord</h1>
       
       <div className="w-full -mx-3 sm:mx-0 px-3 sm:px-0">
         <DashboardStats />
