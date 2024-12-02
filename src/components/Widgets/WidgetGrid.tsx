@@ -19,28 +19,28 @@ export const WidgetGrid = () => {
       id: "1",
       title: "Objectif du jour",
       enabled: true,
-      icon: <Target className="w-5 h-5 md:w-6 md:h-6" />,
+      icon: <Target className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
       value: "2000 calories"
     },
     {
       id: "2",
       title: "Niveau actuel",
       enabled: true,
-      icon: <User className="w-5 h-5 md:w-6 md:h-6" />,
+      icon: <User className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
       value: "Niveau 5"
     },
     {
       id: "3",
       title: "Badges gagnés",
       enabled: true,
-      icon: <Trophy className="w-5 h-5 md:w-6 md:h-6" />,
+      icon: <Trophy className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
       value: "3 nouveaux"
     },
     {
       id: "4",
       title: "Points",
       enabled: true,
-      icon: <Star className="w-5 h-5 md:w-6 md:h-6" />,
+      icon: <Star className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
       value: "1250"
     }
   ]);
@@ -52,16 +52,16 @@ export const WidgetGrid = () => {
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl">Widgets actifs</CardTitle>
+        <CardHeader className="p-3 sm:p-4 md:p-6">
+          <CardTitle className="text-base sm:text-lg md:text-xl">Widgets actifs</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+        <CardContent className="p-3 sm:p-4 md:p-6">
+          <div className="space-y-3 sm:space-y-4">
             {widgets.map(widget => (
               <div key={widget.id} className="flex items-center justify-between">
-                <Label htmlFor={`widget-${widget.id}`} className="text-sm md:text-base">{widget.title}</Label>
+                <Label htmlFor={`widget-${widget.id}`} className="text-xs sm:text-sm md:text-base">{widget.title}</Label>
                 <Switch
                   id={`widget-${widget.id}`}
                   checked={widget.enabled}
@@ -73,7 +73,7 @@ export const WidgetGrid = () => {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4">
         {widgets
           .filter(widget => widget.enabled)
           .map(widget => (
