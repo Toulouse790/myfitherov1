@@ -24,6 +24,7 @@ const Index = () => {
       duration: 45,
       exercises: 8,
       equipment: "Haltères, Tapis",
+      location: "home",
     },
     {
       id: "dashboard-2",
@@ -34,6 +35,7 @@ const Index = () => {
       duration: 30,
       exercises: 6,
       equipment: "Banc, Haltères",
+      location: "gym",
     },
     {
       id: "dashboard-3",
@@ -44,6 +46,7 @@ const Index = () => {
       duration: 40,
       exercises: 7,
       equipment: "Squat rack, Haltères",
+      location: "gym",
     },
   ];
 
