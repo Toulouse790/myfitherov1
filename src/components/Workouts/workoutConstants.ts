@@ -23,6 +23,7 @@ export interface WorkoutFormData {
   exercises: string;
   difficulty: string;
   equipment: string;
+  location: string;
 }
 
 export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercises'> {
@@ -39,6 +40,7 @@ export const initialFormData: WorkoutFormData = {
   exercises: "",
   difficulty: "",
   equipment: "",
+  location: "",
 };
 
 export const sampleWorkouts: WorkoutData[] = [
@@ -51,6 +53,7 @@ export const sampleWorkouts: WorkoutData[] = [
     duration: 45,
     exercises: 8,
     equipment: "Haltères, Tapis",
+    location: "home",
   },
   {
     id: "2",
@@ -61,6 +64,7 @@ export const sampleWorkouts: WorkoutData[] = [
     duration: 60,
     exercises: 6,
     equipment: "Banc de musculation, Haltères, Élastiques",
+    location: "gym",
   },
   {
     id: "3",
@@ -71,5 +75,6 @@ export const sampleWorkouts: WorkoutData[] = [
     duration: 30,
     exercises: 10,
     equipment: "Tapis, Corde à sauter",
+    location: "outdoor",
   },
 ];
