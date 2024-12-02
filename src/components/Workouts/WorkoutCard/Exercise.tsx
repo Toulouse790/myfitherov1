@@ -32,7 +32,7 @@ export const Exercise = ({
         isActive ? 'border-primary bg-primary/5' : ''
       }`}
     >
-      <div className="space-y-3 sm:space-y-4">
+      <div className="flex flex-col gap-4">
         <ExerciseHeader
           name={exercise.name}
           isActive={isActive}
@@ -40,7 +40,7 @@ export const Exercise = ({
         />
 
         {isActive && (
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             {Array.from({ length: exercise.sets }).map((_, setIndex) => (
               <ExerciseSet
                 key={setIndex}
