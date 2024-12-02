@@ -23,13 +23,13 @@ export const ExerciseSet = ({
       <Button
         variant={isCompleted ? "default" : "outline"}
         size="sm"
-        className="w-24"
+        className="w-32 md:w-40"
         onClick={() => isNext && onComplete()}
         disabled={!isNext || restTimer !== null}
       >
         {isCompleted ? <Check className="h-4 w-4" /> : `Série ${setIndex + 1}`}
       </Button>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-1">
         <span className="text-sm">{reps} répétitions</span>
         {isNext && restTimer !== null && (
           <div className="flex items-center gap-2 text-primary">

@@ -38,7 +38,7 @@ export const Exercise = ({
         />
 
         {activeExercise === index && (
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4 md:w-2/3 lg:w-1/2">
             {Array.from({ length: exercise.sets }).map((_, setIndex) => (
               <div key={setIndex} className="flex items-center gap-4">
                 <ExerciseSet
