@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Dumbbell, Flame, Check, Plus, Minus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { WorkoutStats } from "./WorkoutCard/WorkoutStats";
+import { Exercise } from "./WorkoutCard/Exercise";
 
 interface WorkoutCardProps {
   workout: {
@@ -99,106 +99,25 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex flex-wrap gap-4">
-          <div className="flex items-center gap-2">
-            <Dumbbell className="h-4 w-4 text-primary" />
-            <span className="text-sm">{exercises.length} exercices</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Flame className="h-4 w-4 text-primary" />
-            <span className="text-sm">{totalCalories} kcal</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary" />
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => adjustRestDuration(-15)}
-                disabled={restDuration <= 45}
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <span className="text-sm min-w-[4rem] text-center">{restDuration}s repos</span>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => adjustRestDuration(15)}
-                disabled={restDuration >= 180}
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <WorkoutStats
+          exerciseCount={exercises.length}
+          totalCalories={totalCalories}
+          restDuration={restDuration}
+          onRestDurationChange={adjustRestDuration}
+        />
         
         <div className="space-y-4">
           {exercises.map((exercise, index) => (
-            <div 
-              key={index} 
-              className={`p-4 rounded-lg border transition-colors ${
-                activeExercise === index ? 'border-primary bg-primary/5' : ''
-              }`}
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-medium">{exercise.name}</h3>
-                  {(activeExercise === null || activeExercise === index) && (
-                    <Button
-                      variant={activeExercise === index ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => {
-                        if (activeExercise === null) {
-                          setActiveExercise(index);
-                        }
-                      }}
-                    >
-                      {activeExercise === index ? "En cours" : "Commencer"}
-                    </Button>
-                  )}
-                </div>
-
-                {activeExercise === index && (
-                  <div className="grid grid-cols-[auto,1fr] gap-4">
-                    {Array.from({ length: exercise.sets }).map((_, setIndex) => {
-                      const isCompleted = (completedSets[index] || 0) > setIndex;
-                      const isNext = (completedSets[index] || 0) === setIndex;
-                      
-                      return (
-                        <div key={setIndex} className="contents">
-                          <Button
-                            variant={isCompleted ? "default" : "outline"}
-                            size="sm"
-                            className="w-20"
-                            onClick={() => isNext && handleSetCompletion(index)}
-                            disabled={!isNext || restTimer !== null}
-                          >
-                            {isCompleted ? (
-                              <Check className="h-4 w-4" />
-                            ) : (
-                              `Série ${setIndex + 1}`
-                            )}
-                          </Button>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm">
-                              {exercise.reps} répétitions
-                            </span>
-                            {isNext && restTimer !== null && (
-                              <div className="flex items-center gap-2 text-primary">
-                                <Clock className="h-4 w-4" />
-                                <span>{restTimer}s</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
+            <Exercise
+              key={index}
+              exercise={exercise}
+              index={index}
+              activeExercise={activeExercise}
+              completedSets={completedSets}
+              restTimer={restTimer}
+              onStart={() => setActiveExercise(index)}
+              onSetComplete={handleSetCompletion}
+            />
           ))}
         </div>
       </CardContent>
