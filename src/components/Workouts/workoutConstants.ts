@@ -86,8 +86,21 @@ export const sampleWorkouts: WorkoutData[] = [
     muscleGroup: "fullBody",
     difficulty: "beginner",
     duration: 45,
-    exercises: 8,
     location: "home",
+    exercises: [
+      {
+        name: "Pompes",
+        sets: 3,
+        reps: 10,
+        calories: 30
+      },
+      {
+        name: "Squats",
+        sets: 3,
+        reps: 15,
+        calories: 45
+      }
+    ]
   },
   {
     id: "2",
@@ -95,8 +108,21 @@ export const sampleWorkouts: WorkoutData[] = [
     muscleGroup: "chest",
     difficulty: "intermediate",
     duration: 60,
-    exercises: 6,
     location: "gym",
+    exercises: [
+      {
+        name: "Développé couché",
+        sets: 4,
+        reps: 8,
+        calories: 40
+      },
+      {
+        name: "Dips",
+        sets: 3,
+        reps: 12,
+        calories: 35
+      }
+    ]
   },
   {
     id: "3",
@@ -104,7 +130,20 @@ export const sampleWorkouts: WorkoutData[] = [
     muscleGroup: "fullBody",
     difficulty: "advanced",
     duration: 30,
-    exercises: 10,
     location: "outdoor",
+    exercises: [
+      {
+        name: "Burpees",
+        sets: 5,
+        reps: 20,
+        calories: 100
+      },
+      {
+        name: "Mountain Climbers",
+        sets: 5,
+        reps: 30,
+        calories: 80
+      }
+    ]
   },
 ];
