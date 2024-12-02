@@ -24,32 +24,33 @@ export const Exercise = ({
   onStart,
   onSetComplete,
 }: ExerciseProps) => {
+  const isActive = activeExercise === index;
+  
   return (
     <div
-      className={`p-4 rounded-lg border transition-colors ${
-        activeExercise === index ? 'border-primary bg-primary/5' : ''
+      className={`p-3 sm:p-4 rounded-lg border transition-colors ${
+        isActive ? 'border-primary bg-primary/5' : ''
       }`}
     >
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <ExerciseHeader
           name={exercise.name}
-          isActive={activeExercise === index}
+          isActive={isActive}
           onStart={onStart}
         />
 
-        {activeExercise === index && (
-          <div className="grid gap-4">
+        {isActive && (
+          <div className="space-y-3">
             {Array.from({ length: exercise.sets }).map((_, setIndex) => (
-              <div key={setIndex} className="flex flex-col gap-2">
-                <ExerciseSet
-                  setIndex={setIndex}
-                  isCompleted={(completedSets[index] || 0) > setIndex}
-                  isNext={(completedSets[index] || 0) === setIndex}
-                  reps={exercise.reps}
-                  restTimer={restTimer}
-                  onComplete={() => onSetComplete(index)}
-                />
-              </div>
+              <ExerciseSet
+                key={setIndex}
+                setIndex={setIndex}
+                isCompleted={(completedSets[index] || 0) > setIndex}
+                isNext={(completedSets[index] || 0) === setIndex}
+                reps={exercise.reps}
+                restTimer={restTimer}
+                onComplete={() => onSetComplete(index)}
+              />
             ))}
           </div>
         )}

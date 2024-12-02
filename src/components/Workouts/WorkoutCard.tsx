@@ -26,7 +26,7 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
   const [completedSets, setCompletedSets] = useState<{ [key: number]: number }>({});
   const [restTimer, setRestTimer] = useState<number | null>(null);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-  const [restDuration, setRestDuration] = useState<number>(90); // 1min30 par défaut
+  const [restDuration, setRestDuration] = useState<number>(90);
 
   const handleSetCompletion = (exerciseIndex: number) => {
     const currentSets = completedSets[exerciseIndex] || 0;
@@ -90,15 +90,15 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
 
   return (
     <Card className="w-full animate-fade-up">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold">{title}</CardTitle>
+      <CardHeader className="p-4 sm:p-6">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <CardTitle className="text-lg sm:text-xl font-bold">{title}</CardTitle>
           <Badge variant="outline" className="bg-primary text-primary-foreground">
             {exercises.length} exercices
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-4 sm:p-6 space-y-4">
         <WorkoutStats
           exerciseCount={exercises.length}
           totalCalories={totalCalories}

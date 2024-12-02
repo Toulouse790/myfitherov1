@@ -8,14 +8,17 @@ interface ExerciseHeaderProps {
 
 export const ExerciseHeader = ({ name, isActive, onStart }: ExerciseHeaderProps) => {
   return (
-    <div className="flex items-center justify-between">
-      <h3 className="font-medium">{name}</h3>
+    <div className="flex items-center justify-between gap-2">
+      <h3 className="text-sm sm:text-base font-medium line-clamp-2">{name}</h3>
       <Button
         variant={isActive ? "default" : "outline"}
         size="sm"
+        className="flex-shrink-0"
         onClick={onStart}
       >
-        {isActive ? "En cours" : "Commencer"}
+        <span className="text-xs sm:text-sm">
+          {isActive ? "En cours" : "Commencer"}
+        </span>
       </Button>
     </div>
   );

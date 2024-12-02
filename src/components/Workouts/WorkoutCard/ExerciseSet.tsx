@@ -23,25 +23,25 @@ export const ExerciseSet = ({
       <Button
         variant={isCompleted ? "default" : "outline"}
         size="sm"
-        className="w-full"
+        className="w-full min-h-[2.5rem] px-3"
         onClick={() => isNext && onComplete()}
         disabled={!isNext || restTimer !== null}
       >
         {isCompleted ? (
-          <div className="flex items-center justify-center gap-2">
-            <Check className="h-4 w-4" />
-            <span>Série {setIndex + 1} complétée</span>
+          <div className="flex items-center justify-center gap-2 w-full">
+            <Check className="h-4 w-4 flex-shrink-0" />
+            <span className="text-sm">Série {setIndex + 1} complétée</span>
           </div>
         ) : (
-          `Série ${setIndex + 1}`
+          <span className="text-sm">Série {setIndex + 1}</span>
         )}
       </Button>
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <span>{reps} répétitions</span>
+      <div className="flex items-center gap-2 px-1">
+        <span className="text-xs sm:text-sm text-muted-foreground">{reps} répétitions</span>
         {isNext && restTimer !== null && (
-          <div className="flex items-center gap-2 text-primary">
-            <Clock className="h-4 w-4" />
-            <span>{restTimer}s</span>
+          <div className="flex items-center gap-1 text-primary ml-auto">
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="text-xs sm:text-sm">{restTimer}s</span>
           </div>
         )}
       </div>
