@@ -19,18 +19,25 @@ export const ExerciseSet = ({
   onComplete,
 }: ExerciseSetProps) => {
   return (
-    <>
+    <div className="flex flex-col gap-2">
       <Button
         variant={isCompleted ? "default" : "outline"}
         size="sm"
-        className="w-32 md:w-40"
+        className="w-full"
         onClick={() => isNext && onComplete()}
         disabled={!isNext || restTimer !== null}
       >
-        {isCompleted ? <Check className="h-4 w-4" /> : `Série ${setIndex + 1}`}
+        {isCompleted ? (
+          <div className="flex items-center justify-center gap-2">
+            <Check className="h-4 w-4" />
+            <span>Série {setIndex + 1} complétée</span>
+          </div>
+        ) : (
+          `Série ${setIndex + 1}`
+        )}
       </Button>
-      <div className="flex items-center gap-2 flex-1">
-        <span className="text-sm">{reps} répétitions</span>
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span>{reps} répétitions</span>
         {isNext && restTimer !== null && (
           <div className="flex items-center gap-2 text-primary">
             <Clock className="h-4 w-4" />
@@ -38,6 +45,6 @@ export const ExerciseSet = ({
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };

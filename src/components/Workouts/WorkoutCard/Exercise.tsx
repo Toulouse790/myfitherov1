@@ -38,9 +38,9 @@ export const Exercise = ({
         />
 
         {activeExercise === index && (
-          <div className="flex flex-col space-y-4">
+          <div className="grid gap-4">
             {Array.from({ length: exercise.sets }).map((_, setIndex) => (
-              <div key={setIndex} className="flex items-center gap-4">
+              <div key={setIndex} className="flex flex-col gap-2">
                 <ExerciseSet
                   setIndex={setIndex}
                   isCompleted={(completedSets[index] || 0) > setIndex}
