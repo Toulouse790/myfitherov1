@@ -40,4 +40,5 @@ export interface Achievement {
   description: string;
   icon: string;
   unlockedAt?: Date;
+  type: "workout" | "nutrition" | "sleep" | "streak" | "special";
 }
