@@ -5,18 +5,18 @@ import { WorkoutFilters } from "@/components/Workouts/WorkoutFilters";
 import { sampleWorkouts } from "@/components/Workouts/workoutConstants";
 
 const Workouts = () => {
-  const [muscleGroup, setMuscleGroup] = useState("");
-  const [difficulty, setDifficulty] = useState("");
+  const [muscleGroup, setMuscleGroup] = useState("all");
+  const [difficulty, setDifficulty] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const filteredWorkouts = useMemo(() => {
     let filtered = [...sampleWorkouts];
 
-    if (muscleGroup) {
+    if (muscleGroup !== "all") {
       filtered = filtered.filter((w) => w.muscleGroup === muscleGroup);
     }
 
-    if (difficulty) {
+    if (difficulty !== "all") {
       filtered = filtered.filter((w) => w.difficulty === difficulty);
     }
 
@@ -26,11 +26,11 @@ const Workouts = () => {
     });
 
     return filtered;
-  }, [muscleGroup, difficulty, sortOrder, sampleWorkouts]);
+  }, [muscleGroup, difficulty, sortOrder]);
 
   const handleReset = () => {
-    setMuscleGroup("");
-    setDifficulty("");
+    setMuscleGroup("all");
+    setDifficulty("all");
     setSortOrder("asc");
   };
 

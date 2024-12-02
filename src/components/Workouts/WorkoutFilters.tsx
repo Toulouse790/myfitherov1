@@ -36,7 +36,7 @@ export const WorkoutFilters = ({
             <SelectValue placeholder="Groupe musculaire" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Tous</SelectItem>
+            <SelectItem value="all">Tous</SelectItem>
             {muscleGroups.map((group) => (
               <SelectItem key={group.id} value={group.id}>
                 {group.name}
@@ -50,7 +50,7 @@ export const WorkoutFilters = ({
             <SelectValue placeholder="Difficulté" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Toutes</SelectItem>
+            <SelectItem value="all">Toutes</SelectItem>
             {difficultyLevels.map((level) => (
               <SelectItem key={level.id} value={level.id}>
                 {level.name}
