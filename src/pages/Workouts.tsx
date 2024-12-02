@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const Workouts = () => {
   const [muscleGroup, setMuscleGroup] = useState("all");
   const [difficulty, setDifficulty] = useState("all");
+  const [location, setLocation] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const filteredWorkouts = useMemo(() => {
@@ -22,17 +23,22 @@ const Workouts = () => {
       filtered = filtered.filter((w) => w.difficulty === difficulty);
     }
 
+    if (location !== "all") {
+      filtered = filtered.filter((w) => w.location === location);
+    }
+
     filtered.sort((a, b) => {
       const comparison = a.title.localeCompare(b.title);
       return sortOrder === "asc" ? comparison : -comparison;
     });
 
     return filtered;
-  }, [muscleGroup, difficulty, sortOrder]);
+  }, [muscleGroup, difficulty, location, sortOrder]);
 
   const handleReset = () => {
     setMuscleGroup("all");
     setDifficulty("all");
+    setLocation("all");
     setSortOrder("asc");
   };
 
@@ -53,9 +59,11 @@ const Workouts = () => {
           <WorkoutFilters
             muscleGroup={muscleGroup}
             difficulty={difficulty}
+            location={location}
             sortOrder={sortOrder}
             onMuscleGroupChange={setMuscleGroup}
             onDifficultyChange={setDifficulty}
+            onLocationChange={setLocation}
             onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
             onReset={handleReset}
           />
