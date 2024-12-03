@@ -1,3 +1,5 @@
+import { CommonFood } from "@/types/food";
+
 export interface FoodJournalState {
   entries: any[];
   newFood: string;
@@ -6,6 +8,7 @@ export interface FoodJournalState {
   weight: string;
   baseCalories: number;
   selectedCategory: string;
+  filteredFoods: CommonFood[];
 }
 
 export interface FoodJournalActions {
