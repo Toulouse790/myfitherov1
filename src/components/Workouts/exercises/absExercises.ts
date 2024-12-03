@@ -9,7 +9,7 @@ export const absExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Tapis",
     location: ["home", "outdoor", "gym"],
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Allongé sur le dos, genoux fléchis",
       "Mains derrière la tête, coudes écartés",
@@ -25,7 +25,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "En appui sur les avant-bras et la pointe des pieds",
       "Corps parfaitement aligné",
@@ -41,7 +41,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Position de planche sur les mains",
       "Ramenez alternativement les genoux vers la poitrine",
@@ -57,7 +57,7 @@ export const absExercises: Exercise[] = [
     difficulty: "advanced",
     equipment: "Barre de traction",
     location: ["gym"],
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Suspendez-vous à la barre",
       "Jambes tendues, levez-les jusqu'à l'horizontale",

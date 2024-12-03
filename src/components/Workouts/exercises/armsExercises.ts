@@ -9,7 +9,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltères ou Barre",
     location: ["home", "gym"],
-    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, bras le long du corps",
       "Fléchissez les coudes pour monter les poids",
@@ -25,7 +25,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Poulie haute",
     location: ["gym"],
-    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Face à la poulie, coudes près du corps",
       "Tendez les bras vers le bas",
@@ -41,7 +41,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltères",
     location: ["home", "gym"],
-    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, haltères en pronation",
       "Montez les poids en gardant les paumes face à face",
@@ -57,7 +57,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barres parallèles",
     location: ["gym"],
-    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "En appui sur les barres",
       "Fléchissez les coudes pour descendre",

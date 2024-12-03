@@ -9,6 +9,7 @@ export const legsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Optionnel: Barre, Poids",
     location: ["home", "outdoor", "gym"],
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Tenez-vous debout, pieds écartés largeur d'épaules",
       "Descendez comme pour vous asseoir",
@@ -24,6 +25,7 @@ export const legsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Optionnel: Haltères",
     location: ["home", "outdoor", "gym"],
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Faites un grand pas en avant",
       "Descendez jusqu'à ce que les deux genoux soient à 90 degrés",
@@ -39,6 +41,7 @@ export const legsExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Machine presse à cuisses",
     location: ["gym"],
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Réglez le siège à la bonne hauteur",
       "Placez vos pieds largeur d'épaules",
