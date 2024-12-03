@@ -37,28 +37,14 @@ const mockUserProfile: UserProfileType = {
 
 export const UserProfile = () => {
   const [profile] = useState<UserProfileType>(mockUserProfile);
-  const [notifications, setNotifications] = useState(true);
   const { toast } = useToast();
-
-  const handlePreferenceChange = (preference: string, value: boolean) => {
-    toast({
-      title: "Préférence mise à jour",
-      description: `${preference} a été ${value ? 'activé' : 'désactivé'}`,
-    });
-  };
 
   return (
     <div className="container mx-auto p-4 space-y-6 pb-24">
       <ProfileHeader profile={profile} />
 
       <div className="space-y-6">
-        <TrainingPreferences
-          notifications={notifications}
-          onNotificationsChange={(checked) => {
-            setNotifications(checked);
-            handlePreferenceChange("Notifications", checked);
-          }}
-        />
+        <TrainingPreferences />
 
         <AppSettings language="Français" />
 
