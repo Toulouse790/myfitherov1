@@ -39,16 +39,15 @@ export const NextWorkoutCard = () => {
           <Timer className="h-4 w-4 animate-pulse" />
           <span>Prochain entraînement (IA)</span>
         </div>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-6 w-6 bg-background/50 backdrop-blur-sm hover:bg-background/80"
+          onClick={handleCreateManual}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
       </div>
-      
-      <Button
-        variant="outline"
-        size="sm"
-        className="absolute top-4 right-4 bg-background/50 backdrop-blur-sm hover:bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        onClick={handleCreateManual}
-      >
-        <Plus className="h-4 w-4" />
-      </Button>
       
       <div className="p-6 space-y-6">
         <h2 className="text-2xl font-bold text-white group-hover:text-primary transition-colors duration-300">
