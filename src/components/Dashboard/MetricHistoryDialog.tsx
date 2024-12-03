@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
-import { BarChart } from "@/components/ui/chart";
+import { BarChart } from "@/components/ui/charts/BarChart";
 
 interface MetricHistoryDialogProps {
   open: boolean;
@@ -48,9 +48,10 @@ export const MetricHistoryDialog = ({
                 <div className="h-[300px] w-full">
                   <BarChart
                     data={metric.history[period as keyof typeof metric.history]}
-                    xField="date"
-                    yField="value"
-                    color={metric.color}
+                    index="date"
+                    categories={["value"]}
+                    colors={[metric.color]}
+                    valueFormatter={(value: number) => value.toString()}
                   />
                 </div>
               </Card>
