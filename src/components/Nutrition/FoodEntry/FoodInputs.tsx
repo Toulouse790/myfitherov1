@@ -1,5 +1,4 @@
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { commonFoods } from "@/data/commonFoods";
 
 interface FoodInputsProps {
@@ -27,20 +26,18 @@ export const FoodInputs = ({
   onProteinsChange,
   setIsCustomFood,
 }: FoodInputsProps) => {
-  const handleFoodSelect = (foodName: string) => {
-    const selectedFood = commonFoods.find(food => food.name === foodName);
-    if (selectedFood) {
-      onFoodChange(selectedFood.name);
-      setIsCustomFood(false);
-      
-      if (weight) {
-        const weightNum = parseFloat(weight);
-        if (!isNaN(weightNum)) {
-          const newCalories = Math.round((selectedFood.calories * weightNum) / 100);
-          const newProteins = Math.round((selectedFood.proteins * weightNum) / 100);
-          onCaloriesChange(newCalories.toString());
-          onProteinsChange(newProteins.toString());
-        }
+  const handleFoodChange = (value: string) => {
+    onFoodChange(value);
+    setIsCustomFood(true);
+    
+    const selectedFood = commonFoods.find(food => food.name === value);
+    if (selectedFood && weight) {
+      const weightNum = parseFloat(weight);
+      if (!isNaN(weightNum)) {
+        const newCalories = Math.round((selectedFood.calories * weightNum) / 100);
+        const newProteins = Math.round((selectedFood.proteins * weightNum) / 100);
+        onCaloriesChange(newCalories.toString());
+        onProteinsChange(newProteins.toString());
       }
     }
   };
@@ -52,18 +49,9 @@ export const FoodInputs = ({
           type="text"
           placeholder="Nom de l'aliment"
           value={newFood}
-          onChange={(e) => {
-            onFoodChange(e.target.value);
-            setIsCustomFood(true);
-          }}
+          onChange={(e) => handleFoodChange(e.target.value)}
           className="bg-white"
-          list="food-suggestions"
         />
-        <datalist id="food-suggestions">
-          {commonFoods.map((food) => (
-            <option key={food.id} value={food.name} />
-          ))}
-        </datalist>
 
         <Input
           type="number"
