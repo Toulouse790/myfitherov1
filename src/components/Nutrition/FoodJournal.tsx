@@ -1,5 +1,4 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { FoodSearch } from "./FoodSearch";
 import { FoodEntryForm } from "./FoodEntryForm";
 import { BarcodeScanner } from "./BarcodeScanner";
 import { useFoodJournal } from "@/hooks/use-food-journal";
