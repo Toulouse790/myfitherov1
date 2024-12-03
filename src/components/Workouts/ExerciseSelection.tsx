@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Exercise } from "./exerciseLibrary";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -8,20 +8,26 @@ import { Input } from "@/components/ui/input";
 
 interface ExerciseSelectionProps {
   exercises: Exercise[];
+  selectedExercises: string[];
+  onSelectionChange: (selectedIds: string[]) => void;
   onClose: () => void;
 }
 
-export const ExerciseSelection = ({ exercises, onClose }: ExerciseSelectionProps) => {
-  const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+export const ExerciseSelection = ({ 
+  exercises, 
+  selectedExercises,
+  onSelectionChange,
+  onClose 
+}: ExerciseSelectionProps) => {
   const [workoutName, setWorkoutName] = useState("");
   const { toast } = useToast();
 
   const handleExerciseToggle = (exerciseId: string) => {
-    setSelectedExercises(prev => 
-      prev.includes(exerciseId) 
-        ? prev.filter(id => id !== exerciseId)
-        : [...prev, exerciseId]
-    );
+    const newSelection = selectedExercises.includes(exerciseId)
+      ? selectedExercises.filter(id => id !== exerciseId)
+      : [...selectedExercises, exerciseId];
+    
+    onSelectionChange(newSelection);
   };
 
   const handleSaveWorkout = () => {
