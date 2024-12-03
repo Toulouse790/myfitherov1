@@ -37,7 +37,11 @@ export const NextWorkoutDetail = () => {
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
-          { started_at: new Date().toISOString(), status: 'in_progress' }
+          { 
+            started_at: new Date().toISOString(), 
+            status: 'in_progress',
+            user_id: (await supabase.auth.getUser()).data.user?.id
+          }
         ])
         .select()
         .single();

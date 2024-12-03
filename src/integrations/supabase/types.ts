@@ -65,7 +65,89 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
+          }
+        ]
+      }
+      workout_sessions: {
+        Row: {
+          id: string
+          user_id: string
+          started_at: string | null
+          completed_at: string | null
+          total_duration: number | null
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string
+          started_at?: string | null
+          completed_at?: string | null
+          total_duration?: number | null
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          started_at?: string | null
+          completed_at?: string | null
+          total_duration?: number | null
+          status?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      workout_sets: {
+        Row: {
+          id: string
+          session_id: string
+          exercise_name: string
+          set_number: number
+          reps: number
+          weight: number | null
+          completed_at: string | null
+          rest_duration: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          exercise_name: string
+          set_number: number
+          reps: number
+          weight?: number | null
+          completed_at?: string | null
+          rest_duration?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          exercise_name?: string
+          set_number?: number
+          reps?: number
+          weight?: number | null
+          completed_at?: string | null
+          rest_duration?: number | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_sets_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          }
         ]
       }
     }
