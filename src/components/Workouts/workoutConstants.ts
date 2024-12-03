@@ -1,3 +1,5 @@
+import { sampleWorkouts } from './data/sampleWorkouts';
+
 export const muscleGroups = [
   { 
     id: "chest", 
@@ -113,107 +115,11 @@ export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercis
     sets?: number;
     reps?: number;
     calories?: number;
+    image?: string;
   }>;
+  lastPerformed?: string;
+  completedCount?: number;
+  totalCalories: number;
 }
 
-export const initialFormData: WorkoutFormData = {
-  title: "",
-  muscleGroup: "",
-  duration: "",
-  exercises: "",
-  difficulty: "",
-  location: "",
-};
-
-export const workouts: WorkoutData[] = [
-  {
-    id: "1",
-    title: "Full Body Débutant",
-    muscleGroup: "fullBody",
-    difficulty: "beginner",
-    duration: 45,
-    location: "gym",
-    exercises: [
-      {
-        name: "Leg Press",
-        sets: 3,
-        reps: 12,
-        calories: 40
-      },
-      {
-        name: "Machine Chest Press",
-        sets: 3,
-        reps: 12,
-        calories: 35
-      },
-      {
-        name: "Lat Pulldown",
-        sets: 3,
-        reps: 12,
-        calories: 30
-      }
-    ]
-  },
-  {
-    id: "2",
-    title: "Push Day",
-    muscleGroup: "chest",
-    difficulty: "intermediate",
-    duration: 60,
-    location: "gym",
-    exercises: [
-      {
-        name: "Machine Chest Press",
-        sets: 4,
-        reps: 10,
-        calories: 45
-      },
-      {
-        name: "Machine Shoulder Press",
-        sets: 3,
-        reps: 12,
-        calories: 40
-      },
-      {
-        name: "Machine Pec Fly",
-        sets: 3,
-        reps: 15,
-        calories: 35
-      }
-    ]
-  },
-  {
-    id: "3",
-    title: "Leg Day",
-    muscleGroup: "legs",
-    difficulty: "advanced",
-    duration: 45,
-    location: "gym",
-    exercises: [
-      {
-        name: "Leg Press",
-        sets: 4,
-        reps: 12,
-        calories: 50
-      },
-      {
-        name: "Leg Extension Machine",
-        sets: 3,
-        reps: 15,
-        calories: 40
-      },
-      {
-        name: "Leg Curl Machine",
-        sets: 3,
-        reps: 15,
-        calories: 40
-      },
-      {
-        name: "Machine Calf Raises",
-        sets: 4,
-        reps: 20,
-        calories: 30
-      }
-    ]
-  },
-];
+export const workouts = sampleWorkouts;

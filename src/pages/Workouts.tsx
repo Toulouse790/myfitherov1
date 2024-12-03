@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { WorkoutList } from "@/components/Workouts/WorkoutList";
 import { WorkoutFilters } from "@/components/Workouts/WorkoutFilters";
-import { workouts as initialWorkouts, WorkoutData } from "@/components/Workouts/workoutConstants";
+import { workouts as initialWorkouts } from "@/components/Workouts/workoutConstants";
 import { useState } from "react";
 
 const Workouts = () => {
@@ -12,19 +12,7 @@ const Workouts = () => {
   const [difficulty, setDifficulty] = useState("");
   const [location, setLocation] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [workouts, setWorkouts] = useState<WorkoutData[]>(initialWorkouts);
-
-  const handleFiltersChange = (filteredWorkouts: WorkoutData[]) => {
-    setWorkouts(filteredWorkouts);
-  };
-
-  const handleReset = () => {
-    setMuscleGroup("");
-    setDifficulty("");
-    setLocation("");
-    setSortOrder("asc");
-    setWorkouts(initialWorkouts);
-  };
+  const [workouts, setWorkouts] = useState(initialWorkouts);
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-12">
@@ -47,7 +35,13 @@ const Workouts = () => {
           onDifficultyChange={setDifficulty}
           onLocationChange={setLocation}
           onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
-          onReset={handleReset}
+          onReset={() => {
+            setMuscleGroup("");
+            setDifficulty("");
+            setLocation("");
+            setSortOrder("asc");
+            setWorkouts(initialWorkouts);
+          }}
         />
         <WorkoutList workouts={workouts} />
       </div>
