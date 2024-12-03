@@ -1,98 +1,50 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ArrowLeft, Timer } from "lucide-react";
 import { WorkoutTimer } from "./WorkoutTimer";
 import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
-import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
-import { StartWorkoutButton } from "./NextWorkoutDetail/StartWorkoutButton";
-import { exerciseImages } from "./data/exerciseImages";
+import { MetricComparison } from "./NextWorkoutDetail/MetricComparison";
+import { supabase } from "@/integrations/supabase/client";
 
-const EXERCISES = [
+const SAMPLE_EXERCISES = [
   "Rowing avec Haltères",
   "Tirage à la poulie barre en V",
   "Curl Biceps aux Haltères",
-  "Curl Marteau",
-  "Développé Militaire",
-  "Élévations Latérales",
-  "Crunch",
-  "Planche"
-];
-
-const DEFAULT_SETS = [
-  { id: 1, reps: 12, weight: 10, completed: false },
-  { id: 2, reps: 12, weight: 10, completed: false },
-  { id: 3, reps: 12, weight: 10, completed: false },
+  "Développé Militaire"
 ];
 
 export const NextWorkoutDetail = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
+  const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
 
-  const handleExerciseClick = (index: number) => {
-    if (!isWorkoutStarted) {
-      toast({
-        title: "Démarrez l'entraînement",
-        description: "Vous devez démarrer l'entraînement avant de pouvoir accéder aux exercices.",
-      });
-      return;
-    }
-
-    setCurrentExerciseIndex(index);
-    navigate(`/workouts/exercise/${index}`, { 
-      state: { 
-        exerciseName: EXERCISES[index],
-        sets: DEFAULT_SETS,
-        videoUrl: exerciseImages[EXERCISES[index]]
-      }
-    });
-  };
-
-  const startWorkout = async () => {
+  const handleStartWorkout = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté pour démarrer un entraînement",
-          variant: "destructive",
-        });
-        return;
-      }
+      if (!user) return;
 
-      const { data: session, error: sessionError } = await supabase
+      const { data, error } = await supabase
         .from('workout_sessions')
         .insert([
-          { 
-            user_id: user.id,
-            started_at: new Date().toISOString(),
-            status: 'in_progress'
-          }
+          { user_id: user.id }
         ])
         .select()
         .single();
 
-      if (sessionError) throw sessionError;
-
+      if (error) throw error;
+      
       setIsWorkoutStarted(true);
-      toast({
-        title: "C'est parti !",
-        description: "Votre entraînement a commencé. Bon courage !",
-      });
+      setCurrentExerciseIndex(0);
     } catch (error) {
       console.error('Error starting workout:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de démarrer l'entraînement",
-        variant: "destructive",
-      });
     }
+  };
+
+  const handleExerciseClick = (index: number) => {
+    if (!isWorkoutStarted) return;
+    setCurrentExerciseIndex(index);
   };
 
   return (
@@ -108,24 +60,40 @@ export const NextWorkoutDetail = () => {
 
       {isWorkoutStarted && <WorkoutTimer />}
 
-      <Card className="bg-[#1E2330]">
-        <div className="p-6 space-y-6">
-          <WorkoutHeader 
-            title="Prochain entraînement"
-            duration={61}
-          />
-
-          <ExerciseList
-            exercises={EXERCISES}
-            currentExerciseIndex={currentExerciseIndex}
-            isWorkoutStarted={isWorkoutStarted}
-            onExerciseClick={handleExerciseClick}
-          />
-
-          {!isWorkoutStarted && (
-            <StartWorkoutButton onStart={startWorkout} />
-          )}
+      <Card className="p-6 space-y-6 bg-[#1E2330]">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-white">Dos, Biceps, Épaules</h1>
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <Timer className="w-4 h-4" />
+            <span>61 mins</span>
+          </div>
         </div>
+
+        {!isWorkoutStarted && (
+          <Button 
+            className="w-full"
+            onClick={handleStartWorkout}
+          >
+            Commencer l'entraînement
+          </Button>
+        )}
+
+        <div className="grid gap-4">
+          <MetricComparison
+            planned={8}
+            actual={currentExerciseIndex !== null ? currentExerciseIndex + 1 : 0}
+            unit="exercices"
+            icon={Timer}
+            label="Progression"
+          />
+        </div>
+
+        <ExerciseList
+          exercises={SAMPLE_EXERCISES}
+          currentExerciseIndex={currentExerciseIndex}
+          isWorkoutStarted={isWorkoutStarted}
+          onExerciseClick={handleExerciseClick}
+        />
       </Card>
     </div>
   );
