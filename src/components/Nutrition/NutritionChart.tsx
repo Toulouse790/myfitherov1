@@ -13,12 +13,15 @@ export const NutritionChart = () => {
   ];
 
   return (
-    <Card className="w-full sm:w-auto">
-      <CardHeader className="p-3">
-        <CardTitle className="text-sm sm:text-base">Suivi hebdomadaire</CardTitle>
+    <Card className="w-full sm:w-auto bg-[#1E2330] border-none shadow-lg">
+      <CardHeader className="p-4 border-b border-gray-800">
+        <CardTitle className="text-lg font-semibold text-white flex items-center gap-2">
+          Suivi hebdomadaire
+          <span className="text-sm font-normal text-gray-400">(calories)</span>
+        </CardTitle>
       </CardHeader>
-      <CardContent className="p-3">
-        <div className="h-[250px]">
+      <CardContent className="p-4">
+        <div className="h-[300px] w-full">
           <BarChart
             data={data}
             index="name"
@@ -26,7 +29,19 @@ export const NutritionChart = () => {
             colors={["#8B5CF6"]}
             valueFormatter={(value: number) => `${value} kcal`}
             yAxisWidth={48}
-            ticks={[0, 500, 1000, 1500, 2000, 2500, 3000]}
+            showLegend={false}
+            showGridLines={false}
+            startEndOnly={false}
+            showAnimation={true}
+            className="[&_.recharts-cartesian-grid-horizontal_line]:stroke-gray-800 [&_.recharts-cartesian-axis-tick-value]:fill-gray-400"
+            customTooltip={(props: any) => (
+              <div className="bg-[#2A2F3F] p-2 rounded-lg border border-gray-700 shadow-xl">
+                <p className="text-white font-medium">{props.payload[0]?.payload.name}</p>
+                <p className="text-primary">
+                  {props.payload[0]?.value} kcal
+                </p>
+              </div>
+            )}
           />
         </div>
       </CardContent>
