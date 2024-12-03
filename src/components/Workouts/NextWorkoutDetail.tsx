@@ -7,6 +7,7 @@ import { MetricComparison } from "./NextWorkoutDetail/MetricComparison";
 import { ExerciseCard } from "./NextWorkoutDetail/ExerciseCard";
 import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
 import { getNextWorkoutRecommendation } from "@/utils/workoutPlanning";
+import { useNavigate } from "react-router-dom";
 
 const SAMPLE_EXERCISES = [
   {
@@ -73,6 +74,7 @@ const SAMPLE_EXERCISES = [
 
 export const NextWorkoutDetail = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const totals = SAMPLE_EXERCISES.reduce((acc, exercise) => ({
     plannedDuration: acc.plannedDuration + exercise.planned.duration,
     actualDuration: acc.actualDuration + exercise.actual.duration,
