@@ -11,6 +11,7 @@ import { InitialQuestionnaire } from "./components/Profile/InitialQuestionnaire"
 import { NextWorkoutDetail } from "./components/Workouts/NextWorkoutDetail";
 import { Toaster } from "@/components/ui/toaster";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
+import { UserProfile } from "./components/Profile/UserProfile";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/initial-questionnaire" element={<ProtectedRoute><InitialQuestionnaire /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
       </Routes>
       <Toaster />
     </Router>
