@@ -20,28 +20,28 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#8B5CF6",
+          DEFAULT: "#8B5CF6", // Violet vif pour l'accent principal
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#D946EF",
+          DEFAULT: "#7E69AB", // Violet plus doux pour les éléments secondaires
           foreground: "#FFFFFF",
         },
         accent: {
-          DEFAULT: "#F97316",
+          DEFAULT: "#6E59A5", // Violet tertiaire pour les accents
           foreground: "#FFFFFF",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#ea384c", // Rouge pour les alertes et erreurs
+          foreground: "#FFFFFF",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#F1F0FB", // Violet très clair pour le fond
+          foreground: "#6E59A5",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "#FFFFFF",
+          foreground: "#1A1F2C", // Violet très foncé pour le texte
         },
       },
       borderRadius: {
