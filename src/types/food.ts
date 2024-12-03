@@ -11,4 +11,5 @@ export interface FoodEntry {
   name: string;
   calories: number;
   proteins: number;
+  mealType?: string;
 }

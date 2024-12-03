@@ -20,7 +20,7 @@ interface FoodEntryFormProps {
   onCaloriesChange: (value: string) => void;
   onProteinsChange: (value: string) => void;
   onWeightChange: (value: string) => void;
-  onAddEntry: () => void;
+  onAddEntry: (mealType: string) => void;
 }
 
 export const FoodEntryForm = ({
@@ -96,6 +96,19 @@ export const FoodEntryForm = ({
     }
   };
 
+  const handleAdd = () => {
+    if (!selectedMealType) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez sélectionner un type de repas",
+        variant: "destructive",
+      });
+      return;
+    }
+    onAddEntry(selectedMealType);
+    setSelectedMealType("");
+  };
+
   return (
     <div className="space-y-4">
       <Card className="p-4 bg-white border border-gray-200">
@@ -121,7 +134,7 @@ export const FoodEntryForm = ({
           <ActionButtons
             isCustomFood={isCustomFood}
             onSuggest={handleSuggestFood}
-            onAdd={onAddEntry}
+            onAdd={handleAdd}
           />
         </div>
       </Card>

@@ -20,6 +20,7 @@ export const addFoodEntry = async (userId: string, entry: Omit<FoodEntry, 'id'>)
       name: entry.name,
       calories: parseInt(entry.calories.toString()),
       proteins: parseInt(entry.proteins.toString()),
+      meal_type: entry.mealType,
     })
     .select()
     .single();

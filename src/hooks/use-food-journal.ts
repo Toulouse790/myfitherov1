@@ -31,6 +31,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
           name: entry.name,
           calories: entry.calories,
           proteins: entry.proteins,
+          mealType: entry.meal_type,
         })));
       } catch (error: any) {
         console.error('Error in loadEntries:', error);
@@ -52,7 +53,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
     loadEntries();
   }, []);
 
-  const handleAddEntry = async () => {
+  const handleAddEntry = async (mealType: string) => {
     if (!newFood || !calories || !proteins) {
       toast({
         title: "Erreur",
@@ -77,6 +78,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
         name: `${newFood} (${weight}g)`,
         calories: parseInt(calories),
         proteins: parseInt(proteins),
+        mealType: mealType,
       });
 
       const newEntry: FoodEntry = {
@@ -84,6 +86,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
         name: data.name,
         calories: data.calories,
         proteins: data.proteins,
+        mealType: data.meal_type,
       };
 
       setEntries([newEntry, ...entries]);
@@ -113,9 +116,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
       setNewFood(selectedFood.name);
       setBaseCalories(selectedFood.calories);
       setProteins(selectedFood.proteins.toString());
-      // Automatically set the category based on the selected food
       setSelectedCategory(selectedFood.category);
-      // Reset weight and calories when selecting new food
       setWeight("");
       setCalories("");
     }
@@ -128,7 +129,6 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
       setNewFood(scannedFood.name);
       setBaseCalories(scannedFood.calories);
       setProteins(scannedFood.proteins.toString());
-      // Automatically set the category based on the scanned food
       setSelectedCategory(scannedFood.category);
       setWeight("");
       setCalories("");
