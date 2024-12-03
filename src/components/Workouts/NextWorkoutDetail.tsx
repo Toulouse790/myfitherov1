@@ -74,6 +74,12 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/50 pb-20">
+      {isWorkoutStarted && (
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <WorkoutTimer />
+        </div>
+      )}
+      
       <div className="container max-w-4xl mx-auto px-4 py-8 space-y-8">
         <Button 
           variant="ghost" 
@@ -82,12 +88,6 @@ export const NextWorkoutDetail = () => {
         >
           <span>Terminer l'entraînement</span>
         </Button>
-
-        {isWorkoutStarted && (
-          <div className="animate-fade-in">
-            <WorkoutTimer />
-          </div>
-        )}
 
         <Card className="overflow-hidden border-none bg-card shadow-lg">
           <div className="p-6 space-y-8">
