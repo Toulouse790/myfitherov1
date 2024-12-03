@@ -14,29 +14,27 @@ export const ExerciseList = ({
   onExerciseClick 
 }: ExerciseListProps) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {exercises.map((exercise, index) => (
         <div 
           key={index} 
-          className={`space-y-4 cursor-pointer transition-all duration-300 ${
-            currentExerciseIndex === index ? 'ring-2 ring-primary rounded-lg p-4' : ''
-          }`}
           onClick={() => isWorkoutStarted && onExerciseClick(index)}
+          className={`
+            p-4 rounded-lg transition-all duration-300 cursor-pointer
+            ${currentExerciseIndex === index ? 'bg-primary/5 ring-1 ring-primary' : 'hover:bg-muted/50'}
+            ${!isWorkoutStarted && 'opacity-50 cursor-not-allowed'}
+          `}
         >
-          <div className="relative aspect-video rounded-lg overflow-hidden mb-4">
-            <img 
-              src={exerciseImages[exercise]} 
-              alt={exercise}
-              className="w-full h-full object-cover"
-            />
-            {!isWorkoutStarted && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <p className="text-white text-sm">Démarrez l'entraînement pour accéder à l'exercice</p>
-              </div>
-            )}
+          <div className="flex items-center gap-4">
+            <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0">
+              <img 
+                src={exerciseImages[exercise]} 
+                alt={exercise}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <h3 className="font-medium">{exercise}</h3>
           </div>
-          
-          <h2 className="text-xl font-semibold text-white">{exercise}</h2>
         </div>
       ))}
     </div>
