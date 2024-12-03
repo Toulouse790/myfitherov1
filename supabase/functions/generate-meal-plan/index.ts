@@ -1,6 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,7 +14,13 @@ serve(async (req) => {
   try {
     const { durationDays, maxBudget, calorieTarget, dietaryRestrictions } = await req.json();
 
-    // Appel à l'API OpenAI pour générer le plan de repas
+    console.log('Generating meal plan with parameters:', {
+      durationDays,
+      maxBudget,
+      calorieTarget,
+      dietaryRestrictions,
+    });
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -31,7 +36,6 @@ serve(async (req) => {
             Génère un plan de repas sur ${durationDays} jours avec un budget maximum de ${maxBudget}€.
             Objectif calorique journalier : ${calorieTarget} calories.
             Restrictions alimentaires : ${dietaryRestrictions.join(', ')}.
-            Inclure un cheat meal par semaine.
             Format de réponse : JSON avec structure par jour et par repas, incluant calories, protéines, glucides, lipides et coût estimé.`
           }
         ],
@@ -41,6 +45,12 @@ serve(async (req) => {
     });
 
     const data = await response.json();
+    console.log('OpenAI response:', data);
+
+    if (!data.choices || !data.choices[0]) {
+      throw new Error('Invalid response from OpenAI');
+    }
+
     const mealPlan = JSON.parse(data.choices[0].message.content);
 
     return new Response(

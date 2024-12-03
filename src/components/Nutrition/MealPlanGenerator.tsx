@@ -53,26 +53,16 @@ export const MealPlanGenerator = ({
     try {
       const dailyCalories = calculateDailyCalories();
 
-      const response = await fetch(
-        'https://ipuvsaxyhzezuuhhmwcu.supabase.co/functions/v1/generate-meal-plan',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            durationDays: parseInt(durationDays),
-            maxBudget: parseInt(maxBudget),
-            calorieTarget: dailyCalories,
-            dietaryRestrictions: allergies,
-          }),
-        }
-      );
+      const { data, error } = await supabase.functions.invoke('generate-meal-plan', {
+        body: {
+          durationDays: parseInt(durationDays),
+          maxBudget: parseInt(maxBudget),
+          calorieTarget: dailyCalories,
+          dietaryRestrictions: allergies,
+        },
+      });
 
-      const { mealPlan, error } = await response.json();
-
-      if (error) throw new Error(error);
+      if (error) throw error;
 
       // Save to Supabase
       const { data: planData, error: planError } = await supabase
@@ -89,7 +79,7 @@ export const MealPlanGenerator = ({
 
       if (planError) throw planError;
 
-      setGeneratedPlan(mealPlan);
+      setGeneratedPlan(data.mealPlan);
       toast({
         title: "Plan alimentaire généré",
         description: `Plan sur ${durationDays} jours avec un budget de ${maxBudget}€`,
