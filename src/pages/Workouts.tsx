@@ -41,7 +41,7 @@ const Workouts = () => {
   };
 
   if (showExerciseDetail) {
-    return <WorkoutExerciseDetail onBack={() => setShowExerciseDetail(false)} />;
+    return <WorkoutExerciseDetail />;
   }
 
   return (
