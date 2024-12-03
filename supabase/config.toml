@@ -1,1 +1,10 @@
 project_id = "ipuvsaxyhzezuuhhmwcu"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[[functions]]
+name = "generate-meal-plan"
+verify_jwt = true
