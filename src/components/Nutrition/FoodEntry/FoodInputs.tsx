@@ -58,13 +58,21 @@ export const FoodInputs = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div className="space-y-2">
-        <Input
-          type="text"
-          placeholder="Nom de l'aliment"
-          value={newFood}
-          onChange={(e) => handleFoodChange(e.target.value)}
-          className="bg-white"
-        />
+        <div className="relative">
+          <Input
+            type="text"
+            placeholder="Nom de l'aliment"
+            value={newFood}
+            onChange={(e) => handleFoodChange(e.target.value)}
+            className="bg-white"
+            list="food-suggestions"
+          />
+          <datalist id="food-suggestions" className="hidden">
+            {commonFoods.map((food) => (
+              <option key={food.id} value={food.name} />
+            ))}
+          </datalist>
+        </div>
 
         <Input
           type="number"
