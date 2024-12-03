@@ -20,24 +20,24 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#8B5CF6", // Violet vif pour l'accent principal
-          foreground: "#FFFFFF",
+          DEFAULT: "#0EA5E9", // Bleu vif pour les boutons
+          foreground: "#FFFFFF", // Texte blanc pour les boutons
         },
         secondary: {
-          DEFAULT: "#7E69AB", // Violet plus doux pour les éléments secondaires
+          DEFAULT: "#1EAEDB", // Bleu secondaire
           foreground: "#FFFFFF",
         },
         accent: {
-          DEFAULT: "#6E59A5", // Violet tertiaire pour les accents
+          DEFAULT: "#33C3F0", // Bleu tertiaire
           foreground: "#FFFFFF",
         },
         destructive: {
-          DEFAULT: "#ea384c", // Rouge pour les alertes et erreurs
+          DEFAULT: "#ea384c",
           foreground: "#FFFFFF",
         },
         muted: {
-          DEFAULT: "#F1F0FB", // Violet très clair pour le fond
-          foreground: "#6E59A5",
+          DEFAULT: "#F6F6F7", // Gris très clair pour le fond
+          foreground: "#555555", // Gris foncé pour le texte
         },
         card: {
           DEFAULT: "hsl(var(--card))",
