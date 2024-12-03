@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import Workouts from "./pages/Workouts";
 import Nutrition from "./pages/Nutrition";
@@ -15,23 +16,25 @@ import { UserProfile } from "./components/Profile/UserProfile";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        
-        <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-        <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
-        <Route path="/workout-exercise/:exerciseId" element={<ProtectedRoute><WorkoutExerciseDetail /></ProtectedRoute>} />
-        <Route path="/workouts/exercise/next-workout" element={<ProtectedRoute><NextWorkoutDetail /></ProtectedRoute>} />
-        <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
-        <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
-        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-        <Route path="/initial-questionnaire" element={<ProtectedRoute><InitialQuestionnaire /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-      </Routes>
-      <Toaster />
-    </Router>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <Router>
+        <Routes>
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          
+          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
+          <Route path="/workout-exercise/:exerciseId" element={<ProtectedRoute><WorkoutExerciseDetail /></ProtectedRoute>} />
+          <Route path="/workouts/exercise/next-workout" element={<ProtectedRoute><NextWorkoutDetail /></ProtectedRoute>} />
+          <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
+          <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+          <Route path="/initial-questionnaire" element={<ProtectedRoute><InitialQuestionnaire /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        </Routes>
+        <Toaster />
+      </Router>
+    </ThemeProvider>
   );
 }
 
