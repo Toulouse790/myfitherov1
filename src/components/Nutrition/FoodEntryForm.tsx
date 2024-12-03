@@ -86,7 +86,6 @@ export const FoodEntryForm = ({
         description: "Votre suggestion d'aliment a été enregistrée et sera examinée",
       });
 
-      // Reset form after successful suggestion
       onFoodChange("");
       onCaloriesChange("");
       onProteinsChange("");
@@ -112,9 +111,9 @@ export const FoodEntryForm = ({
   return (
     <div className="space-y-4">
       <Card className="p-4 bg-white border border-gray-200">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-4">
           <Select value={selectedMealType} onValueChange={setSelectedMealType}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-full md:w-[200px]">
               <SelectValue placeholder="Sélectionner un repas" />
             </SelectTrigger>
             <SelectContent>
@@ -129,59 +128,62 @@ export const FoodEntryForm = ({
               ))}
             </SelectContent>
           </Select>
-        </div>
-      </Card>
 
-      <Card className="p-4 bg-white border border-gray-200">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Input
-            placeholder="Aliment"
-            value={newFood}
-            onChange={(e) => {
-              onFoodChange(e.target.value);
-              setIsCustomFood(true);
-            }}
-            className="col-span-2 md:col-span-1 bg-white border-gray-300"
-          />
-          <Input
-            type="number"
-            placeholder="Poids (g)"
-            value={weight}
-            onChange={(e) => handleWeightChange(e.target.value)}
-            className="bg-white border-gray-300"
-          />
-          <Input
-            type="number"
-            placeholder="Calories"
-            value={calories}
-            onChange={(e) => onCaloriesChange(e.target.value)}
-            className={`border-gray-300 ${isCustomFood ? 'bg-white' : 'bg-gray-50'}`}
-            readOnly={!isCustomFood}
-          />
-          <Input
-            type="number"
-            placeholder="Protéines (g)"
-            value={proteins}
-            onChange={(e) => onProteinsChange(e.target.value)}
-            className="bg-white border-gray-300"
-          />
-        </div>
-        <div className="mt-4 flex justify-between">
-          {isCustomFood && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Input
+                placeholder="Nom de l'aliment"
+                value={newFood}
+                onChange={(e) => {
+                  onFoodChange(e.target.value);
+                  setIsCustomFood(true);
+                }}
+                className="bg-white border-gray-300"
+              />
+              <Input
+                type="number"
+                placeholder="Quantité (g)"
+                value={weight}
+                onChange={(e) => handleWeightChange(e.target.value)}
+                className="bg-white border-gray-300"
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                type="number"
+                placeholder="Calories"
+                value={calories}
+                onChange={(e) => onCaloriesChange(e.target.value)}
+                className={`border-gray-300 ${isCustomFood ? 'bg-white' : 'bg-gray-50'}`}
+                readOnly={!isCustomFood}
+              />
+              <Input
+                type="number"
+                placeholder="Protéines (g)"
+                value={proteins}
+                onChange={(e) => onProteinsChange(e.target.value)}
+                className="bg-white border-gray-300"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2">
+            {isCustomFood && (
+              <Button 
+                onClick={handleSuggestFood}
+                variant="outline"
+                className="gap-2"
+              >
+                <Plus className="w-4 h-4" /> Suggérer
+              </Button>
+            )}
             <Button 
-              onClick={handleSuggestFood}
-              variant="outline"
-              className="gap-2"
+              onClick={onAddEntry} 
+              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
             >
-              <Plus className="w-4 h-4" /> Suggérer cet aliment
+              <Plus className="w-4 h-4" /> Ajouter
             </Button>
-          )}
-          <Button 
-            onClick={onAddEntry} 
-            className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-4 h-4" /> Ajouter
-          </Button>
+          </div>
         </div>
       </Card>
     </div>
