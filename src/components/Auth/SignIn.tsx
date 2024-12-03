@@ -20,15 +20,22 @@ export const SignIn = () => {
     setIsLoading(true);
 
     try {
+      console.log("Tentative de connexion avec:", { email });
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
+      console.log("Réponse de Supabase:", { data, error });
+
       if (error) {
+        console.error("Erreur de connexion:", error);
         toast({
           title: "Erreur de connexion",
-          description: error.message,
+          description: error.message === "Failed to fetch" 
+            ? "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet."
+            : error.message,
           variant: "destructive",
         });
         return;
@@ -42,9 +49,10 @@ export const SignIn = () => {
         navigate("/");
       }
     } catch (error) {
+      console.error("Erreur inattendue:", error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de la connexion",
+        description: "Une erreur inattendue est survenue lors de la connexion",
         variant: "destructive",
       });
     } finally {
