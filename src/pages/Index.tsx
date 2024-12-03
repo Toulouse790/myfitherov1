@@ -5,7 +5,6 @@ import { NextWorkoutCard } from "@/components/Workouts/NextWorkoutCard";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { StrengthScore } from "@/components/Dashboard/StrengthScore";
 import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
-import { BottomNav } from "@/components/Layout/BottomNav";
 import { useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 
@@ -18,7 +17,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="container max-w-full p-3 pb-24 space-y-6 bg-[#1A1F2C]">
+    <div className="container max-w-full p-3 space-y-6 bg-[#1A1F2C]">
       <NextWorkoutCard />
       
       <WorkoutSuggestions />
@@ -26,8 +25,6 @@ const Index = () => {
       <StrengthScore />
       
       <TrendMetrics />
-      
-      <BottomNav />
     </div>
   );
 };

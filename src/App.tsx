@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import { SignIn } from "@/components/Auth/SignIn";
 import { UserProfile } from "@/components/Profile/UserProfile";
 import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
+import { BottomNav } from "@/components/Layout/BottomNav";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <main className="flex-1">
+          <main className="flex-1 pb-20">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/workouts" element={<Workouts />} />
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/questionnaire" element={<InitialQuestionnaire />} />
             </Routes>
+            <BottomNav />
           </main>
         </BrowserRouter>
       </TooltipProvider>
