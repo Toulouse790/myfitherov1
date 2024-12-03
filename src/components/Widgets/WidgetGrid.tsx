@@ -11,6 +11,7 @@ interface Widget {
   enabled: boolean;
   icon: React.ReactNode;
   value: string;
+  target: string;
 }
 
 export const WidgetGrid = () => {
@@ -20,28 +21,32 @@ export const WidgetGrid = () => {
       title: "Objectif du jour",
       enabled: true,
       icon: <Target className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
-      value: "2000 calories"
+      value: "2000 calories",
+      target: "2500 calories"
     },
     {
       id: "2",
       title: "Niveau actuel",
       enabled: true,
       icon: <User className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
-      value: "Niveau 5"
+      value: "Niveau 5",
+      target: "Niveau 6"
     },
     {
       id: "3",
       title: "Badges gagnés",
       enabled: true,
       icon: <Trophy className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
-      value: "3 nouveaux"
+      value: "3 nouveaux",
+      target: "5 badges"
     },
     {
       id: "4",
       title: "Points",
       enabled: true,
       icon: <Star className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
-      value: "1250"
+      value: "1250",
+      target: "2000"
     }
   ]);
 
@@ -81,6 +86,7 @@ export const WidgetGrid = () => {
               key={widget.id}
               title={widget.title}
               value={widget.value}
+              target={widget.target}
               icon={widget.icon}
             />
           ))}
