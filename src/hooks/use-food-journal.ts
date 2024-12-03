@@ -3,31 +3,37 @@ import { useToast } from "@/hooks/use-toast";
 import { commonFoods } from "@/data/commonFoods";
 import { FoodEntry } from "@/types/food";
 import { supabase } from "@/integrations/supabase/client";
+import { loadFoodEntries, addFoodEntry, deleteFoodEntry } from "./food-journal/database";
+import { FoodJournalState, FoodJournalActions } from "./food-journal/types";
 
-export const useFoodJournal = () => {
+export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
   const [entries, setEntries] = useState<FoodEntry[]>([]);
   const [newFood, setNewFood] = useState("");
   const [calories, setCalories] = useState("");
   const [proteins, setProteins] = useState("");
+  const [weight, setWeight] = useState("");
+  const [baseCalories, setBaseCalories] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { toast } = useToast();
 
-  const loadEntries = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.log("No user found, skipping loadEntries");
-        return;
-      }
+  useEffect(() => {
+    const loadEntries = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          console.log("No user found, skipping loadEntries");
+          return;
+        }
 
-      const { data, error } = await supabase
-        .from('food_journal_entries')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error loading entries:', error);
+        const data = await loadFoodEntries(user.id);
+        setEntries(data.map(entry => ({
+          id: entry.id,
+          name: entry.name,
+          calories: entry.calories,
+          proteins: entry.proteins,
+        })));
+      } catch (error: any) {
+        console.error('Error in loadEntries:', error);
         if (error.code === '42P01') {
           toast({
             title: "Initialisation en cours",
@@ -40,28 +46,9 @@ export const useFoodJournal = () => {
             variant: "destructive",
           });
         }
-        return;
       }
+    };
 
-      if (data) {
-        setEntries(data.map(entry => ({
-          id: entry.id,
-          name: entry.name,
-          calories: entry.calories,
-          proteins: entry.proteins,
-        })));
-      }
-    } catch (error: any) {
-      console.error('Error in loadEntries:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du chargement du journal",
-        variant: "destructive",
-      });
-    }
-  };
-
-  useEffect(() => {
     loadEntries();
   }, []);
 
@@ -86,45 +73,30 @@ export const useFoodJournal = () => {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('food_journal_entries')
-        .insert({
-          user_id: user.id,
-          name: newFood,
-          calories: parseInt(calories),
-          proteins: parseInt(proteins),
-        })
-        .select()
-        .single();
+      const data = await addFoodEntry(user.id, {
+        name: `${newFood} (${weight}g)`,
+        calories: parseInt(calories),
+        proteins: parseInt(proteins),
+      });
 
-      if (error) {
-        console.error('Error adding entry:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible d'ajouter l'aliment",
-          variant: "destructive",
-        });
-        return;
-      }
+      const newEntry: FoodEntry = {
+        id: data.id,
+        name: data.name,
+        calories: data.calories,
+        proteins: data.proteins,
+      };
 
-      if (data) {
-        const newEntry: FoodEntry = {
-          id: data.id,
-          name: data.name,
-          calories: data.calories,
-          proteins: data.proteins,
-        };
+      setEntries([newEntry, ...entries]);
+      setNewFood("");
+      setCalories("");
+      setProteins("");
+      setWeight("");
+      setBaseCalories(0);
 
-        setEntries([newEntry, ...entries]);
-        setNewFood("");
-        setCalories("");
-        setProteins("");
-
-        toast({
-          title: "Aliment ajouté",
-          description: "L'aliment a été ajouté à votre journal",
-        });
-      }
+      toast({
+        title: "Aliment ajouté",
+        description: "L'aliment a été ajouté à votre journal",
+      });
     } catch (error: any) {
       console.error('Error in handleAddEntry:', error);
       toast({
@@ -139,8 +111,11 @@ export const useFoodJournal = () => {
     const selectedFood = commonFoods.find((food) => food.id === foodId);
     if (selectedFood) {
       setNewFood(selectedFood.name);
-      setCalories(selectedFood.calories.toString());
+      setBaseCalories(selectedFood.calories);
       setProteins(selectedFood.proteins.toString());
+      // Reset weight and calories when selecting new food
+      setWeight("");
+      setCalories("");
     }
   };
 
@@ -149,8 +124,10 @@ export const useFoodJournal = () => {
     
     if (scannedFood) {
       setNewFood(scannedFood.name);
-      setCalories(scannedFood.calories.toString());
+      setBaseCalories(scannedFood.calories);
       setProteins(scannedFood.proteins.toString());
+      setWeight("");
+      setCalories("");
     } else {
       toast({
         title: "Produit non trouvé",
@@ -162,21 +139,7 @@ export const useFoodJournal = () => {
 
   const handleDeleteEntry = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('food_journal_entries')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        console.error('Error deleting entry:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de supprimer l'aliment",
-          variant: "destructive",
-        });
-        return;
-      }
-
+      await deleteFoodEntry(id);
       setEntries(entries.filter((entry) => entry.id !== id));
       toast({
         title: "Aliment supprimé",
@@ -201,11 +164,14 @@ export const useFoodJournal = () => {
     newFood,
     calories,
     proteins,
+    weight,
+    baseCalories,
     selectedCategory,
     filteredFoods,
     setNewFood,
     setCalories,
     setProteins,
+    setWeight,
     setSelectedCategory,
     handleAddEntry,
     handleSelectFood,
