@@ -36,16 +36,6 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
         <CardTitle className="text-xl text-gray-800">Journal alimentaire</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <BarcodeScanner onScan={handleBarcodeScan} />
-        
-        <FoodSearch
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          filteredFoods={filteredFoods}
-          onSelectFood={handleSelectFood}
-          userAllergies={userAllergies}
-        />
-        
         <FoodEntryForm
           newFood={newFood}
           calories={calories}
@@ -57,6 +47,16 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
           onProteinsChange={setProteins}
           onWeightChange={setWeight}
           onAddEntry={handleAddEntry}
+        />
+        
+        <BarcodeScanner onScan={handleBarcodeScan} />
+        
+        <FoodSearch
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          filteredFoods={filteredFoods}
+          onSelectFood={handleSelectFood}
+          userAllergies={userAllergies}
         />
 
         <FoodEntryList
