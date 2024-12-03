@@ -1,39 +1,50 @@
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { WorkoutList } from "@/components/Workouts/WorkoutList";
+import { WorkoutFilters } from "@/components/Workouts/WorkoutFilters";
+import { workouts as initialWorkouts } from "@/components/Workouts/workoutConstants";
 import { useState } from "react";
-import { Header } from "@/components/Layout/Header";
-import { BottomNav } from "@/components/Layout/BottomNav";
-import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
-import { CreateWorkoutDialog } from "@/components/Workouts/CreateWorkoutDialog";
-import { SportPrograms } from "@/components/Workouts/SportPrograms";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Workouts = () => {
+  const navigate = useNavigate();
+  const [muscleGroup, setMuscleGroup] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [location, setLocation] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [workouts, setWorkouts] = useState(initialWorkouts);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white dark:from-[#1A1F2C] dark:to-[#2A2F3F]">
-      <Header />
-      
-      <main className="container max-w-6xl mx-auto px-4 pt-20 pb-24">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Exercices</h1>
-          <CreateWorkoutDialog />
-        </div>
+    <div className="container mx-auto px-4 pt-24 pb-12">
+      <Button 
+        variant="ghost" 
+        className="mb-6"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Retour
+      </Button>
 
-        <Tabs defaultValue="exercises" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="exercises">Bibliothèque d'exercices</TabsTrigger>
-            <TabsTrigger value="programs">Programmes sportifs</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="exercises" className="space-y-6">
-            <ExerciseLibrary />
-          </TabsContent>
-
-          <TabsContent value="programs" className="space-y-6">
-            <SportPrograms />
-          </TabsContent>
-        </Tabs>
-      </main>
-
-      <BottomNav />
+      <div className="space-y-6">
+        <WorkoutFilters
+          muscleGroup={muscleGroup}
+          difficulty={difficulty}
+          location={location}
+          sortOrder={sortOrder}
+          onMuscleGroupChange={setMuscleGroup}
+          onDifficultyChange={setDifficulty}
+          onLocationChange={setLocation}
+          onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
+          onReset={() => {
+            setMuscleGroup("");
+            setDifficulty("");
+            setLocation("");
+            setSortOrder("asc");
+            setWorkouts(initialWorkouts);
+          }}
+        />
+        <WorkoutList workouts={workouts} />
+      </div>
     </div>
   );
 };
