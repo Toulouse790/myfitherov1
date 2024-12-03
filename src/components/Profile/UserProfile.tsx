@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, LogOut } from "lucide-react";
+import { ChevronRight, LogOut, User, Bell, Moon, Sun, Languages } from "lucide-react";
 import { UserProfile as UserProfileType } from "@/types/user";
 import { ProfileHeader } from "./ProfileHeader";
 import { ThemeSelector } from "@/components/Theme/ThemeSelector";
@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { ColorCustomization } from "./ColorCustomization";
 
 const mockUserProfile: UserProfileType = {
   id: "1",
@@ -37,24 +38,7 @@ const mockUserProfile: UserProfileType = {
     points: 1250,
     level: 5
   },
-  achievements: [
-    {
-      id: "1",
-      name: "Premier Pas",
-      description: "Compléter votre première séance",
-      icon: "🏃",
-      unlockedAt: new Date(),
-      type: "workout"
-    },
-    {
-      id: "2",
-      name: "Série Gagnante",
-      description: "7 jours consécutifs d'entraînement",
-      icon: "🔥",
-      unlockedAt: new Date(),
-      type: "streak"
-    }
-  ],
+  achievements: [],
   isPremium: false
 };
 
@@ -62,6 +46,9 @@ export const UserProfile = () => {
   const [profile] = useState<UserProfileType>(mockUserProfile);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("Français");
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -84,7 +71,7 @@ export const UserProfile = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="container mx-auto p-4 space-y-6 pb-24">
       <Card>
         <CardContent className="pt-6">
           <ProfileHeader profile={profile} />
@@ -94,78 +81,89 @@ export const UserProfile = () => {
       <div className="space-y-6">
         <Card>
           <CardContent className="pt-6">
-            <h2 className="text-xl font-semibold mb-4">Compte</h2>
+            <h2 className="text-xl font-semibold mb-4">Préférences d'entraînement</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div>
-                  <Label>Adresse e-mail</Label>
-                  <p className="text-sm text-muted-foreground">{profile.email}</p>
+                <div className="flex items-center gap-3">
+                  <User className="w-5 h-5" />
+                  <div>
+                    <p className="font-medium">Niveau</p>
+                    <p className="text-sm text-muted-foreground">Intermédiaire</p>
+                  </div>
                 </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </div>
-
+              
+              <Separator />
+              
               <div className="flex items-center justify-between">
-                <Label htmlFor="notifications">Notifications</Label>
+                <div className="flex items-center gap-3">
+                  <Bell className="w-5 h-5" />
+                  <div>
+                    <p className="font-medium">Notifications</p>
+                    <p className="text-sm text-muted-foreground">Rappels d'entraînement</p>
+                  </div>
+                </div>
                 <Switch
-                  id="notifications"
-                  checked={profile.preferences.notifications}
-                  onCheckedChange={(checked) => handlePreferenceChange('notifications', checked)}
+                  checked={notifications}
+                  onCheckedChange={(checked) => {
+                    setNotifications(checked);
+                    handlePreferenceChange("Notifications", checked);
+                  }}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <h2 className="text-xl font-semibold mb-4">Paramètres de l'application</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {darkMode ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                  <div>
+                    <p className="font-medium">Mode sombre</p>
+                    <p className="text-sm text-muted-foreground">Changer l'apparence</p>
+                  </div>
+                </div>
+                <Switch
+                  checked={darkMode}
+                  onCheckedChange={(checked) => {
+                    setDarkMode(checked);
+                    handlePreferenceChange("Mode sombre", checked);
+                  }}
                 />
               </div>
 
+              <Separator />
+
               <div className="flex items-center justify-between">
-                <Label>Thème</Label>
+                <div className="flex items-center gap-3">
+                  <Languages className="w-5 h-5" />
+                  <div>
+                    <p className="font-medium">Langue</p>
+                    <p className="text-sm text-muted-foreground">{language}</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+              </div>
+
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Thème</p>
+                  <p className="text-sm text-muted-foreground">Personnaliser les couleurs</p>
+                </div>
                 <ThemeSelector />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-xl font-semibold mb-4">Unités</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>Unité de mesure</Label>
-                <div className="flex items-center">
-                  <span className="text-sm text-muted-foreground mr-2">Kg (Kilogrammes)</span>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Label>Unité de distance</Label>
-                <div className="flex items-center">
-                  <span className="text-sm text-muted-foreground mr-2">Kilomètres</span>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-xl font-semibold mb-4">Légal</h2>
-            <div className="space-y-4">
-              <Button
-                variant="ghost"
-                className="w-full justify-between"
-                onClick={() => navigate("/terms")}
-              >
-                Conditions générales
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-between"
-                onClick={() => navigate("/privacy")}
-              >
-                Politique de confidentialité
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <ColorCustomization />
 
         <div className="space-y-4">
           <Button
