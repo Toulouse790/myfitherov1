@@ -50,11 +50,63 @@ export const MealPlanGenerator = ({
   };
 
   const generateMealPlan = async () => {
-    toast({
-      title: "Fonctionnalité Premium",
-      description: "La génération de plans de repas personnalisés sera bientôt disponible avec notre offre premium.",
-      variant: "default",
-    });
+    setIsGenerating(true);
+    try {
+      const dailyCalories = calculateDailyCalories();
+
+      // Génération d'un plan de repas basique pour la démonstration
+      const mockPlan = Array.from({ length: parseInt(durationDays) }, (_, dayIndex) => ({
+        meals: {
+          breakfast: {
+            name: "Porridge aux fruits",
+            calories: 300,
+            proteins: 15,
+            carbs: 45,
+            fats: 8,
+            estimated_cost: 2.5,
+          },
+          lunch: {
+            name: "Poulet et riz aux légumes",
+            calories: 550,
+            proteins: 35,
+            carbs: 65,
+            fats: 15,
+            estimated_cost: 5,
+          },
+          dinner: {
+            name: "Saumon grillé et quinoa",
+            calories: 450,
+            proteins: 30,
+            carbs: 45,
+            fats: 20,
+            estimated_cost: 7,
+          },
+          snack: {
+            name: "Yaourt grec et fruits secs",
+            calories: 200,
+            proteins: 10,
+            carbs: 25,
+            fats: 8,
+            estimated_cost: 2,
+          }
+        }
+      }));
+
+      setGeneratedPlan(mockPlan);
+      toast({
+        title: "Plan alimentaire généré",
+        description: `Plan sur ${durationDays} jours avec un budget de ${maxBudget}€`,
+      });
+    } catch (error) {
+      console.error('Error generating meal plan:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer le plan alimentaire",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -64,7 +116,7 @@ export const MealPlanGenerator = ({
           <div className="flex items-center gap-2">
             <CardTitle>Générer un plan alimentaire personnalisé</CardTitle>
             <Lock className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">(Premium)</span>
+            <span className="text-sm text-muted-foreground">(Premium - Mode démo)</span>
           </div>
         </CardHeader>
         <CardContent>
