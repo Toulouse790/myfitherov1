@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 interface FoodEntryFormProps {
   newFood: string;
@@ -30,45 +31,49 @@ export const FoodEntryForm = ({
   const handleWeightChange = (value: string) => {
     onWeightChange(value);
     if (baseCalories > 0 && value) {
-      // Calculate calories based on weight (baseCalories is per 100g)
       const newCalories = Math.round((baseCalories * parseInt(value)) / 100);
       onCaloriesChange(newCalories.toString());
     }
   };
 
   return (
-    <div className="flex flex-wrap gap-2">
-      <Input
-        placeholder="Aliment"
-        value={newFood}
-        onChange={(e) => onFoodChange(e.target.value)}
-        className="flex-1"
-      />
-      <Input
-        type="number"
-        placeholder="Poids (g)"
-        value={weight}
-        onChange={(e) => handleWeightChange(e.target.value)}
-        className="w-24"
-      />
-      <Input
-        type="number"
-        placeholder="Calories"
-        value={calories}
-        onChange={(e) => onCaloriesChange(e.target.value)}
-        className="w-24"
-        readOnly
-      />
-      <Input
-        type="number"
-        placeholder="Protéines (g)"
-        value={proteins}
-        onChange={(e) => onProteinsChange(e.target.value)}
-        className="w-24"
-      />
-      <Button onClick={onAddEntry} className="gap-2">
-        <Plus className="w-4 h-4" /> Ajouter
-      </Button>
-    </div>
+    <Card className="p-4 bg-muted/30">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Input
+          placeholder="Aliment"
+          value={newFood}
+          onChange={(e) => onFoodChange(e.target.value)}
+          className="col-span-2 md:col-span-1"
+        />
+        <Input
+          type="number"
+          placeholder="Poids (g)"
+          value={weight}
+          onChange={(e) => handleWeightChange(e.target.value)}
+          className="bg-white/50"
+        />
+        <Input
+          type="number"
+          placeholder="Calories"
+          value={calories}
+          onChange={(e) => onCaloriesChange(e.target.value)}
+          className="bg-muted"
+          readOnly
+        />
+        <Input
+          type="number"
+          placeholder="Protéines (g)"
+          value={proteins}
+          onChange={(e) => onProteinsChange(e.target.value)}
+          className="bg-white/50"
+        />
+        <Button 
+          onClick={onAddEntry} 
+          className="col-span-2 md:col-span-1 gap-2 bg-primary hover:bg-primary/90"
+        >
+          <Plus className="w-4 h-4" /> Ajouter
+        </Button>
+      </div>
+    </Card>
   );
 };

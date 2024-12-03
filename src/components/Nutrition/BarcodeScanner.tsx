@@ -3,6 +3,7 @@ import { BrowserMultiFormatReader } from "@zxing/browser";
 import { Button } from "@/components/ui/button";
 import { Scan } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
 
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
@@ -18,13 +19,11 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
     
     return () => {
       if (codeReaderRef.current) {
-        // Stop any ongoing video stream
         const videoElement = videoRef.current;
         if (videoElement && videoElement.srcObject) {
           const stream = videoElement.srcObject as MediaStream;
           stream.getTracks().forEach(track => track.stop());
         }
-        // Reset the code reader
         codeReaderRef.current = undefined;
       }
     };
@@ -56,13 +55,11 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
           (result, err) => {
             if (result) {
               onScan(result.getText());
-              // Stop the video stream
               const videoElement = videoRef.current;
               if (videoElement && videoElement.srcObject) {
                 const stream = videoElement.srcObject as MediaStream;
                 stream.getTracks().forEach(track => track.stop());
               }
-              // Reset the code reader
               codeReaderRef.current = undefined;
               toast({
                 title: "Code-barres scanné",
@@ -82,15 +79,21 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
   };
 
   return (
-    <div className="space-y-4">
-      <Button onClick={startScanning} variant="outline" className="w-full gap-2">
-        <Scan className="w-4 h-4" />
-        Scanner un code-barres
-      </Button>
+    <Card className="overflow-hidden bg-muted/30">
+      <div className="p-4">
+        <Button 
+          onClick={startScanning} 
+          variant="outline" 
+          className="w-full gap-2 bg-white hover:bg-white/90"
+        >
+          <Scan className="w-4 h-4" />
+          Scanner un code-barres
+        </Button>
+      </div>
       <video
         ref={videoRef}
-        className="w-full aspect-video rounded-lg bg-muted"
+        className="w-full aspect-video bg-black/10"
       />
-    </div>
+    </Card>
   );
 };
