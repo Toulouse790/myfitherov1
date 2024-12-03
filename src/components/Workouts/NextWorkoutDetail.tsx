@@ -1,11 +1,33 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Timer, ArrowLeft } from "lucide-react";
+import { Timer, ArrowLeft, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { MetricComparison } from "./NextWorkoutDetail/MetricComparison";
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+
+interface Set {
+  id: number;
+  reps: number;
+  weight: number;
+}
 
 export const NextWorkoutDetail = () => {
   const navigate = useNavigate();
+  const [sets, setSets] = useState<Set[]>([
+    { id: 1, reps: 12, weight: 10 },
+    { id: 2, reps: 12, weight: 10 },
+    { id: 3, reps: 12, weight: 10 },
+  ]);
+  const [notes, setNotes] = useState("");
+
+  const handleAddSet = () => {
+    const newSet = {
+      id: sets.length + 1,
+      reps: sets[0].reps,
+      weight: sets[0].weight,
+    };
+    setSets([...sets, newSet]);
+  };
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
@@ -18,59 +40,62 @@ export const NextWorkoutDetail = () => {
         Retour
       </Button>
 
-      <Card className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Dos, Biceps, Épaules</h1>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Timer className="w-4 h-4" />
-            <span>61 mins</span>
+      <Card className="bg-[#1E2330]">
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-white">Prochain entraînement</h1>
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <Timer className="w-4 h-4" />
+              <span>61 mins</span>
+            </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <MetricComparison
-            planned={8}
-            actual={8}
-            unit="exercices"
-            icon={Timer}
-          />
-          <MetricComparison
-            planned={24}
-            actual={24}
-            unit="séries"
-            icon={Timer}
-          />
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Exercices</h2>
-          <div className="grid gap-4">
-            {[
-              "Rowing avec Haltères",
-              "Tirage à la poulie barre en V",
-              "Curl Biceps aux Haltères",
-              "Curl Marteau",
-              "Développé Militaire",
-              "Élévations Latérales",
-              "Crunch",
-              "Planche"
-            ].map((exercise, index) => (
-              <Card key={index} className="p-4">
-                <div className="flex items-center justify-between">
-                  <span>{exercise}</span>
-                  <span className="text-sm text-muted-foreground">3 × 12</span>
+          <div className="space-y-8">
+            {["Rowing avec Haltères", "Tirage à la poulie barre en V", "Curl Biceps aux Haltères", "Curl Marteau", "Développé Militaire", "Élévations Latérales", "Crunch", "Planche"].map((exercise, index) => (
+              <div key={index} className="space-y-4">
+                <h2 className="text-xl font-semibold text-white">{exercise}</h2>
+                
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="text-sm text-gray-400">SET</div>
+                  <div className="text-sm text-gray-400">RÉPÉTITIONS</div>
+                  <div className="text-sm text-gray-400">KG</div>
                 </div>
-              </Card>
+
+                {sets.map((set) => (
+                  <div key={set.id} className="grid grid-cols-3 gap-4 bg-[#252B3B] p-4 rounded-lg">
+                    <div className="text-white">{set.id}</div>
+                    <div className="text-white">{set.reps}</div>
+                    <div className="text-white">{set.weight}</div>
+                  </div>
+                ))}
+
+                <Button
+                  variant="ghost"
+                  className="w-full flex items-center gap-2 text-[#90EE90] hover:text-[#90EE90]/80"
+                  onClick={handleAddSet}
+                >
+                  <Plus className="w-4 h-4" />
+                  Ajouter une série
+                </Button>
+
+                <div className="space-y-2">
+                  <h3 className="text-white font-medium">Notes</h3>
+                  <Textarea
+                    placeholder="Aucune note ajoutée..."
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="bg-[#252B3B] border-0 text-white placeholder:text-gray-500"
+                  />
+                </div>
+              </div>
             ))}
           </div>
-        </div>
 
-        <div className="flex justify-end gap-4">
-          <Button variant="outline" onClick={() => navigate(-1)}>
-            Annuler
-          </Button>
-          <Button onClick={() => navigate('/workouts')}>
-            Commencer l'entraînement
+          <Button 
+            className="w-full bg-[#90EE90] hover:bg-[#90EE90]/80 text-black font-semibold py-6"
+            onClick={() => navigate('/workouts')}
+          >
+            COMMENCER L'ENTRAÎNEMENT
           </Button>
         </div>
       </Card>
