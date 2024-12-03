@@ -87,19 +87,16 @@ export const NextWorkoutCard = () => {
         
         <div className="flex justify-start gap-6 pt-2">
           {[
-            { icon: SkipForward, tooltip: "Passer" },
-            { icon: RotateCcw, tooltip: "Recommencer" },
-            { icon: Send, tooltip: "Partager" }
-          ].map(({ icon: Icon, tooltip }, index) => (
+            { icon: SkipForward },
+            { icon: RotateCcw },
+            { icon: Send }
+          ].map(({ icon: Icon }, index) => (
             <button 
               key={index}
-              className="text-gray-400 hover:text-primary transition-colors hover:scale-110 transform duration-200 relative group"
+              className="text-gray-400 hover:text-primary transition-colors hover:scale-110 transform duration-200"
               onClick={(e) => e.stopPropagation()}
             >
               <Icon className="w-6 h-6" />
-              <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-background/90 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                {tooltip}
-              </span>
             </button>
           ))}
         </div>
