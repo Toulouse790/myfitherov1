@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { WorkoutTimer } from "./WorkoutTimer";
+import { WorkoutTimer, formatWorkoutTime } from "./WorkoutTimer";
 import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -31,6 +31,18 @@ export const NextWorkoutDetail = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
   const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
   const [showEndWorkoutDialog, setShowEndWorkoutDialog] = useState(false);
+  const startTimeRef = useRef<Date | null>(null);
+  const [workoutStats, setWorkoutStats] = useState({
+    duration: 0,
+    totalWeight: 0,
+    totalCalories: 0
+  });
+
+  useEffect(() => {
+    if (isWorkoutStarted && !startTimeRef.current) {
+      startTimeRef.current = new Date();
+    }
+  }, [isWorkoutStarted]);
 
   const handleStartWorkout = async () => {
     try {
@@ -49,6 +61,7 @@ export const NextWorkoutDetail = () => {
       
       setIsWorkoutStarted(true);
       setCurrentExerciseIndex(0);
+      startTimeRef.current = new Date();
     } catch (error) {
       console.error('Error starting workout:', error);
     }
@@ -60,6 +73,18 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleEndWorkout = () => {
+    if (startTimeRef.current) {
+      const endTime = new Date();
+      const durationInSeconds = Math.floor((endTime.getTime() - startTimeRef.current.getTime()) / 1000);
+      
+      // Calculer les statistiques totales de la séance
+      // Note: Dans une vraie application, ces valeurs devraient être accumulées pendant la séance
+      setWorkoutStats({
+        duration: durationInSeconds,
+        totalWeight: 1250, // À remplacer par le vrai calcul
+        totalCalories: 350, // À remplacer par le vrai calcul
+      });
+    }
     setShowEndWorkoutDialog(true);
   };
 
@@ -73,11 +98,7 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/50 pb-20">
-      {isWorkoutStarted && (
-        <div className="fixed top-0 left-0 right-0 z-50">
-          <WorkoutTimer />
-        </div>
-      )}
+      {isWorkoutStarted && <WorkoutTimer />}
       
       <div className="container max-w-4xl mx-auto px-4 py-8 space-y-8">
         <Card className="overflow-hidden border-none bg-card shadow-lg">
@@ -124,9 +145,25 @@ export const NextWorkoutDetail = () => {
       <AlertDialog open={showEndWorkoutDialog} onOpenChange={setShowEndWorkoutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Terminer l'entraînement ?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Êtes-vous sûr de vouloir terminer cet entraînement ? Cette action ne peut pas être annulée.
+            <AlertDialogTitle>Résumé de l'entraînement</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
+                <div className="text-center p-4 bg-muted rounded-lg">
+                  <p className="text-2xl font-bold text-primary">{formatWorkoutTime(workoutStats.duration)}</p>
+                  <p className="text-sm text-muted-foreground">Durée</p>
+                </div>
+                <div className="text-center p-4 bg-muted rounded-lg">
+                  <p className="text-2xl font-bold text-primary">{workoutStats.totalCalories}</p>
+                  <p className="text-sm text-muted-foreground">Calories</p>
+                </div>
+                <div className="text-center p-4 bg-muted rounded-lg">
+                  <p className="text-2xl font-bold text-primary">{workoutStats.totalWeight}kg</p>
+                  <p className="text-sm text-muted-foreground">Poids total</p>
+                </div>
+              </div>
+              <p className="text-center text-sm text-muted-foreground mt-4">
+                Voulez-vous terminer cet entraînement ?
+              </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

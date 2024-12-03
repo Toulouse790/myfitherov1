@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Timer } from 'lucide-react';
 
 export const WorkoutTimer = () => {
   const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -29,10 +28,17 @@ export const WorkoutTimer = () => {
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  return (
-    <div className="fixed top-16 right-4 bg-primary/10 backdrop-blur-sm rounded-lg p-2 flex items-center gap-1.5 text-primary text-sm">
-      <Timer className="h-4 w-4" />
-      <span className="font-mono text-sm">{formatTime(seconds)}</span>
-    </div>
-  );
+  // On ne retourne plus l'élément visible
+  return null;
+};
+
+// Exporter la fonction de formatage pour pouvoir l'utiliser ailleurs
+export const formatWorkoutTime = (totalSeconds: number) => {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
