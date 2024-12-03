@@ -9,6 +9,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { WorkoutFormData, muscleGroups, difficultyLevels } from "./workoutConstants";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 
 interface WorkoutFormProps {
   formData: WorkoutFormData;
@@ -25,6 +27,19 @@ export const WorkoutForm = ({
   handleSelectChange,
   selectedColor,
 }: WorkoutFormProps) => {
+  const handleMuscleGroupSelect = (value: string) => {
+    if (!formData.muscleGroups.includes(value)) {
+      handleSelectChange([...formData.muscleGroups, value].join(','), 'muscleGroups');
+    }
+  };
+
+  const handleRemoveMuscleGroup = (groupToRemove: string) => {
+    handleSelectChange(
+      formData.muscleGroups.filter(group => group !== groupToRemove).join(','),
+      'muscleGroups'
+    );
+  };
+
   return (
     <form onSubmit={onSubmit} className="space-y-4 pt-4">
       <div className="space-y-2">
@@ -38,14 +53,10 @@ export const WorkoutForm = ({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="muscleGroup">Groupe musculaire</Label>
-        <Select
-          value={formData.muscleGroup}
-          onValueChange={(value) => handleSelectChange(value, "muscleGroup")}
-          required
-        >
+        <Label>Groupes musculaires</Label>
+        <Select onValueChange={(value) => handleMuscleGroupSelect(value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Sélectionnez un groupe musculaire" />
+            <SelectValue placeholder="Sélectionnez les groupes musculaires" />
           </SelectTrigger>
           <SelectContent>
             {muscleGroups.map((group) => (
@@ -59,6 +70,27 @@ export const WorkoutForm = ({
             ))}
           </SelectContent>
         </Select>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {formData.muscleGroups.map((groupId) => {
+            const group = muscleGroups.find(g => g.id === groupId);
+            if (!group) return null;
+            return (
+              <Badge 
+                key={groupId} 
+                className={`${group.color} text-white flex items-center gap-1`}
+              >
+                {group.name}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveMuscleGroup(groupId)}
+                  className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            );
+          })}
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="difficulty">Niveau de difficulté</Label>

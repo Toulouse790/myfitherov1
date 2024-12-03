@@ -100,7 +100,7 @@ export const difficultyLevels = [
 
 export interface WorkoutFormData {
   title: string;
-  muscleGroup: string;
+  muscleGroups: string[];  // Changed from muscleGroup to muscleGroups
   duration: string;
   exercises: string;
   difficulty: string;
@@ -109,7 +109,7 @@ export interface WorkoutFormData {
 
 export const initialFormData: WorkoutFormData = {
   title: "",
-  muscleGroup: "",
+  muscleGroups: [],  // Changed from muscleGroup to muscleGroups array
   duration: "45",
   exercises: "",
   difficulty: "beginner",
