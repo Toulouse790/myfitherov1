@@ -5,17 +5,25 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 
+interface QuestionnaireResponses {
+  objective: string;
+  training_frequency: string;
+  experience_level: string;
+  available_equipment: string;
+}
+
 export const InitialQuestionnaire = () => {
   const [step, setStep] = useState(1);
+  const [responses, setResponses] = useState<QuestionnaireResponses>({
+    objective: "",
+    training_frequency: "",
+    experience_level: "",
+    available_equipment: "",
+  });
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const saveResponse = async (response: {
-    objective: string;
-    training_frequency: string;
-    experience_level: string;
-    available_equipment: string;
-  }) => {
+  const saveResponse = async (finalResponses: QuestionnaireResponses) => {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
@@ -33,7 +41,7 @@ export const InitialQuestionnaire = () => {
       .insert([
         {
           user_id: user.id,
-          ...response
+          ...finalResponses
         }
       ]);
 
@@ -55,17 +63,30 @@ export const InitialQuestionnaire = () => {
   };
 
   const handleNext = async (selectedValue: string) => {
+    let updatedResponses = { ...responses };
+
+    // Mettre à jour la réponse correspondante selon l'étape
+    switch (step) {
+      case 1:
+        updatedResponses.objective = selectedValue;
+        break;
+      case 2:
+        updatedResponses.training_frequency = selectedValue;
+        break;
+      case 3:
+        updatedResponses.experience_level = selectedValue;
+        break;
+      case 4:
+        updatedResponses.available_equipment = selectedValue;
+        break;
+    }
+
+    setResponses(updatedResponses);
+
     if (step < 4) {
       setStep(step + 1);
     } else {
-      // Construire l'objet de réponse basé sur toutes les sélections
-      const response = {
-        objective: "perte_de_poids", // À remplacer par la vraie valeur
-        training_frequency: "3_fois_semaine", // À remplacer par la vraie valeur
-        experience_level: "debutant", // À remplacer par la vraie valeur
-        available_equipment: selectedValue,
-      };
-      await saveResponse(response);
+      await saveResponse(updatedResponses);
     }
   };
 
