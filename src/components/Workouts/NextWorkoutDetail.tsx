@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MetricComparison } from "./NextWorkoutDetail/MetricComparison";
 import { ExerciseCard } from "./NextWorkoutDetail/ExerciseCard";
 import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
+import { getNextWorkoutRecommendation } from "@/utils/workoutPlanning";
 
 const SAMPLE_EXERCISES = [
   {
@@ -86,19 +87,44 @@ export const NextWorkoutDetail = () => {
   });
 
   const handleWorkoutComplete = () => {
+    const workoutPerformance = {
+      exercises: SAMPLE_EXERCISES.map(exercise => ({
+        muscleGroup: "chest", // À remplacer par la vraie donnée
+        intensity: exercise.actual.duration / exercise.planned.duration,
+        volume: 12, // À remplacer par le vrai nombre de répétitions
+        duration: exercise.actual.duration,
+        actualVsPlanned: exercise.actual.calories / exercise.planned.calories
+      })),
+      date: new Date()
+    };
+
+    const nextWorkoutRecommendation = getNextWorkoutRecommendation(workoutPerformance);
+
+    // Sauvegarder les recommandations dans le localStorage
+    localStorage.setItem('lastWorkoutPerformance', JSON.stringify(workoutPerformance));
+    localStorage.setItem('nextWorkoutRecommendation', JSON.stringify(nextWorkoutRecommendation));
+
     const durationExcess = ((totals.actualDuration - totals.plannedDuration) / totals.plannedDuration) * 100;
     const caloriesExcess = ((totals.actualCalories - totals.plannedCalories) / totals.plannedCalories) * 100;
 
     if (durationExcess > 20 || caloriesExcess > 25) {
       toast({
         title: "Attention au surentraînement",
-        description: "Votre performance dépasse significativement l'objectif. Le prochain entraînement sera ajusté pour éviter le surentraînement.",
+        description: `Votre performance dépasse significativement l'objectif. Le prochain entraînement sera ajusté avec ${Math.round(nextWorkoutRecommendation.recommendedIntensity * 100)}% d'intensité pour éviter le surentraînement.`,
         variant: "destructive"
       });
     } else if (durationExcess > 10 || caloriesExcess > 15) {
       toast({
         title: "Excellent travail !",
-        description: "Vos objectifs ont été dépassés. Le prochain entraînement sera légèrement ajusté pour optimiser vos progrès.",
+        description: `Vos objectifs ont été dépassés. Le prochain entraînement sera légèrement ajusté avec un volume de ${nextWorkoutRecommendation.recommendedVolume} répétitions.`,
+      });
+    }
+
+    // Afficher les groupes musculaires à éviter
+    if (nextWorkoutRecommendation.musclesNeedingRest.length > 0) {
+      toast({
+        title: "Récupération musculaire",
+        description: `Groupes musculaires à éviter pour le prochain entraînement : ${nextWorkoutRecommendation.musclesNeedingRest.join(', ')}`,
       });
     }
   };
