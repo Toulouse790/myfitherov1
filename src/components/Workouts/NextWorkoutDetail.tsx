@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { ExerciseSets } from "./ExerciseSets";
 import { useToast } from "@/hooks/use-toast";
+import { Dumbbell, Timer, Flame } from "lucide-react";
 
 const SAMPLE_EXERCISES = [
   "Rowing avec Haltères",
@@ -49,6 +50,11 @@ export const NextWorkoutDetail = () => {
       setIsWorkoutStarted(true);
       setCurrentExerciseIndex(0);
       startTimeRef.current = new Date();
+      
+      toast({
+        title: "C'est parti !",
+        description: "Votre séance d'entraînement a commencé.",
+      });
     } catch (error) {
       console.error('Error starting workout:', error);
     }
@@ -81,17 +87,61 @@ export const NextWorkoutDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="container max-w-2xl mx-auto px-4 py-8 space-y-6">
+    <div className="min-h-screen bg-[#1A1F2C]">
+      <div className="container max-w-2xl mx-auto px-4 py-8 space-y-8">
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl font-bold text-white">Dos, Biceps & Épaules</h1>
+          <div className="flex justify-center gap-6">
+            <div className="flex items-center gap-2 text-gray-400">
+              <Timer className="w-5 h-5" />
+              <span>61 mins</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-400">
+              <Dumbbell className="w-5 h-5" />
+              <span>8 exercices</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-400">
+              <Flame className="w-5 h-5" />
+              <span>~350 kcal</span>
+            </div>
+          </div>
+        </div>
+
         {!isWorkoutStarted ? (
-          <Button 
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-            onClick={handleStartWorkout}
-          >
-            Commencer l'entraînement
-          </Button>
+          <div className="space-y-8">
+            <Card className="bg-[#1E2330] border-none p-6">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-white">Exercices prévus</h2>
+                <div className="grid gap-4">
+                  {SAMPLE_EXERCISES.map((exercise, index) => (
+                    <div 
+                      key={index}
+                      className="p-4 rounded-lg bg-[#252B3B] text-white hover:bg-[#2A2F3F] transition-colors"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Dumbbell className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium">{exercise}</h3>
+                          <p className="text-sm text-gray-400">3 séries • 12 répétitions</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Card>
+            
+            <Button 
+              className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-6 text-lg"
+              onClick={handleStartWorkout}
+            >
+              Commencer l'entraînement
+            </Button>
+          </div>
         ) : (
-          <Card className="border-none shadow-sm">
+          <Card className="bg-[#1E2330] border-none">
             <div className="p-4 space-y-6">
               {currentExerciseIndex !== null && (
                 <ExerciseSets
