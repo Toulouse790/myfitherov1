@@ -1,6 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { SkipForward, RotateCcw, Send, Timer } from "lucide-react";
+import { SkipForward, RotateCcw, Send, Timer, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const SAMPLE_EXERCISES = [
   "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
@@ -11,20 +13,40 @@ const SAMPLE_EXERCISES = [
 
 export const NextWorkoutCard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleCardClick = () => {
     navigate('/workouts');
   };
 
+  const handleCreateManual = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate('/workouts');
+    toast({
+      title: "Création manuelle",
+      description: "Créez votre propre séance d'entraînement",
+    });
+  };
+
   return (
     <Card 
-      className="w-full bg-[#1E2330] border-[#2A2F3F] overflow-hidden animate-fade-in cursor-pointer hover:bg-[#252B3B] transition-colors"
+      className="w-full bg-[#1E2330] border-[#2A2F3F] overflow-hidden animate-fade-in cursor-pointer hover:bg-[#252B3B] transition-colors relative"
       onClick={handleCardClick}
     >
       <div className="bg-[#9BB537] text-white px-4 py-2 text-lg font-medium flex items-center justify-between">
-        <span>Prochain entraînement</span>
+        <span>Prochain entraînement (IA)</span>
         <Timer className="h-5 w-5" />
       </div>
+      
+      <Button
+        variant="outline"
+        size="sm"
+        className="absolute top-2 right-2 bg-background/50 backdrop-blur-sm hover:bg-background/80"
+        onClick={handleCreateManual}
+      >
+        <Plus className="h-4 w-4 mr-1" />
+        <span className="text-xs">Créer manuellement</span>
+      </Button>
       
       <div className="p-4 space-y-4">
         <h2 className="text-2xl font-bold text-white hover-scale transition-transform">
