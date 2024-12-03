@@ -79,12 +79,12 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
   };
 
   return (
-    <Card className="overflow-hidden bg-white shadow-sm">
-      <div className="p-4">
+    <Card className="overflow-hidden bg-white shadow-sm mt-4">
+      <div className="p-2">
         <Button 
           onClick={startScanning} 
           variant="outline" 
-          className="w-full gap-2 bg-white hover:bg-gray-50 text-gray-700 border-gray-200"
+          className="w-full gap-2 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-sm py-2"
         >
           <Scan className="w-4 h-4" />
           Scanner un code-barres
@@ -92,7 +92,7 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
       </div>
       <video
         ref={videoRef}
-        className="w-full aspect-video bg-gray-100"
+        className="w-full h-32 bg-gray-100"
       />
     </Card>
   );

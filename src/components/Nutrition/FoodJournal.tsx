@@ -47,12 +47,12 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
           onAddEntry={handleAddEntry}
         />
         
-        <BarcodeScanner onScan={handleBarcodeScan} />
-        
         <FoodSearch
           entries={entries}
           onDeleteEntry={handleDeleteEntry}
         />
+
+        <BarcodeScanner onScan={handleBarcodeScan} />
       </CardContent>
     </Card>
   );
