@@ -1,4 +1,4 @@
-import { Exercise } from '../types/exercise';
+import { Exercise } from './types/exercise';
 
 export const chestExercises: Exercise[] = [
   {
@@ -15,7 +15,19 @@ export const chestExercises: Exercise[] = [
       "Saisissez la barre avec une prise légèrement plus large que les épaules",
       "Descendez la barre jusqu'à la poitrine",
       "Poussez la barre vers le haut"
-    ]
+    ],
+    targetMuscles: ["pectoraux majeurs", "deltoïdes antérieurs", "triceps"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 5
+    },
+    reps: {
+      beginner: 8,
+      intermediate: 10,
+      advanced: 12
+    },
+    calories: 150
   },
   {
     id: "chest-2",
@@ -31,38 +43,74 @@ export const chestExercises: Exercise[] = [
       "Gardez votre corps droit",
       "Descendez votre poitrine près du sol",
       "Poussez pour revenir à la position initiale"
-    ]
+    ],
+    targetMuscles: ["pectoraux", "deltoïdes", "triceps", "core"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 5
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 15,
+      advanced: 20
+    },
+    calories: 100
   },
   {
     id: "chest-3",
-    name: "Pompes diamant",
+    name: "Écarté avec haltères",
     muscleGroup: "chest",
-    description: "Variation des pompes ciblant plus les triceps",
+    description: "Excellent exercice d'isolation pour les pectoraux",
     difficulty: "intermediate",
-    equipment: "Aucun",
-    location: ["home", "outdoor", "gym"],
+    equipment: "Banc, Haltères",
+    location: ["gym", "home"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "Formez un diamant avec vos mains sous votre poitrine",
-      "Gardez les coudes près du corps",
-      "Descendez en contrôle",
-      "Poussez pour remonter"
-    ]
+      "Allongez-vous sur un banc plat",
+      "Tenez les haltères bras tendus au-dessus de la poitrine",
+      "Descendez les bras sur les côtés en gardant une légère flexion des coudes",
+      "Remontez en contractant les pectoraux"
+    ],
+    targetMuscles: ["pectoraux", "deltoïdes antérieurs"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 12,
+      advanced: 15
+    },
+    calories: 120
   },
   {
     id: "chest-4",
-    name: "Dips pour pectoraux",
+    name: "Développé incliné avec haltères",
     muscleGroup: "chest",
-    description: "Excellent exercice pour le bas des pectoraux",
-    difficulty: "advanced",
-    equipment: "Barres parallèles",
+    description: "Cible la partie supérieure des pectoraux",
+    difficulty: "intermediate",
+    equipment: "Banc incliné, Haltères",
     location: ["gym"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "Positionnez-vous sur les barres parallèles",
-      "Penchez-vous légèrement vers l'avant",
-      "Descendez en fléchissant les coudes",
-      "Poussez pour remonter"
-    ]
+      "Installez-vous sur un banc incliné à 30-45 degrés",
+      "Tenez un haltère dans chaque main au niveau des épaules",
+      "Poussez les haltères vers le haut",
+      "Contrôlez la descente"
+    ],
+    targetMuscles: ["pectoraux supérieurs", "deltoïdes antérieurs", "triceps"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 8,
+      intermediate: 10,
+      advanced: 12
+    },
+    calories: 130
   }
 ];

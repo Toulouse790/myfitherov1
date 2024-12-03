@@ -1,52 +1,116 @@
-import { Exercise } from '../types/exercise';
+import { Exercise } from './types/exercise';
 
 export const legsExercises: Exercise[] = [
   {
     id: "legs-1",
-    name: "Squats",
+    name: "Squat",
     muscleGroup: "legs",
     description: "L'exercice roi pour les jambes",
-    difficulty: "beginner",
-    equipment: "Optionnel: Barre, Poids",
-    location: ["home", "outdoor", "gym"],
+    difficulty: "intermediate",
+    equipment: "Barre et poids (optionnel)",
+    location: ["gym", "home"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "Tenez-vous debout, pieds écartés largeur d'épaules",
+      "Pieds largeur d'épaules",
       "Descendez comme pour vous asseoir",
-      "Gardez le dos droit et les genoux alignés avec les orteils",
-      "Remontez en poussant sur vos talons"
-    ]
+      "Gardez le dos droit",
+      "Poussez sur les talons pour remonter"
+    ],
+    targetMuscles: ["quadriceps", "ischio-jambiers", "fessiers"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 5
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 12,
+      advanced: 15
+    },
+    calories: 150
   },
   {
     id: "legs-2",
     name: "Fentes avant",
     muscleGroup: "legs",
-    description: "Excellent exercice pour cibler chaque jambe individuellement",
+    description: "Excellent pour le travail unilatéral",
     difficulty: "beginner",
-    equipment: "Optionnel: Haltères",
-    location: ["home", "outdoor", "gym"],
+    equipment: "Haltères (optionnel)",
+    location: ["gym", "home", "outdoor"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Faites un grand pas en avant",
-      "Descendez jusqu'à ce que les deux genoux soient à 90 degrés",
-      "Gardez le torse droit",
-      "Poussez sur le pied avant pour revenir à la position initiale"
-    ]
+      "Fléchissez les deux genoux à 90°",
+      "Gardez le buste droit",
+      "Poussez pour revenir"
+    ],
+    targetMuscles: ["quadriceps", "fessiers", "ischio-jambiers"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 12,
+      advanced: 15
+    },
+    calories: 120
   },
   {
     id: "legs-3",
-    name: "Presse à cuisses",
+    name: "Extension des jambes",
     muscleGroup: "legs",
-    description: "Exercice de musculation pour les jambes sur machine",
-    difficulty: "intermediate",
-    equipment: "Machine presse à cuisses",
+    description: "Isolation des quadriceps",
+    difficulty: "beginner",
+    equipment: "Machine à quadriceps",
     location: ["gym"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "Réglez le siège à la bonne hauteur",
-      "Placez vos pieds largeur d'épaules",
-      "Poussez la plateforme",
+      "Asseyez-vous sur la machine",
+      "Attrapez les poignées",
+      "Tendez les jambes",
       "Contrôlez la descente"
-    ]
+    ],
+    targetMuscles: ["quadriceps"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 12,
+      intermediate: 15,
+      advanced: 20
+    },
+    calories: 100
+  },
+  {
+    id: "legs-4",
+    name: "Soulevé de terre roumain",
+    muscleGroup: "legs",
+    description: "Excellent pour les ischio-jambiers",
+    difficulty: "intermediate",
+    equipment: "Barre ou haltères",
+    location: ["gym", "home"],
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    instructions: [
+      "Debout, barre contre les cuisses",
+      "Poussez les fesses en arrière",
+      "Descendez en gardant le dos droit",
+      "Remontez en contractant les ischio-jambiers"
+    ],
+    targetMuscles: ["ischio-jambiers", "fessiers", "lombaires"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 12,
+      advanced: 15
+    },
+    calories: 130
   }
 ];

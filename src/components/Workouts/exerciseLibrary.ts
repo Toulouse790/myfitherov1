@@ -1,4 +1,4 @@
-import { Exercise } from './types/exercise';
+import { Exercise } from './exercises/types/exercise';
 import { chestExercises } from './exercises/chestExercises';
 import { backExercises } from './exercises/backExercises';
 import { legsExercises } from './exercises/legsExercises';

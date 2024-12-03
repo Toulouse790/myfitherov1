@@ -1,4 +1,4 @@
-import { Exercise } from '../types/exercise';
+import { Exercise } from './types/exercise';
 
 export const backExercises: Exercise[] = [
   {
@@ -9,13 +9,25 @@ export const backExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barre de traction",
     location: ["gym", "outdoor"],
-    image: "https://images.unsplash.com/photo-1598971639058-999f3bfbfb09?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Saisissez la barre avec une prise plus large que les épaules",
       "Tirez votre corps vers le haut jusqu'à ce que votre menton dépasse la barre",
       "Descendez de manière contrôlée",
       "Répétez le mouvement"
-    ]
+    ],
+    targetMuscles: ["grand dorsal", "rhomboïdes", "trapèzes", "biceps"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 5
+    },
+    reps: {
+      beginner: 5,
+      intermediate: 8,
+      advanced: 12
+    },
+    calories: 150
   },
   {
     id: "back-2",
@@ -25,44 +37,80 @@ export const backExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barre, Poids",
     location: ["gym"],
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop",
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Penchez-vous en avant avec le dos droit",
       "Saisissez la barre",
       "Tirez la barre vers votre abdomen",
       "Revenez à la position initiale de manière contrôlée"
-    ]
+    ],
+    targetMuscles: ["grand dorsal", "trapèzes", "rhomboïdes", "biceps"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 8,
+      intermediate: 10,
+      advanced: 12
+    },
+    calories: 140
   },
   {
     id: "back-3",
-    name: "Superman",
+    name: "Tirage vertical",
     muscleGroup: "back",
-    description: "Exercice au sol pour le bas du dos",
+    description: "Excellent exercice pour la largeur du dos",
     difficulty: "beginner",
-    equipment: "Tapis (optionnel)",
-    location: ["home", "outdoor", "gym"],
-    image: "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=800&h=600&fit=crop",
+    equipment: "Machine de tirage vertical",
+    location: ["gym"],
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "Allongez-vous sur le ventre",
-      "Tendez les bras devant vous",
-      "Soulevez simultanément les bras et les jambes",
-      "Maintenez la position quelques secondes"
-    ]
+      "Asseyez-vous à la machine, réglez les cuisses",
+      "Saisissez la barre large au-dessus de votre tête",
+      "Tirez la barre vers votre poitrine en serrant les omoplates",
+      "Remontez lentement"
+    ],
+    targetMuscles: ["grand dorsal", "rhomboïdes", "biceps"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 12,
+      advanced: 15
+    },
+    calories: 130
   },
   {
     id: "back-4",
-    name: "Rowing haltère",
+    name: "Rowing un bras",
     muscleGroup: "back",
-    description: "Excellent exercice pour cibler chaque côté du dos",
+    description: "Exercice unilatéral pour le dos",
     difficulty: "beginner",
-    equipment: "Haltères",
-    location: ["home", "gym"],
-    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
+    equipment: "Haltère, Banc",
+    location: ["gym", "home"],
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "Penchez-vous en avant, un genou sur le banc",
-      "Tirez l'haltère vers votre hanche",
-      "Serrez l'omoplate à la fin du mouvement",
-      "Revenez à la position initiale en contrôle"
-    ]
+      "Un genou et une main sur le banc",
+      "Haltère dans l'autre main",
+      "Tirez l'haltère vers la hanche",
+      "Contrôlez la descente"
+    ],
+    targetMuscles: ["grand dorsal", "trapèzes", "rhomboïdes"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 12,
+      advanced: 15
+    },
+    calories: 100
   }
 ];

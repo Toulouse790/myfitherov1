@@ -1,25 +1,37 @@
-import { Exercise } from '../types/exercise';
+import { Exercise } from './types/exercise';
 
 export const armsExercises: Exercise[] = [
   {
     id: "arms-1",
     name: "Curl biceps",
     muscleGroup: "arms",
-    description: "L'exercice fondamental pour développer les biceps",
+    description: "L'exercice fondamental pour les biceps",
     difficulty: "beginner",
     equipment: "Haltères ou Barre",
-    location: ["home", "gym"],
+    location: ["gym", "home"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, bras le long du corps",
-      "Fléchissez les coudes pour monter les poids",
+      "Montez les poids en fléchissant les coudes",
       "Contractez les biceps au sommet",
-      "Descendez lentement en contrôlant le mouvement"
-    ]
+      "Descendez lentement"
+    ],
+    targetMuscles: ["biceps", "avant-bras"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 12,
+      intermediate: 15,
+      advanced: 18
+    },
+    calories: 100
   },
   {
     id: "arms-2",
-    name: "Extensions triceps à la poulie haute",
+    name: "Extension triceps à la poulie",
     muscleGroup: "arms",
     description: "Excellent exercice d'isolation pour les triceps",
     difficulty: "beginner",
@@ -31,38 +43,74 @@ export const armsExercises: Exercise[] = [
       "Tendez les bras vers le bas",
       "Ne bougez que les avant-bras",
       "Remontez lentement"
-    ]
+    ],
+    targetMuscles: ["triceps"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 12,
+      intermediate: 15,
+      advanced: 20
+    },
+    calories: 90
   },
   {
     id: "arms-3",
     name: "Curl marteau",
     muscleGroup: "arms",
-    description: "Variante du curl ciblant le brachial et le long chef du biceps",
+    description: "Variante du curl ciblant le brachial",
     difficulty: "beginner",
     equipment: "Haltères",
-    location: ["home", "gym"],
+    location: ["gym", "home"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, haltères en pronation",
       "Montez les poids en gardant les paumes face à face",
       "Contractez au sommet",
       "Descendez en contrôlant"
-    ]
+    ],
+    targetMuscles: ["biceps", "brachial", "avant-bras"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 12,
+      intermediate: 15,
+      advanced: 18
+    },
+    calories: 95
   },
   {
     id: "arms-4",
-    name: "Dips",
+    name: "Extension triceps au-dessus de la tête",
     muscleGroup: "arms",
-    description: "Excellent exercice composé pour les triceps",
+    description: "Excellent pour la masse des triceps",
     difficulty: "intermediate",
-    equipment: "Barres parallèles",
-    location: ["gym"],
+    equipment: "Haltère",
+    location: ["gym", "home"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "En appui sur les barres",
-      "Fléchissez les coudes pour descendre",
-      "Poussez pour remonter",
-      "Gardez le buste droit ou légèrement penché"
-    ]
+      "Assis ou debout, haltère au-dessus de la tête",
+      "Descendez l'haltère derrière la tête",
+      "Gardez les coudes près des oreilles",
+      "Tendez les bras"
+    ],
+    targetMuscles: ["triceps"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 12,
+      intermediate: 15,
+      advanced: 15
+    },
+    calories: 85
   }
 ];
