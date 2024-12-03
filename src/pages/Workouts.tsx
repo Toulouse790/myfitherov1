@@ -22,8 +22,8 @@ const Workouts = () => {
     <div className="container mx-auto px-4 pt-24 pb-12">
       <Button 
         variant="ghost" 
-        className="mb-6"
         onClick={handleBack}
+        className="mb-6"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
         Retour
