@@ -1,6 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Sparkles, Activity, Bookmark } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Slider } from "@/components/ui/slider";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UserProfile {
   age: number;
@@ -138,9 +145,50 @@ const mockUserProfile: UserProfile = {
 
 export const WorkoutSuggestions = () => {
   const { toast } = useToast();
+  const [showDialog, setShowDialog] = useState(false);
+  const [goal, setGoal] = useState<"weight_loss" | "muscle_gain" | "maintenance">("maintenance");
+  const [workoutsPerWeek, setWorkoutsPerWeek] = useState(3);
+  const [recoveryCapacity, setRecoveryCapacity] = useState<"low" | "medium" | "high">("medium");
 
-  const handleGenerateWorkout = () => {
-    const plan = generateWorkoutPlan(mockUserProfile);
+  const handleGenerateWorkout = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour générer un programme personnalisé",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from('questionnaire_responses')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    if (!profile) {
+      toast({
+        title: "Profil incomplet",
+        description: "Veuillez d'abord remplir le questionnaire initial",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const userProfile: UserProfile = {
+      age: 30, // À remplacer par les vraies données une fois ajoutées
+      weight: 75,
+      height: 175,
+      goal,
+      workoutsPerWeek,
+      dailyCalories: 2500,
+      recoveryCapacity
+    };
+
+    const plan = generateWorkoutPlan(userProfile);
+    setShowDialog(false);
     
     toast({
       title: "Programme généré avec succès",
@@ -159,7 +207,7 @@ export const WorkoutSuggestions = () => {
       description: "Laissez notre IA vous aider à créer un entraînement",
       icon: <Sparkles className="w-5 h-5 text-white" />,
       bgColor: "bg-[#2A2F3F]",
-      onClick: handleGenerateWorkout
+      onClick: () => setShowDialog(true)
     },
     {
       title: "Cardio",
@@ -195,6 +243,66 @@ export const WorkoutSuggestions = () => {
           </Card>
         ))}
       </div>
+
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Personnaliser votre entraînement</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="space-y-4">
+              <Label>Objectif principal</Label>
+              <RadioGroup value={goal} onValueChange={(value: any) => setGoal(value)}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="weight_loss" id="weight_loss" />
+                  <Label htmlFor="weight_loss">Perte de poids</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="muscle_gain" id="muscle_gain" />
+                  <Label htmlFor="muscle_gain">Prise de masse</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="maintenance" id="maintenance" />
+                  <Label htmlFor="maintenance">Maintien</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="space-y-4">
+              <Label>Séances par semaine: {workoutsPerWeek}</Label>
+              <Slider
+                value={[workoutsPerWeek]}
+                onValueChange={([value]) => setWorkoutsPerWeek(value)}
+                max={6}
+                min={1}
+                step={1}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <Label>Capacité de récupération</Label>
+              <RadioGroup value={recoveryCapacity} onValueChange={(value: any) => setRecoveryCapacity(value)}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="low" id="low" />
+                  <Label htmlFor="low">Faible</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="medium" id="medium" />
+                  <Label htmlFor="medium">Moyenne</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="high" id="high" />
+                  <Label htmlFor="high">Élevée</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <Button onClick={handleGenerateWorkout} className="w-full">
+              Générer mon programme
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
