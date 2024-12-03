@@ -6,17 +6,16 @@ import { exercises } from "@/components/Workouts/exerciseLibrary";
 import { muscleGroups } from "@/components/Workouts/workoutConstants";
 import { SportPrograms } from "@/components/Workouts/SportPrograms";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WorkoutExerciseDetail } from "@/components/Workouts/WorkoutExerciseDetail";
 
 const Workouts = () => {
   const { toast } = useToast();
   const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
+  const [showExerciseDetail, setShowExerciseDetail] = useState(false);
 
   const generateWorkout = (muscleGroup: string) => {
-    // Filtrer les exercices par groupe musculaire
     const muscleExercises = exercises.filter(ex => ex.muscleGroup === muscleGroup);
-    
-    // Sélectionner aléatoirement 4-6 exercices
-    const numExercises = Math.floor(Math.random() * 3) + 4; // 4-6 exercices
+    const numExercises = Math.floor(Math.random() * 3) + 4;
     const selectedExercises = muscleExercises
       .sort(() => Math.random() - 0.5)
       .slice(0, numExercises)
@@ -24,14 +23,14 @@ const Workouts = () => {
         ...exercise,
         sets: 3,
         reps: 12,
-        calories: 0 // Sera calculé plus tard
+        calories: 0
       }));
 
     const workout = {
       id: Date.now().toString(),
       title: `Séance ${muscleGroup}`,
       exercises: selectedExercises,
-      totalCalories: 0, // Sera calculé plus tard
+      totalCalories: 0,
     };
 
     setSelectedWorkout(workout);
@@ -40,6 +39,10 @@ const Workouts = () => {
       description: "Une nouvelle séance a été générée pour vous.",
     });
   };
+
+  if (showExerciseDetail) {
+    return <WorkoutExerciseDetail onBack={() => setShowExerciseDetail(false)} />;
+  }
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 space-y-8">
@@ -69,93 +72,98 @@ const Workouts = () => {
           </div>
 
           {selectedWorkout && (
-          <div className="space-y-4 animate-fade-in">
-            <h2 className="text-xl font-semibold">{selectedWorkout.title}</h2>
-            <div className="grid gap-4">
-              {selectedWorkout.exercises.map((exercise: any, index: number) => (
-                <div key={index} className="p-4 rounded-lg border">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-medium">{exercise.name}</h3>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          variant="outline" 
+            <div className="space-y-4 animate-fade-in">
+              <h2 className="text-xl font-semibold">{selectedWorkout.title}</h2>
+              <div className="grid gap-4">
+                {selectedWorkout.exercises.map((exercise: any, index: number) => (
+                  <div key={index} className="p-4 rounded-lg border">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-medium">{exercise.name}</h3>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              const newWorkout = {...selectedWorkout};
+                              newWorkout.exercises[index].sets = Math.max(1, exercise.sets - 1);
+                              setSelectedWorkout(newWorkout);
+                            }}
+                          >
+                            -
+                          </Button>
+                          <span>{exercise.sets} séries</span>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              const newWorkout = {...selectedWorkout};
+                              newWorkout.exercises[index].sets = exercise.sets + 1;
+                              setSelectedWorkout(newWorkout);
+                            }}
+                          >
+                            +
+                          </Button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              const newWorkout = {...selectedWorkout};
+                              newWorkout.exercises[index].reps = Math.max(1, exercise.reps - 1);
+                              setSelectedWorkout(newWorkout);
+                            }}
+                          >
+                            -
+                          </Button>
+                          <span>{exercise.reps} répétitions</span>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              const newWorkout = {...selectedWorkout};
+                              newWorkout.exercises[index].reps = exercise.reps + 1;
+                              setSelectedWorkout(newWorkout);
+                            }}
+                          >
+                            +
+                          </Button>
+                        </div>
+                        <Button
+                          variant="default"
                           size="sm"
-                          onClick={() => {
-                            const newWorkout = {...selectedWorkout};
-                            newWorkout.exercises[index].sets = Math.max(1, exercise.sets - 1);
-                            setSelectedWorkout(newWorkout);
-                          }}
+                          onClick={() => setShowExerciseDetail(true)}
                         >
-                          -
-                        </Button>
-                        <span>{exercise.sets} séries</span>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            const newWorkout = {...selectedWorkout};
-                            newWorkout.exercises[index].sets = exercise.sets + 1;
-                            setSelectedWorkout(newWorkout);
-                          }}
-                        >
-                          +
-                        </Button>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            const newWorkout = {...selectedWorkout};
-                            newWorkout.exercises[index].reps = Math.max(1, exercise.reps - 1);
-                            setSelectedWorkout(newWorkout);
-                          }}
-                        >
-                          -
-                        </Button>
-                        <span>{exercise.reps} répétitions</span>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            const newWorkout = {...selectedWorkout};
-                            newWorkout.exercises[index].reps = exercise.reps + 1;
-                            setSelectedWorkout(newWorkout);
-                          }}
-                        >
-                          +
+                          Commencer
                         </Button>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <Button 
+                className="w-full"
+                onClick={() => {
+                  const newWorkout = {...selectedWorkout};
+                  newWorkout.exercises = newWorkout.exercises.map(ex => ({
+                    ...ex,
+                    calories: Math.round(ex.sets * ex.reps * 0.5)
+                  }));
+                  newWorkout.totalCalories = newWorkout.exercises.reduce((acc, ex) => acc + ex.calories, 0);
+                  
+                  const savedWorkouts = JSON.parse(localStorage.getItem("savedWorkouts") || "[]");
+                  localStorage.setItem("savedWorkouts", JSON.stringify([...savedWorkouts, newWorkout]));
+                  
+                  toast({
+                    title: "Séance sauvegardée",
+                    description: `Dépense calorique estimée : ${newWorkout.totalCalories} kcal`,
+                  });
+                }}
+              >
+                Sauvegarder la séance
+              </Button>
             </div>
-            <Button 
-              className="w-full"
-              onClick={() => {
-                // Calculer les calories approximatives (exemple simple)
-                const newWorkout = {...selectedWorkout};
-                newWorkout.exercises = newWorkout.exercises.map(ex => ({
-                  ...ex,
-                  calories: Math.round(ex.sets * ex.reps * 0.5) // Estimation très basique
-                }));
-                newWorkout.totalCalories = newWorkout.exercises.reduce((acc, ex) => acc + ex.calories, 0);
-                
-                // Sauvegarder dans le localStorage
-                const savedWorkouts = JSON.parse(localStorage.getItem("savedWorkouts") || "[]");
-                localStorage.setItem("savedWorkouts", JSON.stringify([...savedWorkouts, newWorkout]));
-                
-                toast({
-                  title: "Séance sauvegardée",
-                  description: `Dépense calorique estimée : ${newWorkout.totalCalories} kcal`,
-                });
-              }}
-            >
-              Sauvegarder la séance
-            </Button>
-          </div>
           )}
         </TabsContent>
 
