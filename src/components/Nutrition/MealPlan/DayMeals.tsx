@@ -23,19 +23,21 @@ interface DayMealsProps {
 export const DayMeals = ({ meals, mealTitles }: DayMealsProps) => {
   return (
     <div className="space-y-4">
-      {Object.entries(meals).map(([mealType, meal]) => (
+      {Object.entries(mealTitles).map(([mealType, { title }]) => (
         <div key={mealType} className="p-4 rounded-lg bg-muted">
-          <h3 className="font-medium mb-2">{mealTitles[mealType].title}</h3>
-          <div className="space-y-1 text-sm">
-            <p>{meal.name}</p>
-            <p className="text-muted-foreground">
-              {meal.calories} kcal | {meal.proteins}g protéines | {meal.carbs}g glucides | {meal.fats}g lipides
-            </p>
-            <p className="text-primary">Coût estimé: {meal.estimated_cost}€</p>
-            {meal.is_cheat_meal && (
-              <p className="text-primary font-medium">Cheat meal 🎉</p>
-            )}
-          </div>
+          <h3 className="font-medium mb-2">{title}</h3>
+          {meals[mealType] && (
+            <div className="space-y-1 text-sm">
+              <p>{meals[mealType].name}</p>
+              <p className="text-muted-foreground">
+                {meals[mealType].calories} kcal | {meals[mealType].proteins}g protéines | {meals[mealType].carbs}g glucides | {meals[mealType].fats}g lipides
+              </p>
+              <p className="text-primary">Coût estimé: {meals[mealType].estimated_cost}€</p>
+              {meals[mealType].is_cheat_meal && (
+                <p className="text-primary font-medium">Cheat meal 🎉</p>
+              )}
+            </div>
+          )}
         </div>
       ))}
     </div>
