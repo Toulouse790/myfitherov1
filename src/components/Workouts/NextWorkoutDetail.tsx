@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Timer, Dumbbell, Flame, ArrowUp, ArrowDown } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Timer, Dumbbell, Flame } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { MetricComparison } from "./NextWorkoutDetail/MetricComparison";
+import { ExerciseCard } from "./NextWorkoutDetail/ExerciseCard";
+import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
 
 const SAMPLE_EXERCISES = [
   {
@@ -68,36 +70,9 @@ const SAMPLE_EXERCISES = [
   }
 ];
 
-const MetricComparison = ({ planned, actual, unit, icon: Icon }) => {
-  const isExceeded = actual > planned;
-  const difference = actual - planned;
-  
-  return (
-    <Card className="p-4 flex items-center gap-2 bg-primary/5">
-      <Icon className="h-5 w-5 text-primary" />
-      <div className="flex items-center gap-2">
-        <span>{actual} {unit}</span>
-        {isExceeded ? (
-          <div className="flex items-center text-green-500 text-sm">
-            <ArrowUp className="h-3 w-3" />
-            <span>+{difference}</span>
-          </div>
-        ) : difference < 0 ? (
-          <div className="flex items-center text-orange-500 text-sm">
-            <ArrowDown className="h-3 w-3" />
-            <span>{difference}</span>
-          </div>
-        ) : null}
-      </div>
-    </Card>
-  );
-};
-
 export const NextWorkoutDetail = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Calculer les totaux
   const totals = SAMPLE_EXERCISES.reduce((acc, exercise) => ({
     plannedDuration: acc.plannedDuration + exercise.planned.duration,
     actualDuration: acc.actualDuration + exercise.actual.duration,
@@ -111,7 +86,6 @@ export const NextWorkoutDetail = () => {
   });
 
   const handleWorkoutComplete = () => {
-    // Vérifier si l'entraînement est trop intense
     const durationExcess = ((totals.actualDuration - totals.plannedDuration) / totals.plannedDuration) * 100;
     const caloriesExcess = ((totals.actualCalories - totals.plannedCalories) / totals.plannedCalories) * 100;
 
@@ -131,100 +105,43 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 space-y-6">
-      <Button 
-        variant="ghost" 
-        className="mb-6"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Retour
-      </Button>
+      <WorkoutHeader />
 
-      <div className="space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Prochain Entraînement (IA)
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Dos, Biceps, Épaules
-          </p>
-        </div>
+      <div className="flex justify-center gap-6 flex-wrap">
+        <MetricComparison 
+          planned={totals.plannedDuration} 
+          actual={totals.actualDuration} 
+          unit="min" 
+          icon={Timer}
+          label="Durée"
+        />
+        <Card className="p-4 flex items-center gap-2 bg-primary/5">
+          <Dumbbell className="h-5 w-5 text-primary" />
+          <span>{SAMPLE_EXERCISES.length} exercices</span>
+        </Card>
+        <MetricComparison 
+          planned={totals.plannedCalories} 
+          actual={totals.actualCalories} 
+          unit="kcal" 
+          icon={Flame}
+          label="Calories"
+        />
+      </div>
 
-        <div className="flex justify-center gap-6 flex-wrap">
-          <MetricComparison 
-            planned={totals.plannedDuration} 
-            actual={totals.actualDuration} 
-            unit="mins" 
-            icon={Timer} 
-          />
-          <Card className="p-4 flex items-center gap-2 bg-primary/5">
-            <Dumbbell className="h-5 w-5 text-primary" />
-            <span>{SAMPLE_EXERCISES.length} exercices</span>
-          </Card>
-          <MetricComparison 
-            planned={totals.plannedCalories} 
-            actual={totals.actualCalories} 
-            unit="kcal" 
-            icon={Flame} 
-          />
-        </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        {SAMPLE_EXERCISES.map((exercise, index) => (
+          <ExerciseCard key={index} exercise={exercise} />
+        ))}
+      </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          {SAMPLE_EXERCISES.map((exercise, index) => (
-            <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video">
-                <img 
-                  src={exercise.image} 
-                  alt={exercise.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-4 space-y-4">
-                <h3 className="font-semibold text-lg">{exercise.name}</h3>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="text-center p-2 bg-secondary/10 rounded-lg">
-                    <div className="font-medium">{exercise.sets}</div>
-                    <div className="text-muted-foreground">Séries</div>
-                  </div>
-                  <div className="text-center p-2 bg-secondary/10 rounded-lg">
-                    <div className="font-medium">{exercise.reps}</div>
-                    <div className="text-muted-foreground">Reps</div>
-                  </div>
-                  <div className="text-center p-2 bg-secondary/10 rounded-lg">
-                    <div className="font-medium">{exercise.rest}s</div>
-                    <div className="text-muted-foreground">Repos</div>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <div className="flex items-center gap-2">
-                    <Timer className="h-4 w-4 text-muted-foreground" />
-                    <span className={exercise.actual.duration > exercise.planned.duration ? "text-green-500" : ""}>
-                      {exercise.actual.duration}min
-                    </span>
-                    <span className="text-muted-foreground">/ {exercise.planned.duration}min</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Flame className="h-4 w-4 text-muted-foreground" />
-                    <span className={exercise.actual.calories > exercise.planned.calories ? "text-green-500" : ""}>
-                      {exercise.actual.calories}
-                    </span>
-                    <span className="text-muted-foreground">/ {exercise.planned.calories} kcal</span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        <div className="flex justify-center pt-6">
-          <Button 
-            size="lg" 
-            className="w-full max-w-md"
-            onClick={handleWorkoutComplete}
-          >
-            Terminer l'entraînement
-          </Button>
-        </div>
+      <div className="flex justify-center pt-6">
+        <Button 
+          size="lg" 
+          className="w-full max-w-md"
+          onClick={handleWorkoutComplete}
+        >
+          Terminer l'entraînement
+        </Button>
       </div>
     </div>
   );
