@@ -19,13 +19,21 @@ export const WorkoutExerciseDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { exerciseName, sets: initialSets, videoUrl } = location.state || {};
+  
+  // Ensure we have default values if location.state is undefined
+  const defaultState = {
+    exerciseName: "Rowing avec Haltères",
+    sets: [
+      { id: 1, reps: 12, weight: 10 },
+      { id: 2, reps: 12, weight: 10 },
+      { id: 3, reps: 12, weight: 10 },
+    ],
+    videoUrl: null
+  };
 
-  const [sets, setSets] = useState<Set[]>(initialSets || [
-    { id: 1, reps: 14, weight: 8 },
-    { id: 2, reps: 14, weight: 8 },
-    { id: 3, reps: 14, weight: 8 },
-  ]);
+  const { exerciseName, sets: initialSets, videoUrl } = location.state || defaultState;
+
+  const [sets, setSets] = useState<Set[]>(initialSets || defaultState.sets);
   const [notes, setNotes] = useState("");
   const [restTimer, setRestTimer] = useState<number | null>(null);
 
