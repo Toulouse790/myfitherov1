@@ -7,93 +7,16 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  console.log('Function called at:', new Date().toISOString());
-
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { durationDays, maxBudget, calorieTarget, dietaryRestrictions } = await req.json();
-    const openAiKey = Deno.env.get('OPENAI_API_KEY');
-
     console.log('Request parameters:', { durationDays, maxBudget, calorieTarget, dietaryRestrictions });
-    console.log('OpenAI key exists:', !!openAiKey);
 
-    if (!openAiKey) {
-      throw new Error('OpenAI API key is not configured');
-    }
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: `Tu es un expert en nutrition qui génère des plans de repas équilibrés. 
-            Génère un plan de repas sur ${durationDays} jours avec un budget maximum de ${maxBudget}€.
-            Objectif calorique journalier : ${calorieTarget} calories.
-            Restrictions alimentaires : ${dietaryRestrictions?.join(', ') || 'aucune'}.
-            Format de réponse attendu : JSON avec la structure suivante :
-            {
-              "days": [
-                {
-                  "dayNumber": 1,
-                  "meals": {
-                    "breakfast": { "name": "...", "calories": 0, "proteins": 0, "carbs": 0, "fats": 0, "estimated_cost": 0 },
-                    "lunch": { "name": "...", "calories": 0, "proteins": 0, "carbs": 0, "fats": 0, "estimated_cost": 0 },
-                    "dinner": { "name": "...", "calories": 0, "proteins": 0, "carbs": 0, "fats": 0, "estimated_cost": 0 }
-                  }
-                }
-              ]
-            }`
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-      }),
-    });
-
-    console.log('OpenAI API response status:', response.status);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI API error response:', errorText);
-      
-      // Handle quota exceeded error specifically
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ 
-            error: "Le quota OpenAI est dépassé. Veuillez réessayer plus tard ou mettre à jour votre plan OpenAI.",
-            details: errorText
-          }),
-          { 
-            status: 429,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          }
-        );
-      }
-      
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('OpenAI response received successfully');
-
-    let mealPlan;
-    try {
-      const content = data.choices[0].message.content;
-      mealPlan = JSON.parse(content);
-      console.log('Meal plan parsed successfully');
-    } catch (error) {
-      console.error('Failed to parse OpenAI response:', error);
-      throw new Error('Failed to parse meal plan from OpenAI response');
-    }
+    // Générer un plan de repas basique sans IA
+    const mealPlan = generateBasicMealPlan(durationDays, calorieTarget, maxBudget, dietaryRestrictions);
 
     return new Response(
       JSON.stringify({ mealPlan }),
@@ -114,3 +37,39 @@ serve(async (req) => {
     );
   }
 });
+
+function generateBasicMealPlan(durationDays: number, calorieTarget: number, maxBudget: number, dietaryRestrictions: string[]) {
+  const meals = {
+    breakfast: [
+      { name: "Porridge aux fruits", calories: 300, proteins: 10, carbs: 45, fats: 8, estimated_cost: 2 },
+      { name: "Œufs et toast", calories: 350, proteins: 15, carbs: 30, fats: 12, estimated_cost: 2.5 },
+      { name: "Yaourt avec granola", calories: 280, proteins: 12, carbs: 40, fats: 6, estimated_cost: 2 }
+    ],
+    lunch: [
+      { name: "Salade de quinoa", calories: 450, proteins: 18, carbs: 55, fats: 15, estimated_cost: 4 },
+      { name: "Sandwich poulet avocat", calories: 500, proteins: 25, carbs: 45, fats: 18, estimated_cost: 5 },
+      { name: "Bowl de riz aux légumes", calories: 400, proteins: 15, carbs: 60, fats: 10, estimated_cost: 3.5 }
+    ],
+    dinner: [
+      { name: "Saumon grillé et légumes", calories: 550, proteins: 35, carbs: 30, fats: 25, estimated_cost: 6 },
+      { name: "Pâtes aux légumes", calories: 480, proteins: 18, carbs: 70, fats: 12, estimated_cost: 3 },
+      { name: "Poulet rôti et patates", calories: 600, proteins: 40, carbs: 45, fats: 20, estimated_cost: 5 }
+    ]
+  };
+
+  const plan = [];
+  const dailyBudget = maxBudget / durationDays;
+
+  for (let day = 0; day < durationDays; day++) {
+    const dayMeals = {
+      meals: {
+        breakfast: meals.breakfast[day % meals.breakfast.length],
+        lunch: meals.lunch[day % meals.lunch.length],
+        dinner: meals.dinner[day % meals.dinner.length]
+      }
+    };
+    plan.push(dayMeals);
+  }
+
+  return plan;
+}
