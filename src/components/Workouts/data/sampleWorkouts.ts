@@ -2,7 +2,7 @@ export const sampleWorkouts = [
   {
     id: "1",
     title: "Full Body Débutant",
-    muscleGroup: "fullBody",
+    muscleGroups: ["fullBody"],
     difficulty: "beginner",
     duration: 45,
     location: "gym",
@@ -36,7 +36,7 @@ export const sampleWorkouts = [
   {
     id: "2",
     title: "Push Day Intermédiaire",
-    muscleGroup: "chest",
+    muscleGroups: ["chest", "shoulders", "triceps"],
     difficulty: "intermediate",
     duration: 60,
     location: "gym",

@@ -27,7 +27,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
         >
           <WorkoutCard workout={{
             title: workout.title,
-            muscleGroup: workout.muscleGroup,
+            muscleGroup: workout.muscleGroups[0] || "", // Utiliser le premier groupe musculaire comme principal
             exercises: workout.exercises.map(ex => ({
               name: ex.name,
               sets: ex.sets || 3,
