@@ -10,21 +10,23 @@ import { SignUp } from "./components/Auth/SignUp";
 import { InitialQuestionnaire } from "./components/Profile/InitialQuestionnaire";
 import { NextWorkoutDetail } from "./components/Workouts/NextWorkoutDetail";
 import { Toaster } from "@/components/ui/toaster";
+import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/workouts" element={<Workouts />} />
-        <Route path="/workout-exercise/:exerciseId" element={<WorkoutExerciseDetail />} />
-        <Route path="/workouts/exercise/next-workout" element={<NextWorkoutDetail />} />
-        <Route path="/nutrition" element={<Nutrition />} />
-        <Route path="/sleep" element={<Sleep />} />
-        <Route path="/admin" element={<Admin />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/initial-questionnaire" element={<InitialQuestionnaire />} />
+        
+        <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+        <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
+        <Route path="/workout-exercise/:exerciseId" element={<ProtectedRoute><WorkoutExerciseDetail /></ProtectedRoute>} />
+        <Route path="/workouts/exercise/next-workout" element={<ProtectedRoute><NextWorkoutDetail /></ProtectedRoute>} />
+        <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
+        <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+        <Route path="/initial-questionnaire" element={<ProtectedRoute><InitialQuestionnaire /></ProtectedRoute>} />
       </Routes>
       <Toaster />
     </Router>
