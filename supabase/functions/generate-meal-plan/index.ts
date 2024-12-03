@@ -36,7 +36,26 @@ serve(async (req) => {
             Génère un plan de repas sur ${durationDays} jours avec un budget maximum de ${maxBudget}€.
             Objectif calorique journalier : ${calorieTarget} calories.
             Restrictions alimentaires : ${dietaryRestrictions.join(', ')}.
-            Format de réponse : JSON avec structure par jour et par repas, incluant calories, protéines, glucides, lipides et coût estimé.`
+            Format de réponse : JSON avec la structure suivante:
+            [
+              {
+                "day": 1,
+                "meals": [
+                  {
+                    "type": "breakfast|lunch|dinner",
+                    "foods": [
+                      {
+                        "name": "string",
+                        "quantity": "number",
+                        "unit": "string",
+                        "calories": "number",
+                        "proteins": "number"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]`
           }
         ],
         temperature: 0.7,
@@ -44,24 +63,48 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      console.error('OpenAI API error:', await response.text());
+      throw new Error('Failed to get response from OpenAI');
+    }
+
     const data = await response.json();
     console.log('OpenAI response:', data);
 
-    if (!data.choices || !data.choices[0]) {
-      throw new Error('Invalid response from OpenAI');
+    if (!data.choices?.[0]?.message?.content) {
+      console.error('Invalid OpenAI response structure:', data);
+      throw new Error('Invalid response structure from OpenAI');
     }
 
-    const mealPlan = JSON.parse(data.choices[0].message.content);
+    let mealPlan;
+    try {
+      mealPlan = JSON.parse(data.choices[0].message.content);
+    } catch (e) {
+      console.error('Failed to parse OpenAI response:', e);
+      console.error('Raw content:', data.choices[0].message.content);
+      throw new Error('Failed to parse meal plan from OpenAI response');
+    }
+
+    if (!Array.isArray(mealPlan)) {
+      console.error('Meal plan is not an array:', mealPlan);
+      throw new Error('Invalid meal plan format');
+    }
 
     return new Response(
       JSON.stringify({ mealPlan }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error generating meal plan:', error);
+    console.error('Error in generate-meal-plan function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      }),
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     );
   }
 });
