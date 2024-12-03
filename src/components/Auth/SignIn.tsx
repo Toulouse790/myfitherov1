@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 
 export const SignIn = () => {
@@ -20,12 +20,14 @@ export const SignIn = () => {
     setIsLoading(true);
 
     try {
+      console.log("Tentative de connexion avec:", { email }); // Debug log
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        console.error("Erreur de connexion:", error); // Debug log
         let errorMessage = "Une erreur est survenue lors de la connexion";
         
         if (error.message === "Invalid login credentials") {
@@ -45,6 +47,7 @@ export const SignIn = () => {
       }
 
       if (data.user) {
+        console.log("Connexion réussie:", data.user); // Debug log
         toast({
           title: "Connexion réussie",
           description: "Bienvenue !",
