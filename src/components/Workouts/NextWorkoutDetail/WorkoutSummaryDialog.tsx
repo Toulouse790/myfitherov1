@@ -1,13 +1,13 @@
 import {
   AlertDialog,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { formatWorkoutTime } from "../WorkoutTimer";
+import { Clock, Dumbbell, Flame } from "lucide-react";
 
 interface WorkoutSummaryDialogProps {
   open: boolean;
@@ -28,34 +28,58 @@ export const WorkoutSummaryDialog = ({
 }: WorkoutSummaryDialogProps) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-md">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Résumé de l'entraînement</AlertDialogTitle>
-          <AlertDialogDescription asChild>
-            <div className="space-y-6 py-4">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-2xl font-bold text-primary">{formatWorkoutTime(stats.duration)}</p>
-                  <p className="text-sm text-muted-foreground">Durée</p>
-                </div>
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-2xl font-bold text-primary">{stats.totalCalories}</p>
-                  <p className="text-sm text-muted-foreground">Calories</p>
-                </div>
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-2xl font-bold text-primary">{stats.totalWeight}kg</p>
-                  <p className="text-sm text-muted-foreground">Poids total</p>
-                </div>
+      <AlertDialogContent className="max-w-md bg-white dark:bg-[#1E2330] border-none">
+        <AlertDialogHeader className="space-y-6">
+          <AlertDialogTitle className="text-2xl font-semibold text-center">
+            Résumé de l'entraînement
+          </AlertDialogTitle>
+          <div className="grid grid-cols-3 gap-6">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Clock className="w-6 h-6 text-primary" />
               </div>
+              <span className="text-xl font-bold text-primary">
+                {formatWorkoutTime(stats.duration)}
+              </span>
+              <span className="text-sm text-muted-foreground">Durée</span>
             </div>
-          </AlertDialogDescription>
+            
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Flame className="w-6 h-6 text-primary" />
+              </div>
+              <span className="text-xl font-bold text-primary">
+                {stats.totalCalories}
+              </span>
+              <span className="text-sm text-muted-foreground">Calories</span>
+            </div>
+            
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Dumbbell className="w-6 h-6 text-primary" />
+              </div>
+              <span className="text-xl font-bold text-primary">
+                {stats.totalWeight}
+                <span className="text-sm ml-1">kg</span>
+              </span>
+              <span className="text-sm text-muted-foreground">Poids total</span>
+            </div>
+          </div>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Continuer l'entraînement
-          </Button>
-          <Button onClick={onConfirm} className="bg-primary hover:bg-primary/90">
+        
+        <AlertDialogFooter className="flex flex-col gap-2 sm:flex-col">
+          <Button 
+            onClick={onConfirm}
+            className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-6"
+          >
             Terminer l'entraînement
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="w-full border-primary/20 text-primary hover:bg-primary/5"
+          >
+            Continuer l'entraînement
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
