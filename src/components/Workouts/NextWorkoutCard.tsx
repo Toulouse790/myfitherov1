@@ -47,8 +47,7 @@ export const NextWorkoutCard = () => {
         className="absolute top-4 right-4 bg-background/50 backdrop-blur-sm hover:bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         onClick={handleCreateManual}
       >
-        <Plus className="h-4 w-4 mr-1" />
-        <span className="text-xs">Créer manuellement</span>
+        <Plus className="h-4 w-4" />
       </Button>
       
       <div className="p-6 space-y-6">
