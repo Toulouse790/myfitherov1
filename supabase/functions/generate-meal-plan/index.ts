@@ -7,6 +7,8 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  console.log('Function called at:', new Date().toISOString());
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -15,12 +17,12 @@ serve(async (req) => {
     const { durationDays, maxBudget, calorieTarget, dietaryRestrictions } = await req.json();
     const openAiKey = Deno.env.get('OPENAI_API_KEY');
 
-    if (!openAiKey) {
-      console.error('OpenAI API key is not configured in environment variables');
-      throw new Error('Configuration error: OpenAI API key is missing');
-    }
+    console.log('Request parameters:', { durationDays, maxBudget, calorieTarget, dietaryRestrictions });
+    console.log('OpenAI key exists:', !!openAiKey);
 
-    console.log('Request parameters:', { durationDays, maxBudget, calorieTarget });
+    if (!openAiKey) {
+      throw new Error('OpenAI API key is not configured');
+    }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -36,7 +38,7 @@ serve(async (req) => {
             content: `Tu es un expert en nutrition qui génère des plans de repas équilibrés. 
             Génère un plan de repas sur ${durationDays} jours avec un budget maximum de ${maxBudget}€.
             Objectif calorique journalier : ${calorieTarget} calories.
-            Restrictions alimentaires : ${dietaryRestrictions.join(', ')}.
+            Restrictions alimentaires : ${dietaryRestrictions?.join(', ') || 'aucune'}.
             Format de réponse attendu : JSON avec la structure suivante :
             {
               "days": [
@@ -57,6 +59,8 @@ serve(async (req) => {
       }),
     });
 
+    console.log('OpenAI API response status:', response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
       console.error('OpenAI API error response:', errorText);
@@ -70,6 +74,7 @@ serve(async (req) => {
     try {
       const content = data.choices[0].message.content;
       mealPlan = JSON.parse(content);
+      console.log('Meal plan parsed successfully');
     } catch (error) {
       console.error('Failed to parse OpenAI response:', error);
       throw new Error('Failed to parse meal plan from OpenAI response');
