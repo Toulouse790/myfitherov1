@@ -5,45 +5,64 @@ export const armsExercises: Exercise[] = [
     id: "arms-1",
     name: "Curl biceps",
     muscleGroup: "arms",
-    description: "L'exercice classique pour les biceps",
+    description: "L'exercice fondamental pour développer les biceps",
     difficulty: "beginner",
     equipment: "Haltères ou Barre",
     location: ["home", "gym"],
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
     instructions: [
-      "Tenez les poids bras tendus",
+      "Debout, bras le long du corps",
       "Fléchissez les coudes pour monter les poids",
-      "Maintenez la position haute brièvement",
-      "Redescendez lentement"
+      "Contractez les biceps au sommet",
+      "Descendez lentement en contrôlant le mouvement"
     ]
   },
   {
     id: "arms-2",
-    name: "Extensions triceps",
+    name: "Extensions triceps à la poulie haute",
     muscleGroup: "arms",
-    description: "Excellent exercice pour cibler les triceps",
+    description: "Excellent exercice d'isolation pour les triceps",
     difficulty: "beginner",
-    equipment: "Haltère ou Corde",
+    equipment: "Poulie haute",
     location: ["gym"],
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
     instructions: [
-      "Tenez le poids au-dessus de votre tête",
-      "Descendez le poids derrière votre tête",
-      "Étendez les bras vers le haut",
-      "Répétez le mouvement"
+      "Face à la poulie, coudes près du corps",
+      "Tendez les bras vers le bas",
+      "Ne bougez que les avant-bras",
+      "Remontez lentement"
     ]
   },
   {
     id: "arms-3",
+    name: "Curl marteau",
+    muscleGroup: "arms",
+    description: "Variante du curl ciblant le brachial et le long chef du biceps",
+    difficulty: "beginner",
+    equipment: "Haltères",
+    location: ["home", "gym"],
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
+    instructions: [
+      "Debout, haltères en pronation",
+      "Montez les poids en gardant les paumes face à face",
+      "Contractez au sommet",
+      "Descendez en contrôlant"
+    ]
+  },
+  {
+    id: "arms-4",
     name: "Dips",
     muscleGroup: "arms",
-    description: "Exercice composé pour triceps et pectoraux",
+    description: "Excellent exercice composé pour les triceps",
     difficulty: "intermediate",
-    equipment: "Barres parallèles ou chaise",
-    location: ["home", "outdoor", "gym"],
+    equipment: "Barres parallèles",
+    location: ["gym"],
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
     instructions: [
-      "Placez-vous entre les barres",
-      "Descendez en fléchissant les coudes",
+      "En appui sur les barres",
+      "Fléchissez les coudes pour descendre",
       "Poussez pour remonter",
-      "Gardez le corps droit ou légèrement penché"
+      "Gardez le buste droit ou légèrement penché"
     ]
   }
 ];

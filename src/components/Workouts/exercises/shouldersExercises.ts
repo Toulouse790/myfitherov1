@@ -5,45 +5,48 @@ export const shouldersExercises: Exercise[] = [
     id: "shoulders-1",
     name: "Développé militaire",
     muscleGroup: "shoulders",
-    description: "Exercice fondamental pour les épaules",
+    description: "Exercice fondamental pour développer la force et la masse des épaules",
     difficulty: "intermediate",
     equipment: "Barre ou Haltères",
     location: ["gym"],
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
     instructions: [
-      "Tenez-vous debout ou assis avec le dos droit",
-      "Poussez le poids au-dessus de votre tête",
-      "Descendez le poids au niveau des épaules",
-      "Répétez le mouvement"
+      "Position de départ debout ou assis, dos droit",
+      "Barre ou haltères au niveau des épaules",
+      "Poussez le poids au-dessus de la tête",
+      "Revenez lentement à la position initiale"
     ]
   },
   {
     id: "shoulders-2",
     name: "Élévations latérales",
     muscleGroup: "shoulders",
-    description: "Isolation des deltoïdes moyens",
+    description: "Excellent exercice d'isolation pour développer le volume des deltoïdes moyens",
     difficulty: "beginner",
     equipment: "Haltères",
     location: ["home", "gym"],
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
     instructions: [
-      "Tenez-vous debout avec un haltère dans chaque main",
+      "Debout, haltères le long du corps",
       "Levez les bras sur les côtés jusqu'à l'horizontale",
-      "Maintenez brièvement la position",
-      "Redescendez lentement"
+      "Gardez une légère flexion des coudes",
+      "Contrôlez la descente"
     ]
   },
   {
     id: "shoulders-3",
-    name: "Handstand push-ups",
+    name: "Élévations frontales",
     muscleGroup: "shoulders",
-    description: "Exercice avancé de poids de corps",
-    difficulty: "expert",
-    equipment: "Mur",
-    location: ["home", "outdoor", "gym"],
+    description: "Cible les deltoïdes antérieurs pour des épaules bien développées",
+    difficulty: "beginner",
+    equipment: "Haltères ou Barre",
+    location: ["home", "gym"],
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop",
     instructions: [
-      "Placez-vous en équilibre sur les mains contre un mur",
-      "Fléchissez les bras pour descendre",
-      "Poussez pour remonter",
-      "Maintenez l'alignement du corps"
+      "Debout, poids devant les cuisses",
+      "Levez les poids devant vous jusqu'à l'horizontale",
+      "Maintenez brièvement la position haute",
+      "Revenez lentement à la position initiale"
     ]
   }
 ];
