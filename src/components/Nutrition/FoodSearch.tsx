@@ -73,7 +73,7 @@ export const FoodSearch = ({ entries, onDeleteEntry }: FoodSearchProps) => {
                         <div className="text-sm text-gray-700 flex gap-3">
                           <span>{entry.calories} kcal</span>
                           <span>•</span>
-                          <span>{entry.proteins}g protéines</span>
+                          <span>{entry.proteins} protéines</span>
                         </div>
                       </div>
                     </div>
