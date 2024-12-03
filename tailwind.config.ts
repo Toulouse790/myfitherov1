@@ -40,8 +40,8 @@ export default {
           foreground: "#6E59A5",
         },
         card: {
-          DEFAULT: "#FFFFFF",
-          foreground: "#1A1F2C", // Violet très foncé pour le texte
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
       },
       borderRadius: {
