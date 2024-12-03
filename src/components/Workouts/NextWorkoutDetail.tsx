@@ -4,12 +4,24 @@ import { Timer, ArrowLeft, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { exerciseImages } from "./data/exerciseImages";
 
 interface Set {
   id: number;
   reps: number;
   weight: number;
 }
+
+const EXERCISES = [
+  "Rowing avec Haltères",
+  "Tirage à la poulie barre en V",
+  "Curl Biceps aux Haltères",
+  "Curl Marteau",
+  "Développé Militaire",
+  "Élévations Latérales",
+  "Crunch",
+  "Planche"
+];
 
 export const NextWorkoutDetail = () => {
   const navigate = useNavigate();
@@ -51,8 +63,16 @@ export const NextWorkoutDetail = () => {
           </div>
 
           <div className="space-y-8">
-            {["Rowing avec Haltères", "Tirage à la poulie barre en V", "Curl Biceps aux Haltères", "Curl Marteau", "Développé Militaire", "Élévations Latérales", "Crunch", "Planche"].map((exercise, index) => (
+            {EXERCISES.map((exercise, index) => (
               <div key={index} className="space-y-4">
+                <div className="relative aspect-video rounded-lg overflow-hidden mb-4">
+                  <img 
+                    src={exerciseImages[exercise]} 
+                    alt={exercise}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                
                 <h2 className="text-xl font-semibold text-white">{exercise}</h2>
                 
                 <div className="grid grid-cols-3 gap-4 mb-4">

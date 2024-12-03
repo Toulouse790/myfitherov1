@@ -3,12 +3,13 @@ import { SkipForward, RotateCcw, Send, Timer, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { exerciseImages } from "./data/exerciseImages";
 
 const SAMPLE_EXERCISES = [
-  "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
-  "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
-  "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
-  "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
+  "Rowing avec Haltères",
+  "Tirage à la poulie barre en V",
+  "Curl Biceps aux Haltères",
+  "Développé Militaire"
 ];
 
 export const NextWorkoutCard = () => {
@@ -67,14 +68,14 @@ export const NextWorkoutCard = () => {
         </div>
         
         <div className="grid grid-cols-4 gap-3">
-          {SAMPLE_EXERCISES.map((img, index) => (
+          {SAMPLE_EXERCISES.map((exerciseName, index) => (
             <div 
               key={index}
               className="aspect-square rounded-xl overflow-hidden bg-[#2A2F3F] hover:ring-2 hover:ring-primary transition-all duration-300 transform hover:scale-105"
             >
               <img 
-                src={img} 
-                alt={`Exercise ${index + 1}`}
+                src={exerciseImages[exerciseName]} 
+                alt={exerciseName}
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
               />
             </div>
