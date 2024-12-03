@@ -3,7 +3,6 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignUpForm } from "./SignUpForm";
 import { useSignup } from "@/hooks/use-signup";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +11,6 @@ export const SignUp = () => {
   const [username, setUsername] = useState("");
   const { signup, isLoading } = useSignup();
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,20 +33,12 @@ export const SignUp = () => {
       return;
     }
 
-    try {
-      const { error } = await signup(email, password, username);
-      if (error?.message.includes("User already registered")) {
-        toast({
-          title: "Compte existant",
-          description: "Un compte existe déjà avec cet email. Redirection vers la page de connexion...",
-          variant: "destructive",
-        });
-        setTimeout(() => navigate("/signin"), 2000);
-      }
-    } catch (error: any) {
+    const { error } = await signup(email, password, username);
+    
+    if (error) {
       toast({
         title: "Erreur",
-        description: error?.message || "Une erreur est survenue lors de l'inscription",
+        description: error.message || "Une erreur est survenue lors de l'inscription",
         variant: "destructive",
       });
     }
