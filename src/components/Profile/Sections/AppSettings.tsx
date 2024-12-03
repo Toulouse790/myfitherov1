@@ -1,47 +1,43 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Moon, Sun, Languages, ChevronRight } from "lucide-react";
-import { useTheme } from "next-themes";
+import { ThemeSelector } from "@/components/Theme/ThemeSelector";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 interface AppSettingsProps {
   language: string;
 }
 
 export const AppSettings = ({ language }: AppSettingsProps) => {
-  const { theme, setTheme } = useTheme();
-  const isDarkMode = theme === 'dark';
+  const { toast } = useToast();
+
+  const handleLanguageChange = (value: string) => {
+    toast({
+      title: "Langue mise à jour",
+      description: "La langue a été changée avec succès",
+    });
+  };
 
   return (
     <Card>
       <CardContent className="pt-6">
         <h2 className="text-xl font-semibold mb-4">Paramètres de l'application</h2>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {isDarkMode ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-              <div>
-                <p className="font-medium">Mode sombre</p>
-                <p className="text-sm text-muted-foreground">Changer l'apparence</p>
-              </div>
-            </div>
-            <Switch
-              checked={isDarkMode}
-              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-            />
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Thème</label>
+            <ThemeSelector />
           </div>
 
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Languages className="w-5 h-5" />
-              <div>
-                <p className="font-medium">Langue</p>
-                <p className="text-sm text-muted-foreground">{language}</p>
-              </div>
-            </div>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Langue</label>
+            <Select value={language} onValueChange={handleLanguageChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionnez la langue" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="fr">Français</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>

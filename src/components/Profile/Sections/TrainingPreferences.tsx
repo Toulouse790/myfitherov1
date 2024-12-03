@@ -14,6 +14,7 @@ interface TrainingPreferencesProps {
 
 export const TrainingPreferences = ({ notifications, onNotificationsChange }: TrainingPreferencesProps) => {
   const { toast } = useToast();
+  const [reminderTime, setReminderTime] = useState<string>("30");
   const [questionnaire, setQuestionnaire] = useState<{
     objective: string;
     training_frequency: string;
@@ -71,6 +72,31 @@ export const TrainingPreferences = ({ notifications, onNotificationsChange }: Tr
     toast({
       title: "Succès",
       description: "Vos préférences ont été mises à jour",
+    });
+  };
+
+  const handleReminderTimeChange = async (value: string) => {
+    setReminderTime(value);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ reminder_time: value })
+      .eq('id', user.id);
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le délai de rappel",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Succès",
+      description: "Le délai de rappel a été mis à jour",
     });
   };
 
@@ -163,18 +189,39 @@ export const TrainingPreferences = ({ notifications, onNotificationsChange }: Tr
           
           <Separator />
           
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5" />
-              <div>
-                <p className="font-medium">Notifications</p>
-                <p className="text-sm text-muted-foreground">Rappels d'entraînement</p>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Bell className="w-5 h-5" />
+                <div>
+                  <p className="font-medium">Notifications</p>
+                  <p className="text-sm text-muted-foreground">Rappels d'entraînement</p>
+                </div>
               </div>
+              <Switch
+                checked={notifications}
+                onCheckedChange={onNotificationsChange}
+              />
             </div>
-            <Switch
-              checked={notifications}
-              onCheckedChange={onNotificationsChange}
-            />
+            
+            {notifications && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Délai de rappel</label>
+                <Select
+                  value={reminderTime}
+                  onValueChange={handleReminderTimeChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionnez le délai" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 minutes avant</SelectItem>
+                    <SelectItem value="60">1 heure avant</SelectItem>
+                    <SelectItem value="120">2 heures avant</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
