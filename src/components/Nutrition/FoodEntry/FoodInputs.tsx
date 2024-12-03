@@ -77,7 +77,7 @@ export const FoodInputs = ({
               <CommandGroup className="max-h-64 overflow-auto">
                 {commonFoods
                   .filter(food => 
-                    food.name.toLowerCase().includes(searchValue.toLowerCase())
+                    food.name.toLowerCase().startsWith(searchValue.toLowerCase())
                   )
                   .map((food) => (
                     <CommandItem
