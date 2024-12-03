@@ -28,23 +28,7 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
       });
 
       if (error) {
-        if (error.message.includes("User already registered")) {
-          toast({
-            title: "Erreur lors de l'inscription",
-            description: "Un compte existe déjà avec cet email. Veuillez vous connecter ou utiliser une autre adresse email.",
-            variant: "destructive",
-          });
-          navigate("/signin");
-          return;
-        }
-
-        const errorMessage = handleSignupError(error);
-        toast({
-          title: "Erreur lors de l'inscription",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        return;
+        return { error };
       }
 
       if (data) {
@@ -59,13 +43,10 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
           navigate("/initial-questionnaire");
         }, 2000);
       }
-    } catch (error) {
-      console.error("Erreur lors de l'inscription:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'inscription",
-        variant: "destructive",
-      });
+
+      return { data };
+    } catch (error: any) {
+      return { error };
     } finally {
       setIsLoading(false);
     }
