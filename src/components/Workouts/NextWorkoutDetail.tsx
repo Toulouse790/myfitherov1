@@ -2,10 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Timer } from "lucide-react";
 import { WorkoutTimer } from "./WorkoutTimer";
 import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
-import { MetricComparison } from "./NextWorkoutDetail/MetricComparison";
 import { supabase } from "@/integrations/supabase/client";
 import {
   AlertDialog,
@@ -18,6 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { ExerciseSets } from "./ExerciseSets";
 
 const SAMPLE_EXERCISES = [
   "Rowing avec Haltères",
@@ -91,16 +90,6 @@ export const NextWorkoutDetail = () => {
 
         <Card className="overflow-hidden border-none bg-card shadow-lg">
           <div className="p-6 space-y-8">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                Dos, Biceps, Épaules
-              </h1>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Timer className="w-4 h-4" />
-                <span>61 mins</span>
-              </div>
-            </div>
-
             {!isWorkoutStarted && (
               <Button 
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
@@ -111,20 +100,18 @@ export const NextWorkoutDetail = () => {
             )}
 
             <div className="space-y-6">
-              <MetricComparison
-                planned={8}
-                actual={currentExerciseIndex !== null ? currentExerciseIndex + 1 : 0}
-                unit="exercices"
-                icon={Timer}
-                label="Progression"
-              />
-
-              <ExerciseList
-                exercises={SAMPLE_EXERCISES}
-                currentExerciseIndex={currentExerciseIndex}
-                isWorkoutStarted={isWorkoutStarted}
-                onExerciseClick={handleExerciseClick}
-              />
+              {currentExerciseIndex !== null && isWorkoutStarted ? (
+                <ExerciseSets
+                  exerciseName={SAMPLE_EXERCISES[currentExerciseIndex]}
+                />
+              ) : (
+                <ExerciseList
+                  exercises={SAMPLE_EXERCISES}
+                  currentExerciseIndex={currentExerciseIndex}
+                  isWorkoutStarted={isWorkoutStarted}
+                  onExerciseClick={handleExerciseClick}
+                />
+              )}
             </div>
           </div>
         </Card>

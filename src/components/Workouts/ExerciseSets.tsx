@@ -19,9 +19,9 @@ interface ExerciseSetsProps {
 
 export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) => {
   const [sets, setSets] = useState<Set[]>(initialSets || [
-    { id: 1, reps: 12, weight: 10, completed: false },
-    { id: 2, reps: 12, weight: 10, completed: false },
-    { id: 3, reps: 12, weight: 10, completed: false },
+    { id: 1, reps: 10, weight: 10, completed: false },
+    { id: 2, reps: 10, weight: 10, completed: false },
+    { id: 3, reps: 10, weight: 10, completed: false },
   ]);
   const [restTimer, setRestTimer] = useState<number | null>(null);
   const [currentSet, setCurrentSet] = useState<number>(1);
@@ -95,6 +95,8 @@ export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) =
 
   return (
     <div className="space-y-6">
+      <h2 className="text-2xl font-bold">{exerciseName}</h2>
+      
       <ProgressBar 
         completedSets={completedSetsCount} 
         totalSets={sets.length} 
