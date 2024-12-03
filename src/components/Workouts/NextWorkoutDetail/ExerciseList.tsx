@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { exerciseImages } from "../data/exerciseImages";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { ExerciseMedia } from "@/types/exercise-media";
 
 interface ExerciseListProps {
   exercises: string[];
@@ -24,13 +25,13 @@ export const ExerciseList = ({
       try {
         const { data, error } = await supabase
           .from('exercise_media')
-          .select('exercise_name, media_url')
+          .select('*')
           .in('exercise_name', exercises)
           .eq('media_type', 'image');
 
         if (error) throw error;
 
-        const mediaMap = data.reduce((acc, { exercise_name, media_url }) => ({
+        const mediaMap = (data as ExerciseMedia[]).reduce((acc, { exercise_name, media_url }) => ({
           ...acc,
           [exercise_name]: media_url
         }), {});
