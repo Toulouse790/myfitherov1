@@ -78,14 +78,24 @@ export const WorkoutExerciseDetail = () => {
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <Button 
-        variant="ghost" 
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Retour
-      </Button>
+      <div className="flex items-center justify-between gap-4">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Retour
+        </Button>
+
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2 text-primary hover:text-primary/80"
+          onClick={handleAddSet}
+        >
+          <Plus className="w-4 h-4" />
+          Ajouter une série
+        </Button>
+      </div>
 
       <WorkoutTimer />
 
@@ -141,15 +151,6 @@ export const WorkoutExerciseDetail = () => {
                 </div>
               </div>
             )}
-
-            <Button
-              variant="ghost"
-              className="w-full flex items-center gap-2 text-primary hover:text-primary/80"
-              onClick={handleAddSet}
-            >
-              <Plus className="w-4 h-4" />
-              Ajouter une série
-            </Button>
           </div>
 
           <div className="space-y-2">
