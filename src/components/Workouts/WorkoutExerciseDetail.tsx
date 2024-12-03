@@ -1,25 +1,33 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Timer } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { WorkoutTimer } from "./WorkoutTimer";
+import { useToast } from "@/hooks/use-toast";
 
 interface Set {
   id: number;
   reps: number;
   weight: number;
+  completed?: boolean;
 }
 
 export const WorkoutExerciseDetail = () => {
   const { exerciseId } = useParams();
   const navigate = useNavigate();
-  const [sets, setSets] = useState<Set[]>([
+  const location = useLocation();
+  const { toast } = useToast();
+  const { exerciseName, sets: initialSets, videoUrl } = location.state || {};
+
+  const [sets, setSets] = useState<Set[]>(initialSets || [
     { id: 1, reps: 14, weight: 8 },
     { id: 2, reps: 14, weight: 8 },
     { id: 3, reps: 14, weight: 8 },
   ]);
   const [notes, setNotes] = useState("");
+  const [restTimer, setRestTimer] = useState<number | null>(null);
 
   const handleAddSet = () => {
     const newSet = {
@@ -30,8 +38,28 @@ export const WorkoutExerciseDetail = () => {
     setSets([...sets, newSet]);
   };
 
-  const handleStart = () => {
-    // TODO: Implement start workout logic
+  const startRestTimer = () => {
+    setRestTimer(90);
+    const interval = setInterval(() => {
+      setRestTimer((current) => {
+        if (current === null || current <= 1) {
+          clearInterval(interval);
+          toast({
+            title: "Repos terminé !",
+            description: "C'est reparti ! Commencez la série suivante.",
+          });
+          return null;
+        }
+        return current - 1;
+      });
+    }, 1000);
+  };
+
+  const handleSetComplete = (setId: number) => {
+    setSets(sets.map(set => 
+      set.id === setId ? { ...set, completed: true } : set
+    ));
+    startRestTimer();
   };
 
   return (
@@ -45,27 +73,67 @@ export const WorkoutExerciseDetail = () => {
         Retour
       </Button>
 
+      <WorkoutTimer />
+
       <Card className="bg-[#1E2330]">
         <CardHeader>
-          <CardTitle className="text-2xl text-white">Rowing avec Haltères</CardTitle>
+          <CardTitle className="text-2xl text-white">{exerciseName}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          {videoUrl && (
+            <div className="relative aspect-video rounded-lg overflow-hidden mb-6">
+              <video
+                src={videoUrl}
+                poster={videoUrl}
+                controls
+                className="w-full h-full object-cover"
+              >
+                <img 
+                  src={videoUrl} 
+                  alt={exerciseName}
+                  className="w-full h-full object-cover"
+                />
+              </video>
+            </div>
+          )}
+
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-white">Ensembles efficaces</h2>
+            <h2 className="text-xl font-semibold text-white">Séries</h2>
             
             <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="text-sm text-gray-400">SET</div>
-              <div className="text-sm text-gray-400">RÉPÉTITIONS PAR BRAS</div>
-              <div className="text-sm text-gray-400">KG PAR HALTÈRE</div>
+              <div className="text-sm text-gray-400">SÉRIE</div>
+              <div className="text-sm text-gray-400">RÉPÉTITIONS</div>
+              <div className="text-sm text-gray-400">KG</div>
             </div>
 
             {sets.map((set) => (
               <div key={set.id} className="grid grid-cols-3 gap-4 bg-[#252B3B] p-4 rounded-lg">
                 <div className="text-white">{set.id}</div>
                 <div className="text-white">{set.reps}</div>
-                <div className="text-white">{set.weight}</div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white">{set.weight}</span>
+                  {!set.completed && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSetComplete(set.id)}
+                      disabled={restTimer !== null}
+                    >
+                      Valider
+                    </Button>
+                  )}
+                </div>
               </div>
             ))}
+
+            {restTimer !== null && (
+              <div className="fixed bottom-20 right-4 bg-primary text-primary-foreground px-6 py-3 rounded-full animate-pulse">
+                <div className="flex items-center gap-2">
+                  <Timer className="h-5 w-5" />
+                  <span className="font-medium">Repos: {restTimer}s</span>
+                </div>
+              </div>
+            )}
 
             <Button
               variant="ghost"
@@ -86,13 +154,6 @@ export const WorkoutExerciseDetail = () => {
               className="bg-[#252B3B] border-0 text-white placeholder:text-gray-500"
             />
           </div>
-
-          <Button 
-            className="w-full bg-[#90EE90] hover:bg-[#90EE90]/80 text-black font-semibold py-6"
-            onClick={handleStart}
-          >
-            COMMENCER
-          </Button>
         </CardContent>
       </Card>
     </div>
