@@ -8,6 +8,7 @@ import { WorkoutExerciseDetail } from "./components/Workouts/WorkoutExerciseDeta
 import { SignIn } from "./components/Auth/SignIn";
 import { SignUp } from "./components/Auth/SignUp";
 import { InitialQuestionnaire } from "./components/Profile/InitialQuestionnaire";
+import { NextWorkoutDetail } from "./components/Workouts/NextWorkoutDetail";
 import { Toaster } from "@/components/ui/toaster";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/workouts" element={<Workouts />} />
         <Route path="/workout-exercise/:exerciseId" element={<WorkoutExerciseDetail />} />
+        <Route path="/workouts/exercise/next-workout" element={<NextWorkoutDetail />} />
         <Route path="/nutrition" element={<Nutrition />} />
         <Route path="/sleep" element={<Sleep />} />
         <Route path="/admin" element={<Admin />} />
