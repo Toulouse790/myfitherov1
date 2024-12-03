@@ -42,13 +42,45 @@ export const FoodInputs = ({
 }: FoodInputsProps) => {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [selectedFoodBase, setSelectedFoodBase] = useState<{
+    calories: number;
+    proteins: number;
+  } | null>(null);
 
   const handleSelectFood = (selectedFood: typeof commonFoods[0]) => {
     onFoodChange(selectedFood.name);
-    onCaloriesChange(selectedFood.calories.toString());
-    onProteinsChange(selectedFood.proteins.toString());
+    setSelectedFoodBase({
+      calories: selectedFood.calories,
+      proteins: selectedFood.proteins,
+    });
     setIsCustomFood(false);
     setOpen(false);
+
+    // Si un poids est déjà entré, on recalcule les valeurs
+    if (weight) {
+      const weightNum = parseFloat(weight);
+      if (!isNaN(weightNum)) {
+        const newCalories = Math.round((selectedFood.calories * weightNum) / 100);
+        const newProteins = Math.round((selectedFood.proteins * weightNum) / 100);
+        onCaloriesChange(newCalories.toString());
+        onProteinsChange(newProteins.toString());
+      }
+    }
+  };
+
+  const handleWeightChange = (newWeight: string) => {
+    onWeightChange(newWeight);
+    
+    // Si un aliment est sélectionné, on recalcule les valeurs nutritionnelles
+    if (selectedFoodBase && newWeight) {
+      const weightNum = parseFloat(newWeight);
+      if (!isNaN(weightNum)) {
+        const newCalories = Math.round((selectedFoodBase.calories * weightNum) / 100);
+        const newProteins = Math.round((selectedFoodBase.proteins * weightNum) / 100);
+        onCaloriesChange(newCalories.toString());
+        onProteinsChange(newProteins.toString());
+      }
+    }
   };
 
   return (
@@ -102,7 +134,7 @@ export const FoodInputs = ({
           type="number"
           placeholder="Quantité (g)"
           value={weight}
-          onChange={(e) => onWeightChange(e.target.value)}
+          onChange={(e) => handleWeightChange(e.target.value)}
           className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
         />
       </div>
@@ -120,7 +152,8 @@ export const FoodInputs = ({
           placeholder="Protéines (g)"
           value={proteins}
           onChange={(e) => onProteinsChange(e.target.value)}
-          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
+          className={`border-gray-300 text-gray-900 placeholder:text-gray-500 ${isCustomFood ? 'bg-white' : 'bg-gray-50'}`}
+          readOnly={!isCustomFood}
         />
       </div>
     </div>
