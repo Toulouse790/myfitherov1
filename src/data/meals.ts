@@ -56,6 +56,85 @@ export const defaultMeals = {
   }
 };
 
+export const generateVariedMealPlan = (
+  durationDays: number,
+  excludedFoods: string[] = [],
+  allergies: string[] = [],
+  intolerances: string[] = [],
+  targetCalories: number = 2000
+) => {
+  const plan = [];
+  const weekDays = [
+    "Lundi", "Mardi", "Mercredi", "Jeudi",
+    "Vendredi", "Samedi", "Dimanche"
+  ];
+  
+  // Filtrer les alternatives en fonction des restrictions
+  const filterAlternatives = (foods: any[]) => {
+    return foods.filter(food => {
+      const foodName = food.name.toLowerCase();
+      return !excludedFoods.some(excluded => foodName.includes(excluded.toLowerCase())) &&
+             !allergies.some(allergy => foodName.includes(allergy.toLowerCase())) &&
+             !intolerances.some(intolerance => foodName.includes(intolerance.toLowerCase()));
+    });
+  };
+
+  // Générer des alternatives pour chaque repas
+  const generateAlternatives = (meal: any) => {
+    const alternatives = mealVariants[meal.type] || [];
+    return {
+      ...meal,
+      alternatives: filterAlternatives(alternatives)
+    };
+  };
+
+  for (let day = 0; day < durationDays; day++) {
+    const dayIndex = day % 7;
+    const breakfastVariant = mealVariants.breakfast[day % mealVariants.breakfast.length];
+    const lunchVariant = mealVariants.lunch[day % mealVariants.lunch.length];
+    const dinnerVariant = mealVariants.dinner[day % mealVariants.dinner.length];
+
+    // Ajuster les portions en fonction des calories cibles
+    const calorieAdjustment = targetCalories / 2000;
+
+    plan.push({
+      day: weekDays[dayIndex],
+      meals: {
+        breakfast: generateAlternatives({
+          ...defaultMeals.breakfast.meal,
+          ...breakfastVariant,
+          calories: Math.round(breakfastVariant.calories * calorieAdjustment),
+          type: "breakfast"
+        }),
+        morning_snack: generateAlternatives({
+          ...defaultMeals.morning_snack.meal,
+          calories: Math.round(defaultMeals.morning_snack.meal.calories * calorieAdjustment),
+          type: "snack"
+        }),
+        lunch: generateAlternatives({
+          ...defaultMeals.lunch.meal,
+          ...lunchVariant,
+          calories: Math.round(lunchVariant.calories * calorieAdjustment),
+          type: "lunch"
+        }),
+        afternoon_snack: generateAlternatives({
+          ...defaultMeals.afternoon_snack.meal,
+          calories: Math.round(defaultMeals.afternoon_snack.meal.calories * calorieAdjustment),
+          type: "snack"
+        }),
+        dinner: generateAlternatives({
+          ...defaultMeals.dinner.meal,
+          ...dinnerVariant,
+          calories: Math.round(dinnerVariant.calories * calorieAdjustment),
+          type: "dinner"
+        })
+      }
+    });
+  }
+
+  return plan;
+};
+
 // Variantes scientifiquement optimisées pour alterner
 export const mealVariants = {
   breakfast: [
@@ -118,36 +197,4 @@ export const mealVariants = {
       benefits: "Association fer végétal et vitamine C pour absorption optimale"
     }
   ]
-};
-
-// Fonction pour générer un plan de repas varié
-export const generateVariedMealPlan = (durationDays: number) => {
-  const plan = [];
-  
-  for (let day = 0; day < durationDays; day++) {
-    const breakfastVariant = mealVariants.breakfast[day % mealVariants.breakfast.length];
-    const lunchVariant = mealVariants.lunch[day % mealVariants.lunch.length];
-    const dinnerVariant = mealVariants.dinner[day % mealVariants.dinner.length];
-
-    plan.push({
-      meals: {
-        breakfast: {
-          ...defaultMeals.breakfast.meal,
-          ...breakfastVariant
-        },
-        morning_snack: defaultMeals.morning_snack.meal,
-        lunch: {
-          ...defaultMeals.lunch.meal,
-          ...lunchVariant
-        },
-        afternoon_snack: defaultMeals.afternoon_snack.meal,
-        dinner: {
-          ...defaultMeals.dinner.meal,
-          ...dinnerVariant
-        }
-      }
-    });
-  }
-
-  return plan;
 };

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { MealPlan, Meal, FoodItem } from "@/types/nutrition";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MealPlanDisplayProps {
   mealPlan: MealPlan;
@@ -21,7 +22,7 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
 
-  const handleFoodChange = (meal: Meal, oldFood: FoodItem, newFood: FoodItem) => {
+  const handleFoodChange = async (meal: Meal, oldFood: FoodItem, newFood: FoodItem) => {
     const updatedMeals = mealPlan.meals.map((m) => {
       if (m.id === meal.id) {
         const updatedFoods = m.foods.map((f) => 
@@ -51,6 +52,50 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
     });
   };
 
+  const handleExcludeFood = async (food: FoodItem) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: preferences, error } = await supabase
+      .from('user_nutrition_preferences')
+      .select('excluded_foods')
+      .eq('user_id', user.id)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour vos préférences",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const excludedFoods = preferences?.excluded_foods || [];
+    const updatedExcludedFoods = [...excludedFoods, food.name];
+
+    const { error: updateError } = await supabase
+      .from('user_nutrition_preferences')
+      .upsert({
+        user_id: user.id,
+        excluded_foods: updatedExcludedFoods,
+      });
+
+    if (updateError) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour vos préférences",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Préférences mises à jour",
+      description: `${food.name} ne sera plus proposé dans vos menus.`,
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -73,37 +118,46 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
                         {food.quantity} {food.unit} - {food.calories} kcal
                       </p>
                     </div>
-                    {food.alternatives && food.alternatives.length > 0 && (
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            Alternatives
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Alternatives disponibles</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-2">
-                            {food.alternatives.map((alt) => (
-                              <Button
-                                key={alt.id}
-                                variant="ghost"
-                                className="w-full justify-start"
-                                onClick={() => handleFoodChange(meal, food, alt)}
-                              >
-                                <div>
-                                  <p>{alt.name}</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {alt.calories} kcal | {alt.proteins}g protéines
-                                  </p>
-                                </div>
-                              </Button>
-                            ))}
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    )}
+                    <div className="flex gap-2">
+                      {food.alternatives && food.alternatives.length > 0 && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              Alternatives
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Alternatives disponibles</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-2">
+                              {food.alternatives.map((alt) => (
+                                <Button
+                                  key={alt.id}
+                                  variant="ghost"
+                                  className="w-full justify-start"
+                                  onClick={() => handleFoodChange(meal, food, alt)}
+                                >
+                                  <div>
+                                    <p>{alt.name}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {alt.calories} kcal | {alt.proteins}g protéines
+                                    </p>
+                                  </div>
+                                </Button>
+                              ))}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleExcludeFood(food)}
+                      >
+                        Ne plus proposer
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
