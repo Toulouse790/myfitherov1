@@ -7,6 +7,7 @@ import Admin from "./pages/Admin";
 import { WorkoutExerciseDetail } from "./components/Workouts/WorkoutExerciseDetail";
 import { SignIn } from "./components/Auth/SignIn";
 import { SignUp } from "./components/Auth/SignUp";
+import { InitialQuestionnaire } from "./components/Profile/InitialQuestionnaire";
 import { Toaster } from "@/components/ui/toaster";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/initial-questionnaire" element={<InitialQuestionnaire />} />
       </Routes>
       <Toaster />
     </Router>

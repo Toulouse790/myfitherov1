@@ -29,14 +29,14 @@ export const SignUp = () => {
     // Afficher le message de bienvenue
     toast({
       title: "Bienvenue !",
-      description: `${username}, bienvenue dans cette belle aventure ! Commençons ensemble votre parcours fitness.`,
+      description: `${username}, bienvenue dans cette belle aventure ! Configurons ensemble vos préférences.`,
       duration: 5000,
     });
 
     // Simuler un délai pour que l'utilisateur puisse voir le message
     setTimeout(() => {
-      // Rediriger vers la page d'accueil
-      navigate("/");
+      // Rediriger vers le questionnaire initial
+      navigate("/initial-questionnaire");
     }, 2000);
   };
 
