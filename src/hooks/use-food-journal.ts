@@ -113,6 +113,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
       setNewFood(selectedFood.name);
       setBaseCalories(selectedFood.calories);
       setProteins(selectedFood.proteins.toString());
+      // Automatically set the category based on the selected food
+      setSelectedCategory(selectedFood.category);
       // Reset weight and calories when selecting new food
       setWeight("");
       setCalories("");
@@ -126,6 +128,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
       setNewFood(scannedFood.name);
       setBaseCalories(scannedFood.calories);
       setProteins(scannedFood.proteins.toString());
+      // Automatically set the category based on the scanned food
+      setSelectedCategory(scannedFood.category);
       setWeight("");
       setCalories("");
     } else {
