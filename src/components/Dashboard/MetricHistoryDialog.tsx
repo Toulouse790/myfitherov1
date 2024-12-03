@@ -15,6 +15,7 @@ interface MetricHistoryDialogProps {
     label: string;
     value: string;
     color: string;
+    unit: string;
     history: {
       daily: { date: string; value: number }[];
       weekly: { date: string; value: number }[];
@@ -51,7 +52,7 @@ export const MetricHistoryDialog = ({
                     index="date"
                     categories={["value"]}
                     colors={[metric.color]}
-                    valueFormatter={(value: number) => value.toString()}
+                    valueFormatter={(value: number) => `${value} ${metric.unit}`}
                   />
                 </div>
               </Card>

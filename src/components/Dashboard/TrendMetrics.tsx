@@ -24,24 +24,28 @@ const metrics = [
     label: "Entraînements", 
     value: "4", 
     color: "text-blue-400",
+    unit: "séances",
     history: mockHistory
   },
   { 
     label: "Volume", 
     value: "31 209 kg", 
     color: "text-cyan-400",
+    unit: "kg",
     history: mockHistory
   },
   { 
     label: "Calories", 
     value: "1 506", 
     color: "text-pink-400",
+    unit: "kcal",
     history: mockHistory
   },
   { 
     label: "Séries", 
     value: "91", 
     color: "text-purple-400",
+    unit: "séries",
     history: mockHistory
   }
 ];
