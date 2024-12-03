@@ -56,24 +56,38 @@ export const useMealPlanGenerator = ({
         return;
       }
 
-      // Fetch user preferences
-      const { data: preferences, error: preferencesError } = await supabase
+      // First try to get existing preferences
+      let { data: preferences, error: fetchError } = await supabase
         .from('user_nutrition_preferences')
         .select('allergies, intolerances, excluded_foods')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (preferencesError && preferencesError.code !== 'PGRST116') {
-        console.error('Error fetching preferences:', preferencesError);
-        toast({
-          title: "Erreur",
-          description: "Impossible de récupérer vos préférences alimentaires",
-          variant: "destructive",
-        });
-        return;
+      // If no preferences exist, create default ones
+      if (!preferences) {
+        const { data: newPreferences, error: insertError } = await supabase
+          .from('user_nutrition_preferences')
+          .insert({
+            user_id: user.id,
+            allergies: [],
+            intolerances: [],
+            excluded_foods: []
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error('Error creating preferences:', insertError);
+          toast({
+            title: "Erreur",
+            description: "Impossible de créer vos préférences alimentaires",
+            variant: "destructive",
+          });
+          return;
+        }
+        preferences = newPreferences;
       }
 
-      // Use empty arrays if no preferences exist
       const userPreferences = preferences || {
         allergies: [],
         intolerances: [],
