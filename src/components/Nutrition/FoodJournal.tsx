@@ -42,6 +42,7 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
           proteins={proteins}
           weight={weight}
           baseCalories={baseCalories}
+          selectedCategory={selectedCategory}
           onFoodChange={setNewFood}
           onCaloriesChange={setCalories}
           onProteinsChange={setProteins}
