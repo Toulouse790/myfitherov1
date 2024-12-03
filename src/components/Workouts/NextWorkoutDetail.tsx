@@ -48,53 +48,63 @@ export const NextWorkoutDetail = () => {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <Button 
-        variant="ghost" 
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Retour
-      </Button>
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/50 pb-20">
+      <div className="container max-w-4xl mx-auto px-4 py-8 space-y-8">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 hover:bg-background/80"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Retour</span>
+        </Button>
 
-      {isWorkoutStarted && <WorkoutTimer />}
-
-      <Card className="p-6 space-y-6 bg-[#1E2330]">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white">Dos, Biceps, Épaules</h1>
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Timer className="w-4 h-4" />
-            <span>61 mins</span>
+        {isWorkoutStarted && (
+          <div className="animate-fade-in">
+            <WorkoutTimer />
           </div>
-        </div>
-
-        {!isWorkoutStarted && (
-          <Button 
-            className="w-full"
-            onClick={handleStartWorkout}
-          >
-            Commencer l'entraînement
-          </Button>
         )}
 
-        <div className="grid gap-4">
-          <MetricComparison
-            planned={8}
-            actual={currentExerciseIndex !== null ? currentExerciseIndex + 1 : 0}
-            unit="exercices"
-            icon={Timer}
-            label="Progression"
-          />
-        </div>
+        <Card className="overflow-hidden border-none bg-card shadow-lg">
+          <div className="p-6 space-y-8">
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                Dos, Biceps, Épaules
+              </h1>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Timer className="w-4 h-4" />
+                <span>61 mins</span>
+              </div>
+            </div>
 
-        <ExerciseList
-          exercises={SAMPLE_EXERCISES}
-          currentExerciseIndex={currentExerciseIndex}
-          isWorkoutStarted={isWorkoutStarted}
-          onExerciseClick={handleExerciseClick}
-        />
-      </Card>
+            {!isWorkoutStarted && (
+              <Button 
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                onClick={handleStartWorkout}
+              >
+                Commencer l'entraînement
+              </Button>
+            )}
+
+            <div className="space-y-6">
+              <MetricComparison
+                planned={8}
+                actual={currentExerciseIndex !== null ? currentExerciseIndex + 1 : 0}
+                unit="exercices"
+                icon={Timer}
+                label="Progression"
+              />
+
+              <ExerciseList
+                exercises={SAMPLE_EXERCISES}
+                currentExerciseIndex={currentExerciseIndex}
+                isWorkoutStarted={isWorkoutStarted}
+                onExerciseClick={handleExerciseClick}
+              />
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
