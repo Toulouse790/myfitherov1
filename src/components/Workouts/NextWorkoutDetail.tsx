@@ -9,6 +9,7 @@ import { WorkoutTimer } from "./WorkoutTimer";
 import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
 import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
 import { StartWorkoutButton } from "./NextWorkoutDetail/StartWorkoutButton";
+import { exerciseImages } from "./data/exerciseImages";
 
 const EXERCISES = [
   "Rowing avec Haltères",
@@ -44,13 +45,19 @@ export const NextWorkoutDetail = () => {
 
   const startWorkout = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
           { 
-            started_at: new Date().toISOString(), 
-            status: 'in_progress',
-            user_id: (await supabase.auth.getUser()).data.user?.id
+            user_id: user.id,
+            started_at: new Date().toISOString(),
+            status: 'in_progress'
           }
         ])
         .select()
