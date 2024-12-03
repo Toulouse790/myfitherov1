@@ -7,6 +7,8 @@ import { WorkoutFilters } from "./WorkoutFilters";
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { MuscleGroupCard } from "./filters/MuscleGroupCard";
+import { FilterControls } from "./filters/FilterControls";
 
 export const ExerciseLibrary = () => {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("all");
@@ -30,24 +32,81 @@ export const ExerciseLibrary = () => {
     return sortOrder === "asc" ? comparison : -comparison;
   });
 
+  const getSelectedExercisesCount = (muscleId: string): number => {
+    return exercises.filter(ex => {
+      let matches = false;
+      if (muscleId === "fullBody") {
+        matches = true;
+      } else if (muscleId === "biceps" || muscleId === "triceps") {
+        matches = ex.muscleGroup === "arms";
+      } else if (muscleId === "quadriceps" || muscleId === "hamstrings" || muscleId === "glutes") {
+        matches = ex.muscleGroup === "legs";
+      } else if (muscleId === "lower_back") {
+        matches = ex.muscleGroup === "back";
+      } else {
+        matches = ex.muscleGroup === muscleId;
+      }
+      return matches && selectedExercises.includes(ex.id);
+    }).length;
+  };
+
+  const handleMuscleGroupClick = (muscleId: string) => {
+    if (muscleId === selectedMuscleGroup) {
+      const filteredExercises = exercises.filter(ex => {
+        if (muscleId === "fullBody") return true;
+        if (muscleId === "biceps" || muscleId === "triceps") {
+          return ex.muscleGroup === "arms";
+        }
+        if (muscleId === "quadriceps" || muscleId === "hamstrings" || muscleId === "glutes") {
+          return ex.muscleGroup === "legs";
+        }
+        if (muscleId === "lower_back") {
+          return ex.muscleGroup === "back";
+        }
+        return ex.muscleGroup === muscleId;
+      });
+      setSelectedMuscleExercises(filteredExercises);
+      setShowExerciseSelection(true);
+    } else {
+      setSelectedMuscleGroup(muscleId);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <WorkoutFilters
-        muscleGroup={selectedMuscleGroup}
-        difficulty={selectedDifficulty}
-        location={selectedLocation}
-        sortOrder={sortOrder}
-        onMuscleGroupChange={setSelectedMuscleGroup}
-        onDifficultyChange={setSelectedDifficulty}
-        onLocationChange={setSelectedLocation}
-        onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
-        onReset={() => {
-          setSelectedMuscleGroup("all");
-          setSelectedDifficulty("all");
-          setSelectedLocation("all");
-          setSortOrder("asc");
-        }}
-      />
+      <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          {muscleGroups.map((muscle) => (
+            <MuscleGroupCard
+              key={muscle.id}
+              id={muscle.id}
+              name={muscle.name}
+              image={muscle.image}
+              isSelected={selectedMuscleGroup === muscle.id}
+              selectedExercises={getSelectedExercisesCount(muscle.id)}
+              totalExercises={muscle.totalExercises}
+              onClick={() => handleMuscleGroupClick(muscle.id)}
+            />
+          ))}
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <FilterControls
+            difficulty={selectedDifficulty}
+            location={selectedLocation}
+            sortOrder={sortOrder}
+            onDifficultyChange={setSelectedDifficulty}
+            onLocationChange={setSelectedLocation}
+            onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
+            onReset={() => {
+              setSelectedMuscleGroup("all");
+              setSelectedDifficulty("all");
+              setSelectedLocation("all");
+              setSortOrder("asc");
+            }}
+          />
+        </div>
+      </div>
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {filteredExercises.map((exercise) => (
@@ -66,9 +125,8 @@ const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
     outdoor: "Extérieur"
   };
 
-  // Simulons des données d'entraînement (à remplacer par des vraies données plus tard)
-  const completedCount = Math.floor(Math.random() * 5) + 1; // Entre 1 et 5 pour la démo
-  const lastTrainingDate = new Date(); // Date actuelle pour la démo
+  const completedCount = Math.floor(Math.random() * 5) + 1;
+  const lastTrainingDate = new Date();
 
   return (
     <Card 
