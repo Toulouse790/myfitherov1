@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignUpForm } from "./SignUpForm";
 import { useSignup } from "@/hooks/use-signup";
+import { useToast } from "@/hooks/use-toast";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const { signup, isLoading } = useSignup();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
