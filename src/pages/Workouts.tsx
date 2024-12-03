@@ -14,12 +14,16 @@ const Workouts = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [workouts, setWorkouts] = useState(initialWorkouts);
 
+  const handleBack = () => {
+    navigate("/");
+  };
+
   return (
     <div className="container mx-auto px-4 pt-24 pb-12">
       <Button 
         variant="ghost" 
         className="mb-6"
-        onClick={() => navigate(-1)}
+        onClick={handleBack}
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
         Retour
