@@ -75,6 +75,7 @@ const SAMPLE_EXERCISES = [
 export const NextWorkoutDetail = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  
   const totals = SAMPLE_EXERCISES.reduce((acc, exercise) => ({
     plannedDuration: acc.plannedDuration + exercise.planned.duration,
     actualDuration: acc.actualDuration + exercise.actual.duration,
