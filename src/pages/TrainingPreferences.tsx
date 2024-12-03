@@ -1,7 +1,7 @@
-import { TrainingPreferences } from "@/components/Profile/Sections/TrainingPreferences";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { BottomNav } from "@/components/Layout/BottomNav";
 
 const TrainingPreferencesPage = () => {
   const navigate = useNavigate();
@@ -16,9 +16,29 @@ const TrainingPreferencesPage = () => {
         <ArrowLeft className="w-4 h-4 mr-2" />
         Retour
       </Button>
-      
-      <h1 className="text-2xl font-bold">Préférences d'entraînement</h1>
-      <TrainingPreferences />
+
+      <div>
+        <h1 className="text-2xl font-bold mb-6">Préférences d'entraînement</h1>
+        
+        <div className="space-y-6">
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            <h2 className="text-xl font-semibold mb-4">Objectif principal</h2>
+            <p className="text-muted-foreground">Perte de poids</p>
+          </div>
+
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            <h2 className="text-xl font-semibold mb-4">Niveau d'activité</h2>
+            <p className="text-muted-foreground">Intermédiaire</p>
+          </div>
+
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            <h2 className="text-xl font-semibold mb-4">Équipement disponible</h2>
+            <p className="text-muted-foreground">Haltères, tapis de yoga</p>
+          </div>
+        </div>
+      </div>
+
+      <BottomNav />
     </div>
   );
 };
