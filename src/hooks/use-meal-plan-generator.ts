@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { defaultMeals } from "@/data/meals";
+import { defaultMeals, generateVariedMealPlan } from "@/data/meals";
 
 interface UseMealPlanGeneratorProps {
   workoutsPerWeek: number;
@@ -46,27 +46,12 @@ export const useMealPlanGenerator = ({
     setIsGenerating(true);
     try {
       const dailyCalories = calculateDailyCalories();
-      const mockPlan = Array.from({ length: parseInt(durationDays) }, (_, dayIndex) => ({
-        meals: {
-          breakfast: {
-            ...defaultMeals.breakfast.meal,
-          },
-          lunch: {
-            ...defaultMeals.lunch.meal,
-          },
-          dinner: {
-            ...defaultMeals.dinner.meal,
-          },
-          snack: {
-            ...defaultMeals.snack.meal,
-          }
-        }
-      }));
+      const mockPlan = generateVariedMealPlan(parseInt(durationDays));
 
       setGeneratedPlan(mockPlan);
       toast({
         title: "Plan alimentaire généré",
-        description: `Plan sur ${durationDays} jours avec un budget de ${maxBudget}€`,
+        description: `Plan varié sur ${durationDays} jours avec un budget de ${maxBudget}€`,
       });
     } catch (error) {
       console.error('Error generating meal plan:', error);
