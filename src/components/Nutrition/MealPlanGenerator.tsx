@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MealPlanForm } from "./MealPlan/MealPlanForm";
 import { DayMeals } from "./MealPlan/DayMeals";
+import { Lock } from "lucide-react";
 
 interface MealPlanGeneratorProps {
   workoutsPerWeek: number;
@@ -49,58 +50,22 @@ export const MealPlanGenerator = ({
   };
 
   const generateMealPlan = async () => {
-    setIsGenerating(true);
-    try {
-      const dailyCalories = calculateDailyCalories();
-
-      const { data, error } = await supabase.functions.invoke('generate-meal-plan', {
-        body: {
-          durationDays: parseInt(durationDays),
-          maxBudget: parseInt(maxBudget),
-          calorieTarget: dailyCalories,
-          dietaryRestrictions: allergies,
-        },
-      });
-
-      if (error) throw error;
-
-      // Save to Supabase
-      const { data: planData, error: planError } = await supabase
-        .from('meal_plans')
-        .insert({
-          user_id: (await supabase.auth.getUser()).data.user?.id,
-          start_date: new Date().toISOString(),
-          duration_days: parseInt(durationDays),
-          budget_max: parseInt(maxBudget),
-          cheat_meal_day: 7, // Default to Sunday
-        })
-        .select()
-        .single();
-
-      if (planError) throw planError;
-
-      setGeneratedPlan(data.mealPlan);
-      toast({
-        title: "Plan alimentaire généré",
-        description: `Plan sur ${durationDays} jours avec un budget de ${maxBudget}€`,
-      });
-    } catch (error) {
-      console.error('Error generating meal plan:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de générer le plan alimentaire",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGenerating(false);
-    }
+    toast({
+      title: "Fonctionnalité Premium",
+      description: "La génération de plans de repas personnalisés sera bientôt disponible avec notre offre premium.",
+      variant: "default",
+    });
   };
 
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Générer un plan alimentaire personnalisé</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle>Générer un plan alimentaire personnalisé</CardTitle>
+            <Lock className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">(Premium)</span>
+          </div>
         </CardHeader>
         <CardContent>
           <MealPlanForm
