@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
 import { TrainingFrequencyStep } from "./QuestionnaireSteps/TrainingFrequencyStep";
 import { ActivityLevelStep } from "./QuestionnaireSteps/ActivityLevelStep";
