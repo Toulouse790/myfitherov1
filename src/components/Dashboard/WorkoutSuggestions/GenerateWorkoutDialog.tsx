@@ -46,7 +46,7 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
       goal: profile.objective,
       workoutsPerWeek: parseInt(profile.training_frequency),
       dailyCalories: 2500,
-      recoveryCapacity: "medium" as "low" | "medium" | "high" // Type assertion pour garantir le bon type
+      recoveryCapacity: "medium" as "low" | "medium" | "high"
     };
 
     const plan = generateWorkoutPlan(userProfile);
