@@ -16,7 +16,7 @@ export const NextWorkoutCard = () => {
   const { toast } = useToast();
 
   const handleCardClick = () => {
-    navigate('/workouts');
+    navigate('/workouts/exercise/next-workout');
   };
 
   const handleCreateManual = (e: React.MouseEvent) => {
