@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { SkipForward, RotateCcw, Send, Timer } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const SAMPLE_EXERCISES = [
   "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
@@ -9,8 +10,17 @@ const SAMPLE_EXERCISES = [
 ];
 
 export const NextWorkoutCard = () => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate('/workouts');
+  };
+
   return (
-    <Card className="w-full bg-[#1E2330] border-[#2A2F3F] overflow-hidden animate-fade-in">
+    <Card 
+      className="w-full bg-[#1E2330] border-[#2A2F3F] overflow-hidden animate-fade-in cursor-pointer hover:bg-[#252B3B] transition-colors"
+      onClick={handleCardClick}
+    >
       <div className="bg-[#9BB537] text-white px-4 py-2 text-lg font-medium flex items-center justify-between">
         <span>Prochain entraînement</span>
         <Timer className="h-5 w-5" />
@@ -47,13 +57,31 @@ export const NextWorkoutCard = () => {
         </div>
         
         <div className="flex justify-start gap-6 pt-2">
-          <button className="text-gray-300 hover:text-white transition-colors hover:scale-110 transform duration-200">
+          <button 
+            className="text-gray-300 hover:text-white transition-colors hover:scale-110 transform duration-200"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Logique pour passer au suivant
+            }}
+          >
             <SkipForward className="w-6 h-6" />
           </button>
-          <button className="text-gray-300 hover:text-white transition-colors hover:scale-110 transform duration-200">
+          <button 
+            className="text-gray-300 hover:text-white transition-colors hover:scale-110 transform duration-200"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Logique pour recommencer
+            }}
+          >
             <RotateCcw className="w-6 h-6" />
           </button>
-          <button className="text-gray-300 hover:text-white transition-colors hover:scale-110 transform duration-200">
+          <button 
+            className="text-gray-300 hover:text-white transition-colors hover:scale-110 transform duration-200"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Logique pour partager
+            }}
+          >
             <Send className="w-6 h-6" />
           </button>
         </div>
