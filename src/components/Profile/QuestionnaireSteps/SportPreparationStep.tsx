@@ -15,20 +15,20 @@ export const SportPreparationStep = ({
       <h3 className="font-medium">Combien de temps avez-vous besoin pour vous préparer ?</h3>
       <RadioGroup value={preparationTime} onValueChange={onPreparationTimeChange}>
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="15" id="15min" />
-          <Label htmlFor="15min">15 minutes - Préparation rapide</Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="30" id="30min" />
-          <Label htmlFor="30min">30 minutes - Préparation standard</Label>
-        </div>
-        <div className="flex items-center space-x-2">
           <RadioGroupItem value="45" id="45min" />
-          <Label htmlFor="45min">45 minutes - Préparation complète</Label>
+          <Label htmlFor="45min">45 minutes - Préparation standard</Label>
         </div>
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="60" id="60min" />
-          <Label htmlFor="60min">60 minutes - Préparation détaillée</Label>
+          <Label htmlFor="60min">60 minutes - Préparation complète</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="90" id="90min" />
+          <Label htmlFor="90min">90 minutes - Préparation détaillée</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="120" id="120min" />
+          <Label htmlFor="120min">120 minutes - Préparation approfondie</Label>
         </div>
       </RadioGroup>
     </div>
