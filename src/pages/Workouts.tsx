@@ -5,6 +5,7 @@ import { WorkoutList } from "@/components/Workouts/WorkoutList";
 import { WorkoutFilters } from "@/components/Workouts/WorkoutFilters";
 import { workouts as initialWorkouts } from "@/components/Workouts/workoutConstants";
 import { useState } from "react";
+import { BottomNav } from "@/components/Layout/BottomNav";
 
 const Workouts = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Workouts = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-12">
+    <div className="container mx-auto px-4 pt-24 pb-24">
       <Button 
         variant="ghost" 
         onClick={handleBack}
@@ -49,6 +50,8 @@ const Workouts = () => {
         />
         <WorkoutList workouts={workouts} />
       </div>
+
+      <BottomNav />
     </div>
   );
 };

@@ -1,71 +1,16 @@
-import { Header } from "@/components/Layout/Header";
-import { BarChart } from "@/components/ui/chart";
+import { SleepTracker } from "@/components/Sleep/SleepTracker";
 import { ConnectedDevices } from "@/components/Sleep/ConnectedDevices";
+import { BottomNav } from "@/components/Layout/BottomNav";
 
 const Sleep = () => {
-  const sleepData = [
-    { name: 'Lun', hours: 7.5 },
-    { name: 'Mar', hours: 8 },
-    { name: 'Mer', hours: 6.5 },
-    { name: 'Jeu', hours: 7 },
-    { name: 'Ven', hours: 8.5 },
-    { name: 'Sam', hours: 9 },
-    { name: 'Dim', hours: 8 },
-  ];
-
-  const formatTime = (hours: number) => {
-    const h = Math.floor(hours);
-    const m = Math.round((hours - h) * 60);
-    return `${h}h${m > 0 ? ` ${m}min` : ''}`;
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto px-4 pt-24 pb-12 space-y-8">
-        <h1 className="text-3xl font-bold">Sommeil</h1>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <h3 className="text-xl font-semibold mb-4">Moyenne de sommeil</h3>
-            <p className="text-4xl font-bold text-primary">{formatTime(7.8)}</p>
-            <p className="text-sm text-muted-foreground mt-2">Cette semaine</p>
-          </div>
-
-          <div className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <h3 className="text-xl font-semibold mb-4">Qualité du sommeil</h3>
-            <p className="text-4xl font-bold text-primary">85%</p>
-            <p className="text-sm text-muted-foreground mt-2">Score moyen</p>
-          </div>
-
-          <div className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <h3 className="text-xl font-semibold mb-4">Objectif</h3>
-            <p className="text-4xl font-bold text-primary">8h</p>
-            <p className="text-sm text-muted-foreground mt-2">Par nuit</p>
-          </div>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-              <h2 className="text-2xl font-semibold mb-4">Historique du sommeil</h2>
-              <div className="h-[300px]">
-                <BarChart
-                  data={sleepData}
-                  index="name"
-                  categories={['hours']}
-                  colors={['#8B5CF6']}
-                  valueFormatter={(value) => `${value}h`}
-                  yAxisWidth={40}
-                />
-              </div>
-            </div>
-          </div>
-          <div>
-            <ConnectedDevices />
-          </div>
-        </div>
-      </main>
+    <div className="container mx-auto p-4 pb-24">
+      <h1 className="text-2xl font-bold mb-6">Sommeil</h1>
+      <div className="space-y-6">
+        <SleepTracker />
+        <ConnectedDevices />
+      </div>
+      <BottomNav />
     </div>
   );
 };

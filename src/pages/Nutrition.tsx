@@ -5,6 +5,7 @@ import { MealPlanGenerator } from "@/components/Nutrition/MealPlanGenerator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Target, LineChart } from "lucide-react";
+import { BottomNav } from "@/components/Layout/BottomNav";
 
 const Nutrition = () => {
   const mockUserData = {
@@ -24,7 +25,7 @@ const Nutrition = () => {
   };
 
   return (
-    <div className="container mx-auto p-2 animate-fade-up">
+    <div className="container mx-auto p-2 pb-24 animate-fade-up">
       <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-3">Nutrition</h1>
 
       <Tabs defaultValue="overview" className="space-y-3">
@@ -57,6 +58,8 @@ const Nutrition = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      <BottomNav />
     </div>
   );
 };
