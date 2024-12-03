@@ -30,9 +30,9 @@ export const WorkoutTimer = () => {
   };
 
   return (
-    <div className="fixed top-20 right-4 bg-primary/10 backdrop-blur-sm rounded-lg p-3 flex items-center gap-2 text-primary">
-      <Timer className="h-5 w-5" />
-      <span className="font-mono font-medium">{formatTime(seconds)}</span>
+    <div className="fixed top-16 right-4 bg-primary/10 backdrop-blur-sm rounded-lg p-2 flex items-center gap-1.5 text-primary text-sm">
+      <Timer className="h-4 w-4" />
+      <span className="font-mono text-sm">{formatTime(seconds)}</span>
     </div>
   );
 };
