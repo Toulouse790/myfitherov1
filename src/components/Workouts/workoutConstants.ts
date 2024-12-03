@@ -107,6 +107,15 @@ export interface WorkoutFormData {
   location: string;
 }
 
+export const initialFormData: WorkoutFormData = {
+  title: "",
+  muscleGroup: "",
+  duration: "45",
+  exercises: "",
+  difficulty: "beginner",
+  location: "home"
+};
+
 export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercises'> {
   id: string;
   duration: number;
