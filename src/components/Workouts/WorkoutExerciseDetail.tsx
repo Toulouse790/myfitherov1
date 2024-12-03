@@ -1,15 +1,32 @@
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Timer, Dumbbell } from "lucide-react";
 import { ExerciseSets } from "./ExerciseSets";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { exercises } from "./exerciseLibrary";
 
-interface WorkoutExerciseDetailProps {
-  onBack: () => void;
-}
+export const WorkoutExerciseDetail = () => {
+  const { exerciseId } = useParams();
+  const navigate = useNavigate();
+  const exercise = exercises.find(ex => ex.id === exerciseId);
 
-export const WorkoutExerciseDetail = ({ onBack }: WorkoutExerciseDetailProps) => {
-  const { toast } = useToast();
+  if (!exercise) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 pt-16 pb-12">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Retour
+          </Button>
+          <p className="text-center mt-8">Exercice non trouvé</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -17,7 +34,7 @@ export const WorkoutExerciseDetail = ({ onBack }: WorkoutExerciseDetailProps) =>
         <div className="flex items-center justify-between mb-6">
           <Button
             variant="ghost"
-            onClick={onBack}
+            onClick={() => navigate(-1)}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -35,15 +52,15 @@ export const WorkoutExerciseDetail = ({ onBack }: WorkoutExerciseDetailProps) =>
               <Dumbbell className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Rowing avec Haltères</h1>
+              <h1 className="text-2xl font-bold">{exercise.name}</h1>
               <p className="text-muted-foreground">
-                Exercice pour le dos et les biceps
+                {exercise.description}
               </p>
             </div>
           </div>
 
           <ExerciseSets 
-            exerciseName="Rowing avec Haltères"
+            exerciseName={exercise.name}
             initialSets={[
               { id: 1, reps: 12, weight: 10, completed: false },
               { id: 2, reps: 12, weight: 10, completed: false },

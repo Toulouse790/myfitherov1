@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { exercises, Exercise } from "./exerciseLibrary";
 import { muscleGroups, difficultyLevels } from "./workoutConstants";
@@ -55,6 +56,7 @@ export const ExerciseLibrary = () => {
 };
 
 const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
+  const navigate = useNavigate();
   const locationLabels = {
     home: "Maison",
     gym: "Salle de sport",
@@ -62,7 +64,10 @@ const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
   };
 
   return (
-    <Card className="h-full">
+    <Card 
+      className="h-full cursor-pointer hover:bg-accent/5 transition-colors"
+      onClick={() => navigate(`/workout-exercise/${exercise.id}`)}
+    >
       <CardHeader className="space-y-1">
         <CardTitle className="text-lg sm:text-xl line-clamp-2">{exercise.name}</CardTitle>
       </CardHeader>
