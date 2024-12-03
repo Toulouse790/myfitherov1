@@ -144,6 +144,50 @@ export type Database = {
           },
         ]
       }
+      user_suggested_foods: {
+        Row: {
+          calories: number
+          category: string
+          created_at: string
+          id: string
+          name: string
+          proteins: number
+          status: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          calories: number
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          proteins: number
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          calories?: number
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          proteins?: number
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_suggested_foods_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workout_sessions: {
         Row: {
           created_at: string | null
