@@ -12,7 +12,7 @@ const Index = () => {
   useWelcomeToast();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Header />
       
       <main className="container max-w-4xl mx-auto px-4 pt-16 pb-20">

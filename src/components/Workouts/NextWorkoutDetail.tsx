@@ -87,20 +87,20 @@ export const NextWorkoutDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1F2C]">
+    <div className="min-h-screen bg-white">
       <div className="container max-w-2xl mx-auto px-4 py-8 space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold text-white">Dos, Biceps & Épaules</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Dos, Biceps & Épaules</h1>
           <div className="flex justify-center gap-6">
-            <div className="flex items-center gap-2 text-gray-400">
+            <div className="flex items-center gap-2 text-gray-600">
               <Timer className="w-5 h-5" />
               <span>61 mins</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-400">
+            <div className="flex items-center gap-2 text-gray-600">
               <Dumbbell className="w-5 h-5" />
               <span>8 exercices</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-400">
+            <div className="flex items-center gap-2 text-gray-600">
               <Flame className="w-5 h-5" />
               <span>~350 kcal</span>
             </div>
@@ -109,14 +109,14 @@ export const NextWorkoutDetail = () => {
 
         {!isWorkoutStarted ? (
           <div className="space-y-8">
-            <Card className="bg-[#1E2330] border-none p-6">
+            <Card className="bg-white border p-6">
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-white">Exercices prévus</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Exercices prévus</h2>
                 <div className="grid gap-4">
                   {SAMPLE_EXERCISES.map((exercise, index) => (
                     <div 
                       key={index}
-                      className="p-4 rounded-lg bg-[#252B3B] text-white hover:bg-[#2A2F3F] transition-colors"
+                      className="p-4 rounded-lg bg-gray-50 text-gray-900 hover:bg-gray-100 transition-colors"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -124,7 +124,7 @@ export const NextWorkoutDetail = () => {
                         </div>
                         <div>
                           <h3 className="font-medium">{exercise}</h3>
-                          <p className="text-sm text-gray-400">3 séries • 12 répétitions</p>
+                          <p className="text-sm text-gray-600">3 séries • 12 répétitions</p>
                         </div>
                       </div>
                     </div>
@@ -143,7 +143,7 @@ export const NextWorkoutDetail = () => {
             </div>
           </div>
         ) : (
-          <Card className="bg-[#1E2330] border-none">
+          <Card className="bg-white border">
             <div className="p-4 space-y-6">
               {currentExerciseIndex !== null && (
                 <ExerciseSets
