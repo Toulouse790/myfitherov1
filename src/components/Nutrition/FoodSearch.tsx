@@ -38,7 +38,7 @@ export const FoodSearch = ({
   return (
     <div className="space-y-4">
       <Tabs defaultValue={selectedCategory} onValueChange={onCategoryChange}>
-        <TabsList className="w-full flex-wrap h-auto bg-muted/30">
+        <TabsList className="w-full flex-wrap h-auto bg-white border">
           {categories.map((category) => (
             <TabsTrigger 
               key={category.value} 
@@ -59,7 +59,7 @@ export const FoodSearch = ({
                     <Button
                       key={food.id}
                       variant="ghost"
-                      className="w-full justify-start h-auto py-3 px-4 hover:bg-muted/50 animate-fade-up"
+                      className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-muted/10 text-foreground animate-fade-up"
                       onClick={() => onSelectFood(food.id)}
                     >
                       <div className="text-left space-y-1">

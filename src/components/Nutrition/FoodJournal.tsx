@@ -31,9 +31,9 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
   } = useFoodJournal();
 
   return (
-    <Card>
+    <Card className="bg-gray-50">
       <CardHeader>
-        <CardTitle>Journal alimentaire</CardTitle>
+        <CardTitle className="text-foreground">Journal alimentaire</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <BarcodeScanner onScan={handleBarcodeScan} />

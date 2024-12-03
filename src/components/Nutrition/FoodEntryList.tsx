@@ -11,13 +11,13 @@ interface FoodEntryListProps {
 
 export const FoodEntryList = ({ entries, onDeleteEntry }: FoodEntryListProps) => {
   return (
-    <Card className="p-4 bg-muted/30">
+    <Card className="p-4 bg-white shadow-sm">
       <ScrollArea className="h-[300px]">
         <div className="space-y-2">
           {entries.map((entry, index) => (
             <div
               key={entry.id}
-              className="flex items-center justify-between p-3 rounded-lg bg-white/50 hover:bg-white/70 transition-colors animate-fade-up"
+              className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors animate-fade-up"
               style={{ 
                 animationDelay: `${index * 50}ms`,
                 animationFillMode: 'backwards'
