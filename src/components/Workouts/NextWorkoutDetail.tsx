@@ -133,12 +133,14 @@ export const NextWorkoutDetail = () => {
               </div>
             </Card>
             
-            <Button 
-              className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-6 text-lg"
-              onClick={handleStartWorkout}
-            >
-              Commencer l'entraînement
-            </Button>
+            <div className="flex justify-center">
+              <Button 
+                className="w-64 bg-gradient-to-r from-primary to-secondary hover:scale-105 transform transition-all duration-300 text-white font-bold py-6 text-xl rounded-full shadow-lg hover:shadow-xl"
+                onClick={handleStartWorkout}
+              >
+                🔥 C'EST PARTI ! 💪
+              </Button>
+            </div>
           </div>
         ) : (
           <Card className="bg-[#1E2330] border-none">
