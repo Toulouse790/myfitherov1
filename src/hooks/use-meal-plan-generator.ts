@@ -56,38 +56,34 @@ export const useMealPlanGenerator = ({
         return;
       }
 
-      const { data: preferences, error } = await supabase
-        .from('user_nutrition_preferences')
-        .select('allergies, intolerances, excluded_foods')
-        .eq('user_id', user.id)
-        .single();
+      // Default preferences if none exist
+      let userPreferences = {
+        allergies: [] as string[],
+        intolerances: [] as string[],
+        excluded_foods: [] as string[]
+      };
 
-      // If no preferences exist yet, create an empty record
-      if (error && error.code === 'PGRST116') {
-        await supabase
+      try {
+        const { data: preferences, error } = await supabase
           .from('user_nutrition_preferences')
-          .insert({
-            user_id: user.id,
-            allergies: [],
-            intolerances: [],
-            excluded_foods: []
-          });
-      } else if (error) {
+          .select('allergies, intolerances, excluded_foods')
+          .eq('user_id', user.id)
+          .single();
+
+        if (preferences) {
+          userPreferences = preferences;
+        }
+      } catch (error) {
         console.error('Error fetching preferences:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de récupérer vos préférences alimentaires",
-          variant: "destructive",
-        });
-        return;
+        // Continue with default preferences
       }
 
       const dailyCalories = calculateDailyCalories();
       const mockPlan = generateVariedMealPlan(
         parseInt(durationDays),
-        preferences?.excluded_foods || [],
-        preferences?.allergies || [],
-        preferences?.intolerances || [],
+        userPreferences.excluded_foods,
+        userPreferences.allergies,
+        userPreferences.intolerances,
         dailyCalories
       );
 
