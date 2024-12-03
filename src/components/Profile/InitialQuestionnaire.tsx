@@ -6,6 +6,7 @@ import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
 import { PersonalInfoStep } from "./QuestionnaireSteps/PersonalInfoStep";
 import { TrainingFrequencyStep } from "./QuestionnaireSteps/TrainingFrequencyStep";
 import { TrainingLocationStep } from "./QuestionnaireSteps/TrainingLocationStep";
+import { ActivityLevelStep } from "./QuestionnaireSteps/ActivityLevelStep";
 import { useNavigate } from "react-router-dom";
 
 interface QuestionnaireData {
@@ -19,6 +20,7 @@ interface QuestionnaireData {
   allergies: string[];
   dietaryRestrictions: string[];
   trainingLocation: string;
+  activityLevel: string;
 }
 
 export const InitialQuestionnaire = () => {
@@ -36,18 +38,20 @@ export const InitialQuestionnaire = () => {
     allergies: [],
     dietaryRestrictions: [],
     trainingLocation: "",
+    activityLevel: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem("userPreferences", JSON.stringify({
-      workoutDuration: formData.workoutDuration
+      workoutDuration: formData.workoutDuration,
+      activityLevel: formData.activityLevel
     }));
     toast({
       title: "Profil complété !",
       description: "Vos préférences ont été enregistrées avec succès.",
     });
-    navigate("/workouts");
+    navigate("/");
   };
 
   const updateFormData = (field: keyof QuestionnaireData, value: any) => {
@@ -79,6 +83,13 @@ export const InitialQuestionnaire = () => {
         );
       case 3:
         return (
+          <ActivityLevelStep
+            activityLevel={formData.activityLevel}
+            onActivityLevelChange={(value) => updateFormData("activityLevel", value)}
+          />
+        );
+      case 4:
+        return (
           <TrainingFrequencyStep
             workoutsPerWeek={formData.workoutsPerWeek}
             onWorkoutsPerWeekChange={(value) => updateFormData("workoutsPerWeek", value)}
@@ -86,7 +97,7 @@ export const InitialQuestionnaire = () => {
             onWorkoutDurationChange={(value) => updateFormData("workoutDuration", value)}
           />
         );
-      case 4:
+      case 5:
         return (
           <TrainingLocationStep
             trainingLocation={formData.trainingLocation}
@@ -116,10 +127,10 @@ export const InitialQuestionnaire = () => {
               >
                 Précédent
               </Button>
-              {currentStep < 4 ? (
+              {currentStep < 5 ? (
                 <Button
                   type="button"
-                  onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
+                  onClick={() => setCurrentStep(Math.min(5, currentStep + 1))}
                 >
                   Suivant
                 </Button>
