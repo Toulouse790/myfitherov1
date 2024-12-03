@@ -6,6 +6,7 @@ import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
 import { PersonalInfoStep } from "./QuestionnaireSteps/PersonalInfoStep";
 import { TrainingFrequencyStep } from "./QuestionnaireSteps/TrainingFrequencyStep";
 import { TrainingLocationStep } from "./QuestionnaireSteps/TrainingLocationStep";
+import { SportPreparationStep } from "./QuestionnaireSteps/SportPreparationStep";
 
 interface QuestionnaireData {
   objective: string;
@@ -18,6 +19,7 @@ interface QuestionnaireData {
   allergies: string[];
   dietaryRestrictions: string[];
   trainingLocation: string;
+  preparationTime: string;
 }
 
 export const InitialQuestionnaire = () => {
@@ -34,13 +36,14 @@ export const InitialQuestionnaire = () => {
     allergies: [],
     dietaryRestrictions: [],
     trainingLocation: "",
+    preparationTime: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Save workout duration to localStorage
     localStorage.setItem("userPreferences", JSON.stringify({
-      workoutDuration: formData.workoutDuration
+      workoutDuration: formData.workoutDuration,
+      preparationTime: formData.preparationTime
     }));
     toast({
       title: "Profil complété !",
@@ -91,6 +94,13 @@ export const InitialQuestionnaire = () => {
             onTrainingLocationChange={(value) => updateFormData("trainingLocation", value)}
           />
         );
+      case 5:
+        return (
+          <SportPreparationStep
+            preparationTime={formData.preparationTime}
+            onPreparationTimeChange={(value) => updateFormData("preparationTime", value)}
+          />
+        );
       default:
         return null;
     }
@@ -113,10 +123,10 @@ export const InitialQuestionnaire = () => {
             >
               Précédent
             </Button>
-            {currentStep < 4 ? (
+            {currentStep < 5 ? (
               <Button
                 type="button"
-                onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
+                onClick={() => setCurrentStep(Math.min(5, currentStep + 1))}
               >
                 Suivant
               </Button>
