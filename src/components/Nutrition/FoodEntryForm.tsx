@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ interface FoodEntryFormProps {
   proteins: string;
   weight: string;
   baseCalories: number;
+  selectedCategory: string;
   onFoodChange: (value: string) => void;
   onCaloriesChange: (value: string) => void;
   onProteinsChange: (value: string) => void;
@@ -31,6 +33,7 @@ export const FoodEntryForm = ({
   proteins,
   weight,
   baseCalories,
+  selectedCategory,
   onFoodChange,
   onCaloriesChange,
   onProteinsChange,
