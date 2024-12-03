@@ -41,8 +41,39 @@ export const InitialQuestionnaire = () => {
     activityLevel: "",
   });
 
+  const checkOvertrainingRisk = () => {
+    const workoutsPerWeek = parseInt(formData.workoutsPerWeek);
+    const workoutDuration = parseInt(formData.workoutDuration);
+    const totalWeeklyTrainingMinutes = workoutsPerWeek * workoutDuration;
+    
+    // Facteurs de risque basés sur la littérature scientifique
+    const isHighRisk = () => {
+      // Plus de 6 séances par semaine est considéré comme risqué
+      if (workoutsPerWeek > 6) return true;
+      
+      // Plus de 10 heures d'entraînement par semaine pour un non-athlète
+      if (totalWeeklyTrainingMinutes > 600) return true;
+      
+      // Combinaison d'activité intense quotidienne et d'entraînement fréquent
+      if (formData.activityLevel === "very_active" && workoutsPerWeek > 5) return true;
+      if (formData.activityLevel === "extra_active" && workoutsPerWeek > 4) return true;
+      
+      return false;
+    };
+
+    if (isHighRisk()) {
+      toast({
+        title: "Attention au surentraînement",
+        description: "Votre programme d'entraînement est très intense. Pensez à inclure suffisamment de repos et à écouter votre corps. Il est recommandé de commencer progressivement et d'augmenter l'intensité au fil du temps.",
+        variant: "destructive",
+        duration: 6000,
+      });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    checkOvertrainingRisk();
     localStorage.setItem("userPreferences", JSON.stringify({
       workoutDuration: formData.workoutDuration,
       activityLevel: formData.activityLevel
