@@ -43,7 +43,7 @@ export const FoodSearch = ({
             <TabsTrigger 
               key={category.value} 
               value={category.value}
-              className="text-gray-700 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+              className="text-gray-700 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               {category.label}
             </TabsTrigger>
@@ -59,7 +59,7 @@ export const FoodSearch = ({
                     <Button
                       key={food.id}
                       variant="ghost"
-                      className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-gray-50 text-gray-800"
+                      className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-primary/10 text-gray-800 hover:text-gray-900"
                       onClick={() => onSelectFood(food.id)}
                     >
                       <div className="text-left space-y-1">
