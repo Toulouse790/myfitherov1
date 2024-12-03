@@ -32,6 +32,8 @@ export const SignIn = () => {
           errorMessage = "Email ou mot de passe incorrect";
         } else if (error.message === "Email not confirmed") {
           errorMessage = "Veuillez confirmer votre email avant de vous connecter";
+        } else if (error.message === "Failed to fetch") {
+          errorMessage = "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet.";
         }
         
         toast({
