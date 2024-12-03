@@ -17,7 +17,7 @@ export interface FoodJournalActions {
   setProteins: (value: string) => void;
   setWeight: (value: string) => void;
   setSelectedCategory: (value: string) => void;
-  handleAddEntry: () => Promise<void>;
+  handleAddEntry: (mealType: string) => Promise<void>;
   handleSelectFood: (foodId: string) => void;
   handleBarcodeScan: (barcode: string) => Promise<void>;
   handleDeleteEntry: (id: string) => Promise<void>;
