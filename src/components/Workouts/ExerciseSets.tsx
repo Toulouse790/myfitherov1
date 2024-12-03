@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Plus, Timer, Flame, Check, ChevronUp, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress";
+import { SetCard } from "./ExerciseSets/SetCard";
+import { RestTimer } from "./ExerciseSets/RestTimer";
+import { ProgressBar } from "./ExerciseSets/ProgressBar";
 
 interface Set {
   id: number;
@@ -92,115 +91,34 @@ export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) =
     }));
   };
 
-  const progress = (sets.filter(set => set.completed).length / sets.length) * 100;
+  const completedSetsCount = sets.filter(set => set.completed).length;
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <div className="flex justify-between items-center text-sm text-muted-foreground">
-          <span>Progression</span>
-          <span>{Math.round(progress)}%</span>
-        </div>
-        <Progress value={progress} className="h-2" />
-      </div>
+      <ProgressBar 
+        completedSets={completedSetsCount} 
+        totalSets={sets.length} 
+      />
 
       <div className="space-y-4">
         {sets.map((set) => (
-          <Card key={set.id} className={`p-4 transition-all duration-300 ${
-            currentSet === set.id ? 'ring-2 ring-primary' : ''
-          }`}>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">Série {set.id}</span>
-                {set.completed && (
-                  <div className="flex items-center gap-2 text-green-500">
-                    <Check className="h-4 w-4" />
-                    <span className="text-sm">Complétée</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm text-muted-foreground">Poids (kg)</label>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => adjustWeight(set.id, false)}
-                      disabled={set.completed}
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                    <span className="w-12 text-center">{set.weight}</span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => adjustWeight(set.id, true)}
-                      disabled={set.completed}
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm text-muted-foreground">Répétitions</label>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => adjustReps(set.id, false)}
-                      disabled={set.completed}
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                    <span className="w-12 text-center">{set.reps}</span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => adjustReps(set.id, true)}
-                      disabled={set.completed}
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                className="w-full"
-                variant={set.completed ? "secondary" : "default"}
-                onClick={() => handleSetCompletion(set.id)}
-                disabled={set.completed || (currentSet !== set.id) || (restTimer !== null)}
-              >
-                {set.completed ? (
-                  <span className="flex items-center gap-2">
-                    Série complétée
-                    {set.calories && (
-                      <>
-                        <Flame className="h-4 w-4" />
-                        <span>{set.calories} kcal</span>
-                      </>
-                    )}
-                  </span>
-                ) : (
-                  "Valider la série"
-                )}
-              </Button>
-            </div>
-          </Card>
+          <SetCard
+            key={set.id}
+            setId={set.id}
+            reps={set.reps}
+            weight={set.weight}
+            completed={set.completed}
+            calories={set.calories}
+            isCurrentSet={currentSet === set.id}
+            restTimer={restTimer}
+            onComplete={handleSetCompletion}
+            onWeightChange={adjustWeight}
+            onRepsChange={adjustReps}
+          />
         ))}
       </div>
 
-      {restTimer !== null && (
-        <div className="fixed bottom-20 right-4 bg-primary text-primary-foreground px-6 py-3 rounded-full animate-pulse shadow-lg">
-          <div className="flex items-center gap-2">
-            <Timer className="h-5 w-5" />
-            <span className="font-medium">{restTimer}s</span>
-          </div>
-        </div>
-      )}
+      <RestTimer restTimer={restTimer} />
     </div>
   );
 };
