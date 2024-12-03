@@ -34,9 +34,9 @@ export const NextWorkoutCard = () => {
       className="w-full bg-gradient-to-br from-[#1E2330] to-[#252B3B] border-[#2A2F3F] overflow-hidden animate-fade-up cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-300 relative group"
       onClick={handleCardClick}
     >
-      <div className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 text-lg font-medium flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Timer className="h-5 w-5 animate-pulse" />
+      <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 text-sm font-medium flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Timer className="h-4 w-4 animate-pulse" />
           <span>Prochain entraînement (IA)</span>
         </div>
       </div>
