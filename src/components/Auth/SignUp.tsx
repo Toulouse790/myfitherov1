@@ -5,10 +5,10 @@ import { useSignup } from "@/hooks/use-signup";
 import { useToast } from "@/hooks/use-toast";
 
 export const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("test@example.com");
+  const [password, setPassword] = useState("password123");
+  const [confirmPassword, setConfirmPassword] = useState("password123");
+  const [username, setUsername] = useState("testuser");
   const { signup, isLoading } = useSignup();
   const { toast } = useToast();
 
