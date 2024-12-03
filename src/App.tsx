@@ -7,6 +7,7 @@ import Admin from "./pages/Admin";
 import { WorkoutExerciseDetail } from "./components/Workouts/WorkoutExerciseDetail";
 import { SignIn } from "./components/Auth/SignIn";
 import { SignUp } from "./components/Auth/SignUp";
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
       </Routes>
+      <Toaster />
     </Router>
   );
 }
