@@ -1,5 +1,4 @@
 import { exerciseImages } from "../data/exerciseImages";
-import { Dumbbell } from "lucide-react";
 
 interface ExerciseListProps {
   exercises: string[];
@@ -27,8 +26,12 @@ export const ExerciseList = ({
           `}
         >
           <div className="flex items-center gap-4">
-            <div className="relative w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Dumbbell className="w-5 h-5 text-primary" />
+            <div className="relative w-16 h-16 rounded-lg overflow-hidden">
+              <img 
+                src={exerciseImages[exercise]} 
+                alt={exercise}
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <h3 className="font-medium text-white">{exercise}</h3>
