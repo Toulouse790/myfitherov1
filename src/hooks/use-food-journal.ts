@@ -20,22 +20,33 @@ export const useFoodJournal = () => {
   const loadEntries = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log("No user found, skipping loadEntries");
+        return;
+      }
 
       const { data, error } = await supabase
         .from('food_journal_entries')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42P01') {
+          console.log("Table food_journal_entries does not exist yet");
+          return;
+        }
+        throw error;
+      }
 
-      setEntries(data.map(entry => ({
-        id: entry.id,
-        name: entry.name,
-        calories: entry.calories,
-        proteins: entry.proteins,
-      })));
-    } catch (error) {
+      if (data) {
+        setEntries(data.map(entry => ({
+          id: entry.id,
+          name: entry.name,
+          calories: entry.calories,
+          proteins: entry.proteins,
+        })));
+      }
+    } catch (error: any) {
       console.error('Error loading entries:', error);
       toast({
         title: "Erreur",
@@ -79,23 +90,25 @@ export const useFoodJournal = () => {
 
       if (error) throw error;
 
-      const newEntry: FoodEntry = {
-        id: data.id,
-        name: data.name,
-        calories: data.calories,
-        proteins: data.proteins,
-      };
+      if (data) {
+        const newEntry: FoodEntry = {
+          id: data.id,
+          name: data.name,
+          calories: data.calories,
+          proteins: data.proteins,
+        };
 
-      setEntries([newEntry, ...entries]);
-      setNewFood("");
-      setCalories("");
-      setProteins("");
+        setEntries([newEntry, ...entries]);
+        setNewFood("");
+        setCalories("");
+        setProteins("");
 
-      toast({
-        title: "Aliment ajouté",
-        description: "L'aliment a été ajouté à votre journal",
-      });
-    } catch (error) {
+        toast({
+          title: "Aliment ajouté",
+          description: "L'aliment a été ajouté à votre journal",
+        });
+      }
+    } catch (error: any) {
       console.error('Error adding entry:', error);
       toast({
         title: "Erreur",
