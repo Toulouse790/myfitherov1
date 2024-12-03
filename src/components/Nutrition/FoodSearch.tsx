@@ -1,87 +1,94 @@
-import { Search } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CommonFood } from "@/types/food";
+import { ChevronRight } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useState } from "react";
 
 interface FoodSearchProps {
-  selectedCategory: string;
-  onCategoryChange: (category: string) => void;
-  filteredFoods: CommonFood[];
-  onSelectFood: (foodId: string) => void;
-  userAllergies?: string[];
+  entries: Array<{
+    id: string;
+    name: string;
+    calories: number;
+    proteins: number;
+    mealType: string;
+  }>;
+  onDeleteEntry?: (id: string) => void;
 }
 
-export const FoodSearch = ({
-  selectedCategory,
-  onCategoryChange,
-  filteredFoods,
-  onSelectFood,
-  userAllergies = [],
-}: FoodSearchProps) => {
-  const displayedFoods = filteredFoods.filter(
-    (food) => !userAllergies.some((allergy) => 
-      food.name.toLowerCase().includes(allergy.toLowerCase())
-    )
-  );
+export const FoodSearch = ({ entries, onDeleteEntry }: FoodSearchProps) => {
+  const [openMeal, setOpenMeal] = useState<string | null>(null);
 
-  const categories = [
-    { value: "all", label: "Tout" },
-    { value: "Protéines", label: "Protéines" },
-    { value: "Féculents", label: "Féculents" },
-    { value: "Légumes", label: "Légumes" },
-    { value: "Fruits", label: "Fruits" },
-    { value: "Produits laitiers", label: "Laitages" },
-    { value: "Autres", label: "Autres" }
-  ];
+  const mealTypes = {
+    breakfast: "Petit déjeuner",
+    lunch: "Déjeuner",
+    dinner: "Dîner",
+    snack: "Collation"
+  };
+
+  const entriesByMealType = entries.reduce((acc, entry) => {
+    if (!acc[entry.mealType]) {
+      acc[entry.mealType] = [];
+    }
+    acc[entry.mealType].push(entry);
+    return acc;
+  }, {} as Record<string, typeof entries>);
 
   return (
-    <div className="space-y-4">
-      <Tabs defaultValue={selectedCategory} onValueChange={onCategoryChange}>
-        <TabsList className="w-full flex-wrap h-auto bg-white border border-gray-200">
-          {categories.map((category) => (
-            <TabsTrigger 
-              key={category.value} 
-              value={category.value}
-              className="text-gray-900 data-[state=active]:bg-primary data-[state=active]:text-white"
+    <Card className="p-4 bg-white border border-gray-200">
+      <ScrollArea className="h-[300px]">
+        <div className="space-y-2">
+          {Object.entries(mealTypes).map(([type, label]) => (
+            <Collapsible
+              key={type}
+              open={openMeal === type}
+              onOpenChange={() => setOpenMeal(openMeal === type ? null : type)}
             >
-              {category.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {categories.map((category) => (
-          <TabsContent key={category.value} value={category.value}>
-            <ScrollArea className="h-[300px] rounded-md border border-gray-200">
-              <div className="grid grid-cols-1 gap-2 p-2">
-                {displayedFoods
-                  .filter(food => category.value === "all" || food.category === category.value)
-                  .map((food) => (
-                    <Button
-                      key={food.id}
-                      variant="ghost"
-                      className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-primary/10 text-gray-900 hover:text-gray-900"
-                      onClick={() => onSelectFood(food.id)}
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between p-4 h-auto text-gray-900 hover:bg-gray-50"
+                >
+                  <span className="font-medium">{label}</span>
+                  <ChevronRight 
+                    className={`h-4 w-4 transition-transform ${
+                      openMeal === type ? "rotate-90" : ""
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="space-y-2 p-2">
+                  {entriesByMealType[type]?.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="flex items-center justify-between p-3 rounded-lg bg-gray-50"
                     >
-                      <div className="text-left space-y-1">
-                        <div className="font-medium">{food.name}</div>
+                      <div className="space-y-1">
+                        <p className="font-medium text-gray-900">{entry.name}</p>
                         <div className="text-sm text-gray-700 flex gap-3">
-                          <span>{food.calories} kcal</span>
+                          <span>{entry.calories} kcal</span>
                           <span>•</span>
-                          <span>{food.proteins}g protéines</span>
+                          <span>{entry.proteins}g protéines</span>
                         </div>
                       </div>
-                    </Button>
+                    </div>
                   ))}
-                {displayedFoods.length === 0 && (
-                  <p className="text-center text-gray-700 py-8">
-                    Aucun aliment disponible dans cette catégorie
-                  </p>
-                )}
-              </div>
-            </ScrollArea>
-          </TabsContent>
-        ))}
-      </Tabs>
-    </div>
+                  {(!entriesByMealType[type] || entriesByMealType[type].length === 0) && (
+                    <p className="text-center text-gray-700 py-4">
+                      Aucun aliment enregistré pour ce repas
+                    </p>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          ))}
+        </div>
+      </ScrollArea>
+    </Card>
   );
 };

@@ -1,7 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { FoodSearch } from "./FoodSearch";
 import { FoodEntryForm } from "./FoodEntryForm";
-import { FoodEntryList } from "./FoodEntryList";
 import { BarcodeScanner } from "./BarcodeScanner";
 import { useFoodJournal } from "@/hooks/use-food-journal";
 
@@ -18,14 +17,12 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
     weight,
     baseCalories,
     selectedCategory,
-    filteredFoods,
     setNewFood,
     setCalories,
     setProteins,
     setWeight,
     setSelectedCategory,
     handleAddEntry,
-    handleSelectFood,
     handleBarcodeScan,
     handleDeleteEntry,
   } = useFoodJournal();
@@ -53,14 +50,6 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
         <BarcodeScanner onScan={handleBarcodeScan} />
         
         <FoodSearch
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          filteredFoods={filteredFoods}
-          onSelectFood={handleSelectFood}
-          userAllergies={userAllergies}
-        />
-
-        <FoodEntryList
           entries={entries}
           onDeleteEntry={handleDeleteEntry}
         />
