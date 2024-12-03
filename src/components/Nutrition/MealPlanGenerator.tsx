@@ -1,12 +1,8 @@
-import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { MealPlanForm } from "./MealPlan/MealPlanForm";
-import { DayMeals } from "./MealPlan/DayMeals";
 import { Lock } from "lucide-react";
-import { defaultMeals } from "@/data/meals";
+import { MealPlanForm } from "./MealPlan/MealPlanForm";
+import { GeneratedPlanDisplay } from "./MealPlan/GeneratedPlanDisplay";
+import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
 
 interface MealPlanGeneratorProps {
   workoutsPerWeek: number;
@@ -25,70 +21,21 @@ export const MealPlanGenerator = ({
   age,
   allergies,
 }: MealPlanGeneratorProps) => {
-  const { toast } = useToast();
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [durationDays, setDurationDays] = useState("7");
-  const [maxBudget, setMaxBudget] = useState("100");
-  const [generatedPlan, setGeneratedPlan] = useState<any>(null);
-
-  const calculateDailyCalories = () => {
-    const bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-    const activityFactor = 1.2 + (workoutsPerWeek * 0.1);
-    let totalCalories = bmr * activityFactor;
-
-    switch (goal) {
-      case "weight_loss":
-        totalCalories *= 0.85;
-        break;
-      case "muscle_gain":
-        totalCalories *= 1.15;
-        break;
-      case "maintenance":
-        break;
-    }
-
-    return Math.round(totalCalories);
-  };
-
-  const generateMealPlan = async () => {
-    setIsGenerating(true);
-    try {
-      const dailyCalories = calculateDailyCalories();
-
-      // Génération d'un plan de repas basique pour la démonstration
-      const mockPlan = Array.from({ length: parseInt(durationDays) }, (_, dayIndex) => ({
-        meals: {
-          breakfast: {
-            ...defaultMeals.breakfast.meal,
-          },
-          lunch: {
-            ...defaultMeals.lunch.meal,
-          },
-          dinner: {
-            ...defaultMeals.dinner.meal,
-          },
-          snack: {
-            ...defaultMeals.snack.meal,
-          }
-        }
-      }));
-
-      setGeneratedPlan(mockPlan);
-      toast({
-        title: "Plan alimentaire généré",
-        description: `Plan sur ${durationDays} jours avec un budget de ${maxBudget}€`,
-      });
-    } catch (error) {
-      console.error('Error generating meal plan:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de générer le plan alimentaire",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+  const {
+    isGenerating,
+    durationDays,
+    maxBudget,
+    generatedPlan,
+    setDurationDays,
+    setMaxBudget,
+    generateMealPlan,
+  } = useMealPlanGenerator({
+    workoutsPerWeek,
+    goal,
+    weight,
+    height,
+    age,
+  });
 
   return (
     <div className="space-y-4">
@@ -113,27 +60,10 @@ export const MealPlanGenerator = ({
       </Card>
 
       {generatedPlan && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Votre plan alimentaire</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="1" className="w-full">
-              <TabsList className="w-full flex-wrap h-auto">
-                {Array.from({ length: parseInt(durationDays) }, (_, i) => (
-                  <TabsTrigger key={i + 1} value={(i + 1).toString()} className="flex-1">
-                    Jour {i + 1}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              {generatedPlan.map((day: any, index: number) => (
-                <TabsContent key={index} value={(index + 1).toString()}>
-                  <DayMeals meals={day.meals} mealTitles={defaultMeals} />
-                </TabsContent>
-              ))}
-            </Tabs>
-          </CardContent>
-        </Card>
+        <GeneratedPlanDisplay 
+          generatedPlan={generatedPlan}
+          durationDays={durationDays}
+        />
       )}
     </div>
   );
