@@ -38,12 +38,12 @@ export const FoodSearch = ({
   return (
     <div className="space-y-4">
       <Tabs defaultValue={selectedCategory} onValueChange={onCategoryChange}>
-        <TabsList className="w-full flex-wrap h-auto bg-white border">
+        <TabsList className="w-full flex-wrap h-auto bg-white border border-gray-200">
           {categories.map((category) => (
             <TabsTrigger 
               key={category.value} 
               value={category.value}
-              className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="text-gray-700 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
             >
               {category.label}
             </TabsTrigger>
@@ -51,7 +51,7 @@ export const FoodSearch = ({
         </TabsList>
         {categories.map((category) => (
           <TabsContent key={category.value} value={category.value}>
-            <ScrollArea className="h-[300px] rounded-md">
+            <ScrollArea className="h-[300px] rounded-md border border-gray-200">
               <div className="grid grid-cols-1 gap-2 p-2">
                 {displayedFoods
                   .filter(food => category.value === "all" || food.category === category.value)
@@ -59,12 +59,12 @@ export const FoodSearch = ({
                     <Button
                       key={food.id}
                       variant="ghost"
-                      className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-muted/10 text-foreground animate-fade-up"
+                      className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-gray-50 text-gray-800"
                       onClick={() => onSelectFood(food.id)}
                     >
                       <div className="text-left space-y-1">
                         <div className="font-medium">{food.name}</div>
-                        <div className="text-sm text-muted-foreground flex gap-3">
+                        <div className="text-sm text-gray-600 flex gap-3">
                           <span>{food.calories} kcal</span>
                           <span>•</span>
                           <span>{food.proteins}g protéines</span>
@@ -73,7 +73,7 @@ export const FoodSearch = ({
                     </Button>
                   ))}
                 {displayedFoods.length === 0 && (
-                  <p className="text-center text-muted-foreground py-8">
+                  <p className="text-center text-gray-500 py-8">
                     Aucun aliment disponible dans cette catégorie
                   </p>
                 )}
