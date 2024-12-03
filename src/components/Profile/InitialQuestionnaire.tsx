@@ -6,6 +6,7 @@ import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
 import { PersonalInfoStep } from "./QuestionnaireSteps/PersonalInfoStep";
 import { TrainingFrequencyStep } from "./QuestionnaireSteps/TrainingFrequencyStep";
 import { TrainingLocationStep } from "./QuestionnaireSteps/TrainingLocationStep";
+import { useNavigate } from "react-router-dom";
 
 interface QuestionnaireData {
   objective: string;
@@ -22,6 +23,7 @@ interface QuestionnaireData {
 
 export const InitialQuestionnaire = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<QuestionnaireData>({
     objective: "",
@@ -45,6 +47,7 @@ export const InitialQuestionnaire = () => {
       title: "Profil complété !",
       description: "Vos préférences ont été enregistrées avec succès.",
     });
+    navigate("/workouts");
   };
 
   const updateFormData = (field: keyof QuestionnaireData, value: any) => {
@@ -96,35 +99,37 @@ export const InitialQuestionnaire = () => {
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
-      <CardHeader>
-        <CardTitle>Questionnaire initial</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {renderStep()}
-          <div className="flex justify-between pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-              disabled={currentStep === 1}
-            >
-              Précédent
-            </Button>
-            {currentStep < 4 ? (
+    <div className="container mx-auto px-4 h-screen flex items-center justify-center">
+      <Card className="w-full max-w-lg">
+        <CardHeader>
+          <CardTitle>Questionnaire initial</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {renderStep()}
+            <div className="flex justify-between pt-4">
               <Button
                 type="button"
-                onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
+                variant="outline"
+                onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                disabled={currentStep === 1}
               >
-                Suivant
+                Précédent
               </Button>
-            ) : (
-              <Button type="submit">Terminer</Button>
-            )}
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+              {currentStep < 4 ? (
+                <Button
+                  type="button"
+                  onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
+                >
+                  Suivant
+                </Button>
+              ) : (
+                <Button type="submit">Terminer</Button>
+              )}
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
