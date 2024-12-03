@@ -20,13 +20,12 @@ export const WorkoutExerciseDetail = () => {
   const location = useLocation();
   const { toast } = useToast();
   
-  // Ensure we have default values if location.state is undefined
   const defaultState = {
     exerciseName: "Rowing avec Haltères",
     sets: [
-      { id: 1, reps: 12, weight: 10 },
-      { id: 2, reps: 12, weight: 10 },
-      { id: 3, reps: 12, weight: 10 },
+      { id: 1, reps: 12, weight: 10, completed: false },
+      { id: 2, reps: 12, weight: 10, completed: false },
+      { id: 3, reps: 12, weight: 10, completed: false },
     ],
     videoUrl: null
   };
@@ -42,6 +41,7 @@ export const WorkoutExerciseDetail = () => {
       id: sets.length + 1,
       reps: sets[0].reps,
       weight: sets[0].weight,
+      completed: false
     };
     setSets([...sets, newSet]);
   };
@@ -68,6 +68,12 @@ export const WorkoutExerciseDetail = () => {
       set.id === setId ? { ...set, completed: true } : set
     ));
     startRestTimer();
+    
+    const calories = Math.round(sets[setId - 1].reps * sets[setId - 1].weight * 0.15);
+    toast({
+      title: "Série complétée !",
+      description: `${calories} calories brûlées. 90 secondes de repos.`,
+    });
   };
 
   return (
@@ -90,18 +96,11 @@ export const WorkoutExerciseDetail = () => {
         <CardContent className="space-y-6">
           {videoUrl && (
             <div className="relative aspect-video rounded-lg overflow-hidden mb-6">
-              <video
-                src={videoUrl}
-                poster={videoUrl}
-                controls
+              <img 
+                src={videoUrl} 
+                alt={exerciseName}
                 className="w-full h-full object-cover"
-              >
-                <img 
-                  src={videoUrl} 
-                  alt={exerciseName}
-                  className="w-full h-full object-cover"
-                />
-              </video>
+              />
             </div>
           )}
 
