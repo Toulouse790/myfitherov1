@@ -12,11 +12,6 @@ export const useFoodJournal = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { toast } = useToast();
 
-  // Charger les entrées au démarrage
-  useEffect(() => {
-    loadEntries();
-  }, []);
-
   const loadEntries = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -28,14 +23,24 @@ export const useFoodJournal = () => {
       const { data, error } = await supabase
         .from('food_journal_entries')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
+        console.error('Error loading entries:', error);
         if (error.code === '42P01') {
-          console.log("Table food_journal_entries does not exist yet");
-          return;
+          toast({
+            title: "Initialisation en cours",
+            description: "La base de données est en cours d'initialisation. Veuillez patienter quelques instants.",
+          });
+        } else {
+          toast({
+            title: "Erreur",
+            description: "Impossible de charger le journal alimentaire",
+            variant: "destructive",
+          });
         }
-        throw error;
+        return;
       }
 
       if (data) {
@@ -47,14 +52,18 @@ export const useFoodJournal = () => {
         })));
       }
     } catch (error: any) {
-      console.error('Error loading entries:', error);
+      console.error('Error in loadEntries:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de charger le journal alimentaire",
+        description: "Une erreur est survenue lors du chargement du journal",
         variant: "destructive",
       });
     }
   };
+
+  useEffect(() => {
+    loadEntries();
+  }, []);
 
   const handleAddEntry = async () => {
     if (!newFood || !calories || !proteins) {
@@ -88,7 +97,15 @@ export const useFoodJournal = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding entry:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible d'ajouter l'aliment",
+          variant: "destructive",
+        });
+        return;
+      }
 
       if (data) {
         const newEntry: FoodEntry = {
@@ -109,10 +126,10 @@ export const useFoodJournal = () => {
         });
       }
     } catch (error: any) {
-      console.error('Error adding entry:', error);
+      console.error('Error in handleAddEntry:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'ajouter l'aliment",
+        description: "Une erreur est survenue lors de l'ajout de l'aliment",
         variant: "destructive",
       });
     }
@@ -150,18 +167,26 @@ export const useFoodJournal = () => {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting entry:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de supprimer l'aliment",
+          variant: "destructive",
+        });
+        return;
+      }
 
       setEntries(entries.filter((entry) => entry.id !== id));
       toast({
         title: "Aliment supprimé",
         description: "L'aliment a été supprimé de votre journal",
       });
-    } catch (error) {
-      console.error('Error deleting entry:', error);
+    } catch (error: any) {
+      console.error('Error in handleDeleteEntry:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de supprimer l'aliment",
+        description: "Une erreur est survenue lors de la suppression de l'aliment",
         variant: "destructive",
       });
     }
