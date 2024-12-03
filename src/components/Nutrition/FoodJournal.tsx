@@ -3,6 +3,7 @@ import { FoodEntryForm } from "./FoodEntryForm";
 import { BarcodeScanner } from "./BarcodeScanner";
 import { useFoodJournal } from "@/hooks/use-food-journal";
 import { Clock8 } from "lucide-react";
+import { FoodSearch } from "./FoodSearch";
 
 interface FoodJournalProps {
   userAllergies?: string[];
