@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { defaultMeals, generateVariedMealPlan } from "@/data/meals";
+import { defaultMeals, generateVariedMealPlan } from "@/data/meals/mealPlanGenerator";
 import { supabase } from "@/integrations/supabase/client";
 
 interface UseMealPlanGeneratorProps {
@@ -25,21 +25,16 @@ export const useMealPlanGenerator = ({
   const [generatedPlan, setGeneratedPlan] = useState<any>(null);
 
   const calculateDailyCalories = () => {
-    // Formule de Harris-Benedict pour le métabolisme de base
     const bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-    
-    // Facteur d'activité basé sur le nombre d'entraînements
     const activityFactor = 1.2 + (workoutsPerWeek * 0.1);
-    
-    // Calories totales avec ajustement selon l'objectif
     let totalCalories = bmr * activityFactor;
 
     switch (goal) {
       case "weight_loss":
-        totalCalories *= 0.85; // Déficit calorique de 15%
+        totalCalories *= 0.85;
         break;
       case "muscle_gain":
-        totalCalories *= 1.15; // Surplus calorique de 15%
+        totalCalories *= 1.15;
         break;
       case "maintenance":
         break;
@@ -61,7 +56,6 @@ export const useMealPlanGenerator = ({
         return;
       }
 
-      // Récupérer les préférences de l'utilisateur
       const { data: preferences } = await supabase
         .from('user_nutrition_preferences')
         .select('allergies, intolerances, excluded_foods')

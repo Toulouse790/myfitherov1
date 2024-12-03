@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DayMeals } from "./DayMeals";
-import { defaultMeals } from "@/data/meals";
+import { defaultMeals } from "@/data/meals/mealPlanGenerator";
 
 interface GeneratedPlanDisplayProps {
   generatedPlan: any;
