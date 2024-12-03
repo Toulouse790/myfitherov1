@@ -52,57 +52,68 @@ export const FoodEntryForm = ({
   ];
 
   return (
-    <Card className="p-4 bg-white border border-gray-200">
-      <div className="flex gap-4 mb-4">
-        <Select>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Type de repas" />
-          </SelectTrigger>
-          <SelectContent>
-            {mealTypes.map((type) => (
-              <SelectItem key={type.value} value={type.value}>
-                {type.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button 
-          onClick={onAddEntry} 
-          className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          <Plus className="w-4 h-4" /> Ajouter
-        </Button>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Input
-          placeholder="Aliment"
-          value={newFood}
-          onChange={(e) => onFoodChange(e.target.value)}
-          className="col-span-2 md:col-span-1 bg-white border-gray-300"
-        />
-        <Input
-          type="number"
-          placeholder="Poids (g)"
-          value={weight}
-          onChange={(e) => handleWeightChange(e.target.value)}
-          className="bg-white border-gray-300"
-        />
-        <Input
-          type="number"
-          placeholder="Calories"
-          value={calories}
-          onChange={(e) => onCaloriesChange(e.target.value)}
-          className="bg-gray-50 border-gray-300"
-          readOnly
-        />
-        <Input
-          type="number"
-          placeholder="Protéines (g)"
-          value={proteins}
-          onChange={(e) => onProteinsChange(e.target.value)}
-          className="bg-white border-gray-300"
-        />
-      </div>
-    </Card>
+    <div className="space-y-4">
+      <Card className="p-4 bg-white border border-gray-200">
+        <div className="flex items-center gap-4">
+          <Select>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Ajouter un repas" />
+            </SelectTrigger>
+            <SelectContent>
+              {mealTypes.map((type) => (
+                <SelectItem 
+                  key={type.value} 
+                  value={type.value}
+                  className="text-gray-800 hover:bg-gray-100"
+                >
+                  {type.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </Card>
+
+      <Card className="p-4 bg-white border border-gray-200">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Input
+            placeholder="Aliment"
+            value={newFood}
+            onChange={(e) => onFoodChange(e.target.value)}
+            className="col-span-2 md:col-span-1 bg-white border-gray-300"
+          />
+          <Input
+            type="number"
+            placeholder="Poids (g)"
+            value={weight}
+            onChange={(e) => handleWeightChange(e.target.value)}
+            className="bg-white border-gray-300"
+          />
+          <Input
+            type="number"
+            placeholder="Calories"
+            value={calories}
+            onChange={(e) => onCaloriesChange(e.target.value)}
+            className="bg-gray-50 border-gray-300"
+            readOnly
+          />
+          <Input
+            type="number"
+            placeholder="Protéines (g)"
+            value={proteins}
+            onChange={(e) => onProteinsChange(e.target.value)}
+            className="bg-white border-gray-300"
+          />
+        </div>
+        <div className="mt-4 flex justify-end">
+          <Button 
+            onClick={onAddEntry} 
+            className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="w-4 h-4" /> Ajouter
+          </Button>
+        </div>
+      </Card>
+    </div>
   );
 };
