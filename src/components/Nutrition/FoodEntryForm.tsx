@@ -48,54 +48,6 @@ export const FoodEntryForm = ({
     }
   };
 
-  const handleSuggestFood = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté pour suggérer un aliment",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!newFood || !calories || !proteins) {
-        toast({
-          title: "Erreur",
-          description: "Veuillez remplir tous les champs",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      await supabase.from('user_suggested_foods').insert({
-        user_id: user.id,
-        name: newFood,
-        calories: parseInt(calories),
-        proteins: parseInt(proteins),
-        category: selectedCategory || "Autres"
-      });
-
-      toast({
-        title: "Suggestion envoyée",
-        description: "Votre suggestion d'aliment a été enregistrée et sera examinée",
-      });
-
-      onFoodChange("");
-      onCaloriesChange("");
-      onProteinsChange("");
-      onWeightChange("");
-      setIsCustomFood(false);
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'enregistrement de la suggestion",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleAdd = () => {
     if (!selectedMealType) {
       toast({
@@ -131,11 +83,7 @@ export const FoodEntryForm = ({
             setIsCustomFood={setIsCustomFood}
           />
 
-          <ActionButtons
-            isCustomFood={isCustomFood}
-            onSuggest={handleSuggestFood}
-            onAdd={handleAdd}
-          />
+          <ActionButtons onAdd={handleAdd} />
         </div>
       </Card>
     </div>
