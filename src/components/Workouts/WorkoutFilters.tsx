@@ -52,6 +52,8 @@ export const WorkoutFilters = ({
             name={muscle.name}
             image={muscle.image}
             isSelected={muscleGroup === muscle.id}
+            selectedExercises={muscle.selectedExercises}
+            totalExercises={muscle.totalExercises}
             onClick={() => handleMuscleGroupClick(muscle.id)}
           />
         ))}

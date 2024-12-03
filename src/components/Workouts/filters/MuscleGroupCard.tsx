@@ -6,10 +6,20 @@ interface MuscleGroupCardProps {
   name: string;
   image: string;
   isSelected: boolean;
+  selectedExercises: number;
+  totalExercises: number;
   onClick: () => void;
 }
 
-export const MuscleGroupCard = ({ id, name, image, isSelected, onClick }: MuscleGroupCardProps) => {
+export const MuscleGroupCard = ({ 
+  id, 
+  name, 
+  image, 
+  isSelected, 
+  selectedExercises,
+  totalExercises,
+  onClick 
+}: MuscleGroupCardProps) => {
   return (
     <Card 
       className={`cursor-pointer transition-colors hover:bg-accent overflow-hidden ${
@@ -24,9 +34,12 @@ export const MuscleGroupCard = ({ id, name, image, isSelected, onClick }: Muscle
             alt={name}
             className="object-cover w-full h-full brightness-75"
           />
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
             <p className="text-xs sm:text-sm font-medium text-white drop-shadow-lg">
               {name}
+            </p>
+            <p className="text-xs text-white/90 drop-shadow-lg">
+              {selectedExercises}/{totalExercises}
             </p>
           </div>
         </AspectRatio>
