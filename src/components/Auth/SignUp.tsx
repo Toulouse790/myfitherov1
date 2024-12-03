@@ -50,9 +50,14 @@ export const SignUp = () => {
       });
 
       if (error) {
+        let errorMessage = error.message;
+        if (error.message.includes("Database error")) {
+          errorMessage = "Erreur lors de la création du profil. Veuillez réessayer.";
+        }
+        
         toast({
           title: "Erreur lors de l'inscription",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive",
         });
         return;
