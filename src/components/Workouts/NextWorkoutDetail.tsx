@@ -22,6 +22,12 @@ const EXERCISES = [
   "Planche"
 ];
 
+const DEFAULT_SETS = [
+  { id: 1, reps: 12, weight: 10 },
+  { id: 2, reps: 12, weight: 10 },
+  { id: 3, reps: 12, weight: 10 },
+];
+
 export const NextWorkoutDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -33,11 +39,7 @@ export const NextWorkoutDetail = () => {
     navigate(`/workout-exercise/${index}`, { 
       state: { 
         exerciseName: EXERCISES[index],
-        sets: [
-          { id: 1, reps: 12, weight: 10 },
-          { id: 2, reps: 12, weight: 10 },
-          { id: 3, reps: 12, weight: 10 },
-        ],
+        sets: DEFAULT_SETS,
         videoUrl: exerciseImages[EXERCISES[index]]
       }
     });
