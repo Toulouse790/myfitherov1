@@ -6,16 +6,10 @@ import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
 import { WorkoutSummary } from "@/components/Dashboard/WorkoutSummary";
 import { Header } from "@/components/Layout/Header";
 import { BottomNav } from "@/components/Layout/BottomNav";
-import { useEffect } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { useWelcomeToast } from "@/hooks/use-welcome-toast";
 
 const Index = () => {
-  useEffect(() => {
-    toast({
-      title: "Bienvenue sur HealthSync",
-      description: "Suivez vos progrès et atteignez vos objectifs fitness.",
-    });
-  }, []);
+  useWelcomeToast();
 
   return (
     <div className="min-h-screen bg-background">
