@@ -15,13 +15,13 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
   }
 
   return (
-    <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 animate-fade-in">
       {workouts.map((workout, index) => (
         <div
           key={workout.id}
           className="opacity-0 animate-fade-in"
           style={{
-            animationDelay: `${index * 150}ms`,
+            animationDelay: `${index * 100}ms`,
             animationFillMode: 'forwards'
           }}
         >

@@ -41,49 +41,50 @@ const Workouts = () => {
   };
 
   if (showExerciseDetail) {
-    return <WorkoutExerciseDetail />;
+    return <WorkoutExerciseDetail onBack={() => setShowExerciseDetail(false)} />;
   }
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-12 space-y-8">
+    <div className="container mx-auto px-4 pt-20 pb-12 space-y-6">
       <Tabs defaultValue="custom" className="w-full">
-        <TabsList className="w-full">
-          <TabsTrigger value="custom" className="flex-1">
+        <TabsList className="w-full mb-6">
+          <TabsTrigger value="custom" className="flex-1 text-sm sm:text-base">
             Séances personnalisées
           </TabsTrigger>
-          <TabsTrigger value="programs" className="flex-1">
+          <TabsTrigger value="programs" className="flex-1 text-sm sm:text-base">
             Programmes sportifs
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="custom" className="space-y-6">
-          <h1 className="text-2xl sm:text-3xl font-bold">Séances personnalisées</h1>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <TabsContent value="custom" className="space-y-6 animate-fade-in">
+          <h1 className="text-xl sm:text-2xl font-bold">Séances personnalisées</h1>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {muscleGroups.map((group) => (
               <Button
                 key={group.id}
                 variant="outline"
-                className="h-auto py-4 flex flex-col gap-2"
+                className="h-auto py-3 flex flex-col gap-2 hover:scale-[1.02] transition-transform duration-300"
                 onClick={() => generateWorkout(group.id)}
               >
-                <span className="text-sm font-medium">{group.name}</span>
+                <span className="text-xs sm:text-sm font-medium">{group.name}</span>
               </Button>
             ))}
           </div>
 
           {selectedWorkout && (
             <div className="space-y-4 animate-fade-in">
-              <h2 className="text-xl font-semibold">{selectedWorkout.title}</h2>
-              <div className="grid gap-4">
+              <h2 className="text-lg sm:text-xl font-semibold">{selectedWorkout.title}</h2>
+              <div className="grid gap-3">
                 {selectedWorkout.exercises.map((exercise: any, index: number) => (
-                  <div key={index} className="p-4 rounded-lg border">
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-medium">{exercise.name}</h3>
-                      <div className="flex items-center gap-4">
+                  <div key={index} className="p-3 rounded-lg border hover:border-primary/50 transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <h3 className="font-medium text-sm sm:text-base">{exercise.name}</h3>
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                         <div className="flex items-center gap-2">
                           <Button 
                             variant="outline" 
                             size="sm"
+                            className="h-8 w-8 p-0"
                             onClick={() => {
                               const newWorkout = {...selectedWorkout};
                               newWorkout.exercises[index].sets = Math.max(1, exercise.sets - 1);
@@ -92,10 +93,11 @@ const Workouts = () => {
                           >
                             -
                           </Button>
-                          <span>{exercise.sets} séries</span>
+                          <span className="text-sm w-20 text-center">{exercise.sets} séries</span>
                           <Button 
-                            variant="outline" 
+                            variant="outline"
                             size="sm"
+                            className="h-8 w-8 p-0"
                             onClick={() => {
                               const newWorkout = {...selectedWorkout};
                               newWorkout.exercises[index].sets = exercise.sets + 1;
@@ -107,8 +109,9 @@ const Workouts = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Button 
-                            variant="outline" 
+                            variant="outline"
                             size="sm"
+                            className="h-8 w-8 p-0"
                             onClick={() => {
                               const newWorkout = {...selectedWorkout};
                               newWorkout.exercises[index].reps = Math.max(1, exercise.reps - 1);
@@ -117,10 +120,11 @@ const Workouts = () => {
                           >
                             -
                           </Button>
-                          <span>{exercise.reps} répétitions</span>
+                          <span className="text-sm w-24 text-center">{exercise.reps} répétitions</span>
                           <Button 
-                            variant="outline" 
+                            variant="outline"
                             size="sm"
+                            className="h-8 w-8 p-0"
                             onClick={() => {
                               const newWorkout = {...selectedWorkout};
                               newWorkout.exercises[index].reps = exercise.reps + 1;
@@ -133,6 +137,7 @@ const Workouts = () => {
                         <Button
                           variant="default"
                           size="sm"
+                          className="w-full sm:w-auto"
                           onClick={() => setShowExerciseDetail(true)}
                         >
                           Commencer
@@ -143,7 +148,7 @@ const Workouts = () => {
                 ))}
               </div>
               <Button 
-                className="w-full"
+                className="w-full sm:w-auto"
                 onClick={() => {
                   const newWorkout = {...selectedWorkout};
                   newWorkout.exercises = newWorkout.exercises.map(ex => ({
@@ -167,8 +172,8 @@ const Workouts = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="programs" className="space-y-6">
-          <h1 className="text-2xl sm:text-3xl font-bold">Programmes sportifs</h1>
+        <TabsContent value="programs" className="space-y-6 animate-fade-in">
+          <h1 className="text-xl sm:text-2xl font-bold">Programmes sportifs</h1>
           <SportPrograms />
         </TabsContent>
       </Tabs>

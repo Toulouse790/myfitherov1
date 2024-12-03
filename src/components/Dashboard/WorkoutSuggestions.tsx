@@ -149,7 +149,7 @@ export const WorkoutSuggestions = () => {
       - Intensité : ${Math.round(plan.intensity * 100)}%
       - ${plan.recommendedRest}s de repos entre les séries
       - ${plan.setsAndReps.sets} séries de ${plan.setsAndReps.reps} répétitions
-      - ${plan.weeklySchedule.daysPerWeek} jours par semaine (${plan.weeklySchedule.recommendedDays.join(", ")})`,
+      - ${plan.weeklySchedule.daysPerWeek} jours par semaine`,
     });
   };
 
@@ -157,40 +157,40 @@ export const WorkoutSuggestions = () => {
     {
       title: "Personnalisé",
       description: "Laissez notre IA vous aider à créer un entraînement",
-      icon: <Sparkles className="w-6 h-6 text-white" />,
+      icon: <Sparkles className="w-5 h-5 text-white" />,
       bgColor: "bg-[#2A2F3F]",
       onClick: handleGenerateWorkout
     },
     {
       title: "Cardio",
       description: "Enregistrer une séance de cardio",
-      icon: <Activity className="w-6 h-6 text-white" />,
+      icon: <Activity className="w-5 h-5 text-white" />,
       bgColor: "bg-[#2A2F3F]"
     },
     {
       title: "Favoris",
       description: "Choisi parmi vos entraînements sauvegardés",
-      icon: <Bookmark className="w-6 h-6 text-white" />,
+      icon: <Bookmark className="w-5 h-5 text-white" />,
       bgColor: "bg-[#2A2F3F]"
     }
   ];
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-white">Envie de quelque chose de différent?</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <h2 className="text-lg sm:text-xl font-semibold text-white">Envie de quelque chose de différent?</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {suggestions.map((suggestion, index) => (
           <Card 
             key={index}
-            className={`${suggestion.bgColor} p-4 cursor-pointer hover:opacity-90 transition-opacity`}
+            className={`${suggestion.bgColor} p-3 cursor-pointer hover:opacity-90 transition-all duration-300 transform hover:scale-[1.02]`}
             onClick={suggestion.onClick}
           >
             <div className="space-y-2">
-              <div className="rounded-full bg-[#1E2330] w-12 h-12 flex items-center justify-center">
+              <div className="rounded-full bg-[#1E2330] w-10 h-10 flex items-center justify-center">
                 {suggestion.icon}
               </div>
-              <h3 className="text-white font-medium">{suggestion.title}</h3>
-              <p className="text-gray-400 text-sm">{suggestion.description}</p>
+              <h3 className="text-white font-medium text-sm sm:text-base">{suggestion.title}</h3>
+              <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">{suggestion.description}</p>
             </div>
           </Card>
         ))}
