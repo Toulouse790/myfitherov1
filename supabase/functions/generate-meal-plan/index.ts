@@ -13,49 +13,30 @@ serve(async (req) => {
 
   try {
     const { durationDays, maxBudget, calorieTarget, dietaryRestrictions } = await req.json();
+    const openAiKey = Deno.env.get('OPENAI_API_KEY');
 
-    console.log('Generating meal plan with parameters:', {
-      durationDays,
-      maxBudget,
-      calorieTarget,
-      dietaryRestrictions,
-    });
+    console.log('OpenAI Key exists:', !!openAiKey);
+    console.log('Request parameters:', { durationDays, maxBudget, calorieTarget });
+
+    if (!openAiKey) {
+      throw new Error('OpenAI API key is not configured');
+    }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${openAiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
             content: `Tu es un expert en nutrition qui génère des plans de repas équilibrés. 
             Génère un plan de repas sur ${durationDays} jours avec un budget maximum de ${maxBudget}€.
             Objectif calorique journalier : ${calorieTarget} calories.
-            Restrictions alimentaires : ${dietaryRestrictions.join(', ')}.
-            Format de réponse : JSON avec la structure suivante:
-            [
-              {
-                "day": 1,
-                "meals": [
-                  {
-                    "type": "breakfast|lunch|dinner",
-                    "foods": [
-                      {
-                        "name": "string",
-                        "quantity": "number",
-                        "unit": "string",
-                        "calories": "number",
-                        "proteins": "number"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]`
+            Restrictions alimentaires : ${dietaryRestrictions.join(', ')}.`
           }
         ],
         temperature: 0.7,
@@ -70,29 +51,10 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('OpenAI response:', data);
-
-    if (!data.choices?.[0]?.message?.content) {
-      console.error('Invalid OpenAI response structure:', data);
-      throw new Error('Invalid response structure from OpenAI');
-    }
-
-    let mealPlan;
-    try {
-      mealPlan = JSON.parse(data.choices[0].message.content);
-    } catch (e) {
-      console.error('Failed to parse OpenAI response:', e);
-      console.error('Raw content:', data.choices[0].message.content);
-      throw new Error('Failed to parse meal plan from OpenAI response');
-    }
-
-    if (!Array.isArray(mealPlan)) {
-      console.error('Meal plan is not an array:', mealPlan);
-      throw new Error('Invalid meal plan format');
-    }
+    console.log('OpenAI response received');
 
     return new Response(
-      JSON.stringify({ mealPlan }),
+      JSON.stringify({ mealPlan: data.choices[0].message.content }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
@@ -100,7 +62,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        details: error.stack
+        details: error.stack,
+        timestamp: new Date().toISOString()
       }),
       { 
         status: 500,
