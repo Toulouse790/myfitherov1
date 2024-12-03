@@ -42,7 +42,7 @@ export const generateWorkoutPlan = (profile: UserProfile) => {
       maintenance: { compound: 0.5, isolation: 0.5, cardio: true }
     };
 
-    const distribution = baseDistribution[profile.goal];
+    const distribution = baseDistribution[profile.goal as keyof typeof baseDistribution] || baseDistribution.maintenance;
 
     if (profile.recoveryCapacity === "low") {
       distribution.compound -= 0.1;
