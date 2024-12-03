@@ -48,10 +48,9 @@ export const MetricHistoryDialog = ({
                 <div className="h-[300px] w-full">
                   <BarChart
                     data={metric.history[period as keyof typeof metric.history]}
-                    index="date"
-                    categories={["value"]}
-                    colors={[metric.color]}
-                    valueFormatter={(value: number) => value.toString()}
+                    xField="date"
+                    yField="value"
+                    color={metric.color}
                   />
                 </div>
               </Card>
