@@ -80,14 +80,6 @@ export const NextWorkoutDetail = () => {
       )}
       
       <div className="container max-w-4xl mx-auto px-4 py-8 space-y-8">
-        <Button 
-          variant="ghost" 
-          onClick={handleEndWorkout}
-          className="flex items-center gap-2 hover:bg-destructive/10 hover:text-destructive"
-        >
-          <span>Terminer l'entraînement</span>
-        </Button>
-
         <Card className="overflow-hidden border-none bg-card shadow-lg">
           <div className="p-6 space-y-8">
             {!isWorkoutStarted && (
@@ -115,6 +107,18 @@ export const NextWorkoutDetail = () => {
             </div>
           </div>
         </Card>
+
+        {isWorkoutStarted && (
+          <div className="fixed bottom-8 left-0 right-0 px-4">
+            <Button 
+              variant="destructive"
+              onClick={handleEndWorkout}
+              className="w-full max-w-4xl mx-auto"
+            >
+              Terminer l'entraînement
+            </Button>
+          </div>
+        )}
       </div>
 
       <AlertDialog open={showEndWorkoutDialog} onOpenChange={setShowEndWorkoutDialog}>
