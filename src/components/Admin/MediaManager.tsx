@@ -11,6 +11,7 @@ export const MediaManager = () => {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState(muscleGroups[0].id);
+  const [uploadedFiles, setUploadedFiles] = useState<{[key: string]: {images: string[], videos: string[]}}>({});
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -19,25 +20,52 @@ export const MediaManager = () => {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (selectedFile) {
-      toast({
-        title: "Upload en cours",
-        description: `Upload du fichier ${selectedFile.name} pour ${
-          muscleGroups.find(group => group.id === selectedMuscleGroup)?.name
-        }`,
-      });
+      try {
+        // Créer un objet URL pour le fichier
+        const fileUrl = URL.createObjectURL(selectedFile);
+        
+        // Mettre à jour l'état des fichiers téléchargés
+        setUploadedFiles(prev => ({
+          ...prev,
+          [selectedMuscleGroup]: {
+            images: selectedFile.type.startsWith('image/') 
+              ? [...(prev[selectedMuscleGroup]?.images || []), fileUrl]
+              : (prev[selectedMuscleGroup]?.images || []),
+            videos: selectedFile.type.startsWith('video/')
+              ? [...(prev[selectedMuscleGroup]?.videos || []), fileUrl]
+              : (prev[selectedMuscleGroup]?.videos || [])
+          }
+        }));
+
+        toast({
+          title: "Fichier téléchargé avec succès",
+          description: `${selectedFile.name} a été ajouté à la bibliothèque de ${
+            muscleGroups.find(group => group.id === selectedMuscleGroup)?.name
+          }`,
+        });
+
+        // Réinitialiser le fichier sélectionné
+        setSelectedFile(null);
+      } catch (error) {
+        toast({
+          title: "Erreur lors du téléchargement",
+          description: "Une erreur est survenue lors du téléchargement du fichier.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const MediaUploadSection = ({ type }: { type: "image" | "video" }) => (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <Input
           type="file"
           accept={type === "image" ? "image/*" : "video/*"}
           onChange={handleFileChange}
-          className="flex-1 mr-4"
+          className="flex-1"
         />
         <Button onClick={handleUpload} disabled={!selectedFile}>
           <Upload className="mr-2 h-4 w-4" />
@@ -45,17 +73,27 @@ export const MediaManager = () => {
         </Button>
       </div>
       
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((item) => (
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {uploadedFiles[selectedMuscleGroup]?.[type === "image" ? "images" : "videos"]?.map((fileUrl, index) => (
           <div 
-            key={item}
+            key={index}
             className={`${
               type === "image" ? "aspect-square" : "aspect-video"
-            } bg-gray-100 rounded-lg flex items-center justify-center`}
+            } bg-gray-100 rounded-lg overflow-hidden`}
           >
-            <p className="text-sm text-gray-500">
-              {type === "image" ? `Image ${item}` : `Vidéo ${item}`}
-            </p>
+            {type === "image" ? (
+              <img 
+                src={fileUrl} 
+                alt={`${type} ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <video 
+                src={fileUrl}
+                controls
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
         ))}
       </div>
