@@ -13,6 +13,7 @@ import { NextWorkoutDetail } from "./components/Workouts/NextWorkoutDetail";
 import { Toaster } from "@/components/ui/toaster";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 import { UserProfile } from "./components/Profile/UserProfile";
+import TrainingPreferencesPage from "./pages/TrainingPreferences";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/initial-questionnaire" element={<ProtectedRoute><InitialQuestionnaire /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+          <Route path="/training-preferences" element={<ProtectedRoute><TrainingPreferencesPage /></ProtectedRoute>} />
         </Routes>
         <Toaster />
       </Router>

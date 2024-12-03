@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { UserProfile as UserProfileType } from "@/types/user";
 import { ProfileHeader } from "./ProfileHeader";
-import { TrainingPreferences } from "./Sections/TrainingPreferences";
 import { AppSettings } from "./Sections/AppSettings";
 import { AccountActions } from "./Sections/AccountActions";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const mockUserProfile: UserProfileType = {
   id: "1",
@@ -44,7 +46,19 @@ export const UserProfile = () => {
       <ProfileHeader profile={profile} />
 
       <div className="space-y-6">
-        <TrainingPreferences />
+        <Link to="/training-preferences">
+          <Card>
+            <CardContent className="flex items-center justify-between py-6">
+              <div>
+                <h2 className="text-xl font-semibold">Préférences d'entraînement</h2>
+                <p className="text-sm text-muted-foreground">
+                  Objectif, niveau d'activité, équipement disponible
+                </p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </CardContent>
+          </Card>
+        </Link>
 
         <AppSettings language="Français" />
 
