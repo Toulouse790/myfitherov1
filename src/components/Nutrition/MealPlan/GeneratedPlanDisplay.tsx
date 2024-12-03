@@ -8,6 +8,16 @@ interface GeneratedPlanDisplayProps {
   durationDays: string;
 }
 
+const weekDays = [
+  "Lundi",
+  "Mardi",
+  "Mercredi",
+  "Jeudi",
+  "Vendredi",
+  "Samedi",
+  "Dimanche"
+];
+
 export const GeneratedPlanDisplay = ({ 
   generatedPlan,
   durationDays,
@@ -24,7 +34,7 @@ export const GeneratedPlanDisplay = ({
           <TabsList className="w-full flex-wrap h-auto">
             {Array.from({ length: parseInt(durationDays) }, (_, i) => (
               <TabsTrigger key={i + 1} value={(i + 1).toString()} className="flex-1">
-                Jour {i + 1}
+                {weekDays[i % 7]}
               </TabsTrigger>
             ))}
           </TabsList>
