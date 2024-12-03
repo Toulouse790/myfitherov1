@@ -1,4 +1,7 @@
 import { Card } from "@/components/ui/card";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface Meal {
   name: string;
@@ -21,14 +24,32 @@ interface DayMealsProps {
 }
 
 export const DayMeals = ({ meals, mealTitles }: DayMealsProps) => {
+  const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
+
+  const toggleMeal = (mealType: string) => {
+    setExpandedMeal(expandedMeal === mealType ? null : mealType);
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {Object.entries(mealTitles).map(([mealType, { title }]) => (
-        <div key={mealType} className="p-4 rounded-lg bg-muted">
-          <h3 className="font-medium mb-2">{title}</h3>
-          {meals[mealType] && (
-            <div className="space-y-1 text-sm">
-              <p>{meals[mealType].name}</p>
+        <Card key={mealType} className="overflow-hidden">
+          <Button
+            variant="ghost"
+            className="w-full flex justify-between items-center p-4 h-auto"
+            onClick={() => toggleMeal(mealType)}
+          >
+            <span className="font-medium">{title}</span>
+            {expandedMeal === mealType ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
+          
+          {expandedMeal === mealType && meals[mealType] && (
+            <div className="p-4 pt-0 space-y-2 text-sm">
+              <p className="font-medium">{meals[mealType].name}</p>
               <p className="text-muted-foreground">
                 {meals[mealType].calories} kcal | {meals[mealType].proteins}g protéines | {meals[mealType].carbs}g glucides | {meals[mealType].fats}g lipides
               </p>
@@ -38,7 +59,7 @@ export const DayMeals = ({ meals, mealTitles }: DayMealsProps) => {
               )}
             </div>
           )}
-        </div>
+        </Card>
       ))}
     </div>
   );
