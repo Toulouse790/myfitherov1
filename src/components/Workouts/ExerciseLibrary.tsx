@@ -3,18 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { exercises, Exercise } from "./exerciseLibrary";
 import { muscleGroups, difficultyLevels } from "./workoutConstants";
-import { WorkoutFilters } from "./WorkoutFilters";
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { MuscleGroupCard } from "./filters/MuscleGroupCard";
 import { FilterControls } from "./filters/FilterControls";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 export const ExerciseLibrary = () => {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [selectedExercises, setSelectedExercises] = useLocalStorage<string[]>("selectedExercises", []);
+  const [showExerciseSelection, setShowExerciseSelection] = useState(false);
+  const [selectedMuscleExercises, setSelectedMuscleExercises] = useState<typeof exercises>([]);
 
   const filteredExercises = exercises.filter((exercise) => {
     if (selectedMuscleGroup !== "all" && exercise.muscleGroup !== selectedMuscleGroup) {
