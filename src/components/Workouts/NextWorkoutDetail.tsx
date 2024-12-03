@@ -73,7 +73,6 @@ const SAMPLE_EXERCISES = [
 
 export const NextWorkoutDetail = () => {
   const { toast } = useToast();
-
   const totals = SAMPLE_EXERCISES.reduce((acc, exercise) => ({
     plannedDuration: acc.plannedDuration + exercise.planned.duration,
     actualDuration: acc.actualDuration + exercise.actual.duration,
@@ -127,6 +126,9 @@ export const NextWorkoutDetail = () => {
         description: `Groupes musculaires à éviter pour le prochain entraînement : ${nextWorkoutRecommendation.musclesNeedingRest.join(', ')}`,
       });
     }
+
+    // Redirection vers la page d'accueil
+    navigate('/');
   };
 
   return (

@@ -3,6 +3,7 @@ import { NextWorkoutCard } from "@/components/Workouts/NextWorkoutCard";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { StrengthScore } from "@/components/Dashboard/StrengthScore";
 import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
+import { WorkoutSummary } from "@/components/Dashboard/WorkoutSummary";
 import { Header } from "@/components/Layout/Header";
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { useEffect } from "react";
@@ -29,6 +30,8 @@ const Index = () => {
             Suivez vos progrès, fixez vos objectifs et dépassez-vous
           </p>
         </div>
+
+        <WorkoutSummary />
 
         <div className="grid gap-6">
           <div className="rounded-xl bg-white/50 dark:bg-[#1E2330]/50 backdrop-blur-sm p-4 shadow-lg border border-muted">
