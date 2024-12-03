@@ -20,22 +20,23 @@ export const SignIn = () => {
     setIsLoading(true);
 
     try {
-      console.log("Tentative de connexion avec:", { email });
-      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      console.log("Réponse de Supabase:", { data, error });
-
       if (error) {
-        console.error("Erreur de connexion:", error);
+        let errorMessage = "Une erreur est survenue lors de la connexion";
+        
+        if (error.message === "Invalid login credentials") {
+          errorMessage = "Email ou mot de passe incorrect";
+        } else if (error.message === "Email not confirmed") {
+          errorMessage = "Veuillez confirmer votre email avant de vous connecter";
+        }
+        
         toast({
           title: "Erreur de connexion",
-          description: error.message === "Failed to fetch" 
-            ? "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet."
-            : error.message,
+          description: errorMessage,
           variant: "destructive",
         });
         return;
@@ -52,7 +53,7 @@ export const SignIn = () => {
       console.error("Erreur inattendue:", error);
       toast({
         title: "Erreur",
-        description: "Une erreur inattendue est survenue lors de la connexion",
+        description: "Une erreur inattendue est survenue. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {
