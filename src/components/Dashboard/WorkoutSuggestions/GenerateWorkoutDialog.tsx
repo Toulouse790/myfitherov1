@@ -40,7 +40,7 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
     }
 
     const userProfile = {
-      age: 30, // À implémenter plus tard avec les données réelles
+      age: 30,
       weight: 75,
       height: 175,
       goal: profile.objective,
