@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { SignUpForm } from "./SignUpForm";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -26,16 +24,13 @@ export const SignUp = () => {
       return;
     }
 
-    // Afficher le message de bienvenue
     toast({
       title: "Bienvenue !",
       description: `${username}, bienvenue dans cette belle aventure ! Configurons ensemble vos préférences.`,
       duration: 5000,
     });
 
-    // Simuler un délai pour que l'utilisateur puisse voir le message
     setTimeout(() => {
-      // Rediriger vers le questionnaire initial
       navigate("/initial-questionnaire");
     }, 2000);
   };
@@ -46,63 +41,17 @@ export const SignUp = () => {
         <CardHeader>
           <CardTitle>Créer un compte</CardTitle>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Nom d'utilisateur</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Votre nom d'utilisateur"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="exemple@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full">
-              S'inscrire
-            </Button>
-            <p className="text-sm text-center text-muted-foreground">
-              Déjà un compte ?{" "}
-              <Link to="/signin" className="text-primary hover:underline">
-                Se connecter
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
+        <SignUpForm
+          username={username}
+          email={email}
+          password={password}
+          confirmPassword={confirmPassword}
+          onUsernameChange={setUsername}
+          onEmailChange={setEmail}
+          onPasswordChange={setPassword}
+          onConfirmPasswordChange={setConfirmPassword}
+          onSubmit={handleSubmit}
+        />
       </Card>
     </div>
   );
