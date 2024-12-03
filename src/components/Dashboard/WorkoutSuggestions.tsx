@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Sparkles, Running, Bookmark } from "lucide-react";
+import { Sparkles, Activity, Bookmark } from "lucide-react";
 
 const suggestions = [
   {
@@ -11,7 +11,7 @@ const suggestions = [
   {
     title: "Cardio",
     description: "Enregistrer une séance de cardio",
-    icon: <Running className="w-6 h-6 text-white" />,
+    icon: <Activity className="w-6 h-6 text-white" />,
     bgColor: "bg-[#2A2F3F]"
   },
   {

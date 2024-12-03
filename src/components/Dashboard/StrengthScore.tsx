@@ -14,7 +14,7 @@ export const StrengthScore = () => {
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="text-2xl font-bold text-white">{score}</span>
           </div>
-          <Progress value={(score / maxScore) * 100} className="h-2 w-full absolute bottom-0" indicatorColor="bg-[#F97316]" />
+          <Progress value={(score / maxScore) * 100} className="h-2 w-full absolute bottom-0 [&>div]:bg-[#F97316]" />
         </div>
         <div className="space-y-1">
           <div className="text-lg font-medium text-white">{level}</div>
