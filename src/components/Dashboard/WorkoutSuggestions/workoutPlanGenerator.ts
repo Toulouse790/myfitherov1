@@ -8,7 +8,7 @@ interface UserProfile {
   recoveryCapacity: "low" | "medium" | "high";
 }
 
-const generateWorkoutPlan = (profile: UserProfile) => {
+export const generateWorkoutPlan = (profile: UserProfile) => {
   const bmi = profile.weight / Math.pow(profile.height / 100, 2);
   
   const getIntensity = () => {
