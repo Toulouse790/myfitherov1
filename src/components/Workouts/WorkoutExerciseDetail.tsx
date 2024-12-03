@@ -89,9 +89,9 @@ export const WorkoutExerciseDetail = () => {
 
       <WorkoutTimer />
 
-      <Card className="bg-[#1E2330]">
+      <Card className="bg-white">
         <CardHeader>
-          <CardTitle className="text-2xl text-white">{exerciseName}</CardTitle>
+          <CardTitle className="text-2xl text-gray-900">{exerciseName}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {videoUrl && (
@@ -105,20 +105,20 @@ export const WorkoutExerciseDetail = () => {
           )}
 
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-white">Séries</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Séries</h2>
             
             <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="text-sm text-gray-400">SÉRIE</div>
-              <div className="text-sm text-gray-400">RÉPÉTITIONS</div>
-              <div className="text-sm text-gray-400">KG</div>
+              <div className="text-sm text-gray-500">SÉRIE</div>
+              <div className="text-sm text-gray-500">RÉPÉTITIONS</div>
+              <div className="text-sm text-gray-500">KG</div>
             </div>
 
             {sets.map((set) => (
-              <div key={set.id} className="grid grid-cols-3 gap-4 bg-[#252B3B] p-4 rounded-lg">
-                <div className="text-white">{set.id}</div>
-                <div className="text-white">{set.reps}</div>
+              <div key={set.id} className="grid grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
+                <div className="text-gray-900">{set.id}</div>
+                <div className="text-gray-900">{set.reps}</div>
                 <div className="flex items-center justify-between">
-                  <span className="text-white">{set.weight}</span>
+                  <span className="text-gray-900">{set.weight}</span>
                   {!set.completed && (
                     <Button
                       variant="outline"
@@ -144,7 +144,7 @@ export const WorkoutExerciseDetail = () => {
 
             <Button
               variant="ghost"
-              className="w-full flex items-center gap-2 text-[#90EE90] hover:text-[#90EE90]/80"
+              className="w-full flex items-center gap-2 text-primary hover:text-primary/80"
               onClick={handleAddSet}
             >
               <Plus className="w-4 h-4" />
@@ -153,12 +153,12 @@ export const WorkoutExerciseDetail = () => {
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-white font-medium">Notes</h3>
+            <h3 className="text-gray-900 font-medium">Notes</h3>
             <Textarea
               placeholder="Aucune note ajoutée..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="bg-[#252B3B] border-0 text-white placeholder:text-gray-500"
+              className="bg-white border text-gray-900 placeholder:text-gray-500"
             />
           </div>
         </CardContent>

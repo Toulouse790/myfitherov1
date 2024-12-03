@@ -13,11 +13,11 @@ export const NutritionChart = () => {
   ];
 
   return (
-    <Card className="w-full sm:w-auto bg-[#1E2330] border-none shadow-lg">
-      <CardHeader className="p-4 border-b border-gray-800">
-        <CardTitle className="text-lg font-semibold text-white flex items-center gap-2">
+    <Card className="w-full sm:w-auto bg-white border shadow-lg">
+      <CardHeader className="p-4 border-b">
+        <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           Suivi hebdomadaire
-          <span className="text-sm font-normal text-gray-400">(calories)</span>
+          <span className="text-sm font-normal text-gray-500">(calories)</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
@@ -33,10 +33,10 @@ export const NutritionChart = () => {
             showGridLines={false}
             startEndOnly={false}
             showAnimation={true}
-            className="[&_.recharts-cartesian-grid-horizontal_line]:stroke-gray-800 [&_.recharts-cartesian-axis-tick-value]:fill-gray-400"
+            className="[&_.recharts-cartesian-grid-horizontal_line]:stroke-gray-200 [&_.recharts-cartesian-axis-tick-value]:fill-gray-600"
             customTooltip={(props: any) => (
-              <div className="bg-[#2A2F3F] p-2 rounded-lg border border-gray-700 shadow-xl">
-                <p className="text-white font-medium">{props.payload[0]?.payload.name}</p>
+              <div className="bg-white p-2 rounded-lg border shadow-xl">
+                <p className="text-gray-900 font-medium">{props.payload[0]?.payload.name}</p>
                 <p className="text-primary">
                   {props.payload[0]?.value} kcal
                 </p>
