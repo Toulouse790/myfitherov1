@@ -9,9 +9,9 @@ const TrainingPreferencesPage = () => {
   return (
     <div className="container mx-auto p-4 space-y-6 pb-24">
       <Button 
-        variant="ghost" 
+        variant="outline" 
         onClick={() => navigate(-1)}
-        className="mb-4"
+        className="mb-4 text-foreground hover:text-foreground/80"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Retour
