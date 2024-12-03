@@ -3,17 +3,20 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { SignUpForm } from "./SignUpForm";
+import { supabase } from "@/integrations/supabase/client";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     if (password !== confirmPassword) {
       toast({
@@ -21,18 +24,51 @@ export const SignUp = () => {
         description: "Les mots de passe ne correspondent pas",
         variant: "destructive",
       });
+      setIsLoading(false);
       return;
     }
 
-    toast({
-      title: "Bienvenue !",
-      description: `${username}, bienvenue dans cette belle aventure ! Configurons ensemble vos préférences.`,
-      duration: 5000,
-    });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: username,
+          },
+        },
+      });
 
-    setTimeout(() => {
-      navigate("/initial-questionnaire");
-    }, 2000);
+      if (error) {
+        toast({
+          title: "Erreur lors de l'inscription",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data) {
+        toast({
+          title: "Bienvenue !",
+          description: `${username}, bienvenue dans cette belle aventure ! Configurons ensemble vos préférences.`,
+          duration: 5000,
+        });
+
+        setTimeout(() => {
+          navigate("/initial-questionnaire");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'inscription:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'inscription",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -51,6 +87,7 @@ export const SignUp = () => {
           onPasswordChange={setPassword}
           onConfirmPasswordChange={setConfirmPassword}
           onSubmit={handleSubmit}
+          isLoading={isLoading}
         />
       </Card>
     </div>

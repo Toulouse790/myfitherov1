@@ -14,6 +14,7 @@ interface SignUpFormProps {
   onPasswordChange: (value: string) => void;
   onConfirmPasswordChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  isLoading: boolean;
 }
 
 export const SignUpForm = ({
@@ -26,6 +27,7 @@ export const SignUpForm = ({
   onPasswordChange,
   onConfirmPasswordChange,
   onSubmit,
+  isLoading,
 }: SignUpFormProps) => {
   return (
     <form onSubmit={onSubmit}>
@@ -39,6 +41,7 @@ export const SignUpForm = ({
             value={username}
             onChange={(e) => onUsernameChange(e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
         <div className="space-y-2">
@@ -50,6 +53,7 @@ export const SignUpForm = ({
             value={email}
             onChange={(e) => onEmailChange(e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
         <div className="space-y-2">
@@ -60,6 +64,7 @@ export const SignUpForm = ({
             value={password}
             onChange={(e) => onPasswordChange(e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
         <div className="space-y-2">
@@ -70,12 +75,13 @@ export const SignUpForm = ({
             value={confirmPassword}
             onChange={(e) => onConfirmPasswordChange(e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
-        <Button type="submit" className="w-full">
-          S'inscrire
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Inscription en cours..." : "S'inscrire"}
         </Button>
         <p className="text-sm text-center text-muted-foreground">
           Déjà un compte ?{" "}
