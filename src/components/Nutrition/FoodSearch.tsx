@@ -43,7 +43,7 @@ export const FoodSearch = ({
             <TabsTrigger 
               key={category.value} 
               value={category.value}
-              className="text-gray-700 data-[state=active]:bg-primary data-[state=active]:text-white"
+              className="text-gray-900 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               {category.label}
             </TabsTrigger>
@@ -59,12 +59,12 @@ export const FoodSearch = ({
                     <Button
                       key={food.id}
                       variant="ghost"
-                      className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-primary/10 text-gray-800 hover:text-gray-900"
+                      className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-primary/10 text-gray-900 hover:text-gray-900"
                       onClick={() => onSelectFood(food.id)}
                     >
                       <div className="text-left space-y-1">
                         <div className="font-medium">{food.name}</div>
-                        <div className="text-sm text-gray-600 flex gap-3">
+                        <div className="text-sm text-gray-700 flex gap-3">
                           <span>{food.calories} kcal</span>
                           <span>•</span>
                           <span>{food.proteins}g protéines</span>
@@ -73,7 +73,7 @@ export const FoodSearch = ({
                     </Button>
                   ))}
                 {displayedFoods.length === 0 && (
-                  <p className="text-center text-gray-500 py-8">
+                  <p className="text-center text-gray-700 py-8">
                     Aucun aliment disponible dans cette catégorie
                   </p>
                 )}

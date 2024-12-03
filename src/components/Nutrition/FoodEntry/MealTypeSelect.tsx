@@ -22,7 +22,7 @@ export const MealTypeSelect = ({ value, onChange }: MealTypeSelectProps) => {
 
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-full md:w-[200px]">
+      <SelectTrigger className="w-full md:w-[200px] text-gray-900">
         <SelectValue placeholder="Sélectionner un repas" />
       </SelectTrigger>
       <SelectContent>
@@ -30,7 +30,7 @@ export const MealTypeSelect = ({ value, onChange }: MealTypeSelectProps) => {
           <SelectItem 
             key={type.value} 
             value={type.value}
-            className="text-gray-800 hover:bg-gray-100"
+            className="text-gray-900 hover:bg-gray-100"
           >
             {type.label}
           </SelectItem>

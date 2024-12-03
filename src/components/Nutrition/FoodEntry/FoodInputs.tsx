@@ -35,14 +35,14 @@ export const FoodInputs = ({
             onFoodChange(e.target.value);
             setIsCustomFood(true);
           }}
-          className="bg-white border-gray-300"
+          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
         />
         <Input
           type="number"
           placeholder="Quantité (g)"
           value={weight}
           onChange={(e) => onWeightChange(e.target.value)}
-          className="bg-white border-gray-300"
+          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
         />
       </div>
       <div className="space-y-2">
@@ -51,7 +51,7 @@ export const FoodInputs = ({
           placeholder="Calories"
           value={calories}
           onChange={(e) => onCaloriesChange(e.target.value)}
-          className={`border-gray-300 ${isCustomFood ? 'bg-white' : 'bg-gray-50'}`}
+          className={`border-gray-300 text-gray-900 placeholder:text-gray-500 ${isCustomFood ? 'bg-white' : 'bg-gray-50'}`}
           readOnly={!isCustomFood}
         />
         <Input
@@ -59,7 +59,7 @@ export const FoodInputs = ({
           placeholder="Protéines (g)"
           value={proteins}
           onChange={(e) => onProteinsChange(e.target.value)}
-          className="bg-white border-gray-300"
+          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
         />
       </div>
     </div>

@@ -33,7 +33,7 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
   return (
     <Card className="bg-white">
       <CardHeader>
-        <CardTitle className="text-xl text-gray-800">Journal alimentaire</CardTitle>
+        <CardTitle className="text-xl text-gray-900">Journal alimentaire</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <FoodEntryForm
