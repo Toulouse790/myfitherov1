@@ -125,7 +125,7 @@ export const initialFormData: WorkoutFormData = {
   location: "",
 };
 
-export const sampleWorkouts: WorkoutData[] = [
+export const workouts: WorkoutData[] = [
   {
     id: "1",
     title: "Full Body Débutant",
