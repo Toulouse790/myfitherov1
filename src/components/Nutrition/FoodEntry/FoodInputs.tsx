@@ -32,13 +32,26 @@ export const FoodInputs = ({
     
     const selectedFood = commonFoods.find(food => food.name === value);
     if (selectedFood && weight) {
-      const weightNum = parseFloat(weight);
-      if (!isNaN(weightNum)) {
-        const newCalories = Math.round((selectedFood.calories * weightNum) / 100);
-        const newProteins = Math.round((selectedFood.proteins * weightNum) / 100);
-        onCaloriesChange(newCalories.toString());
-        onProteinsChange(newProteins.toString());
-      }
+      updateNutrients(selectedFood.calories, selectedFood.proteins, weight);
+    }
+  };
+
+  const handleWeightChange = (newWeight: string) => {
+    onWeightChange(newWeight);
+    
+    const selectedFood = commonFoods.find(food => food.name === newFood);
+    if (selectedFood && newWeight) {
+      updateNutrients(selectedFood.calories, selectedFood.proteins, newWeight);
+    }
+  };
+
+  const updateNutrients = (baseCalories: number, baseProteins: number, currentWeight: string) => {
+    const weightNum = parseFloat(currentWeight);
+    if (!isNaN(weightNum)) {
+      const newCalories = Math.round((baseCalories * weightNum) / 100);
+      const newProteins = Math.round((baseProteins * weightNum) / 100);
+      onCaloriesChange(newCalories.toString());
+      onProteinsChange(newProteins.toString());
     }
   };
 
@@ -57,7 +70,7 @@ export const FoodInputs = ({
           type="number"
           placeholder="Quantité (g)"
           value={weight}
-          onChange={(e) => onWeightChange(e.target.value)}
+          onChange={(e) => handleWeightChange(e.target.value)}
           className="bg-white"
         />
       </div>
