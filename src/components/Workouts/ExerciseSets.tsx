@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Timer } from "lucide-react";
+import { Plus, Timer, Flame } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Set {
@@ -9,6 +9,7 @@ interface Set {
   reps: number;
   weight: number;
   completed: boolean;
+  calories?: number;
 }
 
 interface ExerciseSetsProps {
@@ -23,7 +24,6 @@ export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) =
     { id: 3, reps: 14, weight: 8, completed: false },
   ]);
   const [restTimer, setRestTimer] = useState<number | null>(null);
-  const [notes, setNotes] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,15 +45,39 @@ export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) =
     return () => clearInterval(interval);
   }, [restTimer, toast]);
 
+  const calculateCalories = (reps: number, weight: number): number => {
+    // Formule approximative pour calculer les calories :
+    // (0.0175 * MET * poids corporel en kg * durée en minutes)
+    // MET (Metabolic Equivalent of Task) pour la musculation : environ 6
+    // Durée estimée par série : 1 minute
+    // Poids corporel : utilisation du poids de l'exercice comme facteur
+    const MET = 6;
+    const duration = 1; // minute par série
+    return Math.round(0.0175 * MET * (weight * 2) * duration * reps * 0.1);
+  };
+
   const handleSetCompletion = (setId: number) => {
-    setSets(prev => prev.map(set => 
-      set.id === setId ? { ...set, completed: true } : set
-    ));
-    setRestTimer(90); // Démarre un timer de repos de 90 secondes
-    toast({
-      title: "Série complétée !",
-      description: "90 secondes de repos avant la prochaine série.",
-    });
+    setSets(prev => prev.map(set => {
+      if (set.id === setId) {
+        const calories = calculateCalories(set.reps, set.weight);
+        return { ...set, completed: true, calories };
+      }
+      return set;
+    }));
+    setRestTimer(90);
+    
+    const currentSet = sets.find(s => s.id === setId);
+    if (currentSet) {
+      const calories = calculateCalories(currentSet.reps, currentSet.weight);
+      toast({
+        title: "Série complétée !",
+        description: `${calories} calories brûlées. 90 secondes de repos avant la prochaine série.`,
+      });
+    }
+  };
+
+  const getTotalCalories = (): number => {
+    return sets.reduce((total, set) => total + (set.calories || 0), 0);
   };
 
   const addNewSet = () => {
@@ -72,7 +96,13 @@ export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) =
 
   return (
     <div className="space-y-6 p-4">
-      <h2 className="text-2xl font-bold">{exerciseName}</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">{exerciseName}</h2>
+        <div className="flex items-center gap-2 text-primary">
+          <Flame className="h-5 w-5" />
+          <span className="font-semibold">{getTotalCalories()} kcal</span>
+        </div>
+      </div>
       
       <div className="space-y-4">
         <div className="grid grid-cols-3 gap-4 text-sm font-medium text-center mb-2">
@@ -94,7 +124,19 @@ export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) =
               onClick={() => handleSetCompletion(set.id)}
               disabled={set.completed || (restTimer !== null)}
             >
-              {set.completed ? "Série complétée" : "Valider la série"}
+              {set.completed ? (
+                <span className="flex items-center gap-2">
+                  Série complétée
+                  {set.calories && (
+                    <>
+                      <Flame className="h-4 w-4" />
+                      <span>{set.calories} kcal</span>
+                    </>
+                  )}
+                </span>
+              ) : (
+                "Valider la série"
+              )}
               {restTimer !== null && !set.completed && (
                 <Timer className="ml-2 h-4 w-4 animate-pulse" />
               )}
@@ -120,16 +162,6 @@ export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) =
           </div>
         </div>
       )}
-
-      <div className="space-y-2">
-        <h3 className="font-medium">Notes</h3>
-        <textarea
-          className="w-full h-24 p-2 rounded-lg bg-card border resize-none"
-          placeholder="Aucune note ajoutée..."
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-        />
-      </div>
 
       <Button className="w-full bg-[#9BB537] hover:bg-[#9BB537]/90">
         COMMENCER
