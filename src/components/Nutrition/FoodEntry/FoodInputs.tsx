@@ -56,7 +56,6 @@ export const FoodInputs = ({
     setIsCustomFood(false);
     setOpen(false);
 
-    // Si un poids est déjà entré, on recalcule les valeurs
     if (weight) {
       const weightNum = parseFloat(weight);
       if (!isNaN(weightNum)) {
@@ -71,7 +70,6 @@ export const FoodInputs = ({
   const handleWeightChange = (newWeight: string) => {
     onWeightChange(newWeight);
     
-    // Si un aliment est sélectionné, on recalcule les valeurs nutritionnelles
     if (selectedFoodBase && newWeight) {
       const weightNum = parseFloat(newWeight);
       if (!isNaN(weightNum)) {
@@ -83,8 +81,10 @@ export const FoodInputs = ({
     }
   };
 
-  const filteredFoods = commonFoods.filter(food => 
-    food.name.toLowerCase().includes(searchValue.toLowerCase())
+  // Ensure we always have a valid array of foods for filtering
+  const foods = Array.isArray(commonFoods) ? commonFoods : [];
+  const filteredFoods = foods.filter(food => 
+    food.name.toLowerCase().includes((searchValue || "").toLowerCase())
   );
 
   return (
