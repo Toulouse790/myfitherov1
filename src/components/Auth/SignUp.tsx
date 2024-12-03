@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +12,7 @@ export const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,11 +26,18 @@ export const SignUp = () => {
       return;
     }
 
-    // TODO: Implement actual registration logic
+    // Afficher le message de bienvenue
     toast({
-      title: "Inscription",
-      description: "Fonctionnalité à implémenter",
+      title: "Bienvenue !",
+      description: `${username}, bienvenue dans cette belle aventure ! Commençons ensemble votre parcours fitness.`,
+      duration: 5000,
     });
+
+    // Simuler un délai pour que l'utilisateur puisse voir le message
+    setTimeout(() => {
+      // Rediriger vers la page d'accueil
+      navigate("/");
+    }, 2000);
   };
 
   return (
