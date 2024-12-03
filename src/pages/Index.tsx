@@ -18,37 +18,31 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white dark:from-[#1A1F2C] dark:to-[#2A2F3F]">
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container max-w-4xl mx-auto px-4 pt-20 pb-24 space-y-6">
-        <div className="text-center mb-8 animate-fade-up">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Votre parcours fitness personnalisé
+      <main className="container max-w-4xl mx-auto px-4 pt-16 pb-20">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold text-foreground">
+            Tableau de bord
           </h1>
-          <p className="mt-2 text-muted-foreground">
-            Suivez vos progrès, fixez vos objectifs et dépassez-vous
+          <p className="text-sm text-muted-foreground">
+            Suivez vos progrès et atteignez vos objectifs
           </p>
         </div>
 
-        <WorkoutSummary />
+        <div className="space-y-4">
+          <WorkoutSummary />
 
-        <div className="grid gap-6">
-          <div className="rounded-xl bg-white/50 dark:bg-[#1E2330]/50 backdrop-blur-sm p-4 shadow-lg border border-muted">
+          <div className="grid gap-4">
             <NextWorkoutCard />
-          </div>
-
-          <div className="rounded-xl bg-white/50 dark:bg-[#1E2330]/50 backdrop-blur-sm p-4 shadow-lg border border-muted">
-            <WorkoutSuggestions />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="rounded-xl bg-white/50 dark:bg-[#1E2330]/50 backdrop-blur-sm p-4 shadow-lg border border-muted">
+            
+            <div className="grid md:grid-cols-2 gap-4">
               <StrengthScore />
-            </div>
-            <div className="rounded-xl bg-white/50 dark:bg-[#1E2330]/50 backdrop-blur-sm p-4 shadow-lg border border-muted">
               <TrendMetrics />
             </div>
+
+            <WorkoutSuggestions />
           </div>
         </div>
       </main>
