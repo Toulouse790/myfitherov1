@@ -56,44 +56,55 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data: preferences, error } = await supabase
-      .from('user_nutrition_preferences')
-      .select('excluded_foods')
-      .eq('user_id', user.id)
-      .single();
+    try {
+      const { data: preferences, error } = await supabase
+        .from('user_nutrition_preferences')
+        .select('excluded_foods')
+        .eq('user_id', user.id)
+        .single();
 
-    if (error && error.code !== 'PGRST116') {
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching preferences:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour vos préférences",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const excludedFoods = preferences?.excluded_foods || [];
+      const updatedExcludedFoods = [...new Set([...excludedFoods, food.name])];
+
+      const { error: upsertError } = await supabase
+        .from('user_nutrition_preferences')
+        .upsert({
+          user_id: user.id,
+          excluded_foods: updatedExcludedFoods,
+        });
+
+      if (upsertError) {
+        console.error('Error updating preferences:', upsertError);
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour vos préférences",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Préférences mises à jour",
+        description: `${food.name} ne sera plus proposé dans vos menus.`,
+      });
+    } catch (error) {
+      console.error('Error in handleExcludeFood:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour vos préférences",
+        description: "Une erreur est survenue lors de la mise à jour des préférences",
         variant: "destructive",
       });
-      return;
     }
-
-    const excludedFoods = preferences?.excluded_foods || [];
-    const updatedExcludedFoods = [...excludedFoods, food.name];
-
-    const { error: updateError } = await supabase
-      .from('user_nutrition_preferences')
-      .upsert({
-        user_id: user.id,
-        excluded_foods: updatedExcludedFoods,
-      });
-
-    if (updateError) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour vos préférences",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Préférences mises à jour",
-      description: `${food.name} ne sera plus proposé dans vos menus.`,
-    });
   };
 
   return (
