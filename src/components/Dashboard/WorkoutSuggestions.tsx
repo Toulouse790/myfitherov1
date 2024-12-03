@@ -12,55 +12,117 @@ interface UserProfile {
   recoveryCapacity: "low" | "medium" | "high";
 }
 
+interface Exercise {
+  name: string;
+  type: "compound" | "isolation";
+  muscleGroup: string;
+  intensity: number;
+  sets: number;
+  reps: number;
+  restTime: number;
+}
+
 const generateWorkoutPlan = (profile: UserProfile) => {
-  // Calcul de l'intensité en fonction de l'âge et de la capacité de récupération
+  // Calcul du BMI pour adapter l'intensité
+  const bmi = profile.weight / Math.pow(profile.height / 100, 2);
+  
+  // Calcul de l'intensité en fonction de multiples facteurs
   const getIntensity = () => {
     const baseIntensity = profile.recoveryCapacity === "high" ? 0.8 : 
                          profile.recoveryCapacity === "medium" ? 0.7 : 0.6;
-    return profile.age > 50 ? baseIntensity * 0.8 : baseIntensity;
+    
+    // Ajustements basés sur l'âge
+    const ageAdjustment = profile.age > 50 ? 0.8 :
+                         profile.age > 40 ? 0.9 :
+                         profile.age > 30 ? 1.0 : 1.1;
+    
+    // Ajustements basés sur le BMI
+    const bmiAdjustment = bmi > 30 ? 0.85 :
+                         bmi > 25 ? 0.9 :
+                         bmi < 18.5 ? 0.9 : 1.0;
+    
+    return baseIntensity * ageAdjustment * bmiAdjustment;
   };
 
-  // Calcul du volume en fonction des calories et des jours d'entraînement
+  // Calcul du volume optimal
   const getVolume = () => {
-    const baseVolume = Math.floor(profile.dailyCalories / 200); // ~1 set pour 200 calories
+    const baseVolume = Math.floor(profile.dailyCalories / 200);
     const weeklyAdjustment = 1 + (profile.workoutsPerWeek / 10);
-    return Math.floor(baseVolume * weeklyAdjustment);
+    const recoveryAdjustment = profile.recoveryCapacity === "high" ? 1.2 :
+                              profile.recoveryCapacity === "medium" ? 1.0 : 0.8;
+    
+    return Math.floor(baseVolume * weeklyAdjustment * recoveryAdjustment);
   };
 
-  // Sélection des exercices en fonction de l'objectif
+  // Sélection intelligente des exercices
   const getExerciseTypes = () => {
-    switch(profile.goal) {
-      case "weight_loss":
-        return {
-          compound: 0.7, // 70% exercices composés
-          isolation: 0.3, // 30% exercices d'isolation
-          cardio: true
-        };
-      case "muscle_gain":
-        return {
-          compound: 0.6,
-          isolation: 0.4,
-          cardio: false
-        };
-      default:
-        return {
-          compound: 0.5,
-          isolation: 0.5,
-          cardio: true
-        };
+    const baseDistribution = {
+      weight_loss: { compound: 0.7, isolation: 0.3, cardio: true },
+      muscle_gain: { compound: 0.6, isolation: 0.4, cardio: false },
+      maintenance: { compound: 0.5, isolation: 0.5, cardio: true }
+    };
+
+    const distribution = baseDistribution[profile.goal];
+
+    // Ajustement basé sur la capacité de récupération
+    if (profile.recoveryCapacity === "low") {
+      distribution.compound -= 0.1;
+      distribution.isolation += 0.1;
     }
+
+    // Ajustement basé sur l'âge
+    if (profile.age > 50) {
+      distribution.compound -= 0.1;
+      distribution.isolation += 0.1;
+    }
+
+    return distribution;
   };
 
+  // Calcul du temps de repos optimal
+  const getRestTime = () => {
+    const baseRest = profile.recoveryCapacity === "high" ? 60 : 
+                    profile.recoveryCapacity === "medium" ? 90 : 120;
+    
+    // Ajustements basés sur l'intensité
+    const intensity = getIntensity();
+    const intensityAdjustment = intensity > 0.8 ? 1.2 :
+                               intensity > 0.6 ? 1.0 : 0.8;
+    
+    return Math.round(baseRest * intensityAdjustment);
+  };
+
+  // Génération du programme complet
   const intensity = getIntensity();
   const volume = getVolume();
   const exerciseTypes = getExerciseTypes();
+  const restTime = getRestTime();
+
+  // Calcul des séries et répétitions optimales
+  const getSetsAndReps = () => {
+    if (profile.goal === "weight_loss") {
+      return { sets: 3, reps: 15 };
+    } else if (profile.goal === "muscle_gain") {
+      return { sets: 4, reps: 8 };
+    }
+    return { sets: 3, reps: 12 };
+  };
+
+  const { sets, reps } = getSetsAndReps();
 
   return {
     intensity,
     volume,
     exerciseTypes,
-    recommendedRest: profile.recoveryCapacity === "high" ? 60 : 
-                    profile.recoveryCapacity === "medium" ? 90 : 120,
+    recommendedRest: restTime,
+    setsAndReps: { sets, reps },
+    weeklySchedule: {
+      daysPerWeek: profile.workoutsPerWeek,
+      sessionsPerDay: 1,
+      recommendedDays: profile.workoutsPerWeek <= 3 ? ["Lundi", "Mercredi", "Vendredi"] :
+                      profile.workoutsPerWeek <= 4 ? ["Lundi", "Mardi", "Jeudi", "Vendredi"] :
+                      ["Lundi", "Mardi", "Mercredi", "Vendredi", "Samedi"]
+    }
   };
 };
 
@@ -82,7 +144,12 @@ export const WorkoutSuggestions = () => {
     
     toast({
       title: "Programme généré avec succès",
-      description: `Un programme adapté à votre profil a été créé avec ${plan.volume} séries au total, une intensité de ${Math.round(plan.intensity * 100)}% et ${plan.recommendedRest}s de repos entre les séries.`,
+      description: `Programme personnalisé créé avec :
+      - ${plan.volume} séries au total
+      - Intensité : ${Math.round(plan.intensity * 100)}%
+      - ${plan.recommendedRest}s de repos entre les séries
+      - ${plan.setsAndReps.sets} séries de ${plan.setsAndReps.reps} répétitions
+      - ${plan.weeklySchedule.daysPerWeek} jours par semaine (${plan.weeklySchedule.recommendedDays.join(", ")})`,
     });
   };
 
