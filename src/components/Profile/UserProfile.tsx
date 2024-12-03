@@ -11,7 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
-import { ColorCustomization } from "./ColorCustomization";
 
 const mockUserProfile: UserProfileType = {
   id: "1",
@@ -162,8 +161,6 @@ export const UserProfile = () => {
             </div>
           </CardContent>
         </Card>
-
-        <ColorCustomization />
 
         <div className="space-y-4">
           <Button
