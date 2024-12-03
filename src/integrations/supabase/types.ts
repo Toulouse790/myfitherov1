@@ -14,6 +14,7 @@ export type Database = {
           calories: number
           created_at: string
           id: string
+          meal_type: string
           name: string
           proteins: number
           updated_at: string
@@ -23,6 +24,7 @@ export type Database = {
           calories: number
           created_at?: string
           id?: string
+          meal_type?: string
           name: string
           proteins: number
           updated_at?: string
@@ -32,6 +34,7 @@ export type Database = {
           calories?: number
           created_at?: string
           id?: string
+          meal_type?: string
           name?: string
           proteins?: number
           updated_at?: string

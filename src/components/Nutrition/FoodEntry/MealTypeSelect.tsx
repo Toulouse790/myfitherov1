@@ -14,15 +14,14 @@ interface MealTypeSelectProps {
 export const MealTypeSelect = ({ value, onChange }: MealTypeSelectProps) => {
   const mealTypes = [
     { value: "breakfast", label: "Petit déjeuner" },
-    { value: "morning_snack", label: "Collation matin" },
     { value: "lunch", label: "Déjeuner" },
-    { value: "afternoon_snack", label: "Collation après-midi" },
     { value: "dinner", label: "Dîner" },
+    { value: "snack", label: "Collation" }
   ];
 
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-full md:w-[200px] text-gray-900">
+      <SelectTrigger className="w-full md:w-[200px] bg-white text-black">
         <SelectValue placeholder="Sélectionner un repas" />
       </SelectTrigger>
       <SelectContent>
@@ -30,7 +29,7 @@ export const MealTypeSelect = ({ value, onChange }: MealTypeSelectProps) => {
           <SelectItem 
             key={type.value} 
             value={type.value}
-            className="text-gray-900 hover:bg-gray-100"
+            className="text-black hover:bg-blue-50"
           >
             {type.label}
           </SelectItem>

@@ -1,7 +1,7 @@
-import { Profile, ProfileInsert, ProfileUpdate } from '@/types/database/profile';
-import { QuestionnaireResponse, QuestionnaireResponseInsert, QuestionnaireResponseUpdate } from '@/types/database/questionnaire';
-import { WorkoutSession, WorkoutSessionInsert, WorkoutSessionUpdate } from '@/types/database/workout';
-import { ExerciseMedia, ExerciseMediaInsert, ExerciseMediaUpdate } from '@/types/database/exercise-media';
+import { Profile, ProfileInsert, ProfileUpdate } from '@/types/supabase/profile';
+import { QuestionnaireResponse, QuestionnaireResponseInsert, QuestionnaireResponseUpdate } from '@/types/supabase/questionnaire';
+import { WorkoutSession, WorkoutSessionInsert, WorkoutSessionUpdate } from '@/types/supabase/workout';
+import { FoodJournalEntry, FoodJournalEntryInsert } from '@/types/supabase/food';
 
 export type Database = {
   public: {
@@ -21,10 +21,10 @@ export type Database = {
         Insert: WorkoutSessionInsert;
         Update: WorkoutSessionUpdate;
       };
-      exercise_media: {
-        Row: ExerciseMedia;
-        Insert: ExerciseMediaInsert;
-        Update: ExerciseMediaUpdate;
+      food_journal_entries: {
+        Row: FoodJournalEntry;
+        Insert: FoodJournalEntryInsert;
+        Update: Partial<FoodJournalEntryInsert>;
       };
     };
     Views: {
