@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
 import { commonFoods } from "@/data/commonFoods";
 import { Button } from "@/components/ui/button";
 import {
@@ -81,10 +81,11 @@ export const FoodInputs = ({
     }
   };
 
-  // Ensure we always have a valid array of foods for filtering
+  // Ensure we have a valid array of foods and search value
   const foods = Array.isArray(commonFoods) ? commonFoods : [];
+  const safeSearchValue = searchValue || "";
   const filteredFoods = foods.filter(food => 
-    food.name.toLowerCase().includes((searchValue || "").toLowerCase())
+    food.name.toLowerCase().includes(safeSearchValue.toLowerCase())
   );
 
   return (
@@ -101,16 +102,15 @@ export const FoodInputs = ({
               {newFood || "Sélectionner un aliment..."}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-full p-0">
+          <PopoverContent className="w-full p-0" align="start">
             <Command>
               <CommandInput 
                 placeholder="Rechercher un aliment..." 
-                className="h-9"
-                value={searchValue}
+                value={safeSearchValue}
                 onValueChange={setSearchValue}
               />
               <CommandEmpty>Aucun aliment trouvé.</CommandEmpty>
-              <CommandGroup className="max-h-64 overflow-auto">
+              <CommandGroup>
                 {filteredFoods.map((food) => (
                   <CommandItem
                     key={food.id}
