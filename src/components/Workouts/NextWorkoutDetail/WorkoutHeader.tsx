@@ -1,29 +1,18 @@
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Timer } from "lucide-react";
 
-export const WorkoutHeader = () => {
-  const navigate = useNavigate();
-  
+interface WorkoutHeaderProps {
+  title: string;
+  duration: number;
+}
+
+export const WorkoutHeader = ({ title, duration }: WorkoutHeaderProps) => {
   return (
-    <>
-      <Button 
-        variant="ghost" 
-        className="mb-6"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Retour
-      </Button>
-
-      <div className="text-center">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Prochain Entraînement (IA)
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Dos, Biceps, Épaules
-        </p>
+    <div className="flex items-center justify-between">
+      <h1 className="text-2xl font-bold text-white">{title}</h1>
+      <div className="flex items-center gap-2 text-sm text-gray-400">
+        <Timer className="w-4 h-4" />
+        <span>{duration} mins</span>
       </div>
-    </>
+    </div>
   );
 };
