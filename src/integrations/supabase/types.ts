@@ -68,6 +68,44 @@ export type Database = {
           },
         ]
       }
+      user_nutrition_preferences: {
+        Row: {
+          allergies: string[] | null
+          created_at: string
+          excluded_foods: string[] | null
+          id: string
+          intolerances: string[] | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          allergies?: string[] | null
+          created_at?: string
+          excluded_foods?: string[] | null
+          id?: string
+          intolerances?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          allergies?: string[] | null
+          created_at?: string
+          excluded_foods?: string[] | null
+          id?: string
+          intolerances?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_nutrition_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workout_sessions: {
         Row: {
           created_at: string | null
