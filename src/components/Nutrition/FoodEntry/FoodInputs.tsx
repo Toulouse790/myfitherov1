@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { commonFoods } from "@/data/commonFoods";
 import { Button } from "@/components/ui/button";
@@ -41,26 +41,18 @@ export const FoodInputs = ({
   setIsCustomFood,
 }: FoodInputsProps) => {
   const [open, setOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedFoodBase, setSelectedFoodBase] = useState<{
-    calories: number;
-    proteins: number;
-  } | null>(null);
+  const [search, setSearch] = useState("");
 
-  const handleSelectFood = (selectedFood: typeof commonFoods[0]) => {
-    onFoodChange(selectedFood.name);
-    setSelectedFoodBase({
-      calories: selectedFood.calories,
-      proteins: selectedFood.proteins,
-    });
+  const handleSelectFood = (food: typeof commonFoods[0]) => {
+    onFoodChange(food.name);
     setIsCustomFood(false);
     setOpen(false);
 
     if (weight) {
       const weightNum = parseFloat(weight);
       if (!isNaN(weightNum)) {
-        const newCalories = Math.round((selectedFood.calories * weightNum) / 100);
-        const newProteins = Math.round((selectedFood.proteins * weightNum) / 100);
+        const newCalories = Math.round((food.calories * weightNum) / 100);
+        const newProteins = Math.round((food.proteins * weightNum) / 100);
         onCaloriesChange(newCalories.toString());
         onProteinsChange(newProteins.toString());
       }
@@ -70,22 +62,20 @@ export const FoodInputs = ({
   const handleWeightChange = (newWeight: string) => {
     onWeightChange(newWeight);
     
-    if (selectedFoodBase && newWeight) {
+    const selectedFood = commonFoods.find(f => f.name === newFood);
+    if (selectedFood && newWeight) {
       const weightNum = parseFloat(newWeight);
       if (!isNaN(weightNum)) {
-        const newCalories = Math.round((selectedFoodBase.calories * weightNum) / 100);
-        const newProteins = Math.round((selectedFoodBase.proteins * weightNum) / 100);
+        const newCalories = Math.round((selectedFood.calories * weightNum) / 100);
+        const newProteins = Math.round((selectedFood.proteins * weightNum) / 100);
         onCaloriesChange(newCalories.toString());
         onProteinsChange(newProteins.toString());
       }
     }
   };
 
-  // Ensure we have a valid array of foods and search value
-  const foods = Array.isArray(commonFoods) ? commonFoods : [];
-  const safeSearchValue = searchValue || "";
-  const filteredFoods = foods.filter(food => 
-    food.name.toLowerCase().includes(safeSearchValue.toLowerCase())
+  const filteredFoods = commonFoods.filter(food => 
+    food.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -97,7 +87,7 @@ export const FoodInputs = ({
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-full justify-start text-left font-normal bg-white border-gray-300 text-gray-900"
+              className="w-full justify-start text-left font-normal"
             >
               {newFood || "Sélectionner un aliment..."}
             </Button>
@@ -106,8 +96,8 @@ export const FoodInputs = ({
             <Command>
               <CommandInput 
                 placeholder="Rechercher un aliment..." 
-                value={safeSearchValue}
-                onValueChange={setSearchValue}
+                value={search}
+                onValueChange={setSearch}
               />
               <CommandEmpty>Aucun aliment trouvé.</CommandEmpty>
               <CommandGroup>
@@ -117,12 +107,7 @@ export const FoodInputs = ({
                     value={food.name}
                     onSelect={() => handleSelectFood(food)}
                   >
-                    <div>
-                      <div className="font-medium">{food.name}</div>
-                      <div className="text-sm text-gray-500">
-                        {food.calories} kcal | {food.proteins}g protéines
-                      </div>
-                    </div>
+                    {food.name}
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -135,16 +120,17 @@ export const FoodInputs = ({
           placeholder="Quantité (g)"
           value={weight}
           onChange={(e) => handleWeightChange(e.target.value)}
-          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
+          className="bg-white"
         />
       </div>
+
       <div className="space-y-2">
         <Input
           type="number"
           placeholder="Calories"
           value={calories}
           onChange={(e) => onCaloriesChange(e.target.value)}
-          className={`border-gray-300 text-gray-900 placeholder:text-gray-500 ${isCustomFood ? 'bg-white' : 'bg-gray-50'}`}
+          className={isCustomFood ? "bg-white" : "bg-gray-50"}
           readOnly={!isCustomFood}
         />
         <Input
@@ -152,7 +138,7 @@ export const FoodInputs = ({
           placeholder="Protéines (g)"
           value={proteins}
           onChange={(e) => onProteinsChange(e.target.value)}
-          className={`border-gray-300 text-gray-900 placeholder:text-gray-500 ${isCustomFood ? 'bg-white' : 'bg-gray-50'}`}
+          className={isCustomFood ? "bg-white" : "bg-gray-50"}
           readOnly={!isCustomFood}
         />
       </div>
