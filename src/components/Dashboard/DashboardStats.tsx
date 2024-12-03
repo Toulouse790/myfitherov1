@@ -8,6 +8,7 @@ import { AlertTriangle } from "lucide-react";
 export const DashboardStats = () => {
   const { toast } = useToast();
   const workoutsThisMonth = 12;
+  const plannedWorkouts = 16;
 
   useEffect(() => {
     if (workoutsThisMonth > 24) {
@@ -33,21 +34,24 @@ export const DashboardStats = () => {
         </Alert>
       )}
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <DashboardCard
           title="Séances ce mois"
           value={workoutsThisMonth}
+          target={plannedWorkouts}
           icon={<Dumbbell className="w-5 h-5" />}
           className={workoutsThisMonth > 24 ? "border-red-500" : ""}
         />
         <DashboardCard
           title="Minutes d'entraînement"
           value={360}
+          target={400}
           icon={<Activity className="w-5 h-5" />}
         />
         <DashboardCard
           title="Calories brûlées"
           value="2,450"
+          target="2,800"
           icon={<Heart className="w-5 h-5" />}
         />
       </div>
