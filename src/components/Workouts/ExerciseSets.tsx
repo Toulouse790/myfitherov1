@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Timer, Flame } from "lucide-react";
+import { Plus, Timer, Flame, Check, ChevronUp, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Progress } from "@/components/ui/progress";
 
 interface Set {
   id: number;
@@ -19,11 +20,12 @@ interface ExerciseSetsProps {
 
 export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) => {
   const [sets, setSets] = useState<Set[]>(initialSets || [
-    { id: 1, reps: 14, weight: 8, completed: false },
-    { id: 2, reps: 14, weight: 8, completed: false },
-    { id: 3, reps: 14, weight: 8, completed: false },
+    { id: 1, reps: 12, weight: 10, completed: false },
+    { id: 2, reps: 12, weight: 10, completed: false },
+    { id: 3, reps: 12, weight: 10, completed: false },
   ]);
   const [restTimer, setRestTimer] = useState<number | null>(null);
+  const [currentSet, setCurrentSet] = useState<number>(1);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,127 +47,160 @@ export const ExerciseSets = ({ exerciseName, initialSets }: ExerciseSetsProps) =
     return () => clearInterval(interval);
   }, [restTimer, toast]);
 
-  const calculateCalories = (reps: number, weight: number): number => {
-    // Formule approximative pour calculer les calories :
-    // (0.0175 * MET * poids corporel en kg * durée en minutes)
-    // MET (Metabolic Equivalent of Task) pour la musculation : environ 6
-    // Durée estimée par série : 1 minute
-    // Poids corporel : utilisation du poids de l'exercice comme facteur
-    const MET = 6;
-    const duration = 1; // minute par série
-    return Math.round(0.0175 * MET * (weight * 2) * duration * reps * 0.1);
-  };
-
   const handleSetCompletion = (setId: number) => {
     setSets(prev => prev.map(set => {
       if (set.id === setId) {
-        const calories = calculateCalories(set.reps, set.weight);
+        const calories = Math.round(set.reps * set.weight * 0.15);
         return { ...set, completed: true, calories };
       }
       return set;
     }));
-    setRestTimer(90);
     
-    const currentSet = sets.find(s => s.id === setId);
-    if (currentSet) {
-      const calories = calculateCalories(currentSet.reps, currentSet.weight);
-      toast({
-        title: "Série complétée !",
-        description: `${calories} calories brûlées. 90 secondes de repos avant la prochaine série.`,
-      });
+    if (setId < sets.length) {
+      setRestTimer(90);
+      setCurrentSet(setId + 1);
     }
-  };
-
-  const getTotalCalories = (): number => {
-    return sets.reduce((total, set) => total + (set.calories || 0), 0);
-  };
-
-  const addNewSet = () => {
-    const newSet = {
-      id: sets.length + 1,
-      reps: sets[0].reps,
-      weight: sets[0].weight,
-      completed: false,
-    };
-    setSets([...sets, newSet]);
+    
+    const calories = Math.round(sets[setId - 1].reps * sets[setId - 1].weight * 0.15);
     toast({
-      title: "Nouvelle série ajoutée",
-      description: `Série ${newSet.id} ajoutée avec succès.`,
+      title: "Série complétée !",
+      description: `${calories} calories brûlées. 90 secondes de repos.`,
     });
   };
 
+  const adjustWeight = (setId: number, increment: boolean) => {
+    setSets(prev => prev.map(set => {
+      if (set.id === setId) {
+        return { 
+          ...set, 
+          weight: Math.max(0, set.weight + (increment ? 1 : -1))
+        };
+      }
+      return set;
+    }));
+  };
+
+  const adjustReps = (setId: number, increment: boolean) => {
+    setSets(prev => prev.map(set => {
+      if (set.id === setId) {
+        return { 
+          ...set, 
+          reps: Math.max(1, set.reps + (increment ? 1 : -1))
+        };
+      }
+      return set;
+    }));
+  };
+
+  const progress = (sets.filter(set => set.completed).length / sets.length) * 100;
+
   return (
-    <div className="space-y-6 p-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">{exerciseName}</h2>
-        <div className="flex items-center gap-2 text-primary">
-          <Flame className="h-5 w-5" />
-          <span className="font-semibold">{getTotalCalories()} kcal</span>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="flex justify-between items-center text-sm text-muted-foreground">
+          <span>Progression</span>
+          <span>{Math.round(progress)}%</span>
         </div>
+        <Progress value={progress} className="h-2" />
       </div>
-      
+
       <div className="space-y-4">
-        <div className="grid grid-cols-3 gap-4 text-sm font-medium text-center mb-2">
-          <div>SÉRIE</div>
-          <div>RÉPÉTITIONS PAR BRAS</div>
-          <div>KG PAR HALTÈRE</div>
-        </div>
-        
         {sets.map((set) => (
-          <Card key={set.id} className="p-4">
-            <div className="grid grid-cols-3 gap-4 items-center">
-              <div className="text-center font-bold">{set.id}</div>
-              <div className="text-center">{set.reps}</div>
-              <div className="text-center">{set.weight}</div>
+          <Card key={set.id} className={`p-4 transition-all duration-300 ${
+            currentSet === set.id ? 'ring-2 ring-primary' : ''
+          }`}>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Série {set.id}</span>
+                {set.completed && (
+                  <div className="flex items-center gap-2 text-green-500">
+                    <Check className="h-4 w-4" />
+                    <span className="text-sm">Complétée</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">Poids (kg)</label>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => adjustWeight(set.id, false)}
+                      disabled={set.completed}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                    <span className="w-12 text-center">{set.weight}</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => adjustWeight(set.id, true)}
+                      disabled={set.completed}
+                    >
+                      <ChevronUp className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">Répétitions</label>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => adjustReps(set.id, false)}
+                      disabled={set.completed}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                    <span className="w-12 text-center">{set.reps}</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => adjustReps(set.id, true)}
+                      disabled={set.completed}
+                    >
+                      <ChevronUp className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                className="w-full"
+                variant={set.completed ? "secondary" : "default"}
+                onClick={() => handleSetCompletion(set.id)}
+                disabled={set.completed || (currentSet !== set.id) || (restTimer !== null)}
+              >
+                {set.completed ? (
+                  <span className="flex items-center gap-2">
+                    Série complétée
+                    {set.calories && (
+                      <>
+                        <Flame className="h-4 w-4" />
+                        <span>{set.calories} kcal</span>
+                      </>
+                    )}
+                  </span>
+                ) : (
+                  "Valider la série"
+                )}
+              </Button>
             </div>
-            <Button
-              className="w-full mt-2"
-              variant={set.completed ? "secondary" : "default"}
-              onClick={() => handleSetCompletion(set.id)}
-              disabled={set.completed || (restTimer !== null)}
-            >
-              {set.completed ? (
-                <span className="flex items-center gap-2">
-                  Série complétée
-                  {set.calories && (
-                    <>
-                      <Flame className="h-4 w-4" />
-                      <span>{set.calories} kcal</span>
-                    </>
-                  )}
-                </span>
-              ) : (
-                "Valider la série"
-              )}
-              {restTimer !== null && !set.completed && (
-                <Timer className="ml-2 h-4 w-4 animate-pulse" />
-              )}
-            </Button>
           </Card>
         ))}
-
-        <Button
-          variant="outline"
-          className="w-full gap-2 text-[#9BB537]"
-          onClick={addNewSet}
-        >
-          <Plus className="h-4 w-4" />
-          Ajouter une série
-        </Button>
       </div>
 
       {restTimer !== null && (
-        <div className="fixed bottom-20 right-4 bg-primary text-primary-foreground px-4 py-2 rounded-full animate-pulse">
+        <div className="fixed bottom-20 right-4 bg-primary text-primary-foreground px-6 py-3 rounded-full animate-pulse shadow-lg">
           <div className="flex items-center gap-2">
-            <Timer className="h-4 w-4" />
-            <span>{restTimer}s</span>
+            <Timer className="h-5 w-5" />
+            <span className="font-medium">{restTimer}s</span>
           </div>
         </div>
       )}
-
-      <Button className="w-full bg-[#9BB537] hover:bg-[#9BB537]/90">
-        COMMENCER
-      </Button>
     </div>
   );
 };
