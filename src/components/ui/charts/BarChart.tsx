@@ -10,6 +10,12 @@ interface BarChartProps {
   valueFormatter?: (value: number) => string
   yAxisWidth?: number
   ticks?: number[]
+  showLegend?: boolean
+  showGridLines?: boolean
+  startEndOnly?: boolean
+  showAnimation?: boolean
+  className?: string
+  customTooltip?: (props: any) => React.ReactElement
 }
 
 export const BarChart = ({
@@ -20,6 +26,12 @@ export const BarChart = ({
   valueFormatter = (value: number) => value.toString(),
   yAxisWidth = 56,
   ticks,
+  showLegend = true,
+  showGridLines = true,
+  startEndOnly = false,
+  showAnimation = false,
+  className,
+  customTooltip,
 }: BarChartProps) => {
   return (
     <ChartContainer
@@ -32,7 +44,7 @@ export const BarChart = ({
         ),
       }}
     >
-      <RechartsPrimitive.BarChart data={data}>
+      <RechartsPrimitive.BarChart data={data} className={className}>
         <RechartsPrimitive.XAxis
           dataKey={index}
           stroke="#888888"
@@ -49,13 +61,22 @@ export const BarChart = ({
           tickFormatter={valueFormatter}
           ticks={ticks}
         />
-        <RechartsPrimitive.Tooltip />
+        {showGridLines && (
+          <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+        )}
+        {customTooltip ? (
+          <RechartsPrimitive.Tooltip content={customTooltip} />
+        ) : (
+          <RechartsPrimitive.Tooltip />
+        )}
+        {showLegend && <RechartsPrimitive.Legend />}
         {categories.map((category, i) => (
           <RechartsPrimitive.Bar
             key={category}
             dataKey={category}
             fill={colors[i % colors.length]}
             radius={[4, 4, 0, 0]}
+            animationDuration={showAnimation ? 1000 : 0}
           />
         ))}
       </RechartsPrimitive.BarChart>
