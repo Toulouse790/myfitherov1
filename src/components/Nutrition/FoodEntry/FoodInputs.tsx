@@ -83,6 +83,10 @@ export const FoodInputs = ({
     }
   };
 
+  const filteredFoods = commonFoods.filter(food => 
+    food.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div className="space-y-2">
@@ -107,24 +111,20 @@ export const FoodInputs = ({
               />
               <CommandEmpty>Aucun aliment trouvé.</CommandEmpty>
               <CommandGroup className="max-h-64 overflow-auto">
-                {commonFoods
-                  .filter(food => 
-                    food.name.toLowerCase().startsWith(searchValue.toLowerCase())
-                  )
-                  .map((food) => (
-                    <CommandItem
-                      key={food.id}
-                      value={food.name}
-                      onSelect={() => handleSelectFood(food)}
-                    >
-                      <div>
-                        <div className="font-medium">{food.name}</div>
-                        <div className="text-sm text-gray-500">
-                          {food.calories} kcal | {food.proteins}g protéines
-                        </div>
+                {filteredFoods.map((food) => (
+                  <CommandItem
+                    key={food.id}
+                    value={food.name}
+                    onSelect={() => handleSelectFood(food)}
+                  >
+                    <div>
+                      <div className="font-medium">{food.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {food.calories} kcal | {food.proteins}g protéines
                       </div>
-                    </CommandItem>
-                  ))}
+                    </div>
+                  </CommandItem>
+                ))}
               </CommandGroup>
             </Command>
           </PopoverContent>
