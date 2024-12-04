@@ -15,7 +15,7 @@ export const MediaManager = () => {
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
 
-  const { data: exercises = [], isError, isLoading } = useQuery({
+  const { data: exercises = [], isError, isLoading, refetch } = useQuery({
     queryKey: ['exercises'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -26,8 +26,6 @@ export const MediaManager = () => {
         console.error('Error fetching exercises:', error);
         throw error;
       }
-      
-      console.log('Raw data from Supabase:', data);
       
       if (!data || data.length === 0) {
         console.log('No exercises found in database');
@@ -81,6 +79,7 @@ export const MediaManager = () => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      setSelectedExercise(exercises.find(e => e.name === event.target.dataset.exerciseName)?.name || null);
     }
   };
 
@@ -121,6 +120,7 @@ export const MediaManager = () => {
       });
 
       setSelectedFile(null);
+      await refetch(); // Refresh the exercise list
     } catch (error) {
       console.error('Error uploading media:', error);
       toast({
@@ -155,6 +155,8 @@ export const MediaManager = () => {
         title: "Niveaux de difficulté mis à jour",
         description: `Les niveaux de difficulté pour ${selectedExercise} ont été mis à jour`,
       });
+      
+      await refetch(); // Refresh the exercise list
     } catch (error) {
       console.error('Error updating difficulties:', error);
       toast({

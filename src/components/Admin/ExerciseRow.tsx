@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Image, Video } from "lucide-react";
 import { UploadForm } from "./UploadForm";
 import { DifficultyBadges } from "./DifficultyBadges";
+import { useState } from "react";
 
 interface ExerciseRowProps {
   exercise: {
@@ -25,6 +26,8 @@ export const ExerciseRow = ({
   onDifficultyChange,
   selectedDifficulties,
 }: ExerciseRowProps) => {
+  const [mediaType, setMediaType] = useState<'image' | 'video'>('image');
+
   return (
     <Card className="p-4 mb-4">
       <div className="flex items-center justify-between gap-4">
@@ -37,9 +40,28 @@ export const ExerciseRow = ({
           onDifficultyChange={onDifficultyChange}
         />
 
+        <div className="flex items-center gap-2">
+          <Button 
+            variant={mediaType === 'image' ? "default" : "outline"} 
+            size="sm"
+            onClick={() => setMediaType('image')}
+          >
+            <Image className="mr-2 h-4 w-4" />
+            Image
+          </Button>
+          <Button 
+            variant={mediaType === 'video' ? "default" : "outline"} 
+            size="sm"
+            onClick={() => setMediaType('video')}
+          >
+            <Video className="mr-2 h-4 w-4" />
+            Vidéo
+          </Button>
+        </div>
+
         <div className="flex-shrink-0 w-64">
           <UploadForm
-            type="image"
+            type={mediaType}
             onFileChange={onFileChange}
             onUpload={onUpload}
             selectedFile={selectedFile}
