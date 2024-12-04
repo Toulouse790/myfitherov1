@@ -18,17 +18,22 @@ export const MediaManager = () => {
   const { data: exercises = [], isError, isLoading } = useQuery({
     queryKey: ['exercises'],
     queryFn: async () => {
-      console.log('Fetching exercises...');
       const { data, error } = await supabase
         .from('exercises')
         .select('*');
 
       if (error) {
+        console.error('Error fetching exercises:', error);
         throw error;
       }
       
       console.log('Raw data from Supabase:', data);
       
+      if (!data || data.length === 0) {
+        console.log('No exercises found in database');
+        return [];
+      }
+
       return data.map(exercise => ({
         id: exercise.id,
         name: exercise.name,

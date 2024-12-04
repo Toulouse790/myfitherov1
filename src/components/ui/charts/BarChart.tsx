@@ -44,46 +44,48 @@ export const BarChart = ({
         ),
       }}
     >
-      <RechartsPrimitive.BarChart data={data} className={className}>
-        <RechartsPrimitive.XAxis
-          dataKey={index}
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          scale="point"
-          padding={{ left: 10, right: 10 }}
-        />
-        <RechartsPrimitive.YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          width={yAxisWidth}
-          tickFormatter={valueFormatter}
-          ticks={ticks}
-          scale="linear"
-          padding={{ top: 10, bottom: 10 }}
-        />
-        {showGridLines && (
-          <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
-        )}
-        {customTooltip ? (
-          <RechartsPrimitive.Tooltip content={customTooltip} />
-        ) : (
-          <RechartsPrimitive.Tooltip />
-        )}
-        {showLegend && <RechartsPrimitive.Legend />}
-        {categories.map((category, i) => (
-          <RechartsPrimitive.Bar
-            key={category}
-            dataKey={category}
-            fill={colors[i % colors.length]}
-            radius={[4, 4, 0, 0]}
-            animationDuration={showAnimation ? 1000 : 0}
+      <RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.BarChart data={data} className={className}>
+          <RechartsPrimitive.XAxis
+            dataKey={index}
+            stroke="#888888"
+            fontSize={12}
+            tickLine={false}
+            axisLine={false}
+            scale="point"
+            padding={{ left: 10, right: 10 }}
           />
-        ))}
-      </RechartsPrimitive.BarChart>
+          <RechartsPrimitive.YAxis
+            stroke="#888888"
+            fontSize={12}
+            tickLine={false}
+            axisLine={false}
+            width={yAxisWidth}
+            tickFormatter={valueFormatter}
+            ticks={ticks}
+            scale="linear"
+            padding={{ top: 10, bottom: 10 }}
+          />
+          {showGridLines && (
+            <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+          )}
+          {customTooltip ? (
+            <RechartsPrimitive.Tooltip content={customTooltip} />
+          ) : (
+            <RechartsPrimitive.Tooltip />
+          )}
+          {showLegend && <RechartsPrimitive.Legend />}
+          {categories.map((category, i) => (
+            <RechartsPrimitive.Bar
+              key={category}
+              dataKey={category}
+              fill={colors[i % colors.length]}
+              radius={[4, 4, 0, 0]}
+              animationDuration={showAnimation ? 1000 : 0}
+            />
+          ))}
+        </RechartsPrimitive.BarChart>
+      </RechartsPrimitive.ResponsiveContainer>
     </ChartContainer>
   )
 }
