@@ -8,7 +8,7 @@ interface SearchBarProps {
 
 export const SearchBar = ({ value, onChange }: SearchBarProps) => {
   return (
-    <div className="relative w-full sm:max-w-sm">
+    <div className="relative w-full max-w-sm">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
       <Input
         placeholder="Rechercher un groupe musculaire"

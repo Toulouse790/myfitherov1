@@ -61,11 +61,11 @@ export const Workouts = () => {
         <Header />
         <AppSidebar />
         <div className="md:pl-64">
-          <div className="container max-w-4xl mx-auto p-4">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold">Bibliothèque d'exercices</h1>
+          <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold">Bibliothèque d'exercices</h1>
               {selectedExercises.length > 0 && (
-                <Button onClick={handleStartWorkout}>
+                <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
                   C'est parti ! ({selectedExercises.length})
                 </Button>
               )}
