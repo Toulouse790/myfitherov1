@@ -45,7 +45,11 @@ export const ExerciseRow = ({
                 variant={mediaType === 'image' ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setMediaType('image')}
-                className="min-w-[100px]"
+                className={`min-w-[100px] ${
+                  mediaType === 'image' 
+                    ? "bg-[#0EA5E9] hover:bg-[#0EA5E9]/90" 
+                    : "border-[#0EA5E9] text-[#0EA5E9] hover:bg-[#0EA5E9] hover:text-white"
+                }`}
               >
                 <Image className="mr-2 h-4 w-4" />
                 Photo
@@ -54,7 +58,11 @@ export const ExerciseRow = ({
                 variant={mediaType === 'video' ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setMediaType('video')}
-                className="min-w-[100px]"
+                className={`min-w-[100px] ${
+                  mediaType === 'video' 
+                    ? "bg-[#9b87f5] hover:bg-[#9b87f5]/90" 
+                    : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white"
+                }`}
               >
                 <Video className="mr-2 h-4 w-4" />
                 Vidéo
@@ -74,7 +82,11 @@ export const ExerciseRow = ({
                 size="sm"
                 onClick={onUpload}
                 disabled={!selectedFile}
-                className="min-w-[100px]"
+                className={`min-w-[100px] ${
+                  selectedFile 
+                    ? "bg-[#0EA5E9] hover:bg-[#0EA5E9]/90" 
+                    : "opacity-50 cursor-not-allowed"
+                }`}
               >
                 <Upload className="mr-2 h-4 w-4" />
                 Publier
