@@ -31,8 +31,19 @@ export const ExerciseSelection = ({
           .select('*')
           .eq('media_type', 'image');
 
-        if (muscleGroup) {
-          query = query.ilike('exercise_name', `%${muscleGroup}%`);
+        // Map muscle group IDs to search terms
+        const searchTermMap: { [key: string]: string } = {
+          chest: 'poitrine',
+          back: 'dos',
+          legs: 'jambes',
+          shoulders: 'épaules',
+          biceps: 'biceps',
+          triceps: 'triceps',
+          abs: 'abdominaux'
+        };
+
+        if (muscleGroup && searchTermMap[muscleGroup]) {
+          query = query.ilike('exercise_name', `%${searchTermMap[muscleGroup]}%`);
         }
 
         const { data, error } = await query;
@@ -41,6 +52,14 @@ export const ExerciseSelection = ({
 
         console.log('Fetched exercises:', data);
         setExercises(data || []);
+
+        if (!data || data.length === 0) {
+          toast({
+            title: "Aucun exercice trouvé",
+            description: "Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.",
+            variant: "destructive",
+          });
+        }
       } catch (error) {
         console.error('Error fetching exercises:', error);
         toast({
@@ -72,7 +91,7 @@ export const ExerciseSelection = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="overflow-hidden hover:shadow-md transition-shadow">
+            <Card className="overflow-hidden hover:shadow-md transition-shadow bg-card">
               <CardHeader className="space-y-1">
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -82,7 +101,7 @@ export const ExerciseSelection = ({
                   />
                   <label
                     htmlFor={exercise.id}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     {exercise.exercise_name}
                   </label>
