@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Edit } from "lucide-react";
 
-export const AdminHeader = () => {
+interface AdminHeaderProps {
+  isEditing: boolean;
+  onEditingChange: (editing: boolean) => void;
+}
+
+export const AdminHeader = ({ isEditing, onEditingChange }: AdminHeaderProps) => {
   const { toast } = useToast();
 
   const handleExport = () => {
@@ -19,7 +25,18 @@ export const AdminHeader = () => {
           Gérez votre application et suivez vos statistiques
         </p>
       </div>
-      <Button onClick={handleExport}>Exporter les données</Button>
+      <div className="flex gap-2">
+        <Button
+          variant={isEditing ? "secondary" : "outline"}
+          onClick={() => onEditingChange(!isEditing)}
+          className="gap-2"
+          size="sm"
+        >
+          <Edit className="w-4 h-4" />
+          {isEditing ? "Terminer" : "Modifier"}
+        </Button>
+        <Button size="sm" onClick={handleExport}>Exporter</Button>
+      </div>
     </div>
   );
 };

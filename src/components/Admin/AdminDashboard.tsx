@@ -1,7 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { BarChart } from "@/components/ui/chart";
-import { Button } from "@/components/ui/button";
-import { Edit, GripHorizontal } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -19,6 +17,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
+import { GripHorizontal } from "lucide-react";
 
 const SortableCard = ({ id, children, isEditing }: { id: string; children: React.ReactNode, isEditing: boolean }) => {
   const {
@@ -127,33 +126,20 @@ export const AdminDashboard = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button
-          variant={isEditing ? "secondary" : "outline"}
-          onClick={() => setIsEditing(!isEditing)}
-          className="gap-2"
-        >
-          <Edit className="w-4 h-4" />
-          {isEditing ? "Terminer" : "Modifier la disposition"}
-        </Button>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="grid gap-6 md:grid-cols-2">
+        <SortableContext items={widgets.map(w => w.id)} strategy={verticalListSortingStrategy}>
+          {widgets.map((widget) => (
+            <SortableCard key={widget.id} id={widget.id} isEditing={isEditing}>
+              {renderWidget(widget)}
+            </SortableCard>
+          ))}
+        </SortableContext>
       </div>
-
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="grid gap-6 md:grid-cols-2">
-          <SortableContext items={widgets.map(w => w.id)} strategy={verticalListSortingStrategy}>
-            {widgets.map((widget) => (
-              <SortableCard key={widget.id} id={widget.id} isEditing={isEditing}>
-                {renderWidget(widget)}
-              </SortableCard>
-            ))}
-          </SortableContext>
-        </div>
-      </DndContext>
-    </div>
+    </DndContext>
   );
 };
