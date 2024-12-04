@@ -21,7 +21,7 @@ export const MediaList = ({
   selectedDifficulties,
 }: MediaListProps) => {
   const filteredExercises = exercises.filter(
-    exercise => exercise.muscleGroup.toLowerCase() === selectedGroup.toLowerCase()
+    exercise => exercise.muscleGroup === selectedGroup
   );
 
   return (
