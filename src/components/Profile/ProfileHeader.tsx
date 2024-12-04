@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { SettingsSheet } from "./Sections/SettingsSheet";
 
 const AVATAR_OPTIONS = [
   "/placeholder.svg",
@@ -189,49 +190,52 @@ export const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
         </div>
       </div>
 
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline" size="icon">
-            <Bell className="h-4 w-4" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Préférences de notification</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <h4 className="font-medium">Notifications de repas</h4>
-                <p className="text-sm text-muted-foreground">
-                  Recevez des rappels pour vos repas
-                </p>
+      <div className="flex items-center gap-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Bell className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Préférences de notification</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <h4 className="font-medium">Notifications de repas</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Recevez des rappels pour vos repas
+                  </p>
+                </div>
+                <Switch
+                  checked={notifications}
+                  onCheckedChange={handleNotificationChange}
+                />
               </div>
-              <Switch
-                checked={notifications}
-                onCheckedChange={handleNotificationChange}
-              />
+              {notifications && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    Délai de rappel
+                  </label>
+                  <Select value={reminderTime} onValueChange={handleReminderTimeChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un délai" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="15">15 minutes avant</SelectItem>
+                      <SelectItem value="30">30 minutes avant</SelectItem>
+                      <SelectItem value="60">1 heure avant</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
-            {notifications && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Délai de rappel
-                </label>
-                <Select value={reminderTime} onValueChange={handleReminderTimeChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choisir un délai" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="15">15 minutes avant</SelectItem>
-                    <SelectItem value="30">30 minutes avant</SelectItem>
-                    <SelectItem value="60">1 heure avant</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+        <SettingsSheet />
+      </div>
     </div>
   );
 };

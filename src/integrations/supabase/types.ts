@@ -9,6 +9,47 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_training_data: {
+        Row: {
+          action_type: string
+          context: Json
+          created_at: string
+          feedback: boolean | null
+          id: string
+          result: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          context: Json
+          created_at?: string
+          feedback?: boolean | null
+          id?: string
+          result?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          context?: Json
+          created_at?: string
+          feedback?: boolean | null
+          id?: string
+          result?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_training_data_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercise_media: {
         Row: {
           created_at: string
