@@ -34,10 +34,14 @@ export const ExerciseSelection = ({
           .eq('media_type', 'image');
 
         if (muscleGroup) {
+          // Logique spécifique pour les biceps et triceps
           if (muscleGroup === "biceps" || muscleGroup === "triceps") {
-            query = query.or(`exercise_name.ilike.%${muscleGroup}%`);
-          } else {
             query = query.ilike('exercise_name', `%${muscleGroup}%`);
+          } 
+          // Pour les autres groupes musculaires
+          else {
+            const searchTerm = muscleGroup.toLowerCase();
+            query = query.ilike('exercise_name', `%${searchTerm}%`);
           }
         }
 
@@ -45,6 +49,7 @@ export const ExerciseSelection = ({
 
         if (error) throw error;
 
+        console.log('Fetched exercises:', data); // Pour le débogage
         setExercises(data || []);
       } catch (error) {
         console.error('Error fetching exercises:', error);
