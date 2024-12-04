@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExerciseSets } from "../ExerciseSets";
-import { ExerciseList } from "./ExerciseList";
 
 interface WorkoutInProgressProps {
   exercises: string[];
@@ -20,17 +19,7 @@ export const WorkoutInProgress = ({
     <>
       <Card className="border">
         <div className="p-4 space-y-6">
-          {currentExerciseIndex !== null && (
-            <ExerciseSets
-              exerciseName={exercises[currentExerciseIndex]}
-            />
-          )}
-          <ExerciseList
-            exercises={exercises}
-            currentExerciseIndex={currentExerciseIndex}
-            isWorkoutStarted={true}
-            onExerciseClick={onExerciseClick}
-          />
+          <ExerciseSets exercises={exercises} />
         </div>
       </Card>
 

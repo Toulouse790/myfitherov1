@@ -4,66 +4,120 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ExerciseAnimation } from "./ExerciseAnimation";
 
-interface ExerciseSetsProps {
-  exerciseName: string;
+interface Exercise {
+  name: string;
+  reps: number;
+  sets: number;
+  completed: boolean;
 }
 
-export const ExerciseSets = ({ exerciseName }: ExerciseSetsProps) => {
+interface ExerciseSetsProps {
+  exercises: string[];
+}
+
+export const ExerciseSets = ({ exercises }: ExerciseSetsProps) => {
+  const [exerciseStates, setExerciseStates] = useState<Exercise[]>(
+    exercises.map(name => ({
+      name,
+      reps: 12,
+      sets: 4,
+      completed: false
+    }))
+  );
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentSet, setCurrentSet] = useState(0);
   const [isResting, setIsResting] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [reps, setReps] = useState(12);
-  
-  const totalSets = 4;
+
+  const currentExercise = exerciseStates[currentExerciseIndex];
   const restTime = 120;
 
   const handleSetComplete = () => {
-    if (currentSet < totalSets) {
-      setCurrentSet((prev) => prev + 1);
+    if (currentSet < currentExercise.sets - 1) {
+      setCurrentSet(prev => prev + 1);
       setIsResting(true);
       setProgress(0);
+    } else {
+      // Exercise completed
+      const updatedExercises = [...exerciseStates];
+      updatedExercises[currentExerciseIndex].completed = true;
+      setExerciseStates(updatedExercises);
+
+      // Move to next exercise if available
+      if (currentExerciseIndex < exercises.length - 1) {
+        setCurrentExerciseIndex(prev => prev + 1);
+        setCurrentSet(0);
+      }
     }
   };
 
   const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 0;
-    setReps(value);
+    const updatedExercises = [...exerciseStates];
+    updatedExercises[currentExerciseIndex].reps = value;
+    setExerciseStates(updatedExercises);
   };
 
-  return (
-    <Card className="p-4 space-y-4">
-      <h3 className="text-lg font-semibold">{exerciseName}</h3>
-      
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <span className="text-sm">Répétitions:</span>
-          <Input
-            type="number"
-            value={reps}
-            onChange={handleRepsChange}
-            className="w-20"
-            min={1}
-            inputMode="numeric"
-          />
-        </div>
-        
-        <ExerciseAnimation
-          reps={reps}
-          restTime={restTime}
-          sets={totalSets}
-          currentSet={currentSet}
-          isResting={isResting}
-          progress={progress}
-        />
-      </div>
+  if (!currentExercise) return null;
 
-      <Button
-        onClick={handleSetComplete}
-        className="w-full"
-        disabled={currentSet >= totalSets}
-      >
-        {currentSet >= totalSets ? 'Exercice terminé' : 'Série terminée'}
-      </Button>
-    </Card>
+  return (
+    <div className="space-y-4">
+      {exerciseStates.map((exercise, index) => (
+        <Card 
+          key={exercise.name}
+          className={`p-4 ${index === currentExerciseIndex ? 'ring-2 ring-primary' : ''} ${
+            exercise.completed ? 'bg-muted' : ''
+          }`}
+        >
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">{exercise.name}</h3>
+            
+            {index === currentExerciseIndex && (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">Répétitions:</span>
+                  <Input
+                    type="number"
+                    value={exercise.reps}
+                    onChange={handleRepsChange}
+                    className="w-20"
+                    min={1}
+                    inputMode="numeric"
+                  />
+                </div>
+                
+                <ExerciseAnimation
+                  reps={exercise.reps}
+                  restTime={restTime}
+                  sets={exercise.sets}
+                  currentSet={currentSet}
+                  isResting={isResting}
+                  progress={progress}
+                />
+
+                <Button
+                  onClick={handleSetComplete}
+                  className="w-full"
+                  disabled={exercise.completed}
+                >
+                  {exercise.completed 
+                    ? 'Exercice terminé' 
+                    : currentSet === exercise.sets - 1 
+                      ? 'Terminer l\'exercice'
+                      : 'Série terminée'
+                  }
+                </Button>
+              </>
+            )}
+
+            {exercise.completed && (
+              <div className="text-sm text-muted-foreground">
+                ✓ Exercice terminé
+              </div>
+            )}
+          </div>
+        </Card>
+      ))}
+    </div>
   );
 };
