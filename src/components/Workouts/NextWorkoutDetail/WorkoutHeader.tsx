@@ -1,9 +1,13 @@
 import { Timer, Dumbbell, Flame } from "lucide-react";
 
-export const WorkoutHeader = () => {
+interface WorkoutHeaderProps {
+  title: string;
+}
+
+export const WorkoutHeader = ({ title }: WorkoutHeaderProps) => {
   return (
     <div className="text-center space-y-4">
-      <h1 className="text-3xl font-bold">Dos, Biceps & Épaules</h1>
+      <h1 className="text-3xl font-bold">{title}</h1>
       <div className="flex justify-center gap-6">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Timer className="w-5 h-5" />
