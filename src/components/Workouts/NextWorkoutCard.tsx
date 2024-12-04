@@ -46,16 +46,16 @@ export const NextWorkoutCard = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-[#1E2330] border-[#2A2F3F]">
+    <Card className="w-full max-w-2xl mx-auto bg-background border-border">
       <div className="bg-primary/10 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-white">
+        <div className="flex items-center gap-2 text-foreground">
           <Timer className="h-4 w-4" />
           <span>Prochain entraînement</span>
         </div>
       </div>
       
       <div className="p-4 space-y-4">
-        <h2 className="text-lg font-bold text-white">
+        <h2 className="text-lg font-bold text-foreground">
           Dos, Biceps, Épaules
         </h2>
         
@@ -63,15 +63,15 @@ export const NextWorkoutCard = () => {
           {SAMPLE_EXERCISES.map((exercise, index) => (
             <div key={index} className="space-y-2">
               <div 
-                className="flex items-center gap-3 p-3 rounded-lg bg-[#252B3B]"
+                className="flex items-center gap-3 p-3 rounded-lg bg-secondary/10 hover:bg-secondary/20 transition-colors cursor-pointer"
                 onClick={() => handleExerciseClick(index)}
               >
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Dumbbell className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-white">{exercise.name}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-sm text-foreground">{exercise.name}</p>
+                  <p className="text-xs text-muted-foreground">
                     {exercise.defaultSets} séries • {exercise.defaultReps} répétitions
                   </p>
                 </div>
@@ -81,17 +81,17 @@ export const NextWorkoutCard = () => {
                 <div className="pl-11 space-y-2 animate-fade-down">
                   {Array.from({ length: exercise.defaultSets }).map((_, setIndex) => (
                     <div key={setIndex} className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400 w-16">Série {setIndex + 1}</span>
+                      <span className="text-xs text-muted-foreground w-16">Série {setIndex + 1}</span>
                       <Input
                         type="number"
                         value={exerciseSets[index][setIndex]}
                         onChange={(e) => handleRepsChange(index, setIndex, e.target.value)}
-                        className="w-20 h-8 text-sm bg-[#2A2F3F] border-[#353B4B] text-white"
+                        className="w-20 h-8 text-sm bg-background border-input text-foreground"
                         min="1"
                         inputMode="numeric"
                         pattern="[0-9]*"
                       />
-                      <span className="text-xs text-gray-400">reps</span>
+                      <span className="text-xs text-muted-foreground">reps</span>
                     </div>
                   ))}
                 </div>
