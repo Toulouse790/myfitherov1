@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
-import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
-import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
-import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
-import { CardioSession } from "./NextWorkoutDetail/CardioSession";
+import { WorkoutHeader } from "./WorkoutHeader";
+import { ExerciseList } from "./ExerciseList";
+import { WorkoutInProgress } from "./WorkoutInProgress";
+import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
+import { CardioSession } from "./CardioSession";
 import { useAuth } from "@/hooks/use-auth";
+import { generateWorkoutPlan } from "../WorkoutSuggestions/workoutPlanGenerator";
 
 export const NextWorkoutDetail = () => {
   const location = useLocation();
@@ -58,42 +59,71 @@ export const NextWorkoutDetail = () => {
     }
   };
 
-  const handleStartCardio = async () => {
+  const handleRegenerateWorkout = async () => {
     if (!user) {
       toast({
         title: "Erreur",
-        description: "Vous devez être connecté pour démarrer une séance",
+        description: "Vous devez être connecté pour générer un entraînement",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      const { data: session, error: sessionError } = await supabase
-        .from('workout_sessions')
-        .insert([
-          { 
-            user_id: user.id,
-            status: 'in_progress', 
-            type: 'cardio' 
-          }
-        ])
-        .select()
+      // Récupérer le profil de l'utilisateur
+      const { data: profile } = await supabase
+        .from('questionnaire_responses')
+        .select('*')
+        .eq('user_id', user.id)
         .single();
 
-      if (sessionError) throw sessionError;
+      if (!profile) {
+        toast({
+          title: "Profil incomplet",
+          description: "Veuillez d'abord remplir le questionnaire initial",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Générer un nouveau plan adapté avec une intensité réduite
+      const userProfile = {
+        age: 30,
+        weight: 75,
+        height: 175,
+        goal: profile.objective,
+        workoutsPerWeek: parseInt(profile.training_frequency),
+        dailyCalories: 2000,
+        recoveryCapacity: "low" as const // Réduire l'intensité car l'utilisateur n'est pas en forme
+      };
+
+      const newPlan = generateWorkoutPlan(userProfile);
+
+      // Mettre à jour la session avec le nouveau plan
+      if (sessionId) {
+        const { error: updateError } = await supabase
+          .from('workout_sessions')
+          .update({ 
+            is_adapted: true,
+            initial_energy_level: 'bad'
+          })
+          .eq('id', sessionId);
+
+        if (updateError) throw updateError;
+      }
 
       toast({
-        title: "Séance de cardio démarrée",
-        description: "Vous pouvez maintenant enregistrer votre activité cardio",
+        title: "Programme adapté",
+        description: "Un nouveau programme moins intense a été généré",
       });
 
-      navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+      // Rediriger vers le nouveau programme
+      navigate(`/workouts/exercise/next-workout?session=${sessionId}`);
     } catch (error) {
-      console.error('Error starting cardio session:', error);
+      console.error('Error regenerating workout:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de démarrer la séance de cardio",
+        description: "Impossible de générer un nouvel entraînement",
         variant: "destructive",
       });
     }
@@ -137,6 +167,7 @@ export const NextWorkoutDetail = () => {
         currentExerciseIndex={currentExerciseIndex}
         onExerciseClick={handleExerciseClick}
         sessionId={sessionId}
+        onRegenerateWorkout={handleRegenerateWorkout}
       />
       <WorkoutSummaryDialog 
         open={showSummary} 

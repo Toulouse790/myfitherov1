@@ -12,7 +12,8 @@ interface WorkoutInProgressProps {
   exercises: string[];
   currentExerciseIndex: number | null;
   onExerciseClick: (index: number) => void;
-  sessionId?: string;
+  sessionId?: string | null;
+  onRegenerateWorkout: () => void;
 }
 
 export const WorkoutInProgress = ({
@@ -20,6 +21,7 @@ export const WorkoutInProgress = ({
   currentExerciseIndex,
   onExerciseClick,
   sessionId,
+  onRegenerateWorkout,
 }: WorkoutInProgressProps) => {
   const [showEnergyDialog, setShowEnergyDialog] = useState(true);
   const [showSummary, setShowSummary] = useState(false);
@@ -41,10 +43,6 @@ export const WorkoutInProgress = ({
         variant: "destructive",
       });
     }
-  };
-
-  const handleRegenerateWorkout = () => {
-    navigate('/dashboard');
   };
 
   const handleEndWorkout = () => {
@@ -92,7 +90,7 @@ export const WorkoutInProgress = ({
         open={showEnergyDialog}
         onOpenChange={setShowEnergyDialog}
         onEnergyLevel={handleEnergyLevel}
-        onRegenerateWorkout={handleRegenerateWorkout}
+        onRegenerateWorkout={onRegenerateWorkout}
       />
 
       <Card className="border">
