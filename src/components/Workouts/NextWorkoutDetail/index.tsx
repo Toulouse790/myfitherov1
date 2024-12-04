@@ -8,6 +8,7 @@ import { WorkoutInProgress } from "./WorkoutInProgress";
 import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
 import { CardioSession } from "./CardioSession";
 import { useAuth } from "@/hooks/use-auth";
+import { generateWorkoutPlan } from "@/components/Dashboard/WorkoutSuggestions/workoutPlanGenerator";
 
 export const NextWorkoutDetail = () => {
   const location = useLocation();
@@ -133,6 +134,20 @@ export const NextWorkoutDetail = () => {
         return;
       }
 
+      // Générer un nouveau plan adapté avec une intensité réduite
+      const userProfile = {
+        age: 30,
+        weight: 75,
+        height: 175,
+        goal: profile.objective,
+        workoutsPerWeek: parseInt(profile.training_frequency),
+        dailyCalories: 2000,
+        recoveryCapacity: "low"
+      };
+
+      const newPlan = generateWorkoutPlan(userProfile);
+
+      // Mettre à jour la session avec le nouveau plan
       if (sessionId) {
         const { error: updateError } = await supabase
           .from('workout_sessions')
