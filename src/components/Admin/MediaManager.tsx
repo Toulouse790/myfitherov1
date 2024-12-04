@@ -21,6 +21,7 @@ export const MediaManager = () => {
 
   const fetchExercises = async () => {
     try {
+      console.log('Fetching exercises...');
       const { data, error } = await supabase
         .from('exercises')
         .select('*');
@@ -28,6 +29,8 @@ export const MediaManager = () => {
       if (error) {
         throw error;
       }
+      
+      console.log('Raw data from Supabase:', data);
       
       // Transform the data to match the Exercise type
       const transformedData = data.map(exercise => ({
@@ -59,6 +62,7 @@ export const MediaManager = () => {
         calories: 100
       })) as Exercise[];
       
+      console.log('Transformed exercises:', transformedData);
       setExercises(transformedData);
     } catch (error) {
       console.error('Error fetching exercises:', error);

@@ -20,9 +20,19 @@ export const MediaList = ({
   onDifficultyChange,
   selectedDifficulties,
 }: MediaListProps) => {
-  const filteredExercises = exercises.filter(
-    exercise => exercise.muscleGroup === selectedGroup
-  );
+  console.log('MediaList - All exercises:', exercises);
+  console.log('MediaList - Selected group:', selectedGroup);
+  
+  const filteredExercises = exercises.filter(exercise => {
+    console.log('Comparing:', {
+      exerciseMuscleGroup: exercise.muscleGroup,
+      selectedGroup: selectedGroup,
+      matches: exercise.muscleGroup === selectedGroup
+    });
+    return exercise.muscleGroup === selectedGroup;
+  });
+  
+  console.log('MediaList - Filtered exercises:', filteredExercises);
 
   return (
     <div className="space-y-4">
