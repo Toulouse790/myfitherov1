@@ -8,6 +8,26 @@ interface UserProfile {
   recoveryCapacity: "low" | "medium" | "high";
 }
 
+export interface WorkoutPlan {
+  intensity: number;
+  volume: number;
+  exerciseTypes: {
+    compound: number;
+    isolation: number;
+    cardio: boolean;
+  };
+  recommendedRest: number;
+  setsAndReps: {
+    sets: number;
+    reps: number;
+  };
+  weeklySchedule: {
+    daysPerWeek: number;
+    sessionsPerDay: number;
+    recommendedDays: string[];
+  };
+}
+
 export const generateWorkoutPlan = (profile: UserProfile) => {
   const bmi = profile.weight / Math.pow(profile.height / 100, 2);
   
