@@ -23,11 +23,25 @@ export const MediaList = ({
   console.log('MediaList - All exercises:', exercises);
   console.log('MediaList - Selected group:', selectedGroup);
   
+  const getMuscleGroupForFilter = (group: string): string => {
+    const muscleGroupMap: { [key: string]: string } = {
+      chest: 'poitrine',
+      back: 'dos',
+      legs: 'jambes',
+      shoulders: 'épaules',
+      biceps: 'biceps',
+      triceps: 'triceps',
+      abs: 'abdominaux'
+    };
+    return muscleGroupMap[group] || group;
+  };
+
   const filteredExercises = exercises.filter(exercise => {
-    const match = exercise.muscleGroup.toLowerCase() === selectedGroup.toLowerCase();
+    const muscleGroupToMatch = getMuscleGroupForFilter(selectedGroup);
+    const match = exercise.muscleGroup.toLowerCase() === muscleGroupToMatch.toLowerCase();
     console.log('Comparing:', {
       exerciseMuscleGroup: exercise.muscleGroup.toLowerCase(),
-      selectedGroup: selectedGroup.toLowerCase(),
+      selectedGroup: muscleGroupToMatch.toLowerCase(),
       matches: match
     });
     return match;
