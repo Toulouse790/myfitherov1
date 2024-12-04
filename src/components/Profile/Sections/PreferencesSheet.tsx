@@ -10,6 +10,7 @@ import { Settings2, MessageSquareText, Ruler, Scale, Share2 } from "lucide-react
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { MeasurementsSection } from "./MeasurementsSection";
 
 export const PreferencesSheet = () => {
   const { toast } = useToast();
@@ -30,10 +31,7 @@ export const PreferencesSheet = () => {
   };
 
   const handleShareProgress = () => {
-    // Création d'un message de partage personnalisé
     const shareText = "💪 Je progresse dans mes objectifs fitness ! Rejoignez-moi sur FitApp pour suivre votre progression et atteindre vos objectifs ensemble ! 🎯 #FitProgress #FitnessJourney";
-    
-    // Ouvrir Instagram avec le message pré-rempli
     const instagramUrl = `https://www.instagram.com/share?text=${encodeURIComponent(shareText)}`;
     window.open(instagramUrl, '_blank');
     
@@ -50,7 +48,7 @@ export const PreferencesSheet = () => {
           <Settings2 className="h-4 w-4" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md">
+      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Préférences</SheetTitle>
         </SheetHeader>
@@ -86,6 +84,10 @@ export const PreferencesSheet = () => {
               </SelectContent>
             </Select>
           </div>
+
+          <Separator />
+
+          <MeasurementsSection />
 
           <Separator />
 
