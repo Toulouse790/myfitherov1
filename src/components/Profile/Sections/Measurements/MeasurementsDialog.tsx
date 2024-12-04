@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MeasurementForm } from "./MeasurementForm";
-import { MeasurementChart } from "./MeasurementChart";
-import { MeasurementFormData, MeasurementHistory } from "./types";
+import { MeasurementFormData } from "./types";
 
 export const MeasurementsDialog = () => {
   const [open, setOpen] = useState(false);
@@ -22,31 +21,7 @@ export const MeasurementsDialog = () => {
     calf_left_cm: "",
     calf_right_cm: "",
   });
-  const [history, setHistory] = useState<MeasurementHistory[]>([]);
-  const [selectedMeasure, setSelectedMeasure] = useState("chest_cm");
   const { toast } = useToast();
-
-  const fetchHistory = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from('muscle_measurements')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('measurement_date', { ascending: true });
-
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger l'historique des mesures",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setHistory(data || []);
-  };
 
   const handleSubmit = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -80,7 +55,6 @@ export const MeasurementsDialog = () => {
       description: "Vos mesures ont été enregistrées",
     });
 
-    fetchHistory();
     setOpen(false);
   };
 
@@ -90,9 +64,6 @@ export const MeasurementsDialog = () => {
         <Button 
           variant="outline" 
           className="w-full mt-4"
-          onClick={() => {
-            fetchHistory();
-          }}
         >
           Ajouter mes mensurations
         </Button>
@@ -105,12 +76,6 @@ export const MeasurementsDialog = () => {
         <MeasurementForm 
           measurements={measurements}
           setMeasurements={setMeasurements}
-        />
-
-        <MeasurementChart 
-          history={history}
-          selectedMeasure={selectedMeasure}
-          setSelectedMeasure={setSelectedMeasure}
         />
 
         <div className="flex justify-end gap-4 mt-4">
