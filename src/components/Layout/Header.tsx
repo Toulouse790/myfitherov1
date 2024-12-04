@@ -1,81 +1,60 @@
-import { Dumbbell, User, BarChart, LogOut } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react";
+import { useSidebar } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Header = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [username, setUsername] = useState<string | null>(null);
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('username')
-          .eq('id', user.id)
-          .single();
-        
-        if (profile) {
-          setUsername(profile.username);
-        }
-      }
-    };
-
-    getUser();
-  }, []);
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la déconnexion",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Déconnexion réussie",
-        description: "À bientôt !",
-      });
-      navigate("/signin");
-    }
-  };
+  const { toggleSidebar } = useSidebar();
+  const { user } = useAuth();
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-b z-50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2">
-          <Dumbbell className="w-6 h-6 text-primary" />
-          <span className="font-bold text-xl">FitTrack</span>
-        </Link>
-        
-        <nav className="flex items-center space-x-4">
-          <Link to="/stats" className="p-2 hover:text-primary transition-colors">
-            <BarChart className="w-5 h-5" />
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <Button
+          variant="ghost"
+          className="mr-2 px-2 md:hidden"
+          onClick={toggleSidebar}
+        >
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle sidebar</span>
+        </Button>
+
+        <div className="mr-4 hidden md:flex">
+          <Link to="/" className="mr-6 flex items-center space-x-2">
+            <span className="hidden font-bold sm:inline-block">
+              MyFitHero
+            </span>
           </Link>
-          {username ? (
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-medium">{username}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                className="hover:text-primary transition-colors"
-              >
-                <LogOut className="w-5 h-5" />
-              </Button>
+        </div>
+
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <div className="w-full flex-1 md:w-auto md:flex-none">
+            <div className="w-full md:w-auto">
+              <input
+                type="search"
+                placeholder="Rechercher..."
+                className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:w-[200px]"
+              />
             </div>
-          ) : (
-            <Link to="/signup" className="p-2 hover:text-primary transition-colors">
-              <User className="w-5 h-5" />
-            </Link>
-          )}
-        </nav>
+          </div>
+          <nav className="flex items-center">
+            {user ? (
+              <Link to="/profile">
+                <Button variant="ghost" className="h-8 w-8 rounded-full">
+                  <span className="sr-only">Profile</span>
+                  <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
+                    {user.email?.charAt(0).toUpperCase()}
+                  </span>
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/signin">
+                <Button variant="ghost">Connexion</Button>
+              </Link>
+            )}
+          </nav>
+        </div>
       </div>
     </header>
   );
