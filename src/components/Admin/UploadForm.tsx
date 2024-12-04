@@ -14,7 +14,7 @@ export const UploadForm = ({ type, onFileChange, selectedFile }: UploadFormProps
         type="file"
         accept={type === "image" ? "image/*" : "video/*"}
         onChange={onFileChange}
-        className="flex-1 text-sm"
+        className="w-[200px]"
       />
     </div>
   );
