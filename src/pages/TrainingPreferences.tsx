@@ -18,6 +18,7 @@ const TrainingPreferencesPage = () => {
     available_equipment: "",
   });
   const [loading, setLoading] = useState(true);
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     fetchPreferences();
@@ -52,13 +53,21 @@ const TrainingPreferencesPage = () => {
     setLoading(false);
   };
 
-  const updatePreference = async (field: string, value: string) => {
+  const handlePreferenceChange = (field: string, value: string) => {
+    setPreferences(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    setHasChanges(true);
+  };
+
+  const savePreferences = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const { error } = await supabase
       .from('questionnaire_responses')
-      .update({ [field]: value })
+      .update(preferences)
       .eq('user_id', user.id);
 
     if (error) {
@@ -70,11 +79,7 @@ const TrainingPreferencesPage = () => {
       return;
     }
 
-    setPreferences(prev => ({
-      ...prev,
-      [field]: value
-    }));
-
+    setHasChanges(false);
     toast({
       title: "Succès",
       description: "Vos préférences ont été mises à jour",
@@ -91,14 +96,22 @@ const TrainingPreferencesPage = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-6 pb-24">
-      <Button 
-        variant="outline" 
-        onClick={() => navigate(-1)}
-        className="mb-4 text-foreground hover:text-foreground/80"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Retour
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate(-1)}
+          className="text-foreground hover:text-foreground/80"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Retour
+        </Button>
+        <Button 
+          onClick={savePreferences}
+          disabled={!hasChanges}
+        >
+          Enregistrer
+        </Button>
+      </div>
 
       <div>
         <h1 className="text-2xl font-bold mb-6">Préférences d'entraînement</h1>
@@ -108,7 +121,7 @@ const TrainingPreferencesPage = () => {
             <h2 className="text-xl font-semibold mb-4">Objectif principal</h2>
             <ObjectiveSelect
               value={preferences.objective}
-              onChange={(value) => updatePreference("objective", value)}
+              onChange={(value) => handlePreferenceChange("objective", value)}
             />
           </div>
 
@@ -116,7 +129,7 @@ const TrainingPreferencesPage = () => {
             <h2 className="text-xl font-semibold mb-4">Niveau d'activité</h2>
             <ActivityLevelSelect
               value={preferences.experience_level}
-              onChange={(value) => updatePreference("experience_level", value)}
+              onChange={(value) => handlePreferenceChange("experience_level", value)}
             />
           </div>
 
@@ -124,7 +137,7 @@ const TrainingPreferencesPage = () => {
             <h2 className="text-xl font-semibold mb-4">Équipement disponible</h2>
             <EquipmentSelect
               value={preferences.available_equipment}
-              onChange={(value) => updatePreference("available_equipment", value)}
+              onChange={(value) => handlePreferenceChange("available_equipment", value)}
             />
           </div>
         </div>
