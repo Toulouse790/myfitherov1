@@ -11,59 +11,53 @@ import { useQuery } from "@tanstack/react-query";
 export const MediaManager = () => {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedGroup, setSelectedGroup] = useState<string>(muscleGroups[0]?.name || "");
+  const [selectedGroup, setSelectedGroup] = useState<string>(muscleGroups[0]?.id || "");
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
 
-  const fetchExercises = async () => {
-    console.log('Fetching exercises...');
-    const { data, error } = await supabase
-      .from('exercises')
-      .select('*');
-
-    if (error) {
-      throw error;
-    }
-    
-    console.log('Raw data from Supabase:', data);
-    
-    // Transform the data to match the Exercise type
-    const transformedData = data.map(exercise => ({
-      id: exercise.id,
-      name: exercise.name,
-      muscleGroup: exercise.muscle_group,
-      difficulty: exercise.difficulty || [],
-      description: "Description de l'exercice", // Default value
-      equipment: "Équipement standard", // Default value
-      location: ["gym"], // Default value
-      instructions: ["Instruction 1"], // Default value
-      targetMuscles: [exercise.muscle_group], // Default value
-      objectives: ["muscle_gain"], // Default value
-      sets: {
-        beginner: 3,
-        intermediate: 4,
-        advanced: 5
-      },
-      reps: {
-        beginner: 10,
-        intermediate: 12,
-        advanced: 15
-      },
-      restTime: {
-        beginner: 60,
-        intermediate: 45,
-        advanced: 30
-      },
-      calories: 100
-    })) as Exercise[];
-    
-    console.log('Transformed exercises:', transformedData);
-    return transformedData;
-  };
-
-  const { data: exercises = [], isError } = useQuery({
+  const { data: exercises = [], isError, isLoading } = useQuery({
     queryKey: ['exercises'],
-    queryFn: fetchExercises
+    queryFn: async () => {
+      console.log('Fetching exercises...');
+      const { data, error } = await supabase
+        .from('exercises')
+        .select('*');
+
+      if (error) {
+        throw error;
+      }
+      
+      console.log('Raw data from Supabase:', data);
+      
+      return data.map(exercise => ({
+        id: exercise.id,
+        name: exercise.name,
+        muscleGroup: exercise.muscle_group,
+        difficulty: exercise.difficulty || [],
+        description: "Description de l'exercice",
+        equipment: "Équipement standard",
+        location: ["gym"],
+        instructions: ["Instruction 1"],
+        targetMuscles: [exercise.muscle_group],
+        objectives: ["muscle_gain"],
+        sets: {
+          beginner: 3,
+          intermediate: 4,
+          advanced: 5
+        },
+        reps: {
+          beginner: 10,
+          intermediate: 12,
+          advanced: 15
+        },
+        restTime: {
+          beginner: 60,
+          intermediate: 45,
+          advanced: 30
+        },
+        calories: 100
+      })) as Exercise[];
+    }
   });
 
   if (isError) {
@@ -72,6 +66,10 @@ export const MediaManager = () => {
       description: "Impossible de charger les exercices",
       variant: "destructive",
     });
+  }
+
+  if (isLoading) {
+    return <div>Chargement des exercices...</div>;
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +166,7 @@ export const MediaManager = () => {
         <h2 className="text-2xl font-bold">Gestionnaire de médias</h2>
       </div>
 
-      <Tabs defaultValue={muscleGroups[0]?.name} className="space-y-6">
+      <Tabs defaultValue={muscleGroups[0]?.id} className="space-y-6">
         <MuscleGroupList
           selectedGroup={selectedGroup}
           onGroupSelect={setSelectedGroup}

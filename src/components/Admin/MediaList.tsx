@@ -24,15 +24,24 @@ export const MediaList = ({
   console.log('MediaList - Selected group:', selectedGroup);
   
   const filteredExercises = exercises.filter(exercise => {
+    const match = exercise.muscleGroup.toLowerCase() === selectedGroup.toLowerCase();
     console.log('Comparing:', {
-      exerciseMuscleGroup: exercise.muscleGroup,
-      selectedGroup: selectedGroup,
-      matches: exercise.muscleGroup === selectedGroup
+      exerciseMuscleGroup: exercise.muscleGroup.toLowerCase(),
+      selectedGroup: selectedGroup.toLowerCase(),
+      matches: match
     });
-    return exercise.muscleGroup === selectedGroup;
+    return match;
   });
   
   console.log('MediaList - Filtered exercises:', filteredExercises);
+
+  if (exercises.length === 0) {
+    return <div>Aucun exercice disponible</div>;
+  }
+
+  if (filteredExercises.length === 0) {
+    return <div>Aucun exercice trouvé pour ce groupe musculaire</div>;
+  }
 
   return (
     <div className="space-y-4">
