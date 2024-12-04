@@ -8,11 +8,13 @@ import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth"; // Add this import
 
 export const NextWorkoutDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth(); // Add this line to get the current user
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isCardio, setIsCardio] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -57,6 +59,60 @@ export const NextWorkoutDetail = () => {
     return () => clearInterval(interval);
   }, [isRunning]);
 
+  const handleStartCardio = async () => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour démarrer une séance",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data: session, error: sessionError } = await supabase
+        .from('workout_sessions')
+        .insert([
+          { 
+            user_id: user.id,
+            status: 'in_progress', 
+            type: 'cardio' 
+          }
+        ])
+        .select()
+        .single();
+
+      if (sessionError) throw sessionError;
+
+      toast({
+        title: "Séance de cardio démarrée",
+        description: "Vous pouvez maintenant enregistrer votre activité cardio",
+      });
+
+      navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+    } catch (error) {
+      console.error('Error starting cardio session:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de démarrer la séance de cardio",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleExerciseClick = (index: number) => {
+    setCurrentExerciseIndex(index);
+  };
+
+  const handleEndWorkout = () => {
+    setShowSummary(true);
+  };
+
+  const handleConfirmEndWorkout = async () => {
+    // Add your workout completion logic here
+    navigate('/workouts');
+  };
+
   const handleFinishCardio = async () => {
     if (!sessionId) return;
 
@@ -66,6 +122,7 @@ export const NextWorkoutDetail = () => {
         .insert([
           {
             session_id: sessionId,
+            user_id: user?.id,
             duration_minutes: Math.round(duration / 60),
             total_sets: 1,
             total_reps: 1,
@@ -86,25 +143,13 @@ export const NextWorkoutDetail = () => {
 
       navigate('/workouts');
     } catch (error) {
+      console.error('Error finishing cardio session:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'enregistrer la séance de cardio",
         variant: "destructive",
       });
     }
-  };
-
-  const handleExerciseClick = (index: number) => {
-    setCurrentExerciseIndex(index);
-  };
-
-  const handleEndWorkout = () => {
-    setShowSummary(true);
-  };
-
-  const handleConfirmEndWorkout = async () => {
-    // Add your workout completion logic here
-    navigate('/workouts');
   };
 
   if (isCardio) {
