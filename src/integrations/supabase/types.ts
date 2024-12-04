@@ -321,6 +321,7 @@ export type Database = {
           energy_level: number | null
           id: string
           muscle_groups_worked: string[] | null
+          perceived_difficulty: string | null
           session_id: string | null
           total_reps: number
           total_sets: number
@@ -335,6 +336,7 @@ export type Database = {
           energy_level?: number | null
           id?: string
           muscle_groups_worked?: string[] | null
+          perceived_difficulty?: string | null
           session_id?: string | null
           total_reps?: number
           total_sets?: number
@@ -349,6 +351,7 @@ export type Database = {
           energy_level?: number | null
           id?: string
           muscle_groups_worked?: string[] | null
+          perceived_difficulty?: string | null
           session_id?: string | null
           total_reps?: number
           total_sets?: number
@@ -459,6 +462,8 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          initial_energy_level: string | null
+          is_adapted: boolean | null
           started_at: string | null
           status: string | null
           type: string | null
@@ -468,6 +473,8 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          initial_energy_level?: string | null
+          is_adapted?: boolean | null
           started_at?: string | null
           status?: string | null
           type?: string | null
@@ -477,6 +484,8 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          initial_energy_level?: string | null
+          is_adapted?: boolean | null
           started_at?: string | null
           status?: string | null
           type?: string | null

@@ -140,7 +140,7 @@ export const NextWorkoutDetail = () => {
         exercises={exercises}
         currentExerciseIndex={currentExerciseIndex}
         onExerciseClick={handleExerciseClick}
-        onEndWorkout={handleEndWorkout}
+        sessionId={sessionId}
       />
       <WorkoutSummaryDialog 
         open={showSummary} 

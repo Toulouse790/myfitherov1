@@ -1,7 +1,7 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExerciseSets } from "../ExerciseSets";
-import { useState, useEffect } from "react";
 import { InitialEnergyDialog } from "./InitialEnergyDialog";
 import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,11 +47,15 @@ export const WorkoutInProgress = ({
     navigate('/dashboard');
   };
 
-  const handleEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
+  const handleEndWorkout = () => {
+    setShowSummary(true);
+  };
+
+  const handleConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
     if (!sessionId) return;
 
     try {
-      // Mettre à jour les statistiques d'entraînement
+      // Update training stats with perceived difficulty
       const { error: statsError } = await supabase
         .from('training_stats')
         .update({ perceived_difficulty: difficulty })
@@ -59,7 +63,7 @@ export const WorkoutInProgress = ({
 
       if (statsError) throw statsError;
 
-      // Mettre à jour le statut de la session
+      // Update session status
       const { error: sessionError } = await supabase
         .from('workout_sessions')
         .update({ status: 'completed' })
@@ -100,7 +104,7 @@ export const WorkoutInProgress = ({
       <div className="fixed bottom-8 left-0 right-0 px-4">
         <Button 
           variant="destructive"
-          onClick={() => setShowSummary(true)}
+          onClick={handleEndWorkout}
           className="w-full max-w-2xl mx-auto"
         >
           Terminer l'entraînement
@@ -115,7 +119,7 @@ export const WorkoutInProgress = ({
           totalWeight: 0,
           totalCalories: 0
         }}
-        onConfirm={handleEndWorkout}
+        onConfirm={handleConfirmEndWorkout}
       />
     </>
   );
