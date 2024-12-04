@@ -8,7 +8,7 @@ import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { CardioSession } from "./NextWorkoutDetail/CardioSession";
 import { useAuth } from "@/hooks/use-auth";
-import { generateWorkoutPlan } from "../components/WorkoutSuggestions/workoutPlanGenerator";
+import { generateWorkoutPlan } from "@/components/Dashboard/WorkoutSuggestions/workoutPlanGenerator";
 
 export const NextWorkoutDetail = () => {
   const location = useLocation();
@@ -94,7 +94,7 @@ export const NextWorkoutDetail = () => {
         goal: profile.objective,
         workoutsPerWeek: parseInt(profile.training_frequency),
         dailyCalories: 2000,
-        recoveryCapacity: "low" as const // Réduire l'intensité car l'utilisateur n'est pas en forme
+        recoveryCapacity: "low" as const
       };
 
       const newPlan = generateWorkoutPlan(userProfile);
