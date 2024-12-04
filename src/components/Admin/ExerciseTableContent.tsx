@@ -1,14 +1,6 @@
 import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-
-interface ExerciseTableContentProps {
-  exercises: any[];
-  locations: { id: string; name: string; }[];
-  difficulties: { id: string; name: string; }[];
-  onLocationChange: (exerciseId: string, location: string, checked: boolean) => void;
-  onDifficultyChange: (exerciseId: string, difficulty: string, checked: boolean) => void;
-}
+import { LocationCheckboxes, DifficultyCheckboxes } from "./ExerciseCheckboxes";
+import { ExerciseTableContentProps } from "./types/exercise-table";
 
 export const ExerciseTableContent = ({
   exercises,
@@ -55,74 +47,5 @@ export const ExerciseTableContent = ({
         ))}
       </tbody>
     </table>
-  );
-};
-
-const LocationCheckboxes = ({ 
-  exercise, 
-  locations, 
-  onChange 
-}: { 
-  exercise: any; 
-  locations: { id: string; name: string; }[];
-  onChange: (exerciseId: string, location: string, checked: boolean) => void;
-}) => (
-  <div className="flex gap-4">
-    {locations.map((location) => (
-      <CheckboxWithLabel
-        key={location.id}
-        id={`${exercise.id}-${location.id}`}
-        checked={(exercise.location || []).includes(location.id)}
-        onChange={(checked) => onChange(exercise.id, location.id, checked)}
-        label={location.name}
-      />
-    ))}
-  </div>
-);
-
-const DifficultyCheckboxes = ({ 
-  exercise, 
-  difficulties, 
-  onChange 
-}: { 
-  exercise: any; 
-  difficulties: { id: string; name: string; }[];
-  onChange: (exerciseId: string, difficulty: string, checked: boolean) => void;
-}) => (
-  <div className="flex gap-4">
-    {difficulties.map((difficulty) => (
-      <CheckboxWithLabel
-        key={difficulty.id}
-        id={`${exercise.id}-${difficulty.id}`}
-        checked={(exercise.difficulty || []).includes(difficulty.id)}
-        onChange={(checked) => onChange(exercise.id, difficulty.id, checked)}
-        label={difficulty.name}
-      />
-    ))}
-  </div>
-);
-
-const CheckboxWithLabel = ({ 
-  id, 
-  checked, 
-  onChange, 
-  label 
-}: { 
-  id: string; 
-  checked: boolean; 
-  onChange: (checked: boolean) => void;
-  label: string;
-}) => {
-  return (
-    <div className="flex items-center space-x-2">
-      <Checkbox
-        id={id}
-        checked={checked}
-        onCheckedChange={onChange}
-      />
-      <Label htmlFor={id}>
-        {label}
-      </Label>
-    </div>
   );
 };
