@@ -4,8 +4,9 @@ import { ExerciseSelection } from "./ExerciseSelection";
 import { exercises } from "./exerciseLibrary";
 import { muscleGroups } from "./workoutConstants";
 import { MuscleGroupCard } from "./filters/MuscleGroupCard";
-import { FilterControls } from "./filters/FilterControls";
+import { FilterControlsGroup } from "./components/FilterControlsGroup";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { filterExercisesByMuscleGroup, checkExerciseMatch } from "./utils/exerciseFilters";
 
 interface WorkoutFiltersProps {
   muscleGroup: string;
@@ -36,22 +37,7 @@ export const WorkoutFilters = ({
 
   const handleMuscleGroupClick = (muscleId: string) => {
     if (muscleId === muscleGroup) {
-      const filteredExercises = exercises.filter(ex => {
-        if (muscleId === "fullBody") return true;
-        if (muscleId === "biceps" || muscleId === "triceps") {
-          return ex.muscleGroup === "arms";
-        }
-        if (muscleId === "quadriceps" || muscleId === "hamstrings" || muscleId === "glutes") {
-          return ex.muscleGroup === "legs";
-        }
-        if (muscleId === "lower_back") {
-          return ex.muscleGroup === "back";
-        }
-        if (muscleId === "chest") {
-          return ex.muscleGroup === "chest";
-        }
-        return ex.muscleGroup === muscleId;
-      });
+      const filteredExercises = filterExercisesByMuscleGroup(exercises, muscleId);
       setSelectedMuscleExercises(filteredExercises);
       setShowExerciseSelection(true);
     } else {
@@ -61,20 +47,7 @@ export const WorkoutFilters = ({
 
   const getSelectedExercisesCount = (muscleId: string): number => {
     return exercises.filter(ex => {
-      let matches = false;
-      if (muscleId === "fullBody") {
-        matches = true;
-      } else if (muscleId === "biceps" || muscleId === "triceps") {
-        matches = ex.muscleGroup === "arms";
-      } else if (muscleId === "quadriceps" || muscleId === "hamstrings" || muscleId === "glutes") {
-        matches = ex.muscleGroup === "legs";
-      } else if (muscleId === "lower_back") {
-        matches = ex.muscleGroup === "back";
-      } else if (muscleId === "chest") {
-        matches = ex.muscleGroup === "chest";
-      } else {
-        matches = ex.muscleGroup === muscleId;
-      }
+      const matches = checkExerciseMatch(ex, muscleId);
       return matches && selectedExercises.includes(ex.id);
     }).length;
   };
@@ -100,7 +73,7 @@ export const WorkoutFilters = ({
         ))}
       </div>
 
-      <FilterControls
+      <FilterControlsGroup
         difficulty={difficulty}
         location={location}
         sortOrder={sortOrder}
