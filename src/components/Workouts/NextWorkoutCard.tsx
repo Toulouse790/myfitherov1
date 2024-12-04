@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { SkipForward, RotateCcw, Send, Timer, Plus } from "lucide-react";
+import { SkipForward, RotateCcw, Send, Timer, Plus, Dumbbell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -49,7 +49,7 @@ export const NextWorkoutCard = () => {
         </Button>
       </div>
       
-      <div className="p-2 sm:p-3 space-y-2 sm:space-y-3">
+      <div className="p-4 space-y-4">
         <h2 className="text-base sm:text-lg font-bold text-white group-hover:text-primary transition-colors duration-300">
           Dos, Biceps, Épaules, Abdos
         </h2>
@@ -65,23 +65,21 @@ export const NextWorkoutCard = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+        <div className="space-y-2">
           {SAMPLE_EXERCISES.map((exerciseName, index) => (
             <div 
               key={index}
-              className="aspect-square rounded-lg overflow-hidden bg-[#2A2F3F] hover:ring-1 hover:ring-primary transition-all duration-300 transform hover:scale-105"
+              className="flex items-center gap-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
             >
-              <img 
-                src={exerciseImages[exerciseName]} 
-                alt={exerciseName}
-                className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-              />
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Dumbbell className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-white">{exerciseName}</p>
+                <p className="text-xs text-gray-400">3 séries • 12 répétitions</p>
+              </div>
             </div>
           ))}
-        </div>
-        
-        <div className="text-xs text-gray-400 line-clamp-2 bg-white/5 p-2 rounded-lg">
-          Rowing avec Haltères • Tirage à la poulie barre en V • Curl Biceps aux Haltères • Curl Marteau • Développé Militaire • Élévations Latérales • Crunch • Planche
         </div>
         
         <div className="flex justify-start gap-2 sm:gap-3">
