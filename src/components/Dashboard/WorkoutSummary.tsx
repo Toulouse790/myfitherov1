@@ -1,44 +1,48 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Activity, Calendar, TrendingUp } from "lucide-react";
-
-interface WorkoutSummaryProps {
-  dailyStats: {
-    duration: number;
-    calories: number;
-    exercises: number;
-  };
-  weeklyStats: {
-    workouts: number;
-    totalDuration: number;
-    avgIntensity: number;
-  };
-  monthlyStats: {
-    totalWorkouts: number;
-    progress: number;
-    streak: number;
-  };
-}
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const WorkoutSummary = () => {
-  // Mock data - à remplacer par des données réelles
-  const summaryData: WorkoutSummaryProps = {
-    dailyStats: {
-      duration: 61,
-      calories: 450,
-      exercises: 8,
-    },
-    weeklyStats: {
-      workouts: 4,
-      totalDuration: 240,
-      avgIntensity: 85,
-    },
-    monthlyStats: {
-      totalWorkouts: 16,
-      progress: 90,
-      streak: 4,
-    },
-  };
+  const { data: stats } = useQuery({
+    queryKey: ['workout-summary'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('training_stats')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(30);
+      
+      if (error) throw error;
+      
+      const dailyStats = data[0] || {
+        duration_minutes: 0,
+        total_sets: 0,
+        average_intensity: 0
+      };
+
+      const weeklyStats = {
+        workouts: data.length,
+        totalDuration: data.reduce((acc, stat) => acc + (stat.duration_minutes || 0), 0),
+        avgIntensity: Math.round(
+          data.reduce((acc, stat) => acc + (stat.average_intensity || 0), 0) / data.length
+        )
+      };
+
+      const monthlyStats = {
+        totalWorkouts: data.length,
+        progress: Math.min(Math.round((data.length / 20) * 100), 100),
+        streak: calculateStreak(data)
+      };
+
+      return {
+        dailyStats,
+        weeklyStats,
+        monthlyStats
+      };
+    }
+  });
 
   return (
     <Card className="p-4">
@@ -62,21 +66,21 @@ export const WorkoutSummary = () => {
           <div className="grid grid-cols-3 gap-4 mt-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.dailyStats.duration} min
+                {stats?.dailyStats.duration_minutes || 0} min
               </p>
               <p className="text-sm text-muted-foreground">Durée</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.dailyStats.calories} kcal
+                {Math.round((stats?.dailyStats.duration_minutes || 0) * 7.5)} kcal
               </p>
               <p className="text-sm text-muted-foreground">Calories</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.dailyStats.exercises}
+                {stats?.dailyStats.total_sets || 0}
               </p>
-              <p className="text-sm text-muted-foreground">Exercices</p>
+              <p className="text-sm text-muted-foreground">Séries</p>
             </div>
           </div>
         </TabsContent>
@@ -85,19 +89,19 @@ export const WorkoutSummary = () => {
           <div className="grid grid-cols-3 gap-4 mt-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.weeklyStats.workouts}
+                {stats?.weeklyStats.workouts || 0}
               </p>
               <p className="text-sm text-muted-foreground">Entraînements</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.weeklyStats.totalDuration} min
+                {stats?.weeklyStats.totalDuration || 0} min
               </p>
               <p className="text-sm text-muted-foreground">Durée totale</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.weeklyStats.avgIntensity}%
+                {stats?.weeklyStats.avgIntensity || 0}%
               </p>
               <p className="text-sm text-muted-foreground">Intensité moy.</p>
             </div>
@@ -108,19 +112,19 @@ export const WorkoutSummary = () => {
           <div className="grid grid-cols-3 gap-4 mt-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.monthlyStats.totalWorkouts}
+                {stats?.monthlyStats.totalWorkouts || 0}
               </p>
               <p className="text-sm text-muted-foreground">Total séances</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.monthlyStats.progress}%
+                {stats?.monthlyStats.progress || 0}%
               </p>
               <p className="text-sm text-muted-foreground">Progression</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {summaryData.monthlyStats.streak} jours
+                {stats?.monthlyStats.streak || 0} jours
               </p>
               <p className="text-sm text-muted-foreground">Série active</p>
             </div>
@@ -130,3 +134,37 @@ export const WorkoutSummary = () => {
     </Card>
   );
 };
+
+function calculateStreak(data: any[]): number {
+  if (!data.length) return 0;
+  
+  let streak = 1;
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const hasWorkoutToday = data.some(stat => 
+    new Date(stat.created_at).toDateString() === today.toDateString()
+  );
+  
+  const hasWorkoutYesterday = data.some(stat => 
+    new Date(stat.created_at).toDateString() === yesterday.toDateString()
+  );
+  
+  if (!hasWorkoutToday && !hasWorkoutYesterday) return 0;
+  
+  for (let i = 1; i < data.length; i++) {
+    const current = new Date(data[i].created_at);
+    const prev = new Date(data[i - 1].created_at);
+    
+    const diffDays = Math.floor((prev.getTime() - current.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays <= 1) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  
+  return streak;
+}

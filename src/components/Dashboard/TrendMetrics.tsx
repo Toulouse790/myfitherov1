@@ -2,56 +2,78 @@ import { Card } from "@/components/ui/card";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { MetricHistoryDialog } from "./MetricHistoryDialog";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-// Données mockées pour l'historique - à remplacer par des données réelles
-const mockHistory = {
-  daily: Array.from({ length: 7 }, (_, i) => ({
-    date: `J-${6-i}`,
-    value: Math.floor(Math.random() * 100),
-  })),
-  weekly: Array.from({ length: 4 }, (_, i) => ({
+const getMetricHistory = async (days: number) => {
+  const { data, error } = await supabase
+    .from('training_stats')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(days);
+
+  if (error) throw error;
+
+  const dailyData = data.map(stat => ({
+    date: new Date(stat.created_at).toLocaleDateString(),
+    value: stat.total_sets
+  }));
+
+  const weeklyData = Array.from({ length: 4 }, (_, i) => ({
     date: `S-${3-i}`,
-    value: Math.floor(Math.random() * 400),
-  })),
-  monthly: Array.from({ length: 6 }, (_, i) => ({
-    date: `M-${5-i}`,
-    value: Math.floor(Math.random() * 1200),
-  })),
-};
+    value: Math.floor(Math.random() * 400)
+  }));
 
-const metrics = [
-  { 
-    label: "Entraînements", 
-    value: "4", 
-    color: "text-blue-400",
-    unit: "séances",
-    history: mockHistory
-  },
-  { 
-    label: "Volume", 
-    value: "31 209 kg", 
-    color: "text-cyan-400",
-    unit: "kg",
-    history: mockHistory
-  },
-  { 
-    label: "Calories", 
-    value: "1 506", 
-    color: "text-pink-400",
-    unit: "kcal",
-    history: mockHistory
-  },
-  { 
-    label: "Séries", 
-    value: "91", 
-    color: "text-purple-400",
-    unit: "séries",
-    history: mockHistory
-  }
-];
+  const monthlyData = Array.from({ length: 6 }, (_, i) => ({
+    date: `M-${5-i}`,
+    value: Math.floor(Math.random() * 1200)
+  }));
+
+  return {
+    daily: dailyData,
+    weekly: weeklyData,
+    monthly: monthlyData
+  };
+};
 
 export const TrendMetrics = () => {
   const [selectedMetric, setSelectedMetric] = useState<typeof metrics[0] | null>(null);
+
+  const { data: stats } = useQuery({
+    queryKey: ['trend-metrics'],
+    queryFn: () => getMetricHistory(7)
+  });
+
+  const metrics = [
+    { 
+      label: "Entraînements", 
+      value: stats?.daily.length.toString() || "0", 
+      color: "text-blue-400",
+      unit: "séances",
+      history: stats || { daily: [], weekly: [], monthly: [] }
+    },
+    { 
+      label: "Volume", 
+      value: "31 209", 
+      color: "text-cyan-400",
+      unit: "kg",
+      history: stats || { daily: [], weekly: [], monthly: [] }
+    },
+    { 
+      label: "Calories", 
+      value: "1 506", 
+      color: "text-pink-400",
+      unit: "kcal",
+      history: stats || { daily: [], weekly: [], monthly: [] }
+    },
+    { 
+      label: "Séries", 
+      value: "91", 
+      color: "text-purple-400",
+      unit: "séries",
+      history: stats || { daily: [], weekly: [], monthly: [] }
+    }
+  ];
 
   return (
     <div className="space-y-4">

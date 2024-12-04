@@ -9,6 +9,47 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          icon_name: string
+          id: string
+          name: string
+          unlocked_at: string
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          icon_name: string
+          id?: string
+          name: string
+          unlocked_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: string
+          name?: string
+          unlocked_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_training_data: {
         Row: {
           action_type: string
@@ -238,6 +279,66 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "questionnaire_responses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      training_stats: {
+        Row: {
+          average_intensity: number | null
+          created_at: string
+          duration_minutes: number
+          energy_level: number | null
+          id: string
+          muscle_groups_worked: string[] | null
+          session_id: string | null
+          total_reps: number
+          total_sets: number
+          total_weight: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          average_intensity?: number | null
+          created_at?: string
+          duration_minutes?: number
+          energy_level?: number | null
+          id?: string
+          muscle_groups_worked?: string[] | null
+          session_id?: string | null
+          total_reps?: number
+          total_sets?: number
+          total_weight?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          average_intensity?: number | null
+          created_at?: string
+          duration_minutes?: number
+          energy_level?: number | null
+          id?: string
+          muscle_groups_worked?: string[] | null
+          session_id?: string | null
+          total_reps?: number
+          total_sets?: number
+          total_weight?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_stats_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "training_stats_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"

@@ -51,7 +51,7 @@ export const MetricHistoryDialog = ({
                     data={metric.history[period as keyof typeof metric.history]}
                     index="date"
                     categories={["value"]}
-                    colors={[metric.color]}
+                    colors={[metric.color.replace("text-", "bg-")]}
                     valueFormatter={(value: number) => `${value} ${metric.unit}`}
                   />
                 </div>

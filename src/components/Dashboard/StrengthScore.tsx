@@ -1,13 +1,29 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Trophy, TrendingUp, Target } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const StrengthScore = () => {
-  const score = 56;
+  const { data: stats } = useQuery({
+    queryKey: ['strength-stats'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('training_stats')
+        .select('total_weight, average_intensity')
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (error) throw error;
+      return data?.[0];
+    }
+  });
+
+  const score = Math.round((stats?.average_intensity || 0) * 0.8);
   const maxScore = 100;
-  const level = "Novice";
-  const nextLevel = "Intermédiaire";
-  const pointsToNextLevel = 14;
+  const level = getLevel(score);
+  const nextLevel = getNextLevel(level);
+  const pointsToNextLevel = getPointsToNextLevel(score, level);
 
   const getLevelColor = (level: string) => {
     switch (level.toLowerCase()) {
@@ -97,3 +113,39 @@ export const StrengthScore = () => {
     </Card>
   );
 };
+
+function getLevel(score: number): string {
+  if (score < 20) return "Débutant";
+  if (score < 40) return "Novice";
+  if (score < 60) return "Intermédiaire";
+  if (score < 80) return "Avancé";
+  return "Expert";
+}
+
+function getNextLevel(currentLevel: string): string {
+  switch (currentLevel) {
+    case "Débutant":
+      return "Novice";
+    case "Novice":
+      return "Intermédiaire";
+    case "Intermédiaire":
+      return "Avancé";
+    case "Avancé":
+      return "Expert";
+    default:
+      return "Expert";
+  }
+}
+
+function getPointsToNextLevel(score: number, currentLevel: string): number {
+  const thresholds = {
+    "Débutant": 20,
+    "Novice": 40,
+    "Intermédiaire": 60,
+    "Avancé": 80,
+    "Expert": 100
+  };
+  
+  const nextLevel = getNextLevel(currentLevel);
+  return thresholds[nextLevel as keyof typeof thresholds] - score;
+}

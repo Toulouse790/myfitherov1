@@ -4,11 +4,30 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const DashboardStats = () => {
   const { toast } = useToast();
-  const workoutsThisMonth = 12;
+
+  const { data: trainingStats } = useQuery({
+    queryKey: ['training-stats'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('training_stats')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(30);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const workoutsThisMonth = trainingStats?.length || 0;
   const plannedWorkouts = 16;
+  const totalMinutes = trainingStats?.reduce((acc, stat) => acc + (stat.duration_minutes || 0), 0) || 0;
+  const totalCalories = Math.round((totalMinutes * 7.5)); // Estimation basique des calories
 
   useEffect(() => {
     if (workoutsThisMonth > 24) {
@@ -44,14 +63,14 @@ export const DashboardStats = () => {
         />
         <DashboardCard
           title="Minutes d'entraînement"
-          value={360}
+          value={totalMinutes}
           target={400}
           icon={<Activity className="w-5 h-5" />}
         />
         <DashboardCard
           title="Calories brûlées"
-          value="2,450"
-          target="2,800"
+          value={totalCalories}
+          target={2800}
           icon={<Heart className="w-5 h-5" />}
         />
       </div>
