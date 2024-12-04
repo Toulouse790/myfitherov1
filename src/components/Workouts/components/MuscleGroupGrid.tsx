@@ -28,13 +28,13 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
 
         const counts: {[key: string]: number} = {};
         muscleGroups.forEach(group => {
-          counts[group.id] = data.filter(ex => {
-            if (group.id === "biceps" || group.id === "triceps") {
-              return ex.exercise_name.toLowerCase().includes("biceps") || 
-                     ex.exercise_name.toLowerCase().includes("triceps");
-            }
-            return ex.exercise_name.toLowerCase().includes(group.name.toLowerCase());
-          }).length;
+          const searchTerm = group.id === "biceps" || group.id === "triceps" 
+            ? group.id 
+            : group.name.toLowerCase();
+            
+          counts[group.id] = data.filter(ex => 
+            ex.exercise_name.toLowerCase().includes(searchTerm)
+          ).length;
         });
 
         setExerciseCounts(counts);
