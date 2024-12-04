@@ -37,7 +37,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Poulie haute",
     location: ["gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
     instructions: [
       "Face à la poulie, coudes près du corps",
       "Tendez les bras vers le bas",
@@ -93,7 +93,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Haltère",
     location: ["gym", "home"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
     instructions: [
       "Assis ou debout, haltère au-dessus de la tête",
       "Descendez l'haltère derrière la tête",
