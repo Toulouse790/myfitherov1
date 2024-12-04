@@ -68,5 +68,107 @@ export const absExercises: Exercise[] = [
       advanced: 30
     },
     calories: 70
+  },
+  {
+    id: "abs-3",
+    name: "Relevé de jambes",
+    muscleGroup: "abdominaux",
+    description: "Cible les abdominaux inférieurs",
+    difficulty: "intermediate",
+    equipment: "Aucun",
+    location: ["home", "gym", "outdoor"],
+    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
+    instructions: [
+      "Allongé sur le dos",
+      "Jambes tendues",
+      "Levez les jambes à 90 degrés",
+      "Redescendez lentement"
+    ],
+    targetMuscles: ["abdominaux inférieurs"],
+    objectives: ["muscle_gain", "endurance"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 15,
+      advanced: 20
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
+    },
+    calories: 90
+  },
+  {
+    id: "abs-4",
+    name: "Russian Twist",
+    muscleGroup: "abdominaux",
+    description: "Excellent pour les obliques",
+    difficulty: "intermediate",
+    equipment: "Poids (optionnel)",
+    location: ["home", "gym", "outdoor"],
+    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
+    instructions: [
+      "Assis, genoux pliés",
+      "Penchez-vous légèrement en arrière",
+      "Tournez le torse d'un côté à l'autre",
+      "Gardez les abdominaux contractés"
+    ],
+    targetMuscles: ["obliques", "abdominaux"],
+    objectives: ["muscle_gain", "endurance"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 20,
+      intermediate: 30,
+      advanced: 40
+    },
+    restTime: {
+      beginner: 60,
+      intermediate: 45,
+      advanced: 30
+    },
+    calories: 100
+  },
+  {
+    id: "abs-5",
+    name: "Mountain Climber",
+    muscleGroup: "abdominaux",
+    description: "Excellent exercice cardio-abdominal",
+    difficulty: "intermediate",
+    equipment: "Aucun",
+    location: ["home", "gym", "outdoor"],
+    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
+    instructions: [
+      "Position de planche",
+      "Ramenez alternativement les genoux vers la poitrine",
+      "Gardez le dos droit",
+      "Maintenez un rythme rapide"
+    ],
+    targetMuscles: ["abdominaux", "obliques"],
+    objectives: ["endurance", "weight_loss"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 20,
+      intermediate: 30,
+      advanced: 40
+    },
+    restTime: {
+      beginner: 60,
+      intermediate: 45,
+      advanced: 30
+    },
+    calories: 120
   }
 ];

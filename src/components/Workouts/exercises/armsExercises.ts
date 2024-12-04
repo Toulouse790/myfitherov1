@@ -33,7 +33,7 @@ export const armsExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 150 // Mise à jour des calories
+    calories: 150
   },
   {
     id: "arms-2",
@@ -67,7 +67,7 @@ export const armsExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 130 // Mise à jour des calories
+    calories: 130
   },
   {
     id: "arms-3",
@@ -101,24 +101,24 @@ export const armsExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 140 // Mise à jour des calories
+    calories: 140
   },
   {
     id: "arms-4",
-    name: "Extension triceps au-dessus de la tête",
+    name: "Dips",
     muscleGroup: "arms",
-    description: "Excellent pour la masse des triceps",
+    description: "Excellent exercice composé pour les triceps",
     difficulty: "intermediate",
-    equipment: "Haltère",
+    equipment: "Barres parallèles ou chaise",
     location: ["gym", "home"],
     image: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
     instructions: [
-      "Assis ou debout, haltère au-dessus de la tête",
-      "Descendez l'haltère derrière la tête",
-      "Gardez les coudes près des oreilles",
-      "Tendez les bras"
+      "En appui sur les barres",
+      "Descendez en pliant les coudes",
+      "Poussez pour remonter",
+      "Gardez le buste droit"
     ],
-    targetMuscles: ["triceps"],
+    targetMuscles: ["triceps", "pectoraux", "épaules"],
     objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
@@ -126,8 +126,8 @@ export const armsExercises: Exercise[] = [
       advanced: 4
     },
     reps: {
-      beginner: 12,
-      intermediate: 15,
+      beginner: 8,
+      intermediate: 12,
       advanced: 15
     },
     restTime: {
@@ -135,6 +135,40 @@ export const armsExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 120 // Mise à jour des calories
+    calories: 160
+  },
+  {
+    id: "arms-5",
+    name: "Pompes diamant",
+    muscleGroup: "arms",
+    description: "Excellent exercice pour les triceps sans matériel",
+    difficulty: "intermediate",
+    equipment: "Aucun",
+    location: ["home", "outdoor", "gym"],
+    image: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
+    instructions: [
+      "Mains en forme de diamant sous la poitrine",
+      "Descendez en pliant les coudes",
+      "Poussez pour remonter",
+      "Gardez les coudes près du corps"
+    ],
+    targetMuscles: ["triceps", "pectoraux"],
+    objectives: ["muscle_gain", "endurance"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 8,
+      intermediate: 12,
+      advanced: 15
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
+    },
+    calories: 120
   }
 ];
