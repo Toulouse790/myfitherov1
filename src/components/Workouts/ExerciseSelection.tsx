@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
 
 interface ExerciseSelectionProps {
   exercises: Exercise[];
@@ -49,7 +50,6 @@ export const ExerciseSelection = ({
       return;
     }
 
-    // Récupérer la durée depuis le localStorage
     const userPreferences = JSON.parse(localStorage.getItem("userPreferences") || "{}");
     const workoutDuration = userPreferences.workoutDuration || "45";
 
@@ -61,7 +61,6 @@ export const ExerciseSelection = ({
       createdAt: new Date().toISOString(),
     };
 
-    // Sauvegarder dans le localStorage
     const savedWorkouts = JSON.parse(localStorage.getItem("savedWorkouts") || "[]");
     localStorage.setItem("savedWorkouts", JSON.stringify([...savedWorkouts, workout]));
 
@@ -74,7 +73,7 @@ export const ExerciseSelection = ({
   };
 
   return (
-    <div className="space-y-6 animate-fade-up">
+    <div className="space-y-6">
       <div className="space-y-4">
         <Input
           placeholder="Nom du programme"
@@ -84,26 +83,42 @@ export const ExerciseSelection = ({
         />
         <div className="grid gap-4 sm:grid-cols-2">
           {exercises.map((exercise) => (
-            <Card key={exercise.id} className="overflow-hidden">
-              <CardHeader className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={exercise.id}
-                    checked={selectedExercises.includes(exercise.id)}
-                    onCheckedChange={() => handleExerciseToggle(exercise.id)}
-                  />
-                  <label
-                    htmlFor={exercise.id}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {exercise.name}
-                  </label>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">{exercise.description}</p>
-              </CardContent>
-            </Card>
+            <motion.div
+              key={exercise.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
+                <CardHeader className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={exercise.id}
+                      checked={selectedExercises.includes(exercise.id)}
+                      onCheckedChange={() => handleExerciseToggle(exercise.id)}
+                    />
+                    <label
+                      htmlFor={exercise.id}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {exercise.name}
+                    </label>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {exercise.image && (
+                    <div className="relative aspect-video mb-2 rounded-md overflow-hidden">
+                      <img
+                        src={exercise.image}
+                        alt={exercise.name}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">{exercise.description}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
       </div>

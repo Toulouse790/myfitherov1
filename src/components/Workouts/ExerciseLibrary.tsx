@@ -11,10 +11,12 @@ import { AddExerciseForm } from "./AddExerciseForm";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { FloatingWorkoutButton } from "./FloatingWorkoutButton";
+import { ExerciseSelection } from "./ExerciseSelection";
 
 export const ExerciseLibrary = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [showExerciseSelection, setShowExerciseSelection] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -26,6 +28,27 @@ export const ExerciseLibrary = () => {
     toast({
       title: "Exercice ajouté",
       description: "L'exercice a été ajouté avec succès à la bibliothèque",
+    });
+  };
+
+  const handleMuscleGroupClick = (muscleId: string) => {
+    if (muscleId === muscleGroup) {
+      const filteredExercises = exercises.filter(ex => {
+        if (muscleId === "fullBody") return true;
+        return ex.muscleGroup === muscleId;
+      });
+      setSelectedMuscleExercises(filteredExercises);
+      setShowExerciseSelection(true);
+    } else {
+      onMuscleGroupChange(muscleId);
+    }
+  };
+
+  const handleExerciseSelectionChange = (selectedIds: string[]) => {
+    setSelectedExercises(selectedIds);
+    toast({
+      title: "Exercices sélectionnés",
+      description: `${selectedIds.length} exercices ajoutés à votre séance`,
     });
   };
 
@@ -61,7 +84,7 @@ export const ExerciseLibrary = () => {
         {filteredMuscleGroups.map((muscle) => (
           <Card
             key={muscle.id}
-            onClick={() => navigate(`/workout-exercise/${muscle.id}`)}
+            onClick={() => handleMuscleGroupClick(muscle.id)}
             className="p-4 cursor-pointer hover:shadow-lg transition-all group relative overflow-hidden"
           >
             <div className="flex items-center gap-4">
@@ -88,6 +111,20 @@ export const ExerciseLibrary = () => {
           </Card>
         ))}
       </div>
+
+      <Dialog open={showExerciseSelection} onOpenChange={setShowExerciseSelection}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>Sélectionner des exercices</DialogTitle>
+          </DialogHeader>
+          <ExerciseSelection
+            exercises={selectedMuscleExercises}
+            selectedExercises={selectedExercises}
+            onSelectionChange={handleExerciseSelectionChange}
+            onClose={() => setShowExerciseSelection(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       <FloatingWorkoutButton 
         selectedCount={selectedExercises.length}
