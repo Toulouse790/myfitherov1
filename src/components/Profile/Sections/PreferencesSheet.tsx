@@ -6,7 +6,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Settings2, Instagram, MessageSquareText, Ruler, Scale, Lightbulb } from "lucide-react";
+import { Settings2, MessageSquareText, Ruler, Scale, Share2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -29,8 +29,18 @@ export const PreferencesSheet = () => {
     window.location.href = "mailto:support@example.com";
   };
 
-  const handleInstagramClick = () => {
-    window.open("https://instagram.com/votre_compte", "_blank");
+  const handleShareProgress = () => {
+    // Création d'un message de partage personnalisé
+    const shareText = "💪 Je progresse dans mes objectifs fitness ! Rejoignez-moi sur FitApp pour suivre votre progression et atteindre vos objectifs ensemble ! 🎯 #FitProgress #FitnessJourney";
+    
+    // Ouvrir Instagram avec le message pré-rempli
+    const instagramUrl = `https://www.instagram.com/share?text=${encodeURIComponent(shareText)}`;
+    window.open(instagramUrl, '_blank');
+    
+    toast({
+      title: "Partage sur Instagram",
+      description: "Partagez votre progression et inspirez votre communauté !",
+    });
   };
 
   return (
@@ -94,17 +104,17 @@ export const PreferencesSheet = () => {
               className="w-full justify-start"
               onClick={handleFeatureRequest}
             >
-              <Lightbulb className="mr-2 h-4 w-4" />
+              <MessageSquareText className="mr-2 h-4 w-4" />
               Demande de fonctionnalité
             </Button>
 
             <Button 
               variant="outline" 
               className="w-full justify-start"
-              onClick={handleInstagramClick}
+              onClick={handleShareProgress}
             >
-              <Instagram className="mr-2 h-4 w-4" />
-              Suivez-nous sur Instagram
+              <Share2 className="mr-2 h-4 w-4" />
+              Partager ma progression sur Instagram
             </Button>
           </div>
         </div>
