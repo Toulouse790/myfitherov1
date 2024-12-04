@@ -47,8 +47,8 @@ export const ExerciseLibrary = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 p-4">
-      <div className="flex justify-between items-center mb-6">
+    <div className="container max-w-7xl mx-auto space-y-6 p-4 sm:p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <SearchBar value={searchQuery} onChange={setSearchQuery} />
         <AddExerciseButton onSuccess={handleExerciseAdd} />
       </div>
@@ -59,7 +59,7 @@ export const ExerciseLibrary = () => {
       />
 
       <Dialog open={showExerciseSelection} onOpenChange={setShowExerciseSelection}>
-        <DialogContent className="sm:max-w-[800px]">
+        <DialogContent className="w-[95vw] max-w-[800px] h-[90vh] max-h-[800px] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Sélectionner des exercices</DialogTitle>
           </DialogHeader>
