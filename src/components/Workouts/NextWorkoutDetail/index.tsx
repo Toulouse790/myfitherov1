@@ -59,55 +59,6 @@ export const NextWorkoutDetail = () => {
     }
   };
 
-  const handleStartCardio = async () => {
-    if (!user) {
-      toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour démarrer une séance",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { data: session, error: sessionError } = await supabase
-        .from('workout_sessions')
-        .insert([
-          { 
-            user_id: user.id,
-            status: 'in_progress', 
-            type: 'cardio' 
-          }
-        ])
-        .select()
-        .single();
-
-      if (sessionError) throw sessionError;
-
-      toast({
-        title: "Séance de cardio démarrée",
-        description: "Vous pouvez maintenant enregistrer votre activité cardio",
-      });
-
-      navigate(`/workouts/exercise/next-workout?session=${session.id}`);
-    } catch (error) {
-      console.error('Error starting cardio session:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de démarrer la séance de cardio",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleExerciseClick = (index: number) => {
-    setCurrentExerciseIndex(index);
-  };
-
-  const handleConfirmEndWorkout = async () => {
-    navigate('/workouts');
-  };
-
   const handleRegenerateWorkout = async () => {
     if (!user) {
       toast({
@@ -142,7 +93,7 @@ export const NextWorkoutDetail = () => {
         goal: profile.objective,
         workoutsPerWeek: parseInt(profile.training_frequency),
         dailyCalories: 2000,
-        recoveryCapacity: "low"
+        recoveryCapacity: "low" as const
       };
 
       const newPlan = generateWorkoutPlan(userProfile);
@@ -174,6 +125,14 @@ export const NextWorkoutDetail = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleExerciseClick = (index: number) => {
+    setCurrentExerciseIndex(index);
+  };
+
+  const handleConfirmEndWorkout = async () => {
+    navigate('/workouts');
   };
 
   if (!user) {
