@@ -18,6 +18,9 @@ export const NextWorkoutDetail = () => {
   const [duration, setDuration] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [exercises, setExercises] = useState<string[]>([]);
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
+  const [workoutStarted, setWorkoutStarted] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -91,6 +94,19 @@ export const NextWorkoutDetail = () => {
     }
   };
 
+  const handleExerciseClick = (index: number) => {
+    setCurrentExerciseIndex(index);
+  };
+
+  const handleEndWorkout = () => {
+    setShowSummary(true);
+  };
+
+  const handleConfirmEndWorkout = async () => {
+    // Add your workout completion logic here
+    navigate('/workouts');
+  };
+
   if (isCardio) {
     return (
       <div className="container max-w-4xl mx-auto p-4 space-y-8">
@@ -130,10 +146,29 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-8">
-      <WorkoutHeader />
-      <ExerciseList />
-      <WorkoutInProgress />
-      <WorkoutSummaryDialog open={showSummary} onOpenChange={setShowSummary} />
+      <WorkoutHeader title="Séance d'entraînement" />
+      <ExerciseList 
+        exercises={exercises}
+        currentExerciseIndex={currentExerciseIndex}
+        isWorkoutStarted={workoutStarted}
+        onExerciseClick={handleExerciseClick}
+      />
+      <WorkoutInProgress 
+        exercises={exercises}
+        currentExerciseIndex={currentExerciseIndex}
+        onExerciseClick={handleExerciseClick}
+        onEndWorkout={handleEndWorkout}
+      />
+      <WorkoutSummaryDialog 
+        open={showSummary} 
+        onOpenChange={setShowSummary}
+        stats={{
+          duration: Math.round(duration / 60),
+          totalWeight: 0,
+          totalCalories: 0
+        }}
+        onConfirm={handleConfirmEndWorkout}
+      />
     </div>
   );
 };
