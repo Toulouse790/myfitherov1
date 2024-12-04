@@ -5,13 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MuscleGroupList } from "./MuscleGroupList";
 import { MediaList } from "./MediaList";
 import { muscleGroups } from "../Workouts/workoutConstants";
-
-interface Exercise {
-  id: string;
-  name: string;
-  muscle_group: string;
-  difficulty: string[];
-}
+import { Exercise } from "@/components/Workouts/exercises/types/exercise";
 
 export const MediaManager = () => {
   const { toast } = useToast();
@@ -32,7 +26,15 @@ export const MediaManager = () => {
         .select('*');
 
       if (error) throw error;
-      setExercises(data);
+      
+      // Transform the data to match the Exercise type
+      const transformedData = data.map(exercise => ({
+        ...exercise,
+        muscleGroup: exercise.muscle_group,
+        difficulty: exercise.difficulty || []
+      })) as Exercise[];
+      
+      setExercises(transformedData);
     } catch (error) {
       console.error('Error fetching exercises:', error);
       toast({

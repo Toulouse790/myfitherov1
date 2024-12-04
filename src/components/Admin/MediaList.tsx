@@ -1,5 +1,5 @@
 import { ExerciseRow } from "./ExerciseRow";
-import { Exercise } from "../Workouts/types/exercise";
+import { Exercise } from "@/components/Workouts/exercises/types/exercise";
 
 interface MediaListProps {
   exercises: Exercise[];
@@ -21,7 +21,7 @@ export const MediaList = ({
   selectedDifficulties,
 }: MediaListProps) => {
   const filteredExercises = exercises.filter(
-    exercise => exercise.muscle_group.toLowerCase() === selectedGroup.toLowerCase()
+    exercise => exercise.muscleGroup.toLowerCase() === selectedGroup.toLowerCase()
   );
 
   return (
@@ -29,7 +29,13 @@ export const MediaList = ({
       {filteredExercises.map((exercise) => (
         <ExerciseRow
           key={exercise.id}
-          exercise={exercise}
+          exercise={{
+            id: exercise.id,
+            name: exercise.name,
+            difficulty: Array.isArray(exercise.difficulty) 
+              ? exercise.difficulty 
+              : [exercise.difficulty]
+          }}
           onFileChange={onFileChange}
           onUpload={onUpload}
           selectedFile={selectedFile}
