@@ -1,9 +1,6 @@
 import { WidgetGrid } from "@/components/Widgets/WidgetGrid";
 import { NextWorkoutCard } from "@/components/Workouts/NextWorkoutCard";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
-import { StrengthScore } from "@/components/Dashboard/StrengthScore";
-import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
-import { WorkoutSummary } from "@/components/Dashboard/WorkoutSummary";
 import { Header } from "@/components/Layout/Header";
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { useWelcomeToast } from "@/hooks/useWelcomeToast";
@@ -26,18 +23,8 @@ const Index = () => {
         </div>
 
         <div className="space-y-4">
-          <WorkoutSummary />
-
-          <div className="grid gap-4">
-            <NextWorkoutCard />
-            
-            <div className="grid md:grid-cols-2 gap-4">
-              <StrengthScore />
-              <TrendMetrics />
-            </div>
-
-            <WorkoutSuggestions />
-          </div>
+          <NextWorkoutCard />
+          <WorkoutSuggestions />
         </div>
       </main>
 
