@@ -5,6 +5,7 @@ import { Workouts } from "./pages/Workouts";
 import Nutrition from "./pages/Nutrition";
 import Sleep from "./pages/Sleep";
 import Admin from "./pages/Admin";
+import Stats from "./pages/Stats";
 import { WorkoutExerciseDetail } from "./components/Workouts/WorkoutExerciseDetail";
 import { SignIn } from "./components/Auth/SignIn";
 import { SignUp } from "./components/Auth/SignUp";
@@ -30,6 +31,7 @@ function App() {
           <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
           <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+          <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />
           <Route path="/initial-questionnaire" element={<ProtectedRoute><InitialQuestionnaire /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
           <Route path="/training-preferences" element={<ProtectedRoute><TrainingPreferencesPage /></ProtectedRoute>} />
