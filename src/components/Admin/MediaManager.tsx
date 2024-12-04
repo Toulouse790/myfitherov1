@@ -25,13 +25,38 @@ export const MediaManager = () => {
         .from('exercises')
         .select('*');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       
       // Transform the data to match the Exercise type
       const transformedData = data.map(exercise => ({
-        ...exercise,
+        id: exercise.id,
+        name: exercise.name,
         muscleGroup: exercise.muscle_group,
-        difficulty: exercise.difficulty || []
+        difficulty: exercise.difficulty || [],
+        description: "Description de l'exercice", // Default value
+        equipment: "Équipement standard", // Default value
+        location: ["gym"], // Default value
+        instructions: ["Instruction 1"], // Default value
+        targetMuscles: [exercise.muscle_group], // Default value
+        objectives: ["muscle_gain"], // Default value
+        sets: {
+          beginner: 3,
+          intermediate: 4,
+          advanced: 5
+        },
+        reps: {
+          beginner: 10,
+          intermediate: 12,
+          advanced: 15
+        },
+        restTime: {
+          beginner: 60,
+          intermediate: 45,
+          advanced: 30
+        },
+        calories: 100
       })) as Exercise[];
       
       setExercises(transformedData);
