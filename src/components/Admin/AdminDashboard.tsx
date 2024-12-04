@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { BarChart } from "@/components/ui/chart";
+import { Button } from "@/components/ui/button";
+import { Edit, GripHorizontal } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -18,7 +20,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
 
-const SortableCard = ({ id, children }: { id: string; children: React.ReactNode }) => {
+const SortableCard = ({ id, children, isEditing }: { id: string; children: React.ReactNode, isEditing: boolean }) => {
   const {
     attributes,
     listeners,
@@ -30,11 +32,16 @@ const SortableCard = ({ id, children }: { id: string; children: React.ReactNode 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    cursor: 'grab',
+    cursor: isEditing ? 'grab' : 'default',
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...(isEditing ? { ...attributes, ...listeners } : {})}>
+      {isEditing && (
+        <div className="absolute top-2 right-2 z-10">
+          <GripHorizontal className="w-5 h-5 text-gray-400" />
+        </div>
+      )}
       {children}
     </div>
   );
@@ -67,6 +74,8 @@ export const AdminDashboard = () => {
     },
   ]);
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -75,6 +84,8 @@ export const AdminDashboard = () => {
   );
 
   const handleDragEnd = (event: any) => {
+    if (!isEditing) return;
+    
     const { active, over } = event;
 
     if (active.id !== over.id) {
@@ -89,7 +100,7 @@ export const AdminDashboard = () => {
   const renderWidget = (widget: typeof widgets[0]) => {
     if (widget.id === "revenue") {
       return (
-        <Card className="p-6">
+        <Card className="p-6 relative">
           <h3 className="font-semibold mb-4">Revenus mensuels</h3>
           <BarChart
             data={widget.data}
@@ -102,7 +113,7 @@ export const AdminDashboard = () => {
       );
     }
     return (
-      <Card className="p-6">
+      <Card className="p-6 relative">
         <h3 className="font-semibold mb-4">Activité utilisateurs</h3>
         <BarChart
           data={widget.data}
@@ -116,20 +127,33 @@ export const AdminDashboard = () => {
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="grid gap-6 md:grid-cols-2">
-        <SortableContext items={widgets.map(w => w.id)} strategy={verticalListSortingStrategy}>
-          {widgets.map((widget) => (
-            <SortableCard key={widget.id} id={widget.id}>
-              {renderWidget(widget)}
-            </SortableCard>
-          ))}
-        </SortableContext>
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button
+          variant={isEditing ? "secondary" : "outline"}
+          onClick={() => setIsEditing(!isEditing)}
+          className="gap-2"
+        >
+          <Edit className="w-4 h-4" />
+          {isEditing ? "Terminer" : "Modifier la disposition"}
+        </Button>
       </div>
-    </DndContext>
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="grid gap-6 md:grid-cols-2">
+          <SortableContext items={widgets.map(w => w.id)} strategy={verticalListSortingStrategy}>
+            {widgets.map((widget) => (
+              <SortableCard key={widget.id} id={widget.id} isEditing={isEditing}>
+                {renderWidget(widget)}
+              </SortableCard>
+            ))}
+          </SortableContext>
+        </div>
+      </DndContext>
+    </div>
   );
 };
