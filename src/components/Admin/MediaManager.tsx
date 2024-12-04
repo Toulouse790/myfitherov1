@@ -1,10 +1,9 @@
-import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { MuscleGroupList } from "./MuscleGroupList";
-import { ExerciseRow } from "./ExerciseRow";
+import { MediaList } from "./MediaList";
 import { muscleGroups } from "../Workouts/workoutConstants";
 
 interface Exercise {
@@ -134,10 +133,6 @@ export const MediaManager = () => {
     }
   };
 
-  const filteredExercises = exercises.filter(
-    exercise => exercise.muscle_group.toLowerCase() === selectedGroup.toLowerCase()
-  );
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -149,20 +144,16 @@ export const MediaManager = () => {
           selectedGroup={selectedGroup}
           onGroupSelect={setSelectedGroup}
         />
-
-        <div className="space-y-4">
-          {filteredExercises.map((exercise) => (
-            <ExerciseRow
-              key={exercise.id}
-              exercise={exercise}
-              onFileChange={handleFileChange}
-              onUpload={handleUpload}
-              selectedFile={selectedFile}
-              onDifficultyChange={handleDifficultyChange}
-              selectedDifficulties={selectedDifficulties}
-            />
-          ))}
-        </div>
+        
+        <MediaList
+          exercises={exercises}
+          selectedGroup={selectedGroup}
+          onFileChange={handleFileChange}
+          onUpload={handleUpload}
+          selectedFile={selectedFile}
+          onDifficultyChange={handleDifficultyChange}
+          selectedDifficulties={selectedDifficulties}
+        />
       </Tabs>
     </div>
   );

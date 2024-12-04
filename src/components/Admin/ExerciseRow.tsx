@@ -1,8 +1,8 @@
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { UploadForm } from "./UploadForm";
+import { DifficultyBadges } from "./DifficultyBadges";
 
 interface ExerciseRowProps {
   exercise: {
@@ -25,8 +25,6 @@ export const ExerciseRow = ({
   onDifficultyChange,
   selectedDifficulties,
 }: ExerciseRowProps) => {
-  const difficulties = ["beginner", "intermediate", "advanced", "expert"];
-
   return (
     <Card className="p-4 mb-4">
       <div className="flex items-center justify-between gap-4">
@@ -34,18 +32,10 @@ export const ExerciseRow = ({
           <h3 className="font-medium">{exercise.name}</h3>
         </div>
         
-        <div className="flex gap-2 flex-wrap flex-1">
-          {difficulties.map((difficulty) => (
-            <Badge
-              key={difficulty}
-              variant={selectedDifficulties.includes(difficulty) ? "default" : "outline"}
-              className="cursor-pointer"
-              onClick={() => onDifficultyChange(difficulty)}
-            >
-              {difficulty}
-            </Badge>
-          ))}
-        </div>
+        <DifficultyBadges
+          selectedDifficulties={selectedDifficulties}
+          onDifficultyChange={onDifficultyChange}
+        />
 
         <div className="flex-shrink-0 w-64">
           <UploadForm
