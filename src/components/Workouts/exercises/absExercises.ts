@@ -9,7 +9,7 @@ export const absExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Tapis",
     location: ["home", "gym", "outdoor"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "Allongé sur le dos, genoux fléchis",
       "Mains derrière la tête",
@@ -37,7 +37,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "gym", "outdoor"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "En appui sur les avant-bras",
       "Corps aligné",
@@ -65,7 +65,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barre fixe ou tapis",
     location: ["gym", "home"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "Allongé sur le dos",
       "Jambes tendues",
@@ -93,7 +93,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Poids (optionnel)",
     location: ["home", "gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "Assis, genoux fléchis",
       "Buste incliné en arrière",
