@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,73 +6,73 @@ import { MuscleGroupList } from "./MuscleGroupList";
 import { MediaList } from "./MediaList";
 import { muscleGroups } from "../Workouts/workoutConstants";
 import { Exercise } from "@/components/Workouts/exercises/types/exercise";
+import { useQuery } from "@tanstack/react-query";
 
 export const MediaManager = () => {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<string>(muscleGroups[0]?.name || "");
-  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
 
-  useEffect(() => {
-    fetchExercises();
-  }, []);
-
   const fetchExercises = async () => {
-    try {
-      console.log('Fetching exercises...');
-      const { data, error } = await supabase
-        .from('exercises')
-        .select('*');
+    console.log('Fetching exercises...');
+    const { data, error } = await supabase
+      .from('exercises')
+      .select('*');
 
-      if (error) {
-        throw error;
-      }
-      
-      console.log('Raw data from Supabase:', data);
-      
-      // Transform the data to match the Exercise type
-      const transformedData = data.map(exercise => ({
-        id: exercise.id,
-        name: exercise.name,
-        muscleGroup: exercise.muscle_group,
-        difficulty: exercise.difficulty || [],
-        description: "Description de l'exercice", // Default value
-        equipment: "Équipement standard", // Default value
-        location: ["gym"], // Default value
-        instructions: ["Instruction 1"], // Default value
-        targetMuscles: [exercise.muscle_group], // Default value
-        objectives: ["muscle_gain"], // Default value
-        sets: {
-          beginner: 3,
-          intermediate: 4,
-          advanced: 5
-        },
-        reps: {
-          beginner: 10,
-          intermediate: 12,
-          advanced: 15
-        },
-        restTime: {
-          beginner: 60,
-          intermediate: 45,
-          advanced: 30
-        },
-        calories: 100
-      })) as Exercise[];
-      
-      console.log('Transformed exercises:', transformedData);
-      setExercises(transformedData);
-    } catch (error) {
-      console.error('Error fetching exercises:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les exercices",
-        variant: "destructive",
-      });
+    if (error) {
+      throw error;
     }
+    
+    console.log('Raw data from Supabase:', data);
+    
+    // Transform the data to match the Exercise type
+    const transformedData = data.map(exercise => ({
+      id: exercise.id,
+      name: exercise.name,
+      muscleGroup: exercise.muscle_group,
+      difficulty: exercise.difficulty || [],
+      description: "Description de l'exercice", // Default value
+      equipment: "Équipement standard", // Default value
+      location: ["gym"], // Default value
+      instructions: ["Instruction 1"], // Default value
+      targetMuscles: [exercise.muscle_group], // Default value
+      objectives: ["muscle_gain"], // Default value
+      sets: {
+        beginner: 3,
+        intermediate: 4,
+        advanced: 5
+      },
+      reps: {
+        beginner: 10,
+        intermediate: 12,
+        advanced: 15
+      },
+      restTime: {
+        beginner: 60,
+        intermediate: 45,
+        advanced: 30
+      },
+      calories: 100
+    })) as Exercise[];
+    
+    console.log('Transformed exercises:', transformedData);
+    return transformedData;
   };
+
+  const { data: exercises = [], isError } = useQuery({
+    queryKey: ['exercises'],
+    queryFn: fetchExercises
+  });
+
+  if (isError) {
+    toast({
+      title: "Erreur",
+      description: "Impossible de charger les exercices",
+      variant: "destructive",
+    });
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -152,8 +152,6 @@ export const MediaManager = () => {
         title: "Niveaux de difficulté mis à jour",
         description: `Les niveaux de difficulté pour ${selectedExercise} ont été mis à jour`,
       });
-
-      fetchExercises();
     } catch (error) {
       console.error('Error updating difficulties:', error);
       toast({
