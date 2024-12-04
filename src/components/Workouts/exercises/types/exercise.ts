@@ -3,23 +3,27 @@ export interface Exercise {
   name: string;
   muscleGroup: string;
   description: string;
-  difficulty: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
   equipment: string;
-  location: string[];
+  location: ("home" | "gym" | "outdoor")[];
   image?: string;
   instructions: string[];
-  targetMuscles?: string[];
-  videoUrl?: string;
-  duration?: number;
-  calories?: number;
-  sets?: {
+  targetMuscles: string[];
+  objectives: ("weight_loss" | "muscle_gain" | "maintenance" | "endurance")[];
+  sets: {
     beginner: number;
     intermediate: number;
     advanced: number;
   };
-  reps?: {
+  reps: {
     beginner: number;
     intermediate: number;
     advanced: number;
   };
+  restTime: {
+    beginner: number;
+    intermediate: number;
+    advanced: number;
+  };
+  calories: number;
 }

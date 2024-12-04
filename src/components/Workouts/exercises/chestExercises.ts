@@ -17,6 +17,7 @@ export const chestExercises: Exercise[] = [
       "Poussez la barre vers le haut"
     ],
     targetMuscles: ["pectoraux majeurs", "deltoïdes antérieurs", "triceps"],
+    objectives: ["muscle_gain", "maintenance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -26,6 +27,11 @@ export const chestExercises: Exercise[] = [
       beginner: 8,
       intermediate: 10,
       advanced: 12
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 60
     },
     calories: 150
   },
@@ -45,6 +51,7 @@ export const chestExercises: Exercise[] = [
       "Poussez pour revenir à la position initiale"
     ],
     targetMuscles: ["pectoraux", "deltoïdes", "triceps", "core"],
+    objectives: ["muscle_gain", "endurance", "weight_loss"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -55,52 +62,30 @@ export const chestExercises: Exercise[] = [
       intermediate: 15,
       advanced: 20
     },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
+    },
     calories: 100
   },
   {
     id: "chest-3",
-    name: "Écarté avec haltères",
+    name: "Développé incliné haltères",
     muscleGroup: "chest",
-    description: "Excellent exercice d'isolation pour les pectoraux",
-    difficulty: "intermediate",
-    equipment: "Banc, Haltères",
-    location: ["gym", "home"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
-    instructions: [
-      "Allongez-vous sur un banc plat",
-      "Tenez les haltères bras tendus au-dessus de la poitrine",
-      "Descendez les bras sur les côtés en gardant une légère flexion des coudes",
-      "Remontez en contractant les pectoraux"
-    ],
-    targetMuscles: ["pectoraux", "deltoïdes antérieurs"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 4
-    },
-    reps: {
-      beginner: 10,
-      intermediate: 12,
-      advanced: 15
-    },
-    calories: 120
-  },
-  {
-    id: "chest-4",
-    name: "Développé incliné avec haltères",
-    muscleGroup: "chest",
-    description: "Cible la partie supérieure des pectoraux",
+    description: "Excellent pour cibler la partie supérieure des pectoraux",
     difficulty: "intermediate",
     equipment: "Banc incliné, Haltères",
     location: ["gym"],
     image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
-      "Installez-vous sur un banc incliné à 30-45 degrés",
+      "Installez-vous sur un banc incliné",
       "Tenez un haltère dans chaque main au niveau des épaules",
       "Poussez les haltères vers le haut",
       "Contrôlez la descente"
     ],
     targetMuscles: ["pectoraux supérieurs", "deltoïdes antérieurs", "triceps"],
+    objectives: ["muscle_gain"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -110,6 +95,11 @@ export const chestExercises: Exercise[] = [
       beginner: 8,
       intermediate: 10,
       advanced: 12
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 60
     },
     calories: 130
   }

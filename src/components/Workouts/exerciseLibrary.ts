@@ -5,6 +5,7 @@ import { legsExercises } from './exercises/legsExercises';
 import { shouldersExercises } from './exercises/shouldersExercises';
 import { armsExercises } from './exercises/armsExercises';
 import { absExercises } from './exercises/absExercises';
+import { cardioExercises } from './exercises/cardioExercises';
 
 export const exercises: Exercise[] = [
   ...chestExercises,
@@ -12,7 +13,24 @@ export const exercises: Exercise[] = [
   ...legsExercises,
   ...shouldersExercises,
   ...armsExercises,
-  ...absExercises
+  ...absExercises,
+  ...cardioExercises
 ];
+
+export const filterExercises = (
+  location: string[],
+  difficulty: string,
+  objectives: string[],
+  equipment?: string[]
+): Exercise[] => {
+  return exercises.filter(exercise => {
+    const locationMatch = location.some(loc => exercise.location.includes(loc));
+    const difficultyMatch = exercise.difficulty === difficulty;
+    const objectiveMatch = objectives.some(obj => exercise.objectives.includes(obj));
+    const equipmentMatch = !equipment || equipment.includes(exercise.equipment);
+    
+    return locationMatch && difficultyMatch && objectiveMatch && equipmentMatch;
+  });
+};
 
 export type { Exercise };

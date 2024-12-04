@@ -3,12 +3,12 @@ import { Exercise } from './types/exercise';
 export const legsExercises: Exercise[] = [
   {
     id: "legs-1",
-    name: "Squat",
+    name: "Squat poids de corps",
     muscleGroup: "legs",
-    description: "L'exercice roi pour les jambes",
-    difficulty: "intermediate",
-    equipment: "Barre et poids (optionnel)",
-    location: ["gym", "home"],
+    description: "Exercice complet pour les jambes sans équipement",
+    difficulty: "beginner",
+    equipment: "Aucun",
+    location: ["home", "outdoor", "gym"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Pieds largeur d'épaules",
@@ -17,93 +17,78 @@ export const legsExercises: Exercise[] = [
       "Poussez sur les talons pour remonter"
     ],
     targetMuscles: ["quadriceps", "ischio-jambiers", "fessiers"],
+    objectives: ["endurance", "weight_loss", "maintenance"],
     sets: {
       beginner: 3,
       intermediate: 4,
       advanced: 5
     },
     reps: {
-      beginner: 10,
-      intermediate: 12,
-      advanced: 15
-    },
-    calories: 150
-  },
-  {
-    id: "legs-2",
-    name: "Fentes avant",
-    muscleGroup: "legs",
-    description: "Excellent pour le travail unilatéral",
-    difficulty: "beginner",
-    equipment: "Haltères (optionnel)",
-    location: ["gym", "home", "outdoor"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
-    instructions: [
-      "Faites un grand pas en avant",
-      "Fléchissez les deux genoux à 90°",
-      "Gardez le buste droit",
-      "Poussez pour revenir"
-    ],
-    targetMuscles: ["quadriceps", "fessiers", "ischio-jambiers"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 4
-    },
-    reps: {
-      beginner: 10,
-      intermediate: 12,
-      advanced: 15
-    },
-    calories: 120
-  },
-  {
-    id: "legs-3",
-    name: "Extension des jambes",
-    muscleGroup: "legs",
-    description: "Isolation des quadriceps",
-    difficulty: "beginner",
-    equipment: "Machine à quadriceps",
-    location: ["gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
-    instructions: [
-      "Asseyez-vous sur la machine",
-      "Attrapez les poignées",
-      "Tendez les jambes",
-      "Contrôlez la descente"
-    ],
-    targetMuscles: ["quadriceps"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 4
-    },
-    reps: {
       beginner: 12,
       intermediate: 15,
       advanced: 20
     },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
+    },
     calories: 100
   },
   {
-    id: "legs-4",
-    name: "Soulevé de terre roumain",
+    id: "legs-2",
+    name: "Squat avec barre",
     muscleGroup: "legs",
-    description: "Excellent pour les ischio-jambiers",
+    description: "L'exercice roi pour la prise de masse des jambes",
     difficulty: "intermediate",
-    equipment: "Barre ou haltères",
-    location: ["gym", "home"],
+    equipment: "Barre et poids",
+    location: ["gym"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "Debout, barre contre les cuisses",
-      "Poussez les fesses en arrière",
+      "Placez la barre sur vos trapèzes",
+      "Pieds largeur d'épaules",
       "Descendez en gardant le dos droit",
-      "Remontez en contractant les ischio-jambiers"
+      "Poussez à travers vos talons"
     ],
-    targetMuscles: ["ischio-jambiers", "fessiers", "lombaires"],
+    targetMuscles: ["quadriceps", "ischio-jambiers", "fessiers", "lombaires"],
+    objectives: ["muscle_gain", "maintenance"],
     sets: {
       beginner: 3,
       intermediate: 4,
+      advanced: 5
+    },
+    reps: {
+      beginner: 8,
+      intermediate: 10,
+      advanced: 12
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 75
+    },
+    calories: 150
+  },
+  {
+    id: "legs-3",
+    name: "Fentes marchées",
+    muscleGroup: "legs",
+    description: "Excellent pour le travail unilatéral et l'équilibre",
+    difficulty: "beginner",
+    equipment: "Aucun (ou haltères optionnels)",
+    location: ["home", "outdoor", "gym"],
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    instructions: [
+      "Faites un grand pas en avant",
+      "Descendez le genou arrière vers le sol",
+      "Poussez sur la jambe avant pour remonter",
+      "Alternez les jambes en avançant"
+    ],
+    targetMuscles: ["quadriceps", "fessiers", "ischio-jambiers"],
+    objectives: ["endurance", "weight_loss", "maintenance"],
+    sets: {
+      beginner: 2,
+      intermediate: 3,
       advanced: 4
     },
     reps: {
@@ -111,6 +96,11 @@ export const legsExercises: Exercise[] = [
       intermediate: 12,
       advanced: 15
     },
-    calories: 130
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
+    },
+    calories: 120
   }
 ];
