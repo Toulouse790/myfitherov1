@@ -107,6 +107,60 @@ export const NextWorkoutDetail = () => {
     navigate('/workouts');
   };
 
+  const handleRegenerateWorkout = async () => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour générer un entraînement",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data: profile } = await supabase
+        .from('questionnaire_responses')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!profile) {
+        toast({
+          title: "Profil incomplet",
+          description: "Veuillez d'abord remplir le questionnaire initial",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (sessionId) {
+        const { error: updateError } = await supabase
+          .from('workout_sessions')
+          .update({ 
+            is_adapted: true,
+            initial_energy_level: 'bad'
+          })
+          .eq('id', sessionId);
+
+        if (updateError) throw updateError;
+      }
+
+      toast({
+        title: "Programme adapté",
+        description: "Un nouveau programme moins intense a été généré",
+      });
+
+      navigate(`/workouts/exercise/next-workout?session=${sessionId}`);
+    } catch (error) {
+      console.error('Error regenerating workout:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer un nouvel entraînement",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (!user) {
     return null;
   }
@@ -137,6 +191,7 @@ export const NextWorkoutDetail = () => {
         currentExerciseIndex={currentExerciseIndex}
         onExerciseClick={handleExerciseClick}
         sessionId={sessionId}
+        onRegenerateWorkout={handleRegenerateWorkout}
       />
       <WorkoutSummaryDialog 
         open={showSummary} 
