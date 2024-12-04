@@ -51,6 +51,8 @@ export const BarChart = ({
           fontSize={12}
           tickLine={false}
           axisLine={false}
+          scale="point"
+          padding={{ left: 10, right: 10 }}
         />
         <RechartsPrimitive.YAxis
           stroke="#888888"
@@ -60,6 +62,8 @@ export const BarChart = ({
           width={yAxisWidth}
           tickFormatter={valueFormatter}
           ticks={ticks}
+          scale="linear"
+          padding={{ top: 10, bottom: 10 }}
         />
         {showGridLines && (
           <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
