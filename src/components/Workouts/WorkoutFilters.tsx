@@ -47,6 +47,9 @@ export const WorkoutFilters = ({
         if (muscleId === "lower_back") {
           return ex.muscleGroup === "back";
         }
+        if (muscleId === "chest") {
+          return ex.muscleGroup === "chest";
+        }
         return ex.muscleGroup === muscleId;
       });
       setSelectedMuscleExercises(filteredExercises);
@@ -67,6 +70,8 @@ export const WorkoutFilters = ({
         matches = ex.muscleGroup === "legs";
       } else if (muscleId === "lower_back") {
         matches = ex.muscleGroup === "back";
+      } else if (muscleId === "chest") {
+        matches = ex.muscleGroup === "chest";
       } else {
         matches = ex.muscleGroup === muscleId;
       }
