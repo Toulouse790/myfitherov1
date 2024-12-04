@@ -20,7 +20,7 @@ const Index = () => {
           <h1 className="text-2xl font-semibold text-foreground">
             Tableau de bord
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent font-medium">
             Suivez vos progrès et atteignez vos objectifs
           </p>
         </div>
