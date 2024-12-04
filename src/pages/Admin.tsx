@@ -3,6 +3,7 @@ import { AdminDashboard } from "@/components/Admin/AdminDashboard";
 import { AdminHeader } from "@/components/Admin/AdminHeader";
 import { AdminStats } from "@/components/Admin/AdminStats";
 import { MediaManager } from "@/components/Admin/MediaManager";
+import { ExerciseTable } from "@/components/Admin/ExerciseTable";
 import { useState } from "react";
 
 const Admin = () => {
@@ -15,9 +16,10 @@ const Admin = () => {
         onEditingChange={setIsEditing}
       />
       <Tabs defaultValue="finances" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="finances">Finances</TabsTrigger>
           <TabsTrigger value="media">Médias</TabsTrigger>
+          <TabsTrigger value="exercises">Exercices</TabsTrigger>
         </TabsList>
         
         <TabsContent value="finances" className="space-y-6">
@@ -27,6 +29,10 @@ const Admin = () => {
         
         <TabsContent value="media">
           <MediaManager />
+        </TabsContent>
+
+        <TabsContent value="exercises">
+          <ExerciseTable />
         </TabsContent>
       </Tabs>
     </div>
