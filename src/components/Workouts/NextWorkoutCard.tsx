@@ -9,7 +9,10 @@ const SAMPLE_EXERCISES = [
   "Rowing avec Haltères",
   "Tirage à la poulie barre en V",
   "Curl Biceps aux Haltères",
-  "Développé Militaire"
+  "Développé Militaire",
+  "Élévations Latérales",
+  "Crunch",
+  "Planche"
 ];
 
 export const NextWorkoutCard = () => {
@@ -61,7 +64,7 @@ export const NextWorkoutCard = () => {
           </div>
           <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-500" />
           <div className="bg-white/5 px-2 py-0.5 rounded-full">
-            8 exercices
+            {SAMPLE_EXERCISES.length} exercices
           </div>
         </div>
         
