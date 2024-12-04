@@ -121,6 +121,7 @@ export type Database = {
       exercise_media: {
         Row: {
           created_at: string
+          exercise_id: string | null
           exercise_name: string
           id: string
           media_type: string
@@ -128,6 +129,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          exercise_id?: string | null
           exercise_name: string
           id?: string
           media_type: string
@@ -135,10 +137,46 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          exercise_id?: string | null
           exercise_name?: string
           id?: string
           media_type?: string
           media_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_media_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercises: {
+        Row: {
+          created_at: string
+          difficulty: string[]
+          id: string
+          muscle_group: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          difficulty?: string[]
+          id?: string
+          muscle_group: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          difficulty?: string[]
+          id?: string
+          muscle_group?: string
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
