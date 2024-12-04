@@ -8,6 +8,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { formatWorkoutTime } from "../WorkoutTimer";
 import { Clock, Dumbbell, Flame } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 interface WorkoutSummaryDialogProps {
   open: boolean;
@@ -17,7 +20,7 @@ interface WorkoutSummaryDialogProps {
     totalWeight: number;
     totalCalories: number;
   };
-  onConfirm: () => void;
+  onConfirm: (difficulty: "easy" | "medium" | "hard") => void;
 }
 
 export const WorkoutSummaryDialog = ({
@@ -26,6 +29,8 @@ export const WorkoutSummaryDialog = ({
   stats,
   onConfirm,
 }: WorkoutSummaryDialogProps) => {
+  const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-md bg-white dark:bg-[#1E2330] border-none">
@@ -65,21 +70,32 @@ export const WorkoutSummaryDialog = ({
               <span className="text-sm text-muted-foreground">Poids total</span>
             </div>
           </div>
+
+          <div className="space-y-4 pt-4">
+            <h3 className="font-medium text-center">Comment avez-vous trouvé cet entraînement ?</h3>
+            <RadioGroup value={difficulty} onValueChange={(value: "easy" | "medium" | "hard") => setDifficulty(value)}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="easy" id="easy" />
+                <Label htmlFor="easy">Facile</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="medium" id="medium" />
+                <Label htmlFor="medium">Moyen</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="hard" id="hard" />
+                <Label htmlFor="hard">Difficile</Label>
+              </div>
+            </RadioGroup>
+          </div>
         </AlertDialogHeader>
         
         <AlertDialogFooter className="flex flex-col gap-2 sm:flex-col">
           <Button 
-            onClick={onConfirm}
+            onClick={() => onConfirm(difficulty)}
             className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-6"
           >
             Terminer l'entraînement
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="w-full border-primary/20 text-primary hover:bg-primary/5"
-          >
-            Continuer l'entraînement
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
