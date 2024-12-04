@@ -1,17 +1,18 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Image, Video, Trash2 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { exercises } from "../Workouts/exerciseLibrary";
+import { Image, Video } from "lucide-react";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { MuscleGroupList } from "./MuscleGroupList";
+import { MediaGrid } from "./MediaGrid";
+import { UploadForm } from "./UploadForm";
+import { muscleGroups } from "../Workouts/workoutConstants";
 
 export const MediaManager = () => {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedExercise, setSelectedExercise] = useState<string>(exercises[0]?.name || "");
+  const [selectedGroup, setSelectedGroup] = useState<string>(muscleGroups[0]?.name || "");
   const [exerciseMedia, setExerciseMedia] = useState<{[key: string]: {images: string[], videos: string[]}}>({});
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export const MediaManager = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile || !selectedExercise) return;
+    if (!selectedFile || !selectedGroup) return;
 
     try {
       const fileExt = selectedFile.name.split('.').pop();
@@ -77,7 +78,7 @@ export const MediaManager = () => {
       const { error: dbError } = await supabase
         .from('exercise_media')
         .insert({
-          exercise_name: selectedExercise,
+          exercise_name: selectedGroup,
           media_type: mediaType,
           media_url: publicUrl
         });
@@ -86,7 +87,7 @@ export const MediaManager = () => {
 
       toast({
         title: "Média téléchargé avec succès",
-        description: `Le média a été ajouté à l'exercice ${selectedExercise}`,
+        description: `Le média a été ajouté à l'exercice ${selectedGroup}`,
       });
 
       setSelectedFile(null);
@@ -128,93 +129,56 @@ export const MediaManager = () => {
     }
   };
 
-  const MediaUploadSection = ({ type }: { type: "image" | "video" }) => (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <Input
-          type="file"
-          accept={type === "image" ? "image/*" : "video/*"}
-          onChange={handleFileChange}
-          className="flex-1"
-        />
-        <Button onClick={handleUpload} disabled={!selectedFile}>
-          <Upload className="mr-2 h-4 w-4" />
-          Uploader
-        </Button>
-      </div>
-      
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {exerciseMedia[selectedExercise]?.[type === "image" ? "images" : "videos"]?.map((mediaUrl, index) => (
-          <div 
-            key={index}
-            className="relative group"
-          >
-            <div className={`${
-              type === "image" ? "aspect-square" : "aspect-video"
-            } bg-gray-100 rounded-lg overflow-hidden`}>
-              {type === "image" ? (
-                <img 
-                  src={mediaUrl} 
-                  alt={`${type} ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <video 
-                  src={mediaUrl}
-                  controls
-                  className="w-full h-full object-cover"
-                />
-              )}
-            </div>
-            <Button
-              variant="destructive"
-              size="icon"
-              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => handleDelete(mediaUrl, selectedExercise, type)}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Gestionnaire de médias</h2>
       </div>
 
-      <Tabs defaultValue={exercises[0]?.name} className="space-y-6">
-        <TabsList className="flex flex-wrap gap-2">
-          {exercises.map((exercise) => (
-            <TabsTrigger
-              key={exercise.id}
-              value={exercise.name}
-              onClick={() => setSelectedExercise(exercise.name)}
-            >
-              {exercise.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <Tabs defaultValue={muscleGroups[0]?.name} className="space-y-6">
+        <MuscleGroupList
+          selectedGroup={selectedGroup}
+          onGroupSelect={setSelectedGroup}
+        />
 
-        {exercises.map((exercise) => (
-          <TabsContent key={exercise.id} value={exercise.name} className="space-y-6">
+        {muscleGroups.map((group) => (
+          <TabsContent key={group.id} value={group.name} className="space-y-6">
             <Card className="p-4">
               <h3 className="font-semibold mb-4 flex items-center">
                 <Image className="mr-2 h-4 w-4" />
-                Images - {exercise.name}
+                Images - {group.name}
               </h3>
-              <MediaUploadSection type="image" />
+              <UploadForm
+                type="image"
+                onFileChange={handleFileChange}
+                onUpload={handleUpload}
+                selectedFile={selectedFile}
+              />
+              <MediaGrid
+                mediaUrls={exerciseMedia[group.name]?.images || []}
+                onDelete={handleDelete}
+                exerciseName={group.name}
+                type="image"
+              />
             </Card>
 
             <Card className="p-4">
               <h3 className="font-semibold mb-4 flex items-center">
                 <Video className="mr-2 h-4 w-4" />
-                Vidéos - {exercise.name}
+                Vidéos - {group.name}
               </h3>
-              <MediaUploadSection type="video" />
+              <UploadForm
+                type="video"
+                onFileChange={handleFileChange}
+                onUpload={handleUpload}
+                selectedFile={selectedFile}
+              />
+              <MediaGrid
+                mediaUrls={exerciseMedia[group.name]?.videos || []}
+                onDelete={handleDelete}
+                exerciseName={group.name}
+                type="video"
+              />
             </Card>
           </TabsContent>
         ))}
