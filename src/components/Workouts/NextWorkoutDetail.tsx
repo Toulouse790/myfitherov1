@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { WorkoutHeader } from "./WorkoutHeader";
-import { ExerciseList } from "./ExerciseList";
-import { WorkoutInProgress } from "./WorkoutInProgress";
-import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
-import { CardioSession } from "./CardioSession";
+import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
+import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
+import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
+import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
+import { CardioSession } from "./NextWorkoutDetail/CardioSession";
 import { useAuth } from "@/hooks/use-auth";
-import { generateWorkoutPlan } from "../WorkoutSuggestions/workoutPlanGenerator";
+import { generateWorkoutPlan } from "../components/WorkoutSuggestions/workoutPlanGenerator";
 
 export const NextWorkoutDetail = () => {
   const location = useLocation();
