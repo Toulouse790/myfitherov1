@@ -6,7 +6,6 @@ import { AccountActions } from "./Sections/AccountActions";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 
 const mockUserProfile: UserProfileType = {
   id: "1",
@@ -47,8 +46,8 @@ export const UserProfile = () => {
 
       <div className="space-y-6">
         <Link to="/training-preferences">
-          <Card>
-            <CardContent className="flex items-center justify-between py-6">
+          <div className="p-6 hover:bg-accent/10 rounded-lg transition-colors">
+            <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold">Préférences d'entraînement</h2>
                 <p className="text-sm text-muted-foreground">
@@ -56,13 +55,17 @@ export const UserProfile = () => {
                 </p>
               </div>
               <ChevronRight className="h-5 w-5 text-muted-foreground" />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </Link>
 
-        <AppSettings language="Français" />
+        <div className="p-6 space-y-6 rounded-lg">
+          <AppSettings language="Français" />
+        </div>
 
-        <AccountActions />
+        <div className="p-6 rounded-lg">
+          <AccountActions />
+        </div>
       </div>
     </div>
   );
