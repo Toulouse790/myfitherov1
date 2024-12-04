@@ -20,15 +20,15 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0EA5E9", // Bleu vif pour les boutons
-          foreground: "#FFFFFF", // Texte blanc pour les boutons
+          DEFAULT: "#0EA5E9",
+          foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#1EAEDB", // Bleu secondaire
+          DEFAULT: "#1EAEDB",
           foreground: "#FFFFFF",
         },
         accent: {
-          DEFAULT: "#33C3F0", // Bleu tertiaire
+          DEFAULT: "#33C3F0",
           foreground: "#FFFFFF",
         },
         destructive: {
@@ -36,8 +36,8 @@ export default {
           foreground: "#FFFFFF",
         },
         muted: {
-          DEFAULT: "#F6F6F7", // Gris très clair pour le fond
-          foreground: "#555555", // Gris foncé pour le texte
+          DEFAULT: "#F6F6F7",
+          foreground: "#555555",
         },
         card: {
           DEFAULT: "hsl(var(--card))",
@@ -54,9 +54,24 @@ export default {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "exercise-bounce": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "exercise-pulse": {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.7", transform: "scale(0.95)" },
+        },
+        "exercise-spin": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        }
       },
       animation: {
         "fade-up": "fade-up 0.5s ease-out",
+        "exercise-bounce": "exercise-bounce 1s ease-in-out infinite",
+        "exercise-pulse": "exercise-pulse 2s ease-in-out infinite",
+        "exercise-spin": "exercise-spin 1s linear infinite",
       },
     },
   },
