@@ -1,4 +1,6 @@
 import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface ExerciseTableContentProps {
   exercises: any[];
