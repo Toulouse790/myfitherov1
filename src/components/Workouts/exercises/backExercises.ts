@@ -33,7 +33,7 @@ export const backExercises: Exercise[] = [
       intermediate: 90,
       advanced: 60
     },
-    calories: 150
+    calories: 200 // Mise à jour des calories
   },
   {
     id: "back-2",
@@ -67,7 +67,7 @@ export const backExercises: Exercise[] = [
       intermediate: 90,
       advanced: 60
     },
-    calories: 140
+    calories: 180 // Mise à jour des calories
   },
   {
     id: "back-3",
@@ -101,40 +101,6 @@ export const backExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 130
-  },
-  {
-    id: "back-4",
-    name: "Rowing un bras",
-    muscleGroup: "back",
-    description: "Exercice unilatéral pour le dos",
-    difficulty: "beginner",
-    equipment: "Haltère, Banc",
-    location: ["gym", "home"],
-    image: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
-    instructions: [
-      "Un genou et une main sur le banc",
-      "Haltère dans l'autre main",
-      "Tirez l'haltère vers la hanche",
-      "Contrôlez la descente"
-    ],
-    targetMuscles: ["grand dorsal", "trapèzes", "rhomboïdes"],
-    objectives: ["muscle_gain", "endurance"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 4
-    },
-    reps: {
-      beginner: 10,
-      intermediate: 12,
-      advanced: 15
-    },
-    restTime: {
-      beginner: 90,
-      intermediate: 60,
-      advanced: 45
-    },
-    calories: 100
+    calories: 160 // Mise à jour des calories
   }
 ];

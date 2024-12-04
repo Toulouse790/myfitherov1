@@ -33,7 +33,7 @@ export const shouldersExercises: Exercise[] = [
       intermediate: 90,
       advanced: 60
     },
-    calories: 130
+    calories: 170 // Mise à jour des calories
   },
   {
     id: "shoulders-2",
@@ -67,7 +67,7 @@ export const shouldersExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 100
+    calories: 140 // Mise à jour des calories
   },
   {
     id: "shoulders-3",
@@ -101,7 +101,7 @@ export const shouldersExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 90
+    calories: 130 // Mise à jour des calories
   },
   {
     id: "shoulders-4",
@@ -135,6 +135,6 @@ export const shouldersExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 90
+    calories: 120 // Mise à jour des calories
   }
 ];
