@@ -5,18 +5,33 @@ import { GenerateWorkoutDialog } from "./GenerateWorkoutDialog";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const WorkoutSuggestions = () => {
   const [showDialog, setShowDialog] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleStartCardio = async () => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour démarrer une séance",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
-          { status: 'in_progress', type: 'cardio' }
+          { 
+            user_id: user.id,
+            status: 'in_progress', 
+            type: 'cardio' 
+          }
         ])
         .select()
         .single();
@@ -30,6 +45,7 @@ export const WorkoutSuggestions = () => {
 
       navigate(`/workouts/exercise/next-workout?session=${session.id}`);
     } catch (error) {
+      console.error('Error starting cardio session:', error);
       toast({
         title: "Erreur",
         description: "Impossible de démarrer la séance de cardio",
