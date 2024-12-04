@@ -42,7 +42,12 @@ export const ExerciseTableContent = ({
             <td className="p-2">
               <DifficultyCheckboxes
                 exercise={exercise}
-                difficulties={difficulties}
+                difficulties={[
+                  { id: "beginner", name: "Débutant" },
+                  { id: "intermediate", name: "Intermédiaire" },
+                  { id: "advanced", name: "Avancé" },
+                  { id: "expert", name: "Expert" }
+                ]}
                 onChange={onDifficultyChange}
               />
             </td>
