@@ -39,7 +39,14 @@ export const NextWorkoutDetail = () => {
   const handleStartWorkout = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour commencer un entraînement",
+          variant: "destructive",
+        });
+        return;
+      }
 
       const { error } = await supabase
         .from('workout_sessions')
@@ -57,6 +64,11 @@ export const NextWorkoutDetail = () => {
       });
     } catch (error) {
       console.error('Error starting workout:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors du démarrage de l'entraînement",
+        variant: "destructive",
+      });
     }
   };
 
@@ -78,29 +90,49 @@ export const NextWorkoutDetail = () => {
     setShowEndWorkoutDialog(true);
   };
 
-  const confirmEndWorkout = () => {
-    toast({
-      title: "Entraînement terminé",
-      description: "Votre séance a été enregistrée avec succès.",
-    });
-    navigate(-1);
+  const confirmEndWorkout = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('workout_sessions')
+        .update({ status: 'completed' })
+        .eq('user_id', user.id)
+        .eq('status', 'in_progress');
+
+      if (error) throw error;
+
+      toast({
+        title: "Entraînement terminé",
+        description: "Votre séance a été enregistrée avec succès.",
+      });
+      navigate(-1);
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la finalisation de l'entraînement",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="container max-w-2xl mx-auto px-4 py-8 space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold text-gray-900">Dos, Biceps & Épaules</h1>
+          <h1 className="text-3xl font-bold">Dos, Biceps & Épaules</h1>
           <div className="flex justify-center gap-6">
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <Timer className="w-5 h-5" />
               <span>61 mins</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <Dumbbell className="w-5 h-5" />
               <span>8 exercices</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <Flame className="w-5 h-5" />
               <span>~350 kcal</span>
             </div>
@@ -109,14 +141,14 @@ export const NextWorkoutDetail = () => {
 
         {!isWorkoutStarted ? (
           <div className="space-y-8">
-            <Card className="bg-white border p-6">
+            <Card className="border p-6">
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-gray-900">Exercices prévus</h2>
+                <h2 className="text-xl font-semibold">Exercices prévus</h2>
                 <div className="grid gap-4">
                   {SAMPLE_EXERCISES.map((exercise, index) => (
                     <div 
                       key={index}
-                      className="p-4 rounded-lg bg-gray-50 text-gray-900 hover:bg-gray-100 transition-colors"
+                      className="p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -124,7 +156,7 @@ export const NextWorkoutDetail = () => {
                         </div>
                         <div>
                           <h3 className="font-medium">{exercise}</h3>
-                          <p className="text-sm text-gray-600">3 séries • 12 répétitions</p>
+                          <p className="text-sm text-muted-foreground">3 séries • 12 répétitions</p>
                         </div>
                       </div>
                     </div>
@@ -135,7 +167,7 @@ export const NextWorkoutDetail = () => {
             
             <div className="flex justify-center">
               <Button 
-                className="w-64 bg-gradient-to-r from-primary to-secondary hover:scale-105 transform transition-all duration-300 text-white font-bold py-6 text-xl rounded-full shadow-lg hover:shadow-xl"
+                className="w-64 bg-gradient-to-r from-primary to-primary hover:opacity-90 transform transition-all duration-300 text-primary-foreground font-bold py-6 text-xl rounded-full shadow-lg hover:shadow-xl"
                 onClick={handleStartWorkout}
               >
                 🔥 C'EST PARTI ! 💪
@@ -143,7 +175,7 @@ export const NextWorkoutDetail = () => {
             </div>
           </div>
         ) : (
-          <Card className="bg-white border">
+          <Card className="border">
             <div className="p-4 space-y-6">
               {currentExerciseIndex !== null && (
                 <ExerciseSets
