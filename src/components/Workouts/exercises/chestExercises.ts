@@ -9,7 +9,7 @@ export const chestExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Banc, Barre, Poids",
     location: ["gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Allongez-vous sur le banc",
       "Saisissez la barre avec une prise légèrement plus large que les épaules",
@@ -37,7 +37,7 @@ export const chestExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Placez vos mains légèrement plus larges que vos épaules",
       "Gardez votre corps droit",
@@ -65,7 +65,7 @@ export const chestExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Banc, Haltères",
     location: ["gym", "home"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Allongez-vous sur un banc plat",
       "Tenez les haltères bras tendus au-dessus de la poitrine",
@@ -93,7 +93,7 @@ export const chestExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Banc incliné, Haltères",
     location: ["gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Installez-vous sur un banc incliné à 30-45 degrés",
       "Tenez un haltère dans chaque main au niveau des épaules",
