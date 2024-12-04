@@ -37,10 +37,10 @@ export const MeasurementsSection = () => {
       .select('*')
       .eq('user_id', user.id)
       .order('measurement_date', { ascending: false })
-      .limit(1)
-      .single();
+      .limit(1);
 
-    if (error && error.code !== 'PGRST116') {
+    // Si nous avons une erreur qui n'est pas liée à l'absence de données
+    if (error) {
       toast({
         title: "Erreur",
         description: "Impossible de charger vos mensurations",
@@ -49,8 +49,11 @@ export const MeasurementsSection = () => {
       return;
     }
 
-    if (data) {
-      setMeasurements(data);
+    // Si nous avons des données, prenons le premier élément
+    if (data && data.length > 0) {
+      setMeasurements(data[0]);
+    } else {
+      setMeasurements(null);
     }
   };
 
