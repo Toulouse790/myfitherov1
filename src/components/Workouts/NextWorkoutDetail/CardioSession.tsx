@@ -25,10 +25,17 @@ export const CardioSession = ({
   const { toast } = useToast();
 
   const handleFinishCardio = async () => {
-    if (!sessionId) return;
+    if (!sessionId || !userId) {
+      toast({
+        title: "Erreur",
+        description: "Session invalide",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
-      await supabase
+      const { error: statsError } = await supabase
         .from('training_stats')
         .insert([
           {
@@ -42,10 +49,17 @@ export const CardioSession = ({
           }
         ]);
 
-      await supabase
+      if (statsError) throw statsError;
+
+      const { error: sessionError } = await supabase
         .from('workout_sessions')
-        .update({ status: 'completed' })
+        .update({ 
+          status: 'completed',
+          user_id: userId 
+        })
         .eq('id', sessionId);
+
+      if (sessionError) throw sessionError;
 
       toast({
         title: "Séance de cardio terminée",
