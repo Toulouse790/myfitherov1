@@ -4,20 +4,54 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { exerciseImages } from "./data/exerciseImages";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 const SAMPLE_EXERCISES = [
-  "Rowing avec Haltères",
-  "Tirage à la poulie barre en V",
-  "Curl Biceps aux Haltères",
-  "Développé Militaire",
-  "Élévations Latérales",
-  "Crunch",
-  "Planche"
+  {
+    name: "Rowing avec Haltères",
+    defaultSets: 3,
+    defaultReps: 12
+  },
+  {
+    name: "Tirage à la poulie barre en V",
+    defaultSets: 3,
+    defaultReps: 12
+  },
+  {
+    name: "Curl Biceps aux Haltères",
+    defaultSets: 3,
+    defaultReps: 12
+  },
+  {
+    name: "Développé Militaire",
+    defaultSets: 4,
+    defaultReps: 10
+  },
+  {
+    name: "Élévations Latérales",
+    defaultSets: 3,
+    defaultReps: 15
+  },
+  {
+    name: "Crunch",
+    defaultSets: 3,
+    defaultReps: 20
+  },
+  {
+    name: "Planche",
+    defaultSets: 3,
+    defaultReps: 30
+  }
 ];
 
 export const NextWorkoutCard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
+  const [exerciseSets, setExerciseSets] = useState(
+    SAMPLE_EXERCISES.map(ex => Array(ex.defaultSets).fill(ex.defaultReps))
+  );
 
   const handleCardClick = () => {
     navigate('/workouts/exercise/next-workout');
@@ -30,6 +64,18 @@ export const NextWorkoutCard = () => {
       title: "Création manuelle",
       description: "Créez votre propre séance d'entraînement",
     });
+  };
+
+  const handleExerciseClick = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedExercise(selectedExercise === index ? null : index);
+  };
+
+  const handleRepsChange = (exerciseIndex: number, setIndex: number, value: string) => {
+    const newValue = parseInt(value) || 0;
+    const newExerciseSets = [...exerciseSets];
+    newExerciseSets[exerciseIndex][setIndex] = newValue;
+    setExerciseSets(newExerciseSets);
   };
 
   return (
@@ -53,7 +99,7 @@ export const NextWorkoutCard = () => {
       </div>
       
       <div className="p-4 space-y-4">
-        <h2 className="text-base sm:text-lg font-bold text-white transition-colors duration-300">
+        <h2 className="text-base sm:text-lg font-bold text-white">
           Dos, Biceps, Épaules, Abdos
         </h2>
         
@@ -69,18 +115,42 @@ export const NextWorkoutCard = () => {
         </div>
         
         <div className="space-y-2">
-          {SAMPLE_EXERCISES.map((exerciseName, index) => (
-            <div 
-              key={index}
-              className="flex items-center gap-3 p-2 rounded-lg bg-white/5"
-            >
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Dumbbell className="w-4 h-4 text-primary" />
+          {SAMPLE_EXERCISES.map((exercise, index) => (
+            <div key={index}>
+              <div 
+                className="flex items-center gap-3 p-2 rounded-lg bg-white/5"
+                onClick={(e) => handleExerciseClick(index, e)}
+              >
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Dumbbell className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-white">{exercise.name}</p>
+                  <p className="text-xs text-gray-400">
+                    {exercise.defaultSets} séries • {exercise.defaultReps} répétitions
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-white">{exerciseName}</p>
-                <p className="text-xs text-gray-400">3 séries • 12 répétitions</p>
-              </div>
+
+              {selectedExercise === index && (
+                <div className="mt-2 pl-11 space-y-2 animate-fade-down">
+                  {Array.from({ length: exercise.defaultSets }).map((_, setIndex) => (
+                    <div key={setIndex} className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400 w-16">Série {setIndex + 1}</span>
+                      <Input
+                        type="number"
+                        value={exerciseSets[index][setIndex]}
+                        onChange={(e) => handleRepsChange(index, setIndex, e.target.value)}
+                        className="w-20 h-8 text-sm bg-white/10 border-white/20 text-white"
+                        min="1"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                      />
+                      <span className="text-xs text-gray-400">reps</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -93,7 +163,7 @@ export const NextWorkoutCard = () => {
           ].map(({ icon: Icon }, index) => (
             <button 
               key={index}
-              className="text-gray-400 transition-colors"
+              className="text-gray-400"
               onClick={(e) => e.stopPropagation()}
             >
               <Icon className="w-4 h-4" />

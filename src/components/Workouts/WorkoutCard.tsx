@@ -11,7 +11,7 @@ interface WorkoutCardProps {
 export const WorkoutCard = ({ title, description, icon, onClick }: WorkoutCardProps) => {
   return (
     <Card 
-      className="bg-[#2A2F3F] p-3 cursor-pointer transition-all duration-300"
+      className="bg-[#2A2F3F] p-3 cursor-pointer"
       onClick={onClick}
     >
       <div className="space-y-2">
