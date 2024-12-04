@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { generateWorkoutPlan } from "./workoutPlanGenerator";
+import { useState } from "react";
+import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
+import type { WorkoutPlan } from "./workoutPlanGenerator";
 
 interface GenerateWorkoutDialogProps {
   open: boolean;
@@ -11,6 +14,7 @@ interface GenerateWorkoutDialogProps {
 
 export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDialogProps) => {
   const { toast } = useToast();
+  const [generatedPlan, setGeneratedPlan] = useState<WorkoutPlan | null>(null);
 
   const handleGenerateWorkout = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -50,17 +54,7 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
     };
 
     const plan = generateWorkoutPlan(userProfile);
-    onOpenChange(false);
-    
-    toast({
-      title: "Programme généré avec succès",
-      description: `Programme personnalisé créé avec :
-      - ${plan.volume} séries au total
-      - Intensité : ${Math.round(plan.intensity * 100)}%
-      - ${plan.recommendedRest}s de repos entre les séries
-      - ${plan.setsAndReps.sets} séries de ${plan.setsAndReps.reps} répétitions
-      - ${plan.weeklySchedule.daysPerWeek} jours par semaine`,
-    });
+    setGeneratedPlan(plan);
   };
 
   return (
@@ -69,14 +63,19 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
         <DialogHeader>
           <DialogTitle>Générer votre programme personnalisé</DialogTitle>
         </DialogHeader>
-        <div className="py-4">
-          <p className="text-sm text-muted-foreground mb-4">
-            Nous allons utiliser vos réponses au questionnaire initial pour générer un programme adapté à vos objectifs.
-          </p>
-          <Button onClick={handleGenerateWorkout} className="w-full">
-            Générer mon programme
-          </Button>
-        </div>
+        
+        {!generatedPlan ? (
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground mb-4">
+              Nous allons utiliser vos réponses au questionnaire initial pour générer un programme adapté à vos objectifs.
+            </p>
+            <Button onClick={handleGenerateWorkout} className="w-full">
+              Générer mon programme
+            </Button>
+          </div>
+        ) : (
+          <GeneratedWorkoutPreview plan={generatedPlan} />
+        )}
       </DialogContent>
     </Dialog>
   );
