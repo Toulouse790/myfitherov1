@@ -1,15 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Image, Video } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { MuscleGroupList } from "./MuscleGroupList";
-import { MediaGrid } from "./MediaGrid";
-import { UploadForm } from "./UploadForm";
+import { ExerciseRow } from "./ExerciseRow";
 import { muscleGroups } from "../Workouts/workoutConstants";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 
 interface Exercise {
   id: string;
@@ -24,14 +20,10 @@ export const MediaManager = () => {
   const [selectedGroup, setSelectedGroup] = useState<string>(muscleGroups[0]?.name || "");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
-  const [exerciseMedia, setExerciseMedia] = useState<{[key: string]: {images: string[], videos: string[]}}>({});
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
-
-  const difficulties = ["beginner", "intermediate", "advanced", "expert"];
 
   useEffect(() => {
     fetchExercises();
-    fetchExerciseMedia();
   }, []);
 
   const fetchExercises = async () => {
@@ -47,37 +39,6 @@ export const MediaManager = () => {
       toast({
         title: "Erreur",
         description: "Impossible de charger les exercices",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const fetchExerciseMedia = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('exercise_media')
-        .select('*');
-
-      if (error) throw error;
-
-      const mediaMap = data.reduce((acc, item) => ({
-        ...acc,
-        [item.exercise_name]: {
-          images: item.media_type === 'image' 
-            ? [...(acc[item.exercise_name]?.images || []), item.media_url]
-            : (acc[item.exercise_name]?.images || []),
-          videos: item.media_type === 'video'
-            ? [...(acc[item.exercise_name]?.videos || []), item.media_url]
-            : (acc[item.exercise_name]?.videos || [])
-        }
-      }), {});
-
-      setExerciseMedia(mediaMap);
-    } catch (error) {
-      console.error('Error fetching exercise media:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les médias des exercices",
         variant: "destructive",
       });
     }
@@ -127,39 +88,11 @@ export const MediaManager = () => {
       });
 
       setSelectedFile(null);
-      fetchExerciseMedia();
     } catch (error) {
       console.error('Error uploading media:', error);
       toast({
         title: "Erreur lors du téléchargement",
         description: "Une erreur est survenue lors du téléchargement du fichier.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleDelete = async (mediaUrl: string, exerciseName: string, mediaType: 'image' | 'video') => {
-    try {
-      const { error } = await supabase
-        .from('exercise_media')
-        .delete()
-        .eq('media_url', mediaUrl)
-        .eq('exercise_name', exerciseName)
-        .eq('media_type', mediaType);
-
-      if (error) throw error;
-
-      toast({
-        title: "Média supprimé",
-        description: `Le média a été supprimé de l'exercice ${exerciseName}`,
-      });
-
-      fetchExerciseMedia();
-    } catch (error) {
-      console.error('Error deleting media:', error);
-      toast({
-        title: "Erreur lors de la suppression",
-        description: "Une erreur est survenue lors de la suppression du fichier.",
         variant: "destructive",
       });
     }
@@ -217,89 +150,18 @@ export const MediaManager = () => {
           onGroupSelect={setSelectedGroup}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Exercices - {selectedGroup}</h3>
-            <div className="space-y-2">
-              {filteredExercises.map((exercise) => (
-                <Card
-                  key={exercise.id}
-                  className={`p-4 cursor-pointer hover:bg-accent ${
-                    selectedExercise === exercise.name ? 'ring-2 ring-primary' : ''
-                  }`}
-                  onClick={() => {
-                    setSelectedExercise(exercise.name);
-                    setSelectedDifficulties(exercise.difficulty);
-                  }}
-                >
-                  <h4 className="font-medium">{exercise.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {exercise.difficulty.length} niveau(x) de difficulté
-                  </p>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          {selectedExercise && (
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Niveaux de difficulté - {selectedExercise}</h3>
-                <div className="space-y-2">
-                  {difficulties.map((difficulty) => (
-                    <div key={difficulty} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={difficulty}
-                        checked={selectedDifficulties.includes(difficulty)}
-                        onCheckedChange={() => handleDifficultyChange(difficulty)}
-                      />
-                      <Label htmlFor={difficulty} className="capitalize">
-                        {difficulty}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Card className="p-4">
-                <h3 className="font-semibold mb-4 flex items-center">
-                  <Image className="mr-2 h-4 w-4" />
-                  Images - {selectedExercise}
-                </h3>
-                <UploadForm
-                  type="image"
-                  onFileChange={handleFileChange}
-                  onUpload={handleUpload}
-                  selectedFile={selectedFile}
-                />
-                <MediaGrid
-                  mediaUrls={exerciseMedia[selectedExercise]?.images || []}
-                  onDelete={handleDelete}
-                  exerciseName={selectedExercise}
-                  type="image"
-                />
-              </Card>
-
-              <Card className="p-4">
-                <h3 className="font-semibold mb-4 flex items-center">
-                  <Video className="mr-2 h-4 w-4" />
-                  Vidéos - {selectedExercise}
-                </h3>
-                <UploadForm
-                  type="video"
-                  onFileChange={handleFileChange}
-                  onUpload={handleUpload}
-                  selectedFile={selectedFile}
-                />
-                <MediaGrid
-                  mediaUrls={exerciseMedia[selectedExercise]?.videos || []}
-                  onDelete={handleDelete}
-                  exerciseName={selectedExercise}
-                  type="video"
-                />
-              </Card>
-            </div>
-          )}
+        <div className="space-y-4">
+          {filteredExercises.map((exercise) => (
+            <ExerciseRow
+              key={exercise.id}
+              exercise={exercise}
+              onFileChange={handleFileChange}
+              onUpload={handleUpload}
+              selectedFile={selectedFile}
+              onDifficultyChange={handleDifficultyChange}
+              selectedDifficulties={selectedDifficulties}
+            />
+          ))}
         </div>
       </Tabs>
     </div>

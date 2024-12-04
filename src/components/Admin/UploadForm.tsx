@@ -9,19 +9,15 @@ interface UploadFormProps {
   selectedFile: File | null;
 }
 
-export const UploadForm = ({ type, onFileChange, onUpload, selectedFile }: UploadFormProps) => {
+export const UploadForm = ({ type, onFileChange, selectedFile }: UploadFormProps) => {
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+    <div className="flex items-center gap-2">
       <Input
         type="file"
         accept={type === "image" ? "image/*" : "video/*"}
         onChange={onFileChange}
-        className="flex-1"
+        className="flex-1 text-sm"
       />
-      <Button onClick={onUpload} disabled={!selectedFile}>
-        <Upload className="mr-2 h-4 w-4" />
-        Uploader
-      </Button>
     </div>
   );
 };
