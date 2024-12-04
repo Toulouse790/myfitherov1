@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Timer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";

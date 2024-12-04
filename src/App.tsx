@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
-import Workouts from "./pages/Workouts";
+import { Workouts } from "./pages/Workouts";
 import Nutrition from "./pages/Nutrition";
 import Sleep from "./pages/Sleep";
 import Admin from "./pages/Admin";
