@@ -17,6 +17,7 @@ export const absExercises: Exercise[] = [
       "Revenez lentement"
     ],
     targetMuscles: ["grand droit", "obliques"],
+    objectives: ["weight_loss", "endurance", "maintenance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -26,6 +27,11 @@ export const absExercises: Exercise[] = [
       beginner: 15,
       intermediate: 20,
       advanced: 25
+    },
+    restTime: {
+      beginner: 60,
+      intermediate: 45,
+      advanced: 30
     },
     calories: 80
   },
@@ -45,6 +51,7 @@ export const absExercises: Exercise[] = [
       "Maintenez la position"
     ],
     targetMuscles: ["abdominaux", "transverse", "lombaires"],
+    objectives: ["endurance", "maintenance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -54,6 +61,11 @@ export const absExercises: Exercise[] = [
       beginner: 30,
       intermediate: 45,
       advanced: 60
+    },
+    restTime: {
+      beginner: 60,
+      intermediate: 45,
+      advanced: 30
     },
     calories: 70
   },
@@ -73,6 +85,7 @@ export const absExercises: Exercise[] = [
       "Descendez lentement"
     ],
     targetMuscles: ["abdominaux inférieurs", "psoas"],
+    objectives: ["weight_loss", "muscle_gain"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -82,6 +95,11 @@ export const absExercises: Exercise[] = [
       beginner: 10,
       intermediate: 15,
       advanced: 20
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 90
   },
@@ -101,6 +119,7 @@ export const absExercises: Exercise[] = [
       "Gardez les abdominaux contractés"
     ],
     targetMuscles: ["obliques", "grand droit"],
+    objectives: ["weight_loss", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -110,6 +129,11 @@ export const absExercises: Exercise[] = [
       beginner: 20,
       intermediate: 30,
       advanced: 40
+    },
+    restTime: {
+      beginner: 60,
+      intermediate: 45,
+      advanced: 30
     },
     calories: 85
   }
