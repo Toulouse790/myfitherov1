@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Battery, BatteryLow } from "lucide-react";
+import { useState } from "react";
 
 interface InitialEnergyDialogProps {
   open: boolean;
@@ -21,9 +22,14 @@ export const InitialEnergyDialog = ({
   onEnergyLevel,
   onRegenerateWorkout,
 }: InitialEnergyDialogProps) => {
-  const handleBadEnergy = () => {
-    onEnergyLevel("bad");
-    onOpenChange(false);
+  const [selectedEnergy, setSelectedEnergy] = useState<"good" | "bad" | null>(null);
+
+  const handleEnergySelect = (level: "good" | "bad") => {
+    setSelectedEnergy(level);
+    onEnergyLevel(level);
+    if (level === "good") {
+      onOpenChange(false);
+    }
   };
 
   return (
@@ -37,10 +43,7 @@ export const InitialEnergyDialog = ({
           <Button
             variant="outline"
             className="flex flex-col items-center gap-2 p-6"
-            onClick={() => {
-              onEnergyLevel("good");
-              onOpenChange(false);
-            }}
+            onClick={() => handleEnergySelect("good")}
           >
             <Battery className="h-8 w-8 text-green-500" />
             <span>En forme</span>
@@ -49,25 +52,24 @@ export const InitialEnergyDialog = ({
           <Button
             variant="outline"
             className="flex flex-col items-center gap-2 p-6"
-            onClick={() => {
-              handleBadEnergy();
-            }}
+            onClick={() => handleEnergySelect("bad")}
           >
             <BatteryLow className="h-8 w-8 text-red-500" />
             <span>Pas en forme</span>
           </Button>
         </div>
 
-        {/* Ce bouton n'apparaît que si l'utilisateur n'est pas en forme */}
-        <AlertDialogFooter>
-          <Button
-            variant="outline"
-            onClick={onRegenerateWorkout}
-            className="w-full"
-          >
-            Générer un nouvel entraînement adapté
-          </Button>
-        </AlertDialogFooter>
+        {selectedEnergy === "bad" && (
+          <AlertDialogFooter>
+            <Button
+              variant="outline"
+              onClick={onRegenerateWorkout}
+              className="w-full"
+            >
+              Générer un nouvel entraînement adapté
+            </Button>
+          </AlertDialogFooter>
+        )}
       </AlertDialogContent>
     </AlertDialog>
   );
