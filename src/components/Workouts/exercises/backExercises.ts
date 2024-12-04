@@ -17,6 +17,7 @@ export const backExercises: Exercise[] = [
       "Répétez le mouvement"
     ],
     targetMuscles: ["grand dorsal", "rhomboïdes", "trapèzes", "biceps"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -26,6 +27,11 @@ export const backExercises: Exercise[] = [
       beginner: 5,
       intermediate: 8,
       advanced: 12
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 60
     },
     calories: 150
   },
@@ -45,6 +51,7 @@ export const backExercises: Exercise[] = [
       "Revenez à la position initiale de manière contrôlée"
     ],
     targetMuscles: ["grand dorsal", "trapèzes", "rhomboïdes", "biceps"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -54,6 +61,11 @@ export const backExercises: Exercise[] = [
       beginner: 8,
       intermediate: 10,
       advanced: 12
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 60
     },
     calories: 140
   },
@@ -73,6 +85,7 @@ export const backExercises: Exercise[] = [
       "Remontez lentement"
     ],
     targetMuscles: ["grand dorsal", "rhomboïdes", "biceps"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -82,6 +95,11 @@ export const backExercises: Exercise[] = [
       beginner: 10,
       intermediate: 12,
       advanced: 15
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 130
   },
@@ -101,6 +119,7 @@ export const backExercises: Exercise[] = [
       "Contrôlez la descente"
     ],
     targetMuscles: ["grand dorsal", "trapèzes", "rhomboïdes"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -110,6 +129,11 @@ export const backExercises: Exercise[] = [
       beginner: 10,
       intermediate: 12,
       advanced: 15
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 100
   }

@@ -18,9 +18,9 @@ export const exercises: Exercise[] = [
 ];
 
 export const filterExercises = (
-  location: string[],
+  location: ("home" | "gym" | "outdoor")[],
   difficulty: string,
-  objectives: string[],
+  objectives: ("weight_loss" | "muscle_gain" | "maintenance" | "endurance")[],
   equipment?: string[]
 ): Exercise[] => {
   return exercises.filter(exercise => {

@@ -17,6 +17,7 @@ export const armsExercises: Exercise[] = [
       "Descendez lentement"
     ],
     targetMuscles: ["biceps", "avant-bras"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -26,6 +27,11 @@ export const armsExercises: Exercise[] = [
       beginner: 12,
       intermediate: 15,
       advanced: 18
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 100
   },
@@ -45,6 +51,7 @@ export const armsExercises: Exercise[] = [
       "Remontez lentement"
     ],
     targetMuscles: ["triceps"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -54,6 +61,11 @@ export const armsExercises: Exercise[] = [
       beginner: 12,
       intermediate: 15,
       advanced: 20
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 90
   },
@@ -73,6 +85,7 @@ export const armsExercises: Exercise[] = [
       "Descendez en contrôlant"
     ],
     targetMuscles: ["biceps", "brachial", "avant-bras"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -82,6 +95,11 @@ export const armsExercises: Exercise[] = [
       beginner: 12,
       intermediate: 15,
       advanced: 18
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 95
   },
@@ -101,6 +119,7 @@ export const armsExercises: Exercise[] = [
       "Tendez les bras"
     ],
     targetMuscles: ["triceps"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -110,6 +129,11 @@ export const armsExercises: Exercise[] = [
       beginner: 12,
       intermediate: 15,
       advanced: 15
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 85
   }

@@ -17,6 +17,7 @@ export const shouldersExercises: Exercise[] = [
       "Contrôlez la descente"
     ],
     targetMuscles: ["deltoïdes", "trapèzes", "triceps"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -26,6 +27,11 @@ export const shouldersExercises: Exercise[] = [
       beginner: 8,
       intermediate: 10,
       advanced: 12
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 60
     },
     calories: 130
   },
@@ -45,6 +51,7 @@ export const shouldersExercises: Exercise[] = [
       "Descendez lentement"
     ],
     targetMuscles: ["deltoïdes moyens"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -54,6 +61,11 @@ export const shouldersExercises: Exercise[] = [
       beginner: 12,
       intermediate: 15,
       advanced: 18
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 100
   },
@@ -73,6 +85,7 @@ export const shouldersExercises: Exercise[] = [
       "Descendez lentement"
     ],
     targetMuscles: ["deltoïdes antérieurs"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 3,
@@ -82,6 +95,11 @@ export const shouldersExercises: Exercise[] = [
       beginner: 12,
       intermediate: 15,
       advanced: 15
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 90
   },
@@ -101,6 +119,7 @@ export const shouldersExercises: Exercise[] = [
       "Contrôlez le retour"
     ],
     targetMuscles: ["deltoïdes postérieurs", "trapèzes"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -110,6 +129,11 @@ export const shouldersExercises: Exercise[] = [
       beginner: 12,
       intermediate: 15,
       advanced: 18
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
     },
     calories: 90
   }
