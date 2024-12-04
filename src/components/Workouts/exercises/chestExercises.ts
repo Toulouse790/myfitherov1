@@ -4,7 +4,7 @@ export const chestExercises: Exercise[] = [
   {
     id: "chest-1",
     name: "Développé couché",
-    muscleGroup: "chest",
+    muscleGroup: "poitrine",
     description: "Un exercice fondamental pour le développement des pectoraux",
     difficulty: "intermediate",
     equipment: "Banc, Barre, Poids",
@@ -37,42 +37,8 @@ export const chestExercises: Exercise[] = [
   },
   {
     id: "chest-2",
-    name: "Pompes",
-    muscleGroup: "chest",
-    description: "Un exercice de poids de corps classique pour les pectoraux",
-    difficulty: "beginner",
-    equipment: "Aucun",
-    location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
-    instructions: [
-      "Placez vos mains légèrement plus larges que vos épaules",
-      "Gardez votre corps droit",
-      "Descendez votre poitrine près du sol",
-      "Poussez pour revenir à la position initiale"
-    ],
-    targetMuscles: ["pectoraux", "deltoïdes", "triceps", "core"],
-    objectives: ["muscle_gain", "endurance", "weight_loss"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 5
-    },
-    reps: {
-      beginner: 10,
-      intermediate: 15,
-      advanced: 20
-    },
-    restTime: {
-      beginner: 90,
-      intermediate: 60,
-      advanced: 45
-    },
-    calories: 100
-  },
-  {
-    id: "chest-3",
-    name: "Développé incliné haltères",
-    muscleGroup: "chest",
+    name: "Développé incliné avec haltères",
+    muscleGroup: "poitrine",
     description: "Excellent pour cibler la partie supérieure des pectoraux",
     difficulty: "intermediate",
     equipment: "Banc incliné, Haltères",
@@ -102,5 +68,39 @@ export const chestExercises: Exercise[] = [
       advanced: 60
     },
     calories: 130
+  },
+  {
+    id: "chest-3",
+    name: "Pompes",
+    muscleGroup: "poitrine",
+    description: "Un exercice de poids de corps classique pour les pectoraux",
+    difficulty: "beginner",
+    equipment: "Aucun",
+    location: ["home", "outdoor", "gym"],
+    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    instructions: [
+      "Placez vos mains légèrement plus larges que vos épaules",
+      "Gardez votre corps droit",
+      "Descendez votre poitrine près du sol",
+      "Poussez pour revenir à la position initiale"
+    ],
+    targetMuscles: ["pectoraux", "deltoïdes", "triceps", "core"],
+    objectives: ["muscle_gain", "endurance", "weight_loss"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 5
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 15,
+      advanced: 20
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
+    },
+    calories: 100
   }
 ];

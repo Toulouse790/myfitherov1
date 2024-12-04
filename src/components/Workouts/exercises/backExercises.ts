@@ -4,7 +4,7 @@ export const backExercises: Exercise[] = [
   {
     id: "back-1",
     name: "Tractions",
-    muscleGroup: "back",
+    muscleGroup: "dos",
     description: "Excellent exercice pour le développement du dos",
     difficulty: "intermediate",
     equipment: "Barre de traction",
@@ -33,12 +33,12 @@ export const backExercises: Exercise[] = [
       intermediate: 90,
       advanced: 60
     },
-    calories: 200 // Mise à jour des calories
+    calories: 200
   },
   {
     id: "back-2",
     name: "Rowing barre",
-    muscleGroup: "back",
+    muscleGroup: "dos",
     description: "Exercice complet pour le dos",
     difficulty: "intermediate",
     equipment: "Barre, Poids",
@@ -67,12 +67,12 @@ export const backExercises: Exercise[] = [
       intermediate: 90,
       advanced: 60
     },
-    calories: 180 // Mise à jour des calories
+    calories: 180
   },
   {
     id: "back-3",
     name: "Tirage vertical",
-    muscleGroup: "back",
+    muscleGroup: "dos",
     description: "Excellent exercice pour la largeur du dos",
     difficulty: "beginner",
     equipment: "Machine de tirage vertical",
@@ -101,6 +101,6 @@ export const backExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 160 // Mise à jour des calories
+    calories: 160
   }
 ];

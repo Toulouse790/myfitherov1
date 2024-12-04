@@ -3,42 +3,8 @@ import { Exercise } from './types/exercise';
 export const legsExercises: Exercise[] = [
   {
     id: "legs-1",
-    name: "Squat poids de corps",
-    muscleGroup: "legs",
-    description: "Exercice complet pour les jambes sans équipement",
-    difficulty: "beginner",
-    equipment: "Aucun",
-    location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
-    instructions: [
-      "Pieds largeur d'épaules",
-      "Descendez comme pour vous asseoir",
-      "Gardez le dos droit",
-      "Poussez sur les talons pour remonter"
-    ],
-    targetMuscles: ["quadriceps", "ischio-jambiers", "fessiers"],
-    objectives: ["endurance", "weight_loss", "maintenance"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 5
-    },
-    reps: {
-      beginner: 12,
-      intermediate: 15,
-      advanced: 20
-    },
-    restTime: {
-      beginner: 90,
-      intermediate: 60,
-      advanced: 45
-    },
-    calories: 100
-  },
-  {
-    id: "legs-2",
     name: "Squat avec barre",
-    muscleGroup: "legs",
+    muscleGroup: "jambes",
     description: "L'exercice roi pour la prise de masse des jambes",
     difficulty: "intermediate",
     equipment: "Barre et poids",
@@ -70,25 +36,25 @@ export const legsExercises: Exercise[] = [
     calories: 150
   },
   {
-    id: "legs-3",
-    name: "Fentes marchées",
-    muscleGroup: "legs",
-    description: "Excellent pour le travail unilatéral et l'équilibre",
-    difficulty: "beginner",
-    equipment: "Aucun (ou haltères optionnels)",
-    location: ["home", "outdoor", "gym"],
+    id: "legs-2",
+    name: "Presse à cuisses",
+    muscleGroup: "jambes",
+    description: "Excellent exercice pour développer la force des jambes",
+    difficulty: "intermediate",
+    equipment: "Machine presse à cuisses",
+    location: ["gym"],
     image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
-      "Faites un grand pas en avant",
-      "Descendez le genou arrière vers le sol",
-      "Poussez sur la jambe avant pour remonter",
-      "Alternez les jambes en avançant"
+      "Réglez le siège à la bonne hauteur",
+      "Placez vos pieds largeur d'épaules sur la plateforme",
+      "Poussez en gardant le bas du dos plaqué",
+      "Contrôlez la descente"
     ],
-    targetMuscles: ["quadriceps", "fessiers", "ischio-jambiers"],
-    objectives: ["endurance", "weight_loss", "maintenance"],
+    targetMuscles: ["quadriceps", "ischio-jambiers", "fessiers"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
-      beginner: 2,
-      intermediate: 3,
+      beginner: 3,
+      intermediate: 4,
       advanced: 4
     },
     reps: {
@@ -101,6 +67,40 @@ export const legsExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 120
+    calories: 130
+  },
+  {
+    id: "legs-3",
+    name: "Extension de jambes",
+    muscleGroup: "jambes",
+    description: "Isolation des quadriceps",
+    difficulty: "beginner",
+    equipment: "Machine à extension",
+    location: ["gym"],
+    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    instructions: [
+      "Asseyez-vous sur la machine",
+      "Ajustez le coussin sur vos chevilles",
+      "Étendez complètement les jambes",
+      "Revenez lentement à la position de départ"
+    ],
+    targetMuscles: ["quadriceps"],
+    objectives: ["muscle_gain", "endurance"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 12,
+      intermediate: 15,
+      advanced: 20
+    },
+    restTime: {
+      beginner: 60,
+      intermediate: 45,
+      advanced: 30
+    },
+    calories: 100
   }
 ];
