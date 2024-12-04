@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 import { ChevronRight } from "lucide-react";
+import { MeasurementsDialog } from "./Measurements/MeasurementsDialog";
 
 interface Measurements {
   chest_cm: number | null;
@@ -21,8 +19,6 @@ interface Measurements {
 
 export const MeasurementsSection = () => {
   const [measurements, setMeasurements] = useState<Measurements | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     fetchLatestMeasurements();
@@ -39,51 +35,9 @@ export const MeasurementsSection = () => {
       .order('measurement_date', { ascending: false })
       .limit(1);
 
-    // Si nous avons une erreur qui n'est pas liée à l'absence de données
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger vos mensurations",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Si nous avons des données, prenons le premier élément
     if (data && data.length > 0) {
       setMeasurements(data[0]);
-    } else {
-      setMeasurements(null);
     }
-  };
-
-  const handleSave = async (newMeasurements: Measurements) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { error } = await supabase
-      .from('muscle_measurements')
-      .insert({
-        user_id: user.id,
-        ...newMeasurements,
-      });
-
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder vos mensurations",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Succès",
-      description: "Vos mensurations ont été sauvegardées",
-    });
-    
-    setIsEditing(false);
-    fetchLatestMeasurements();
   };
 
   const renderMeasurement = (label: string, value: number | null) => (
@@ -121,13 +75,7 @@ export const MeasurementsSection = () => {
         </div>
       )}
 
-      <Button 
-        variant="outline" 
-        className="w-full mt-4"
-        onClick={() => setIsEditing(true)}
-      >
-        {measurements ? 'Mettre à jour' : 'Ajouter mes mensurations'}
-      </Button>
+      <MeasurementsDialog />
     </div>
   );
 };
