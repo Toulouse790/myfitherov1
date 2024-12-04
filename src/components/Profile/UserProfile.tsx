@@ -6,6 +6,7 @@ import { AccountActions } from "./Sections/AccountActions";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
+import { MeasurementsSection } from "./Sections/MeasurementsSection";
 
 const mockUserProfile: UserProfileType = {
   id: "1",
@@ -58,6 +59,8 @@ export const UserProfile = () => {
             </div>
           </div>
         </Link>
+
+        <MeasurementsSection />
 
         <div className="p-6 space-y-6 rounded-lg">
           <AppSettings language="Français" />
