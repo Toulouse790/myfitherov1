@@ -5,6 +5,7 @@ import { BottomNav } from "@/components/Layout/BottomNav";
 import { ObjectiveSelect } from "@/components/Profile/Sections/Training/ObjectiveSelect";
 import { ActivityLevelSelect } from "@/components/Profile/Sections/Training/ActivityLevelSelect";
 import { EquipmentSelect } from "@/components/Profile/Sections/Training/EquipmentSelect";
+import { MeasurementsSection } from "@/components/Profile/Sections/MeasurementsSection";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -139,6 +140,10 @@ const TrainingPreferencesPage = () => {
               value={preferences.available_equipment}
               onChange={(value) => handlePreferenceChange("available_equipment", value)}
             />
+          </div>
+
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            <MeasurementsSection />
           </div>
         </div>
       </div>
