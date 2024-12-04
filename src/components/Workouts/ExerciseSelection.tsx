@@ -34,8 +34,8 @@ export const ExerciseSelection = ({
   const handleSaveWorkout = () => {
     if (!workoutName.trim()) {
       toast({
-        title: "Erreur",
-        description: "Veuillez donner un nom à votre programme",
+        title: "Nom du programme manquant",
+        description: "Veuillez donner un nom à votre programme d'entraînement pour pouvoir le sauvegarder",
         variant: "destructive",
       });
       return;
@@ -43,8 +43,8 @@ export const ExerciseSelection = ({
 
     if (selectedExercises.length === 0) {
       toast({
-        title: "Erreur",
-        description: "Veuillez sélectionner au moins un exercice",
+        title: "Aucun exercice sélectionné",
+        description: "Veuillez sélectionner au moins un exercice pour créer votre programme d'entraînement",
         variant: "destructive",
       });
       return;
@@ -65,8 +65,8 @@ export const ExerciseSelection = ({
     localStorage.setItem("savedWorkouts", JSON.stringify([...savedWorkouts, workout]));
 
     toast({
-      title: "Programme sauvegardé",
-      description: "Votre programme d'entraînement a été sauvegardé avec succès",
+      title: "Programme sauvegardé avec succès",
+      description: "Votre programme d'entraînement personnalisé a été sauvegardé et est prêt à être utilisé",
     });
 
     onClose();
@@ -76,7 +76,7 @@ export const ExerciseSelection = ({
     <div className="space-y-6">
       <div className="space-y-4">
         <Input
-          placeholder="Nom du programme"
+          placeholder="Donnez un nom à votre programme d'entraînement"
           value={workoutName}
           onChange={(e) => setWorkoutName(e.target.value)}
           className="w-full"
@@ -110,7 +110,7 @@ export const ExerciseSelection = ({
                     <div className="relative aspect-video mb-2 rounded-md overflow-hidden">
                       <img
                         src={exercise.image}
-                        alt={exercise.name}
+                        alt={`Démonstration de l'exercice ${exercise.name}`}
                         className="object-cover w-full h-full"
                       />
                     </div>
@@ -124,10 +124,10 @@ export const ExerciseSelection = ({
       </div>
       <div className="flex justify-end space-x-4">
         <Button variant="outline" onClick={onClose}>
-          Annuler
+          Annuler la création
         </Button>
         <Button onClick={handleSaveWorkout}>
-          Sauvegarder le programme
+          Sauvegarder le programme complet
         </Button>
       </div>
     </div>

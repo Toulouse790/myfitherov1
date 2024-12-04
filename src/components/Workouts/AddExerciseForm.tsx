@@ -50,13 +50,13 @@ export const AddExerciseForm = ({ onSuccess }: AddExerciseFormProps) => {
 
       onSuccess();
       toast({
-        title: "Exercice ajouté",
-        description: "L'exercice a été ajouté avec succès",
+        title: "Exercice ajouté avec succès",
+        description: "Votre nouvel exercice a été ajouté à la bibliothèque d'exercices",
       });
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'ajout de l'exercice",
+        title: "Erreur lors de l'ajout",
+        description: "Une erreur est survenue lors de l'ajout de l'exercice. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {
@@ -67,33 +67,35 @@ export const AddExerciseForm = ({ onSuccess }: AddExerciseFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Nom de l'exercice</Label>
+        <Label htmlFor="name">Nom complet de l'exercice</Label>
         <Input
           id="name"
           value={formData.name}
           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+          placeholder="Exemple: Développé couché avec haltères"
           required
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">Description détaillée de l'exercice</Label>
         <Textarea
           id="description"
           value={formData.description}
           onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          placeholder="Décrivez les étapes d'exécution de l'exercice et les points importants à respecter"
           required
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="muscleGroup">Groupe musculaire</Label>
+        <Label htmlFor="muscleGroup">Groupe musculaire principal ciblé</Label>
         <Select
           value={formData.muscleGroup}
           onValueChange={(value) => setFormData(prev => ({ ...prev, muscleGroup: value }))}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Sélectionner un groupe musculaire" />
+            <SelectValue placeholder="Sélectionnez le groupe musculaire principal" />
           </SelectTrigger>
           <SelectContent>
             {muscleGroups.map((group) => (
@@ -106,17 +108,20 @@ export const AddExerciseForm = ({ onSuccess }: AddExerciseFormProps) => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="image">Image</Label>
+        <Label htmlFor="image">Image démonstrative de l'exercice</Label>
         <Input
           id="image"
           type="file"
           accept="image/*"
           onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.files?.[0] || null }))}
         />
+        <p className="text-sm text-muted-foreground">
+          Ajoutez une image claire montrant la position correcte pour cet exercice
+        </p>
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Ajout en cours..." : "Ajouter l'exercice"}
+        {isLoading ? "Ajout de l'exercice en cours..." : "Ajouter cet exercice"}
       </Button>
     </form>
   );
