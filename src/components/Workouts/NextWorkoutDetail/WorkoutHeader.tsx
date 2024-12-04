@@ -4,6 +4,8 @@ interface WorkoutHeaderProps {
 
 export const WorkoutHeader = ({ title }: WorkoutHeaderProps) => {
   return (
-    <h1 className="text-2xl font-bold">{title}</h1>
+    <div className="flex items-center justify-between">
+      <h1 className="text-2xl font-bold">{title}</h1>
+    </div>
   );
 };

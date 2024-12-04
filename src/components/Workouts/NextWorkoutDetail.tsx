@@ -6,15 +6,14 @@ import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
 import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
 import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
-import { Button } from "@/components/ui/button";
-import { Timer } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth"; // Add this import
+import { CardioSession } from "./NextWorkoutDetail/CardioSession";
+import { useAuth } from "@/hooks/use-auth";
 
 export const NextWorkoutDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth(); // Add this line to get the current user
+  const { user } = useAuth();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isCardio, setIsCardio] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -33,6 +32,16 @@ export const NextWorkoutDetail = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setDuration(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRunning]);
+
   const checkSessionType = async (sessionId: string) => {
     try {
       const { data: session } = await supabase
@@ -48,16 +57,6 @@ export const NextWorkoutDetail = () => {
       console.error('Error checking session type:', error);
     }
   };
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setDuration(prev => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isRunning]);
 
   const handleStartCardio = async () => {
     if (!user) {
@@ -109,83 +108,22 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleConfirmEndWorkout = async () => {
-    // Add your workout completion logic here
     navigate('/workouts');
   };
 
-  const handleFinishCardio = async () => {
-    if (!sessionId) return;
-
-    try {
-      await supabase
-        .from('training_stats')
-        .insert([
-          {
-            session_id: sessionId,
-            user_id: user?.id,
-            duration_minutes: Math.round(duration / 60),
-            total_sets: 1,
-            total_reps: 1,
-            total_weight: 0,
-            muscle_groups_worked: ['cardio']
-          }
-        ]);
-
-      await supabase
-        .from('workout_sessions')
-        .update({ status: 'completed' })
-        .eq('id', sessionId);
-
-      toast({
-        title: "Séance de cardio terminée",
-        description: `Durée: ${Math.round(duration / 60)} minutes`,
-      });
-
-      navigate('/workouts');
-    } catch (error) {
-      console.error('Error finishing cardio session:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'enregistrer la séance de cardio",
-        variant: "destructive",
-      });
-    }
-  };
+  if (!user) {
+    return null;
+  }
 
   if (isCardio) {
     return (
-      <div className="container max-w-4xl mx-auto p-4 space-y-8">
-        <WorkoutHeader title="Séance de Cardio" />
-        
-        <div className="p-6 bg-card rounded-lg border shadow-sm space-y-6">
-          <div className="text-center space-y-2">
-            <div className="text-4xl font-bold">
-              {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
-            </div>
-            <p className="text-muted-foreground">Durée de la séance</p>
-          </div>
-
-          <div className="flex justify-center gap-4">
-            <Button
-              variant={isRunning ? "destructive" : "default"}
-              onClick={() => setIsRunning(!isRunning)}
-              className="w-32"
-            >
-              <Timer className="mr-2 h-4 w-4" />
-              {isRunning ? "Pause" : "Démarrer"}
-            </Button>
-            
-            <Button
-              variant="default"
-              onClick={handleFinishCardio}
-              className="w-32"
-              disabled={duration === 0}
-            >
-              Terminer
-            </Button>
-          </div>
-        </div>
-      </div>
+      <CardioSession
+        sessionId={sessionId}
+        duration={duration}
+        isRunning={isRunning}
+        userId={user.id}
+        setIsRunning={setIsRunning}
+      />
     );
   }
 
