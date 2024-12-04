@@ -21,11 +21,9 @@ export const ExerciseAnimation = ({
 }: ExerciseAnimationProps) => {
   return (
     <div className="grid grid-cols-3 gap-4">
-      <Card className="p-4 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-primary/10 to-primary/5">
+      <Card className="p-4 flex flex-col items-center justify-center space-y-2">
         <div className="relative">
-          <RefreshCw 
-            className={`w-8 h-8 text-primary ${!isResting ? 'animate-exercise-spin' : ''}`} 
-          />
+          <RefreshCw className="w-8 h-8 text-primary" />
           <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
             {reps}
           </span>
@@ -33,24 +31,20 @@ export const ExerciseAnimation = ({
         <span className="text-sm font-medium">Répétitions</span>
       </Card>
 
-      <Card className="p-4 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-secondary/10 to-secondary/5">
+      <Card className="p-4 flex flex-col items-center justify-center space-y-2">
         <div className="relative">
-          <Timer 
-            className={`w-8 h-8 text-secondary ${isResting ? 'animate-exercise-pulse' : ''}`}
-          />
-          <span className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          <Timer className="w-8 h-8 text-primary" />
+          <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
             {restTime}s
           </span>
         </div>
         <span className="text-sm font-medium">Repos</span>
       </Card>
 
-      <Card className="p-4 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-accent/10 to-accent/5">
+      <Card className="p-4 flex flex-col items-center justify-center space-y-2">
         <div className="relative">
-          <RotateCcw 
-            className={`w-8 h-8 text-accent ${currentSet < sets ? 'hover:animate-exercise-bounce' : ''}`}
-          />
-          <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          <RotateCcw className="w-8 h-8 text-primary" />
+          <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
             {currentSet}/{sets}
           </span>
         </div>
