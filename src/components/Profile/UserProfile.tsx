@@ -5,7 +5,8 @@ import { AppSettings } from "./Sections/AppSettings";
 import { AccountActions } from "./Sections/AccountActions";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Crown } from "lucide-react";
+import { Button } from "../ui/button";
 
 const mockUserProfile: UserProfileType = {
   id: "1",
@@ -45,6 +46,31 @@ export const UserProfile = () => {
       <ProfileHeader profile={profile} />
 
       <div className="space-y-6">
+        {/* Subscription Status */}
+        <div className="p-6 hover:bg-accent/10 rounded-lg transition-colors">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Crown className={profile.isPremium ? "text-yellow-500" : "text-muted-foreground"} />
+              <div>
+                <h2 className="text-xl font-semibold">Abonnement</h2>
+                <p className="text-sm text-muted-foreground">
+                  {profile.isPremium ? "Premium" : "Gratuit"}
+                </p>
+              </div>
+            </div>
+            {!profile.isPremium && (
+              <Button variant="default" onClick={() => {
+                toast({
+                  title: "Bientôt disponible",
+                  description: "L'abonnement premium sera bientôt disponible !",
+                });
+              }}>
+                Passer Premium
+              </Button>
+            )}
+          </div>
+        </div>
+
         <Link to="/training-preferences">
           <div className="p-6 hover:bg-accent/10 rounded-lg transition-colors">
             <div className="flex items-center justify-between">
