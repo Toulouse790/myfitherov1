@@ -9,7 +9,7 @@ export const DifficultyBadges = ({
   selectedDifficulties,
   onDifficultyChange,
 }: DifficultyBadgesProps) => {
-  const difficulties = ["beginner", "intermediate", "advanced", "expert"];
+  const difficulties = ["débutant", "intermédiaire", "avancé", "expert"];
 
   return (
     <div className="flex gap-2 flex-wrap flex-1">
