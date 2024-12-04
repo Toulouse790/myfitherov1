@@ -1,27 +1,16 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ExerciseTableContent } from "./ExerciseTableContent";
 
-interface Location {
-  id: string;
-  name: string;
-}
-
-interface Difficulty {
-  id: string;
-  name: string;
-}
-
-const locations: Location[] = [
+const locations = [
   { id: "gym", name: "Salle" },
   { id: "home", name: "Maison" },
   { id: "outdoor", name: "Extérieur" }
 ];
 
-const difficulties: Difficulty[] = [
+const difficulties = [
   { id: "beginner", name: "Débutant" },
   { id: "intermediate", name: "Intermédiaire" },
   { id: "advanced", name: "Avancé" }
@@ -30,8 +19,6 @@ const difficulties: Difficulty[] = [
 export const ExerciseTable = () => {
   const { toast } = useToast();
   const [exercises, setExercises] = useState<any[]>([]);
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -143,60 +130,13 @@ export const ExerciseTable = () => {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Liste des exercices ({exercises.length})</h3>
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Nom</th>
-                  <th className="text-left p-2">Groupe musculaire</th>
-                  <th className="text-left p-2">Lieux d'entraînement</th>
-                  <th className="text-left p-2">Niveaux de difficulté</th>
-                </tr>
-              </thead>
-              <tbody>
-                {exercises.map((exercise) => (
-                  <tr key={exercise.id} className="border-b">
-                    <td className="p-2">{exercise.name}</td>
-                    <td className="p-2">{exercise.muscle_group}</td>
-                    <td className="p-2">
-                      <div className="flex gap-4">
-                        {locations.map((location) => (
-                          <div key={location.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`${exercise.id}-${location.id}`}
-                              checked={(exercise.location || []).includes(location.id)}
-                              onCheckedChange={(checked) => 
-                                handleLocationChange(exercise.id, location.id, checked as boolean)
-                              }
-                            />
-                            <Label htmlFor={`${exercise.id}-${location.id}`}>
-                              {location.name}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="p-2">
-                      <div className="flex gap-4">
-                        {difficulties.map((difficulty) => (
-                          <div key={difficulty.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`${exercise.id}-${difficulty.id}`}
-                              checked={(exercise.difficulty || []).includes(difficulty.id)}
-                              onCheckedChange={(checked) =>
-                                handleDifficultyChange(exercise.id, difficulty.id, checked as boolean)
-                              }
-                            />
-                            <Label htmlFor={`${exercise.id}-${difficulty.id}`}>
-                              {difficulty.name}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <ExerciseTableContent
+              exercises={exercises}
+              locations={locations}
+              difficulties={difficulties}
+              onLocationChange={handleLocationChange}
+              onDifficultyChange={handleDifficultyChange}
+            />
           </div>
         </div>
       </Card>
