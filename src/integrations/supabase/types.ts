@@ -252,7 +252,9 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          level: number | null
           meal_notifications: boolean | null
+          points: number | null
           reminder_time: number | null
           updated_at: string
           username: string | null
@@ -260,7 +262,9 @@ export type Database = {
         Insert: {
           created_at?: string
           id: string
+          level?: number | null
           meal_notifications?: boolean | null
+          points?: number | null
           reminder_time?: number | null
           updated_at?: string
           username?: string | null
@@ -268,7 +272,9 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          level?: number | null
           meal_notifications?: boolean | null
+          points?: number | null
           reminder_time?: number | null
           updated_at?: string
           username?: string | null
