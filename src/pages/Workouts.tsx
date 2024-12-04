@@ -1,61 +1,9 @@
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { WorkoutList } from "@/components/Workouts/WorkoutList";
-import { WorkoutFilters } from "@/components/Workouts/WorkoutFilters";
-import { workouts as initialWorkouts } from "@/components/Workouts/workoutConstants";
-import { useState } from "react";
-import { BottomNav } from "@/components/Layout/BottomNav";
+import { ExerciseList } from "@/components/Workouts/WorkoutSession";
 
-const Workouts = () => {
-  const navigate = useNavigate();
-  const [muscleGroup, setMuscleGroup] = useState("");
-  const [difficulty, setDifficulty] = useState("");
-  const [location, setLocation] = useState("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [workouts, setWorkouts] = useState(initialWorkouts);
-
-  const handleBack = () => {
-    navigate("/");
-  };
-
+export const Workouts = () => {
   return (
-    <div className="container mx-auto px-4 pt-24 pb-24">
-      <div className="flex items-center justify-between mb-6">
-        <Button 
-          variant="ghost" 
-          onClick={handleBack}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Retour
-        </Button>
-      </div>
-
-      <WorkoutFilters
-        muscleGroup={muscleGroup}
-        difficulty={difficulty}
-        location={location}
-        sortOrder={sortOrder}
-        onMuscleGroupChange={setMuscleGroup}
-        onDifficultyChange={setDifficulty}
-        onLocationChange={setLocation}
-        onSortOrderChange={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
-        onReset={() => {
-          setMuscleGroup("");
-          setDifficulty("");
-          setLocation("");
-          setSortOrder("asc");
-          setWorkouts(initialWorkouts);
-        }}
-      />
-
-      <div className="mt-6">
-        <WorkoutList workouts={workouts} />
-      </div>
-
-      <BottomNav />
+    <div className="min-h-screen bg-background">
+      <ExerciseList />
     </div>
   );
 };
-
-export default Workouts;
