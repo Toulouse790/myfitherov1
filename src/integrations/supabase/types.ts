@@ -91,6 +91,33 @@ export type Database = {
           },
         ]
       }
+      cardio_exercises: {
+        Row: {
+          calories_formula: string
+          created_at: string
+          id: string
+          name: string
+          parameters: Json
+          type: string
+        }
+        Insert: {
+          calories_formula: string
+          created_at?: string
+          id?: string
+          name: string
+          parameters: Json
+          type: string
+        }
+        Update: {
+          calories_formula?: string
+          created_at?: string
+          id?: string
+          name?: string
+          parameters?: Json
+          type?: string
+        }
+        Relationships: []
+      }
       exercise_media: {
         Row: {
           created_at: string
