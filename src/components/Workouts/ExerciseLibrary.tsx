@@ -17,6 +17,8 @@ export const ExerciseLibrary = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showExerciseSelection, setShowExerciseSelection] = useState(false);
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
+  const [selectedMuscleExercises, setSelectedMuscleExercises] = useState(exercises);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -32,7 +34,7 @@ export const ExerciseLibrary = () => {
   };
 
   const handleMuscleGroupClick = (muscleId: string) => {
-    if (muscleId === muscleGroup) {
+    if (muscleId === selectedMuscleGroup) {
       const filteredExercises = exercises.filter(ex => {
         if (muscleId === "fullBody") return true;
         return ex.muscleGroup === muscleId;
@@ -40,7 +42,7 @@ export const ExerciseLibrary = () => {
       setSelectedMuscleExercises(filteredExercises);
       setShowExerciseSelection(true);
     } else {
-      onMuscleGroupChange(muscleId);
+      setSelectedMuscleGroup(muscleId);
     }
   };
 
