@@ -1,14 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { WorkoutTimer } from "./WorkoutTimer";
-import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
 import { supabase } from "@/integrations/supabase/client";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
-import { ExerciseSets } from "./ExerciseSets";
 import { useToast } from "@/hooks/use-toast";
-import { Dumbbell, Timer, Flame } from "lucide-react";
+import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
+import { ExercisePreview } from "./NextWorkoutDetail/ExercisePreview";
+import { StartWorkoutButton } from "./NextWorkoutDetail/StartWorkoutButton";
+import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
 
 const SAMPLE_EXERCISES = [
   "Rowing avec Haltères",
@@ -121,23 +120,7 @@ export const NextWorkoutDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container max-w-2xl mx-auto px-4 py-8 space-y-8">
-        <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold">Dos, Biceps & Épaules</h1>
-          <div className="flex justify-center gap-6">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Timer className="w-5 h-5" />
-              <span>61 mins</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Dumbbell className="w-5 h-5" />
-              <span>8 exercices</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Flame className="w-5 h-5" />
-              <span>~350 kcal</span>
-            </div>
-          </div>
-        </div>
+        <WorkoutHeader />
 
         {!isWorkoutStarted ? (
           <div className="space-y-8">
@@ -146,62 +129,21 @@ export const NextWorkoutDetail = () => {
                 <h2 className="text-xl font-semibold">Exercices prévus</h2>
                 <div className="grid gap-4">
                   {SAMPLE_EXERCISES.map((exercise, index) => (
-                    <div 
-                      key={index}
-                      className="p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Dumbbell className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{exercise}</h3>
-                          <p className="text-sm text-muted-foreground">3 séries • 12 répétitions</p>
-                        </div>
-                      </div>
-                    </div>
+                    <ExercisePreview key={index} exercise={exercise} />
                   ))}
                 </div>
               </div>
             </Card>
             
-            <div className="flex justify-center">
-              <Button 
-                className="w-64 bg-gradient-to-r from-primary to-primary hover:opacity-90 transform transition-all duration-300 text-primary-foreground font-bold py-6 text-xl rounded-full shadow-lg hover:shadow-xl"
-                onClick={handleStartWorkout}
-              >
-                🔥 C'EST PARTI ! 💪
-              </Button>
-            </div>
+            <StartWorkoutButton onClick={handleStartWorkout} />
           </div>
         ) : (
-          <Card className="border">
-            <div className="p-4 space-y-6">
-              {currentExerciseIndex !== null && (
-                <ExerciseSets
-                  exerciseName={SAMPLE_EXERCISES[currentExerciseIndex]}
-                />
-              )}
-              <ExerciseList
-                exercises={SAMPLE_EXERCISES}
-                currentExerciseIndex={currentExerciseIndex}
-                isWorkoutStarted={isWorkoutStarted}
-                onExerciseClick={handleExerciseClick}
-              />
-            </div>
-          </Card>
-        )}
-
-        {isWorkoutStarted && (
-          <div className="fixed bottom-8 left-0 right-0 px-4">
-            <Button 
-              variant="destructive"
-              onClick={handleEndWorkout}
-              className="w-full max-w-2xl mx-auto"
-            >
-              Terminer l'entraînement
-            </Button>
-          </div>
+          <WorkoutInProgress
+            exercises={SAMPLE_EXERCISES}
+            currentExerciseIndex={currentExerciseIndex}
+            onExerciseClick={handleExerciseClick}
+            onEndWorkout={handleEndWorkout}
+          />
         )}
       </div>
 
