@@ -12,11 +12,11 @@ const Index = () => {
   useWelcomeToast();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col items-center">
       <Header />
       
-      <main className="container max-w-4xl mx-auto px-4 pt-16 pb-20">
-        <div className="mb-6">
+      <main className="w-full max-w-4xl mx-auto px-4 pt-16 pb-20">
+        <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-black">
             Tableau de bord
           </h1>
