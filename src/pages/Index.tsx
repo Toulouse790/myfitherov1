@@ -17,7 +17,7 @@ const Index = () => {
       
       <main className="container max-w-4xl mx-auto px-4 pt-16 pb-20">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-foreground">
+          <h1 className="text-2xl font-bold text-black">
             Tableau de bord
           </h1>
           <p className="text-sm bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent font-medium">
