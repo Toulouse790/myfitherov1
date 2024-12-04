@@ -10,7 +10,6 @@ interface MuscleGroupGridProps {
 }
 
 export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroupGridProps) => {
-  const [clickTimeout, setClickTimeout] = useState<NodeJS.Timeout | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const filteredMuscleGroups = muscleGroups.filter(group => 
@@ -18,20 +17,8 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   );
 
   const handleClick = (muscleId: string) => {
-    if (clickTimeout) {
-      // Double click detected
-      clearTimeout(clickTimeout);
-      setClickTimeout(null);
-      onMuscleGroupClick(muscleId);
-      setSelectedId(muscleId);
-    } else {
-      // First click - wait to see if double click follows
-      const timeout = setTimeout(() => {
-        setSelectedId(muscleId);
-        setClickTimeout(null);
-      }, 250); // Adjust this value to change double-click sensitivity
-      setClickTimeout(timeout);
-    }
+    setSelectedId(muscleId);
+    onMuscleGroupClick(muscleId);
   };
 
   return (
