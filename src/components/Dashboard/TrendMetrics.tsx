@@ -53,7 +53,7 @@ export const TrendMetrics = () => {
       history: stats || { daily: [], weekly: [], monthly: [] }
     },
     { 
-      label: "Volume", 
+      label: "Volume total", 
       value: "31 209", 
       color: "text-cyan-400",
       unit: "kg",
