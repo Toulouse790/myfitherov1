@@ -1,158 +1,139 @@
-import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
-import { ExercisePreview } from "./NextWorkoutDetail/ExercisePreview";
-import { StartWorkoutButton } from "./NextWorkoutDetail/StartWorkoutButton";
+import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
 import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
-
-const SAMPLE_EXERCISES = [
-  "Rowing avec Haltères",
-  "Tirage à la poulie barre en V",
-  "Curl Biceps aux Haltères",
-  "Développé Militaire"
-];
+import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
+import { Button } from "@/components/ui/button";
+import { Timer } from "lucide-react";
 
 export const NextWorkoutDetail = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
-  const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
-  const [showEndWorkoutDialog, setShowEndWorkoutDialog] = useState(false);
-  const startTimeRef = useRef<Date | null>(null);
-  const [workoutStats, setWorkoutStats] = useState({
-    duration: 0,
-    totalWeight: 0,
-    totalCalories: 0
-  });
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isCardio, setIsCardio] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   useEffect(() => {
-    if (isWorkoutStarted && !startTimeRef.current) {
-      startTimeRef.current = new Date();
+    const params = new URLSearchParams(location.search);
+    const session = params.get("session");
+    if (session) {
+      setSessionId(session);
+      checkSessionType(session);
     }
-  }, [isWorkoutStarted]);
+  }, [location]);
 
-  const handleStartWorkout = async () => {
+  const checkSessionType = async (sessionId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté pour commencer un entraînement",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const { error } = await supabase
+      const { data: session } = await supabase
         .from('workout_sessions')
-        .insert([{ user_id: user.id }]);
+        .select('type')
+        .eq('id', sessionId)
+        .single();
 
-      if (error) throw error;
-      
-      setIsWorkoutStarted(true);
-      setCurrentExerciseIndex(0);
-      startTimeRef.current = new Date();
-      
-      toast({
-        title: "C'est parti !",
-        description: "Votre séance d'entraînement a commencé.",
-      });
+      if (session?.type === 'cardio') {
+        setIsCardio(true);
+      }
     } catch (error) {
-      console.error('Error starting workout:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du démarrage de l'entraînement",
-        variant: "destructive",
-      });
+      console.error('Error checking session type:', error);
     }
   };
 
-  const handleExerciseClick = (index: number) => {
-    if (!isWorkoutStarted) return;
-    setCurrentExerciseIndex(index);
-  };
-
-  const handleEndWorkout = () => {
-    if (startTimeRef.current) {
-      const endTime = new Date();
-      const durationInSeconds = Math.floor((endTime.getTime() - startTimeRef.current.getTime()) / 1000);
-      setWorkoutStats({
-        duration: durationInSeconds,
-        totalWeight: 1250,
-        totalCalories: 350,
-      });
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setDuration(prev => prev + 1);
+      }, 1000);
     }
-    setShowEndWorkoutDialog(true);
-  };
+    return () => clearInterval(interval);
+  }, [isRunning]);
 
-  const confirmEndWorkout = async () => {
+  const handleFinishCardio = async () => {
+    if (!sessionId) return;
+
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      await supabase
+        .from('training_stats')
+        .insert([
+          {
+            session_id: sessionId,
+            duration_minutes: Math.round(duration / 60),
+            total_sets: 1,
+            total_reps: 1,
+            total_weight: 0,
+            muscle_groups_worked: ['cardio']
+          }
+        ]);
 
-      const { error } = await supabase
+      await supabase
         .from('workout_sessions')
         .update({ status: 'completed' })
-        .eq('user_id', user.id)
-        .eq('status', 'in_progress');
-
-      if (error) throw error;
+        .eq('id', sessionId);
 
       toast({
-        title: "Entraînement terminé",
-        description: "Votre séance a été enregistrée avec succès.",
+        title: "Séance de cardio terminée",
+        description: `Durée: ${Math.round(duration / 60)} minutes`,
       });
-      navigate(-1);
+
+      navigate('/workouts');
     } catch (error) {
-      console.error('Error completing workout:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de la finalisation de l'entraînement",
+        description: "Impossible d'enregistrer la séance de cardio",
         variant: "destructive",
       });
     }
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-2xl mx-auto px-4 py-8 space-y-8">
-        <WorkoutHeader />
-
-        {!isWorkoutStarted ? (
-          <div className="space-y-8">
-            <Card className="border p-6">
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold">Exercices prévus</h2>
-                <div className="grid gap-4">
-                  {SAMPLE_EXERCISES.map((exercise, index) => (
-                    <ExercisePreview key={index} exercise={exercise} />
-                  ))}
-                </div>
-              </div>
-            </Card>
-            
-            <StartWorkoutButton onClick={handleStartWorkout} />
+  if (isCardio) {
+    return (
+      <div className="container max-w-4xl mx-auto p-4 space-y-8">
+        <WorkoutHeader title="Séance de Cardio" />
+        
+        <div className="p-6 bg-card rounded-lg border shadow-sm space-y-6">
+          <div className="text-center space-y-2">
+            <div className="text-4xl font-bold">
+              {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
+            </div>
+            <p className="text-muted-foreground">Durée de la séance</p>
           </div>
-        ) : (
-          <WorkoutInProgress
-            exercises={SAMPLE_EXERCISES}
-            currentExerciseIndex={currentExerciseIndex}
-            onExerciseClick={handleExerciseClick}
-            onEndWorkout={handleEndWorkout}
-          />
-        )}
-      </div>
 
-      <WorkoutSummaryDialog
-        open={showEndWorkoutDialog}
-        onOpenChange={setShowEndWorkoutDialog}
-        stats={workoutStats}
-        onConfirm={confirmEndWorkout}
-      />
+          <div className="flex justify-center gap-4">
+            <Button
+              variant={isRunning ? "destructive" : "default"}
+              onClick={() => setIsRunning(!isRunning)}
+              className="w-32"
+            >
+              <Timer className="mr-2 h-4 w-4" />
+              {isRunning ? "Pause" : "Démarrer"}
+            </Button>
+            
+            <Button
+              variant="default"
+              onClick={handleFinishCardio}
+              className="w-32"
+              disabled={duration === 0}
+            >
+              Terminer
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container max-w-4xl mx-auto p-4 space-y-8">
+      <WorkoutHeader />
+      <ExerciseList />
+      <WorkoutInProgress />
+      <WorkoutSummaryDialog open={showSummary} onOpenChange={setShowSummary} />
     </div>
   );
 };

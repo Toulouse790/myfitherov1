@@ -434,6 +434,7 @@ export type Database = {
           id: string
           started_at: string | null
           status: string | null
+          type: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -442,6 +443,7 @@ export type Database = {
           id?: string
           started_at?: string | null
           status?: string | null
+          type?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -450,6 +452,7 @@ export type Database = {
           id?: string
           started_at?: string | null
           status?: string | null
+          type?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
