@@ -1,30 +1,11 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
-interface MeasurementFormData {
-  chest_cm: string;
-  biceps_left_cm: string;
-  biceps_right_cm: string;
-  forearm_left_cm: string;
-  forearm_right_cm: string;
-  waist_cm: string;
-  hips_cm: string;
-  thigh_left_cm: string;
-  thigh_right_cm: string;
-  calf_left_cm: string;
-  calf_right_cm: string;
-}
-
-interface MeasurementHistory {
-  measurement_date: string;
-  [key: string]: any;
-}
+import { MeasurementForm } from "./MeasurementForm";
+import { MeasurementChart } from "./MeasurementChart";
+import { MeasurementFormData, MeasurementHistory } from "./types";
 
 export const MeasurementsDialog = () => {
   const [open, setOpen] = useState(false);
@@ -103,20 +84,6 @@ export const MeasurementsDialog = () => {
     setOpen(false);
   };
 
-  const measurementLabels: Record<string, string> = {
-    chest_cm: "Poitrine",
-    biceps_left_cm: "Biceps gauche",
-    biceps_right_cm: "Biceps droit",
-    forearm_left_cm: "Avant-bras gauche",
-    forearm_right_cm: "Avant-bras droit",
-    waist_cm: "Tour de taille",
-    hips_cm: "Hanches",
-    thigh_left_cm: "Cuisse gauche",
-    thigh_right_cm: "Cuisse droite",
-    calf_left_cm: "Mollet gauche",
-    calf_right_cm: "Mollet droit",
-  };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -135,63 +102,16 @@ export const MeasurementsDialog = () => {
           <DialogTitle>Mes mensurations</DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-2 gap-4 py-4">
-          {Object.entries(measurementLabels).map(([key, label]) => (
-            <div key={key} className="space-y-2">
-              <Label htmlFor={key}>{label}</Label>
-              <Input
-                id={key}
-                type="number"
-                step="0.1"
-                value={measurements[key as keyof MeasurementFormData]}
-                onChange={(e) => setMeasurements(prev => ({
-                  ...prev,
-                  [key]: e.target.value
-                }))}
-                placeholder="0.0"
-              />
-            </div>
-          ))}
-        </div>
+        <MeasurementForm 
+          measurements={measurements}
+          setMeasurements={setMeasurements}
+        />
 
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <Label>Évolution</Label>
-            <select 
-              value={selectedMeasure}
-              onChange={(e) => setSelectedMeasure(e.target.value)}
-              className="p-2 border rounded-md"
-            >
-              {Object.entries(measurementLabels).map(([key, label]) => (
-                <option key={key} value={key}>{label}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="h-[200px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={history}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="measurement_date" 
-                  tickFormatter={(value) => new Date(value).toLocaleDateString()}
-                />
-                <YAxis />
-                <Tooltip 
-                  labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                  formatter={(value) => [`${value} cm`, measurementLabels[selectedMeasure]]}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey={selectedMeasure} 
-                  stroke="#2563eb" 
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        <MeasurementChart 
+          history={history}
+          selectedMeasure={selectedMeasure}
+          setSelectedMeasure={setSelectedMeasure}
+        />
 
         <div className="flex justify-end gap-4 mt-4">
           <Button variant="outline" onClick={() => setOpen(false)}>
