@@ -103,10 +103,6 @@ export const NextWorkoutDetail = () => {
     setCurrentExerciseIndex(index);
   };
 
-  const handleEndWorkout = () => {
-    setShowSummary(true);
-  };
-
   const handleConfirmEndWorkout = async () => {
     navigate('/workouts');
   };
