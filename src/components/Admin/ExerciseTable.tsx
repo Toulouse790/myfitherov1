@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -32,6 +32,34 @@ export const ExerciseTable = () => {
   const [exercises, setExercises] = useState<any[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchExercises();
+  }, []);
+
+  const fetchExercises = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('exercises')
+        .select('*')
+        .order('muscle_group', { ascending: true });
+
+      if (error) throw error;
+
+      setExercises(data || []);
+    } catch (error) {
+      console.error('Error fetching exercises:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les exercices",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLocationChange = async (exerciseId: string, location: string, checked: boolean) => {
     try {
@@ -101,11 +129,19 @@ export const ExerciseTable = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <Card className="p-6">
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Liste des exercices</h3>
+          <h3 className="text-lg font-semibold">Liste des exercices ({exercises.length})</h3>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
