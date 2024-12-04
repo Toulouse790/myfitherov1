@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { exercises } from "./exerciseLibrary";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { FloatingWorkoutButton } from "./FloatingWorkoutButton";
@@ -14,7 +13,6 @@ export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showExerciseSelection, setShowExerciseSelection] = useState(false);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
-  const [selectedMuscleExercises, setSelectedMuscleExercises] = useState(exercises);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -26,16 +24,8 @@ export const ExerciseLibrary = () => {
   };
 
   const handleMuscleGroupClick = (muscleId: string) => {
-    if (muscleId === selectedMuscleGroup) {
-      const filteredExercises = exercises.filter(ex => {
-        if (muscleId === "fullBody") return true;
-        return ex.muscleGroup === muscleId;
-      });
-      setSelectedMuscleExercises(filteredExercises);
-      setShowExerciseSelection(true);
-    } else {
-      setSelectedMuscleGroup(muscleId);
-    }
+    setSelectedMuscleGroup(muscleId);
+    setShowExerciseSelection(true);
   };
 
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
@@ -64,10 +54,11 @@ export const ExerciseLibrary = () => {
             <DialogTitle>Sélectionner des exercices</DialogTitle>
           </DialogHeader>
           <ExerciseSelection
-            exercises={selectedMuscleExercises}
+            exercises={[]}
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelectionChange}
             onClose={() => setShowExerciseSelection(false)}
+            muscleGroup={selectedMuscleGroup}
           />
         </DialogContent>
       </Dialog>

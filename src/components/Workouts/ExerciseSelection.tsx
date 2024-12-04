@@ -1,27 +1,63 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Exercise } from "./exerciseLibrary";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ExerciseSelectionProps {
-  exercises: Exercise[];
+  exercises: any[];
   selectedExercises: string[];
   onSelectionChange: (selectedIds: string[]) => void;
   onClose: () => void;
+  muscleGroup?: string;
 }
 
 export const ExerciseSelection = ({ 
-  exercises, 
   selectedExercises,
   onSelectionChange,
-  onClose 
+  onClose,
+  muscleGroup 
 }: ExerciseSelectionProps) => {
   const [workoutName, setWorkoutName] = useState("");
+  const [exercises, setExercises] = useState<any[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchExercises = async () => {
+      try {
+        let query = supabase
+          .from('exercise_media')
+          .select('*')
+          .eq('media_type', 'image');
+
+        if (muscleGroup) {
+          if (muscleGroup === "biceps" || muscleGroup === "triceps") {
+            query = query.or(`exercise_name.ilike.%${muscleGroup}%`);
+          } else {
+            query = query.ilike('exercise_name', `%${muscleGroup}%`);
+          }
+        }
+
+        const { data, error } = await query;
+
+        if (error) throw error;
+
+        setExercises(data || []);
+      } catch (error) {
+        console.error('Error fetching exercises:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les exercices",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchExercises();
+  }, [muscleGroup, toast]);
 
   const handleExerciseToggle = (exerciseId: string) => {
     const newSelection = selectedExercises.includes(exerciseId)
@@ -35,7 +71,7 @@ export const ExerciseSelection = ({
     if (!workoutName.trim()) {
       toast({
         title: "Nom du programme manquant",
-        description: "Veuillez donner un nom à votre programme d'entraînement pour pouvoir le sauvegarder",
+        description: "Veuillez donner un nom à votre programme d'entraînement",
         variant: "destructive",
       });
       return;
@@ -44,29 +80,15 @@ export const ExerciseSelection = ({
     if (selectedExercises.length === 0) {
       toast({
         title: "Aucun exercice sélectionné",
-        description: "Veuillez sélectionner au moins un exercice pour créer votre programme d'entraînement",
+        description: "Veuillez sélectionner au moins un exercice",
         variant: "destructive",
       });
       return;
     }
 
-    const userPreferences = JSON.parse(localStorage.getItem("userPreferences") || "{}");
-    const workoutDuration = userPreferences.workoutDuration || "45";
-
-    const workout = {
-      id: Date.now().toString(),
-      name: workoutName,
-      exercises: selectedExercises,
-      duration: parseInt(workoutDuration),
-      createdAt: new Date().toISOString(),
-    };
-
-    const savedWorkouts = JSON.parse(localStorage.getItem("savedWorkouts") || "[]");
-    localStorage.setItem("savedWorkouts", JSON.stringify([...savedWorkouts, workout]));
-
     toast({
-      title: "Programme sauvegardé avec succès",
-      description: "Votre programme d'entraînement personnalisé a été sauvegardé et est prêt à être utilisé",
+      title: "Programme sauvegardé",
+      description: "Votre programme d'entraînement a été sauvegardé",
     });
 
     onClose();
@@ -101,21 +123,20 @@ export const ExerciseSelection = ({
                       htmlFor={exercise.id}
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      {exercise.name}
+                      {exercise.exercise_name}
                     </label>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {exercise.image && (
+                  {exercise.media_url && (
                     <div className="relative aspect-video mb-2 rounded-md overflow-hidden">
                       <img
-                        src={exercise.image}
-                        alt={`Démonstration de l'exercice ${exercise.name}`}
+                        src={exercise.media_url}
+                        alt={`Démonstration de l'exercice ${exercise.exercise_name}`}
                         className="object-cover w-full h-full"
                       />
                     </div>
                   )}
-                  <p className="text-sm text-muted-foreground">{exercise.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -124,10 +145,10 @@ export const ExerciseSelection = ({
       </div>
       <div className="flex justify-end space-x-4">
         <Button variant="outline" onClick={onClose}>
-          Annuler la création
+          Annuler
         </Button>
         <Button onClick={handleSaveWorkout}>
-          Sauvegarder le programme complet
+          Sauvegarder le programme
         </Button>
       </div>
     </div>
