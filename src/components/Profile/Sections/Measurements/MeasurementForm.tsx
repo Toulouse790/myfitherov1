@@ -17,6 +17,7 @@ export const MeasurementForm = ({ measurements, setMeasurements }: MeasurementFo
           <Input
             id={key}
             type="number"
+            inputMode="numeric"
             step="0.1"
             value={measurements[key as keyof MeasurementFormData]}
             onChange={(e) => setMeasurements({
