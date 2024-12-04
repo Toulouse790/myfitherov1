@@ -2,9 +2,41 @@ import { useState } from "react";
 import { Sparkles, Activity, Bookmark } from "lucide-react";
 import { WorkoutCard } from "./WorkoutCard";
 import { GenerateWorkoutDialog } from "./GenerateWorkoutDialog";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export const WorkoutSuggestions = () => {
   const [showDialog, setShowDialog] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleStartCardio = async () => {
+    try {
+      const { data: session, error: sessionError } = await supabase
+        .from('workout_sessions')
+        .insert([
+          { status: 'in_progress', type: 'cardio' }
+        ])
+        .select()
+        .single();
+
+      if (sessionError) throw sessionError;
+
+      toast({
+        title: "Séance de cardio démarrée",
+        description: "Vous pouvez maintenant enregistrer votre activité cardio",
+      });
+
+      navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de démarrer la séance de cardio",
+        variant: "destructive",
+      });
+    }
+  };
 
   const suggestions = [
     {
@@ -16,7 +48,8 @@ export const WorkoutSuggestions = () => {
     {
       title: "Cardio",
       description: "Enregistrer une séance de cardio",
-      icon: <Activity className="w-5 h-5 text-white" />
+      icon: <Activity className="w-5 h-5 text-white" />,
+      onClick: handleStartCardio
     },
     {
       title: "Favoris",
