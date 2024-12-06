@@ -2,9 +2,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DayMeals } from "./DayMeals";
 import { defaultMeals } from "@/data/meals/mealPlanGenerator";
+import { MealPlan } from "@/data/meals/types";
 
 interface GeneratedPlanDisplayProps {
-  generatedPlan: any;
+  generatedPlan: MealPlan[];
   durationDays: string;
 }
 
@@ -25,8 +26,8 @@ export const GeneratedPlanDisplay = ({
   if (!generatedPlan) return null;
 
   // Calculate total carbs for each day's meals
-  const calculateDayTotalCarbs = (meals: any) => {
-    return Object.values(meals).reduce((total: number, meal: any) => {
+  const calculateDayTotalCarbs = (meals: Record<string, { carbs: number }>) => {
+    return Object.values(meals).reduce((total: number, meal) => {
       return total + (meal.carbs || 0);
     }, 0);
   };
@@ -45,7 +46,7 @@ export const GeneratedPlanDisplay = ({
               </TabsTrigger>
             ))}
           </TabsList>
-          {generatedPlan.map((day: any, index: number) => {
+          {generatedPlan.map((day, index) => {
             const totalCarbs = calculateDayTotalCarbs(day.meals);
             const carbsTarget = day.carbsTarget || 250; // Default target if not provided
 
