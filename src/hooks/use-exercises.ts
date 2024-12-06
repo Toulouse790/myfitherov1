@@ -20,7 +20,8 @@ export const useExercises = (exerciseIds?: string[]) => {
 
         let query = supabase
           .from('exercises')
-          .select('id, name');
+          .select('id, name')
+          .eq('is_published', true);
         
         if (exerciseIds && exerciseIds.length > 0) {
           query = query.in('id', exerciseIds);
