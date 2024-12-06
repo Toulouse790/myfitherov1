@@ -3,6 +3,7 @@ import { WorkoutCard } from "./WorkoutCard";
 import { WorkoutData } from "./workoutConstants";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface WorkoutListProps {
   workouts: WorkoutData[];
@@ -11,13 +12,27 @@ interface WorkoutListProps {
 export const WorkoutList = ({ workouts }: WorkoutListProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleWorkoutClick = async (workout: WorkoutData) => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour créer une séance",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
-          { type: 'strength', status: 'in_progress' }
+          { 
+            user_id: user.id,
+            type: 'strength', 
+            status: 'in_progress' 
+          }
         ])
         .select()
         .single();
