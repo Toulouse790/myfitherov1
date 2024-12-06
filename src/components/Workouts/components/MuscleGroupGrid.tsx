@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dumbbell, ChevronRight, CheckSquare } from "lucide-react";
+import { Dumbbell, ChevronRight } from "lucide-react";
 import { muscleGroups } from "../workoutConstants";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,15 +86,6 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
             </div>
             <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0" />
           </div>
-          {getMuscleGroupCount(muscle.id) > 0 && (
-            <Badge 
-              className="absolute top-2 right-2 bg-primary text-xs"
-              variant="secondary"
-            >
-              <CheckSquare className="h-3 w-3 mr-1" />
-              {getMuscleGroupCount(muscle.id)}
-            </Badge>
-          )}
         </Card>
       ))}
     </div>
