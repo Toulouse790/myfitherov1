@@ -44,8 +44,9 @@ export const NextWorkoutDetail = () => {
   };
 
   const onConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
-    await handleConfirmEndWorkout(difficulty);
-    navigate('/'); // Redirection vers la page d'accueil
+    await handleConfirmEndWorkout();
+    setShowSummary(false);
+    navigate('/');
   };
 
   if (!user) return null;
