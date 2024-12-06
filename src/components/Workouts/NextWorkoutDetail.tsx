@@ -8,7 +8,7 @@ import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Play, Pause, Timer } from "lucide-react";
-import { formatWorkoutTime } from "./WorkoutTimer";
+import { formatWorkoutTime } from "@/utils/time";
 
 export const NextWorkoutDetail = () => {
   const {
@@ -168,4 +168,3 @@ export const NextWorkoutDetail = () => {
     </div>
   );
 };
-
