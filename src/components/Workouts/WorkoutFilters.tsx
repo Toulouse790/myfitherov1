@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ExerciseSelection } from "./ExerciseSelection";
-import { exercises } from "./exerciseLibrary";
 import { muscleGroups } from "./workoutConstants";
 import { MuscleGroupCard } from "./filters/MuscleGroupCard";
 import { FilterControlsGroup } from "./components/FilterControlsGroup";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { filterExercisesByMuscleGroup, checkExerciseMatch } from "./utils/exerciseFilters";
 
 interface WorkoutFiltersProps {
   muscleGroup: string;
@@ -32,13 +30,12 @@ export const WorkoutFilters = ({
   onReset,
 }: WorkoutFiltersProps) => {
   const [showExerciseSelection, setShowExerciseSelection] = useState(false);
-  const [selectedMuscleExercises, setSelectedMuscleExercises] = useState<typeof exercises>([]);
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
   const [selectedExercises, setSelectedExercises] = useLocalStorage<string[]>("selectedExercises", []);
 
   const handleMuscleGroupClick = (muscleId: string) => {
     if (muscleId === muscleGroup) {
-      const filteredExercises = filterExercisesByMuscleGroup(exercises, muscleId);
-      setSelectedMuscleExercises(filteredExercises);
+      setSelectedMuscleGroup(muscleId);
       setShowExerciseSelection(true);
     } else {
       onMuscleGroupChange(muscleId);
@@ -46,10 +43,7 @@ export const WorkoutFilters = ({
   };
 
   const getSelectedExercisesCount = (muscleId: string): number => {
-    return exercises.filter(ex => {
-      const matches = checkExerciseMatch(ex, muscleId);
-      return matches && selectedExercises.includes(ex.id);
-    }).length;
+    return selectedExercises.length;
   };
 
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
@@ -86,10 +80,10 @@ export const WorkoutFilters = ({
       <Dialog open={showExerciseSelection} onOpenChange={setShowExerciseSelection}>
         <DialogContent className="sm:max-w-[800px]">
           <ExerciseSelection
-            exercises={selectedMuscleExercises}
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelectionChange}
             onClose={() => setShowExerciseSelection(false)}
+            muscleGroup={selectedMuscleGroup}
           />
         </DialogContent>
       </Dialog>

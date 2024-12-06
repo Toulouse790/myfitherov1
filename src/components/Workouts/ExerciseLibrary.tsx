@@ -53,7 +53,6 @@ export const ExerciseLibrary = () => {
     setSelectedExercises(selectedIds);
     
     try {
-      // Créer une nouvelle session d'entraînement
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
@@ -69,7 +68,6 @@ export const ExerciseLibrary = () => {
         description: `${selectedIds.length} exercices ajoutés à votre séance`,
       });
 
-      // Rediriger vers la page de la séance
       if (session) {
         navigate(`/workouts/exercise/next-workout?session=${session.id}`);
       }
@@ -114,7 +112,6 @@ export const ExerciseLibrary = () => {
             <DialogTitle>Sélectionner des exercices</DialogTitle>
           </DialogHeader>
           <ExerciseSelection
-            exercises={[]}
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelectionChange}
             onClose={() => setShowExerciseSelection(false)}

@@ -1,14 +1,16 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 
+interface Exercise {
+  id: string;
+  name: string;
+  media_url?: string | null;
+}
+
 interface ExerciseCardProps {
-  exercise: {
-    id: string;
-    name: string;
-    media_url: string | null;
-  };
+  exercise: Exercise;
   isSelected: boolean;
-  onToggle: (exerciseId: string) => void;
+  onToggle: () => void;
 }
 
 export const ExerciseCard = ({ exercise, isSelected, onToggle }: ExerciseCardProps) => {
@@ -19,7 +21,7 @@ export const ExerciseCard = ({ exercise, isSelected, onToggle }: ExerciseCardPro
           <Checkbox
             id={exercise.id}
             checked={isSelected}
-            onCheckedChange={() => onToggle(exercise.id)}
+            onCheckedChange={onToggle}
           />
           <label
             htmlFor={exercise.id}

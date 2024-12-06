@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Layout/Header";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
-import { exercises } from "@/components/Workouts/exerciseLibrary";
 import { useToast } from "@/hooks/use-toast";
 
 export const Workouts = () => {
@@ -68,10 +67,10 @@ export const Workouts = () => {
 
         {showSelection ? (
           <ExerciseSelection
-            exercises={exercises}
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelection}
             onClose={() => setShowSelection(false)}
+            muscleGroup=""
           />
         ) : (
           <ExerciseLibrary />
