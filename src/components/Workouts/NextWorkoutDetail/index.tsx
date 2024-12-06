@@ -34,13 +34,13 @@ export const NextWorkoutDetail = () => {
     : 0;
 
   const handleStartWorkout = () => {
-    setIsRunning(true);
+    setIsRunning(true); // Start the timer
     handleExerciseClick(0);
   };
 
   const handlePauseResume = () => {
     setIsPaused(!isPaused);
-    setIsRunning(!isPaused);
+    setIsRunning(isPaused); // When paused is true, isRunning should be false and vice versa
   };
 
   const handleEndWorkout = () => {
@@ -62,12 +62,12 @@ export const NextWorkoutDetail = () => {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-4 space-y-6">
-      <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-4 border-b">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Timer className="w-5 h-5 text-primary" />
-            <span className="font-mono text-lg">
+    <div className="container max-w-7xl mx-auto p-4 lg:p-8 space-y-8">
+      <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-6 border-b">
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <Timer className="w-6 h-6 text-primary" />
+            <span className="font-mono text-xl">
               {formatWorkoutTime(Math.round(duration))}
             </span>
           </div>
@@ -84,6 +84,7 @@ export const NextWorkoutDetail = () => {
             <Button
               variant={isPaused ? "default" : "outline"}
               onClick={handlePauseResume}
+              className="px-4"
             >
               {isPaused ? (
                 <>
@@ -101,7 +102,7 @@ export const NextWorkoutDetail = () => {
         </div>
 
         {workoutStarted && (
-          <div className="mt-4 space-y-2">
+          <div className="mt-6 space-y-3">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Progression de la séance</span>
               <span>{Math.round(progress)}%</span>
@@ -111,8 +112,8 @@ export const NextWorkoutDetail = () => {
         )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
-        <div className="space-y-4">
+      <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
+        <div className="space-y-6">
           <ExerciseList
             exercises={exercises}
             currentExerciseIndex={currentExerciseIndex}
@@ -132,8 +133,8 @@ export const NextWorkoutDetail = () => {
               isPaused={isPaused}
             />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-4 text-muted-foreground">
-              <p className="text-lg">
+            <div className="flex flex-col items-center justify-center h-full p-12 text-center space-y-6 text-muted-foreground bg-muted/10 rounded-lg border-2 border-dashed">
+              <p className="text-xl">
                 Cliquez sur "Commencer ma séance" pour démarrer votre entraînement
               </p>
             </div>
@@ -147,7 +148,7 @@ export const NextWorkoutDetail = () => {
             variant="destructive"
             size="lg"
             onClick={handleEndWorkout}
-            className="shadow-lg"
+            className="shadow-lg px-6"
           >
             Terminer la séance
           </Button>
