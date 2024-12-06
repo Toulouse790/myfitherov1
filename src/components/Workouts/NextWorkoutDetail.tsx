@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { WorkoutHeader } from "./WorkoutHeader";
-import { ExerciseList } from "./ExerciseList";
-import { WorkoutInProgress } from "./WorkoutInProgress";
-import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
-import { CardioSession } from "./CardioSession";
+import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
+import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
+import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
+import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
+import { CardioSession } from "./NextWorkoutDetail/CardioSession";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Play, Pause, Timer } from "lucide-react";
-import { formatWorkoutTime } from "../WorkoutTimer";
+import { formatWorkoutTime } from "./WorkoutTimer";
 
 export const NextWorkoutDetail = () => {
   const {
