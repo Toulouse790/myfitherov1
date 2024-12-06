@@ -1,118 +1,53 @@
-import { useState, useEffect } from "react";
-import { exerciseImages } from "../data/exerciseImages";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { ExerciseMedia } from "@/types/exercise-media";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
-import { Check, Dumbbell } from "lucide-react";
+import { CheckCircle2, Dumbbell } from "lucide-react";
 
 interface ExerciseListProps {
   exercises: string[];
   currentExerciseIndex: number | null;
   isWorkoutStarted: boolean;
   onExerciseClick: (index: number) => void;
+  completedExercises: number[];
 }
 
-export const ExerciseList = ({ 
-  exercises, 
-  currentExerciseIndex, 
+export const ExerciseList = ({
+  exercises,
+  currentExerciseIndex,
   isWorkoutStarted,
-  onExerciseClick 
+  onExerciseClick,
+  completedExercises
 }: ExerciseListProps) => {
-  const [exerciseMedia, setExerciseMedia] = useState<{[key: string]: string}>({});
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchExerciseMedia = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('exercise_media')
-          .select('*')
-          .in('exercise_name', exercises)
-          .eq('media_type', 'image');
-
-        if (error) throw error;
-
-        const mediaMap = (data as ExerciseMedia[]).reduce((acc, { exercise_name, media_url }) => ({
-          ...acc,
-          [exercise_name]: media_url
-        }), {});
-
-        setExerciseMedia(mediaMap);
-      } catch (error) {
-        console.error('Error fetching exercise media:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les images des exercices",
-          variant: "destructive",
-        });
-      }
-    };
-
-    if (exercises.length > 0) {
-      fetchExerciseMedia();
-    }
-  }, [exercises]);
-
-  const handleExerciseClick = (index: number) => {
-    console.log("Exercise clicked:", index);
-    if (isWorkoutStarted) {
-      onExerciseClick(index);
-    }
-  };
-
   return (
     <div className="space-y-2">
-      <h3 className="font-medium text-lg mb-4">Programme</h3>
-      {exercises.map((exercise, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, delay: index * 0.1 }}
-        >
-          <div 
-            onClick={() => handleExerciseClick(index)}
+      {exercises.map((exercise, index) => {
+        const isCompleted = completedExercises.includes(index);
+        const isCurrent = currentExerciseIndex === index;
+
+        return (
+          <div
+            key={index}
             className={`
-              p-3 rounded-lg transition-all duration-300 cursor-pointer
-              hover:bg-accent
-              ${currentExerciseIndex === index ? 'ring-2 ring-primary bg-primary/5' : 'bg-card'}
-              ${!isWorkoutStarted && 'opacity-50 cursor-not-allowed'}
+              p-4 rounded-lg border transition-all cursor-pointer
+              ${isCurrent ? 'border-primary bg-primary/5' : 'hover:border-primary/50'}
+              ${isCompleted ? 'bg-muted/20' : ''}
             `}
+            onClick={() => isWorkoutStarted && onExerciseClick(index)}
           >
-            <div className="flex items-center gap-3">
-              <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
-                {exerciseMedia[exercise] ? (
-                  <img 
-                    src={exerciseMedia[exercise]} 
-                    alt={exercise}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <Dumbbell className="w-6 h-6 text-muted-foreground" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="font-medium truncate">{exercise}</p>
-                  {index < currentExerciseIndex! && (
-                    <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  {isCompleted ? (
+                    <CheckCircle2 className="w-5 h-5 text-primary" />
+                  ) : (
+                    <Dumbbell className="w-5 h-5 text-primary" />
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  3 séries • 12 répétitions
-                </p>
+                <span className={`${isCompleted ? 'text-muted-foreground' : ''}`}>
+                  {exercise}
+                </span>
               </div>
-              {currentExerciseIndex === index && (
-                <Badge variant="secondary" className="flex-shrink-0">
-                  En cours
-                </Badge>
-              )}
             </div>
           </div>
-        </motion.div>
-      ))}
+        );
+      })}
     </div>
   );
 };

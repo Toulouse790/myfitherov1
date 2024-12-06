@@ -13,12 +13,13 @@ interface WorkoutInProgressProps {
   onExerciseClick: (index: number) => void;
   sessionId?: string | null;
   onRegenerateWorkout: () => void;
+  onExerciseComplete: (index: number) => void;
 }
 
 export const WorkoutInProgress = ({
   exercises,
   currentExerciseIndex,
-  sessionId,
+  onExerciseComplete,
 }: WorkoutInProgressProps) => {
   const [currentSet, setCurrentSet] = useState(1);
   const [weight, setWeight] = useState(20);
@@ -34,7 +35,6 @@ export const WorkoutInProgress = ({
       setCurrentSet(prev => prev + 1);
       startRestTimer(currentExerciseId);
       
-      // Calculer les calories brûlées (exemple simple)
       const calories = Math.round(reps * weight * 0.15);
       
       toast({
@@ -46,6 +46,10 @@ export const WorkoutInProgress = ({
         title: "Exercice terminé !",
         description: "Passez à l'exercice suivant.",
       });
+      if (currentExerciseIndex !== null) {
+        onExerciseComplete(currentExerciseIndex);
+      }
+      setCurrentSet(1);
     }
   };
 

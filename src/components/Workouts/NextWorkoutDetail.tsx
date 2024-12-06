@@ -27,9 +27,11 @@ export const NextWorkoutDetail = () => {
   } = useWorkoutSession();
 
   const [showSummary, setShowSummary] = useState(false);
+  const [completedExercises, setCompletedExercises] = useState<number[]>([]);
 
-  const progress = currentExerciseIndex !== null 
-    ? ((currentExerciseIndex + 1) / exercises.length) * 100 
+  // Calculer la progression en fonction des exercices complétés
+  const progress = exercises.length > 0 
+    ? (completedExercises.length / exercises.length) * 100 
     : 0;
 
   const handleStartWorkout = () => {
@@ -39,6 +41,17 @@ export const NextWorkoutDetail = () => {
 
   const handleEndWorkout = () => {
     setShowSummary(true);
+  };
+
+  const handleExerciseComplete = (index: number) => {
+    if (!completedExercises.includes(index)) {
+      setCompletedExercises(prev => [...prev, index]);
+    }
+    
+    // Si ce n'est pas le dernier exercice, passer au suivant
+    if (index < exercises.length - 1) {
+      handleExerciseClick(index + 1);
+    }
   };
 
   if (!user) return null;
@@ -95,6 +108,7 @@ export const NextWorkoutDetail = () => {
             currentExerciseIndex={currentExerciseIndex}
             isWorkoutStarted={workoutStarted}
             onExerciseClick={handleExerciseClick}
+            completedExercises={completedExercises}
           />
         </div>
 
@@ -106,6 +120,7 @@ export const NextWorkoutDetail = () => {
               onExerciseClick={handleExerciseClick}
               sessionId={sessionId}
               onRegenerateWorkout={handleRegenerateWorkout}
+              onExerciseComplete={handleExerciseComplete}
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full p-12 text-center space-y-6 text-muted-foreground bg-muted/10 rounded-lg border-2 border-dashed">
