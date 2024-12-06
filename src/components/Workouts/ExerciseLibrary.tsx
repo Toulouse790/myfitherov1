@@ -25,9 +25,7 @@ export const ExerciseLibrary = () => {
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
     console.log("Updating selected exercises:", selectedIds);
     setSelectedExercises(prev => {
-      // Filtrer les exercices déjà sélectionnés
       const uniqueExercises = selectedIds.filter(id => !prev.includes(id));
-      // Combiner avec les exercices précédents
       return [...prev, ...uniqueExercises];
     });
   };
@@ -95,19 +93,32 @@ export const ExerciseLibrary = () => {
         onStartWorkout={handleStartWorkout}
       />
 
-      <MuscleGroupGrid 
-        searchQuery={searchQuery}
-        onMuscleGroupClick={handleMuscleGroupClick}
-      />
+      {searchQuery ? (
+        <SelectedExercisesManager
+          showSelection={true}
+          setShowSelection={setShowExerciseSelection}
+          selectedExercises={selectedExercises}
+          selectedMuscleGroup=""
+          searchQuery={searchQuery}
+          onExerciseSelectionChange={handleExerciseSelectionChange}
+        />
+      ) : (
+        <MuscleGroupGrid 
+          searchQuery={searchQuery}
+          onMuscleGroupClick={handleMuscleGroupClick}
+        />
+      )}
 
-      <SelectedExercisesManager
-        showSelection={showExerciseSelection}
-        setShowSelection={setShowExerciseSelection}
-        selectedExercises={selectedExercises}
-        selectedMuscleGroup={selectedMuscleGroup}
-        searchQuery={searchQuery}
-        onExerciseSelectionChange={handleExerciseSelectionChange}
-      />
+      {!searchQuery && showExerciseSelection && (
+        <SelectedExercisesManager
+          showSelection={showExerciseSelection}
+          setShowSelection={setShowExerciseSelection}
+          selectedExercises={selectedExercises}
+          selectedMuscleGroup={selectedMuscleGroup}
+          searchQuery={searchQuery}
+          onExerciseSelectionChange={handleExerciseSelectionChange}
+        />
+      )}
 
       <FloatingWorkoutButton 
         selectedCount={selectedExercises.length}
