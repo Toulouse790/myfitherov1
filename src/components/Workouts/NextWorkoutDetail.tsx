@@ -91,7 +91,7 @@ export const NextWorkoutDetail = () => {
         open={showSummary}
         onOpenChange={setShowSummary}
         stats={{
-          duration: Math.round(duration / 60),
+          duration: Math.round(duration / 60), // Convert seconds to minutes
           totalWeight: 0,
           totalCalories: 0
         }}
