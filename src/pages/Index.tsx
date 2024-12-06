@@ -2,43 +2,17 @@ import { Header } from "@/components/Layout/Header";
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { DashboardStats } from "@/components/Dashboard/DashboardStats";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Trophy, Activity, Brain, ChartBar, Plus } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Plus, Brain, Activity, ChartBar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-
-interface Profile {
-  id: string;
-  points: number;
-  level: number;
-}
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showDialog, setShowDialog] = useState(false);
-  
-  const { data: profile } = useQuery<Profile>({
-    queryKey: ['profile'],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    }
-  });
 
   const handleStartCardio = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -83,28 +57,6 @@ const Index = () => {
       <Header />
       
       <main className="container max-w-4xl mx-auto px-4 pt-8 pb-24">
-        {/* Niveau et Points */}
-        <Card className="p-4 bg-primary/5 mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold">Niveau {profile?.level || 1}</h2>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {profile?.points || 0} points
-            </span>
-          </div>
-          <Progress 
-            value={((profile?.points || 0) % 1000) / 10} 
-            className="h-2" 
-          />
-          <div className="flex justify-between mt-1">
-            <span className="text-xs text-muted-foreground">
-              Prochain niveau dans {1000 - ((profile?.points || 0) % 1000)} points
-            </span>
-          </div>
-        </Card>
-
         {/* Actions principales */}
         <div className="grid grid-cols-2 gap-4 mb-8">
           <Button 
@@ -148,7 +100,7 @@ const Index = () => {
           </Button>
         </div>
 
-        {/* Statistiques rapides */}
+        {/* Statistiques et suggestions */}
         <div className="space-y-6">
           <DashboardStats />
           <WorkoutSuggestions />
