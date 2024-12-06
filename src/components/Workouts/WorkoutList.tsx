@@ -41,7 +41,12 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
 
       if (error) {
         console.error('Erreur lors de la création de la session:', error);
-        return; // Ne pas lancer l'erreur pour éviter le message
+        toast({
+          title: "Erreur",
+          description: "Impossible de créer la session d'entraînement",
+          variant: "destructive",
+        });
+        return;
       }
 
       console.log("Session créée avec succès:", session);
@@ -51,6 +56,11 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
       }
     } catch (error) {
       console.error('Error creating workout session:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la création de la séance",
+        variant: "destructive",
+      });
     }
   };
 

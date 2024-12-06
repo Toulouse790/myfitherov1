@@ -511,6 +511,7 @@ export type Database = {
       workout_sessions: {
         Row: {
           created_at: string | null
+          exercises: string[] | null
           id: string
           initial_energy_level: string | null
           is_adapted: boolean | null
@@ -522,6 +523,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          exercises?: string[] | null
           id?: string
           initial_energy_level?: string | null
           is_adapted?: boolean | null
@@ -533,6 +535,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          exercises?: string[] | null
           id?: string
           initial_energy_level?: string | null
           is_adapted?: boolean | null
