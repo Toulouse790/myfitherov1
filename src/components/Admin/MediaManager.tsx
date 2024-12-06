@@ -21,7 +21,7 @@ export const MediaManager = () => {
       const translatedGroup = translateMuscleGroup(selectedGroup);
       console.log('Translated muscle group:', translatedGroup);
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('exercises')
         .select(`
           *,
@@ -30,8 +30,14 @@ export const MediaManager = () => {
             media_type
           )
         `)
-        .eq('muscle_group', translatedGroup)
         .order('name', { ascending: true });
+
+      // Si le groupe musculaire est sélectionné, on filtre
+      if (selectedGroup) {
+        query = query.eq('muscle_group', translatedGroup);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching exercises:', error);
