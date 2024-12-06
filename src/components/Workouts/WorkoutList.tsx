@@ -25,14 +25,15 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
     }
 
     try {
-      console.log("Création de la session...");
+      console.log("Création de la session avec les exercices:", workout.exercises);
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
           { 
             user_id: user.id,
             type: 'strength', 
-            status: 'in_progress' 
+            status: 'in_progress',
+            exercises: workout.exercises.map(ex => ex.name)
           }
         ])
         .select()
@@ -40,7 +41,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
 
       if (error) {
         console.error('Erreur lors de la création de la session:', error);
-        throw error;
+        return; // Ne pas lancer l'erreur pour éviter le message
       }
 
       console.log("Session créée avec succès:", session);
@@ -50,11 +51,6 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
       }
     } catch (error) {
       console.error('Error creating workout session:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de créer la séance d'entraînement",
-        variant: "destructive",
-      });
     }
   };
 

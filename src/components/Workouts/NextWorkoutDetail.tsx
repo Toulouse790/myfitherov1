@@ -30,18 +30,26 @@ export const NextWorkoutDetail = () => {
     if (session) {
       setSessionId(session);
       checkSessionType(session);
+      fetchSessionExercises(session);
     }
   }, [location]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setDuration(prev => prev + 1);
-      }, 1000);
+  const fetchSessionExercises = async (sessionId: string) => {
+    try {
+      const { data: session } = await supabase
+        .from('workout_sessions')
+        .select('exercises')
+        .eq('id', sessionId)
+        .single();
+
+      if (session?.exercises) {
+        console.log("Exercices récupérés:", session.exercises);
+        setExercises(session.exercises);
+      }
+    } catch (error) {
+      console.error('Error fetching session exercises:', error);
     }
-    return () => clearInterval(interval);
-  }, [isRunning]);
+  };
 
   const checkSessionType = async (sessionId: string) => {
     try {
@@ -70,7 +78,6 @@ export const NextWorkoutDetail = () => {
     }
 
     try {
-      // Récupérer le profil de l'utilisateur
       const { data: profile } = await supabase
         .from('questionnaire_responses')
         .select('*')
@@ -86,7 +93,6 @@ export const NextWorkoutDetail = () => {
         return;
       }
 
-      // Générer un nouveau plan adapté avec une intensité réduite
       const userProfile = {
         age: 30,
         weight: 75,
@@ -99,7 +105,6 @@ export const NextWorkoutDetail = () => {
 
       const newPlan = generateWorkoutPlan(userProfile);
 
-      // Mettre à jour la session avec le nouveau plan
       if (sessionId) {
         const { error: updateError } = await supabase
           .from('workout_sessions')
@@ -117,7 +122,6 @@ export const NextWorkoutDetail = () => {
         description: "Un nouveau programme moins intense a été généré",
       });
 
-      // Rediriger vers le nouveau programme
       navigate(`/workouts/exercise/next-workout?session=${sessionId}`);
     } catch (error) {
       console.error('Error regenerating workout:', error);
