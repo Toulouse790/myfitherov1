@@ -41,13 +41,6 @@ export const GeneratedPlanDisplay = ({
 
   if (!generatedPlan) return null;
 
-  // Calculate total carbs for each day's meals
-  const calculateDayTotalCarbs = (meals: Record<string, { carbs: number }>) => {
-    return Object.values(meals).reduce((total: number, meal) => {
-      return total + (meal.carbs || 0);
-    }, 0);
-  };
-
   // Determine workout time based on session start time
   const getWorkoutTime = (dayIndex: number): 'morning' | 'evening' | undefined => {
     if (!workoutSessions) return undefined;
@@ -78,19 +71,17 @@ export const GeneratedPlanDisplay = ({
             ))}
           </TabsList>
           {generatedPlan.map((day, index) => {
-            const totalCarbs = calculateDayTotalCarbs(day.meals);
             const dayIndex = index % 7;
             const workoutTime = getWorkoutTime(dayIndex);
             const isTrainingDay = Boolean(workoutTime);
-            const carbsTarget = day.carbsTarget || 250; // Default target if not provided
 
             return (
               <TabsContent key={index} value={(index + 1).toString()}>
                 <DayMeals 
                   meals={day.meals} 
                   mealTitles={defaultMeals}
-                  totalCarbs={totalCarbs}
-                  carbsTarget={carbsTarget}
+                  totalCarbs={day.totalCarbs}
+                  carbsTarget={day.carbsTarget}
                   isTrainingDay={isTrainingDay}
                   workoutTime={workoutTime}
                 />

@@ -65,6 +65,18 @@ const isDietCompatible = (mealName: string, dietType: string): boolean => {
   }
 };
 
+// Nouvelle fonction pour obtenir un repas aléatoire différent des derniers jours
+const getRandomMeal = (meals: Meal[], lastMeals: Meal[], count: number = 3): Meal => {
+  const availableMeals = meals.filter(meal => 
+    !lastMeals.slice(-Math.min(count, lastMeals.length)).some(lastMeal => 
+      lastMeal.name === meal.name
+    )
+  );
+  return availableMeals.length > 0 
+    ? availableMeals[Math.floor(Math.random() * availableMeals.length)]
+    : meals[Math.floor(Math.random() * meals.length)];
+};
+
 export const generateVariedMealPlan = (
   durationDays: number,
   excludedFoods: string[] = [],
@@ -72,8 +84,8 @@ export const generateVariedMealPlan = (
   intolerances: string[] = [],
   targetCalories: number = 2000,
   dietType: string = 'omnivore',
-  weightKg: number = 70, // Poids par défaut si non spécifié
-  workoutDays: number[] = [] // Indices des jours d'entraînement (0-6 pour lundi-dimanche)
+  weightKg: number = 70,
+  workoutDays: number[] = []
 ): MealPlan[] => {
   const plan: MealPlan[] = [];
   const weekDays = [
@@ -111,18 +123,6 @@ export const generateVariedMealPlan = (
   const filteredDinnerMeals = filterMeals(dinnerMeals);
   const filteredSnackMeals = filterMeals(snackMeals);
 
-  // Fonction pour obtenir un repas aléatoire différent des derniers jours
-  const getRandomMeal = (meals: Meal[], lastMeals: Meal[], count: number): Meal => {
-    const availableMeals = meals.filter(meal => 
-      !lastMeals.slice(-Math.min(count, lastMeals.length)).some(lastMeal => 
-        lastMeal.name === meal.name
-      )
-    );
-    return availableMeals.length > 0 
-      ? availableMeals[Math.floor(Math.random() * availableMeals.length)]
-      : meals[0];
-  };
-
   // Garder une trace des derniers repas utilisés
   const lastBreakfasts: Meal[] = [];
   const lastLunches: Meal[] = [];
@@ -137,11 +137,11 @@ export const generateVariedMealPlan = (
     const carbsTarget = calculateCarbsTarget(weightKg, isTrainingDay);
 
     // Sélectionner des repas différents des 3 derniers jours
-    const breakfastMeal = getRandomMeal(filteredBreakfastMeals, lastBreakfasts, 3);
-    const lunchMeal = getRandomMeal(filteredLunchMeals, lastLunches, 3);
-    const dinnerMeal = getRandomMeal(filteredDinnerMeals, lastDinners, 3);
-    const morningSnackMeal = getRandomMeal(filteredSnackMeals, lastMorningSnacks, 2);
-    const afternoonSnackMeal = getRandomMeal(filteredSnackMeals, lastAfternoonSnacks, 2);
+    const breakfastMeal = getRandomMeal(filteredBreakfastMeals, lastBreakfasts);
+    const lunchMeal = getRandomMeal(filteredLunchMeals, lastLunches);
+    const dinnerMeal = getRandomMeal(filteredDinnerMeals, lastDinners);
+    const morningSnackMeal = getRandomMeal(filteredSnackMeals, lastMorningSnacks);
+    const afternoonSnackMeal = getRandomMeal(filteredSnackMeals, lastAfternoonSnacks);
 
     // Mettre à jour les historiques
     lastBreakfasts.push(breakfastMeal);
@@ -159,7 +159,7 @@ export const generateVariedMealPlan = (
     };
 
     const totalCarbs = Object.values(dayMeals).reduce(
-      (sum, meal) => sum + meal.carbs,
+      (sum, meal) => sum + (meal?.carbs || 0),
       0
     );
 
