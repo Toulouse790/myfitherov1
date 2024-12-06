@@ -43,8 +43,8 @@ export const NextWorkoutDetail = () => {
     setShowSummary(true);
   };
 
-  const onConfirmEndWorkout = async () => {
-    await handleConfirmEndWorkout();
+  const onConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
+    await handleConfirmEndWorkout(difficulty);
     setShowSummary(false);
     navigate('/');
   };
