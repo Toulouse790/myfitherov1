@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Brain, Dumbbell } from "lucide-react";
+import { Brain, Dumbbell, BarChart3 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Header } from "@/components/Layout/Header";
 import { GenerateWorkoutDialog } from "@/components/Dashboard/WorkoutSuggestions/GenerateWorkoutDialog";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -14,6 +14,10 @@ const Index = () => {
 
   const handleCreateWorkout = () => {
     navigate('/workouts');
+  };
+
+  const handleStatsClick = () => {
+    navigate('/stats');
   };
 
   return (
@@ -61,6 +65,16 @@ const Index = () => {
               </div>
             </div>
           </Card>
+        </div>
+
+        <div className="flex justify-center">
+          <Button
+            onClick={handleStatsClick}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90"
+          >
+            <BarChart3 className="w-5 h-5" />
+            Voir mes statistiques
+          </Button>
         </div>
       </div>
 
