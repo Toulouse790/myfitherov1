@@ -1,98 +1,85 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Image, Video, Upload } from "lucide-react";
+import { Image, Video } from "lucide-react";
 import { UploadForm } from "./UploadForm";
 import { DifficultyBadges } from "./DifficultyBadges";
 import { useState } from "react";
+import { ExerciseMedia } from "@/types/exercise-media";
 
 interface ExerciseRowProps {
   exercise: {
     id: string;
     name: string;
+    muscle_group: string;
     difficulty: string[];
   };
-  onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onUpload: () => void;
   selectedFile: File | null;
-  onDifficultyChange: (difficulty: string) => void;
-  selectedDifficulties: string[];
+  media?: ExerciseMedia[];
 }
 
-export const ExerciseRow = ({
-  exercise,
-  onFileChange,
+export const ExerciseRow = ({ 
+  exercise, 
   onUpload,
   selectedFile,
-  onDifficultyChange,
-  selectedDifficulties,
+  media 
 }: ExerciseRowProps) => {
-  const [mediaType, setMediaType] = useState<'image' | 'video'>('image');
+  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [showVideoUpload, setShowVideoUpload] = useState(false);
+
+  const handleImageClick = () => {
+    setShowImageUpload(true);
+    setShowVideoUpload(false);
+  };
+
+  const handleVideoClick = () => {
+    setShowVideoUpload(true);
+    setShowImageUpload(false);
+  };
 
   return (
-    <Card className="p-4 mb-4">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium w-48">{exercise.name}</h3>
-          
-          <DifficultyBadges
-            selectedDifficulties={selectedDifficulties}
-            onDifficultyChange={onDifficultyChange}
-          />
+    <Card className="mb-4 p-4">
+      <div className="flex flex-col space-y-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-semibold">{exercise.name}</h3>
+            <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
+            <DifficultyBadges difficulty={exercise.difficulty} />
+          </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Button 
-                variant={mediaType === 'image' ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setMediaType('image')}
-                className={`min-w-[100px] ${
-                  mediaType === 'image' 
-                    ? "bg-[#0EA5E9] hover:bg-[#0EA5E9]/90" 
-                    : "border-[#0EA5E9] text-[#0EA5E9] hover:bg-[#0EA5E9] hover:text-white"
-                }`}
-              >
-                <Image className="mr-2 h-4 w-4" />
-                Photo
-              </Button>
-              <Button 
-                variant={mediaType === 'video' ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setMediaType('video')}
-                className={`min-w-[100px] ${
-                  mediaType === 'video' 
-                    ? "bg-[#9b87f5] hover:bg-[#9b87f5]/90" 
-                    : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white"
-                }`}
-              >
-                <Video className="mr-2 h-4 w-4" />
-                Vidéo
-              </Button>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+              onClick={handleImageClick}
+            >
+              <Image className="mr-2 h-4 w-4" />
+              Image
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-purple-500 hover:bg-purple-600 text-white"
+              onClick={handleVideoClick}
+            >
+              <Video className="mr-2 h-4 w-4" />
+              Vidéo
+            </Button>
+          </div>
+        </div>
 
-            <div className="flex items-center gap-4">
+        <div>
+          {(showImageUpload || showVideoUpload) && (
+            <div className="mt-4">
               <UploadForm
-                type={mediaType}
-                onFileChange={onFileChange}
+                exerciseId={exercise.id}
+                type={showImageUpload ? "image" : "video"}
                 onUpload={onUpload}
                 selectedFile={selectedFile}
               />
-
-              <Button 
-                variant="default" 
-                size="sm"
-                onClick={onUpload}
-                disabled={!selectedFile}
-                className={`min-w-[100px] ${
-                  selectedFile 
-                    ? "bg-[#0EA5E9] hover:bg-[#0EA5E9]/90" 
-                    : "opacity-50 cursor-not-allowed"
-                }`}
-              >
-                <Upload className="mr-2 h-4 w-4" />
-                Publier
-              </Button>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </Card>
