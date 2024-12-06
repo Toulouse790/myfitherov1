@@ -29,6 +29,30 @@ export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
     setReps(initialReps);
   }, [exercises]);
 
+  useEffect(() => {
+    // Gérer les timers de repos indépendamment de la pause de l'entraînement
+    const intervals: { [key: string]: NodeJS.Timeout } = {};
+
+    Object.entries(restTimers).forEach(([exerciseId, timer]) => {
+      if (timer !== null) {
+        intervals[exerciseId] = setInterval(() => {
+          setRestTimers(prev => {
+            const currentTimer = prev[exerciseId];
+            if (currentTimer === null || currentTimer <= 1) {
+              clearInterval(intervals[exerciseId]);
+              return { ...prev, [exerciseId]: null };
+            }
+            return { ...prev, [exerciseId]: currentTimer - 1 };
+          });
+        }, 1000);
+      }
+    });
+
+    return () => {
+      Object.values(intervals).forEach(interval => clearInterval(interval));
+    };
+  }, [restTimers]);
+
   const handleSetComplete = (exerciseId: string) => {
     const currentSets = completedSets[exerciseId] || 0;
     
@@ -40,17 +64,6 @@ export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
       
       // Démarrer le timer de repos
       setRestTimers(prev => ({ ...prev, [exerciseId]: 90 }));
-      
-      const interval = setInterval(() => {
-        setRestTimers(prev => {
-          const currentTimer = prev[exerciseId];
-          if (currentTimer === null || currentTimer <= 1) {
-            clearInterval(interval);
-            return { ...prev, [exerciseId]: null };
-          }
-          return { ...prev, [exerciseId]: currentTimer - 1 };
-        });
-      }, 1000);
     }
   };
 
