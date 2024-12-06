@@ -24,7 +24,12 @@ export const ExerciseLibrary = () => {
 
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
     console.log("Updating selected exercises:", selectedIds);
-    setSelectedExercises(selectedIds);
+    setSelectedExercises(prev => {
+      // Filtrer les exercices déjà sélectionnés
+      const uniqueExercises = selectedIds.filter(id => !prev.includes(id));
+      // Combiner avec les exercices précédents
+      return [...prev, ...uniqueExercises];
+    });
   };
 
   const handleStartWorkout = async () => {
