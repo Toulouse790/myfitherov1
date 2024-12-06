@@ -118,6 +118,48 @@ export type Database = {
         }
         Relationships: []
       }
+      common_foods: {
+        Row: {
+          calories: number
+          carbs: number
+          created_at: string
+          diet_types: string[] | null
+          fats: number
+          food_category: string
+          id: string
+          name: string
+          proteins: number
+          serving_size: number
+          serving_unit: string
+        }
+        Insert: {
+          calories: number
+          carbs: number
+          created_at?: string
+          diet_types?: string[] | null
+          fats: number
+          food_category: string
+          id?: string
+          name: string
+          proteins: number
+          serving_size?: number
+          serving_unit?: string
+        }
+        Update: {
+          calories?: number
+          carbs?: number
+          created_at?: string
+          diet_types?: string[] | null
+          fats?: number
+          food_category?: string
+          id?: string
+          name?: string
+          proteins?: number
+          serving_size?: number
+          serving_unit?: string
+        }
+        Relationships: []
+      }
       exercise_media: {
         Row: {
           created_at: string
