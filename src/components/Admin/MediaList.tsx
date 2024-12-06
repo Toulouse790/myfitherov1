@@ -1,12 +1,14 @@
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { muscleGroups } from "../Workouts/workoutConstants";
 import { ExerciseRow } from "./ExerciseRow";
 import { Exercise } from "@/components/Workouts/exercises/types/exercise";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ExerciseMedia } from "@/types/exercise-media";
+import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface MediaListProps {
   exercises: Exercise[];
-  selectedGroup: string;
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onUpload: () => void;
   selectedFile: File | null;
@@ -40,23 +42,42 @@ export const MediaList = ({
     return <div className="text-center p-4">Aucun exercice disponible</div>;
   }
 
+  // Group exercises by muscle group
+  const exercisesByGroup = exercises.reduce((acc, exercise) => {
+    const group = exercise.muscleGroup;
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push(exercise);
+    return acc;
+  }, {} as { [key: string]: Exercise[] });
+
   return (
-    <div className="space-y-4">
-      {exercises.map((exercise) => (
-        <ExerciseRow
-          key={exercise.id}
-          exercise={{
-            id: exercise.id,
-            name: exercise.name,
-            muscle_group: exercise.muscleGroup,
-            difficulty: Array.isArray(exercise.difficulty) 
-              ? exercise.difficulty 
-              : [exercise.difficulty]
-          }}
-          onUpload={onUpload}
-          selectedFile={selectedFile}
-          media={getMediaForExercise(exercise.id)}
-        />
+    <div className="space-y-8">
+      {Object.entries(exercisesByGroup).map(([group, groupExercises]) => (
+        <div key={group} className="space-y-4">
+          <h3 className="text-xl font-semibold mb-4 text-primary">
+            {translateMuscleGroup(group)}
+          </h3>
+          <div className="space-y-4">
+            {groupExercises.map((exercise) => (
+              <ExerciseRow
+                key={exercise.id}
+                exercise={{
+                  id: exercise.id,
+                  name: exercise.name,
+                  muscle_group: exercise.muscleGroup,
+                  difficulty: Array.isArray(exercise.difficulty) 
+                    ? exercise.difficulty 
+                    : [exercise.difficulty]
+                }}
+                onUpload={onUpload}
+                selectedFile={selectedFile}
+                media={getMediaForExercise(exercise.id)}
+              />
+            ))}
+          </div>
+        </div>
       ))}
     </div>
   );

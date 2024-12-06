@@ -173,7 +173,6 @@ export const MediaManager = () => {
 
       <MediaList
         exercises={exercises}
-        selectedGroup={selectedGroup}
         onFileChange={handleFileChange}
         onUpload={handleUpload}
         selectedFile={selectedFile}
