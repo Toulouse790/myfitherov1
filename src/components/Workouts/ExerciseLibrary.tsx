@@ -83,6 +83,19 @@ export const ExerciseLibrary = () => {
     }
   };
 
+  const handleStartWorkout = () => {
+    if (selectedExercises.length === 0) {
+      toast({
+        title: "Aucun exercice sélectionné",
+        description: "Veuillez sélectionner au moins un exercice",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    navigate('/workouts/exercise/next-workout');
+  };
+
   return (
     <div className="container max-w-7xl mx-auto space-y-6 p-4 sm:p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -112,7 +125,7 @@ export const ExerciseLibrary = () => {
 
       <FloatingWorkoutButton 
         selectedCount={selectedExercises.length}
-        onClick={() => navigate('/workouts/exercise/next-workout')}
+        onClick={handleStartWorkout}
       />
     </div>
   );

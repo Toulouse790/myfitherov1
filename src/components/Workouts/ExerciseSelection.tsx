@@ -21,11 +21,13 @@ export const ExerciseSelection = ({
   muscleGroup 
 }: ExerciseSelectionProps) => {
   const [exercises, setExercises] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchExercises = async () => {
       try {
+        setIsLoading(true);
         let query = supabase
           .from('exercise_media')
           .select('*')
@@ -67,6 +69,8 @@ export const ExerciseSelection = ({
           description: "Impossible de charger les exercices",
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -80,6 +84,22 @@ export const ExerciseSelection = ({
     
     onSelectionChange(newSelection);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (exercises.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
