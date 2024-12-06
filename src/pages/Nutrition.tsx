@@ -3,20 +3,9 @@ import { NutritionChart } from "@/components/Nutrition/NutritionChart";
 import { FoodJournal } from "@/components/Nutrition/FoodJournal";
 import { MealPlanGenerator } from "@/components/Nutrition/MealPlanGenerator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Target, LineChart } from "lucide-react";
 import { BottomNav } from "@/components/Layout/BottomNav";
 
 const Nutrition = () => {
-  const mockUserData = {
-    workoutsPerWeek: 4,
-    goal: "muscle_gain" as const,
-    weight: 75,
-    height: 175,
-    age: 30,
-    allergies: [],
-  };
-
   const handleTabClick = (tabValue: string) => {
     const element = document.querySelector(`[value="${tabValue}"]`) as HTMLElement;
     if (element) {
@@ -54,7 +43,7 @@ const Nutrition = () => {
 
         <TabsContent value="meal-plan">
           <div className="w-full">
-            <MealPlanGenerator {...mockUserData} />
+            <MealPlanGenerator />
           </div>
         </TabsContent>
       </Tabs>
