@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -7,6 +7,7 @@ import { ExerciseSelection } from "./ExerciseSelection";
 import { SearchBar } from "./components/SearchBar";
 import { AddExerciseButton } from "./components/AddExerciseButton";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
+import { supabase } from "@/integrations/supabase/client";
 
 export const ExerciseLibrary = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,11 +17,31 @@ export const ExerciseLibrary = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleExerciseAdd = () => {
-    toast({
-      title: "Exercice ajouté",
-      description: "L'exercice a été ajouté avec succès à la bibliothèque",
-    });
+  const handleExerciseAdd = async () => {
+    try {
+      const { error } = await supabase
+        .from('workout_sessions')
+        .insert([
+          { 
+            type: 'strength',
+            status: 'in_progress'
+          }
+        ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Exercice ajouté",
+        description: "L'exercice a été ajouté avec succès à la bibliothèque",
+      });
+    } catch (error) {
+      console.error('Error adding exercise:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter l'exercice",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleMuscleGroupClick = (muscleId: string) => {
@@ -28,12 +49,38 @@ export const ExerciseLibrary = () => {
     setShowExerciseSelection(true);
   };
 
-  const handleExerciseSelectionChange = (selectedIds: string[]) => {
+  const handleExerciseSelectionChange = async (selectedIds: string[]) => {
     setSelectedExercises(selectedIds);
-    toast({
-      title: "Exercices sélectionnés",
-      description: `${selectedIds.length} exercices ajoutés à votre séance`,
-    });
+    
+    try {
+      // Créer une nouvelle session d'entraînement
+      const { data: session, error: sessionError } = await supabase
+        .from('workout_sessions')
+        .insert([
+          { type: 'strength', status: 'in_progress' }
+        ])
+        .select()
+        .single();
+
+      if (sessionError) throw sessionError;
+
+      toast({
+        title: "Exercices sélectionnés",
+        description: `${selectedIds.length} exercices ajoutés à votre séance`,
+      });
+
+      // Rediriger vers la page de la séance
+      if (session) {
+        navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+      }
+    } catch (error) {
+      console.error('Error creating workout session:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la séance d'entraînement",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
