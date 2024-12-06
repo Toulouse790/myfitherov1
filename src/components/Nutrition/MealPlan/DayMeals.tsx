@@ -9,11 +9,19 @@ interface DayMealsProps {
   meals: Record<string, Meal>;
   mealTitles: Record<string, MealWithTitle>;
   isTrainingDay?: boolean;
+  workoutTime?: 'morning' | 'evening';
   totalCarbs: number;
   carbsTarget: number;
 }
 
-export const DayMeals = ({ meals, mealTitles, isTrainingDay, totalCarbs, carbsTarget }: DayMealsProps) => {
+export const DayMeals = ({ 
+  meals, 
+  mealTitles, 
+  isTrainingDay, 
+  workoutTime,
+  totalCarbs, 
+  carbsTarget 
+}: DayMealsProps) => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
 
   const toggleMeal = (mealType: string) => {
@@ -26,13 +34,20 @@ export const DayMeals = ({ meals, mealTitles, isTrainingDay, totalCarbs, carbsTa
     return difference > 0 ? "high" : "low";
   };
 
+  const getCarbsMessage = () => {
+    if (!isTrainingDay) return "Jour de repos";
+    return workoutTime === 'morning' 
+      ? "Entraînement le matin - Glucides concentrés avant/après l'effort"
+      : "Entraînement le soir - Glucides répartis dans la journée";
+  };
+
   const carbsStatus = getCarbsStatus();
 
   return (
     <div className="space-y-4">
       <Alert variant={carbsStatus === "optimal" ? "default" : "destructive"}>
         <AlertDescription>
-          {isTrainingDay ? "Jour d'entraînement" : "Jour de repos"} - 
+          {getCarbsMessage()} - 
           Glucides : {totalCarbs}g / {carbsTarget}g recommandés
         </AlertDescription>
       </Alert>
