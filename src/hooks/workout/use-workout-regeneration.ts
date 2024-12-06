@@ -9,6 +9,7 @@ export const useWorkoutRegeneration = (sessionId: string | null) => {
 
   const handleRegenerateWorkout = async (userId: string) => {
     try {
+      // Récupérer le profil utilisateur
       const { data: profile } = await supabase
         .from('questionnaire_responses')
         .select('*')
@@ -24,6 +25,17 @@ export const useWorkoutRegeneration = (sessionId: string | null) => {
         return;
       }
 
+      // Récupérer les exercices disponibles
+      const { data: exercises, error: exercisesError } = await supabase
+        .from('exercises')
+        .select('name')
+        .eq('is_published', true);
+
+      if (exercisesError) throw exercisesError;
+
+      const availableExercises = exercises?.map(ex => ex.name) || [];
+      console.log("Exercices disponibles pour la régénération:", availableExercises.length);
+
       const userProfile = {
         age: 30,
         weight: 75,
@@ -34,7 +46,8 @@ export const useWorkoutRegeneration = (sessionId: string | null) => {
         recoveryCapacity: "low" as const
       };
 
-      const newPlan = generateWorkoutPlan(userProfile);
+      const newPlan = generateWorkoutPlan(userProfile, availableExercises);
+      console.log("Nouveau plan généré:", newPlan);
 
       if (sessionId) {
         const { error: updateError } = await supabase
