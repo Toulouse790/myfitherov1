@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { FloatingWorkoutButton } from "./FloatingWorkoutButton";
-import { ExerciseSelection } from "./ExerciseSelection";
-import { SearchBar } from "./components/SearchBar";
-import { AddExerciseButton } from "./components/AddExerciseButton";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
+import { LibraryHeader } from "./components/LibraryHeader";
+import { SelectedExercisesManager } from "./components/SelectedExercisesManager";
 import { supabase } from "@/integrations/supabase/client";
 
 export const ExerciseLibrary = () => {
@@ -21,12 +19,10 @@ export const ExerciseLibrary = () => {
     try {
       const { error } = await supabase
         .from('workout_sessions')
-        .insert([
-          { 
-            type: 'strength',
-            status: 'in_progress'
-          }
-        ]);
+        .insert([{ 
+          type: 'strength',
+          status: 'in_progress'
+        }]);
 
       if (error) throw error;
 
@@ -96,30 +92,27 @@ export const ExerciseLibrary = () => {
 
   return (
     <div className="container max-w-7xl mx-auto space-y-6 p-4 sm:p-6 lg:p-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
-        <AddExerciseButton onSuccess={handleExerciseAdd} />
-      </div>
+      <LibraryHeader
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        selectedExercisesCount={selectedExercises.length}
+        onStartWorkout={handleStartWorkout}
+        onExerciseAdd={handleExerciseAdd}
+      />
 
       <MuscleGroupGrid 
         searchQuery={searchQuery}
         onMuscleGroupClick={handleMuscleGroupClick}
       />
 
-      <Dialog open={showExerciseSelection} onOpenChange={setShowExerciseSelection}>
-        <DialogContent className="w-[95vw] max-w-[800px] h-[90vh] max-h-[800px] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Sélectionner des exercices</DialogTitle>
-          </DialogHeader>
-          <ExerciseSelection
-            selectedExercises={selectedExercises}
-            onSelectionChange={handleExerciseSelectionChange}
-            onClose={() => setShowExerciseSelection(false)}
-            muscleGroup={selectedMuscleGroup}
-            searchQuery={searchQuery}
-          />
-        </DialogContent>
-      </Dialog>
+      <SelectedExercisesManager
+        showSelection={showExerciseSelection}
+        setShowSelection={setShowExerciseSelection}
+        selectedExercises={selectedExercises}
+        selectedMuscleGroup={selectedMuscleGroup}
+        searchQuery={searchQuery}
+        onExerciseSelectionChange={handleExerciseSelectionChange}
+      />
 
       <FloatingWorkoutButton 
         selectedCount={selectedExercises.length}
