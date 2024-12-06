@@ -40,7 +40,8 @@ export const NextWorkoutDetail = () => {
 
   const handlePauseResume = () => {
     setIsPaused(!isPaused);
-    setIsRunning(!isPaused);
+    // Inversé ici : quand on met en pause (isPaused devient true), on arrête le timer (setIsRunning(false))
+    setIsRunning(isPaused);
   };
 
   const handleEndWorkout = () => {
