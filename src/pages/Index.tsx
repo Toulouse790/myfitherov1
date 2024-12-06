@@ -7,12 +7,23 @@ import { WorkoutSummary } from "@/components/Dashboard/WorkoutSummary";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trophy, Target, TrendingUp } from "lucide-react";
+import { Trophy, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
+interface Profile {
+  id: string;
+  points: number;
+  level: number;
+}
+
+interface Measurement {
+  [key: string]: number | null;
+  measurement_date: number;
+}
+
 const Index = () => {
-  const { data: profile } = useQuery({
+  const { data: profile } = useQuery<Profile>({
     queryKey: ['profile'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -29,7 +40,7 @@ const Index = () => {
     }
   });
 
-  const { data: measurements } = useQuery({
+  const { data: measurements } = useQuery<Measurement[]>({
     queryKey: ['measurements'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -104,7 +115,7 @@ const Index = () => {
                     const previous = measurements[1][key];
                     if (!value || !previous) return null;
                     const target = previous * 1.1; // 10% d'augmentation comme objectif
-                    const progress = getProgressPercentage(value, previous, target);
+                    const progress = getProgressPercentage(value as number, previous as number, target);
                     
                     return (
                       <div key={key} className="space-y-2">
