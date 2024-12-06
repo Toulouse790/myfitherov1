@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Upload, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AdminHeaderProps {
   isEditing: boolean;
@@ -17,6 +18,7 @@ export const AdminHeader = ({
   onExercisesDeleted
 }: AdminHeaderProps) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleExport = () => {
     toast({
@@ -36,6 +38,8 @@ export const AdminHeader = ({
     }
 
     try {
+      console.log('Publishing exercises:', selectedExercises);
+      
       // Mettre à jour le statut des exercices sélectionnés
       const { error } = await supabase
         .from('exercises')
@@ -43,6 +47,9 @@ export const AdminHeader = ({
         .in('id', selectedExercises);
 
       if (error) throw error;
+
+      // Invalider le cache pour forcer un rafraîchissement des données
+      await queryClient.invalidateQueries({ queryKey: ['exercises'] });
 
       toast({
         title: "Publication réussie",
@@ -87,6 +94,9 @@ export const AdminHeader = ({
         .in('id', selectedExercises);
 
       if (exerciseError) throw exerciseError;
+
+      // Invalider le cache pour forcer un rafraîchissement des données
+      await queryClient.invalidateQueries({ queryKey: ['exercises'] });
 
       toast({
         title: "Suppression réussie",
