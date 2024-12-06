@@ -7,13 +7,15 @@ interface WorkoutLayoutProps {
   currentExerciseIndex: number | null;
   onExerciseClick: (index: number) => void;
   isWorkoutStarted: boolean;
+  completedExercises: number[];
 }
 
 export const WorkoutLayout = ({
   exercises,
   currentExerciseIndex,
   onExerciseClick,
-  isWorkoutStarted
+  isWorkoutStarted,
+  completedExercises
 }: WorkoutLayoutProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -23,6 +25,7 @@ export const WorkoutLayout = ({
           currentExerciseIndex={currentExerciseIndex}
           isWorkoutStarted={isWorkoutStarted}
           onExerciseClick={onExerciseClick}
+          completedExercises={completedExercises}
         />
       </Card>
       

@@ -28,10 +28,10 @@ export const NextWorkoutDetail = () => {
   } = useWorkoutSession();
 
   const [showSummary, setShowSummary] = useState(false);
-  const navigate = useNavigate();
+  const [completedExercises, setCompletedExercises] = useState<number[]>([]);
 
-  const progress = currentExerciseIndex !== null 
-    ? ((currentExerciseIndex + 1) / exercises.length) * 100 
+  const progress = exercises.length > 0 
+    ? (completedExercises.length / exercises.length) * 100 
     : 0;
 
   const handleStartWorkout = () => {
@@ -43,10 +43,15 @@ export const NextWorkoutDetail = () => {
     setShowSummary(true);
   };
 
-  const onConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
-    await handleConfirmEndWorkout(difficulty);
-    setShowSummary(false);
-    navigate('/');
+  const handleExerciseComplete = (index: number) => {
+    if (!completedExercises.includes(index)) {
+      setCompletedExercises(prev => [...prev, index]);
+    }
+    
+    // Si ce n'est pas le dernier exercice, passer au suivant
+    if (index < exercises.length - 1) {
+      handleExerciseClick(index + 1);
+    }
   };
 
   if (!user) return null;
@@ -103,6 +108,7 @@ export const NextWorkoutDetail = () => {
             currentExerciseIndex={currentExerciseIndex}
             isWorkoutStarted={workoutStarted}
             onExerciseClick={handleExerciseClick}
+            completedExercises={completedExercises}
           />
         </div>
 
@@ -114,6 +120,7 @@ export const NextWorkoutDetail = () => {
               onExerciseClick={handleExerciseClick}
               sessionId={sessionId}
               onRegenerateWorkout={handleRegenerateWorkout}
+              onExerciseComplete={handleExerciseComplete}
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full p-6 sm:p-12 text-center space-y-4 sm:space-y-6 text-muted-foreground bg-muted/10 rounded-lg border-2 border-dashed">
@@ -146,7 +153,7 @@ export const NextWorkoutDetail = () => {
           totalWeight: 0,
           totalCalories: 0
         }}
-        onConfirm={onConfirmEndWorkout}
+        onConfirm={handleConfirmEndWorkout}
       />
     </div>
   );
