@@ -20,7 +20,7 @@ interface WorkoutSummaryDialogProps {
     totalWeight: number;
     totalCalories: number;
   };
-  onConfirm: (difficulty: "easy" | "medium" | "hard") => void;
+  onConfirm: (difficulty: "easy" | "medium" | "hard", duration: number) => void;
 }
 
 export const WorkoutSummaryDialog = ({
@@ -44,7 +44,7 @@ export const WorkoutSummaryDialog = ({
                 <Clock className="w-6 h-6 text-primary" />
               </div>
               <span className="text-xl font-bold text-primary">
-                {formatWorkoutTime(stats.duration)}
+                {formatWorkoutTime(stats.duration * 60)}
               </span>
               <span className="text-sm text-muted-foreground">Durée</span>
             </div>
@@ -92,7 +92,7 @@ export const WorkoutSummaryDialog = ({
         
         <AlertDialogFooter className="flex flex-col gap-2 sm:flex-col">
           <Button 
-            onClick={() => onConfirm(difficulty)}
+            onClick={() => onConfirm(difficulty, stats.duration * 60)}
             className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-6"
           >
             Terminer l'entraînement
