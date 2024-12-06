@@ -6,7 +6,6 @@ import { Timer, ChevronUp, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { useRestTimer } from "@/hooks/use-rest-timer";
-import useSound from "use-sound";
 
 interface WorkoutInProgressProps {
   exercises: string[];
@@ -14,20 +13,17 @@ interface WorkoutInProgressProps {
   onExerciseClick: (index: number) => void;
   sessionId?: string | null;
   onRegenerateWorkout: () => void;
-  isPaused: boolean;
 }
 
 export const WorkoutInProgress = ({
   exercises,
   currentExerciseIndex,
   sessionId,
-  isPaused,
 }: WorkoutInProgressProps) => {
   const [currentSet, setCurrentSet] = useState(1);
   const [weight, setWeight] = useState(20);
   const [reps, setReps] = useState(12);
   const { toast } = useToast();
-  const [playSound] = useSound("/sounds/rest-complete.mp3");
   const { restTimers, startRestTimer } = useRestTimer();
 
   const currentExerciseId = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
@@ -89,7 +85,6 @@ export const WorkoutInProgress = ({
                   variant="outline"
                   size="icon"
                   onClick={() => setWeight(prev => Math.max(0, prev - 2.5))}
-                  disabled={isPaused}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -98,13 +93,11 @@ export const WorkoutInProgress = ({
                   value={weight}
                   onChange={(e) => setWeight(Number(e.target.value))}
                   className="text-center"
-                  disabled={isPaused}
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setWeight(prev => prev + 2.5)}
-                  disabled={isPaused}
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>
@@ -118,7 +111,6 @@ export const WorkoutInProgress = ({
                   variant="outline"
                   size="icon"
                   onClick={() => setReps(prev => Math.max(1, prev - 1))}
-                  disabled={isPaused}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -127,13 +119,11 @@ export const WorkoutInProgress = ({
                   value={reps}
                   onChange={(e) => setReps(Number(e.target.value))}
                   className="text-center"
-                  disabled={isPaused}
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setReps(prev => prev + 1)}
-                  disabled={isPaused}
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>
@@ -156,7 +146,7 @@ export const WorkoutInProgress = ({
               <Button
                 className="w-full h-12 text-lg"
                 onClick={handleSetComplete}
-                disabled={isPaused || currentRestTimer !== null}
+                disabled={currentRestTimer !== null}
               >
                 {currentSet === 4 ? "Terminer l'exercice" : "Valider la série"}
               </Button>
