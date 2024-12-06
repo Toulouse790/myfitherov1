@@ -65,15 +65,13 @@ export const MediaList = ({
           exercise={{
             id: exercise.id,
             name: exercise.name,
+            muscle_group: exercise.muscleGroup,
             difficulty: Array.isArray(exercise.difficulty) 
               ? exercise.difficulty 
               : [exercise.difficulty]
           }}
-          onFileChange={onFileChange}
           onUpload={onUpload}
           selectedFile={selectedFile}
-          onDifficultyChange={onDifficultyChange}
-          selectedDifficulties={selectedDifficulties}
         />
       ))}
     </div>

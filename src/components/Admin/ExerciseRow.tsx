@@ -44,7 +44,7 @@ export const ExerciseRow = ({
           <div>
             <h3 className="text-lg font-semibold">{exercise.name}</h3>
             <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
-            <DifficultyBadges difficulty={exercise.difficulty} />
+            <DifficultyBadges difficulties={exercise.difficulty} />
           </div>
 
           <div className="flex items-center space-x-2">
@@ -73,7 +73,7 @@ export const ExerciseRow = ({
           {(showImageUpload || showVideoUpload) && (
             <div className="mt-4">
               <UploadForm
-                exerciseId={exercise.id}
+                exercise_id={exercise.id}
                 type={showImageUpload ? "image" : "video"}
                 onUpload={onUpload}
                 selectedFile={selectedFile}
