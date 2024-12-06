@@ -24,26 +24,28 @@ export const MediaManager = () => {
         console.error('Error fetching exercises:', error);
         throw error;
       }
-      
+
       console.log('Raw exercises data:', data);
-      
-      // Transform the database data to match the Exercise type
-      return data?.map(exercise => ({
-        id: exercise.id,
-        name: exercise.name,
-        muscleGroup: exercise.muscle_group,
-        difficulty: exercise.difficulty,
-        equipment: "",  // Add default values for required Exercise properties
-        location: exercise.location || [],
-        instructions: [],
-        targetMuscles: [],
-        objectives: [],
-        description: "",
-        sets: { beginner: 0, intermediate: 0, advanced: 0 },
-        reps: { beginner: 0, intermediate: 0, advanced: 0 },
-        restTime: { beginner: 0, intermediate: 0, advanced: 0 },
-        calories: 0
-      })) as Exercise[];
+
+      return data?.map(dbExercise => {
+        const exercise: Exercise = {
+          id: dbExercise.id,
+          name: dbExercise.name,
+          muscleGroup: dbExercise.muscle_group,
+          difficulty: Array.isArray(dbExercise.difficulty) ? dbExercise.difficulty[0] : "beginner",
+          equipment: "",
+          location: dbExercise.location || [],
+          instructions: [],
+          targetMuscles: [],
+          objectives: [],
+          description: "",
+          sets: { beginner: 0, intermediate: 0, advanced: 0 },
+          reps: { beginner: 0, intermediate: 0, advanced: 0 },
+          restTime: { beginner: 0, intermediate: 0, advanced: 0 },
+          calories: 0
+        };
+        return exercise;
+      }) || [];
     }
   });
 
@@ -67,16 +69,13 @@ export const MediaManager = () => {
     });
   };
 
-  const filteredExercises = exercises?.filter(
-    (exercise) => {
-      console.log('Filtering exercise:', exercise);
-      console.log('Selected group:', selectedGroup);
-      return exercise.muscleGroup === selectedGroup;
-    }
-  ) || [];
+  const filteredExercises = exercises?.filter(exercise => {
+    console.log('Filtering exercise:', exercise);
+    console.log('Selected group:', selectedGroup);
+    return exercise.muscleGroup === selectedGroup;
+  }) || [];
 
   console.log('Filtered exercises:', filteredExercises);
-  console.log('Selected group:', selectedGroup);
 
   return (
     <div className="container mx-auto p-4 space-y-6">
