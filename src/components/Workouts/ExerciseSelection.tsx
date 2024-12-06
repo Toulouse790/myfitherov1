@@ -35,8 +35,13 @@ export const ExerciseSelection = ({
 
   if (!exercises || exercises.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.
+      <div className="flex flex-col items-center justify-center p-8 space-y-4">
+        <p className="text-center text-muted-foreground">
+          Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.
+        </p>
+        <Button variant="outline" onClick={onClose}>
+          Fermer
+        </Button>
       </div>
     );
   }
