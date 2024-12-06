@@ -23,7 +23,7 @@ export const FloatingWorkoutButton = ({ selectedCount, onClick }: FloatingWorkou
           className="shadow-lg rounded-full px-6 py-6 bg-primary hover:bg-primary/90"
         >
           <Dumbbell className="h-5 w-5 mr-2" />
-          Voir ma séance ({selectedCount})
+          Lancer la séance ({selectedCount})
         </Button>
       </motion.div>
     </AnimatePresence>
