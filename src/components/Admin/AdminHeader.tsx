@@ -1,13 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Upload, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminHeaderProps {
   isEditing: boolean;
   onEditingChange: (editing: boolean) => void;
+  selectedExercises: string[];
+  onExercisesDeleted: () => void;
 }
 
-export const AdminHeader = ({ isEditing, onEditingChange }: AdminHeaderProps) => {
+export const AdminHeader = ({ 
+  isEditing, 
+  onEditingChange,
+  selectedExercises,
+  onExercisesDeleted
+}: AdminHeaderProps) => {
   const { toast } = useToast();
 
   const handleExport = () => {
@@ -24,11 +32,48 @@ export const AdminHeader = ({ isEditing, onEditingChange }: AdminHeaderProps) =>
     });
   };
 
-  const handleDelete = () => {
-    toast({
-      title: "Suppression",
-      description: "L'élément a été supprimé avec succès",
-    });
+  const handleDelete = async () => {
+    if (selectedExercises.length === 0) {
+      toast({
+        title: "Aucun exercice sélectionné",
+        description: "Veuillez sélectionner au moins un exercice à supprimer",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Supprimer les médias associés d'abord
+      const { error: mediaError } = await supabase
+        .from('exercise_media')
+        .delete()
+        .in('exercise_id', selectedExercises);
+
+      if (mediaError) throw mediaError;
+
+      // Ensuite, supprimer les exercices
+      const { error: exerciseError } = await supabase
+        .from('exercises')
+        .delete()
+        .in('id', selectedExercises);
+
+      if (exerciseError) throw exerciseError;
+
+      toast({
+        title: "Suppression réussie",
+        description: `${selectedExercises.length} exercice(s) supprimé(s) avec succès`,
+      });
+
+      // Rafraîchir la liste des exercices
+      onExercisesDeleted();
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -54,6 +99,7 @@ export const AdminHeader = ({ isEditing, onEditingChange }: AdminHeaderProps) =>
           size="sm" 
           onClick={handlePublish}
           className="gap-2 bg-green-600 hover:bg-green-700"
+          disabled={selectedExercises.length === 0}
         >
           <Upload className="w-4 h-4" />
           Publier
@@ -63,6 +109,7 @@ export const AdminHeader = ({ isEditing, onEditingChange }: AdminHeaderProps) =>
           size="sm"
           onClick={handleDelete}
           className="gap-2"
+          disabled={selectedExercises.length === 0}
         >
           <Trash2 className="w-4 h-4" />
           Supprimer

@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ExerciseTableContent } from "./ExerciseTableContent";
+import { AdminHeader } from "./AdminHeader";
 
 const locations = [
   { id: "gym", name: "Salle" },
@@ -21,6 +22,7 @@ export const ExerciseTable = () => {
   const [exercises, setExercises] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetchExercises();
@@ -151,6 +153,12 @@ export const ExerciseTable = () => {
 
   return (
     <div className="space-y-4">
+      <AdminHeader 
+        isEditing={isEditing}
+        onEditingChange={setIsEditing}
+        selectedExercises={selectedExercises}
+        onExercisesDeleted={fetchExercises}
+      />
       <Card className="p-6">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Liste des exercices ({exercises.length})</h3>
