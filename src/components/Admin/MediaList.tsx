@@ -55,12 +55,12 @@ export const MediaList = ({
     return exerciseMedia?.filter(media => media.exercise_id === exerciseId) || [];
   };
 
-  if (exercises.length === 0) {
-    return <div>Aucun exercice disponible</div>;
+  if (!exercises || exercises.length === 0) {
+    return <div className="text-center p-4">Aucun exercice disponible</div>;
   }
 
-  if (filteredExercises.length === 0) {
-    return <div>Aucun exercice trouvé pour ce groupe musculaire</div>;
+  if (!filteredExercises || filteredExercises.length === 0) {
+    return <div className="text-center p-4">Aucun exercice trouvé pour ce groupe musculaire</div>;
   }
 
   return (

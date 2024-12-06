@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Image, Video, Trash2, Upload } from "lucide-react";
+import { Image, Video, Upload } from "lucide-react";
 import { UploadForm } from "./UploadForm";
 import { DifficultyBadges } from "./DifficultyBadges";
 import { useState } from "react";
@@ -32,12 +32,12 @@ export const ExerciseRow = ({
   const { toast } = useToast();
 
   const handleImageClick = () => {
-    setShowImageUpload(true);
+    setShowImageUpload(!showImageUpload);
     setShowVideoUpload(false);
   };
 
   const handleVideoClick = () => {
-    setShowVideoUpload(true);
+    setShowVideoUpload(!showVideoUpload);
     setShowImageUpload(false);
   };
 
@@ -57,7 +57,6 @@ export const ExerciseRow = ({
         description: `Le ${type === 'image' ? 'l\'image' : 'la vidéo'} a été supprimé(e)`,
       });
 
-      // Rafraîchir la liste des médias
       onUpload();
     } catch (error) {
       console.error('Error deleting media:', error);
