@@ -49,7 +49,7 @@ export const ExerciseSelection = ({
         <p className="text-center text-muted-foreground">
           Aucun exercice ne correspond à votre recherche.
         </p>
-        <Button variant="outline" onClick={onClose}>
+        <Button onClick={onClose}>
           Fermer
         </Button>
       </div>
@@ -82,12 +82,9 @@ export const ExerciseSelection = ({
           </motion.div>
         ))}
       </div>
-      <div className="flex justify-end space-x-4">
-        <Button variant="outline" onClick={onClose}>
-          Fermer
-        </Button>
+      <div className="flex justify-end">
         <Button onClick={onClose}>
-          Terminer la sélection ({selectedExercises.length})
+          Terminer ({selectedExercises.length})
         </Button>
       </div>
     </div>
