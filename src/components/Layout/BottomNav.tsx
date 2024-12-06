@@ -23,10 +23,12 @@ export const BottomNav = () => {
               <Link
                 key={index}
                 to={item.path}
-                className="flex flex-col items-center gap-1 w-16 py-1"
+                className={`flex flex-col items-center gap-1 w-16 py-1 transition-colors ${
+                  isActive ? 'text-primary' : 'text-muted-foreground'
+                }`}
               >
-                <Icon className={`w-6 h-6 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
-                <span className={`text-xs ${isActive ? 'text-primary' : 'text-muted-foreground'} text-center`}>
+                <Icon className="w-5 h-5" />
+                <span className="text-xs text-center">
                   {item.label}
                 </span>
               </Link>
