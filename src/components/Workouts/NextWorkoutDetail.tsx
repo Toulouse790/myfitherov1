@@ -8,7 +8,7 @@ import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Play, Pause, Timer } from "lucide-react";
-import { formatWorkoutTime } from "./WorkoutTimer";
+import { formatWorkoutTime } from "../WorkoutTimer";
 
 export const NextWorkoutDetail = () => {
   const {
@@ -75,26 +75,25 @@ export const NextWorkoutDetail = () => {
           {!workoutStarted ? (
             <Button 
               size="lg"
-              className="bg-primary hover:bg-primary/90 text-white font-semibold px-12 py-6 text-lg"
+              className="bg-primary hover:bg-primary/90 text-white font-semibold px-8"
               onClick={handleStartWorkout}
             >
               Commencer ma séance
             </Button>
           ) : (
             <Button
-              size="lg"
               variant={isPaused ? "default" : "outline"}
               onClick={handlePauseResume}
-              className="px-8"
+              className="px-4"
             >
               {isPaused ? (
                 <>
-                  <Play className="w-5 h-5 mr-3" />
+                  <Play className="w-4 h-4 mr-2" />
                   Reprendre
                 </>
               ) : (
                 <>
-                  <Pause className="w-5 h-5 mr-3" />
+                  <Pause className="w-4 h-4 mr-2" />
                   Pause
                 </>
               )}
@@ -108,7 +107,7 @@ export const NextWorkoutDetail = () => {
               <span>Progression de la séance</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <Progress value={progress} className="h-3" />
+            <Progress value={progress} className="h-2" />
           </div>
         )}
       </div>
@@ -143,13 +142,13 @@ export const NextWorkoutDetail = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-12 right-12">
+      <div className="fixed bottom-8 right-8">
         {workoutStarted && (
           <Button 
             variant="destructive"
             size="lg"
             onClick={handleEndWorkout}
-            className="shadow-lg px-8 py-6 text-lg"
+            className="shadow-lg px-6"
           >
             Terminer la séance
           </Button>
