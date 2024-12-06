@@ -40,18 +40,21 @@ export const ExerciseSets = ({
 
     Object.entries(restTimers).forEach(([exerciseName, timer]) => {
       if (timer !== null && timer > 0) {
-        console.log(`Starting rest timer for ${exerciseName}: ${timer}s`);
+        console.log(`Starting interval for ${exerciseName} with ${timer}s remaining`);
+        
         intervals[exerciseName] = setInterval(() => {
           setRestTimers(prev => {
             const currentTimer = prev[exerciseName];
             if (currentTimer === null || currentTimer <= 1) {
-              console.log(`Rest timer completed for ${exerciseName}`);
+              console.log(`Timer completed for ${exerciseName}`);
+              clearInterval(intervals[exerciseName]);
               toast({
                 title: "Repos terminé !",
                 description: "C'est reparti ! Commencez la série suivante.",
               });
               return { ...prev, [exerciseName]: null };
             }
+            console.log(`Timer tick for ${exerciseName}: ${currentTimer - 1}s`);
             return { ...prev, [exerciseName]: currentTimer - 1 };
           });
         }, 1000);
@@ -59,7 +62,9 @@ export const ExerciseSets = ({
     });
 
     return () => {
-      Object.values(intervals).forEach(interval => {
+      console.log('Cleaning up intervals');
+      Object.entries(intervals).forEach(([exerciseName, interval]) => {
+        console.log(`Clearing interval for ${exerciseName}`);
         clearInterval(interval);
       });
     };
@@ -77,7 +82,11 @@ export const ExerciseSets = ({
       }));
       
       console.log(`Starting rest timer for ${exerciseName}`);
-      setRestTimers(prev => ({ ...prev, [exerciseName]: 90 }));
+      setRestTimers(prev => {
+        const newTimers = { ...prev, [exerciseName]: 90 };
+        console.log('New rest timers state:', newTimers);
+        return newTimers;
+      });
 
       // Calculate calories (simple estimation)
       const calories = Math.round(reps[exerciseName] * weights[exerciseName] * 0.15);
