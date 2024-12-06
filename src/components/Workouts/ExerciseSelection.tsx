@@ -8,15 +8,21 @@ export interface ExerciseSelectionProps {
   onSelectionChange: (selectedIds: string[]) => void;
   onClose: () => void;
   muscleGroup?: string;
+  searchQuery?: string;
 }
 
 export const ExerciseSelection = ({
   selectedExercises,
   onSelectionChange,
   onClose,
-  muscleGroup
+  muscleGroup,
+  searchQuery = ""
 }: ExerciseSelectionProps) => {
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
+
+  const filteredExercises = exercises?.filter(exercise => 
+    exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleExerciseToggle = (exerciseId: string) => {
     const newSelection = selectedExercises.includes(exerciseId)
@@ -33,11 +39,11 @@ export const ExerciseSelection = ({
     );
   }
 
-  if (!exercises || exercises.length === 0) {
+  if (!filteredExercises || filteredExercises.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-8 space-y-4">
         <p className="text-center text-muted-foreground">
-          Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.
+          Aucun exercice ne correspond à votre recherche.
         </p>
         <Button variant="outline" onClick={onClose}>
           Fermer
@@ -49,7 +55,7 @@ export const ExerciseSelection = ({
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
-        {exercises.map((exercise) => (
+        {filteredExercises.map((exercise) => (
           <motion.div
             key={exercise.id}
             initial={{ opacity: 0, y: 20 }}

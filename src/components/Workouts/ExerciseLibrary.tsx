@@ -116,6 +116,7 @@ export const ExerciseLibrary = () => {
             onSelectionChange={handleExerciseSelectionChange}
             onClose={() => setShowExerciseSelection(false)}
             muscleGroup={selectedMuscleGroup}
+            searchQuery={searchQuery}
           />
         </DialogContent>
       </Dialog>
