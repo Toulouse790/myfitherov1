@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Plus, Timer } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { WorkoutTimer } from "./WorkoutTimer";
+import { formatWorkoutTime } from "@/utils/time";
 import { useToast } from "@/hooks/use-toast";
 
 interface Set {
@@ -96,8 +96,6 @@ export const WorkoutExerciseDetail = () => {
           Ajouter une série
         </Button>
       </div>
-
-      <WorkoutTimer />
 
       <Card className="bg-white">
         <CardHeader>

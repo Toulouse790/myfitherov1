@@ -6,7 +6,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { formatWorkoutTime } from "../WorkoutTimer";
+import { formatWorkoutTime } from "@/utils/time";
 import { Clock, Dumbbell, Flame } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
