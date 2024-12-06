@@ -15,16 +15,6 @@ export const Header = () => {
             </span>
           </Link>
         </div>
-
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <nav className="flex items-center">
-            {!user && (
-              <Link to="/signin">
-                <Button variant="ghost">Connexion</Button>
-              </Link>
-            )}
-          </nav>
-        </div>
       </div>
     </header>
   );
