@@ -36,7 +36,6 @@ export const ExerciseSets = ({
   }, [exerciseNames]);
 
   useEffect(() => {
-    // Handle rest timers independently
     const intervals: { [key: string]: NodeJS.Timeout } = {};
 
     Object.entries(restTimers).forEach(([exerciseName, timer]) => {
@@ -45,7 +44,10 @@ export const ExerciseSets = ({
           setRestTimers(prev => {
             const currentTimer = prev[exerciseName];
             if (currentTimer === null || currentTimer <= 1) {
-              clearInterval(intervals[exerciseName]);
+              toast({
+                title: "Repos terminé !",
+                description: "C'est reparti ! Commencez la série suivante.",
+              });
               return { ...prev, [exerciseName]: null };
             }
             return { ...prev, [exerciseName]: currentTimer - 1 };
@@ -57,11 +59,10 @@ export const ExerciseSets = ({
     return () => {
       Object.values(intervals).forEach(interval => clearInterval(interval));
     };
-  }, [restTimers]);
+  }, [restTimers, toast]);
 
   const handleSetComplete = (exerciseName: string) => {
     const currentSets = completedSets[exerciseName] || 0;
-    console.log(`Completing set for exercise ${exerciseName}, current sets: ${currentSets}`);
     
     if (currentSets < 3) {
       const newSetsCount = currentSets + 1;
@@ -83,7 +84,6 @@ export const ExerciseSets = ({
 
       // If this was the last set, mark exercise as complete
       if (newSetsCount === 3) {
-        console.log(`Exercise ${exerciseName} completed at index ${currentExerciseIndex}`);
         toast({
           title: "Exercice terminé !",
           description: "Passez à l'exercice suivant.",
@@ -145,9 +145,9 @@ export const ExerciseSets = ({
                     Série {(completedSets[exerciseName] || 0) + 1}/3
                   </h4>
                   {restTimers[exerciseName] !== null && (
-                    <div className="flex items-center gap-2 text-primary animate-pulse">
+                    <div className="flex items-center gap-2 text-primary">
                       <Timer className="h-4 w-4" />
-                      <span>{restTimers[exerciseName]}s</span>
+                      <span className="animate-pulse">{restTimers[exerciseName]}s</span>
                     </div>
                   )}
                 </div>
