@@ -1,11 +1,32 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import useSound from 'use-sound';
 
 export const useRestTimer = (initialRestTime: number = 90) => {
   const [restTimers, setRestTimers] = useState<{ [key: string]: number | null }>({});
   const { toast } = useToast();
-  const [playSound] = useSound("/sounds/rest-complete.mp3", { volume: 0.5 });
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  const playSound = useCallback(async () => {
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+      }
+      
+      const oscillator = audioContextRef.current.createOscillator();
+      const gainNode = audioContextRef.current.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContextRef.current.destination);
+      
+      oscillator.frequency.setValueAtTime(440, audioContextRef.current.currentTime); // A4 note
+      gainNode.gain.setValueAtTime(0.1, audioContextRef.current.currentTime); // Lower volume
+      
+      oscillator.start();
+      oscillator.stop(audioContextRef.current.currentTime + 0.2); // Short beep
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
+  }, []);
 
   useEffect(() => {
     const intervals: { [key: string]: NodeJS.Timeout } = {};
