@@ -34,7 +34,7 @@ export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
     const intervals: { [key: string]: NodeJS.Timeout } = {};
 
     Object.entries(restTimers).forEach(([exerciseId, timer]) => {
-      if (timer !== null) {
+      if (timer !== null && timer > 0) {
         intervals[exerciseId] = setInterval(() => {
           setRestTimers(prev => {
             const currentTimer = prev[exerciseId];

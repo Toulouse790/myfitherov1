@@ -34,13 +34,14 @@ export const NextWorkoutDetail = () => {
     : 0;
 
   const handleStartWorkout = () => {
-    setIsRunning(true); // Start the timer
+    setIsRunning(true); // Démarre le compteur de séance
     handleExerciseClick(0);
   };
 
   const handlePauseResume = () => {
-    setIsPaused(!isPaused);
-    setIsRunning(isPaused); // When paused is true, isRunning should be false and vice versa
+    const newPausedState = !isPaused;
+    setIsPaused(newPausedState);
+    setIsRunning(!newPausedState); // Inverse de l'état de pause pour le compteur
   };
 
   const handleEndWorkout = () => {
