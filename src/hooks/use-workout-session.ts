@@ -146,6 +146,7 @@ export const useWorkoutSession = () => {
   };
 
   const handleExerciseClick = (index: number) => {
+    console.log("Setting current exercise index to:", index);
     setCurrentExerciseIndex(index);
   };
 

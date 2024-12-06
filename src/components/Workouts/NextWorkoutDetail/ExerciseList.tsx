@@ -55,6 +55,13 @@ export const ExerciseList = ({
     }
   }, [exercises]);
 
+  const handleExerciseClick = (index: number) => {
+    console.log("Exercise clicked:", index);
+    if (isWorkoutStarted) {
+      onExerciseClick(index);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <h3 className="font-medium text-lg mb-4">Programme</h3>
@@ -66,7 +73,7 @@ export const ExerciseList = ({
           transition={{ duration: 0.3, delay: index * 0.1 }}
         >
           <div 
-            onClick={() => isWorkoutStarted && onExerciseClick(index)}
+            onClick={() => handleExerciseClick(index)}
             className={`
               p-3 rounded-lg transition-all duration-300 cursor-pointer
               hover:bg-accent
@@ -89,7 +96,7 @@ export const ExerciseList = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="font-medium truncate">{exercise}</p>
-                  {index < currentExerciseIndex && (
+                  {index < currentExerciseIndex! && (
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                   )}
                 </div>

@@ -21,6 +21,10 @@ export const NextWorkoutDetail = () => {
     handleConfirmEndWorkout
   } = useWorkoutSession();
 
+  console.log("Current exercise index:", currentExerciseIndex);
+  console.log("Exercises:", exercises);
+  console.log("Workout started:", workoutStarted);
+
   if (!user) {
     return null;
   }
