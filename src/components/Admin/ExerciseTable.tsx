@@ -35,6 +35,7 @@ export const ExerciseTable = () => {
 
       if (error) throw error;
 
+      console.log('Fetched exercises:', data);
       setExercises(data || []);
     } catch (error) {
       console.error('Error fetching exercises:', error);
@@ -57,12 +58,21 @@ export const ExerciseTable = () => {
         ? [...(exercise.location || []), location]
         : (exercise.location || []).filter((l: string) => l !== location);
 
+      console.log('Updating exercise locations:', {
+        exerciseId,
+        newLocations,
+        checked
+      });
+
       const { error } = await supabase
         .from('exercises')
         .update({ location: newLocations })
         .eq('id', exerciseId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       setExercises(exercises.map(e => 
         e.id === exerciseId ? { ...e, location: newLocations } : e
@@ -93,7 +103,8 @@ export const ExerciseTable = () => {
 
       console.log('Updating exercise difficulties:', {
         exerciseId,
-        newDifficulties
+        newDifficulties,
+        checked
       });
 
       const { error } = await supabase

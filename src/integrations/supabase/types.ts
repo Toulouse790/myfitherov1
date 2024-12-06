@@ -158,6 +158,7 @@ export type Database = {
           created_at: string
           difficulty: string[]
           id: string
+          location: string[] | null
           muscle_group: string
           name: string
           updated_at: string
@@ -166,6 +167,7 @@ export type Database = {
           created_at?: string
           difficulty?: string[]
           id?: string
+          location?: string[] | null
           muscle_group: string
           name: string
           updated_at?: string
@@ -174,6 +176,7 @@ export type Database = {
           created_at?: string
           difficulty?: string[]
           id?: string
+          location?: string[] | null
           muscle_group?: string
           name?: string
           updated_at?: string
