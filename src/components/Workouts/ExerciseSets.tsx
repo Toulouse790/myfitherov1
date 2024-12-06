@@ -74,13 +74,14 @@ export const ExerciseSets = ({
       // Start rest timer
       setRestTimers(prev => ({ ...prev, [exerciseName]: 90 }));
 
+      // Calculate calories (simple estimation)
+      const calories = Math.round(reps[exerciseName] * weights[exerciseName] * 0.15);
+
       // Show progress toast
-      if (newSetsCount < 3) {
-        toast({
-          title: "Série complétée !",
-          description: `Encore ${3 - newSetsCount} séries à faire.`,
-        });
-      }
+      toast({
+        title: "Série complétée !",
+        description: `${calories} calories brûlées. Repos de 90 secondes.`,
+      });
 
       // If this was the last set, mark exercise as complete
       if (newSetsCount === 3) {
