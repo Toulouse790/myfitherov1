@@ -26,7 +26,7 @@ export const ExerciseSets = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    // Initialiser les poids et répétitions pour chaque exercice
+    // Initialize weights and reps for each exercise
     const initialWeights: { [key: string]: number } = {};
     const initialReps: { [key: string]: number } = {};
     exercises.forEach(exercise => {
@@ -38,7 +38,7 @@ export const ExerciseSets = ({
   }, [exercises]);
 
   useEffect(() => {
-    // Gérer les timers de repos indépendamment de la pause de l'entraînement
+    // Handle rest timers independently
     const intervals: { [key: string]: NodeJS.Timeout } = {};
 
     Object.entries(restTimers).forEach(([exerciseId, timer]) => {
@@ -66,30 +66,33 @@ export const ExerciseSets = ({
     console.log(`Completing set for exercise ${exerciseId}, current sets: ${currentSets}`);
     
     if (currentSets < 3) {
+      const newSetsCount = currentSets + 1;
       setCompletedSets(prev => ({
         ...prev,
-        [exerciseId]: (prev[exerciseId] || 0) + 1
+        [exerciseId]: newSetsCount
       }));
       
-      // Démarrer le timer de repos
+      // Start rest timer
       setRestTimers(prev => ({ ...prev, [exerciseId]: 90 }));
 
-      // Afficher un toast pour informer l'utilisateur
-      toast({
-        title: "Série complétée !",
-        description: `Encore ${2 - currentSets} séries à faire.`,
-      });
-    }
+      // Show progress toast
+      if (newSetsCount < 3) {
+        toast({
+          title: "Série complétée !",
+          description: `Encore ${3 - newSetsCount} séries à faire.`,
+        });
+      }
 
-    // Si c'était la dernière série, marquer l'exercice comme terminé
-    if (currentSets === 2) {
-      console.log("Exercise completed, notifying parent");
-      toast({
-        title: "Exercice terminé !",
-        description: "Passez à l'exercice suivant.",
-      });
-      if (onExerciseComplete) {
-        onExerciseComplete(currentExerciseIndex);
+      // If this was the last set, mark exercise as complete
+      if (newSetsCount === 3) {
+        console.log(`Exercise ${exerciseId} completed at index ${currentExerciseIndex}`);
+        toast({
+          title: "Exercice terminé !",
+          description: "Passez à l'exercice suivant.",
+        });
+        if (onExerciseComplete) {
+          onExerciseComplete(currentExerciseIndex);
+        }
       }
     }
   };
@@ -151,7 +154,7 @@ export const ExerciseSets = ({
                   <h4 className="font-medium">
                     Série {(completedSets[exercise.id] || 0) + 1}/3
                   </h4>
-                  {restTimers[exercise.id] !== null && restTimers[exercise.id] !== undefined && (
+                  {restTimers[exercise.id] !== null && (
                     <div className="flex items-center gap-2 text-primary animate-pulse">
                       <Timer className="h-4 w-4" />
                       <span>{restTimers[exercise.id]}s</span>
