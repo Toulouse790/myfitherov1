@@ -14,6 +14,7 @@ interface QuestionnaireResponses {
   training_frequency: string;
   experience_level: string;
   available_equipment: string;
+  workout_duration: string;
 }
 
 const INITIAL_RESPONSES: QuestionnaireResponses = {
@@ -21,6 +22,7 @@ const INITIAL_RESPONSES: QuestionnaireResponses = {
   training_frequency: "",
   experience_level: "",
   available_equipment: "",
+  workout_duration: "60",
 };
 
 export const InitialQuestionnaire = () => {
@@ -101,8 +103,8 @@ export const InitialQuestionnaire = () => {
           <TrainingFrequencyStep
             workoutsPerWeek={responses.training_frequency}
             onWorkoutsPerWeekChange={(value) => handleResponseChange("training_frequency", value)}
-            workoutDuration="60"
-            onWorkoutDurationChange={() => {}}
+            workoutDuration={responses.workout_duration}
+            onWorkoutDurationChange={(value) => handleResponseChange("workout_duration", value)}
           />
         );
       case 3:
@@ -129,7 +131,7 @@ export const InitialQuestionnaire = () => {
       case 1:
         return !!responses.objective;
       case 2:
-        return !!responses.training_frequency;
+        return !!responses.training_frequency && !!responses.workout_duration;
       case 3:
         return !!responses.experience_level;
       case 4:
