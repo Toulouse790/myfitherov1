@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ExerciseAnimation } from "./ExerciseAnimation";
+import { Timer } from "lucide-react";
 import { useExercises } from "@/hooks/use-exercises";
+import { motion } from "framer-motion";
 
 interface ExerciseSetsProps {
   exercises: string[];
@@ -11,29 +12,57 @@ interface ExerciseSetsProps {
 
 export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
   const { exercises, isLoading } = useExercises(exerciseIds);
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
-  const [currentSet, setCurrentSet] = useState(0);
-  const [isResting, setIsResting] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [completedSets, setCompletedSets] = useState<{ [key: string]: number }>({});
+  const [weights, setWeights] = useState<{ [key: string]: number }>({});
+  const [reps, setReps] = useState<{ [key: string]: number }>({});
+  const [restTimers, setRestTimers] = useState<{ [key: string]: number | null }>({});
 
-  const currentExercise = exercises[currentExerciseIndex];
+  useEffect(() => {
+    // Initialiser les poids et répétitions pour chaque exercice
+    const initialWeights: { [key: string]: number } = {};
+    const initialReps: { [key: string]: number } = {};
+    exercises.forEach(exercise => {
+      initialWeights[exercise.id] = 10;
+      initialReps[exercise.id] = 12;
+    });
+    setWeights(initialWeights);
+    setReps(initialReps);
+  }, [exercises]);
 
-  const handleSetComplete = () => {
-    if (!currentExercise) return;
-
-    if (currentSet < 3) {
-      setCurrentSet(prev => prev + 1);
-      setIsResting(true);
-      setProgress(0);
-    } else {
-      if (currentExerciseIndex < exercises.length - 1) {
-        setCurrentExerciseIndex(prev => prev + 1);
-        setCurrentSet(0);
-      }
+  const handleSetComplete = (exerciseId: string) => {
+    const currentSets = completedSets[exerciseId] || 0;
+    
+    if (currentSets < 3) {
+      setCompletedSets(prev => ({
+        ...prev,
+        [exerciseId]: (prev[exerciseId] || 0) + 1
+      }));
+      
+      // Démarrer le timer de repos
+      setRestTimers(prev => ({ ...prev, [exerciseId]: 90 }));
+      
+      const interval = setInterval(() => {
+        setRestTimers(prev => {
+          const currentTimer = prev[exerciseId];
+          if (currentTimer === null || currentTimer <= 1) {
+            clearInterval(interval);
+            return { ...prev, [exerciseId]: null };
+          }
+          return { ...prev, [exerciseId]: currentTimer - 1 };
+        });
+      }, 1000);
     }
   };
 
-  if (isLoading || !currentExercise) {
+  const handleWeightChange = (exerciseId: string, value: number) => {
+    setWeights(prev => ({ ...prev, [exerciseId]: value }));
+  };
+
+  const handleRepsChange = (exerciseId: string, value: number) => {
+    setReps(prev => ({ ...prev, [exerciseId]: value }));
+  };
+
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -42,52 +71,71 @@ export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
   }
 
   return (
-    <div className="space-y-4">
-      {exercises.map((exercise, index) => (
-        <Card 
+    <div className="space-y-6">
+      {exercises.map((exercise) => (
+        <motion.div
           key={exercise.id}
-          className={`p-4 ${index === currentExerciseIndex ? 'ring-2 ring-primary' : ''}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">{exercise.name}</h3>
-            
-            {index === currentExerciseIndex && (
-              <>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">Répétitions:</span>
+          <Card className="p-6">
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold">{exercise.name}</h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Poids (kg)</label>
                   <Input
                     type="number"
-                    value={12}
-                    className="w-20"
-                    min={1}
-                    inputMode="numeric"
-                    readOnly
+                    value={weights[exercise.id] || 0}
+                    onChange={(e) => handleWeightChange(exercise.id, Number(e.target.value))}
+                    min={0}
+                    className="w-full"
                   />
                 </div>
-                
-                <ExerciseAnimation
-                  reps={12}
-                  restTime={120}
-                  sets={3}
-                  currentSet={currentSet}
-                  isResting={isResting}
-                  progress={progress}
-                />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Répétitions</label>
+                  <Input
+                    type="number"
+                    value={reps[exercise.id] || 0}
+                    onChange={(e) => handleRepsChange(exercise.id, Number(e.target.value))}
+                    min={1}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium">
+                    Série {(completedSets[exercise.id] || 0) + 1}/3
+                  </h4>
+                  {restTimers[exercise.id] !== null && restTimers[exercise.id] !== undefined && (
+                    <div className="flex items-center gap-2 text-primary animate-pulse">
+                      <Timer className="h-4 w-4" />
+                      <span>{restTimers[exercise.id]}s</span>
+                    </div>
+                  )}
+                </div>
 
                 <Button
-                  onClick={handleSetComplete}
+                  onClick={() => handleSetComplete(exercise.id)}
                   className="w-full"
-                  disabled={index !== currentExerciseIndex}
+                  disabled={
+                    restTimers[exercise.id] !== null || 
+                    (completedSets[exercise.id] || 0) >= 3
+                  }
                 >
-                  {currentSet === 2 
-                    ? 'Terminer l\'exercice'
-                    : 'Série terminée'
+                  {(completedSets[exercise.id] || 0) >= 3 
+                    ? "Exercice terminé" 
+                    : "Valider la série"
                   }
                 </Button>
-              </>
-            )}
-          </div>
-        </Card>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
       ))}
     </div>
   );

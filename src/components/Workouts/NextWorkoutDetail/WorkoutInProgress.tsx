@@ -18,8 +18,6 @@ interface WorkoutInProgressProps {
 
 export const WorkoutInProgress = ({
   exercises,
-  currentExerciseIndex,
-  onExerciseClick,
   sessionId,
 }: WorkoutInProgressProps) => {
   console.log("WorkoutInProgress - Exercises:", exercises);
