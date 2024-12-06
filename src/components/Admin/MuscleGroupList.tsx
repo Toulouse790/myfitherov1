@@ -14,7 +14,7 @@ export const MuscleGroupList = ({ selectedGroup, onGroupSelect }: MuscleGroupLis
           key={group.id}
           value={group.name}
           onClick={() => onGroupSelect(group.name)}
-          className="whitespace-nowrap"
+          className={`whitespace-nowrap ${selectedGroup === group.name ? 'bg-primary text-primary-foreground' : ''}`}
         >
           {group.name}
         </TabsTrigger>

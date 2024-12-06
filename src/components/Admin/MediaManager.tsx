@@ -21,6 +21,7 @@ export const MediaManager = () => {
         .select('*');
 
       if (error) throw error;
+      console.log('Fetched exercises:', data);
       return data as Exercise[];
     }
   });
@@ -47,12 +48,15 @@ export const MediaManager = () => {
   };
 
   const filteredExercises = exercises?.filter(
-    (exercise) => exercise.muscleGroup === selectedGroup
+    (exercise) => exercise.muscle_group === selectedGroup
   ) || [];
+
+  console.log('Filtered exercises:', filteredExercises);
+  console.log('Selected group:', selectedGroup);
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <Tabs defaultValue={selectedGroup} className="w-full">
+      <Tabs defaultValue={selectedGroup} value={selectedGroup} className="w-full">
         <MuscleGroupList
           selectedGroup={selectedGroup}
           onGroupSelect={setSelectedGroup}

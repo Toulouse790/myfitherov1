@@ -1,11 +1,9 @@
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { muscleGroups } from "../Workouts/workoutConstants";
+import { TabsContent } from "@/components/ui/tabs";
 import { ExerciseRow } from "./ExerciseRow";
 import { Exercise } from "@/components/Workouts/exercises/types/exercise";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ExerciseMedia } from "@/types/exercise-media";
-import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface MediaListProps {
   exercises: Exercise[];
@@ -38,27 +36,25 @@ export const MediaList = ({
     return exerciseMedia?.filter(media => media.exercise_id === exerciseId) || [];
   };
 
-  if (!exercises || exercises.length === 0) {
-    return <div className="text-center p-4">Aucun exercice disponible</div>;
-  }
-
   return (
     <div className="space-y-4">
       {exercises.map((exercise) => (
-        <ExerciseRow
-          key={exercise.id}
-          exercise={{
-            id: exercise.id,
-            name: exercise.name,
-            muscle_group: exercise.muscleGroup,
-            difficulty: Array.isArray(exercise.difficulty) 
-              ? exercise.difficulty 
-              : [exercise.difficulty]
-          }}
-          onUpload={onUpload}
-          selectedFile={selectedFile}
-          media={getMediaForExercise(exercise.id)}
-        />
+        <TabsContent key={exercise.id} value={exercise.muscleGroup}>
+          <ExerciseRow
+            key={exercise.id}
+            exercise={{
+              id: exercise.id,
+              name: exercise.name,
+              muscle_group: exercise.muscleGroup,
+              difficulty: Array.isArray(exercise.difficulty) 
+                ? exercise.difficulty 
+                : [exercise.difficulty]
+            }}
+            onUpload={onUpload}
+            selectedFile={selectedFile}
+            media={getMediaForExercise(exercise.id)}
+          />
+        </TabsContent>
       ))}
     </div>
   );
