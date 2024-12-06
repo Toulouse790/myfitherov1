@@ -56,11 +56,6 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         console.log('Raw exercises data:', data);
 
         if (!data || data.length === 0) {
-          toast({
-            title: "Aucun exercice trouvé",
-            description: "Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.",
-            variant: "destructive",
-          });
           setExercises([]);
         } else {
           const exercisesWithMedia = data.map(exercise => ({
