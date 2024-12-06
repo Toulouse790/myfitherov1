@@ -6,17 +6,30 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 
+interface SuggestionType {
+  title: string;
+  description: string;
+  icon: JSX.Element;
+  onClick?: () => void;
+}
+
 export const WorkoutSuggestions = () => {
   const [showDialog, setShowDialog] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const suggestions = [
+  const suggestions: SuggestionType[] = [
     {
       title: "Favoris",
       description: "Choisi parmi vos entraînements sauvegardés",
-      icon: <Bookmark className="w-5 h-5 text-white" />
+      icon: <Bookmark className="w-5 h-5 text-white" />,
+      onClick: () => {
+        toast({
+          title: "Bientôt disponible",
+          description: "Cette fonctionnalité sera disponible prochainement",
+        });
+      }
     }
   ];
 
