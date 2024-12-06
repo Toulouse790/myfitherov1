@@ -334,6 +334,7 @@ export type Database = {
           objective: string | null
           training_frequency: string | null
           user_id: string | null
+          workout_duration: string | null
         }
         Insert: {
           available_equipment?: string | null
@@ -343,6 +344,7 @@ export type Database = {
           objective?: string | null
           training_frequency?: string | null
           user_id?: string | null
+          workout_duration?: string | null
         }
         Update: {
           available_equipment?: string | null
@@ -352,6 +354,7 @@ export type Database = {
           objective?: string | null
           training_frequency?: string | null
           user_id?: string | null
+          workout_duration?: string | null
         }
         Relationships: [
           {
