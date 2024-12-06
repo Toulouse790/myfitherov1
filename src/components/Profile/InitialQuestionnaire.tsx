@@ -8,6 +8,7 @@ import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
 import { TrainingFrequencyStep } from "./QuestionnaireSteps/TrainingFrequencyStep";
 import { ActivityLevelStep } from "./QuestionnaireSteps/ActivityLevelStep";
 import { TrainingLocationStep } from "./QuestionnaireSteps/TrainingLocationStep";
+import { DietTypeStep } from "./QuestionnaireSteps/DietTypeStep";
 
 interface QuestionnaireResponses {
   objective: string;
@@ -15,6 +16,7 @@ interface QuestionnaireResponses {
   experience_level: string;
   available_equipment: string;
   workout_duration: string;
+  diet_type: string;
 }
 
 const INITIAL_RESPONSES: QuestionnaireResponses = {
@@ -23,6 +25,7 @@ const INITIAL_RESPONSES: QuestionnaireResponses = {
   experience_level: "",
   available_equipment: "",
   workout_duration: "60",
+  diet_type: "omnivore",
 };
 
 export const InitialQuestionnaire = () => {
@@ -78,7 +81,7 @@ export const InitialQuestionnaire = () => {
   };
 
   const handleNext = async () => {
-    if (step < 4) {
+    if (step < 5) {
       setStep(step + 1);
     } else {
       await saveResponse(responses);
@@ -121,6 +124,13 @@ export const InitialQuestionnaire = () => {
             onTrainingLocationChange={(value) => handleResponseChange("available_equipment", value)}
           />
         );
+      case 5:
+        return (
+          <DietTypeStep
+            dietType={responses.diet_type}
+            onDietTypeChange={(value) => handleResponseChange("diet_type", value)}
+          />
+        );
       default:
         return null;
     }
@@ -136,6 +146,8 @@ export const InitialQuestionnaire = () => {
         return !!responses.experience_level;
       case 4:
         return !!responses.available_equipment;
+      case 5:
+        return !!responses.diet_type;
       default:
         return false;
     }
@@ -159,13 +171,13 @@ export const InitialQuestionnaire = () => {
               Précédent
             </Button>
             <div className="text-sm text-muted-foreground">
-              Étape {step} sur 4
+              Étape {step} sur 5
             </div>
             <Button
               onClick={handleNext}
               disabled={!isStepValid()}
             >
-              {step === 4 ? "Terminer" : "Suivant"}
+              {step === 5 ? "Terminer" : "Suivant"}
             </Button>
           </div>
         </CardContent>

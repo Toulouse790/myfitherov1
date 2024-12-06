@@ -329,6 +329,7 @@ export type Database = {
         Row: {
           available_equipment: string | null
           created_at: string
+          diet_type: string | null
           experience_level: string | null
           id: string
           objective: string | null
@@ -339,6 +340,7 @@ export type Database = {
         Insert: {
           available_equipment?: string | null
           created_at?: string
+          diet_type?: string | null
           experience_level?: string | null
           id?: string
           objective?: string | null
@@ -349,6 +351,7 @@ export type Database = {
         Update: {
           available_equipment?: string | null
           created_at?: string
+          diet_type?: string | null
           experience_level?: string | null
           id?: string
           objective?: string | null
