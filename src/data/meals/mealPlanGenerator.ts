@@ -18,6 +18,34 @@ export const mealVariants = {
   dinner: dinnerMeals
 };
 
+const isDietCompatible = (mealName: string, dietType: string): boolean => {
+  const lowerMealName = mealName.toLowerCase();
+  
+  switch (dietType) {
+    case 'vegan':
+      return !lowerMealName.includes('viande') && 
+             !lowerMealName.includes('poulet') &&
+             !lowerMealName.includes('poisson') &&
+             !lowerMealName.includes('saumon') &&
+             !lowerMealName.includes('thon') &&
+             !lowerMealName.includes('oeuf') &&
+             !lowerMealName.includes('fromage') &&
+             !lowerMealName.includes('yaourt') &&
+             !lowerMealName.includes('lait');
+    case 'vegetarian':
+      return !lowerMealName.includes('viande') && 
+             !lowerMealName.includes('poulet') &&
+             !lowerMealName.includes('poisson') &&
+             !lowerMealName.includes('saumon') &&
+             !lowerMealName.includes('thon');
+    case 'pescatarian':
+      return !lowerMealName.includes('viande') && 
+             !lowerMealName.includes('poulet');
+    default:
+      return true;
+  }
+};
+
 export const generateVariedMealPlan = (
   durationDays: number,
   excludedFoods: string[] = [],
@@ -32,34 +60,56 @@ export const generateVariedMealPlan = (
     "Vendredi", "Samedi", "Dimanche"
   ];
   
-  const filterAlternatives = (foods: Meal[]) => {
-    return foods.filter(food => {
-      const foodName = food.name.toLowerCase();
-      const isCompatibleWithDiet = dietType === 'omnivore' || 
-        (dietType === 'vegetarian' && !foodName.includes('viande')) ||
-        (dietType === 'vegan' && !foodName.includes('viande') && !foodName.includes('poisson') && !foodName.includes('oeuf') && !foodName.includes('lait')) ||
-        (dietType === 'pescatarian' && !foodName.includes('viande'));
+  const filterMeals = (meals: Meal[]): Meal[] => {
+    return meals.filter(meal => {
+      const mealName = meal.name.toLowerCase();
+      
+      // Vérifier la compatibilité avec le régime alimentaire
+      if (!isDietCompatible(mealName, dietType)) {
+        return false;
+      }
 
-      return isCompatibleWithDiet &&
-             !excludedFoods.some(excluded => foodName.includes(excluded.toLowerCase())) &&
-             !allergies.some(allergy => foodName.includes(allergy.toLowerCase())) &&
-             !intolerances.some(intolerance => foodName.includes(intolerance.toLowerCase()));
+      // Vérifier les aliments exclus
+      if (excludedFoods.some(food => mealName.includes(food.toLowerCase()))) {
+        return false;
+      }
+
+      // Vérifier les allergies
+      if (allergies.some(allergy => mealName.includes(allergy.toLowerCase()))) {
+        return false;
+      }
+
+      // Vérifier les intolérances
+      if (intolerances.some(intolerance => mealName.includes(intolerance.toLowerCase()))) {
+        return false;
+      }
+
+      return true;
     });
   };
 
   const generateAlternatives = (meal: Meal, type: string) => {
     const alternatives = mealVariants[type as keyof typeof mealVariants] || [];
+    const filteredAlternatives = filterMeals(alternatives);
+    
     return {
       ...meal,
-      alternatives: filterAlternatives(alternatives)
+      alternatives: filteredAlternatives
     };
   };
 
   for (let day = 0; day < durationDays; day++) {
     const dayIndex = day % 7;
-    const breakfastVariant = breakfastMeals[day % breakfastMeals.length];
-    const lunchVariant = lunchMeals[day % lunchMeals.length];
-    const dinnerVariant = dinnerMeals[day % dinnerMeals.length];
+    
+    // Filtrer les repas selon le régime alimentaire et les préférences
+    const filteredBreakfastMeals = filterMeals(breakfastMeals);
+    const filteredLunchMeals = filterMeals(lunchMeals);
+    const filteredDinnerMeals = filterMeals(dinnerMeals);
+
+    // Sélectionner les repas filtrés
+    const breakfastVariant = filteredBreakfastMeals[day % filteredBreakfastMeals.length] || defaultBreakfast;
+    const lunchVariant = filteredLunchMeals[day % filteredLunchMeals.length] || defaultLunch;
+    const dinnerVariant = filteredDinnerMeals[day % filteredDinnerMeals.length] || defaultDinner;
     const calorieAdjustment = targetCalories / 2000;
 
     plan.push({
