@@ -58,14 +58,6 @@ export const ExerciseSelection = ({
 
   return (
     <div className="space-y-6">
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="absolute right-4 top-4" 
-        onClick={onClose}
-      >
-        <X className="h-4 w-4" />
-      </Button>
       <div className="grid gap-4 sm:grid-cols-2">
         {filteredExercises.map((exercise) => (
           <motion.div
