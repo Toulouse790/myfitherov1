@@ -19,6 +19,23 @@ export const mealVariants = {
   snack: snackMeals
 };
 
+const calculateCarbsTarget = (
+  weightKg: number,
+  isTrainingDay: boolean,
+  trainingIntensity: 'light' | 'moderate' | 'intense' = 'moderate'
+): number => {
+  if (!isTrainingDay) return Math.round(weightKg * 2.5); // 2-3g/kg les jours de repos
+
+  switch (trainingIntensity) {
+    case 'light':
+      return Math.round(weightKg * 5); // 5g/kg
+    case 'intense':
+      return Math.round(weightKg * 8); // 7-10g/kg
+    default: // moderate
+      return Math.round(weightKg * 6); // 5-7g/kg
+  }
+};
+
 const isDietCompatible = (mealName: string, dietType: string): boolean => {
   const lowerMealName = mealName.toLowerCase();
   
@@ -54,14 +71,16 @@ export const generateVariedMealPlan = (
   allergies: string[] = [],
   intolerances: string[] = [],
   targetCalories: number = 2000,
-  dietType: string = 'omnivore'
+  dietType: string = 'omnivore',
+  weightKg: number = 70, // Poids par défaut si non spécifié
+  workoutDays: number[] = [] // Indices des jours d'entraînement (0-6 pour lundi-dimanche)
 ): MealPlan[] => {
   const plan: MealPlan[] = [];
   const weekDays = [
     "Lundi", "Mardi", "Mercredi", "Jeudi",
     "Vendredi", "Samedi", "Dimanche"
   ];
-  
+
   const filterMeals = (meals: Meal[]): Meal[] => {
     return meals.filter(meal => {
       const mealName = meal.name.toLowerCase();
@@ -113,7 +132,9 @@ export const generateVariedMealPlan = (
 
   for (let day = 0; day < durationDays; day++) {
     const dayIndex = day % 7;
+    const isTrainingDay = workoutDays.includes(dayIndex);
     const calorieAdjustment = targetCalories / 2000;
+    const carbsTarget = calculateCarbsTarget(weightKg, isTrainingDay);
 
     // Sélectionner des repas différents des 3 derniers jours
     const breakfastMeal = getRandomMeal(filteredBreakfastMeals, lastBreakfasts, 3);
@@ -129,30 +150,25 @@ export const generateVariedMealPlan = (
     lastMorningSnacks.push(morningSnackMeal);
     lastAfternoonSnacks.push(afternoonSnackMeal);
 
+    const dayMeals = {
+      breakfast: breakfastMeal,
+      morning_snack: morningSnackMeal,
+      lunch: lunchMeal,
+      afternoon_snack: afternoonSnackMeal,
+      dinner: dinnerMeal
+    };
+
+    const totalCarbs = Object.values(dayMeals).reduce(
+      (sum, meal) => sum + meal.carbs,
+      0
+    );
+
     plan.push({
       day: weekDays[dayIndex],
-      meals: {
-        breakfast: {
-          ...breakfastMeal,
-          calories: Math.round(breakfastMeal.calories * calorieAdjustment)
-        },
-        morning_snack: {
-          ...morningSnackMeal,
-          calories: Math.round(morningSnackMeal.calories * calorieAdjustment)
-        },
-        lunch: {
-          ...lunchMeal,
-          calories: Math.round(lunchMeal.calories * calorieAdjustment)
-        },
-        afternoon_snack: {
-          ...afternoonSnackMeal,
-          calories: Math.round(afternoonSnackMeal.calories * calorieAdjustment)
-        },
-        dinner: {
-          ...dinnerMeal,
-          calories: Math.round(dinnerMeal.calories * calorieAdjustment)
-        }
-      }
+      meals: dayMeals,
+      isTrainingDay,
+      totalCarbs,
+      carbsTarget
     });
   }
 
