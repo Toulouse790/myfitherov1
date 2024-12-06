@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { WorkoutHeader } from "./NextWorkoutDetail/WorkoutHeader";
-import { ExerciseList } from "./NextWorkoutDetail/ExerciseList";
-import { WorkoutInProgress } from "./NextWorkoutDetail/WorkoutInProgress";
+import { WorkoutProgress } from "./NextWorkoutDetail/WorkoutProgress";
+import { WorkoutContent } from "./NextWorkoutDetail/WorkoutContent";
+import { EndWorkoutButton } from "./NextWorkoutDetail/EndWorkoutButton";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { CardioSession } from "./NextWorkoutDetail/CardioSession";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Timer } from "lucide-react";
-import { formatWorkoutTime } from "@/utils/time";
 
 export const NextWorkoutDetail = () => {
   const {
@@ -29,7 +25,6 @@ export const NextWorkoutDetail = () => {
   const [showSummary, setShowSummary] = useState(false);
   const [completedExercises, setCompletedExercises] = useState<number[]>([]);
 
-  // Calculer la progression en fonction des exercices complétés
   const progress = exercises.length > 0 
     ? (completedExercises.length / exercises.length) * 100 
     : 0;
@@ -48,7 +43,6 @@ export const NextWorkoutDetail = () => {
       setCompletedExercises(prev => [...prev, index]);
     }
     
-    // Si ce n'est pas le dernier exercice, passer au suivant
     if (index < exercises.length - 1) {
       handleExerciseClick(index + 1);
     }
@@ -70,80 +64,28 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="container max-w-7xl mx-auto p-4 lg:p-8 space-y-8">
-      <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-6 border-b">
-        <div className="flex items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <Timer className="w-6 h-6 text-primary" />
-            <span className="font-mono text-xl">
-              {formatWorkoutTime(Math.round(duration))}
-            </span>
-          </div>
-          
-          {!workoutStarted && (
-            <Button 
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-white font-semibold px-8"
-              onClick={handleStartWorkout}
-            >
-              Commencer ma séance
-            </Button>
-          )}
-        </div>
+      <WorkoutProgress
+        duration={duration}
+        progress={progress}
+        workoutStarted={workoutStarted}
+        onStartWorkout={handleStartWorkout}
+      />
 
-        {workoutStarted && (
-          <div className="mt-6 space-y-3">
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Progression de la séance</span>
-              <span>{Math.round(progress)}%</span>
-            </div>
-            <Progress value={progress} className="h-2" />
-          </div>
-        )}
-      </div>
+      <WorkoutContent
+        exercises={exercises}
+        currentExerciseIndex={currentExerciseIndex}
+        workoutStarted={workoutStarted}
+        completedExercises={completedExercises}
+        sessionId={sessionId}
+        onExerciseClick={handleExerciseClick}
+        onRegenerateWorkout={handleRegenerateWorkout}
+        onExerciseComplete={handleExerciseComplete}
+      />
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
-        <div className="space-y-6">
-          <ExerciseList
-            exercises={exercises}
-            currentExerciseIndex={currentExerciseIndex}
-            isWorkoutStarted={workoutStarted}
-            onExerciseClick={handleExerciseClick}
-            completedExercises={completedExercises}
-          />
-        </div>
-
-        <div>
-          {workoutStarted ? (
-            <WorkoutInProgress
-              exercises={exercises}
-              currentExerciseIndex={currentExerciseIndex}
-              onExerciseClick={handleExerciseClick}
-              sessionId={sessionId}
-              onRegenerateWorkout={handleRegenerateWorkout}
-              onExerciseComplete={handleExerciseComplete}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full p-12 text-center space-y-6 text-muted-foreground bg-muted/10 rounded-lg border-2 border-dashed">
-              <p className="text-xl">
-                Cliquez sur "Commencer ma séance" pour démarrer votre entraînement
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="fixed bottom-8 right-8">
-        {workoutStarted && (
-          <Button 
-            variant="destructive"
-            size="lg"
-            onClick={handleEndWorkout}
-            className="shadow-lg px-6"
-          >
-            Terminer la séance
-          </Button>
-        )}
-      </div>
+      <EndWorkoutButton
+        workoutStarted={workoutStarted}
+        onEndWorkout={handleEndWorkout}
+      />
 
       <WorkoutSummaryDialog
         open={showSummary}
