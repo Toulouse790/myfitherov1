@@ -10,13 +10,16 @@ export const useWorkoutRegeneration = (sessionId: string | null) => {
   const handleRegenerateWorkout = async (userId: string) => {
     try {
       // Récupérer le profil utilisateur
-      const { data: profile } = await supabase
+      const { data: profiles, error: profileError } = await supabase
         .from('questionnaire_responses')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-      if (!profile) {
+      if (profileError) throw profileError;
+
+      if (!profiles || profiles.length === 0) {
         toast({
           title: "Profil incomplet",
           description: "Veuillez d'abord remplir le questionnaire initial",
@@ -24,6 +27,8 @@ export const useWorkoutRegeneration = (sessionId: string | null) => {
         });
         return;
       }
+
+      const profile = profiles[0];
 
       // Récupérer les exercices disponibles
       const { data: exercises, error: exercisesError } = await supabase

@@ -56,13 +56,23 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
       return;
     }
 
-    const { data: profile } = await supabase
+    const { data: profiles, error } = await supabase
       .from('questionnaire_responses')
       .select('*')
       .eq('user_id', user.id)
-      .single();
+      .order('created_at', { ascending: false })
+      .limit(1);
 
-    if (!profile) {
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de récupérer votre profil",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!profiles || profiles.length === 0) {
       toast({
         title: "Profil incomplet",
         description: "Veuillez d'abord remplir le questionnaire initial",
@@ -71,6 +81,7 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
       return;
     }
 
+    const profile = profiles[0];
     console.log("Génération du programme avec profil:", profile);
 
     const userProfile = {
