@@ -1,114 +1,21 @@
-import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
+import { SignInForm } from "./SignInForm";
+import { SignInHeader } from "./SignInHeader";
 
 export const SignIn = () => {
-  const [email, setEmail] = useState("test@example.com");
-  const [password, setPassword] = useState("password123");
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      console.log("Tentative de connexion avec:", { email }); // Debug log
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error("Erreur de connexion:", error); // Debug log
-        let errorMessage = "Une erreur est survenue lors de la connexion";
-        
-        if (error.message === "Invalid login credentials") {
-          errorMessage = "Email ou mot de passe incorrect";
-        } else if (error.message === "Email not confirmed") {
-          errorMessage = "Veuillez confirmer votre email avant de vous connecter";
-        } else if (error.message === "Failed to fetch") {
-          errorMessage = "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet.";
-        }
-        
-        toast({
-          title: "Erreur de connexion",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (data.user) {
-        console.log("Connexion réussie:", data.user); // Debug log
-        toast({
-          title: "Connexion réussie",
-          description: "Bienvenue !",
-        });
-        navigate("/");
-      }
-    } catch (error) {
-      console.error("Erreur inattendue:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur inattendue est survenue. Veuillez réessayer.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="container mx-auto px-4 h-screen flex items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Connexion à votre compte</CardTitle>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="exemple@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Connexion en cours..." : "Se connecter"}
-            </Button>
-            <p className="text-sm text-center text-muted-foreground">
-              Pas encore de compte ?{" "}
-              <Link to="/signup" className="text-primary hover:underline">
-                S'inscrire
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
+    <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+        <div className="absolute inset-0 bg-primary" />
+        <div className="relative z-20 flex items-center text-lg font-medium">
+          MyFitHero
+        </div>
+      </div>
+      <div className="lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <SignInHeader />
+          <SignInForm />
+        </div>
+      </div>
     </div>
   );
 };
