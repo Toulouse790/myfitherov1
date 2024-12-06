@@ -33,6 +33,8 @@ export const MealPlanForm = ({
             <SelectContent>
               <SelectItem value="7">7 jours</SelectItem>
               <SelectItem value="14">14 jours</SelectItem>
+              <SelectItem value="30">30 jours</SelectItem>
+              <SelectItem value="60">60 jours</SelectItem>
             </SelectContent>
           </Select>
         </div>
