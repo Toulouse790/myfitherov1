@@ -5,6 +5,7 @@ import { MediaList } from "./MediaList";
 import { Exercise } from "@/components/Workouts/exercises/types/exercise";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { muscleGroups } from "../Workouts/workoutConstants";
 
 export const MediaManager = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -23,6 +24,27 @@ export const MediaManager = () => {
       return data as Exercise[];
     }
   });
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleUpload = () => {
+    setUploadProgress(0);
+    // Reset upload progress
+  };
+
+  const handleDifficultyChange = (difficulty: string) => {
+    setSelectedDifficulties(prev => {
+      if (prev.includes(difficulty)) {
+        return prev.filter(d => d !== difficulty);
+      }
+      return [...prev, difficulty];
+    });
+  };
 
   const filteredExercises = exercises?.filter(
     (exercise) => exercise.muscleGroup === selectedGroup
