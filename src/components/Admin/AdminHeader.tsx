@@ -25,11 +25,40 @@ export const AdminHeader = ({
     });
   };
 
-  const handlePublish = () => {
-    toast({
-      title: "Publication en cours",
-      description: "Les modifications sont en cours de publication...",
-    });
+  const handlePublish = async () => {
+    if (selectedExercises.length === 0) {
+      toast({
+        title: "Aucun exercice sélectionné",
+        description: "Veuillez sélectionner au moins un exercice à publier",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Mettre à jour le statut des exercices sélectionnés
+      const { error } = await supabase
+        .from('exercises')
+        .update({ is_published: true })
+        .in('id', selectedExercises);
+
+      if (error) throw error;
+
+      toast({
+        title: "Publication réussie",
+        description: `${selectedExercises.length} exercice(s) publié(s) avec succès`,
+      });
+
+      // Rafraîchir la liste des exercices
+      onExercisesDeleted();
+    } catch (error) {
+      console.error('Erreur lors de la publication:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la publication",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDelete = async () => {

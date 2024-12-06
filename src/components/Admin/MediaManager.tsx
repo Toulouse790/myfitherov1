@@ -19,7 +19,8 @@ export const MediaManager = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('exercises')
-        .select('*');
+        .select('*')
+        .eq('is_published', true);
 
       if (error) {
         console.error('Error fetching exercises:', error);
