@@ -15,7 +15,12 @@ export const useExercises = (exerciseIds?: string[]) => {
   useEffect(() => {
     const fetchExercises = async () => {
       try {
-        let query = supabase.from('exercises').select('id, name');
+        setIsLoading(true);
+        console.log("Fetching exercises with IDs:", exerciseIds);
+
+        let query = supabase
+          .from('exercises')
+          .select('id, name');
         
         if (exerciseIds && exerciseIds.length > 0) {
           query = query.in('id', exerciseIds);
@@ -31,7 +36,7 @@ export const useExercises = (exerciseIds?: string[]) => {
         }
 
         if (data) {
-          console.log('Fetched exercises:', data);
+          console.log('Fetched exercises data:', data);
           const formattedExercises = data.map(ex => ({
             id: ex.id,
             name: ex.name,
