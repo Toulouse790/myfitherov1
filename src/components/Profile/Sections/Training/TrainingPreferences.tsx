@@ -34,8 +34,7 @@ export const TrainingPreferences = () => {
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .limit(1);
 
     if (error) {
       console.error('Error fetching questionnaire responses:', error);
@@ -47,8 +46,8 @@ export const TrainingPreferences = () => {
       return;
     }
 
-    if (data) {
-      setQuestionnaire(data);
+    if (data && data.length > 0) {
+      setQuestionnaire(data[0]);
     }
   };
 
