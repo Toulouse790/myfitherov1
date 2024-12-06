@@ -31,12 +31,17 @@ export const WorkoutInProgress = ({
   const handleEnergyLevel = async (level: "good" | "bad") => {
     if (!sessionId) return;
 
-    const { error } = await supabase
-      .from('workout_sessions')
-      .update({ initial_energy_level: level })
-      .eq('id', sessionId);
+    try {
+      const { error } = await supabase
+        .from('workout_sessions')
+        .update({ initial_energy_level: level })
+        .eq('id', sessionId);
 
-    if (error) {
+      if (error) throw error;
+
+      setShowEnergyDialog(false);
+    } catch (error) {
+      console.error('Error updating energy level:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'enregistrer votre niveau d'énergie",
@@ -50,14 +55,27 @@ export const WorkoutInProgress = ({
   };
 
   const handleConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      toast({
+        title: "Erreur",
+        description: "Session non trouvée",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       // Update training stats with perceived difficulty
       const { error: statsError } = await supabase
         .from('training_stats')
-        .update({ perceived_difficulty: difficulty })
-        .eq('session_id', sessionId);
+        .insert([{
+          session_id: sessionId,
+          perceived_difficulty: difficulty,
+          duration_minutes: 0, // You might want to track actual duration
+          total_sets: 0,      // You might want to track actual sets
+          total_reps: 0,      // You might want to track actual reps
+          total_weight: 0     // You might want to track actual weight
+        }]);
 
       if (statsError) throw statsError;
 
@@ -76,9 +94,10 @@ export const WorkoutInProgress = ({
 
       navigate('/workouts');
     } catch (error) {
+      console.error('Error completing workout:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'enregistrer vos retours",
+        description: "Impossible de terminer l'entraînement",
         variant: "destructive",
       });
     }
