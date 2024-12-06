@@ -21,7 +21,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["chest"] || 0
+    totalExercises: exerciseCounts["poitrine"] || 0
   },
   { 
     id: "back", 
@@ -29,7 +29,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["back"] || 0
+    totalExercises: exerciseCounts["dos"] || 0
   },
   { 
     id: "legs", 
@@ -37,15 +37,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["legs"] || 0
-  },
-  { 
-    id: "glutes", 
-    name: "Fessier", 
-    color: "bg-primary",
-    image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
-    selectedExercises: 0,
-    totalExercises: exerciseCounts["glutes"] || 0
+    totalExercises: exerciseCounts["jambes"] || 0
   },
   { 
     id: "shoulders", 
@@ -53,7 +45,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["shoulders"] || 0
+    totalExercises: exerciseCounts["épaules"] || 0
   },
   { 
     id: "biceps", 
@@ -61,7 +53,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["arms"] || 0
+    totalExercises: exerciseCounts["biceps"] || 0
   },
   { 
     id: "triceps", 
@@ -69,7 +61,15 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["arms"] || 0
+    totalExercises: exerciseCounts["triceps"] || 0
+  },
+  { 
+    id: "abs", 
+    name: "Abdominaux", 
+    color: "bg-primary",
+    image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
+    selectedExercises: 0,
+    totalExercises: exerciseCounts["abdominaux"] || 0
   }
 ];
 

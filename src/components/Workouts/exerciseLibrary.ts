@@ -7,7 +7,18 @@ import { armsExercises } from './exercises/armsExercises';
 import { absExercises } from './exercises/absExercises';
 import { cardioExercises } from './exercises/cardioExercises';
 
-export const exercises: Exercise[] = [
+// Fonction pour dédupliquer les exercices basée sur leur ID
+const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
+  const seen = new Set();
+  return exercises.filter(exercise => {
+    const duplicate = seen.has(exercise.id);
+    seen.add(exercise.id);
+    return !duplicate;
+  });
+};
+
+// Combine tous les exercices et retire les doublons
+export const exercises: Exercise[] = removeDuplicates([
   ...chestExercises,
   ...backExercises,
   ...legsExercises,
@@ -15,7 +26,7 @@ export const exercises: Exercise[] = [
   ...armsExercises,
   ...absExercises,
   ...cardioExercises
-];
+]);
 
 export const filterExercises = (
   location: ("home" | "gym" | "outdoor")[],
