@@ -26,7 +26,9 @@ interface UserProfile {
   recoveryCapacity: 'low' | 'medium' | 'high';
 }
 
-export const generateWorkoutPlan = (profile: UserProfile): WorkoutPlan => {
+export const generateWorkoutPlan = (profile: UserProfile, availableExercises: string[]): WorkoutPlan => {
+  console.log("Génération avec", availableExercises.length, "exercices disponibles");
+  
   // Calcul de l'intensité en fonction du profil
   const baseIntensity = profile.workoutsPerWeek > 3 ? 0.8 : 0.7;
   const intensityModifier = profile.recoveryCapacity === 'high' ? 0.1 : 0;
@@ -46,33 +48,27 @@ export const generateWorkoutPlan = (profile: UserProfile): WorkoutPlan => {
   // Temps de repos recommandé
   const recommendedRest = profile.goal === 'muscle_gain' ? 90 : 60;
 
-  // Exemple d'exercices (à adapter selon les besoins)
-  const exercises: Exercise[] = [
-    {
-      name: "Développé couché",
+  // Sélection aléatoire d'exercices
+  const selectedExercises = [];
+  const numExercises = 3; // Nombre d'exercices souhaité
+  const shuffledExercises = [...availableExercises].sort(() => Math.random() - 0.5);
+
+  for (let i = 0; i < Math.min(numExercises, shuffledExercises.length); i++) {
+    selectedExercises.push({
+      name: shuffledExercises[i],
       sets: setsAndReps.sets,
       reps: setsAndReps.reps,
       restTime: recommendedRest
-    },
-    {
-      name: "Squat",
-      sets: setsAndReps.sets,
-      reps: setsAndReps.reps,
-      restTime: recommendedRest
-    },
-    {
-      name: "Rowing barre",
-      sets: setsAndReps.sets,
-      reps: setsAndReps.reps,
-      restTime: recommendedRest
-    }
-  ];
+    });
+  }
+
+  console.log("Exercices sélectionnés:", selectedExercises);
 
   return {
     volume,
     intensity,
     recommendedRest,
     setsAndReps,
-    exercises
+    exercises: selectedExercises
   };
 };
