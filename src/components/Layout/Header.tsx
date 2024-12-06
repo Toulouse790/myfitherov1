@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Header = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/signin' || location.pathname === '/signup';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,15 +19,17 @@ export const Header = () => {
         </div>
 
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto">
-            <div className="w-full md:w-auto">
-              <input
-                type="search"
-                placeholder="Rechercher..."
-                className="h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:w-[160px]"
-              />
+          {!isAuthPage && (
+            <div className="w-full flex-1 md:w-auto">
+              <div className="w-full md:w-auto">
+                <input
+                  type="search"
+                  placeholder="Rechercher..."
+                  className="h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:w-[160px]"
+                />
+              </div>
             </div>
-          </div>
+          )}
           <nav className="flex items-center">
             {user ? (
               <Link to="/profile">
