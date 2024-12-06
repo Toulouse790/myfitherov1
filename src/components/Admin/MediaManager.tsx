@@ -14,13 +14,13 @@ export const MediaManager = () => {
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { data: exercises } = useQuery({
+  const { data: exercises, isLoading } = useQuery({
     queryKey: ['exercises'],
     queryFn: async () => {
+      console.log('Fetching exercises for MediaManager');
       const { data, error } = await supabase
         .from('exercises')
-        .select('*')
-        .eq('is_published', true);
+        .select('*');
 
       if (error) {
         console.error('Error fetching exercises:', error);
