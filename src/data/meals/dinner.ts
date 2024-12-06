@@ -17,19 +17,64 @@ export const dinnerMeals: Meal[] = [
     notes: "Couper les patates douces en cubes et les rôtir 25min au four. Griller le poulet 6-7min de chaque côté"
   },
   {
-    name: "Dahl de lentilles corail et riz",
-    calories: 380,
-    proteins: 18,
-    carbs: 65,
-    fats: 8,
-    estimated_cost: 3.5,
+    name: "Saumon grillé aux légumes",
+    calories: 420,
+    proteins: 32,
+    carbs: 25,
+    fats: 22,
+    estimated_cost: 8,
     quantities: [
-      { item: "Lentilles corail", amount: "100g" },
-      { item: "Riz basmati", amount: "60g" },
-      { item: "Lait de coco", amount: "200ml" },
-      { item: "Épices curry", amount: "2 càc" }
+      { item: "Filet de saumon", amount: "150g" },
+      { item: "Courgettes", amount: "200g" },
+      { item: "Poivrons", amount: "150g" },
+      { item: "Huile d'olive", amount: "1 càs" }
     ],
-    notes: "Faire cuire les lentilles 15-20min avec le lait de coco et les épices. Servir avec le riz"
+    notes: "Griller le saumon 4-5min de chaque côté. Faire revenir les légumes à la poêle"
+  },
+  {
+    name: "Tofu aux légumes et quinoa",
+    calories: 380,
+    proteins: 20,
+    carbs: 45,
+    fats: 12,
+    estimated_cost: 5,
+    quantities: [
+      { item: "Tofu ferme", amount: "200g" },
+      { item: "Quinoa", amount: "80g cru" },
+      { item: "Légumes variés", amount: "300g" },
+      { item: "Sauce soja", amount: "2 càs" }
+    ],
+    notes: "Faire mariner le tofu dans la sauce soja. Cuire le quinoa. Faire revenir le tout"
+  },
+  {
+    name: "Steak haché et riz complet",
+    calories: 520,
+    proteins: 40,
+    carbs: 50,
+    fats: 18,
+    estimated_cost: 7,
+    quantities: [
+      { item: "Steak haché 5%", amount: "150g" },
+      { item: "Riz complet", amount: "80g cru" },
+      { item: "Haricots verts", amount: "200g" },
+      { item: "Huile d'olive", amount: "1 càs" }
+    ],
+    notes: "Cuire le riz. Griller le steak selon la cuisson désirée. Cuire les haricots à la vapeur"
+  },
+  {
+    name: "Omelette aux légumes",
+    calories: 350,
+    proteins: 25,
+    carbs: 15,
+    fats: 22,
+    estimated_cost: 4,
+    quantities: [
+      { item: "Oeufs", amount: "3 unités" },
+      { item: "Champignons", amount: "100g" },
+      { item: "Épinards", amount: "100g" },
+      { item: "Fromage allégé", amount: "30g" }
+    ],
+    notes: "Faire revenir les légumes, ajouter les oeufs battus et le fromage"
   }
 ];
 
