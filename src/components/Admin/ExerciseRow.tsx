@@ -1,13 +1,12 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Image, Video, Upload } from "lucide-react";
-import { UploadForm } from "./UploadForm";
-import { DifficultyBadges } from "./DifficultyBadges";
 import { useState } from "react";
 import { ExerciseMedia } from "@/types/exercise-media";
-import { MediaGrid } from "./MediaGrid";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { MediaButtons } from "./MediaButtons";
+import { ExerciseHeader } from "./ExerciseHeader";
+import { MediaSection } from "./MediaSection";
+import { UploadForm } from "./UploadForm";
 
 interface ExerciseRowProps {
   exercise: {
@@ -87,41 +86,16 @@ export const ExerciseRow = ({
     <Card className="mb-4 p-4">
       <div className="flex flex-col space-y-4">
         <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">{exercise.name}</h3>
-            <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
-            <DifficultyBadges difficulties={exercise.difficulty} />
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-blue-500 hover:bg-blue-600 text-white"
-              onClick={handleImageClick}
-            >
-              <Image className="mr-2 h-4 w-4" />
-              Image
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-purple-500 hover:bg-purple-600 text-white"
-              onClick={handleVideoClick}
-            >
-              <Video className="mr-2 h-4 w-4" />
-              Vidéo
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              className="bg-green-600 hover:bg-green-700"
-              onClick={handlePublish}
-            >
-              <Upload className="mr-2 h-4 w-4" />
-              Publier
-            </Button>
-          </div>
+          <ExerciseHeader
+            name={exercise.name}
+            muscleGroup={exercise.muscle_group}
+            difficulties={exercise.difficulty}
+          />
+          <MediaButtons
+            onImageClick={handleImageClick}
+            onVideoClick={handleVideoClick}
+            onPublish={handlePublish}
+          />
         </div>
 
         {(showImageUpload || showVideoUpload) && (
@@ -135,29 +109,19 @@ export const ExerciseRow = ({
           </div>
         )}
 
-        {imageMediaUrls.length > 0 && (
-          <div className="mt-4">
-            <h4 className="text-sm font-semibold mb-2">Images</h4>
-            <MediaGrid
-              mediaUrls={imageMediaUrls}
-              onDelete={handleDelete}
-              exerciseName={exercise.name}
-              type="image"
-            />
-          </div>
-        )}
+        <MediaSection
+          mediaUrls={imageMediaUrls}
+          onDelete={handleDelete}
+          exerciseName={exercise.name}
+          type="image"
+        />
 
-        {videoMediaUrls.length > 0 && (
-          <div className="mt-4">
-            <h4 className="text-sm font-semibold mb-2">Vidéos</h4>
-            <MediaGrid
-              mediaUrls={videoMediaUrls}
-              onDelete={handleDelete}
-              exerciseName={exercise.name}
-              type="video"
-            />
-          </div>
-        )}
+        <MediaSection
+          mediaUrls={videoMediaUrls}
+          onDelete={handleDelete}
+          exerciseName={exercise.name}
+          type="video"
+        />
       </div>
     </Card>
   );
