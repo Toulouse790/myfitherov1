@@ -1,18 +1,5 @@
 import { sampleWorkouts } from './data/sampleWorkouts';
 
-const calculateExerciseCounts = () => {
-  const counts: { [key: string]: number } = {};
-  exercises.forEach(exercise => {
-    if (!counts[exercise.muscleGroup]) {
-      counts[exercise.muscleGroup] = 0;
-    }
-    counts[exercise.muscleGroup]++;
-  });
-  return counts;
-};
-
-const exerciseCounts = calculateExerciseCounts();
-
 export const muscleGroups = [
   { 
     id: "chest", 
@@ -20,7 +7,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["pectoraux"] || 0
+    totalExercises: 0
   },
   { 
     id: "back", 
@@ -28,7 +15,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["dos"] || 0
+    totalExercises: 0
   },
   { 
     id: "legs", 
@@ -36,7 +23,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["jambes"] || 0
+    totalExercises: 0
   },
   { 
     id: "shoulders", 
@@ -44,7 +31,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["épaules"] || 0
+    totalExercises: 0
   },
   { 
     id: "biceps", 
@@ -52,7 +39,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["bras"] || 0
+    totalExercises: 0
   },
   { 
     id: "triceps", 
@@ -60,7 +47,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["bras"] || 0
+    totalExercises: 0
   },
   { 
     id: "abs", 
@@ -68,7 +55,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["abdominaux"] || 0
+    totalExercises: 0
   }
 ];
 
@@ -97,20 +84,4 @@ export const initialFormData: WorkoutFormData = {
   location: "home"
 };
 
-export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercises'> {
-  id: string;
-  duration: number;
-  exercises: Array<{
-    name: string;
-    sets?: number;
-    reps?: number;
-    calories?: number;
-    image?: string;
-  }>;
-  lastPerformed?: string;
-  completedCount?: number;
-  totalCalories: number;
-}
-
 export const workouts = sampleWorkouts;
-
