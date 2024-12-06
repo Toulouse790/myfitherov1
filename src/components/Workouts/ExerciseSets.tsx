@@ -3,74 +3,29 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ExerciseAnimation } from "./ExerciseAnimation";
-import { supabase } from "@/integrations/supabase/client";
-
-interface Exercise {
-  name: string;
-  reps: number;
-  sets: number;
-  completed: boolean;
-}
+import { useExercises } from "@/hooks/use-exercises";
 
 interface ExerciseSetsProps {
   exercises: string[];
 }
 
-export const ExerciseSets = ({ exercises }: ExerciseSetsProps) => {
-  const [exerciseStates, setExerciseStates] = useState<Exercise[]>([]);
+export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
+  const { exercises, isLoading } = useExercises(exerciseIds);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentSet, setCurrentSet] = useState(0);
   const [isResting, setIsResting] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    const fetchExerciseNames = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('exercises')
-          .select('name')
-          .in('id', exercises);
-
-        if (error) {
-          console.error('Error fetching exercise names:', error);
-          return;
-        }
-
-        if (data) {
-          console.log('Exercise data:', data);
-          const exerciseData = data.map(exercise => ({
-            name: exercise.name,
-            reps: 12,
-            sets: 4,
-            completed: false
-          }));
-          setExerciseStates(exerciseData);
-        }
-      } catch (error) {
-        console.error('Error in fetchExerciseNames:', error);
-      }
-    };
-
-    if (exercises.length > 0) {
-      fetchExerciseNames();
-    }
-  }, [exercises]);
-
-  const currentExercise = exerciseStates[currentExerciseIndex];
-  const restTime = 120;
+  const currentExercise = exercises[currentExerciseIndex];
 
   const handleSetComplete = () => {
-    if (currentSet < currentExercise.sets - 1) {
+    if (!currentExercise) return;
+
+    if (currentSet < 3) {
       setCurrentSet(prev => prev + 1);
       setIsResting(true);
       setProgress(0);
     } else {
-      // Exercise completed
-      const updatedExercises = [...exerciseStates];
-      updatedExercises[currentExerciseIndex].completed = true;
-      setExerciseStates(updatedExercises);
-
-      // Move to next exercise if available
       if (currentExerciseIndex < exercises.length - 1) {
         setCurrentExerciseIndex(prev => prev + 1);
         setCurrentSet(0);
@@ -78,23 +33,20 @@ export const ExerciseSets = ({ exercises }: ExerciseSetsProps) => {
     }
   };
 
-  const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0;
-    const updatedExercises = [...exerciseStates];
-    updatedExercises[currentExerciseIndex].reps = value;
-    setExerciseStates(updatedExercises);
-  };
-
-  if (!currentExercise) return null;
+  if (isLoading || !currentExercise) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      {exerciseStates.map((exercise, index) => (
+      {exercises.map((exercise, index) => (
         <Card 
-          key={exercise.name}
-          className={`p-4 ${index === currentExerciseIndex ? 'ring-2 ring-primary' : ''} ${
-            exercise.completed ? 'bg-muted' : ''
-          }`}
+          key={exercise.id}
+          className={`p-4 ${index === currentExerciseIndex ? 'ring-2 ring-primary' : ''}`}
         >
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">{exercise.name}</h3>
@@ -105,18 +57,18 @@ export const ExerciseSets = ({ exercises }: ExerciseSetsProps) => {
                   <span className="text-sm">Répétitions:</span>
                   <Input
                     type="number"
-                    value={exercise.reps}
-                    onChange={handleRepsChange}
+                    value={12}
                     className="w-20"
                     min={1}
                     inputMode="numeric"
+                    readOnly
                   />
                 </div>
                 
                 <ExerciseAnimation
-                  reps={exercise.reps}
-                  restTime={restTime}
-                  sets={exercise.sets}
+                  reps={12}
+                  restTime={120}
+                  sets={3}
                   currentSet={currentSet}
                   isResting={isResting}
                   progress={progress}
@@ -125,22 +77,14 @@ export const ExerciseSets = ({ exercises }: ExerciseSetsProps) => {
                 <Button
                   onClick={handleSetComplete}
                   className="w-full"
-                  disabled={exercise.completed}
+                  disabled={index !== currentExerciseIndex}
                 >
-                  {exercise.completed 
-                    ? 'Exercice terminé' 
-                    : currentSet === exercise.sets - 1 
-                      ? 'Terminer l\'exercice'
-                      : 'Série terminée'
+                  {currentSet === 2 
+                    ? 'Terminer l\'exercice'
+                    : 'Série terminée'
                   }
                 </Button>
               </>
-            )}
-
-            {exercise.completed && (
-              <div className="text-sm text-muted-foreground">
-                ✓ Exercice terminé
-              </div>
             )}
           </div>
         </Card>
