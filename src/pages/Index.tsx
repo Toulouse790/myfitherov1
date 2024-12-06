@@ -58,11 +58,11 @@ const Index = () => {
       
       <main className="container max-w-4xl mx-auto px-4 pt-8 pb-24">
         {/* Actions principales */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="flex flex-row flex-wrap gap-4 mb-8">
           <Button 
             variant="default" 
             size="lg" 
-            className="w-full h-24 flex flex-col items-center justify-center gap-2"
+            className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2"
             onClick={() => navigate('/workouts')}
           >
             <Plus className="w-6 h-6" />
@@ -72,7 +72,7 @@ const Index = () => {
           <Button 
             variant="secondary" 
             size="lg" 
-            className="w-full h-24 flex flex-col items-center justify-center gap-2"
+            className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2"
             onClick={handleStartCardio}
           >
             <Activity className="w-6 h-6" />
@@ -82,7 +82,7 @@ const Index = () => {
           <Button 
             variant="secondary" 
             size="lg" 
-            className="w-full h-24 flex flex-col items-center justify-center gap-2"
+            className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2"
             onClick={() => navigate('/stats')}
           >
             <ChartBar className="w-6 h-6" />
@@ -92,7 +92,7 @@ const Index = () => {
           <Button 
             variant="secondary" 
             size="lg" 
-            className="w-full h-24 flex flex-col items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10"
+            className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10"
             onClick={() => setShowDialog(true)}
           >
             <Brain className="w-6 h-6" />
