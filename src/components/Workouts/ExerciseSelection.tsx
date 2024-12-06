@@ -75,7 +75,7 @@ export const ExerciseSelection = ({
       </div>
       <div className="flex justify-end space-x-4">
         <Button variant="outline" onClick={onClose}>
-          Continuer la sélection
+          Fermer
         </Button>
         <Button onClick={onClose}>
           Terminer la sélection ({selectedExercises.length})
