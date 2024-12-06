@@ -1,5 +1,8 @@
 import { ExerciseRow } from "./ExerciseRow";
 import { Exercise } from "@/components/Workouts/exercises/types/exercise";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { ExerciseMedia } from "@/types/exercise-media";
 
 interface MediaListProps {
   exercises: Exercise[];
@@ -17,12 +20,19 @@ export const MediaList = ({
   onFileChange,
   onUpload,
   selectedFile,
-  onDifficultyChange,
-  selectedDifficulties,
 }: MediaListProps) => {
-  console.log('MediaList - All exercises:', exercises);
-  console.log('MediaList - Selected group:', selectedGroup);
-  
+  const { data: exerciseMedia } = useQuery({
+    queryKey: ['exerciseMedia'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('exercise_media')
+        .select('*');
+      
+      if (error) throw error;
+      return data as ExerciseMedia[];
+    }
+  });
+
   const getMuscleGroupForFilter = (group: string): string => {
     const muscleGroupMap: { [key: string]: string } = {
       chest: 'poitrine',
@@ -38,16 +48,15 @@ export const MediaList = ({
 
   const filteredExercises = exercises.filter(exercise => {
     const muscleGroupToMatch = getMuscleGroupForFilter(selectedGroup);
-    const match = exercise.muscleGroup.toLowerCase() === muscleGroupToMatch.toLowerCase();
-    console.log('Comparing:', {
-      exerciseMuscleGroup: exercise.muscleGroup.toLowerCase(),
-      selectedGroup: muscleGroupToMatch.toLowerCase(),
-      matches: match
-    });
-    return match;
+    return exercise.muscleGroup.toLowerCase() === muscleGroupToMatch.toLowerCase();
   });
-  
-  console.log('MediaList - Filtered exercises:', filteredExercises);
+
+  const getMediaForExercise = (exerciseId: string, type: 'image' | 'video') => {
+    return exerciseMedia?.filter(media => 
+      media.exercise_id === exerciseId && 
+      media.media_type === type
+    ) || [];
+  };
 
   if (exercises.length === 0) {
     return <div>Aucun exercice disponible</div>;
@@ -72,6 +81,7 @@ export const MediaList = ({
           }}
           onUpload={onUpload}
           selectedFile={selectedFile}
+          media={getMediaForExercise(exercise.id, 'image')}
         />
       ))}
     </div>
