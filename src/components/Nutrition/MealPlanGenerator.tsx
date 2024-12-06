@@ -4,23 +4,7 @@ import { MealPlanForm } from "./MealPlan/MealPlanForm";
 import { GeneratedPlanDisplay } from "./MealPlan/GeneratedPlanDisplay";
 import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
 
-interface MealPlanGeneratorProps {
-  workoutsPerWeek: number;
-  goal: "weight_loss" | "muscle_gain" | "maintenance";
-  weight: number;
-  height: number;
-  age: number;
-  allergies: string[];
-}
-
-export const MealPlanGenerator = ({
-  workoutsPerWeek,
-  goal,
-  weight,
-  height,
-  age,
-  allergies,
-}: MealPlanGeneratorProps) => {
+export const MealPlanGenerator = () => {
   const {
     isGenerating,
     durationDays,
@@ -29,13 +13,7 @@ export const MealPlanGenerator = ({
     setDurationDays,
     setMaxBudget,
     generateMealPlan,
-  } = useMealPlanGenerator({
-    workoutsPerWeek,
-    goal,
-    weight,
-    height,
-    age,
-  });
+  } = useMealPlanGenerator();
 
   return (
     <div className="space-y-4">

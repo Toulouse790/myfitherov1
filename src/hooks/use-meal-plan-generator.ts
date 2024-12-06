@@ -1,46 +1,85 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { defaultMeals, generateVariedMealPlan } from "@/data/meals/mealPlanGenerator";
 import { supabase } from "@/integrations/supabase/client";
 
-interface UseMealPlanGeneratorProps {
-  workoutsPerWeek: number;
-  goal: "weight_loss" | "muscle_gain" | "maintenance";
-  weight: number;
-  height: number;
-  age: number;
+interface QuestionnaireData {
+  objective: string;
+  training_frequency: string;
+  experience_level: string;
+  diet_type: string;
 }
 
-export const useMealPlanGenerator = ({
-  workoutsPerWeek,
-  goal,
-  weight,
-  height,
-  age,
-}: UseMealPlanGeneratorProps) => {
+export const useMealPlanGenerator = () => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const [durationDays, setDurationDays] = useState("7");
   const [maxBudget, setMaxBudget] = useState("100");
   const [generatedPlan, setGeneratedPlan] = useState<any>(null);
+  const [questionnaire, setQuestionnaire] = useState<QuestionnaireData | null>(null);
+
+  useEffect(() => {
+    fetchQuestionnaireData();
+  }, []);
+
+  const fetchQuestionnaireData = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('questionnaire_responses')
+      .select('objective, training_frequency, experience_level, diet_type')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error('Error fetching questionnaire data:', error);
+      return;
+    }
+
+    if (data) {
+      setQuestionnaire(data);
+    }
+  };
 
   const calculateDailyCalories = () => {
-    const bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-    const activityFactor = 1.2 + (workoutsPerWeek * 0.1);
-    let totalCalories = bmr * activityFactor;
+    if (!questionnaire) return 2000; // Default value if no questionnaire data
 
-    switch (goal) {
+    const baseCalories = 2000; // Base calories
+    let multiplier = 1;
+
+    // Adjust based on objective
+    switch (questionnaire.objective) {
       case "weight_loss":
-        totalCalories *= 0.85;
+        multiplier *= 0.85;
         break;
       case "muscle_gain":
-        totalCalories *= 1.15;
+        multiplier *= 1.15;
         break;
       case "maintenance":
         break;
     }
 
-    return Math.round(totalCalories);
+    // Adjust based on training frequency
+    const frequency = parseInt(questionnaire.training_frequency) || 3;
+    multiplier *= (1 + (frequency * 0.05));
+
+    // Adjust based on experience level
+    switch (questionnaire.experience_level) {
+      case "beginner":
+        multiplier *= 0.95;
+        break;
+      case "intermediate":
+        multiplier *= 1;
+        break;
+      case "advanced":
+        multiplier *= 1.05;
+        break;
+    }
+
+    return Math.round(baseCalories * multiplier);
   };
 
   const generateMealPlan = async () => {
@@ -56,7 +95,16 @@ export const useMealPlanGenerator = ({
         return;
       }
 
-      // First try to get existing preferences
+      if (!questionnaire) {
+        toast({
+          title: "Erreur",
+          description: "Veuillez d'abord remplir le questionnaire initial",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Get user preferences
       let { data: preferences, error: fetchError } = await supabase
         .from('user_nutrition_preferences')
         .select('allergies, intolerances, excluded_foods')
@@ -95,12 +143,16 @@ export const useMealPlanGenerator = ({
       };
 
       const dailyCalories = calculateDailyCalories();
+      console.log("Generating meal plan with calories:", dailyCalories);
+      console.log("User questionnaire data:", questionnaire);
+
       const mockPlan = generateVariedMealPlan(
         parseInt(durationDays),
         userPreferences.excluded_foods,
         userPreferences.allergies,
         userPreferences.intolerances,
-        dailyCalories
+        dailyCalories,
+        questionnaire.diet_type
       );
 
       setGeneratedPlan(mockPlan);

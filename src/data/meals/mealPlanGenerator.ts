@@ -23,7 +23,8 @@ export const generateVariedMealPlan = (
   excludedFoods: string[] = [],
   allergies: string[] = [],
   intolerances: string[] = [],
-  targetCalories: number = 2000
+  targetCalories: number = 2000,
+  dietType: string = 'omnivore'
 ): MealPlan[] => {
   const plan: MealPlan[] = [];
   const weekDays = [
@@ -34,7 +35,13 @@ export const generateVariedMealPlan = (
   const filterAlternatives = (foods: Meal[]) => {
     return foods.filter(food => {
       const foodName = food.name.toLowerCase();
-      return !excludedFoods.some(excluded => foodName.includes(excluded.toLowerCase())) &&
+      const isCompatibleWithDiet = dietType === 'omnivore' || 
+        (dietType === 'vegetarian' && !foodName.includes('viande')) ||
+        (dietType === 'vegan' && !foodName.includes('viande') && !foodName.includes('poisson') && !foodName.includes('oeuf') && !foodName.includes('lait')) ||
+        (dietType === 'pescatarian' && !foodName.includes('viande'));
+
+      return isCompatibleWithDiet &&
+             !excludedFoods.some(excluded => foodName.includes(excluded.toLowerCase())) &&
              !allergies.some(allergy => foodName.includes(allergy.toLowerCase())) &&
              !intolerances.some(intolerance => foodName.includes(intolerance.toLowerCase()));
     });
