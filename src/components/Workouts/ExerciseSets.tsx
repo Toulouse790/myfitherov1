@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Timer } from "lucide-react";
+import { Timer, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -40,13 +40,10 @@ export const ExerciseSets = ({
 
     Object.entries(restTimers).forEach(([exerciseName, timer]) => {
       if (timer !== null && timer > 0) {
-        console.log(`Starting interval for ${exerciseName} with ${timer}s remaining`);
-        
         intervals[exerciseName] = setInterval(() => {
           setRestTimers(prev => {
             const currentTimer = prev[exerciseName];
             if (currentTimer === null || currentTimer <= 1) {
-              console.log(`Timer completed for ${exerciseName}`);
               clearInterval(intervals[exerciseName]);
               toast({
                 title: "Repos terminé !",
@@ -54,7 +51,6 @@ export const ExerciseSets = ({
               });
               return { ...prev, [exerciseName]: null };
             }
-            console.log(`Timer tick for ${exerciseName}: ${currentTimer - 1}s`);
             return { ...prev, [exerciseName]: currentTimer - 1 };
           });
         }, 1000);
@@ -62,16 +58,13 @@ export const ExerciseSets = ({
     });
 
     return () => {
-      console.log('Cleaning up intervals');
-      Object.entries(intervals).forEach(([exerciseName, interval]) => {
-        console.log(`Clearing interval for ${exerciseName}`);
+      Object.values(intervals).forEach(interval => {
         clearInterval(interval);
       });
     };
   }, [restTimers, toast]);
 
   const handleSetComplete = (exerciseName: string) => {
-    console.log(`Completing set for ${exerciseName}`);
     const currentSets = completedSets[exerciseName] || 0;
     
     if (currentSets < 3) {
@@ -81,12 +74,10 @@ export const ExerciseSets = ({
         [exerciseName]: newSetsCount
       }));
       
-      console.log(`Starting rest timer for ${exerciseName}`);
-      setRestTimers(prev => {
-        const newTimers = { ...prev, [exerciseName]: 90 };
-        console.log('New rest timers state:', newTimers);
-        return newTimers;
-      });
+      setRestTimers(prev => ({
+        ...prev,
+        [exerciseName]: 90
+      }));
 
       // Calculate calories (simple estimation)
       const calories = Math.round(reps[exerciseName] * weights[exerciseName] * 0.15);
@@ -97,7 +88,6 @@ export const ExerciseSets = ({
       });
 
       if (newSetsCount === 3) {
-        console.log(`Exercise ${exerciseName} completed`);
         toast({
           title: "Exercice terminé !",
           description: "Passez à l'exercice suivant.",
@@ -159,25 +149,30 @@ export const ExerciseSets = ({
                     Série {(completedSets[exerciseName] || 0) + 1}/3
                   </h4>
                   {restTimers[exerciseName] !== null && (
-                    <div className="flex items-center gap-2 text-primary">
+                    <div className="flex items-center gap-2 text-primary animate-pulse">
                       <Timer className="h-4 w-4" />
-                      <span className="animate-pulse">{restTimers[exerciseName]}s</span>
+                      <span>{restTimers[exerciseName]}s</span>
                     </div>
                   )}
                 </div>
 
                 <Button
                   onClick={() => handleSetComplete(exerciseName)}
-                  className="w-full"
-                  disabled={
-                    restTimers[exerciseName] !== null || 
-                    (completedSets[exerciseName] || 0) >= 3
-                  }
+                  className="w-full flex items-center justify-center gap-2"
+                  disabled={restTimers[exerciseName] !== null || (completedSets[exerciseName] || 0) >= 3}
+                  size="lg"
                 >
-                  {(completedSets[exerciseName] || 0) >= 3 
-                    ? "Exercice terminé" 
-                    : "Valider la série"
-                  }
+                  {(completedSets[exerciseName] || 0) >= 3 ? (
+                    <>
+                      <CheckCircle className="h-5 w-5" />
+                      <span>Exercice terminé</span>
+                    </>
+                  ) : (
+                    <>
+                      <Timer className="h-5 w-5" />
+                      <span>Valider la série</span>
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
