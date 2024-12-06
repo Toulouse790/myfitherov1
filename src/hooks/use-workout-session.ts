@@ -30,18 +30,32 @@ export const useWorkoutSession = () => {
 
   const fetchSessionExercises = async (sessionId: string) => {
     try {
-      const { data: session, error } = await supabase
+      // Récupérer d'abord la session pour avoir les IDs des exercices
+      const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .select('exercises')
         .eq('id', sessionId)
         .single();
 
-      if (error) throw error;
+      if (sessionError) throw sessionError;
 
       if (session?.exercises) {
-        console.log("Exercices récupérés:", session.exercises);
-        setExercises(session.exercises);
-        setWorkoutStarted(true);
+        console.log("IDs des exercices récupérés:", session.exercises);
+        
+        // Récupérer les détails des exercices à partir des IDs
+        const { data: exercisesData, error: exercisesError } = await supabase
+          .from('exercises')
+          .select('name')
+          .in('id', session.exercises);
+
+        if (exercisesError) throw exercisesError;
+
+        if (exercisesData) {
+          const exerciseNames = exercisesData.map(ex => ex.name);
+          console.log("Noms des exercices récupérés:", exerciseNames);
+          setExercises(exerciseNames);
+          setWorkoutStarted(true);
+        }
       }
     } catch (error) {
       console.error('Error fetching session exercises:', error);
