@@ -1,5 +1,5 @@
 import { WorkoutHeader } from "./WorkoutHeader";
-import { ExerciseList } from "./ExerciseList";
+import { WorkoutLayout } from "./WorkoutLayout";
 import { WorkoutInProgress } from "./WorkoutInProgress";
 import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
 import { CardioSession } from "./CardioSession";
@@ -38,14 +38,16 @@ export const NextWorkoutDetail = () => {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-4 space-y-8">
+    <div className="container max-w-7xl mx-auto p-4 space-y-8">
       <WorkoutHeader title="Séance d'entraînement" />
-      <ExerciseList 
+      
+      <WorkoutLayout
         exercises={exercises}
         currentExerciseIndex={currentExerciseIndex}
-        isWorkoutStarted={workoutStarted}
         onExerciseClick={handleExerciseClick}
+        isWorkoutStarted={workoutStarted}
       />
+
       <WorkoutInProgress 
         exercises={exercises}
         currentExerciseIndex={currentExerciseIndex}
@@ -53,6 +55,7 @@ export const NextWorkoutDetail = () => {
         sessionId={sessionId}
         onRegenerateWorkout={handleRegenerateWorkout}
       />
+      
       <WorkoutSummaryDialog 
         open={false} 
         onOpenChange={() => {}}
