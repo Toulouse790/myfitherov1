@@ -1,5 +1,6 @@
 export interface ExerciseMedia {
   id: string;
+  exercise_id: string | null;
   exercise_name: string;
   media_type: 'image' | 'video';
   media_url: string;

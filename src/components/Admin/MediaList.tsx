@@ -51,11 +51,8 @@ export const MediaList = ({
     return exercise.muscleGroup.toLowerCase() === muscleGroupToMatch.toLowerCase();
   });
 
-  const getMediaForExercise = (exerciseId: string, type: 'image' | 'video') => {
-    return exerciseMedia?.filter(media => 
-      media.exercise_id === exerciseId && 
-      media.media_type === type
-    ) || [];
+  const getMediaForExercise = (exerciseId: string) => {
+    return exerciseMedia?.filter(media => media.exercise_id === exerciseId) || [];
   };
 
   if (exercises.length === 0) {
@@ -81,7 +78,7 @@ export const MediaList = ({
           }}
           onUpload={onUpload}
           selectedFile={selectedFile}
-          media={getMediaForExercise(exercise.id, 'image')}
+          media={getMediaForExercise(exercise.id)}
         />
       ))}
     </div>
