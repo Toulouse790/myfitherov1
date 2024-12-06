@@ -25,7 +25,14 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
           return;
         }
 
-        const data = await loadFoodEntries(user.id);
+        const { data, error } = await supabase
+          .from("food_journal_entries")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
         setEntries(data.map(entry => ({
           id: entry.id,
           name: entry.name,
