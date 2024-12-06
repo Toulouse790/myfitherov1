@@ -20,12 +20,11 @@ export const useExercises = (exerciseIds?: string[]) => {
 
         let query = supabase
           .from('exercises')
-          .select('id, name');
+          .select('*')
+          .order('muscle_group', { ascending: true });
         
         if (exerciseIds && exerciseIds.length > 0) {
           query = query.in('id', exerciseIds);
-        } else {
-          query = query.limit(4);
         }
 
         const { data, error } = await query;

@@ -36,7 +36,8 @@ export const useExerciseSelection = (muscleGroup?: string) => {
             name,
             muscle_group,
             exercise_media (
-              media_url
+              media_url,
+              media_type
             )
           `);
 
@@ -54,22 +55,19 @@ export const useExerciseSelection = (muscleGroup?: string) => {
 
         console.log('Raw exercises data:', data);
 
-        if (!data || data.length === 0) {
-          toast({
-            title: "Aucun exercice trouvé",
-            description: "Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.",
-            variant: "destructive",
-          });
+        if (!data) {
           setExercises([]);
-        } else {
-          const exercisesWithMedia = data.map(exercise => ({
-            id: exercise.id,
-            name: exercise.name,
-            media_url: exercise.exercise_media?.[0]?.media_url || null
-          }));
-          console.log('Processed exercises:', exercisesWithMedia);
-          setExercises(exercisesWithMedia);
+          return;
         }
+
+        const exercisesWithMedia = data.map(exercise => ({
+          id: exercise.id,
+          name: exercise.name,
+          media_url: exercise.exercise_media?.[0]?.media_url || null
+        }));
+
+        console.log('Processed exercises:', exercisesWithMedia);
+        setExercises(exercisesWithMedia);
       } catch (error) {
         console.error('Error in fetchExercises:', error);
         toast({

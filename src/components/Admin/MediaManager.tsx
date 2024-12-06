@@ -20,7 +20,8 @@ export const MediaManager = () => {
       console.log('Fetching exercises for MediaManager');
       const { data, error } = await supabase
         .from('exercises')
-        .select('*');
+        .select('*')
+        .order('muscle_group', { ascending: true });
 
       if (error) {
         console.error('Error fetching exercises:', error);
