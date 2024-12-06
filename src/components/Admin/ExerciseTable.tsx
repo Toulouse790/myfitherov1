@@ -91,12 +91,20 @@ export const ExerciseTable = () => {
         ? [...(exercise.difficulty || []), difficulty]
         : (exercise.difficulty || []).filter((d: string) => d !== difficulty);
 
+      console.log('Updating exercise difficulties:', {
+        exerciseId,
+        newDifficulties
+      });
+
       const { error } = await supabase
         .from('exercises')
         .update({ difficulty: newDifficulties })
         .eq('id', exerciseId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       setExercises(exercises.map(e =>
         e.id === exerciseId ? { ...e, difficulty: newDifficulties } : e

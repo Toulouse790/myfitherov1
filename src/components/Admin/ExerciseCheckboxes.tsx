@@ -37,7 +37,14 @@ export const LocationCheckboxes = ({ exercise, locations, onChange }: LocationCh
           <Checkbox
             id={`${exercise.id}-${location.id}`}
             checked={(exercise.location || []).includes(location.id)}
-            onCheckedChange={(checked) => onChange(exercise.id, location.id, checked as boolean)}
+            onCheckedChange={(checked) => {
+              console.log('Location checkbox changed:', {
+                exerciseId: exercise.id,
+                locationId: location.id,
+                checked
+              });
+              onChange(exercise.id, location.id, checked as boolean);
+            }}
             className="border-[#0EA5E9] data-[state=checked]:bg-[#0EA5E9] data-[state=checked]:text-white"
           />
           <Label
@@ -60,7 +67,14 @@ export const DifficultyCheckboxes = ({ exercise, difficulties, onChange }: Diffi
           <Checkbox
             id={`${exercise.id}-${difficulty.id}`}
             checked={(exercise.difficulty || []).includes(difficulty.id)}
-            onCheckedChange={(checked) => onChange(exercise.id, difficulty.id, checked as boolean)}
+            onCheckedChange={(checked) => {
+              console.log('Difficulty checkbox changed:', {
+                exerciseId: exercise.id,
+                difficultyId: difficulty.id,
+                checked
+              });
+              onChange(exercise.id, difficulty.id, checked as boolean);
+            }}
             className="border-[#9b87f5] data-[state=checked]:bg-[#9b87f5] data-[state=checked]:text-white"
           />
           <Label
