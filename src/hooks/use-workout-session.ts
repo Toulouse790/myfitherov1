@@ -182,6 +182,9 @@ export const useWorkoutSession = () => {
         description: "Vos statistiques ont été enregistrées.",
       });
 
+      // Redirect to workouts page after successful completion
+      navigate('/workouts');
+
     } catch (error) {
       console.error('Error ending workout:', error);
       toast({
