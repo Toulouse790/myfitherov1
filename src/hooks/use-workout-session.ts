@@ -150,8 +150,46 @@ export const useWorkoutSession = () => {
     setCurrentExerciseIndex(index);
   };
 
-  const handleConfirmEndWorkout = async () => {
-    navigate('/workouts');
+  const handleConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
+    try {
+      if (!sessionId || !user) return;
+
+      // Update the workout session status
+      const { error: sessionError } = await supabase
+        .from('workout_sessions')
+        .update({ 
+          status: 'completed',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', sessionId);
+
+      if (sessionError) throw sessionError;
+
+      // Create training stats entry
+      const { error: statsError } = await supabase
+        .from('training_stats')
+        .insert({
+          user_id: user.id,
+          session_id: sessionId,
+          duration_minutes: Math.round(duration / 60),
+          perceived_difficulty: difficulty
+        });
+
+      if (statsError) throw statsError;
+
+      toast({
+        title: "Séance terminée !",
+        description: "Vos statistiques ont été enregistrées.",
+      });
+
+    } catch (error) {
+      console.error('Error ending workout:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de terminer la séance",
+        variant: "destructive",
+      });
+    }
   };
 
   return {
