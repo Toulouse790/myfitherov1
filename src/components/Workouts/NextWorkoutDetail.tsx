@@ -91,11 +91,11 @@ export const NextWorkoutDetail = () => {
         open={showSummary}
         onOpenChange={setShowSummary}
         stats={{
-          duration: Math.round(duration / 60), // Convert seconds to minutes
+          duration: Math.round(duration / 60),
           totalWeight: 0,
           totalCalories: 0
         }}
-        onConfirm={handleConfirmEndWorkout}
+        onConfirm={(difficulty) => handleConfirmEndWorkout(difficulty, duration)}
       />
     </div>
   );

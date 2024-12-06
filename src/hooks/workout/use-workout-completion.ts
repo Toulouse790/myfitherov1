@@ -6,7 +6,7 @@ export const useWorkoutCompletion = (sessionId: string | null, userId: string | 
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
+  const handleConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard", duration: number) => {
     try {
       if (!sessionId || !userId) return;
 
@@ -25,15 +25,18 @@ export const useWorkoutCompletion = (sessionId: string | null, userId: string | 
         .insert({
           user_id: userId,
           session_id: sessionId,
-          duration_minutes: 0,
-          perceived_difficulty: difficulty
+          duration_minutes: Math.round(duration / 60), // Convert seconds to minutes
+          perceived_difficulty: difficulty,
+          total_sets: 0,
+          total_reps: 0,
+          total_weight: 0
         });
 
       if (statsError) throw statsError;
 
       toast({
         title: "Séance terminée !",
-        description: "Vos statistiques ont été enregistrées.",
+        description: `Durée : ${Math.round(duration / 60)} minutes`,
       });
 
       navigate('/workouts');
