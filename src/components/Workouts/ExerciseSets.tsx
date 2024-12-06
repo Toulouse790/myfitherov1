@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
-import { useExercises } from "@/hooks/use-exercises";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -14,11 +13,10 @@ interface ExerciseSetsProps {
 }
 
 export const ExerciseSets = ({ 
-  exercises: exerciseIds,
+  exercises: exerciseNames,
   onExerciseComplete,
   currentExerciseIndex = 0
 }: ExerciseSetsProps) => {
-  const { exercises, isLoading } = useExercises(exerciseIds);
   const [completedSets, setCompletedSets] = useState<{ [key: string]: number }>({});
   const [weights, setWeights] = useState<{ [key: string]: number }>({});
   const [reps, setReps] = useState<{ [key: string]: number }>({});
@@ -29,28 +27,28 @@ export const ExerciseSets = ({
     // Initialize weights and reps for each exercise
     const initialWeights: { [key: string]: number } = {};
     const initialReps: { [key: string]: number } = {};
-    exercises.forEach(exercise => {
-      initialWeights[exercise.id] = 10;
-      initialReps[exercise.id] = 12;
+    exerciseNames.forEach(exercise => {
+      initialWeights[exercise] = 10;
+      initialReps[exercise] = 12;
     });
     setWeights(initialWeights);
     setReps(initialReps);
-  }, [exercises]);
+  }, [exerciseNames]);
 
   useEffect(() => {
     // Handle rest timers independently
     const intervals: { [key: string]: NodeJS.Timeout } = {};
 
-    Object.entries(restTimers).forEach(([exerciseId, timer]) => {
+    Object.entries(restTimers).forEach(([exerciseName, timer]) => {
       if (timer !== null && timer > 0) {
-        intervals[exerciseId] = setInterval(() => {
+        intervals[exerciseName] = setInterval(() => {
           setRestTimers(prev => {
-            const currentTimer = prev[exerciseId];
+            const currentTimer = prev[exerciseName];
             if (currentTimer === null || currentTimer <= 1) {
-              clearInterval(intervals[exerciseId]);
-              return { ...prev, [exerciseId]: null };
+              clearInterval(intervals[exerciseName]);
+              return { ...prev, [exerciseName]: null };
             }
-            return { ...prev, [exerciseId]: currentTimer - 1 };
+            return { ...prev, [exerciseName]: currentTimer - 1 };
           });
         }, 1000);
       }
@@ -61,19 +59,19 @@ export const ExerciseSets = ({
     };
   }, [restTimers]);
 
-  const handleSetComplete = (exerciseId: string) => {
-    const currentSets = completedSets[exerciseId] || 0;
-    console.log(`Completing set for exercise ${exerciseId}, current sets: ${currentSets}`);
+  const handleSetComplete = (exerciseName: string) => {
+    const currentSets = completedSets[exerciseName] || 0;
+    console.log(`Completing set for exercise ${exerciseName}, current sets: ${currentSets}`);
     
     if (currentSets < 3) {
       const newSetsCount = currentSets + 1;
       setCompletedSets(prev => ({
         ...prev,
-        [exerciseId]: newSetsCount
+        [exerciseName]: newSetsCount
       }));
       
       // Start rest timer
-      setRestTimers(prev => ({ ...prev, [exerciseId]: 90 }));
+      setRestTimers(prev => ({ ...prev, [exerciseName]: 90 }));
 
       // Show progress toast
       if (newSetsCount < 3) {
@@ -85,7 +83,7 @@ export const ExerciseSets = ({
 
       // If this was the last set, mark exercise as complete
       if (newSetsCount === 3) {
-        console.log(`Exercise ${exerciseId} completed at index ${currentExerciseIndex}`);
+        console.log(`Exercise ${exerciseName} completed at index ${currentExerciseIndex}`);
         toast({
           title: "Exercice terminé !",
           description: "Passez à l'exercice suivant.",
@@ -97,42 +95,34 @@ export const ExerciseSets = ({
     }
   };
 
-  const handleWeightChange = (exerciseId: string, value: number) => {
-    setWeights(prev => ({ ...prev, [exerciseId]: value }));
+  const handleWeightChange = (exerciseName: string, value: number) => {
+    setWeights(prev => ({ ...prev, [exerciseName]: value }));
   };
 
-  const handleRepsChange = (exerciseId: string, value: number) => {
-    setReps(prev => ({ ...prev, [exerciseId]: value }));
+  const handleRepsChange = (exerciseName: string, value: number) => {
+    setReps(prev => ({ ...prev, [exerciseName]: value }));
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
-      {exercises.map((exercise) => (
+      {exerciseNames.map((exerciseName) => (
         <motion.div
-          key={exercise.id}
+          key={exerciseName}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
           <Card className="p-6">
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold">{exercise.name}</h3>
+              <h3 className="text-xl font-semibold">{exerciseName}</h3>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Poids (kg)</label>
                   <Input
                     type="number"
-                    value={weights[exercise.id] || 0}
-                    onChange={(e) => handleWeightChange(exercise.id, Number(e.target.value))}
+                    value={weights[exerciseName] || 0}
+                    onChange={(e) => handleWeightChange(exerciseName, Number(e.target.value))}
                     min={0}
                     className="w-full"
                   />
@@ -141,8 +131,8 @@ export const ExerciseSets = ({
                   <label className="text-sm font-medium">Répétitions</label>
                   <Input
                     type="number"
-                    value={reps[exercise.id] || 0}
-                    onChange={(e) => handleRepsChange(exercise.id, Number(e.target.value))}
+                    value={reps[exerciseName] || 0}
+                    onChange={(e) => handleRepsChange(exerciseName, Number(e.target.value))}
                     min={1}
                     className="w-full"
                   />
@@ -152,25 +142,25 @@ export const ExerciseSets = ({
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4 className="font-medium">
-                    Série {(completedSets[exercise.id] || 0) + 1}/3
+                    Série {(completedSets[exerciseName] || 0) + 1}/3
                   </h4>
-                  {restTimers[exercise.id] !== null && (
+                  {restTimers[exerciseName] !== null && (
                     <div className="flex items-center gap-2 text-primary animate-pulse">
                       <Timer className="h-4 w-4" />
-                      <span>{restTimers[exercise.id]}s</span>
+                      <span>{restTimers[exerciseName]}s</span>
                     </div>
                   )}
                 </div>
 
                 <Button
-                  onClick={() => handleSetComplete(exercise.id)}
+                  onClick={() => handleSetComplete(exerciseName)}
                   className="w-full"
                   disabled={
-                    restTimers[exercise.id] !== null || 
-                    (completedSets[exercise.id] || 0) >= 3
+                    restTimers[exerciseName] !== null || 
+                    (completedSets[exerciseName] || 0) >= 3
                   }
                 >
-                  {(completedSets[exercise.id] || 0) >= 3 
+                  {(completedSets[exerciseName] || 0) >= 3 
                     ? "Exercice terminé" 
                     : "Valider la série"
                   }

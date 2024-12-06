@@ -12,15 +12,11 @@ export const useWorkoutSession = () => {
   const { user } = useAuth();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isCardio, setIsCardio] = useState(false);
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
+  const [workoutStarted, setWorkoutStarted] = useState(false);
 
   const { duration, isRunning, setIsRunning } = useWorkoutTimer();
-  const { 
-    exercises, 
-    currentExerciseIndex, 
-    workoutStarted,
-    fetchSessionExercises,
-    handleExerciseClick 
-  } = useWorkoutExercises();
+  const { exercises, isLoading, error } = useWorkoutExercises(sessionId);
   const { handleConfirmEndWorkout } = useWorkoutCompletion(sessionId, user?.id);
   const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
 
@@ -30,7 +26,6 @@ export const useWorkoutSession = () => {
     if (session) {
       setSessionId(session);
       checkSessionType(session);
-      fetchSessionExercises(session);
     }
   }, [location]);
 
@@ -48,6 +43,12 @@ export const useWorkoutSession = () => {
     } catch (error) {
       console.error('Error checking session type:', error);
     }
+  };
+
+  const handleExerciseClick = (index: number) => {
+    console.log("Setting current exercise index to:", index);
+    setCurrentExerciseIndex(index);
+    setWorkoutStarted(true);
   };
 
   return {
