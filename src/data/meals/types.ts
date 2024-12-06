@@ -13,6 +13,7 @@ export interface Meal {
   quantities?: Quantity[];
   notes?: string;
   benefits?: string;
+  is_cheat_meal?: boolean;
 }
 
 export interface MealWithTitle {
