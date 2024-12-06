@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MetricHistoryDialog } from "./MetricHistoryDialog";
+import { MetricHistoryDialog } from "@/components/Dashboard/MetricHistoryDialog";
 import { useMetricData } from "./TrendMetrics/useMetricData";
 import { MetricHeader } from "./TrendMetrics/MetricHeader";
 import { MetricGrid } from "./TrendMetrics/MetricGrid";
