@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { ExerciseCard } from "./components/ExerciseCard";
-import { X } from "lucide-react";
 
 export interface ExerciseSelectionProps {
   selectedExercises: string[];
