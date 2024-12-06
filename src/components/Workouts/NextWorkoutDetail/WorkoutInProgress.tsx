@@ -7,6 +7,7 @@ import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface WorkoutInProgressProps {
   exercises: string[];
@@ -40,6 +41,10 @@ export const WorkoutInProgress = ({
       if (error) throw error;
 
       setShowEnergyDialog(false);
+      toast({
+        title: "Niveau d'énergie enregistré",
+        description: "Votre niveau d'énergie a été pris en compte pour cet entraînement.",
+      });
     } catch (error) {
       console.error('Error updating energy level:', error);
       toast({
@@ -65,21 +70,19 @@ export const WorkoutInProgress = ({
     }
 
     try {
-      // Update training stats with perceived difficulty
       const { error: statsError } = await supabase
         .from('training_stats')
         .insert([{
           session_id: sessionId,
           perceived_difficulty: difficulty,
-          duration_minutes: 0, // You might want to track actual duration
-          total_sets: 0,      // You might want to track actual sets
-          total_reps: 0,      // You might want to track actual reps
-          total_weight: 0     // You might want to track actual weight
+          duration_minutes: 0,
+          total_sets: 0,
+          total_reps: 0,
+          total_weight: 0
         }]);
 
       if (statsError) throw statsError;
 
-      // Update session status
       const { error: sessionError } = await supabase
         .from('workout_sessions')
         .update({ status: 'completed' })
@@ -112,21 +115,32 @@ export const WorkoutInProgress = ({
         onRegenerateWorkout={onRegenerateWorkout}
       />
 
-      <Card className="border">
-        <div className="p-4 space-y-6">
-          <ExerciseSets exercises={exercises} />
-        </div>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="border shadow-lg">
+          <div className="p-6 space-y-6">
+            <ExerciseSets exercises={exercises} />
+          </div>
+        </Card>
+      </motion.div>
 
-      <div className="fixed bottom-8 left-0 right-0 px-4">
+      <motion.div 
+        className="fixed bottom-8 left-0 right-0 px-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <Button 
           variant="destructive"
           onClick={handleEndWorkout}
-          className="w-full max-w-2xl mx-auto"
+          className="w-full max-w-2xl mx-auto shadow-lg hover:shadow-xl transition-shadow"
         >
           Terminer l'entraînement
         </Button>
-      </div>
+      </motion.div>
 
       <WorkoutSummaryDialog 
         open={showSummary} 
