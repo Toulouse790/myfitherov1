@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { WorkoutHeader } from "./WorkoutHeader";
 import { ExerciseList } from "./ExerciseList";
 import { WorkoutInProgress } from "./WorkoutInProgress";
@@ -27,6 +28,7 @@ export const NextWorkoutDetail = () => {
   } = useWorkoutSession();
 
   const [showSummary, setShowSummary] = useState(false);
+  const navigate = useNavigate();
 
   const progress = currentExerciseIndex !== null 
     ? ((currentExerciseIndex + 1) / exercises.length) * 100 
@@ -39,6 +41,11 @@ export const NextWorkoutDetail = () => {
 
   const handleEndWorkout = () => {
     setShowSummary(true);
+  };
+
+  const onConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard") => {
+    await handleConfirmEndWorkout(difficulty);
+    navigate('/'); // Redirection vers la page d'accueil
   };
 
   if (!user) return null;
@@ -138,7 +145,7 @@ export const NextWorkoutDetail = () => {
           totalWeight: 0,
           totalCalories: 0
         }}
-        onConfirm={handleConfirmEndWorkout}
+        onConfirm={onConfirmEndWorkout}
       />
     </div>
   );
