@@ -20,8 +20,11 @@ export const MediaManager = () => {
         .from('exercises')
         .select('*');
 
-      if (error) throw error;
-      console.log('Fetched exercises:', data);
+      if (error) {
+        console.error('Error fetching exercises:', error);
+        throw error;
+      }
+      console.log('Raw exercises data:', data);
       return data as Exercise[];
     }
   });
@@ -35,7 +38,6 @@ export const MediaManager = () => {
 
   const handleUpload = () => {
     setUploadProgress(0);
-    // Reset upload progress
   };
 
   const handleDifficultyChange = (difficulty: string) => {
@@ -48,7 +50,13 @@ export const MediaManager = () => {
   };
 
   const filteredExercises = exercises?.filter(
-    (exercise) => exercise.muscleGroup === selectedGroup
+    (exercise) => {
+      console.log('Filtering exercise:', exercise);
+      console.log('Selected group:', selectedGroup);
+      // Handle both muscle_group and muscleGroup
+      const exerciseGroup = exercise.muscle_group || exercise.muscleGroup;
+      return exerciseGroup === selectedGroup;
+    }
   ) || [];
 
   console.log('Filtered exercises:', filteredExercises);
