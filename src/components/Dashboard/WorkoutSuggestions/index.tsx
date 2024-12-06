@@ -30,7 +30,8 @@ export const WorkoutSuggestions = () => {
           { 
             user_id: user.id,
             status: 'in_progress', 
-            type: 'cardio' 
+            type: 'cardio',
+            exercises: []
           }
         ])
         .select()

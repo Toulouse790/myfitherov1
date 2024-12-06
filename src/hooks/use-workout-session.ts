@@ -24,18 +24,34 @@ export const useWorkoutSession = () => {
     if (session) {
       setSessionId(session);
       checkSessionType(session);
+      fetchSessionExercises(session);
     }
   }, [location]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setDuration(prev => prev + 1);
-      }, 1000);
+  const fetchSessionExercises = async (sessionId: string) => {
+    try {
+      const { data: session, error } = await supabase
+        .from('workout_sessions')
+        .select('exercises')
+        .eq('id', sessionId)
+        .single();
+
+      if (error) throw error;
+
+      if (session?.exercises) {
+        console.log("Exercices récupérés:", session.exercises);
+        setExercises(session.exercises);
+        setWorkoutStarted(true);
+      }
+    } catch (error) {
+      console.error('Error fetching session exercises:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de récupérer les exercices de la séance",
+        variant: "destructive",
+      });
     }
-    return () => clearInterval(interval);
-  }, [isRunning]);
+  };
 
   const checkSessionType = async (sessionId: string) => {
     try {
@@ -52,6 +68,16 @@ export const useWorkoutSession = () => {
       console.error('Error checking session type:', error);
     }
   };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setDuration(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRunning]);
 
   const handleRegenerateWorkout = async () => {
     if (!user) {

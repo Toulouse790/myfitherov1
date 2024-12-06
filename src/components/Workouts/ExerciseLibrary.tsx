@@ -6,6 +6,7 @@ import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
 import { LibraryHeader } from "./components/LibraryHeader";
 import { SelectedExercisesManager } from "./components/SelectedExercisesManager";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const ExerciseLibrary = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,6 +15,7 @@ export const ExerciseLibrary = () => {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleMuscleGroupClick = (muscleId: string) => {
     setSelectedMuscleGroup(muscleId);
@@ -23,11 +25,25 @@ export const ExerciseLibrary = () => {
   const handleExerciseSelectionChange = async (selectedIds: string[]) => {
     setSelectedExercises(selectedIds);
     
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour créer une séance",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
-          { type: 'strength', status: 'in_progress' }
+          { 
+            user_id: user.id,
+            type: 'strength', 
+            status: 'in_progress',
+            exercises: selectedIds
+          }
         ])
         .select()
         .single();
