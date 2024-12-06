@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface Exercise {
   id: string;
@@ -33,9 +33,9 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           `);
 
         if (muscleGroup) {
-          const translatedGroup = translateMuscleGroup(muscleGroup);
-          console.log('Translated muscle group:', translatedGroup);
-          query = query.eq('muscle_group', translatedGroup);
+          const englishGroup = reverseTranslateMuscleGroup(muscleGroup);
+          console.log('English muscle group:', englishGroup);
+          query = query.eq('muscle_group', englishGroup.toLowerCase());
         }
 
         const { data, error } = await query;
