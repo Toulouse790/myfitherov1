@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Bookmark } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { WorkoutCard } from "./WorkoutCard";
 import { GenerateWorkoutDialog } from "./GenerateWorkoutDialog";
 import { useNavigate } from "react-router-dom";
@@ -13,12 +13,6 @@ export const WorkoutSuggestions = () => {
   const { user } = useAuth();
 
   const suggestions = [
-    {
-      title: "Personnalisé",
-      description: "Laissez notre IA vous aider à créer un entraînement",
-      icon: <Sparkles className="w-5 h-5 text-white" />,
-      onClick: () => setShowDialog(true)
-    },
     {
       title: "Favoris",
       description: "Choisi parmi vos entraînements sauvegardés",

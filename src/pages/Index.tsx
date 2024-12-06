@@ -2,7 +2,7 @@ import { Header } from "@/components/Layout/Header";
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { DashboardStats } from "@/components/Dashboard/DashboardStats";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
-import { Plus, Brain, Activity, ChartBar } from "lucide-react";
+import { Plus, Brain, Activity, ChartBar, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -95,8 +95,8 @@ const Index = () => {
             className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10"
             onClick={() => setShowDialog(true)}
           >
-            <Brain className="w-6 h-6" />
-            <span>IA Coach</span>
+            <Sparkles className="w-6 h-6" />
+            <span>Laissez-moi faire</span>
           </Button>
         </div>
 
