@@ -19,9 +19,32 @@ const Index = () => {
     });
   };
 
+  const mainActions = [
+    {
+      icon: <Plus className="w-6 h-6" />,
+      label: "Créer",
+      onClick: handleCreateWorkout
+    },
+    {
+      icon: <Activity className="w-6 h-6" />,
+      label: "Cardio",
+      onClick: () => navigate("/workouts/exercise/next-workout")
+    },
+    {
+      icon: <ChartBar className="w-6 h-6" />,
+      label: "Statistiques",
+      onClick: () => navigate("/stats")
+    },
+    {
+      icon: <Sparkles className="w-6 h-6" />,
+      label: "Laissez-moi faire",
+      onClick: () => setShowDialog(true)
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-background">
-      <main className="container max-w-lg mx-auto px-4 pt-8 pb-20">
+      <main className="container max-w-7xl mx-auto px-4 pt-8 pb-20">
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-2">
             Bienvenue sur votre espace
@@ -31,49 +54,24 @@ const Index = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-8">
-          <Button
-            variant="outline"
-            size="lg"
-            className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10"
-            onClick={handleCreateWorkout}
-          >
-            <Plus className="w-6 h-6" />
-            <span>Créer</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            size="lg"
-            className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10"
-            onClick={() => navigate("/workouts/exercise/next-workout")}
-          >
-            <Activity className="w-6 h-6" />
-            <span>Cardio</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            size="lg"
-            className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10"
-            onClick={() => navigate("/stats")}
-          >
-            <ChartBar className="w-6 h-6" />
-            <span>Statistiques</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            size="lg"
-            className="flex-1 h-24 min-w-[200px] flex flex-col items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10"
-            onClick={() => setShowDialog(true)}
-          >
-            <Sparkles className="w-6 h-6" />
-            <span>Laissez-moi faire</span>
-          </Button>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+          {mainActions.map((action, index) => (
+            <Button
+              key={index}
+              variant="outline"
+              size="lg"
+              className="h-24 flex flex-col items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10"
+              onClick={action.onClick}
+            >
+              {action.icon}
+              <span>{action.label}</span>
+            </Button>
+          ))}
         </div>
 
-        <WorkoutSuggestions />
+        <div className="space-y-8">
+          <WorkoutSuggestions />
+        </div>
 
         <GenerateWorkoutDialog
           open={showDialog}

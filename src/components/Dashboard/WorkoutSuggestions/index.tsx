@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Bookmark } from "lucide-react";
+import { Bookmark, Dumbbell, Target, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -29,6 +29,24 @@ export const WorkoutSuggestions = () => {
           description: "Cette fonctionnalité sera disponible prochainement",
         });
       }
+    },
+    {
+      title: "Programme du jour",
+      description: "Suivez votre programme personnalisé",
+      icon: <Target className="w-5 h-5 text-white" />,
+      onClick: () => navigate("/workouts")
+    },
+    {
+      title: "Quick Workout",
+      description: "Séance rapide de 20 minutes",
+      icon: <Zap className="w-5 h-5 text-white" />,
+      onClick: () => navigate("/workouts")
+    },
+    {
+      title: "Full Body",
+      description: "Entraînement complet du corps",
+      icon: <Dumbbell className="w-5 h-5 text-white" />,
+      onClick: () => navigate("/workouts")
     }
   ];
 
@@ -38,7 +56,7 @@ export const WorkoutSuggestions = () => {
         <h2 className="text-lg font-semibold">Suggestions</h2>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {suggestions.map((suggestion, index) => (
           <Card
             key={index}
