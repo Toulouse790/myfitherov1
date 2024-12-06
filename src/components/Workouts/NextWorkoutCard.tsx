@@ -1,38 +1,54 @@
 import { Card } from "@/components/ui/card";
 import { Timer, Dumbbell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
 
-const SAMPLE_EXERCISES = [
-  {
-    name: "Rowing avec Haltères",
-    defaultSets: 3,
-    defaultReps: 12
-  },
-  {
-    name: "Tirage à la poulie barre en V",
-    defaultSets: 3,
-    defaultReps: 12
-  },
-  {
-    name: "Curl Biceps aux Haltères",
-    defaultSets: 3,
-    defaultReps: 12
-  },
-  {
-    name: "Développé Militaire",
-    defaultSets: 4,
-    defaultReps: 10
-  }
-];
+interface Exercise {
+  name: string;
+  defaultSets: number;
+  defaultReps: number;
+}
 
 export const NextWorkoutCard = () => {
   const navigate = useNavigate();
   const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
-  const [exerciseSets, setExerciseSets] = useState(
-    SAMPLE_EXERCISES.map(ex => Array(ex.defaultSets).fill(ex.defaultReps))
-  );
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [exerciseSets, setExerciseSets] = useState<number[][]>([]);
+
+  useEffect(() => {
+    const fetchExercises = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('exercises')
+          .select('name')
+          .limit(4);
+
+        if (error) {
+          console.error('Error fetching exercises:', error);
+          return;
+        }
+
+        if (data) {
+          console.log('Fetched exercises:', data);
+          const formattedExercises = data.map(ex => ({
+            name: ex.name,
+            defaultSets: 3,
+            defaultReps: 12
+          }));
+          setExercises(formattedExercises);
+          setExerciseSets(
+            formattedExercises.map(ex => Array(ex.defaultSets).fill(ex.defaultReps))
+          );
+        }
+      } catch (error) {
+        console.error('Error in fetchExercises:', error);
+      }
+    };
+
+    fetchExercises();
+  }, []);
 
   const handleExerciseClick = (index: number) => {
     setSelectedExercise(selectedExercise === index ? null : index);
@@ -60,7 +76,7 @@ export const NextWorkoutCard = () => {
         </h2>
         
         <div className="space-y-2">
-          {SAMPLE_EXERCISES.map((exercise, index) => (
+          {exercises.map((exercise, index) => (
             <div key={index} className="space-y-2">
               <div 
                 className="flex items-center gap-3 p-3 rounded-lg bg-secondary/10 hover:bg-secondary/20 transition-colors cursor-pointer"
