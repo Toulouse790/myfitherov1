@@ -84,4 +84,19 @@ export const initialFormData: WorkoutFormData = {
   location: "home"
 };
 
+export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercises'> {
+  id: string;
+  duration: number;
+  exercises: Array<{
+    name: string;
+    sets?: number;
+    reps?: number;
+    calories?: number;
+    image?: string;
+  }>;
+  lastPerformed?: string;
+  completedCount?: number;
+  totalCalories: number;
+}
+
 export const workouts = sampleWorkouts;
