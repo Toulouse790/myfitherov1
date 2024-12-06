@@ -4,33 +4,24 @@ import { useToast } from "@/hooks/use-toast";
 import { FloatingWorkoutButton } from "./FloatingWorkoutButton";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
 import { LibraryHeader } from "./components/LibraryHeader";
-import { SelectedExercisesManager } from "./components/SelectedExercisesManager";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
 export const ExerciseLibrary = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
-  const [showExerciseSelection, setShowExerciseSelection] = useState(false);
-  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
 
   const handleMuscleGroupClick = (muscleId: string) => {
     console.log("Muscle group clicked:", muscleId);
-    setSelectedMuscleGroup(muscleId);
-    setShowExerciseSelection(true);
-  };
-
-  const handleExerciseSelectionChange = (selectedIds: string[]) => {
-    console.log("Updating selected exercises:", selectedIds);
-    setSelectedExercises(selectedIds);
-  };
-
-  const handleCloseExerciseSelection = () => {
-    console.log("Closing exercise selection");
-    setShowExerciseSelection(false);
+    // Pour le moment, on ajoute directement le muscle group aux exercices sélectionnés
+    setSelectedExercises(prev => [...prev, muscleId]);
+    toast({
+      title: "Groupe musculaire ajouté",
+      description: "Vous pouvez en sélectionner d'autres ou démarrer votre séance",
+    });
   };
 
   const handleStartWorkout = async () => {
@@ -96,34 +87,10 @@ export const ExerciseLibrary = () => {
         onStartWorkout={handleStartWorkout}
       />
 
-      {searchQuery ? (
-        <SelectedExercisesManager
-          showSelection={true}
-          setShowSelection={setShowExerciseSelection}
-          selectedExercises={selectedExercises}
-          selectedMuscleGroup=""
-          searchQuery={searchQuery}
-          onExerciseSelectionChange={handleExerciseSelectionChange}
-          onClose={handleCloseExerciseSelection}
-        />
-      ) : (
-        <MuscleGroupGrid 
-          searchQuery={searchQuery}
-          onMuscleGroupClick={handleMuscleGroupClick}
-        />
-      )}
-
-      {!searchQuery && showExerciseSelection && (
-        <SelectedExercisesManager
-          showSelection={showExerciseSelection}
-          setShowSelection={setShowExerciseSelection}
-          selectedExercises={selectedExercises}
-          selectedMuscleGroup={selectedMuscleGroup}
-          searchQuery={searchQuery}
-          onExerciseSelectionChange={handleExerciseSelectionChange}
-          onClose={handleCloseExerciseSelection}
-        />
-      )}
+      <MuscleGroupGrid 
+        searchQuery={searchQuery}
+        onMuscleGroupClick={handleMuscleGroupClick}
+      />
 
       <FloatingWorkoutButton 
         selectedCount={selectedExercises.length}
