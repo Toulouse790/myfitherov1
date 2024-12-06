@@ -1,7 +1,6 @@
 import { useState } from "react";
+import { Card } from "@/components/ui/card";
 import { Bookmark } from "lucide-react";
-import { WorkoutCard } from "./WorkoutCard";
-import { GenerateWorkoutDialog } from "./GenerateWorkoutDialog";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -35,25 +34,31 @@ export const WorkoutSuggestions = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg sm:text-xl font-semibold text-white">
-        Envie de quelque chose de différent?
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Suggestions</h2>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {suggestions.map((suggestion, index) => (
-          <WorkoutCard
+          <Card
             key={index}
-            title={suggestion.title}
-            description={suggestion.description}
-            icon={suggestion.icon}
+            className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={suggestion.onClick}
-          />
+          >
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-primary">
+                {suggestion.icon}
+              </div>
+              <div>
+                <h3 className="font-medium">{suggestion.title}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {suggestion.description}
+                </p>
+              </div>
+            </div>
+          </Card>
         ))}
       </div>
-
-      <GenerateWorkoutDialog 
-        open={showDialog} 
-        onOpenChange={setShowDialog}
-      />
     </div>
   );
 };
