@@ -1,60 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
-export const useWorkoutExercises = () => {
+export const useWorkoutExercises = (sessionId: string | null) => {
   const [exercises, setExercises] = useState<string[]>([]);
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
-  const [workoutStarted, setWorkoutStarted] = useState(false);
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  const fetchSessionExercises = async (sessionId: string) => {
-    try {
-      const { data: session, error: sessionError } = await supabase
-        .from('workout_sessions')
-        .select('exercises')
-        .eq('id', sessionId)
-        .single();
+  useEffect(() => {
+    if (!sessionId) return;
 
-      if (sessionError) throw sessionError;
+    const fetchSessionExercises = async () => {
+      try {
+        console.log("Fetching exercises for session:", sessionId);
+        
+        // First, get the exercise names from the session
+        const { data: session, error: sessionError } = await supabase
+          .from('workout_sessions')
+          .select('exercises')
+          .eq('id', sessionId)
+          .single();
 
-      if (session?.exercises) {
+        if (sessionError) throw sessionError;
+        
+        if (!session?.exercises) {
+          console.log("No exercises found in session");
+          setExercises([]);
+          return;
+        }
+
         console.log("IDs des exercices récupérés:", session.exercises);
         
-        const { data: exercisesData, error: exercisesError } = await supabase
-          .from('exercises')
-          .select('name')
-          .in('id', session.exercises);
+        // Since we store exercise names directly, we can use them
+        setExercises(session.exercises);
 
-        if (exercisesError) throw exercisesError;
-
-        if (exercisesData) {
-          const exerciseNames = exercisesData.map(ex => ex.name);
-          console.log("Noms des exercices récupérés:", exerciseNames);
-          setExercises(exerciseNames);
-          setWorkoutStarted(true);
-        }
+      } catch (err) {
+        console.error("Error fetching session exercises:", {
+          message: err.message,
+          details: err,
+          hint: "",
+          code: ""
+        });
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching session exercises:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de récupérer les exercices de la séance",
-        variant: "destructive",
-      });
-    }
-  };
+    };
 
-  const handleExerciseClick = (index: number) => {
-    console.log("Setting current exercise index to:", index);
-    setCurrentExerciseIndex(index);
-  };
+    fetchSessionExercises();
+  }, [sessionId]);
 
-  return {
-    exercises,
-    currentExerciseIndex,
-    workoutStarted,
-    fetchSessionExercises,
-    handleExerciseClick
-  };
+  return { exercises, isLoading, error };
 };
