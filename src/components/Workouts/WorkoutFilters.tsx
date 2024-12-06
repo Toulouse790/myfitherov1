@@ -50,6 +50,10 @@ export const WorkoutFilters = ({
     setSelectedExercises(selectedIds);
   };
 
+  const handleClose = () => {
+    setShowExerciseSelection(false);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -77,12 +81,12 @@ export const WorkoutFilters = ({
         onReset={onReset}
       />
 
-      <Dialog open={showExerciseSelection} onOpenChange={setShowExerciseSelection}>
+      <Dialog open={showExerciseSelection} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-[800px]">
           <ExerciseSelection
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelectionChange}
-            onClose={() => setShowExerciseSelection(false)}
+            onClose={handleClose}
             muscleGroup={selectedMuscleGroup}
           />
         </DialogContent>
