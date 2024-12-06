@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ExerciseAnimation } from "./ExerciseAnimation";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Exercise {
   name: string;
@@ -16,18 +17,44 @@ interface ExerciseSetsProps {
 }
 
 export const ExerciseSets = ({ exercises }: ExerciseSetsProps) => {
-  const [exerciseStates, setExerciseStates] = useState<Exercise[]>(
-    exercises.map(name => ({
-      name,
-      reps: 12,
-      sets: 4,
-      completed: false
-    }))
-  );
+  const [exerciseStates, setExerciseStates] = useState<Exercise[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentSet, setCurrentSet] = useState(0);
   const [isResting, setIsResting] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const fetchExerciseNames = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('exercises')
+          .select('name')
+          .in('id', exercises);
+
+        if (error) {
+          console.error('Error fetching exercise names:', error);
+          return;
+        }
+
+        if (data) {
+          console.log('Exercise data:', data);
+          const exerciseData = data.map(exercise => ({
+            name: exercise.name,
+            reps: 12,
+            sets: 4,
+            completed: false
+          }));
+          setExerciseStates(exerciseData);
+        }
+      } catch (error) {
+        console.error('Error in fetchExerciseNames:', error);
+      }
+    };
+
+    if (exercises.length > 0) {
+      fetchExerciseNames();
+    }
+  }, [exercises]);
 
   const currentExercise = exerciseStates[currentExerciseIndex];
   const restTime = 120;
