@@ -8,6 +8,7 @@ interface SelectedExercisesManagerProps {
   selectedMuscleGroup: string;
   searchQuery: string;
   onExerciseSelectionChange: (selectedIds: string[]) => void;
+  onClose: () => void;
 }
 
 export const SelectedExercisesManager = ({
@@ -17,18 +18,16 @@ export const SelectedExercisesManager = ({
   selectedMuscleGroup,
   searchQuery,
   onExerciseSelectionChange,
+  onClose,
 }: SelectedExercisesManagerProps) => {
-  const handleClose = () => {
-    console.log("SelectedExercisesManager: Closing dialog");
-    setShowSelection(false);
-  };
-
   return (
     <Dialog 
       open={showSelection} 
       onOpenChange={(open) => {
         console.log("Dialog onOpenChange triggered:", open);
-        setShowSelection(open);
+        if (!open) {
+          onClose();
+        }
       }}
     >
       <DialogContent className="w-[95vw] max-w-[800px] h-[90vh] max-h-[800px] overflow-y-auto">
@@ -38,7 +37,7 @@ export const SelectedExercisesManager = ({
         <ExerciseSelection
           selectedExercises={selectedExercises}
           onSelectionChange={onExerciseSelectionChange}
-          onClose={handleClose}
+          onClose={onClose}
           muscleGroup={selectedMuscleGroup}
           searchQuery={searchQuery}
         />

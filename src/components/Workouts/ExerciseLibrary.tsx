@@ -25,10 +25,12 @@ export const ExerciseLibrary = () => {
 
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
     console.log("Updating selected exercises:", selectedIds);
-    setSelectedExercises(prev => {
-      const uniqueExercises = selectedIds.filter(id => !prev.includes(id));
-      return [...prev, ...uniqueExercises];
-    });
+    setSelectedExercises(selectedIds);
+  };
+
+  const handleCloseExerciseSelection = () => {
+    console.log("Closing exercise selection");
+    setShowExerciseSelection(false);
   };
 
   const handleStartWorkout = async () => {
@@ -102,6 +104,7 @@ export const ExerciseLibrary = () => {
           selectedMuscleGroup=""
           searchQuery={searchQuery}
           onExerciseSelectionChange={handleExerciseSelectionChange}
+          onClose={handleCloseExerciseSelection}
         />
       ) : (
         <MuscleGroupGrid 
@@ -118,6 +121,7 @@ export const ExerciseLibrary = () => {
           selectedMuscleGroup={selectedMuscleGroup}
           searchQuery={searchQuery}
           onExerciseSelectionChange={handleExerciseSelectionChange}
+          onClose={handleCloseExerciseSelection}
         />
       )}
 
