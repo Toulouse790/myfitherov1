@@ -38,8 +38,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
             exercise_media (
               media_url
             )
-          `)
-          .eq('is_published', true);
+          `);
 
         if (muscleGroup) {
           const translatedMuscleGroup = muscleGroupMapping[muscleGroup] || muscleGroup;
