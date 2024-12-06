@@ -1,4 +1,5 @@
-import { ExerciseSets } from "../ExerciseSets";
+import { ExerciseDetail } from "./ExerciseDetail";
+import { motion } from "framer-motion";
 
 interface CurrentExerciseProps {
   exercises: string[];
@@ -11,16 +12,15 @@ export const CurrentExercise = ({
 }: CurrentExerciseProps) => {
   if (currentExerciseIndex === null || !exercises[currentExerciseIndex]) {
     return (
-      <div className="flex items-center justify-center h-full text-muted-foreground">
-        Sélectionnez un exercice pour commencer
-      </div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex items-center justify-center h-full text-muted-foreground"
+      >
+        <p className="text-lg">Sélectionnez un exercice pour commencer</p>
+      </motion.div>
     );
   }
 
-  return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">{exercises[currentExerciseIndex]}</h2>
-      <ExerciseSets exercises={[exercises[currentExerciseIndex]]} />
-    </div>
-  );
+  return <ExerciseDetail exercise={exercises[currentExerciseIndex]} />;
 };

@@ -17,7 +17,7 @@ export const WorkoutLayout = ({
 }: WorkoutLayoutProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <Card className="p-4">
+      <Card className="p-4 h-fit md:sticky md:top-4">
         <ExerciseList
           exercises={exercises}
           currentExerciseIndex={currentExerciseIndex}
@@ -26,12 +26,12 @@ export const WorkoutLayout = ({
         />
       </Card>
       
-      <Card className="md:col-span-2 p-4">
+      <div className="md:col-span-2">
         <CurrentExercise
           exercises={exercises}
           currentExerciseIndex={currentExerciseIndex}
         />
-      </Card>
+      </div>
     </div>
   );
 };
