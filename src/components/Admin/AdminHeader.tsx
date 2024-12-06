@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Edit, Upload } from "lucide-react";
+import { Edit, Upload, Trash2 } from "lucide-react";
 
 interface AdminHeaderProps {
   isEditing: boolean;
@@ -21,6 +21,13 @@ export const AdminHeader = ({ isEditing, onEditingChange }: AdminHeaderProps) =>
     toast({
       title: "Publication en cours",
       description: "Les modifications sont en cours de publication...",
+    });
+  };
+
+  const handleDelete = () => {
+    toast({
+      title: "Suppression",
+      description: "L'élément a été supprimé avec succès",
     });
   };
 
@@ -50,6 +57,15 @@ export const AdminHeader = ({ isEditing, onEditingChange }: AdminHeaderProps) =>
         >
           <Upload className="w-4 h-4" />
           Publier
+        </Button>
+        <Button 
+          variant="destructive"
+          size="sm"
+          onClick={handleDelete}
+          className="gap-2"
+        >
+          <Trash2 className="w-4 h-4" />
+          Supprimer
         </Button>
         <Button size="sm" onClick={handleExport}>Exporter</Button>
       </div>
