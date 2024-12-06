@@ -6,7 +6,7 @@ import { Exercise } from "@/components/Workouts/exercises/types/exercise";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { muscleGroups } from "../Workouts/workoutConstants";
-import { translateMuscleGroup, reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 export const MediaManager = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -15,13 +15,23 @@ export const MediaManager = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const { data: exercises, isLoading } = useQuery({
-    queryKey: ['exercises'],
+    queryKey: ['exercises', selectedGroup],
     queryFn: async () => {
-      console.log('Fetching exercises for MediaManager');
+      console.log('Fetching exercises for MediaManager, selected group:', selectedGroup);
+      const translatedGroup = translateMuscleGroup(selectedGroup);
+      console.log('Translated muscle group:', translatedGroup);
+
       const { data, error } = await supabase
         .from('exercises')
-        .select('*')
-        .order('muscle_group', { ascending: true });
+        .select(`
+          *,
+          exercise_media (
+            media_url,
+            media_type
+          )
+        `)
+        .eq('muscle_group', translatedGroup)
+        .order('name', { ascending: true });
 
       if (error) {
         console.error('Error fetching exercises:', error);
@@ -34,7 +44,7 @@ export const MediaManager = () => {
         const exercise: Exercise = {
           id: dbExercise.id,
           name: dbExercise.name,
-          muscleGroup: reverseTranslateMuscleGroup(dbExercise.muscle_group),
+          muscleGroup: selectedGroup,
           difficulty: Array.isArray(dbExercise.difficulty) ? dbExercise.difficulty[0] : "beginner",
           equipment: "",
           location: dbExercise.location || [],
@@ -72,20 +82,7 @@ export const MediaManager = () => {
     });
   };
 
-  const filteredExercises = exercises?.filter(exercise => {
-    console.log('Filtering exercise:', exercise);
-    console.log('Selected group:', selectedGroup);
-    console.log('Exercise muscle group:', exercise.muscleGroup);
-    
-    // Gestion spéciale pour les bras (biceps/triceps)
-    if ((selectedGroup === "Biceps" || selectedGroup === "Triceps") && exercise.muscleGroup === "arms") {
-      return true;
-    }
-    
-    // Pour les autres groupes musculaires
-    return exercise.muscleGroup === reverseTranslateMuscleGroup(selectedGroup);
-  }) || [];
-
+  const filteredExercises = exercises || [];
   console.log('Filtered exercises:', filteredExercises);
 
   return (

@@ -1,22 +1,13 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface Exercise {
   id: string;
   name: string;
   media_url?: string | null;
 }
-
-const muscleGroupMapping: { [key: string]: string } = {
-  chest: "poitrine",
-  back: "dos",
-  legs: "jambes",
-  shoulders: "épaules",
-  biceps: "biceps",
-  triceps: "triceps",
-  abs: "abdominaux"
-};
 
 export const useExerciseSelection = (muscleGroup?: string) => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -42,8 +33,9 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           `);
 
         if (muscleGroup) {
-          const translatedMuscleGroup = muscleGroupMapping[muscleGroup] || muscleGroup;
-          query = query.eq('muscle_group', translatedMuscleGroup);
+          const translatedGroup = translateMuscleGroup(muscleGroup);
+          console.log('Translated muscle group:', translatedGroup);
+          query = query.eq('muscle_group', translatedGroup);
         }
 
         const { data, error } = await query;
@@ -75,7 +67,6 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           description: "Impossible de charger les exercices",
           variant: "destructive",
         });
-        setExercises([]);
       } finally {
         setIsLoading(false);
       }
