@@ -25,6 +25,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
     }
 
     try {
+      console.log("Création de la session...");
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
@@ -37,7 +38,12 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur lors de la création de la session:', error);
+        throw error;
+      }
+
+      console.log("Session créée avec succès:", session);
 
       if (session) {
         navigate(`/workouts/exercise/next-workout?session=${session.id}`);

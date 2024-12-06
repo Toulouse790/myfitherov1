@@ -24,6 +24,9 @@ export const WorkoutInProgress = ({
   sessionId,
   onRegenerateWorkout,
 }: WorkoutInProgressProps) => {
+  console.log("WorkoutInProgress - Exercises:", exercises);
+  console.log("WorkoutInProgress - Session ID:", sessionId);
+
   const [showEnergyDialog, setShowEnergyDialog] = useState(true);
   const [showSummary, setShowSummary] = useState(false);
   const { toast } = useToast();
@@ -105,6 +108,23 @@ export const WorkoutInProgress = ({
       });
     }
   };
+
+  if (!exercises || exercises.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">
+          Aucun exercice n'a été sélectionné pour cette séance.
+        </p>
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/workouts')}
+          className="mt-4"
+        >
+          Retour aux entraînements
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <>
