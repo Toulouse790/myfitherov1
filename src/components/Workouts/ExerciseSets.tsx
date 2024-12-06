@@ -5,17 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
 import { useExercises } from "@/hooks/use-exercises";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseSetsProps {
   exercises: string[];
+  onExerciseComplete?: (index: number) => void;
+  currentExerciseIndex?: number;
 }
 
-export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
+export const ExerciseSets = ({ 
+  exercises: exerciseIds,
+  onExerciseComplete,
+  currentExerciseIndex = 0
+}: ExerciseSetsProps) => {
   const { exercises, isLoading } = useExercises(exerciseIds);
   const [completedSets, setCompletedSets] = useState<{ [key: string]: number }>({});
   const [weights, setWeights] = useState<{ [key: string]: number }>({});
   const [reps, setReps] = useState<{ [key: string]: number }>({});
   const [restTimers, setRestTimers] = useState<{ [key: string]: number | null }>({});
+  const { toast } = useToast();
 
   useEffect(() => {
     // Initialiser les poids et répétitions pour chaque exercice
@@ -55,6 +63,7 @@ export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
 
   const handleSetComplete = (exerciseId: string) => {
     const currentSets = completedSets[exerciseId] || 0;
+    console.log(`Completing set for exercise ${exerciseId}, current sets: ${currentSets}`);
     
     if (currentSets < 3) {
       setCompletedSets(prev => ({
@@ -64,6 +73,24 @@ export const ExerciseSets = ({ exercises: exerciseIds }: ExerciseSetsProps) => {
       
       // Démarrer le timer de repos
       setRestTimers(prev => ({ ...prev, [exerciseId]: 90 }));
+
+      // Afficher un toast pour informer l'utilisateur
+      toast({
+        title: "Série complétée !",
+        description: `Encore ${2 - currentSets} séries à faire.`,
+      });
+    }
+
+    // Si c'était la dernière série, marquer l'exercice comme terminé
+    if (currentSets === 2) {
+      console.log("Exercise completed, notifying parent");
+      toast({
+        title: "Exercice terminé !",
+        description: "Passez à l'exercice suivant.",
+      });
+      if (onExerciseComplete) {
+        onExerciseComplete(currentExerciseIndex);
+      }
     }
   };
 
