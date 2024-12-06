@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExerciseSets } from "../ExerciseSets";
-import { InitialEnergyDialog } from "./InitialEnergyDialog";
 import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -22,41 +21,13 @@ export const WorkoutInProgress = ({
   currentExerciseIndex,
   onExerciseClick,
   sessionId,
-  onRegenerateWorkout,
 }: WorkoutInProgressProps) => {
   console.log("WorkoutInProgress - Exercises:", exercises);
   console.log("WorkoutInProgress - Session ID:", sessionId);
 
-  const [showEnergyDialog, setShowEnergyDialog] = useState(true);
   const [showSummary, setShowSummary] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const handleEnergyLevel = async (level: "good" | "bad") => {
-    if (!sessionId) return;
-
-    try {
-      const { error } = await supabase
-        .from('workout_sessions')
-        .update({ initial_energy_level: level })
-        .eq('id', sessionId);
-
-      if (error) throw error;
-
-      setShowEnergyDialog(false);
-      toast({
-        title: "Niveau d'énergie enregistré",
-        description: "Votre niveau d'énergie a été pris en compte pour cet entraînement.",
-      });
-    } catch (error) {
-      console.error('Error updating energy level:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'enregistrer votre niveau d'énergie",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleEndWorkout = () => {
     setShowSummary(true);
@@ -128,13 +99,6 @@ export const WorkoutInProgress = ({
 
   return (
     <>
-      <InitialEnergyDialog
-        open={showEnergyDialog}
-        onOpenChange={setShowEnergyDialog}
-        onEnergyLevel={handleEnergyLevel}
-        onRegenerateWorkout={onRegenerateWorkout}
-      />
-
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
