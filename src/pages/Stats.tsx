@@ -10,9 +10,9 @@ const Stats = () => {
     <div className="min-h-screen bg-white flex flex-col items-center">
       <Header />
       
-      <main className="w-full max-w-4xl mx-auto px-4 pt-16 pb-20">
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-black">
+      <main className="w-full max-w-3xl mx-auto px-4 pt-12 pb-20">
+        <div className="mb-4 text-center">
+          <h1 className="text-xl font-bold text-black">
             Statistiques
           </h1>
           <p className="text-sm bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent font-medium">
@@ -20,10 +20,10 @@ const Stats = () => {
           </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           <DashboardStats />
           <WorkoutSummary />
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-3">
             <StrengthScore />
             <TrendMetrics />
           </div>

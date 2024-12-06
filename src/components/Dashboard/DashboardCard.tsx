@@ -17,31 +17,31 @@ export const DashboardCard = ({ title, value, target, icon, className }: Dashboa
   const isAhead = normalizedValue > normalizedTarget;
 
   return (
-    <Card className={cn("p-4 animate-fade-up", className)}>
-      <div className="space-y-3">
+    <Card className={cn("p-3 animate-fade-up", className)}>
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">{title}</p>
+          <p className="text-xs text-muted-foreground">{title}</p>
           <div className="text-primary">{icon}</div>
         </div>
         
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-2xl font-bold">{value}</p>
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
+            <p className="text-lg font-bold">{value}</p>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
               Objectif: {target}
               {isAhead ? (
-                <ArrowUp className="w-4 h-4 text-green-500" />
+                <ArrowUp className="w-3 h-3 text-green-500" />
               ) : (
-                <ArrowDown className="w-4 h-4 text-orange-500" />
+                <ArrowDown className="w-3 h-3 text-orange-500" />
               )}
             </p>
           </div>
-          <div className="text-sm font-medium">
+          <div className="text-xs font-medium">
             {progress.toFixed(0)}%
           </div>
         </div>
 
-        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+        <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
           <div 
             className={cn(
               "h-full transition-all duration-500",

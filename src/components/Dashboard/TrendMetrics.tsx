@@ -76,29 +76,29 @@ export const TrendMetrics = () => {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-white">Tendances</h2>
-        <button className="text-gray-400 flex items-center gap-1 text-sm">
+        <h2 className="text-lg font-semibold text-white">Tendances</h2>
+        <button className="text-gray-400 flex items-center gap-1 text-xs">
           7 derniers jours
-          <ChevronDown className="w-4 h-4" />
+          <ChevronDown className="w-3 h-3" />
         </button>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2">
         {metrics.map((metric, index) => (
           <Card 
             key={index} 
-            className="bg-[#1E2330] p-4 cursor-pointer hover:bg-[#252B3B] transition-all duration-300"
+            className="bg-[#1E2330] p-3 cursor-pointer hover:bg-[#252B3B] transition-all duration-300"
             onClick={() => setSelectedMetric(metric)}
           >
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <span className={`text-2xl font-bold ${metric.color}`}>
+                <span className={`text-lg font-bold ${metric.color}`}>
                   {metric.value}
                 </span>
-                <p className="text-gray-400">{metric.label}</p>
+                <p className="text-xs text-gray-400">{metric.label}</p>
               </div>
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+              <ChevronDown className="w-4 h-4 text-gray-400" />
             </div>
           </Card>
         ))}
