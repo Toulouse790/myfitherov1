@@ -15,31 +15,6 @@ export const ExerciseLibrary = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleExerciseAdd = async () => {
-    try {
-      const { error } = await supabase
-        .from('workout_sessions')
-        .insert([{ 
-          type: 'strength',
-          status: 'in_progress'
-        }]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Exercice ajouté",
-        description: "L'exercice a été ajouté avec succès à la bibliothèque",
-      });
-    } catch (error) {
-      console.error('Error adding exercise:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter l'exercice",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleMuscleGroupClick = (muscleId: string) => {
     setSelectedMuscleGroup(muscleId);
     setShowExerciseSelection(true);
@@ -97,7 +72,6 @@ export const ExerciseLibrary = () => {
         setSearchQuery={setSearchQuery}
         selectedExercisesCount={selectedExercises.length}
         onStartWorkout={handleStartWorkout}
-        onExerciseAdd={handleExerciseAdd}
       />
 
       <MuscleGroupGrid 
