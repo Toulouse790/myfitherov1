@@ -24,6 +24,13 @@ export const GeneratedPlanDisplay = ({
 }: GeneratedPlanDisplayProps) => {
   if (!generatedPlan) return null;
 
+  // Calculate total carbs for each day's meals
+  const calculateDayTotalCarbs = (meals: any) => {
+    return Object.values(meals).reduce((total: number, meal: any) => {
+      return total + (meal.carbs || 0);
+    }, 0);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -38,11 +45,22 @@ export const GeneratedPlanDisplay = ({
               </TabsTrigger>
             ))}
           </TabsList>
-          {generatedPlan.map((day: any, index: number) => (
-            <TabsContent key={index} value={(index + 1).toString()}>
-              <DayMeals meals={day.meals} mealTitles={defaultMeals} />
-            </TabsContent>
-          ))}
+          {generatedPlan.map((day: any, index: number) => {
+            const totalCarbs = calculateDayTotalCarbs(day.meals);
+            const carbsTarget = day.carbsTarget || 250; // Default target if not provided
+
+            return (
+              <TabsContent key={index} value={(index + 1).toString()}>
+                <DayMeals 
+                  meals={day.meals} 
+                  mealTitles={defaultMeals}
+                  totalCarbs={totalCarbs}
+                  carbsTarget={carbsTarget}
+                  isTrainingDay={day.isTrainingDay}
+                />
+              </TabsContent>
+            );
+          })}
         </Tabs>
       </CardContent>
     </Card>
