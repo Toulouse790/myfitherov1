@@ -28,42 +28,57 @@ export const ExerciseSelection = ({
     const fetchExercises = async () => {
       try {
         setIsLoading(true);
-        let query = supabase
-          .from('exercise_media')
-          .select('*')
-          .eq('media_type', 'image');
+        console.log('Fetching exercises for muscle group:', muscleGroup);
 
-        // Map muscle group IDs to search terms
-        const searchTermMap: { [key: string]: string } = {
-          chest: 'poitrine',
-          back: 'dos',
-          legs: 'jambes',
-          shoulders: 'épaules',
-          biceps: 'biceps',
-          triceps: 'triceps',
-          abs: 'abdominaux'
-        };
+        const { data, error } = await supabase
+          .from('exercises')
+          .select(`
+            id,
+            name,
+            muscle_group,
+            exercise_media (
+              media_url
+            )
+          `)
+          .eq('is_published', true);
 
-        if (muscleGroup && searchTermMap[muscleGroup]) {
-          query = query.ilike('exercise_name', `%${searchTermMap[muscleGroup]}%`);
+        if (error) {
+          console.error('Error fetching exercises:', error);
+          throw error;
         }
 
-        const { data, error } = await query;
+        console.log('Raw exercises data:', data);
 
-        if (error) throw error;
+        // Filter exercises based on muscle group if specified
+        let filteredExercises = data;
+        if (muscleGroup) {
+          filteredExercises = data.filter(exercise => {
+            const normalizedMuscleGroup = exercise.muscle_group.toLowerCase();
+            const searchTerm = muscleGroup.toLowerCase();
+            return normalizedMuscleGroup.includes(searchTerm);
+          });
+        }
 
-        console.log('Fetched exercises:', data);
-        setExercises(data || []);
+        console.log('Filtered exercises:', filteredExercises);
 
-        if (!data || data.length === 0) {
+        if (!filteredExercises || filteredExercises.length === 0) {
           toast({
             title: "Aucun exercice trouvé",
             description: "Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.",
             variant: "destructive",
           });
         }
+
+        // Transform the data to include the media URL
+        const exercisesWithMedia = filteredExercises.map(exercise => ({
+          id: exercise.id,
+          name: exercise.name,
+          media_url: exercise.exercise_media?.[0]?.media_url || null
+        }));
+
+        setExercises(exercisesWithMedia);
       } catch (error) {
-        console.error('Error fetching exercises:', error);
+        console.error('Error in fetchExercises:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les exercices",
@@ -123,7 +138,7 @@ export const ExerciseSelection = ({
                     htmlFor={exercise.id}
                     className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    {exercise.exercise_name}
+                    {exercise.name}
                   </label>
                 </div>
               </CardHeader>
@@ -132,7 +147,7 @@ export const ExerciseSelection = ({
                   <div className="relative aspect-video mb-2 rounded-md overflow-hidden">
                     <img
                       src={exercise.media_url}
-                      alt={`Démonstration de l'exercice ${exercise.exercise_name}`}
+                      alt={`Démonstration de l'exercice ${exercise.name}`}
                       className="object-cover w-full h-full"
                     />
                   </div>
