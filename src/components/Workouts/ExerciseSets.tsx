@@ -40,10 +40,12 @@ export const ExerciseSets = ({
 
     Object.entries(restTimers).forEach(([exerciseName, timer]) => {
       if (timer !== null && timer > 0) {
+        console.log(`Starting rest timer for ${exerciseName}: ${timer}s`);
         intervals[exerciseName] = setInterval(() => {
           setRestTimers(prev => {
             const currentTimer = prev[exerciseName];
             if (currentTimer === null || currentTimer <= 1) {
+              console.log(`Rest timer completed for ${exerciseName}`);
               toast({
                 title: "Repos terminé !",
                 description: "C'est reparti ! Commencez la série suivante.",
@@ -57,11 +59,14 @@ export const ExerciseSets = ({
     });
 
     return () => {
-      Object.values(intervals).forEach(interval => clearInterval(interval));
+      Object.values(intervals).forEach(interval => {
+        clearInterval(interval);
+      });
     };
   }, [restTimers, toast]);
 
   const handleSetComplete = (exerciseName: string) => {
+    console.log(`Completing set for ${exerciseName}`);
     const currentSets = completedSets[exerciseName] || 0;
     
     if (currentSets < 3) {
@@ -71,25 +76,24 @@ export const ExerciseSets = ({
         [exerciseName]: newSetsCount
       }));
       
-      // Start rest timer
+      console.log(`Starting rest timer for ${exerciseName}`);
       setRestTimers(prev => ({ ...prev, [exerciseName]: 90 }));
 
       // Calculate calories (simple estimation)
       const calories = Math.round(reps[exerciseName] * weights[exerciseName] * 0.15);
 
-      // Show progress toast
       toast({
         title: "Série complétée !",
         description: `${calories} calories brûlées. Repos de 90 secondes.`,
       });
 
-      // If this was the last set, mark exercise as complete
       if (newSetsCount === 3) {
+        console.log(`Exercise ${exerciseName} completed`);
         toast({
           title: "Exercice terminé !",
           description: "Passez à l'exercice suivant.",
         });
-        if (onExerciseComplete) {
+        if (onExerciseComplete && currentExerciseIndex !== undefined) {
           onExerciseComplete(currentExerciseIndex);
         }
       }
