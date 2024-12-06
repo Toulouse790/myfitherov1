@@ -1,11 +1,42 @@
+import { useNavigate } from "react-router-dom";
 import { WorkoutCard } from "./WorkoutCard";
 import { WorkoutData } from "./workoutConstants";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface WorkoutListProps {
   workouts: WorkoutData[];
 }
 
 export const WorkoutList = ({ workouts }: WorkoutListProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleWorkoutClick = async (workout: WorkoutData) => {
+    try {
+      const { data: session, error } = await supabase
+        .from('workout_sessions')
+        .insert([
+          { type: 'strength', status: 'in_progress' }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (session) {
+        navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+      }
+    } catch (error) {
+      console.error('Error creating workout session:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la séance d'entraînement",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (workouts.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground animate-fade-in">
@@ -19,11 +50,12 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
       {workouts.map((workout, index) => (
         <div
           key={workout.id}
-          className="opacity-0 animate-fade-in"
+          className="opacity-0 animate-fade-in cursor-pointer"
           style={{
             animationDelay: `${index * 100}ms`,
             animationFillMode: 'forwards'
           }}
+          onClick={() => handleWorkoutClick(workout)}
         >
           <WorkoutCard workout={{
             title: workout.title,

@@ -20,7 +20,7 @@ interface WorkoutCardProps {
 export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
   return (
     <Card 
-      className="bg-[#2A2F3F] p-3"
+      className="bg-[#2A2F3F] p-3 transition-all duration-200 hover:bg-[#343B4F] hover:scale-[1.02] hover:shadow-lg"
     >
       <div className="space-y-2">
         <div className="rounded-full bg-[#1E2330] w-10 h-10 flex items-center justify-center">
