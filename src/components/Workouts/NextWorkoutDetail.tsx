@@ -62,12 +62,12 @@ export const NextWorkoutDetail = () => {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-4 space-y-6">
-      <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-4 border-b">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Timer className="w-5 h-5 text-primary" />
-            <span className="font-mono text-lg">
+    <div className="container max-w-7xl mx-auto p-4 lg:p-8 space-y-8">
+      <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-6 border-b">
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <Timer className="w-6 h-6 text-primary" />
+            <span className="font-mono text-xl">
               {formatWorkoutTime(Math.round(duration))}
             </span>
           </div>
@@ -75,24 +75,26 @@ export const NextWorkoutDetail = () => {
           {!workoutStarted ? (
             <Button 
               size="lg"
-              className="bg-primary hover:bg-primary/90 text-white font-semibold px-8"
+              className="bg-primary hover:bg-primary/90 text-white font-semibold px-12 py-6 text-lg"
               onClick={handleStartWorkout}
             >
               Commencer ma séance
             </Button>
           ) : (
             <Button
+              size="lg"
               variant={isPaused ? "default" : "outline"}
               onClick={handlePauseResume}
+              className="px-8"
             >
               {isPaused ? (
                 <>
-                  <Play className="w-4 h-4 mr-2" />
+                  <Play className="w-5 h-5 mr-3" />
                   Reprendre
                 </>
               ) : (
                 <>
-                  <Pause className="w-4 h-4 mr-2" />
+                  <Pause className="w-5 h-5 mr-3" />
                   Pause
                 </>
               )}
@@ -101,18 +103,18 @@ export const NextWorkoutDetail = () => {
         </div>
 
         {workoutStarted && (
-          <div className="mt-4 space-y-2">
+          <div className="mt-6 space-y-3">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Progression de la séance</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-3" />
           </div>
         )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
-        <div className="space-y-4">
+      <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
+        <div className="space-y-6">
           <ExerciseList
             exercises={exercises}
             currentExerciseIndex={currentExerciseIndex}
@@ -132,8 +134,8 @@ export const NextWorkoutDetail = () => {
               isPaused={isPaused}
             />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-4 text-muted-foreground">
-              <p className="text-lg">
+            <div className="flex flex-col items-center justify-center h-full p-12 text-center space-y-6 text-muted-foreground bg-muted/10 rounded-lg border-2 border-dashed">
+              <p className="text-xl">
                 Cliquez sur "Commencer ma séance" pour démarrer votre entraînement
               </p>
             </div>
@@ -141,13 +143,13 @@ export const NextWorkoutDetail = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-8 right-8">
+      <div className="fixed bottom-12 right-12">
         {workoutStarted && (
           <Button 
             variant="destructive"
             size="lg"
             onClick={handleEndWorkout}
-            className="shadow-lg"
+            className="shadow-lg px-8 py-6 text-lg"
           >
             Terminer la séance
           </Button>
