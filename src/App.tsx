@@ -15,7 +15,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 import { UserProfile } from "./components/Profile/UserProfile";
 import TrainingPreferencesPage from "./pages/TrainingPreferences";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { BottomNav } from "@/components/Layout/BottomNav";
 
 function App() {
@@ -26,33 +25,14 @@ function App() {
           <Routes>
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            
-            <Route path="/" element={
-              <SidebarProvider>
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              </SidebarProvider>
-            } />
+            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
             <Route path="/workout-exercise/:exerciseId" element={<ProtectedRoute><WorkoutExerciseDetail /></ProtectedRoute>} />
             <Route path="/workouts/exercise/next-workout" element={<ProtectedRoute><NextWorkoutDetail /></ProtectedRoute>} />
             <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
             <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
-            <Route path="/admin" element={
-              <SidebarProvider>
-                <ProtectedRoute>
-                  <Admin />
-                </ProtectedRoute>
-              </SidebarProvider>
-            } />
-            <Route path="/stats" element={
-              <SidebarProvider>
-                <ProtectedRoute>
-                  <Stats />
-                </ProtectedRoute>
-              </SidebarProvider>
-            } />
+            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+            <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />
             <Route path="/initial-questionnaire" element={<ProtectedRoute><InitialQuestionnaire /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
             <Route path="/training-preferences" element={<ProtectedRoute><TrainingPreferencesPage /></ProtectedRoute>} />
