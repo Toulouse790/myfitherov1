@@ -25,9 +25,11 @@ export const ExerciseSelection = ({
   );
 
   const handleExerciseToggle = (exerciseId: string) => {
+    console.log("Toggling exercise:", exerciseId);
     const newSelection = selectedExercises.includes(exerciseId)
       ? selectedExercises.filter(id => id !== exerciseId)
       : [...selectedExercises, exerciseId];
+    console.log("New selection:", newSelection);
     onSelectionChange(newSelection);
   };
 

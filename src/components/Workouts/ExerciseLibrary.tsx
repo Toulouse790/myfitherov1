@@ -23,8 +23,8 @@ export const ExerciseLibrary = () => {
   };
 
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
+    console.log("Updating selected exercises:", selectedIds);
     setSelectedExercises(selectedIds);
-    setShowExerciseSelection(false);
   };
 
   const handleStartWorkout = async () => {
@@ -47,6 +47,7 @@ export const ExerciseLibrary = () => {
     }
 
     try {
+      console.log("Creating workout session with exercises:", selectedExercises);
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
