@@ -1,15 +1,9 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { ExerciseCard } from "./components/ExerciseCard";
 
-interface ExerciseSelectionProps {
+export interface ExerciseSelectionProps {
   selectedExercises: string[];
   onSelectionChange: (selectedIds: string[]) => void;
   onClose: () => void;
@@ -39,7 +33,7 @@ export const ExerciseSelection = ({
     );
   }
 
-  if (exercises.length === 0) {
+  if (!exercises || exercises.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
         Aucun exercice n'est disponible pour ce groupe musculaire pour le moment.
@@ -60,7 +54,7 @@ export const ExerciseSelection = ({
             <ExerciseCard
               exercise={exercise}
               isSelected={selectedExercises.includes(exercise.id)}
-              onToggle={handleExerciseToggle}
+              onToggle={() => handleExerciseToggle(exercise.id)}
             />
           </motion.div>
         ))}
