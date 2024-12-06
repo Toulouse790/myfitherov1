@@ -27,13 +27,14 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
 
         if (error) throw error;
 
+        // Créer un objet pour stocker les comptes
         const counts: {[key: string]: number} = {};
+        
+        // Compter les exercices pour chaque groupe musculaire
         if (data) {
           data.forEach(exercise => {
-            if (!counts[exercise.muscle_group]) {
-              counts[exercise.muscle_group] = 0;
-            }
-            counts[exercise.muscle_group]++;
+            const muscleGroup = exercise.muscle_group.toLowerCase();
+            counts[muscleGroup] = (counts[muscleGroup] || 0) + 1;
           });
         }
 
