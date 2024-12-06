@@ -24,11 +24,25 @@ export const MediaManager = () => {
         console.error('Error fetching exercises:', error);
         throw error;
       }
+      
       console.log('Raw exercises data:', data);
-      // Transform the data to match the Exercise type
+      
+      // Transform the database data to match the Exercise type
       return data?.map(exercise => ({
-        ...exercise,
-        muscleGroup: exercise.muscle_group
+        id: exercise.id,
+        name: exercise.name,
+        muscleGroup: exercise.muscle_group,
+        difficulty: exercise.difficulty,
+        equipment: "",  // Add default values for required Exercise properties
+        location: exercise.location || [],
+        instructions: [],
+        targetMuscles: [],
+        objectives: [],
+        description: "",
+        sets: { beginner: 0, intermediate: 0, advanced: 0 },
+        reps: { beginner: 0, intermediate: 0, advanced: 0 },
+        restTime: { beginner: 0, intermediate: 0, advanced: 0 },
+        calories: 0
       })) as Exercise[];
     }
   });
