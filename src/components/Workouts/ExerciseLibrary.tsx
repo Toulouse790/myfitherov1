@@ -53,7 +53,8 @@ export const ExerciseLibrary = () => {
             user_id: user.id,
             type: 'strength', 
             status: 'in_progress',
-            exercises: selectedExercises
+            exercises: selectedExercises,
+            initial_energy_level: 'good'
           }
         ])
         .select()
