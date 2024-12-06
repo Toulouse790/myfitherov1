@@ -7,7 +7,7 @@ import { CardioSession } from "./CardioSession";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Play, Pause, Timer } from "lucide-react";
+import { Timer } from "lucide-react";
 import { formatWorkoutTime } from "@/utils/time";
 
 export const NextWorkoutDetail = () => {
@@ -27,21 +27,14 @@ export const NextWorkoutDetail = () => {
   } = useWorkoutSession();
 
   const [showSummary, setShowSummary] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
 
   const progress = currentExerciseIndex !== null 
     ? ((currentExerciseIndex + 1) / exercises.length) * 100 
     : 0;
 
   const handleStartWorkout = () => {
-    setIsRunning(true); // Démarre le compteur de séance
+    setIsRunning(true);
     handleExerciseClick(0);
-  };
-
-  const handlePauseResume = () => {
-    const newPausedState = !isPaused;
-    setIsPaused(newPausedState);
-    setIsRunning(!newPausedState); // Inverse de l'état de pause pour le compteur
   };
 
   const handleEndWorkout = () => {
@@ -73,31 +66,13 @@ export const NextWorkoutDetail = () => {
             </span>
           </div>
           
-          {!workoutStarted ? (
+          {!workoutStarted && (
             <Button 
               size="lg"
               className="bg-primary hover:bg-primary/90 text-white font-semibold px-8"
               onClick={handleStartWorkout}
             >
               Commencer ma séance
-            </Button>
-          ) : (
-            <Button
-              variant={isPaused ? "default" : "outline"}
-              onClick={handlePauseResume}
-              className="px-4"
-            >
-              {isPaused ? (
-                <>
-                  <Play className="w-4 h-4 mr-2" />
-                  Reprendre
-                </>
-              ) : (
-                <>
-                  <Pause className="w-4 h-4 mr-2" />
-                  Pause
-                </>
-              )}
             </Button>
           )}
         </div>
@@ -131,7 +106,6 @@ export const NextWorkoutDetail = () => {
               onExerciseClick={handleExerciseClick}
               sessionId={sessionId}
               onRegenerateWorkout={handleRegenerateWorkout}
-              isPaused={isPaused}
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full p-12 text-center space-y-6 text-muted-foreground bg-muted/10 rounded-lg border-2 border-dashed">
