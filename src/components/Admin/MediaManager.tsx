@@ -48,7 +48,7 @@ export const MediaManager = () => {
   };
 
   const filteredExercises = exercises?.filter(
-    (exercise) => exercise.muscle_group === selectedGroup
+    (exercise) => exercise.muscleGroup === selectedGroup
   ) || [];
 
   console.log('Filtered exercises:', filteredExercises);
