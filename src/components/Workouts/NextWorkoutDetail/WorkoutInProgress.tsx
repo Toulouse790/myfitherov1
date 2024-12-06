@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Timer, ChevronUp, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { useRestTimer } from "@/hooks/use-rest-timer";
 import useSound from "use-sound";
 
 interface WorkoutInProgressProps {
@@ -25,34 +26,25 @@ export const WorkoutInProgress = ({
   const [currentSet, setCurrentSet] = useState(1);
   const [weight, setWeight] = useState(20);
   const [reps, setReps] = useState(12);
-  const [restTimer, setRestTimer] = useState<number | null>(null);
   const { toast } = useToast();
   const [playSound] = useSound("/sounds/rest-complete.mp3");
+  const { restTimers, startRestTimer } = useRestTimer();
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (restTimer !== null && restTimer > 0 && !isPaused) {
-      interval = setInterval(() => {
-        setRestTimer((prev) => {
-          if (prev === null || prev <= 1) {
-            playSound();
-            toast({
-              title: "Repos terminé !",
-              description: "C'est reparti ! Commencez la série suivante.",
-            });
-            return null;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [restTimer, isPaused, toast, playSound]);
+  const currentExerciseId = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
+  const currentRestTimer = currentExerciseId ? restTimers[currentExerciseId] : null;
 
   const handleSetComplete = () => {
-    if (currentSet < 4) {
+    if (currentSet < 4 && currentExerciseId) {
       setCurrentSet(prev => prev + 1);
-      setRestTimer(90);
+      startRestTimer(currentExerciseId);
+      
+      // Calculer les calories brûlées (exemple simple)
+      const calories = Math.round(reps * weight * 0.15);
+      
+      toast({
+        title: "Série complétée !",
+        description: `${calories} calories brûlées. 90 secondes de repos.`,
+      });
     } else {
       toast({
         title: "Exercice terminé !",
@@ -97,6 +89,7 @@ export const WorkoutInProgress = ({
                   variant="outline"
                   size="icon"
                   onClick={() => setWeight(prev => Math.max(0, prev - 2.5))}
+                  disabled={isPaused}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -105,11 +98,13 @@ export const WorkoutInProgress = ({
                   value={weight}
                   onChange={(e) => setWeight(Number(e.target.value))}
                   className="text-center"
+                  disabled={isPaused}
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setWeight(prev => prev + 2.5)}
+                  disabled={isPaused}
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>
@@ -123,6 +118,7 @@ export const WorkoutInProgress = ({
                   variant="outline"
                   size="icon"
                   onClick={() => setReps(prev => Math.max(1, prev - 1))}
+                  disabled={isPaused}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -131,11 +127,13 @@ export const WorkoutInProgress = ({
                   value={reps}
                   onChange={(e) => setReps(Number(e.target.value))}
                   className="text-center"
+                  disabled={isPaused}
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setReps(prev => prev + 1)}
+                  disabled={isPaused}
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>
@@ -144,7 +142,7 @@ export const WorkoutInProgress = ({
           </div>
 
           <AnimatePresence>
-            {restTimer !== null ? (
+            {currentRestTimer !== null ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -152,15 +150,15 @@ export const WorkoutInProgress = ({
                 className="flex items-center justify-center gap-2 text-2xl font-bold text-primary"
               >
                 <Timer className="h-6 w-6" />
-                <span>{restTimer}s</span>
+                <span>{currentRestTimer}s</span>
               </motion.div>
             ) : (
               <Button
                 className="w-full h-12 text-lg"
                 onClick={handleSetComplete}
-                disabled={isPaused}
+                disabled={isPaused || currentRestTimer !== null}
               >
-                Valider la série
+                {currentSet === 4 ? "Terminer l'exercice" : "Valider la série"}
               </Button>
             )}
           </AnimatePresence>

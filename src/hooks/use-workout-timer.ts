@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export const useWorkoutTimer = () => {
   const [duration, setDuration] = useState(0);
@@ -14,27 +14,35 @@ export const useWorkoutTimer = () => {
       }, 1000);
     }
 
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [isRunning, isPaused]);
 
-  const startTimer = () => {
+  const startTimer = useCallback(() => {
+    console.log("Starting timer");
     setIsRunning(true);
     setIsPaused(false);
-  };
+  }, []);
 
-  const pauseTimer = () => {
+  const pauseTimer = useCallback(() => {
+    console.log("Pausing timer");
     setIsPaused(true);
-  };
+  }, []);
 
-  const resumeTimer = () => {
+  const resumeTimer = useCallback(() => {
+    console.log("Resuming timer");
     setIsPaused(false);
-  };
+  }, []);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
+    console.log("Resetting timer");
     setDuration(0);
     setIsRunning(false);
     setIsPaused(false);
-  };
+  }, []);
 
   return {
     duration,
