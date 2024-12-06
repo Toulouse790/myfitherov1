@@ -2,21 +2,7 @@ import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
-
-interface Meal {
-  name: string;
-  calories: number;
-  proteins: number;
-  carbs: number;
-  fats: number;
-  estimated_cost: number;
-  is_cheat_meal?: boolean;
-}
-
-interface MealWithTitle {
-  title: string;
-  meal: Meal;
-}
+import { Meal, MealWithTitle } from "@/data/meals/types";
 
 interface DayMealsProps {
   meals: Record<string, Meal>;
@@ -48,12 +34,35 @@ export const DayMeals = ({ meals, mealTitles }: DayMealsProps) => {
           </Button>
           
           {expandedMeal === mealType && meals[mealType] && (
-            <div className="p-4 pt-0 space-y-2 text-sm">
-              <p className="font-medium">{meals[mealType].name}</p>
-              <p className="text-muted-foreground">
-                {meals[mealType].calories} kcal | {meals[mealType].proteins}g protéines | {meals[mealType].carbs}g glucides | {meals[mealType].fats}g lipides
-              </p>
-              <p className="text-primary">Coût estimé: {meals[mealType].estimated_cost}€</p>
+            <div className="p-4 pt-0 space-y-4 text-sm">
+              <div>
+                <p className="font-medium">{meals[mealType].name}</p>
+                <p className="text-muted-foreground">
+                  {meals[mealType].calories} kcal | {meals[mealType].proteins}g protéines | {meals[mealType].carbs}g glucides | {meals[mealType].fats}g lipides
+                </p>
+                <p className="text-primary">Coût estimé: {meals[mealType].estimated_cost}€</p>
+              </div>
+
+              {meals[mealType].quantities && (
+                <div className="space-y-2">
+                  <p className="font-medium">Ingrédients:</p>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {meals[mealType].quantities.map((q, idx) => (
+                      <li key={idx}>
+                        {q.item}: {q.amount}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {meals[mealType].notes && (
+                <div className="space-y-1">
+                  <p className="font-medium">Préparation:</p>
+                  <p className="text-muted-foreground">{meals[mealType].notes}</p>
+                </div>
+              )}
+
               {meals[mealType].is_cheat_meal && (
                 <p className="text-primary font-medium">Cheat meal 🎉</p>
               )}

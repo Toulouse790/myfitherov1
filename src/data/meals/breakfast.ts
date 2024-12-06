@@ -8,6 +8,13 @@ export const breakfastMeals: Meal[] = [
     carbs: 45,
     fats: 10,
     estimated_cost: 3,
+    quantities: [
+      { item: "Flocons d'avoine", amount: "60g" },
+      { item: "Fruits rouges", amount: "100g" },
+      { item: "Protéine en poudre", amount: "30g" },
+      { item: "Lait d'amande", amount: "250ml" }
+    ],
+    notes: "Faire chauffer le lait, ajouter les flocons et la protéine, mélanger et ajouter les fruits"
   },
   {
     name: "Bowl de skyr aux myrtilles et graines de chia",
@@ -16,6 +23,13 @@ export const breakfastMeals: Meal[] = [
     carbs: 40,
     fats: 8,
     estimated_cost: 3.5,
+    quantities: [
+      { item: "Skyr nature", amount: "200g" },
+      { item: "Myrtilles", amount: "100g" },
+      { item: "Graines de chia", amount: "15g" },
+      { item: "Miel", amount: "10g" }
+    ],
+    notes: "Préparer la veille pour laisser les graines de chia gonfler"
   },
   {
     name: "Smoothie bowl banane-épinards",
@@ -24,38 +38,13 @@ export const breakfastMeals: Meal[] = [
     carbs: 50,
     fats: 7,
     estimated_cost: 3,
-  },
-  {
-    name: "Toast avocat et houmous",
-    calories: 380,
-    proteins: 12,
-    carbs: 35,
-    fats: 22,
-    estimated_cost: 4,
-  },
-  {
-    name: "Pancakes protéinés aux flocons d'avoine",
-    calories: 400,
-    proteins: 22,
-    carbs: 48,
-    fats: 12,
-    estimated_cost: 3.5,
-  },
-  {
-    name: "Granola maison et yaourt végétal",
-    calories: 340,
-    proteins: 12,
-    carbs: 52,
-    fats: 14,
-    estimated_cost: 3,
-  },
-  {
-    name: "Oeufs brouillés, pain complet et avocat",
-    calories: 400,
-    proteins: 22,
-    carbs: 35,
-    fats: 15,
-    estimated_cost: 4,
+    quantities: [
+      { item: "Banane", amount: "1 grande" },
+      { item: "Épinards", amount: "50g" },
+      { item: "Lait végétal", amount: "200ml" },
+      { item: "Granola", amount: "30g" }
+    ],
+    notes: "Mixer tous les ingrédients sauf le granola, ajouter le granola au moment de servir"
   }
 ];
 

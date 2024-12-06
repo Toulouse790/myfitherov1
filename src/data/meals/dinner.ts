@@ -8,14 +8,13 @@ export const dinnerMeals: Meal[] = [
     carbs: 40,
     fats: 15,
     estimated_cost: 6,
-  },
-  {
-    name: "Steak de seitan aux champignons",
-    calories: 420,
-    proteins: 30,
-    carbs: 35,
-    fats: 12,
-    estimated_cost: 5,
+    quantities: [
+      { item: "Blanc de poulet", amount: "150g" },
+      { item: "Patate douce", amount: "200g" },
+      { item: "Brocolis", amount: "200g" },
+      { item: "Huile d'olive", amount: "1 càs" }
+    ],
+    notes: "Couper les patates douces en cubes et les rôtir 25min au four. Griller le poulet 6-7min de chaque côté"
   },
   {
     name: "Dahl de lentilles corail et riz",
@@ -24,38 +23,13 @@ export const dinnerMeals: Meal[] = [
     carbs: 65,
     fats: 8,
     estimated_cost: 3.5,
-  },
-  {
-    name: "Galette de quinoa aux légumes",
-    calories: 400,
-    proteins: 15,
-    carbs: 55,
-    fats: 14,
-    estimated_cost: 4,
-  },
-  {
-    name: "Wok de tempeh aux légumes",
-    calories: 430,
-    proteins: 25,
-    carbs: 45,
-    fats: 16,
-    estimated_cost: 5,
-  },
-  {
-    name: "Chili sin carne aux haricots rouges",
-    calories: 390,
-    proteins: 20,
-    carbs: 60,
-    fats: 10,
-    estimated_cost: 4,
-  },
-  {
-    name: "Gratin de courge butternut",
-    calories: 360,
-    proteins: 12,
-    carbs: 50,
-    fats: 12,
-    estimated_cost: 4.5,
+    quantities: [
+      { item: "Lentilles corail", amount: "100g" },
+      { item: "Riz basmati", amount: "60g" },
+      { item: "Lait de coco", amount: "200ml" },
+      { item: "Épices curry", amount: "2 càc" }
+    ],
+    notes: "Faire cuire les lentilles 15-20min avec le lait de coco et les épices. Servir avec le riz"
   }
 ];
 

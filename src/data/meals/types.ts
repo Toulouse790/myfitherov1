@@ -1,3 +1,8 @@
+export interface Quantity {
+  item: string;
+  amount: string;
+}
+
 export interface Meal {
   name: string;
   calories: number;
@@ -5,6 +10,8 @@ export interface Meal {
   carbs: number;
   fats: number;
   estimated_cost: number;
+  quantities?: Quantity[];
+  notes?: string;
   benefits?: string;
 }
 
