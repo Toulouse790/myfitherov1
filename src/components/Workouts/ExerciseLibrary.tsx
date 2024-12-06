@@ -22,13 +22,25 @@ export const ExerciseLibrary = () => {
     setShowExerciseSelection(true);
   };
 
-  const handleExerciseSelectionChange = async (selectedIds: string[]) => {
+  const handleExerciseSelectionChange = (selectedIds: string[]) => {
     setSelectedExercises(selectedIds);
-    
+    setShowExerciseSelection(false);
+  };
+
+  const handleStartWorkout = async () => {
     if (!user) {
       toast({
         title: "Erreur",
         description: "Vous devez être connecté pour créer une séance",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (selectedExercises.length === 0) {
+      toast({
+        title: "Aucun exercice sélectionné",
+        description: "Veuillez sélectionner au moins un exercice",
         variant: "destructive",
       });
       return;
@@ -42,7 +54,7 @@ export const ExerciseLibrary = () => {
             user_id: user.id,
             type: 'strength', 
             status: 'in_progress',
-            exercises: selectedIds
+            exercises: selectedExercises
           }
         ])
         .select()
@@ -51,8 +63,8 @@ export const ExerciseLibrary = () => {
       if (sessionError) throw sessionError;
 
       toast({
-        title: "Exercices sélectionnés",
-        description: `${selectedIds.length} exercices ajoutés à votre séance`,
+        title: "Séance créée",
+        description: `${selectedExercises.length} exercices ajoutés à votre séance`,
       });
 
       if (session) {
@@ -66,19 +78,6 @@ export const ExerciseLibrary = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const handleStartWorkout = () => {
-    if (selectedExercises.length === 0) {
-      toast({
-        title: "Aucun exercice sélectionné",
-        description: "Veuillez sélectionner au moins un exercice",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    navigate('/workouts/exercise/next-workout');
   };
 
   return (
