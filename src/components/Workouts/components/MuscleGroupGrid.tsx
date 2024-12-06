@@ -5,6 +5,7 @@ import { muscleGroups } from "../workoutConstants";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface MuscleGroupGridProps {
   searchQuery: string;
@@ -21,7 +22,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
       try {
         const { data, error } = await supabase
           .from('exercises')
-          .select('muscle_group')
+          .select('muscle_group, id')
           .eq('is_published', true);
 
         if (error) throw error;
@@ -36,6 +37,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
           });
         }
 
+        console.log('Exercise counts:', counts);
         setExerciseCounts(counts);
       } catch (error) {
         console.error('Error fetching exercise counts:', error);
@@ -60,9 +62,8 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   };
 
   const getMuscleGroupCount = (muscleId: string): number => {
-    const muscleGroupName = muscleGroups.find(group => group.id === muscleId)?.name.toLowerCase();
-    if (!muscleGroupName) return 0;
-    return exerciseCounts[muscleGroupName] || 0;
+    const englishName = reverseTranslateMuscleGroup(muscleGroups.find(group => group.id === muscleId)?.name || '');
+    return exerciseCounts[englishName.toLowerCase()] || 0;
   };
 
   return (

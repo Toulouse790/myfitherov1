@@ -1,5 +1,4 @@
 import { sampleWorkouts } from './data/sampleWorkouts';
-import { exercises } from './exerciseLibrary';
 
 const calculateExerciseCounts = () => {
   const counts: { [key: string]: number } = {};
@@ -21,7 +20,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["poitrine"] || 0
+    totalExercises: exerciseCounts["pectoraux"] || 0
   },
   { 
     id: "back", 
@@ -53,7 +52,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["biceps"] || 0
+    totalExercises: exerciseCounts["bras"] || 0
   },
   { 
     id: "triceps", 
@@ -61,7 +60,7 @@ export const muscleGroups = [
     color: "bg-primary",
     image: "/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png",
     selectedExercises: 0,
-    totalExercises: exerciseCounts["triceps"] || 0
+    totalExercises: exerciseCounts["bras"] || 0
   },
   { 
     id: "abs", 
@@ -114,3 +113,4 @@ export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercis
 }
 
 export const workouts = sampleWorkouts;
+
