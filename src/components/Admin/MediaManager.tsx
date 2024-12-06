@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { MuscleGroupList } from "./MuscleGroupList";
 import { MediaList } from "./MediaList";
 import { muscleGroups } from "../Workouts/workoutConstants";
 import { Exercise } from "@/components/Workouts/exercises/types/exercise";
@@ -11,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 export const MediaManager = () => {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedGroup, setSelectedGroup] = useState<string>(muscleGroups[0]?.id || "");
+  const [selectedGroup] = useState<string>(muscleGroups[0]?.id || "");
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
 
@@ -120,7 +118,7 @@ export const MediaManager = () => {
       });
 
       setSelectedFile(null);
-      await refetch(); // Refresh the exercise list
+      await refetch();
     } catch (error) {
       console.error('Error uploading media:', error);
       toast({
@@ -156,7 +154,7 @@ export const MediaManager = () => {
         description: `Les niveaux de difficulté pour ${selectedExercise} ont été mis à jour`,
       });
       
-      await refetch(); // Refresh the exercise list
+      await refetch();
     } catch (error) {
       console.error('Error updating difficulties:', error);
       toast({
@@ -173,22 +171,15 @@ export const MediaManager = () => {
         <h2 className="text-2xl font-bold">Gestionnaire de médias</h2>
       </div>
 
-      <Tabs defaultValue={muscleGroups[0]?.id} className="space-y-6">
-        <MuscleGroupList
-          selectedGroup={selectedGroup}
-          onGroupSelect={setSelectedGroup}
-        />
-        
-        <MediaList
-          exercises={exercises}
-          selectedGroup={selectedGroup}
-          onFileChange={handleFileChange}
-          onUpload={handleUpload}
-          selectedFile={selectedFile}
-          onDifficultyChange={handleDifficultyChange}
-          selectedDifficulties={selectedDifficulties}
-        />
-      </Tabs>
+      <MediaList
+        exercises={exercises}
+        selectedGroup={selectedGroup}
+        onFileChange={handleFileChange}
+        onUpload={handleUpload}
+        selectedFile={selectedFile}
+        onDifficultyChange={handleDifficultyChange}
+        selectedDifficulties={selectedDifficulties}
+      />
     </div>
   );
 };

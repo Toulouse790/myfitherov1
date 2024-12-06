@@ -16,7 +16,6 @@ interface MediaListProps {
 
 export const MediaList = ({
   exercises,
-  selectedGroup,
   onFileChange,
   onUpload,
   selectedFile,
@@ -33,24 +32,6 @@ export const MediaList = ({
     }
   });
 
-  const getMuscleGroupForFilter = (group: string): string => {
-    const muscleGroupMap: { [key: string]: string } = {
-      chest: 'poitrine',
-      back: 'dos',
-      legs: 'jambes',
-      shoulders: 'épaules',
-      biceps: 'biceps',
-      triceps: 'triceps',
-      abs: 'abdominaux'
-    };
-    return muscleGroupMap[group] || group;
-  };
-
-  const filteredExercises = exercises.filter(exercise => {
-    const muscleGroupToMatch = getMuscleGroupForFilter(selectedGroup);
-    return exercise.muscleGroup.toLowerCase() === muscleGroupToMatch.toLowerCase();
-  });
-
   const getMediaForExercise = (exerciseId: string) => {
     return exerciseMedia?.filter(media => media.exercise_id === exerciseId) || [];
   };
@@ -59,13 +40,9 @@ export const MediaList = ({
     return <div className="text-center p-4">Aucun exercice disponible</div>;
   }
 
-  if (!filteredExercises || filteredExercises.length === 0) {
-    return <div className="text-center p-4">Aucun exercice trouvé pour ce groupe musculaire</div>;
-  }
-
   return (
     <div className="space-y-4">
-      {filteredExercises.map((exercise) => (
+      {exercises.map((exercise) => (
         <ExerciseRow
           key={exercise.id}
           exercise={{
