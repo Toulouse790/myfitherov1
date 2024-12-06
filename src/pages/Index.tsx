@@ -12,18 +12,11 @@ const Index = () => {
   const { toast } = useToast();
   const [showDialog, setShowDialog] = useState(false);
 
-  const handleCreateWorkout = () => {
-    toast({
-      title: "Création d'un entraînement",
-      description: "Cette fonctionnalité sera bientôt disponible !",
-    });
-  };
-
   const mainActions = [
     {
       icon: <Plus className="w-6 h-6" />,
-      label: "Créer",
-      onClick: handleCreateWorkout
+      label: "Créer ma séance",
+      onClick: () => navigate("/workouts")
     },
     {
       icon: <Activity className="w-6 h-6" />,
