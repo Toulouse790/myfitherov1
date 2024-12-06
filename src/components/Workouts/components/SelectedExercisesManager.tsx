@@ -19,11 +19,18 @@ export const SelectedExercisesManager = ({
   onExerciseSelectionChange,
 }: SelectedExercisesManagerProps) => {
   const handleClose = () => {
+    console.log("SelectedExercisesManager: Closing dialog");
     setShowSelection(false);
   };
 
   return (
-    <Dialog open={showSelection} onOpenChange={setShowSelection}>
+    <Dialog 
+      open={showSelection} 
+      onOpenChange={(open) => {
+        console.log("Dialog onOpenChange triggered:", open);
+        setShowSelection(open);
+      }}
+    >
       <DialogContent className="w-[95vw] max-w-[800px] h-[90vh] max-h-[800px] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Sélectionner des exercices</DialogTitle>

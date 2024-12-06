@@ -34,6 +34,11 @@ export const ExerciseSelection = ({
     onSelectionChange(newSelection);
   };
 
+  const handleClose = () => {
+    console.log("ExerciseSelection: Close button clicked");
+    onClose();
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -48,7 +53,7 @@ export const ExerciseSelection = ({
         <p className="text-center text-muted-foreground">
           Aucun exercice ne correspond à votre recherche.
         </p>
-        <Button onClick={onClose}>
+        <Button onClick={handleClose}>
           Fermer
         </Button>
       </div>
@@ -74,7 +79,7 @@ export const ExerciseSelection = ({
         ))}
       </div>
       <div className="flex justify-end">
-        <Button onClick={onClose}>
+        <Button onClick={handleClose} className="w-full sm:w-auto">
           Terminer ({selectedExercises.length})
         </Button>
       </div>

@@ -18,6 +18,7 @@ export const ExerciseLibrary = () => {
   const { user } = useAuth();
 
   const handleMuscleGroupClick = (muscleId: string) => {
+    console.log("Muscle group clicked:", muscleId);
     setSelectedMuscleGroup(muscleId);
     setShowExerciseSelection(true);
   };
