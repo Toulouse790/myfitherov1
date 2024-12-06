@@ -25,7 +25,11 @@ export const MediaManager = () => {
         throw error;
       }
       console.log('Raw exercises data:', data);
-      return data as Exercise[];
+      // Transform the data to match the Exercise type
+      return data?.map(exercise => ({
+        ...exercise,
+        muscleGroup: exercise.muscle_group
+      })) as Exercise[];
     }
   });
 
@@ -53,9 +57,7 @@ export const MediaManager = () => {
     (exercise) => {
       console.log('Filtering exercise:', exercise);
       console.log('Selected group:', selectedGroup);
-      // Handle both muscle_group and muscleGroup
-      const exerciseGroup = exercise.muscle_group || exercise.muscleGroup;
-      return exerciseGroup === selectedGroup;
+      return exercise.muscleGroup === selectedGroup;
     }
   ) || [];
 
