@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Image, Video, Upload } from "lucide-react";
+import { Image, Video } from "lucide-react";
 import { UploadForm } from "./UploadForm";
 import { DifficultyBadges } from "./DifficultyBadges";
 import { useState } from "react";
@@ -76,21 +76,6 @@ export const ExerciseRow = ({
                 onUpload={onUpload}
                 selectedFile={selectedFile}
               />
-
-              <Button 
-                variant="default" 
-                size="sm"
-                onClick={onUpload}
-                disabled={!selectedFile}
-                className={`min-w-[100px] ${
-                  selectedFile 
-                    ? "bg-[#0EA5E9] hover:bg-[#0EA5E9]/90" 
-                    : "opacity-50 cursor-not-allowed"
-                }`}
-              >
-                <Upload className="mr-2 h-4 w-4" />
-                Publier
-              </Button>
             </div>
           </div>
         </div>
