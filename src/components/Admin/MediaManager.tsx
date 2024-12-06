@@ -6,7 +6,7 @@ import { Exercise } from "@/components/Workouts/exercises/types/exercise";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { muscleGroups } from "../Workouts/workoutConstants";
-import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 export const MediaManager = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -18,8 +18,8 @@ export const MediaManager = () => {
     queryKey: ['exercises', selectedGroup],
     queryFn: async () => {
       console.log('Fetching exercises for MediaManager, selected group:', selectedGroup);
-      const translatedGroup = translateMuscleGroup(selectedGroup);
-      console.log('Translated muscle group:', translatedGroup);
+      const englishGroup = reverseTranslateMuscleGroup(selectedGroup);
+      console.log('English muscle group:', englishGroup);
 
       const { data, error } = await supabase
         .from('exercises')
@@ -30,7 +30,7 @@ export const MediaManager = () => {
             media_type
           )
         `)
-        .eq('muscle_group', translatedGroup)
+        .eq('muscle_group', englishGroup.toLowerCase())
         .order('name', { ascending: true });
 
       if (error) {
