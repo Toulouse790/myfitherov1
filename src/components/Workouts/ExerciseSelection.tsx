@@ -34,11 +34,6 @@ export const ExerciseSelection = ({
     onSelectionChange(newSelection);
   };
 
-  const handleClose = () => {
-    console.log("ExerciseSelection: Close button clicked");
-    onClose();
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -53,8 +48,8 @@ export const ExerciseSelection = ({
         <p className="text-center text-muted-foreground">
           Aucun exercice ne correspond à votre recherche.
         </p>
-        <Button onClick={handleClose}>
-          Fermer
+        <Button onClick={onClose}>
+          Retour aux groupes musculaires
         </Button>
       </div>
     );
@@ -62,6 +57,15 @@ export const ExerciseSelection = ({
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-semibold">
+          Sélectionnez vos exercices
+        </h2>
+        <Button variant="outline" onClick={onClose}>
+          Retour aux groupes musculaires
+        </Button>
+      </div>
+      
       <div className="grid gap-4 sm:grid-cols-2">
         {filteredExercises.map((exercise) => (
           <motion.div
@@ -77,11 +81,6 @@ export const ExerciseSelection = ({
             />
           </motion.div>
         ))}
-      </div>
-      <div className="flex justify-end">
-        <Button onClick={handleClose} className="w-full sm:w-auto">
-          Terminer ({selectedExercises.length})
-        </Button>
       </div>
     </div>
   );

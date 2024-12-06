@@ -6,22 +6,23 @@ import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
 import { LibraryHeader } from "./components/LibraryHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { ExerciseSelection } from "./ExerciseSelection";
 
 export const ExerciseLibrary = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
 
   const handleMuscleGroupClick = (muscleId: string) => {
     console.log("Muscle group clicked:", muscleId);
-    // Pour le moment, on ajoute directement le muscle group aux exercices sélectionnés
-    setSelectedExercises(prev => [...prev, muscleId]);
-    toast({
-      title: "Groupe musculaire ajouté",
-      description: "Vous pouvez en sélectionner d'autres ou démarrer votre séance",
-    });
+    setSelectedMuscleGroup(muscleId);
+  };
+
+  const handleExerciseSelection = (exerciseIds: string[]) => {
+    setSelectedExercises(exerciseIds);
   };
 
   const handleStartWorkout = async () => {
@@ -87,10 +88,20 @@ export const ExerciseLibrary = () => {
         onStartWorkout={handleStartWorkout}
       />
 
-      <MuscleGroupGrid 
-        searchQuery={searchQuery}
-        onMuscleGroupClick={handleMuscleGroupClick}
-      />
+      {selectedMuscleGroup ? (
+        <ExerciseSelection
+          selectedExercises={selectedExercises}
+          onSelectionChange={handleExerciseSelection}
+          onClose={() => setSelectedMuscleGroup(null)}
+          muscleGroup={selectedMuscleGroup}
+          searchQuery={searchQuery}
+        />
+      ) : (
+        <MuscleGroupGrid 
+          searchQuery={searchQuery}
+          onMuscleGroupClick={handleMuscleGroupClick}
+        />
+      )}
 
       <FloatingWorkoutButton 
         selectedCount={selectedExercises.length}
