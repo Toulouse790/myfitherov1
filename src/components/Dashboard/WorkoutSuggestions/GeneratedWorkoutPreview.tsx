@@ -3,6 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Dumbbell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { WorkoutPlan } from "./workoutPlanGenerator";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface GeneratedWorkoutPreviewProps {
   plan: WorkoutPlan;
@@ -10,9 +13,52 @@ interface GeneratedWorkoutPreviewProps {
 
 export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const handleStartWorkout = async () => {
-    navigate(`/workouts/exercise/next-workout`);
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour démarrer une séance",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Créer une nouvelle session d'entraînement
+      const { data: session, error: sessionError } = await supabase
+        .from('workout_sessions')
+        .insert([
+          { 
+            user_id: user.id,
+            status: 'in_progress',
+            type: 'strength',
+            exercises: plan.exercises.map(ex => ex.name),
+            initial_energy_level: 'good'
+          }
+        ])
+        .select()
+        .single();
+
+      if (sessionError) throw sessionError;
+
+      toast({
+        title: "Séance démarrée",
+        description: "Votre séance d'entraînement a été créée avec succès",
+      });
+
+      // Rediriger vers la page d'entraînement avec l'ID de la session
+      navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+    } catch (error) {
+      console.error('Error starting workout:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de démarrer la séance",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
