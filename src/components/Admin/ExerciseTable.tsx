@@ -20,6 +20,7 @@ export const ExerciseTable = () => {
   const { toast } = useToast();
   const [exercises, setExercises] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
 
   useEffect(() => {
     fetchExercises();
@@ -135,6 +136,11 @@ export const ExerciseTable = () => {
     }
   };
 
+  const handleSelectionChange = (selectedIds: string[]) => {
+    setSelectedExercises(selectedIds);
+    console.log('Selected exercises:', selectedIds);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -155,6 +161,7 @@ export const ExerciseTable = () => {
               difficulties={difficulties}
               onLocationChange={handleLocationChange}
               onDifficultyChange={handleDifficultyChange}
+              onSelectionChange={handleSelectionChange}
             />
           </div>
         </div>

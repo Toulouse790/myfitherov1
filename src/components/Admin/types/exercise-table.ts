@@ -22,4 +22,5 @@ export interface ExerciseTableContentProps {
   difficulties: Difficulty[];
   onLocationChange: (exerciseId: string, location: string, checked: boolean) => void;
   onDifficultyChange: (exerciseId: string, difficulty: string, checked: boolean) => void;
+  onSelectionChange?: (selectedIds: string[]) => void;
 }
