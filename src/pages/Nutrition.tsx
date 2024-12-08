@@ -4,6 +4,7 @@ import { FoodJournal } from "@/components/Nutrition/FoodJournal";
 import { MealPlanGenerator } from "@/components/Nutrition/MealPlanGenerator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BottomNav } from "@/components/Layout/BottomNav";
+import { DailyMeals } from "@/components/Nutrition/DailyMeals";
 
 const Nutrition = () => {
   const handleTabClick = (tabValue: string) => {
@@ -31,6 +32,9 @@ const Nutrition = () => {
             <div className="space-y-3">
               <NutritionGoals />
               <NutritionChart />
+            </div>
+            <div className="space-y-3">
+              <DailyMeals />
             </div>
           </div>
         </TabsContent>
