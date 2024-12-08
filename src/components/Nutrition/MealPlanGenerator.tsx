@@ -44,7 +44,8 @@ export const MealPlanGenerator = () => {
           name: plan.breakfast.name || 'Petit-déjeuner',
           calories: plan.breakfast.calories || 0,
           proteins: plan.breakfast.proteins || 0,
-          meal_type: 'breakfast'
+          meal_type: 'breakfast',
+          notes: plan.breakfast.preparation || ''
         });
       }
 
@@ -55,7 +56,8 @@ export const MealPlanGenerator = () => {
           name: plan.lunch.name || 'Déjeuner',
           calories: plan.lunch.calories || 0,
           proteins: plan.lunch.proteins || 0,
-          meal_type: 'lunch'
+          meal_type: 'lunch',
+          notes: plan.lunch.preparation || ''
         });
       }
 
@@ -66,7 +68,8 @@ export const MealPlanGenerator = () => {
           name: plan.dinner.name || 'Dîner',
           calories: plan.dinner.calories || 0,
           proteins: plan.dinner.proteins || 0,
-          meal_type: 'dinner'
+          meal_type: 'dinner',
+          notes: plan.dinner.preparation || ''
         });
       }
 
@@ -77,7 +80,8 @@ export const MealPlanGenerator = () => {
           name: plan.snack.name || 'Collation',
           calories: plan.snack.calories || 0,
           proteins: plan.snack.proteins || 0,
-          meal_type: 'snack'
+          meal_type: 'snack',
+          notes: plan.snack.preparation || ''
         });
       }
 
