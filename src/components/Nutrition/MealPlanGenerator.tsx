@@ -41,14 +41,14 @@ export const MealPlanGenerator = () => {
 
       // Transformer le plan en entrées de journal
       const entries = [];
-      
+
       // Ajouter le petit-déjeuner
       if (plan.breakfast) {
         entries.push({
           user_id: user.id,
-          name: plan.breakfast.name || 'Petit-déjeuner',
-          calories: plan.breakfast.calories || 0,
-          proteins: plan.breakfast.proteins || 0,
+          name: plan.breakfast.name,
+          calories: plan.breakfast.calories,
+          proteins: plan.breakfast.proteins,
           meal_type: 'breakfast',
           notes: plan.breakfast.preparation || ''
         });
@@ -58,9 +58,9 @@ export const MealPlanGenerator = () => {
       if (plan.lunch) {
         entries.push({
           user_id: user.id,
-          name: plan.lunch.name || 'Déjeuner',
-          calories: plan.lunch.calories || 0,
-          proteins: plan.lunch.proteins || 0,
+          name: plan.lunch.name,
+          calories: plan.lunch.calories,
+          proteins: plan.lunch.proteins,
           meal_type: 'lunch',
           notes: plan.lunch.preparation || ''
         });
@@ -70,9 +70,9 @@ export const MealPlanGenerator = () => {
       if (plan.dinner) {
         entries.push({
           user_id: user.id,
-          name: plan.dinner.name || 'Dîner',
-          calories: plan.dinner.calories || 0,
-          proteins: plan.dinner.proteins || 0,
+          name: plan.dinner.name,
+          calories: plan.dinner.calories,
+          proteins: plan.dinner.proteins,
           meal_type: 'dinner',
           notes: plan.dinner.preparation || ''
         });
@@ -82,9 +82,9 @@ export const MealPlanGenerator = () => {
       if (plan.snack) {
         entries.push({
           user_id: user.id,
-          name: plan.snack.name || 'Collation',
-          calories: plan.snack.calories || 0,
-          proteins: plan.snack.proteins || 0,
+          name: plan.snack.name,
+          calories: plan.snack.calories,
+          proteins: plan.snack.proteins,
           meal_type: 'snack',
           notes: plan.snack.preparation || ''
         });
