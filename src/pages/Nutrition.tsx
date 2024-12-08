@@ -22,6 +22,7 @@ const Nutrition = () => {
         <div className="w-full overflow-x-auto pb-1">
           <TabsList className="w-full justify-start min-w-max">
             <TabsTrigger value="overview" className="text-xs sm:text-sm">Vue d'ensemble</TabsTrigger>
+            <TabsTrigger value="tracking" className="text-xs sm:text-sm">Suivi hebdomadaire</TabsTrigger>
             <TabsTrigger value="journal" className="text-xs sm:text-sm">Journal alimentaire</TabsTrigger>
             <TabsTrigger value="meal-plan" className="text-xs sm:text-sm">Plan repas</TabsTrigger>
           </TabsList>
@@ -31,12 +32,15 @@ const Nutrition = () => {
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-3">
               <NutritionGoals />
-              <NutritionChart />
             </div>
             <div className="space-y-3">
               <DailyMeals />
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="tracking">
+          <NutritionChart />
         </TabsContent>
 
         <TabsContent value="journal">
