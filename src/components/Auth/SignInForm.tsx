@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -10,6 +10,7 @@ export const SignInForm = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -23,15 +24,18 @@ export const SignInForm = () => {
       });
 
       if (error) {
+        console.error("Signin error:", error);
         toast({
           variant: "destructive",
           title: "Erreur de connexion",
           description: "Email ou mot de passe incorrect",
         });
       } else {
-        navigate("/");
+        const from = location.state?.from?.pathname || "/";
+        navigate(from, { replace: true });
       }
     } catch (error) {
+      console.error("Unexpected error:", error);
       toast({
         variant: "destructive",
         title: "Erreur",
