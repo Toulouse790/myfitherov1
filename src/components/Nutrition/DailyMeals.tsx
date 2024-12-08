@@ -1,27 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { MealPlan } from "@/types/nutrition";
-
-interface FoodEntry {
-  id: string;
-  name: string;
-  calories: number;
-  proteins: number;
-  meal_type: string;
-}
+import { mealTypes } from "./DailyMeals/MealTypes";
+import { MealSection } from "./DailyMeals/MealSection";
+import { FoodEntry } from "@/types/food";
 
 export const DailyMeals = () => {
   const [entries, setEntries] = useState<FoodEntry[]>([]);
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
 
   // Fetch today's food journal entries
-  useEffect(() => {
-    const fetchTodayEntries = async () => {
+  useQuery({
+    queryKey: ['food-journal-today'],
+    queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
@@ -41,10 +35,9 @@ export const DailyMeals = () => {
       }
 
       setEntries(data || []);
-    };
-
-    fetchTodayEntries();
-  }, []);
+      return data;
+    }
+  });
 
   // Fetch generated meal plan
   const { data: generatedPlan } = useQuery({
@@ -69,23 +62,13 @@ export const DailyMeals = () => {
 
       if (!preferences || !questionnaire) return null;
 
-      // Get today's day of the week (0-6, where 0 is Sunday)
       const today = new Date().getDay();
-      // Convert to 1-7 where 1 is Monday
       const dayIndex = today === 0 ? 6 : today - 1;
 
-      // Use the mock data generator for now
       const plan = generateBasicMealPlan(dayIndex, questionnaire.diet_type || 'omnivore');
       return plan;
     }
   });
-
-  const mealTypes = {
-    breakfast: "Petit déjeuner",
-    lunch: "Déjeuner",
-    dinner: "Dîner",
-    snack: "Collation"
-  };
 
   const entriesByMealType = entries.reduce((acc, entry) => {
     if (!acc[entry.meal_type]) {
@@ -95,16 +78,6 @@ export const DailyMeals = () => {
     return acc;
   }, {} as Record<string, FoodEntry[]>);
 
-  const calculateMealTotals = (mealEntries: FoodEntry[]) => {
-    return mealEntries.reduce(
-      (totals, entry) => ({
-        calories: totals.calories + entry.calories,
-        proteins: totals.proteins + entry.proteins,
-      }),
-      { calories: 0, proteins: 0 }
-    );
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -112,69 +85,17 @@ export const DailyMeals = () => {
       </CardHeader>
       <CardContent className="space-y-2">
         <ScrollArea className="h-[400px] pr-4">
-          {Object.entries(mealTypes).map(([type, label]) => {
-            const mealEntries = entriesByMealType[type] || [];
-            const totals = calculateMealTotals(mealEntries);
-            const generatedMeal = generatedPlan?.meals?.[type];
-
-            return (
-              <div key={type} className="mb-2">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-between p-4 h-auto"
-                  onClick={() => setExpandedMeal(expandedMeal === type ? null : type)}
-                >
-                  <div className="text-left">
-                    <div className="font-medium">{label}</div>
-                    {(mealEntries.length > 0 || generatedMeal) && (
-                      <div className="text-sm text-muted-foreground">
-                        {totals.calories} kcal • {totals.proteins}g protéines
-                      </div>
-                    )}
-                  </div>
-                  {expandedMeal === type ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </Button>
-
-                {expandedMeal === type && (
-                  <div className="pl-4 pr-2 py-2 space-y-2">
-                    {mealEntries.length > 0 ? (
-                      mealEntries.map((entry) => (
-                        <div
-                          key={entry.id}
-                          className="p-3 rounded-lg bg-muted/50"
-                        >
-                          <div className="font-medium">{entry.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {entry.calories} kcal • {entry.proteins}g protéines
-                          </div>
-                        </div>
-                      ))
-                    ) : generatedMeal ? (
-                      <div className="p-3 rounded-lg bg-muted/50">
-                        <div className="font-medium">{generatedMeal.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {generatedMeal.calories} kcal • {generatedMeal.proteins}g protéines
-                        </div>
-                        {generatedMeal.notes && (
-                          <div className="text-sm text-muted-foreground mt-1">
-                            {generatedMeal.notes}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-center text-muted-foreground py-2">
-                        Aucun aliment enregistré
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {Object.entries(mealTypes).map(([type, label]) => (
+            <MealSection
+              key={type}
+              type={type}
+              label={label}
+              mealEntries={entriesByMealType[type] || []}
+              generatedMeal={generatedPlan?.meals?.[type]}
+              isExpanded={expandedMeal === type}
+              onToggle={() => setExpandedMeal(expandedMeal === type ? null : type)}
+            />
+          ))}
         </ScrollArea>
       </CardContent>
     </Card>
