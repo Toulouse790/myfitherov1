@@ -12,4 +12,5 @@ export interface FoodEntry {
   calories: number;
   proteins: number;
   mealType?: string;
+  notes?: string;
 }
