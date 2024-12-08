@@ -6,7 +6,7 @@ import { useState } from "react";
 export const useFoodEntries = () => {
   const [entries, setEntries] = useState<FoodEntry[]>([]);
 
-  useQuery({
+  const { refetch } = useQuery({
     queryKey: ['food-journal-today'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -37,7 +37,8 @@ export const useFoodEntries = () => {
 
       setEntries(mappedEntries);
       return mappedEntries;
-    }
+    },
+    refetchOnWindowFocus: true
   });
 
   const entriesByMealType = entries.reduce((acc, entry) => {
@@ -50,6 +51,7 @@ export const useFoodEntries = () => {
 
   return {
     entries,
-    entriesByMealType
+    entriesByMealType,
+    refetchEntries: refetch
   };
 };

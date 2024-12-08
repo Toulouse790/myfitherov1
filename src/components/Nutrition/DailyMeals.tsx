@@ -12,7 +12,15 @@ export const DailyMeals = () => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
   const [isCheatMealOpen, setIsCheatMealOpen] = useState(false);
   const { mealPlan } = useDailyTargets();
-  const { entriesByMealType } = useFoodEntries();
+  const { entriesByMealType, refetchEntries } = useFoodEntries();
+
+  const handleCheatMealDialogChange = (open: boolean) => {
+    setIsCheatMealOpen(open);
+    if (!open) {
+      // Rafraîchir les entrées quand le dialog se ferme
+      refetchEntries();
+    }
+  };
 
   return (
     <Card className="w-full">
@@ -46,7 +54,7 @@ export const DailyMeals = () => {
 
       <CheatMealDialog 
         isOpen={isCheatMealOpen}
-        onOpenChange={setIsCheatMealOpen}
+        onOpenChange={handleCheatMealDialogChange}
       />
     </Card>
   );

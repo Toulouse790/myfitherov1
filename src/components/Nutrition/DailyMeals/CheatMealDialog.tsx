@@ -61,6 +61,18 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
         meal_type: selectedMealType
       }));
 
+      // Supprimer d'abord les repas existants pour ce type de repas
+      const { error: deleteError } = await supabase
+        .from('food_journal_entries')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('meal_type', selectedMealType)
+        .gte('created_at', new Date().setHours(0, 0, 0, 0))
+        .lt('created_at', new Date().setHours(23, 59, 59, 999));
+
+      if (deleteError) throw deleteError;
+
+      // Ajouter les nouveaux cheat meals
       const { error } = await supabase
         .from('food_journal_entries')
         .insert(entries);
