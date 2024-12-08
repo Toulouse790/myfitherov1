@@ -15,6 +15,8 @@ export const GeneratedPlanDisplay = ({
   generatedPlan,
   durationDays,
 }: GeneratedPlanDisplayProps) => {
+  console.log("GeneratedPlanDisplay - generatedPlan:", generatedPlan);
+
   const { data: workoutSessions } = useQuery({
     queryKey: ['workout-sessions'],
     queryFn: async () => {
@@ -31,7 +33,6 @@ export const GeneratedPlanDisplay = ({
 
   if (!generatedPlan) return null;
 
-  // Determine workout time based on session start time
   const getWorkoutTime = (dayIndex: number): 'morning' | 'evening' | undefined => {
     if (!workoutSessions) return undefined;
 
@@ -70,15 +71,17 @@ export const GeneratedPlanDisplay = ({
             const workoutTime = getWorkoutTime(dayIndex);
             const isTrainingDay = Boolean(workoutTime);
 
-            console.log(`Rendering day ${index + 1}:`, day);
-
             return (
               <TabsContent key={index} value={(index + 1).toString()}>
                 <DayMeals 
-                  meals={day.meals} 
+                  meals={{
+                    breakfast: day.breakfast,
+                    morning_snack: day.snack,
+                    lunch: day.lunch,
+                    afternoon_snack: day.snack,
+                    dinner: day.dinner
+                  }}
                   mealTitles={defaultMeals}
-                  totalCarbs={day.totalCarbs}
-                  carbsTarget={day.carbsTarget}
                   isTrainingDay={isTrainingDay}
                   workoutTime={workoutTime}
                 />

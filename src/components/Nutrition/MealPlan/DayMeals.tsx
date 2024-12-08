@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, Check, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface DayMealsProps {
-  meals?: Record<string, any>;
+  meals: Record<string, any>;
   mealTitles: Record<string, any>;
   isTrainingDay?: boolean;
   workoutTime?: 'morning' | 'evening';
@@ -79,6 +79,8 @@ export const DayMeals = ({
           const meal = meals[mealType];
           console.log(`Rendering meal ${mealType}:`, meal);
 
+          if (!meal) return null;
+
           return (
             <Card key={mealType} className="overflow-hidden">
               <Button
@@ -94,7 +96,7 @@ export const DayMeals = ({
                 )}
               </Button>
               
-              {expandedMeal === mealType && meal && (
+              {expandedMeal === mealType && (
                 <div className="p-4 pt-0 space-y-4 text-sm">
                   <div>
                     <p className="font-medium">{meal.name}</p>
