@@ -8,25 +8,25 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Vérifier la session initiale
-    const checkSession = async () => {
+    // Vérification initiale de la session
+    const checkInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      console.log("Initial session check:", !!session);
       setIsAuthenticated(!!session);
+      console.log("Initial auth check:", { hasSession: !!session });
     };
 
-    checkSession();
+    checkInitialSession();
 
     // Écouter les changements d'authentification
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Auth state changed:", !!session);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", { event, hasSession: !!session });
       setIsAuthenticated(!!session);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Afficher le loader pendant la vérification
+  // Pendant la vérification initiale
   if (isAuthenticated === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -35,13 +35,19 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Si non authentifié et pas sur signin/signup, rediriger vers signin
-  if (!isAuthenticated && !["/signin", "/signup"].includes(location.pathname)) {
+  // Routes publiques (signin/signup)
+  const publicRoutes = ["/signin", "/signup"];
+  const isPublicRoute = publicRoutes.includes(location.pathname);
+
+  // Si non authentifié et sur une route protégée
+  if (!isAuthenticated && !isPublicRoute) {
+    console.log("Redirecting to signin:", { from: location.pathname });
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  // Si authentifié et sur signin/signup, rediriger vers la page d'accueil
-  if (isAuthenticated && ["/signin", "/signup"].includes(location.pathname)) {
+  // Si authentifié et sur une route publique
+  if (isAuthenticated && isPublicRoute) {
+    console.log("Redirecting to home: user is authenticated");
     return <Navigate to="/" replace />;
   }
 

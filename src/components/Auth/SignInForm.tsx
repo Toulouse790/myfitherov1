@@ -23,26 +23,32 @@ export const SignInForm = () => {
         password,
       });
 
-      console.log("Sign in attempt:", { success: !!data.session, error: !!error });
+      console.log("Sign in attempt:", { 
+        success: !!data.session,
+        error: error?.message,
+        email 
+      });
 
       if (error) {
-        console.error("Signin error:", error);
         toast({
           variant: "destructive",
           title: "Erreur de connexion",
-          description: "Email ou mot de passe incorrect",
+          description: error.message || "Email ou mot de passe incorrect",
         });
-      } else if (data.session) {
-        // S'assurer qu'il y a une session avant de rediriger
+        return;
+      }
+
+      if (data.session) {
         const from = location.state?.from?.pathname || "/";
+        console.log("Login successful, redirecting to:", from);
         navigate(from, { replace: true });
       }
     } catch (error) {
-      console.error("Unexpected error:", error);
+      console.error("Unexpected error during login:", error);
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur est survenue",
+        description: "Une erreur inattendue est survenue",
       });
     } finally {
       setLoading(false);
@@ -58,6 +64,7 @@ export const SignInForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          disabled={loading}
         />
         <Input
           type="password"
@@ -65,6 +72,7 @@ export const SignInForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>

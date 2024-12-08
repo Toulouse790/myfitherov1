@@ -23,8 +23,11 @@ function App() {
       <Router>
         <div className="min-h-screen bg-background pb-16">
           <Routes>
+            {/* Routes publiques */}
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
+            
+            {/* Routes protégées */}
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
             <Route path="/workout-exercise/:exerciseId" element={<ProtectedRoute><WorkoutExerciseDetail /></ProtectedRoute>} />
