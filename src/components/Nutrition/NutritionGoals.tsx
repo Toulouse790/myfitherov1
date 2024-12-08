@@ -1,18 +1,34 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-
-interface NutritionGoal {
-  name: string;
-  current: number;
-  target: number;
-  unit: string;
-}
+import { useDailyTargets } from "@/hooks/use-daily-targets";
 
 export const NutritionGoals = () => {
-  const goals: NutritionGoal[] = [
-    { name: "Calories", current: 1850, target: 2000, unit: "kcal" },
-    { name: "Protéines", current: 120, target: 150, unit: "g" },
-    { name: "Glucides", current: 200, target: 250, unit: "g" },
-    { name: "Lipides", current: 65, target: 70, unit: "g" },
+  const { dailyTargets } = useDailyTargets();
+
+  const goals = [
+    { 
+      name: "Calories", 
+      current: 0, 
+      target: dailyTargets.calories || 2000, 
+      unit: "kcal" 
+    },
+    { 
+      name: "Protéines", 
+      current: 0, 
+      target: dailyTargets.proteins || 150, 
+      unit: "g" 
+    },
+    { 
+      name: "Glucides", 
+      current: Math.round((dailyTargets.calories || 2000) * 0.5 / 4), // 50% des calories en glucides
+      target: Math.round((dailyTargets.calories || 2000) * 0.5 / 4), 
+      unit: "g" 
+    },
+    { 
+      name: "Lipides", 
+      current: Math.round((dailyTargets.calories || 2000) * 0.3 / 9), // 30% des calories en lipides
+      target: Math.round((dailyTargets.calories || 2000) * 0.3 / 9), 
+      unit: "g" 
+    },
   ];
 
   return (
