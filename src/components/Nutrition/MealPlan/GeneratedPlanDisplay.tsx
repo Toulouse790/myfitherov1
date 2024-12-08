@@ -52,13 +52,6 @@ export const GeneratedPlanDisplay = ({
     "Vendredi", "Samedi", "Dimanche"
   ];
 
-  const preparationTips = {
-    breakfast: "Préparez votre petit-déjeuner la veille pour gagner du temps le matin.",
-    lunch: "Pensez à préparer une portion supplémentaire pour avoir des restes pour demain.",
-    dinner: "Privilégiez une cuisson douce pour préserver les nutriments.",
-    snack: "Gardez toujours une collation saine à portée de main."
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -81,23 +74,23 @@ export const GeneratedPlanDisplay = ({
             const formattedMeals = {
               breakfast: {
                 ...day.breakfast,
-                preparation: preparationTips.breakfast
+                preparation: defaultMeals.breakfast.meal.notes
               },
               morning_snack: {
                 ...day.snack,
-                preparation: preparationTips.snack
+                preparation: defaultMeals.morning_snack.meal.notes
               },
               lunch: {
                 ...day.lunch,
-                preparation: preparationTips.lunch
+                preparation: defaultMeals.lunch.meal.notes
               },
               afternoon_snack: {
                 ...day.snack,
-                preparation: preparationTips.snack
+                preparation: defaultMeals.afternoon_snack.meal.notes
               },
               dinner: {
                 ...day.dinner,
-                preparation: preparationTips.dinner
+                preparation: defaultMeals.dinner.meal.notes
               }
             };
 
