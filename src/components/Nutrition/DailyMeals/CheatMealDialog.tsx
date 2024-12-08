@@ -100,7 +100,7 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
           <DialogTitle>Ajouter des Cheat Meals</DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 min-h-0 space-y-4">
+        <div className="flex-1 min-h-0 space-y-4 overflow-y-auto pb-20">
           <div className="space-y-2">
             <label className="text-sm font-medium">Rechercher</label>
             <Input
@@ -182,15 +182,15 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
           )}
         </div>
 
-        <DialogFooter className="mt-6 sm:mt-8">
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t">
           <Button 
-            className="w-full py-6 text-base"
+            className="w-full py-4 text-base"
             onClick={handleAddCheatMeals}
             disabled={selectedCheatMeals.length === 0}
           >
             Ajouter {selectedCheatMeals.length} élément{selectedCheatMeals.length > 1 ? 's' : ''}
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
