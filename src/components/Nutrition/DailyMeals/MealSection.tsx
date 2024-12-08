@@ -14,6 +14,7 @@ interface MealSectionProps {
     calories: number;
     proteins: number;
     notes?: string;
+    quantities?: Array<{ item: string; amount: string; }>;
   };
   isExpanded: boolean;
   onToggle: () => void;
@@ -120,6 +121,18 @@ export const MealSection = ({
                 <div className="text-sm text-muted-foreground">
                   {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
                 </div>
+                {generatedMeal.quantities && generatedMeal.quantities.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    <p className="text-sm font-medium text-gray-700">Ingrédients :</p>
+                    <ul className="list-disc list-inside text-sm text-gray-600 pl-2">
+                      {generatedMeal.quantities.map((item, index) => (
+                        <li key={index}>
+                          {item.item}: {item.amount}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 {generatedMeal.notes && (
                   <p className="mt-2 text-sm text-muted-foreground italic">
                     💡 {generatedMeal.notes}
