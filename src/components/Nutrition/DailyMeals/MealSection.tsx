@@ -42,7 +42,8 @@ export const MealSection = ({
           name: generatedMeal.name,
           calories: status === 'taken' ? generatedMeal.calories : 0,
           proteins: status === 'taken' ? generatedMeal.proteins : 0,
-          meal_type: type
+          meal_type: type,
+          notes: generatedMeal.notes || ''
         });
 
       if (error) throw error;
@@ -102,12 +103,22 @@ export const MealSection = ({
                 className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100/50 transition-colors"
               >
                 <div className="font-medium text-gray-800">{entry.name}</div>
+                {entry.notes && (
+                  <p className="mt-2 text-sm text-muted-foreground italic">
+                    💡 {entry.notes}
+                  </p>
+                )}
               </div>
             ))
           ) : generatedMeal ? (
             <div className="space-y-4">
               <div className="p-3 rounded-lg bg-gray-50">
                 <div className="font-medium text-gray-800">{generatedMeal.name}</div>
+                {generatedMeal.notes && (
+                  <p className="mt-2 text-sm text-muted-foreground italic">
+                    💡 {generatedMeal.notes}
+                  </p>
+                )}
               </div>
               <div className="flex gap-2 justify-end">
                 <Button

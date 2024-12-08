@@ -265,6 +265,7 @@ export type Database = {
           id: string
           meal_type: string
           name: string
+          notes: string | null
           proteins: number
           updated_at: string
           user_id: string | null
@@ -275,6 +276,7 @@ export type Database = {
           id?: string
           meal_type?: string
           name: string
+          notes?: string | null
           proteins: number
           updated_at?: string
           user_id?: string | null
@@ -285,6 +287,7 @@ export type Database = {
           id?: string
           meal_type?: string
           name?: string
+          notes?: string | null
           proteins?: number
           updated_at?: string
           user_id?: string | null
