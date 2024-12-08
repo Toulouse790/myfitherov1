@@ -28,11 +28,16 @@ export const MealPlanGenerator = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      await supabase
+      const { error: deleteError } = await supabase
         .from('food_journal_entries')
         .delete()
         .eq('user_id', user.id)
         .gte('created_at', today.toISOString());
+
+      if (deleteError) {
+        console.error('Error deleting old entries:', deleteError);
+        throw deleteError;
+      }
 
       // Transformer le plan en entrées de journal
       const entries = [];
@@ -86,11 +91,14 @@ export const MealPlanGenerator = () => {
       }
 
       console.log("Inserting entries:", entries);
-      const { error } = await supabase
+      const { error: insertError } = await supabase
         .from('food_journal_entries')
         .insert(entries);
 
-      if (error) throw error;
+      if (insertError) {
+        console.error('Error inserting entries:', insertError);
+        throw insertError;
+      }
 
       toast({
         title: "Plan de repas enregistré",
@@ -107,10 +115,10 @@ export const MealPlanGenerator = () => {
   };
 
   const handleGenerateMealPlan = async () => {
-    await generateMealPlan();
-    if (generatedPlan?.[0]) {
-      console.log("Generated plan to save:", generatedPlan[0]);
-      await saveMealPlanToJournal(generatedPlan[0]);
+    const plan = await generateMealPlan();
+    if (plan?.[0]) {
+      console.log("Generated plan to save:", plan[0]);
+      await saveMealPlanToJournal(plan[0]);
     }
   };
 
