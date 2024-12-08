@@ -21,10 +21,10 @@ const Nutrition = () => {
       <Tabs defaultValue="overview" className="space-y-3">
         <div className="w-full overflow-x-auto pb-1">
           <TabsList className="w-full justify-start min-w-max">
-            <TabsTrigger value="overview" className="text-xs sm:text-sm">Vue d'ensemble</TabsTrigger>
-            <TabsTrigger value="tracking" className="text-xs sm:text-sm">Suivi hebdomadaire</TabsTrigger>
-            <TabsTrigger value="journal" className="text-xs sm:text-sm">Journal alimentaire</TabsTrigger>
-            <TabsTrigger value="meal-plan" className="text-xs sm:text-sm">Plan repas</TabsTrigger>
+            <TabsTrigger value="overview" className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3">Vue d'ensemble</TabsTrigger>
+            <TabsTrigger value="tracking" className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3">Suivi hebdomadaire</TabsTrigger>
+            <TabsTrigger value="journal" className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3">Journal alimentaire</TabsTrigger>
+            <TabsTrigger value="meal-plan" className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3">Plan repas</TabsTrigger>
           </TabsList>
         </div>
 
