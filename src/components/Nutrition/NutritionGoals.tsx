@@ -1,5 +1,4 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 
 interface NutritionGoal {
   name: string;
@@ -30,10 +29,23 @@ export const NutritionGoals = () => {
                 {goal.current}/{goal.target} {goal.unit}
               </span>
             </div>
-            <Progress
-              value={(goal.current / goal.target) * 100}
-              className="h-1.5"
-            />
+            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+              <div className="relative w-full h-full">
+                {/* Barre de progression totale (objectif) */}
+                <div
+                  className="absolute top-0 left-0 h-full bg-muted-foreground/20"
+                  style={{ width: '100%' }}
+                />
+                {/* Barre de progression actuelle */}
+                <div
+                  className="absolute top-0 left-0 h-full transition-all duration-500"
+                  style={{
+                    width: `${Math.min((goal.current / goal.target) * 100, 100)}%`,
+                    backgroundColor: goal.current >= goal.target ? '#22c55e' : '#0EA5E9'
+                  }}
+                />
+              </div>
+            </div>
           </div>
         ))}
       </CardContent>
