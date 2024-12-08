@@ -34,8 +34,17 @@ export const DailyMeals = () => {
         return;
       }
 
-      setEntries(data || []);
-      return data;
+      // Map the database fields to our FoodEntry type
+      const mappedEntries: FoodEntry[] = (data || []).map(entry => ({
+        id: entry.id,
+        name: entry.name,
+        calories: entry.calories,
+        proteins: entry.proteins,
+        mealType: entry.meal_type // Map meal_type from DB to mealType in our type
+      }));
+
+      setEntries(mappedEntries);
+      return mappedEntries;
     }
   });
 
@@ -71,10 +80,10 @@ export const DailyMeals = () => {
   });
 
   const entriesByMealType = entries.reduce((acc, entry) => {
-    if (!acc[entry.meal_type]) {
-      acc[entry.meal_type] = [];
+    if (!acc[entry.mealType]) {
+      acc[entry.mealType] = [];
     }
-    acc[entry.meal_type].push(entry);
+    acc[entry.mealType].push(entry);
     return acc;
   }, {} as Record<string, FoodEntry[]>);
 
