@@ -103,6 +103,11 @@ export const DayMeals = ({
                     <p className="text-muted-foreground">
                       {meal.calories} kcal | {meal.proteins}g protéines
                     </p>
+                    {meal.preparation && (
+                      <p className="mt-2 text-sm text-muted-foreground italic">
+                        💡 {meal.preparation}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex gap-2 justify-end">

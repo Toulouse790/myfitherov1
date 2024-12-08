@@ -13,6 +13,7 @@ export interface Meal {
   type: "breakfast" | "lunch" | "dinner" | "snack";
   totalCalories: number;
   totalProteins: number;
+  preparation?: string;
 }
 
 export interface FoodItem {

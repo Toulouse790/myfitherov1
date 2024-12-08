@@ -2,12 +2,12 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DayMeals } from "./DayMeals";
 import { defaultMeals } from "@/data/meals/mealPlanGenerator";
-import { MealPlan } from "@/data/meals/types";
+import { MealPlan } from "@/types/nutrition";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 interface GeneratedPlanDisplayProps {
-  generatedPlan: MealPlan[];
+  generatedPlan: any[];
   durationDays: string;
 }
 
@@ -52,6 +52,13 @@ export const GeneratedPlanDisplay = ({
     "Vendredi", "Samedi", "Dimanche"
   ];
 
+  const preparationTips = {
+    breakfast: "Préparez votre petit-déjeuner la veille pour gagner du temps le matin.",
+    lunch: "Pensez à préparer une portion supplémentaire pour avoir des restes pour demain.",
+    dinner: "Privilégiez une cuisson douce pour préserver les nutriments.",
+    snack: "Gardez toujours une collation saine à portée de main."
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -71,16 +78,33 @@ export const GeneratedPlanDisplay = ({
             const workoutTime = getWorkoutTime(dayIndex);
             const isTrainingDay = Boolean(workoutTime);
 
+            const formattedMeals = {
+              breakfast: {
+                ...day.breakfast,
+                preparation: preparationTips.breakfast
+              },
+              morning_snack: {
+                ...day.snack,
+                preparation: preparationTips.snack
+              },
+              lunch: {
+                ...day.lunch,
+                preparation: preparationTips.lunch
+              },
+              afternoon_snack: {
+                ...day.snack,
+                preparation: preparationTips.snack
+              },
+              dinner: {
+                ...day.dinner,
+                preparation: preparationTips.dinner
+              }
+            };
+
             return (
               <TabsContent key={index} value={(index + 1).toString()}>
                 <DayMeals 
-                  meals={{
-                    breakfast: day.breakfast,
-                    morning_snack: day.snack,
-                    lunch: day.lunch,
-                    afternoon_snack: day.snack,
-                    dinner: day.dinner
-                  }}
+                  meals={formattedMeals}
                   mealTitles={defaultMeals}
                   isTrainingDay={isTrainingDay}
                   workoutTime={workoutTime}
