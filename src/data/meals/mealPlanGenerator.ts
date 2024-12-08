@@ -77,6 +77,22 @@ const getRandomMeal = (meals: Meal[], lastMeals: Meal[], count: number = 3): Mea
     : meals[Math.floor(Math.random() * meals.length)];
 };
 
+const filterMeals = (meals: Meal[], dietType: string, excludedFoods: string[]): Meal[] => {
+  return meals.filter(meal => {
+    const mealName = meal.name.toLowerCase();
+    
+    if (!isDietCompatible(mealName, dietType)) {
+      return false;
+    }
+
+    if (excludedFoods.some(food => mealName.includes(food.toLowerCase()))) {
+      return false;
+    }
+
+    return true;
+  });
+};
+
 export const generateVariedMealPlan = (
   durationDays: number,
   excludedFoods: string[] = [],
@@ -93,69 +109,44 @@ export const generateVariedMealPlan = (
     "Vendredi", "Samedi", "Dimanche"
   ];
 
-  const filterMeals = (meals: Meal[]): Meal[] => {
-    return meals.filter(meal => {
-      const mealName = meal.name.toLowerCase();
-      
-      if (!isDietCompatible(mealName, dietType)) {
-        return false;
-      }
-
-      if (excludedFoods.some(food => mealName.includes(food.toLowerCase()))) {
-        return false;
-      }
-
-      if (allergies.some(allergy => mealName.includes(allergy.toLowerCase()))) {
-        return false;
-      }
-
-      if (intolerances.some(intolerance => mealName.includes(intolerance.toLowerCase()))) {
-        return false;
-      }
-
-      return true;
-    });
-  };
-
-  // Filtrer tous les repas une seule fois
-  const filteredBreakfastMeals = filterMeals(breakfastMeals);
-  const filteredLunchMeals = filterMeals(lunchMeals);
-  const filteredDinnerMeals = filterMeals(dinnerMeals);
-  const filteredSnackMeals = filterMeals(snackMeals);
-
-  // Garder une trace des derniers repas utilisés
+  // Historique des repas pour éviter la répétition
   const lastBreakfasts: Meal[] = [];
   const lastLunches: Meal[] = [];
   const lastDinners: Meal[] = [];
   const lastMorningSnacks: Meal[] = [];
   const lastAfternoonSnacks: Meal[] = [];
 
+  // Filtrer les repas selon le régime alimentaire et les exclusions
+  const filteredBreakfasts = filterMeals(breakfastMeals, dietType, [...excludedFoods, ...allergies, ...intolerances]);
+  const filteredLunches = filterMeals(lunchMeals, dietType, [...excludedFoods, ...allergies, ...intolerances]);
+  const filteredDinners = filterMeals(dinnerMeals, dietType, [...excludedFoods, ...allergies, ...intolerances]);
+  const filteredSnacks = filterMeals(snackMeals, dietType, [...excludedFoods, ...allergies, ...intolerances]);
+
   for (let day = 0; day < durationDays; day++) {
     const dayIndex = day % 7;
     const isTrainingDay = workoutDays.includes(dayIndex);
-    const calorieAdjustment = targetCalories / 2000;
     const carbsTarget = calculateCarbsTarget(weightKg, isTrainingDay);
 
-    // Sélectionner des repas différents des 3 derniers jours
-    const breakfastMeal = getRandomMeal(filteredBreakfastMeals, lastBreakfasts);
-    const lunchMeal = getRandomMeal(filteredLunchMeals, lastLunches);
-    const dinnerMeal = getRandomMeal(filteredDinnerMeals, lastDinners);
-    const morningSnackMeal = getRandomMeal(filteredSnackMeals, lastMorningSnacks);
-    const afternoonSnackMeal = getRandomMeal(filteredSnackMeals, lastAfternoonSnacks);
+    // Sélectionner des repas différents des derniers jours
+    const breakfast = getRandomMeal(filteredBreakfasts, lastBreakfasts);
+    const morningSnack = getRandomMeal(filteredSnacks, lastMorningSnacks);
+    const lunch = getRandomMeal(filteredLunches, lastLunches);
+    const afternoonSnack = getRandomMeal(filteredSnacks, lastAfternoonSnacks);
+    const dinner = getRandomMeal(filteredDinners, lastDinners);
 
-    // Mettre à jour les historiques
-    lastBreakfasts.push(breakfastMeal);
-    lastLunches.push(lunchMeal);
-    lastDinners.push(dinnerMeal);
-    lastMorningSnacks.push(morningSnackMeal);
-    lastAfternoonSnacks.push(afternoonSnackMeal);
+    // Mettre à jour l'historique des repas
+    lastBreakfasts.push(breakfast);
+    lastLunches.push(lunch);
+    lastDinners.push(dinner);
+    lastMorningSnacks.push(morningSnack);
+    lastAfternoonSnacks.push(afternoonSnack);
 
     const dayMeals = {
-      breakfast: breakfastMeal,
-      morning_snack: morningSnackMeal,
-      lunch: lunchMeal,
-      afternoon_snack: afternoonSnackMeal,
-      dinner: dinnerMeal
+      breakfast,
+      morning_snack: morningSnack,
+      lunch,
+      afternoon_snack: afternoonSnack,
+      dinner
     };
 
     const totalCarbs = Object.values(dayMeals).reduce(
@@ -166,7 +157,6 @@ export const generateVariedMealPlan = (
     plan.push({
       day: weekDays[dayIndex],
       meals: dayMeals,
-      isTrainingDay,
       totalCarbs,
       carbsTarget
     });

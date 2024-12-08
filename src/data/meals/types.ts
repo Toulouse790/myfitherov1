@@ -24,7 +24,6 @@ export interface MealWithTitle {
 export interface MealPlan {
   day: string;
   meals: Record<string, Meal>;
-  isTrainingDay: boolean;
   totalCarbs: number;
   carbsTarget: number;
 }
