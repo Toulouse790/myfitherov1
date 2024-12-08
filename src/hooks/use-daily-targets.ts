@@ -1,6 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+const calculateBMR = (weight: number, height: number, age: number, gender: string) => {
+  // Formule Mifflin-St Jeor
+  const base = (10 * weight) + (6.25 * height) - (5 * age);
+  return gender === 'female' ? base - 161 : base + 5;
+};
+
+const getActivityMultiplier = (activityLevel: string) => {
+  const multipliers = {
+    sedentary: 1.2,
+    lightly_active: 1.375,
+    moderately_active: 1.55,
+    very_active: 1.725,
+    extra_active: 1.9
+  };
+  return multipliers[activityLevel as keyof typeof multipliers] || 1.375;
+};
+
+const getObjectiveMultiplier = (objective: string) => {
+  switch (objective) {
+    case 'weight_loss':
+      return 0.8; // -20% pour perte de poids
+    case 'muscle_gain':
+      return 1.1; // +10% pour prise de masse
+    case 'maintenance':
+    default:
+      return 1;
+  }
+};
+
 export const useDailyTargets = () => {
   const { data: userPreferences } = useQuery({
     queryKey: ['user-nutrition-preferences'],
@@ -22,47 +51,57 @@ export const useDailyTargets = () => {
         .limit(1)
         .single();
 
+      // Récupérer les mesures pour avoir le poids
+      const { data: measurements } = await supabase
+        .from('muscle_measurements')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
       return {
         preferences,
-        questionnaire
+        questionnaire,
+        measurements
       };
     }
   });
 
-  const calculateDailyTargets = (questionnaire: any) => {
-    if (!questionnaire) return {
-      calories: 2000,
-      proteins: 80
-    };
-
-    let baseCalories = 2000;
-    
-    switch (questionnaire.objective) {
-      case 'weight_loss':
-        baseCalories = 1800;
-        break;
-      case 'muscle_gain':
-        baseCalories = 2500;
-        break;
-      case 'maintenance':
-        baseCalories = 2200;
-        break;
-      default:
-        baseCalories = 2000;
+  const calculateDailyTargets = (data: any) => {
+    if (!data?.questionnaire || !data?.measurements) {
+      return {
+        calories: 2000, // Valeurs par défaut sécurisées
+        proteins: 80
+      };
     }
 
-    const activityMultipliers = {
-      sedentary: 1.2,
-      lightly_active: 1.375,
-      moderately_active: 1.55,
-      very_active: 1.725,
-      extra_active: 1.9
-    };
+    const weight = data.measurements.weight_kg || 70; // Poids par défaut si non renseigné
+    const height = data.measurements.height_cm || 170; // Taille par défaut si non renseignée
+    const age = 30; // Âge par défaut si non renseigné
+    const gender = data.questionnaire.gender || 'male';
 
-    const activityMultiplier = activityMultipliers[questionnaire.experience_level as keyof typeof activityMultipliers] || 1.375;
+    // Calcul du BMR
+    const bmr = calculateBMR(weight, height, age, gender);
     
-    const dailyCalories = Math.round(baseCalories * activityMultiplier);
-    const dailyProteins = Math.round(questionnaire.objective === 'muscle_gain' ? dailyCalories * 0.3 / 4 : dailyCalories * 0.25 / 4);
+    // Facteur d'activité
+    const activityMultiplier = getActivityMultiplier(data.questionnaire.experience_level);
+    
+    // Facteur d'objectif
+    const objectiveMultiplier = getObjectiveMultiplier(data.questionnaire.objective);
+    
+    // Calories totales
+    const dailyCalories = Math.round(bmr * activityMultiplier * objectiveMultiplier);
+    
+    // Protéines : 1.6-2.2g/kg pour prise de masse, 1.8-2.7g/kg pour perte de poids, 1.6-2.2g/kg pour maintien
+    let proteinMultiplier = 2;
+    if (data.questionnaire.objective === 'weight_loss') {
+      proteinMultiplier = 2.2;
+    } else if (data.questionnaire.objective === 'muscle_gain') {
+      proteinMultiplier = 2;
+    }
+    
+    const dailyProteins = Math.round(weight * proteinMultiplier);
 
     return {
       calories: dailyCalories,
@@ -89,7 +128,7 @@ export const useDailyTargets = () => {
     }, {} as Record<string, { calories: number, proteins: number }>);
   };
 
-  const dailyTargets = calculateDailyTargets(userPreferences?.questionnaire);
+  const dailyTargets = calculateDailyTargets(userPreferences);
   const mealPlan = generateMealPlan(dailyTargets);
 
   return {
