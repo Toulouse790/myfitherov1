@@ -12,28 +12,30 @@ export const DailyMeals = () => {
   const { entriesByMealType } = useFoodEntries();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Repas du jour</CardTitle>
+    <Card className="w-full">
+      <CardHeader className="p-3 sm:p-4">
+        <CardTitle className="text-sm sm:text-base">Repas du jour</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
-        <ScrollArea className="h-[400px] pr-4">
-          {Object.entries(mealTypes).map(([type, label]) => (
-            <MealSection
-              key={type}
-              type={type}
-              label={label}
-              mealEntries={entriesByMealType[type] || []}
-              generatedMeal={{
-                name: "Suggestion basée sur vos objectifs",
-                calories: mealPlan[type]?.calories || 0,
-                proteins: mealPlan[type]?.proteins || 0,
-                notes: `Objectif: ${mealPlan[type]?.calories || 0} kcal, ${mealPlan[type]?.proteins || 0}g protéines`
-              }}
-              isExpanded={expandedMeal === type}
-              onToggle={() => setExpandedMeal(expandedMeal === type ? null : type)}
-            />
-          ))}
+      <CardContent className="p-2 sm:p-4">
+        <ScrollArea className="h-[300px] sm:h-[400px] pr-2 sm:pr-4">
+          <div className="space-y-2 sm:space-y-3">
+            {Object.entries(mealTypes).map(([type, label]) => (
+              <MealSection
+                key={type}
+                type={type}
+                label={label}
+                mealEntries={entriesByMealType[type] || []}
+                generatedMeal={{
+                  name: "Suggestion basée sur vos objectifs",
+                  calories: mealPlan[type]?.calories || 0,
+                  proteins: mealPlan[type]?.proteins || 0,
+                  notes: `Objectif: ${mealPlan[type]?.calories || 0} kcal, ${mealPlan[type]?.proteins || 0}g protéines`
+                }}
+                isExpanded={expandedMeal === type}
+                onToggle={() => setExpandedMeal(expandedMeal === type ? null : type)}
+              />
+            ))}
+          </div>
         </ScrollArea>
       </CardContent>
     </Card>

@@ -15,7 +15,7 @@ const Nutrition = () => {
   };
 
   return (
-    <div className="container mx-auto p-2 pb-24 animate-fade-up">
+    <div className="container mx-auto px-2 sm:px-4 pb-24 animate-fade-up">
       <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-3">Nutrition</h1>
 
       <Tabs defaultValue="overview" className="space-y-3">
@@ -28,28 +28,30 @@ const Nutrition = () => {
           </TabsList>
         </div>
 
-        <TabsContent value="overview" className="space-y-3">
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="space-y-3">
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+            <div className="space-y-4">
               <NutritionGoals />
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <DailyMeals />
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="tracking">
-          <NutritionChart />
+        <TabsContent value="tracking" className="space-y-4">
+          <div className="w-full">
+            <NutritionChart />
+          </div>
         </TabsContent>
 
-        <TabsContent value="journal">
+        <TabsContent value="journal" className="space-y-4">
           <div className="w-full">
             <FoodJournal />
           </div>
         </TabsContent>
 
-        <TabsContent value="meal-plan">
+        <TabsContent value="meal-plan" className="space-y-4">
           <div className="w-full">
             <MealPlanGenerator />
           </div>
