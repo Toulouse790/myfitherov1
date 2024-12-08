@@ -36,26 +36,44 @@ export const MealSection = ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { error } = await supabase
-        .from('food_journal_entries')
-        .upsert({
+      // Si le repas est marqué comme pris, on ajoute les détails au journal
+      if (status === 'taken' && generatedMeal) {
+        // Créer une entrée pour le repas principal
+        const mealEntry = {
           user_id: user.id,
-          name: generatedMeal?.name || '',
-          calories: status === 'taken' ? generatedMeal?.calories || 0 : 0,
-          proteins: status === 'taken' ? generatedMeal?.proteins || 0 : 0,
+          name: generatedMeal.name,
+          calories: generatedMeal.calories,
+          proteins: generatedMeal.proteins,
           meal_type: type,
-          notes: generatedMeal?.notes || ''
-        });
+          notes: generatedMeal.notes || ''
+        };
 
-      if (error) throw error;
+        // Ajouter les ingrédients comme note si disponibles
+        if (generatedMeal.quantities && generatedMeal.quantities.length > 0) {
+          const ingredientsList = generatedMeal.quantities
+            .map(q => `${q.item}: ${q.amount}`)
+            .join('\n');
+          mealEntry.notes = `${mealEntry.notes}\n\nIngrédients:\n${ingredientsList}`;
+        }
+
+        const { error } = await supabase
+          .from('food_journal_entries')
+          .insert(mealEntry);
+
+        if (error) throw error;
+
+        toast({
+          title: "Repas validé",
+          description: "Le repas a été ajouté à votre journal et vos objectifs ont été mis à jour",
+        });
+      } else if (status === 'skipped') {
+        toast({
+          title: "Repas non pris",
+          description: "Le repas a été marqué comme non pris",
+        });
+      }
 
       setMealStatus(status);
-      toast({
-        title: status === 'taken' ? "Repas validé" : "Repas non pris",
-        description: status === 'taken' 
-          ? "Le repas a été ajouté à vos objectifs journaliers"
-          : "Le repas a été marqué comme non pris",
-      });
     } catch (error) {
       console.error('Error updating meal status:', error);
       toast({
