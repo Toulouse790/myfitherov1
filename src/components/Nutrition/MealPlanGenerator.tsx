@@ -3,8 +3,11 @@ import { Lock } from "lucide-react";
 import { MealPlanForm } from "./MealPlan/MealPlanForm";
 import { GeneratedPlanDisplay } from "./MealPlan/GeneratedPlanDisplay";
 import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const MealPlanGenerator = () => {
+  const { toast } = useToast();
   const {
     isGenerating,
     durationDays,
@@ -14,6 +17,57 @@ export const MealPlanGenerator = () => {
     setMaxBudget,
     generateMealPlan,
   } = useMealPlanGenerator();
+
+  const saveMealPlanToJournal = async (plan: any) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Supprimer les anciens repas pour aujourd'hui
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      await supabase
+        .from('food_journal_entries')
+        .delete()
+        .eq('user_id', user.id)
+        .gte('created_at', today.toISOString());
+
+      // Ajouter les nouveaux repas
+      const entries = Object.entries(plan).map(([mealType, meal]: [string, any]) => ({
+        user_id: user.id,
+        name: meal.name,
+        calories: meal.calories,
+        proteins: meal.proteins,
+        meal_type: mealType,
+      }));
+
+      const { error } = await supabase
+        .from('food_journal_entries')
+        .insert(entries);
+
+      if (error) throw error;
+
+      toast({
+        title: "Plan de repas enregistré",
+        description: "Les repas ont été ajoutés à votre journal alimentaire",
+      });
+    } catch (error) {
+      console.error('Error saving meal plan:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'enregistrer le plan de repas",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleGenerateMealPlan = async () => {
+    await generateMealPlan();
+    if (generatedPlan?.[0]?.meals) {
+      await saveMealPlanToJournal(generatedPlan[0].meals);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -32,7 +86,7 @@ export const MealPlanGenerator = () => {
             isGenerating={isGenerating}
             onDurationChange={setDurationDays}
             onBudgetChange={setMaxBudget}
-            onGenerate={generateMealPlan}
+            onGenerate={handleGenerateMealPlan}
           />
         </CardContent>
       </Card>
