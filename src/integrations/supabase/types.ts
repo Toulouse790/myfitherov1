@@ -279,6 +279,7 @@ export type Database = {
           created_at: string
           forearm_left_cm: number | null
           forearm_right_cm: number | null
+          height_cm: number | null
           hips_cm: number | null
           id: string
           measurement_date: string
@@ -287,6 +288,7 @@ export type Database = {
           updated_at: string
           user_id: string | null
           waist_cm: number | null
+          weight_kg: number | null
         }
         Insert: {
           biceps_left_cm?: number | null
@@ -297,6 +299,7 @@ export type Database = {
           created_at?: string
           forearm_left_cm?: number | null
           forearm_right_cm?: number | null
+          height_cm?: number | null
           hips_cm?: number | null
           id?: string
           measurement_date?: string
@@ -305,6 +308,7 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           waist_cm?: number | null
+          weight_kg?: number | null
         }
         Update: {
           biceps_left_cm?: number | null
@@ -315,6 +319,7 @@ export type Database = {
           created_at?: string
           forearm_left_cm?: number | null
           forearm_right_cm?: number | null
+          height_cm?: number | null
           hips_cm?: number | null
           id?: string
           measurement_date?: string
@@ -323,6 +328,7 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           waist_cm?: number | null
+          weight_kg?: number | null
         }
         Relationships: [
           {
@@ -373,6 +379,7 @@ export type Database = {
           created_at: string
           diet_type: string | null
           experience_level: string | null
+          gender: string | null
           id: string
           objective: string | null
           training_frequency: string | null
@@ -384,6 +391,7 @@ export type Database = {
           created_at?: string
           diet_type?: string | null
           experience_level?: string | null
+          gender?: string | null
           id?: string
           objective?: string | null
           training_frequency?: string | null
@@ -395,6 +403,7 @@ export type Database = {
           created_at?: string
           diet_type?: string | null
           experience_level?: string | null
+          gender?: string | null
           id?: string
           objective?: string | null
           training_frequency?: string | null
