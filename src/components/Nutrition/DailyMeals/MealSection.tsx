@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
 import { FoodEntry } from "@/types/food";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,32 +68,28 @@ export const MealSection = ({
     <div className="mb-2">
       <Button
         variant="ghost"
-        className="w-full justify-between p-4 h-auto"
+        className="w-full justify-between p-4 h-auto hover:bg-gray-100/50 transition-colors"
         onClick={onToggle}
       >
         <div className="text-left flex items-center gap-2">
           <div>
-            <div className="font-medium">{label}</div>
-            {(mealEntries.length > 0 || generatedMeal) && (
-              <div className="text-sm text-muted-foreground">
-                {mealEntries.reduce((sum, entry) => sum + entry.calories, 0) || generatedMeal.calories} kcal • 
-                {mealEntries.reduce((sum, entry) => sum + entry.proteins, 0) || generatedMeal.proteins}g protéines
+            <div className="font-medium text-gray-900">{label}</div>
+            {mealStatus && (
+              <div className="text-sm text-muted-foreground flex items-center gap-1">
+                {mealStatus === 'taken' ? (
+                  <Check className="h-3 w-3 text-green-500" />
+                ) : (
+                  <X className="h-3 w-3 text-red-500" />
+                )}
+                {mealStatus === 'taken' ? 'Pris' : 'Non pris'}
               </div>
-            )}
-          </div>
-          <div className="flex gap-1">
-            {mealStatus === 'taken' && (
-              <CheckCircle className="h-4 w-4 text-green-500" />
-            )}
-            {mealStatus === 'skipped' && (
-              <XCircle className="h-4 w-4 text-red-500" />
             )}
           </div>
         </div>
         {isExpanded ? (
-          <ChevronUp className="h-4 w-4" />
+          <ChevronUp className="h-4 w-4 text-gray-500" />
         ) : (
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className="h-4 w-4 text-gray-500" />
         )}
       </Button>
 
@@ -103,23 +99,17 @@ export const MealSection = ({
             mealEntries.map((entry) => (
               <div
                 key={entry.id}
-                className="p-3 rounded-lg bg-muted/50"
+                className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100/50 transition-colors"
               >
-                <div className="font-medium">{entry.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {entry.calories} kcal • {entry.proteins}g protéines
-                </div>
+                <div className="font-medium text-gray-800">{entry.name}</div>
               </div>
             ))
           ) : generatedMeal ? (
             <div className="space-y-4">
-              <div className="p-3 rounded-lg bg-muted/50">
-                <div className="font-medium">{generatedMeal.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {generatedMeal.calories} kcal • {generatedMeal.proteins}g protéines
-                </div>
+              <div className="p-3 rounded-lg bg-gray-50">
+                <div className="font-medium text-gray-800">{generatedMeal.name}</div>
                 {generatedMeal.notes && (
-                  <div className="text-sm text-muted-foreground mt-1">
+                  <div className="text-sm text-gray-600 mt-1">
                     {generatedMeal.notes}
                   </div>
                 )}
@@ -128,25 +118,23 @@ export const MealSection = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
                   onClick={() => handleMealStatus('skipped')}
+                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
                 >
-                  <XCircle className="h-4 w-4 mr-1" />
-                  Non pris
+                  <X className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-green-500 hover:text-green-600 hover:bg-green-50"
                   onClick={() => handleMealStatus('taken')}
+                  className="text-green-500 hover:text-green-600 hover:bg-green-50"
                 >
-                  <CheckCircle className="h-4 w-4 mr-1" />
-                  Valider
+                  <Check className="h-4 w-4" />
                 </Button>
               </div>
             </div>
           ) : (
-            <div className="text-center text-muted-foreground py-2">
+            <div className="text-center text-gray-500 py-2">
               Aucun aliment enregistré
             </div>
           )}
