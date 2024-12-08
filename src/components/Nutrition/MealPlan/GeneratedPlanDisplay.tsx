@@ -11,16 +11,6 @@ interface GeneratedPlanDisplayProps {
   durationDays: string;
 }
 
-const weekDays = [
-  "Lundi",
-  "Mardi",
-  "Mercredi",
-  "Jeudi",
-  "Vendredi",
-  "Samedi",
-  "Dimanche"
-];
-
 export const GeneratedPlanDisplay = ({ 
   generatedPlan,
   durationDays,
@@ -56,6 +46,11 @@ export const GeneratedPlanDisplay = ({
     return sessionHour < 12 ? 'morning' : 'evening';
   };
 
+  const weekDays = [
+    "Lundi", "Mardi", "Mercredi", "Jeudi",
+    "Vendredi", "Samedi", "Dimanche"
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -74,6 +69,8 @@ export const GeneratedPlanDisplay = ({
             const dayIndex = index % 7;
             const workoutTime = getWorkoutTime(dayIndex);
             const isTrainingDay = Boolean(workoutTime);
+
+            console.log(`Rendering day ${index + 1}:`, day);
 
             return (
               <TabsContent key={index} value={(index + 1).toString()}>
