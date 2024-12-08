@@ -3,7 +3,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
-import { MealPlan } from "@/types/nutrition";
 import { mealTypes } from "./DailyMeals/MealTypes";
 import { MealSection } from "./DailyMeals/MealSection";
 import { FoodEntry } from "@/types/food";
@@ -11,6 +10,34 @@ import { FoodEntry } from "@/types/food";
 export const DailyMeals = () => {
   const [entries, setEntries] = useState<FoodEntry[]>([]);
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
+
+  // Fetch user's questionnaire responses and preferences
+  const { data: userPreferences } = useQuery({
+    queryKey: ['user-nutrition-preferences'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data: preferences } = await supabase
+        .from('user_nutrition_preferences')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      const { data: questionnaire } = await supabase
+        .from('questionnaire_responses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      return {
+        preferences,
+        questionnaire
+      };
+    }
+  });
 
   // Fetch today's food journal entries
   useQuery({
@@ -34,13 +61,12 @@ export const DailyMeals = () => {
         return;
       }
 
-      // Map the database fields to our FoodEntry type
       const mappedEntries: FoodEntry[] = (data || []).map(entry => ({
         id: entry.id,
         name: entry.name,
         calories: entry.calories,
         proteins: entry.proteins,
-        mealType: entry.meal_type // Map meal_type from DB to mealType in our type
+        mealType: entry.meal_type
       }));
 
       setEntries(mappedEntries);
@@ -48,36 +74,72 @@ export const DailyMeals = () => {
     }
   });
 
-  // Fetch generated meal plan
-  const { data: generatedPlan } = useQuery({
-    queryKey: ['meal-plan'],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
+  // Calculate daily targets based on user profile
+  const calculateDailyTargets = (questionnaire: any) => {
+    if (!questionnaire) return {
+      calories: 2000,
+      proteins: 80
+    };
 
-      const { data: preferences } = await supabase
-        .from('user_nutrition_preferences')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      const { data: questionnaire } = await supabase
-        .from('questionnaire_responses')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (!preferences || !questionnaire) return null;
-
-      const today = new Date().getDay();
-      const dayIndex = today === 0 ? 6 : today - 1;
-
-      const plan = generateBasicMealPlan(dayIndex, questionnaire.diet_type || 'omnivore');
-      return plan;
+    let baseCalories = 2000; // Default value
+    
+    // Adjust calories based on objective
+    switch (questionnaire.objective) {
+      case 'weight_loss':
+        baseCalories = 1800;
+        break;
+      case 'muscle_gain':
+        baseCalories = 2500;
+        break;
+      case 'maintenance':
+        baseCalories = 2200;
+        break;
+      default:
+        baseCalories = 2000;
     }
-  });
+
+    // Adjust based on activity level
+    const activityMultipliers = {
+      sedentary: 1.2,
+      lightly_active: 1.375,
+      moderately_active: 1.55,
+      very_active: 1.725,
+      extra_active: 1.9
+    };
+
+    const activityMultiplier = activityMultipliers[questionnaire.experience_level as keyof typeof activityMultipliers] || 1.375;
+    
+    const dailyCalories = Math.round(baseCalories * activityMultiplier);
+    const dailyProteins = Math.round(questionnaire.objective === 'muscle_gain' ? dailyCalories * 0.3 / 4 : dailyCalories * 0.25 / 4);
+
+    return {
+      calories: dailyCalories,
+      proteins: dailyProteins
+    };
+  };
+
+  // Generate meal plan based on daily targets
+  const generateMealPlan = (dailyTargets: { calories: number, proteins: number }) => {
+    const mealDistribution = {
+      breakfast: { calories: 0.25, proteins: 0.25 },
+      lunch: { calories: 0.35, proteins: 0.35 },
+      dinner: { calories: 0.3, proteins: 0.3 },
+      snack: { calories: 0.1, proteins: 0.1 }
+    };
+
+    const dietType = userPreferences?.questionnaire?.diet_type || 'omnivore';
+
+    return Object.entries(mealDistribution).reduce((acc, [meal, ratios]) => {
+      acc[meal] = {
+        calories: Math.round(dailyTargets.calories * ratios.calories),
+        proteins: Math.round(dailyTargets.proteins * ratios.proteins)
+      };
+      return acc;
+    }, {} as Record<string, { calories: number, proteins: number }>);
+  };
+
+  const dailyTargets = calculateDailyTargets(userPreferences?.questionnaire);
+  const mealPlan = generateMealPlan(dailyTargets);
 
   const entriesByMealType = entries.reduce((acc, entry) => {
     if (!acc[entry.mealType]) {
@@ -100,7 +162,12 @@ export const DailyMeals = () => {
               type={type}
               label={label}
               mealEntries={entriesByMealType[type] || []}
-              generatedMeal={generatedPlan?.meals?.[type]}
+              generatedMeal={{
+                name: "Suggestion basée sur vos objectifs",
+                calories: mealPlan[type]?.calories || 0,
+                proteins: mealPlan[type]?.proteins || 0,
+                notes: `Objectif: ${mealPlan[type]?.calories || 0} kcal, ${mealPlan[type]?.proteins || 0}g protéines`
+              }}
               isExpanded={expandedMeal === type}
               onToggle={() => setExpandedMeal(expandedMeal === type ? null : type)}
             />
@@ -109,45 +176,4 @@ export const DailyMeals = () => {
       </CardContent>
     </Card>
   );
-};
-
-// Helper function to generate a basic meal plan (temporary mock data)
-const generateBasicMealPlan = (dayIndex: number, dietType: string) => {
-  const meals = {
-    breakfast: [
-      { name: "Porridge aux fruits", calories: 300, proteins: 10, carbs: 45, fats: 8, notes: "Ajoutez des fruits frais de saison" },
-      { name: "Œufs et toast", calories: 350, proteins: 15, carbs: 30, fats: 12, notes: "2 œufs et 2 tranches de pain complet" },
-      { name: "Yaourt avec granola", calories: 280, proteins: 12, carbs: 40, fats: 6, notes: "Yaourt grec avec granola maison" }
-    ],
-    lunch: [
-      { name: "Salade de quinoa", calories: 450, proteins: 18, carbs: 55, fats: 15, notes: "Riche en protéines végétales" },
-      { name: "Sandwich poulet avocat", calories: 500, proteins: 25, carbs: 45, fats: 18, notes: "Pain complet, poulet grillé" },
-      { name: "Bowl de riz aux légumes", calories: 400, proteins: 15, carbs: 60, fats: 10, notes: "Légumes de saison" }
-    ],
-    dinner: [
-      { name: "Saumon grillé et légumes", calories: 550, proteins: 35, carbs: 30, fats: 25, notes: "Riche en oméga-3" },
-      { name: "Pâtes aux légumes", calories: 480, proteins: 18, carbs: 70, fats: 12, notes: "Sauce tomate maison" },
-      { name: "Poulet rôti et patates", calories: 600, proteins: 40, carbs: 45, fats: 20, notes: "Cuisson au four" }
-    ],
-    snack: [
-      { name: "Fruit et noix", calories: 200, proteins: 5, carbs: 25, fats: 8, notes: "Une poignée de noix" },
-      { name: "Barre protéinée", calories: 180, proteins: 15, carbs: 20, fats: 5, notes: "Avant ou après l'entraînement" },
-      { name: "Smoothie aux fruits", calories: 150, proteins: 8, carbs: 30, fats: 2, notes: "Fruits mixés avec du lait végétal" }
-    ]
-  };
-
-  // Filter meals based on diet type
-  if (dietType === 'vegetarian') {
-    meals.lunch = meals.lunch.filter(meal => !meal.name.includes('poulet'));
-    meals.dinner = meals.dinner.filter(meal => !meal.name.includes('poulet') && !meal.name.includes('saumon'));
-  }
-
-  return {
-    meals: {
-      breakfast: meals.breakfast[dayIndex % meals.breakfast.length],
-      lunch: meals.lunch[dayIndex % meals.lunch.length],
-      dinner: meals.dinner[dayIndex % meals.dinner.length],
-      snack: meals.snack[dayIndex % meals.snack.length]
-    }
-  };
 };
