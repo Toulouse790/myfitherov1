@@ -8,19 +8,16 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        console.log("Auth state:", !!user);
-        setIsAuthenticated(!!user);
-      } catch (error) {
-        console.error("Auth error:", error);
-        setIsAuthenticated(false);
-      }
+    // Vérifier la session initiale
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log("Initial session check:", !!session);
+      setIsAuthenticated(!!session);
     };
 
-    checkAuth();
+    checkSession();
 
+    // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log("Auth state changed:", !!session);
       setIsAuthenticated(!!session);
@@ -29,6 +26,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Afficher le loader pendant la vérification
   if (isAuthenticated === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -37,11 +35,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!isAuthenticated && location.pathname !== "/signin") {
+  // Si non authentifié et pas sur signin/signup, rediriger vers signin
+  if (!isAuthenticated && !["/signin", "/signup"].includes(location.pathname)) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  if (isAuthenticated && (location.pathname === "/signin" || location.pathname === "/signup")) {
+  // Si authentifié et sur signin/signup, rediriger vers la page d'accueil
+  if (isAuthenticated && ["/signin", "/signup"].includes(location.pathname)) {
     return <Navigate to="/" replace />;
   }
 

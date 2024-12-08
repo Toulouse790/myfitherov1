@@ -18,10 +18,12 @@ export const SignInForm = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+
+      console.log("Sign in attempt:", { success: !!data.session, error: !!error });
 
       if (error) {
         console.error("Signin error:", error);
@@ -30,7 +32,8 @@ export const SignInForm = () => {
           title: "Erreur de connexion",
           description: "Email ou mot de passe incorrect",
         });
-      } else {
+      } else if (data.session) {
+        // S'assurer qu'il y a une session avant de rediriger
         const from = location.state?.from?.pathname || "/";
         navigate(from, { replace: true });
       }
