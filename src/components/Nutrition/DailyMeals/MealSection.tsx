@@ -107,25 +107,23 @@ export const MealSection = ({
           ) : generatedMeal ? (
             <div className="space-y-4">
               <div className="p-3 rounded-lg bg-gray-50">
-                <div className="font-medium text-gray-800">{generatedMeal.name}</div>
-                {generatedMeal.notes && (
-                  <div className="text-sm text-gray-600 mt-1">
-                    {generatedMeal.notes}
-                  </div>
-                )}
+                <div className="font-medium text-gray-800">Repas suggéré :</div>
+                <div className="text-sm text-gray-600 mt-2">
+                  {generatedMeal.name}
+                </div>
               </div>
               <div className="flex gap-2 justify-end">
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => handleMealStatus('skipped')}
                   className="text-red-500 hover:text-red-600 hover:bg-red-50"
                 >
                   <X className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => handleMealStatus('taken')}
                   className="text-green-500 hover:text-green-600 hover:bg-green-50"
                 >
@@ -135,7 +133,7 @@ export const MealSection = ({
             </div>
           ) : (
             <div className="text-center text-gray-500 py-2">
-              Aucun aliment enregistré
+              Aucun repas suggéré
             </div>
           )}
         </div>
