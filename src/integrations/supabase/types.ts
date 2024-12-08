@@ -380,10 +380,14 @@ export type Database = {
           diet_type: string | null
           experience_level: string | null
           gender: string | null
+          has_afternoon_snack: boolean | null
+          has_morning_snack: boolean | null
           id: string
           objective: string | null
           training_frequency: string | null
+          training_time: string | null
           user_id: string | null
+          wake_up_time: string | null
           workout_duration: string | null
         }
         Insert: {
@@ -392,10 +396,14 @@ export type Database = {
           diet_type?: string | null
           experience_level?: string | null
           gender?: string | null
+          has_afternoon_snack?: boolean | null
+          has_morning_snack?: boolean | null
           id?: string
           objective?: string | null
           training_frequency?: string | null
+          training_time?: string | null
           user_id?: string | null
+          wake_up_time?: string | null
           workout_duration?: string | null
         }
         Update: {
@@ -404,10 +412,14 @@ export type Database = {
           diet_type?: string | null
           experience_level?: string | null
           gender?: string | null
+          has_afternoon_snack?: boolean | null
+          has_morning_snack?: boolean | null
           id?: string
           objective?: string | null
           training_frequency?: string | null
+          training_time?: string | null
           user_id?: string | null
+          wake_up_time?: string | null
           workout_duration?: string | null
         }
         Relationships: [

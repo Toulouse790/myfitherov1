@@ -12,6 +12,8 @@ interface DayMealsProps {
   workoutTime?: 'morning' | 'evening';
   totalCarbs: number;
   carbsTarget: number;
+  hasMorningSnack?: boolean;
+  hasAfternoonSnack?: boolean;
 }
 
 export const DayMeals = ({ 
@@ -20,7 +22,9 @@ export const DayMeals = ({
   isTrainingDay, 
   workoutTime,
   totalCarbs, 
-  carbsTarget 
+  carbsTarget,
+  hasMorningSnack = true,
+  hasAfternoonSnack = true
 }: DayMealsProps) => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
 
@@ -43,6 +47,14 @@ export const DayMeals = ({
 
   const carbsStatus = getCarbsStatus();
 
+  // Filter out snacks based on preferences
+  const filteredMealTitles = Object.entries(mealTitles).reduce((acc, [key, value]) => {
+    if (key === 'morning_snack' && !hasMorningSnack) return acc;
+    if (key === 'afternoon_snack' && !hasAfternoonSnack) return acc;
+    acc[key] = value;
+    return acc;
+  }, {} as Record<string, MealWithTitle>);
+
   return (
     <div className="space-y-4">
       <Alert variant={carbsStatus === "optimal" ? "default" : "destructive"}>
@@ -53,7 +65,7 @@ export const DayMeals = ({
       </Alert>
 
       <div className="space-y-2">
-        {Object.entries(mealTitles).map(([mealType, { title }]) => (
+        {Object.entries(filteredMealTitles).map(([mealType, { title }]) => (
           <Card key={mealType} className="overflow-hidden">
             <Button
               variant="ghost"
