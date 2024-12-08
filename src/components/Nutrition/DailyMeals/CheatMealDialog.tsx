@@ -1,10 +1,11 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pizza, Plus, Trash2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +19,7 @@ interface CheatMealDialogProps {
 export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) => {
   const [cheatMealSearch, setCheatMealSearch] = useState("");
   const [selectedCheatMeals, setSelectedCheatMeals] = useState<any[]>([]);
+  const [selectedMealType, setSelectedMealType] = useState<string>("lunch");
   const { toast } = useToast();
 
   const { data: cheatMeals = [] } = useQuery({
@@ -58,7 +60,7 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
         name: `🍕 ${meal.name} (Cheat Meal)`,
         calories: meal.calories,
         proteins: meal.proteins,
-        meal_type: 'cheat_meal'
+        meal_type: selectedMealType
       }));
 
       const { error } = await supabase
@@ -69,7 +71,7 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
 
       toast({
         title: "Cheat meals ajoutés !",
-        description: `${entries.length} repas ont été ajoutés à votre journal`,
+        description: `${entries.length} repas ont été ajoutés en remplacement du ${selectedMealType === 'lunch' ? 'déjeuner' : 'dîner'}`,
       });
 
       onOpenChange(false);
@@ -101,6 +103,19 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
         </DialogHeader>
 
         <div className="flex-1 min-h-0 space-y-4 overflow-y-auto pb-20">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Remplacer</label>
+            <Select value={selectedMealType} onValueChange={setSelectedMealType}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choisir le repas à remplacer" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="lunch">Déjeuner</SelectItem>
+                <SelectItem value="dinner">Dîner</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium">Rechercher</label>
             <Input
@@ -188,7 +203,7 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
             onClick={handleAddCheatMeals}
             disabled={selectedCheatMeals.length === 0}
           >
-            Ajouter {selectedCheatMeals.length} élément{selectedCheatMeals.length > 1 ? 's' : ''}
+            Remplacer {selectedMealType === 'lunch' ? 'le déjeuner' : 'le dîner'} par {selectedCheatMeals.length} élément{selectedCheatMeals.length > 1 ? 's' : ''}
           </Button>
         </div>
       </DialogContent>
