@@ -95,32 +95,34 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Ajouter des Cheat Meals</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
+
+        <div className="flex-1 min-h-0 space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Rechercher</label>
             <Input
               placeholder="Ex: Pizza, Burger..."
               value={cheatMealSearch}
               onChange={(e) => setCheatMealSearch(e.target.value)}
+              className="w-full"
             />
           </div>
 
           <Tabs defaultValue="food" className="w-full">
-            <TabsList className="w-full">
-              <TabsTrigger value="food">Plats</TabsTrigger>
-              <TabsTrigger value="drink">Boissons</TabsTrigger>
-              <TabsTrigger value="alcohol">Alcool</TabsTrigger>
-              <TabsTrigger value="dessert">Desserts</TabsTrigger>
+            <TabsList className="w-full grid grid-cols-4 h-auto">
+              <TabsTrigger value="food" className="text-xs sm:text-sm py-2">Plats</TabsTrigger>
+              <TabsTrigger value="drink" className="text-xs sm:text-sm py-2">Boissons</TabsTrigger>
+              <TabsTrigger value="alcohol" className="text-xs sm:text-sm py-2">Alcool</TabsTrigger>
+              <TabsTrigger value="dessert" className="text-xs sm:text-sm py-2">Desserts</TabsTrigger>
             </TabsList>
 
             {['food', 'drink', 'alcohol', 'dessert'].map((category) => (
               <TabsContent key={category} value={category} className="mt-4">
-                <ScrollArea className="h-[300px]">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <ScrollArea className="h-[40vh] sm:h-[45vh]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-1">
                     {cheatMeals
                       .filter(meal => meal.category === category)
                       .map((meal) => (
@@ -135,8 +137,8 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <div className="font-medium">{meal.name}</div>
-                              <div className="text-sm opacity-90">
+                              <div className="font-medium text-sm sm:text-base">{meal.name}</div>
+                              <div className="text-xs sm:text-sm opacity-90">
                                 {meal.calories} kcal • {meal.proteins}g protéines
                               </div>
                             </div>
@@ -160,7 +162,7 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
                   <Badge
                     key={meal.id}
                     variant="secondary"
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 text-xs sm:text-sm"
                   >
                     {meal.name}
                     <Trash2
@@ -173,15 +175,16 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
                   </Badge>
                 ))}
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-xs sm:text-sm text-muted-foreground">
                 Total: {getTotalCalories()} kcal • {getTotalProteins()}g protéines
               </div>
             </div>
           )}
         </div>
-        <DialogFooter className="mt-4">
+
+        <DialogFooter className="mt-6 sm:mt-8">
           <Button 
-            className="w-full" 
+            className="w-full py-6 text-base"
             onClick={handleAddCheatMeals}
             disabled={selectedCheatMeals.length === 0}
           >
