@@ -39,7 +39,7 @@ export const MealSection = ({
         .from('food_journal_entries')
         .upsert({
           user_id: user.id,
-          name: `${label} - ${status === 'taken' ? 'Pris' : 'Non pris'}`,
+          name: generatedMeal.name,
           calories: status === 'taken' ? generatedMeal.calories : 0,
           proteins: status === 'taken' ? generatedMeal.proteins : 0,
           meal_type: type
@@ -107,10 +107,7 @@ export const MealSection = ({
           ) : generatedMeal ? (
             <div className="space-y-4">
               <div className="p-3 rounded-lg bg-gray-50">
-                <div className="font-medium text-gray-800">Repas suggéré :</div>
-                <div className="text-sm text-gray-600 mt-2">
-                  {generatedMeal.name}
-                </div>
+                <div className="font-medium text-gray-800">{generatedMeal.name}</div>
               </div>
               <div className="flex gap-2 justify-end">
                 <Button

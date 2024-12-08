@@ -17,7 +17,6 @@ export const DailyMeals = () => {
   const handleCheatMealDialogChange = (open: boolean) => {
     setIsCheatMealOpen(open);
     if (!open) {
-      // Rafraîchir les entrées quand le dialog se ferme
       refetchEntries();
     }
   };
@@ -39,12 +38,11 @@ export const DailyMeals = () => {
               type={type}
               label={label}
               mealEntries={entriesByMealType[type] || []}
-              generatedMeal={{
-                name: "Suggestion basée sur vos objectifs",
-                calories: mealPlan[type]?.calories || 0,
-                proteins: mealPlan[type]?.proteins || 0,
-                notes: `Objectif: ${mealPlan[type]?.calories || 0} kcal, ${mealPlan[type]?.proteins || 0}g protéines`
-              }}
+              generatedMeal={mealPlan[type] ? {
+                name: `${label} suggéré`,
+                calories: mealPlan[type].calories,
+                proteins: mealPlan[type].proteins,
+              } : undefined}
               isExpanded={expandedMeal === type}
               onToggle={() => setExpandedMeal(expandedMeal === type ? null : type)}
             />
