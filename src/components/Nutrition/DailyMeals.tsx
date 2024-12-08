@@ -14,6 +14,8 @@ export const DailyMeals = () => {
   const { mealPlan } = useDailyTargets();
   const { entriesByMealType, refetchEntries } = useFoodEntries();
 
+  console.log("MealPlan dans DailyMeals:", mealPlan);
+
   const handleCheatMealDialogChange = (open: boolean) => {
     setIsCheatMealOpen(open);
     if (!open) {
@@ -32,21 +34,24 @@ export const DailyMeals = () => {
       </CardHeader>
       <CardContent className="p-2 sm:p-4">
         <div className="space-y-2 sm:space-y-3">
-          {Object.entries(mealTypes).map(([type, label]) => (
-            <MealSection
-              key={type}
-              type={type}
-              label={label}
-              mealEntries={entriesByMealType[type] || []}
-              generatedMeal={mealPlan[type] ? {
-                name: `${label} suggéré`,
-                calories: mealPlan[type].calories,
-                proteins: mealPlan[type].proteins,
-              } : undefined}
-              isExpanded={expandedMeal === type}
-              onToggle={() => setExpandedMeal(expandedMeal === type ? null : type)}
-            />
-          ))}
+          {Object.entries(mealTypes).map(([type, label]) => {
+            console.log(`Type: ${type}, Label: ${label}, MealPlan:`, mealPlan[type]);
+            return (
+              <MealSection
+                key={type}
+                type={type}
+                label={label}
+                mealEntries={entriesByMealType[type] || []}
+                generatedMeal={mealPlan[type] ? {
+                  name: `${mealPlan[type].name || 'Repas suggéré'}`,
+                  calories: mealPlan[type].calories,
+                  proteins: mealPlan[type].proteins,
+                } : undefined}
+                isExpanded={expandedMeal === type}
+                onToggle={() => setExpandedMeal(expandedMeal === type ? null : type)}
+              />
+            );
+          })}
         </div>
       </CardContent>
 

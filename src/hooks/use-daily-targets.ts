@@ -2,30 +2,27 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const calculateBMR = (weight: number, height: number, age: number, gender: string) => {
-  // Formule Mifflin-St Jeor - validée scientifiquement comme plus précise que Harris-Benedict
   const base = (10 * weight) + (6.25 * height) - (5 * age);
   return gender === 'female' ? base - 161 : base + 5;
 };
 
 const getActivityMultiplier = (activityLevel: string) => {
-  // Multipliers basés sur les recommandations de l'OMS et études scientifiques
   const multipliers = {
-    sedentary: 1.2, // Activité minimale
-    lightly_active: 1.375, // 1-3 sessions/semaine
-    moderately_active: 1.55, // 3-5 sessions/semaine
-    very_active: 1.725, // 6-7 sessions/semaine
-    extra_active: 1.9 // Athlètes, 2x/jour
+    sedentary: 1.2,
+    lightly_active: 1.375,
+    moderately_active: 1.55,
+    very_active: 1.725,
+    extra_active: 1.9
   };
   return multipliers[activityLevel as keyof typeof multipliers] || 1.375;
 };
 
 const getObjectiveMultiplier = (objective: string) => {
-  // Ajustements basés sur la littérature scientifique pour des résultats optimaux
   switch (objective) {
     case 'weight_loss':
-      return 0.8; // Déficit de 20% recommandé pour une perte de poids saine
+      return 0.8;
     case 'muscle_gain':
-      return 1.1; // Surplus de 10% recommandé pour une prise de masse optimale
+      return 1.1;
     case 'maintenance':
     default:
       return 1;
@@ -53,7 +50,6 @@ export const useDailyTargets = () => {
         .limit(1)
         .single();
 
-      // Récupérer les mesures pour avoir le poids et la taille
       const { data: measurements } = await supabase
         .from('muscle_measurements')
         .select('*')
@@ -73,37 +69,26 @@ export const useDailyTargets = () => {
   const calculateDailyTargets = (data: any) => {
     if (!data?.questionnaire || !data?.measurements) {
       return {
-        calories: 2000, // Valeurs par défaut sécurisées
+        calories: 2000,
         proteins: 80
       };
     }
 
-    const weight = data.measurements.weight_kg || 70; // Poids par défaut si non renseigné
-    const height = data.measurements.height_cm || 170; // Taille par défaut si non renseignée
-    const age = 30; // Âge par défaut si non renseigné
+    const weight = data.measurements.weight_kg || 70;
+    const height = data.measurements.height_cm || 170;
+    const age = 30;
     const gender = data.questionnaire.gender || 'male';
 
-    // Calcul du BMR avec Mifflin-St Jeor
     const bmr = calculateBMR(weight, height, age, gender);
-    
-    // Facteur d'activité basé sur le niveau d'activité
     const activityMultiplier = getActivityMultiplier(data.questionnaire.experience_level);
-    
-    // Ajustement selon l'objectif
     const objectiveMultiplier = getObjectiveMultiplier(data.questionnaire.objective);
-    
-    // Calories totales
     const dailyCalories = Math.round(bmr * activityMultiplier * objectiveMultiplier);
-    
-    // Protéines selon les recommandations scientifiques
-    // 1.6-2.2g/kg pour prise de masse
-    // 1.8-2.7g/kg pour perte de poids (protection masse musculaire)
-    // 1.6-2.2g/kg pour maintien
     let proteinMultiplier = 2;
+    
     if (data.questionnaire.objective === 'weight_loss') {
-      proteinMultiplier = 2.2; // Protection maximale de la masse musculaire
+      proteinMultiplier = 2.2;
     } else if (data.questionnaire.objective === 'muscle_gain') {
-      proteinMultiplier = 2; // Optimal pour la synthèse protéique
+      proteinMultiplier = 2;
     }
     
     const dailyProteins = Math.round(weight * proteinMultiplier);
@@ -115,22 +100,26 @@ export const useDailyTargets = () => {
   };
 
   const generateMealPlan = (dailyTargets: { calories: number, proteins: number }) => {
+    console.log("Generating meal plan with targets:", dailyTargets);
+    
     const mealDistribution = {
-      breakfast: { calories: 0.25, proteins: 0.25 },
-      lunch: { calories: 0.35, proteins: 0.35 },
-      dinner: { calories: 0.3, proteins: 0.3 },
-      snack: { calories: 0.1, proteins: 0.1 }
+      breakfast: { calories: 0.25, proteins: 0.25, name: "Petit-déjeuner équilibré" },
+      lunch: { calories: 0.35, proteins: 0.35, name: "Déjeuner nutritif" },
+      dinner: { calories: 0.3, proteins: 0.3, name: "Dîner léger" },
+      snack: { calories: 0.1, proteins: 0.1, name: "Collation saine" }
     };
 
-    const dietType = userPreferences?.questionnaire?.diet_type || 'omnivore';
-
-    return Object.entries(mealDistribution).reduce((acc, [meal, ratios]) => {
+    const plan = Object.entries(mealDistribution).reduce((acc, [meal, ratios]) => {
       acc[meal] = {
         calories: Math.round(dailyTargets.calories * ratios.calories),
-        proteins: Math.round(dailyTargets.proteins * ratios.proteins)
+        proteins: Math.round(dailyTargets.proteins * ratios.proteins),
+        name: ratios.name
       };
       return acc;
-    }, {} as Record<string, { calories: number, proteins: number }>);
+    }, {} as Record<string, { calories: number, proteins: number, name: string }>);
+
+    console.log("Generated meal plan:", plan);
+    return plan;
   };
 
   const dailyTargets = calculateDailyTargets(userPreferences);
