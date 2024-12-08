@@ -1,31 +1,42 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useDailyTargets } from "@/hooks/use-daily-targets";
+import { useFoodEntries } from "@/hooks/use-food-entries";
 
 export const NutritionGoals = () => {
   const { dailyTargets } = useDailyTargets();
+  const { entriesByMealType } = useFoodEntries();
+
+  // Calculate total nutrients from all food entries
+  const totals = Object.values(entriesByMealType).flat().reduce(
+    (acc, entry) => ({
+      calories: acc.calories + entry.calories,
+      proteins: acc.proteins + entry.proteins,
+    }),
+    { calories: 0, proteins: 0 }
+  );
 
   const goals = [
     { 
       name: "Calories", 
-      current: 0, 
+      current: totals.calories, 
       target: dailyTargets.calories || 2000, 
       unit: "kcal" 
     },
     { 
       name: "Protéines", 
-      current: 0, 
+      current: totals.proteins, 
       target: dailyTargets.proteins || 150, 
       unit: "g" 
     },
     { 
       name: "Glucides", 
-      current: Math.round((dailyTargets.calories || 2000) * 0.5 / 4), // 50% des calories en glucides
+      current: Math.round((totals.calories) * 0.5 / 4), // 50% des calories en glucides
       target: Math.round((dailyTargets.calories || 2000) * 0.5 / 4), 
       unit: "g" 
     },
     { 
       name: "Lipides", 
-      current: Math.round((dailyTargets.calories || 2000) * 0.3 / 9), // 30% des calories en lipides
+      current: Math.round((totals.calories) * 0.3 / 9), // 30% des calories en lipides
       target: Math.round((dailyTargets.calories || 2000) * 0.3 / 9), 
       unit: "g" 
     },
