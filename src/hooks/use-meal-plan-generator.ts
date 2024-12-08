@@ -68,7 +68,33 @@ export const useMealPlanGenerator = () => {
         questionnaire?.diet_type || 'omnivore'
       );
 
-      setGeneratedPlan(plan);
+      // Transformer le plan pour qu'il soit compatible avec le format attendu
+      const formattedPlan = plan.map(dayPlan => ({
+        breakfast: {
+          name: dayPlan.meals.breakfast.name,
+          calories: dayPlan.meals.breakfast.calories,
+          proteins: dayPlan.meals.breakfast.proteins,
+        },
+        lunch: {
+          name: dayPlan.meals.lunch.name,
+          calories: dayPlan.meals.lunch.calories,
+          proteins: dayPlan.meals.lunch.proteins,
+        },
+        dinner: {
+          name: dayPlan.meals.dinner.name,
+          calories: dayPlan.meals.dinner.calories,
+          proteins: dayPlan.meals.dinner.proteins,
+        },
+        snack: {
+          name: dayPlan.meals.morning_snack.name,
+          calories: dayPlan.meals.morning_snack.calories,
+          proteins: dayPlan.meals.morning_snack.proteins,
+        }
+      }));
+
+      console.log("Formatted plan:", formattedPlan);
+      setGeneratedPlan(formattedPlan);
+      
       toast({
         title: "Plan généré",
         description: "Votre plan alimentaire a été généré avec succès",
