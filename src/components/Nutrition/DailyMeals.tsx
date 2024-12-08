@@ -11,16 +11,34 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 export const DailyMeals = () => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
   const { mealPlan } = useDailyTargets();
   const { entriesByMealType } = useFoodEntries();
   const [isCheatMealOpen, setIsCheatMealOpen] = useState(false);
-  const [cheatMealName, setCheatMealName] = useState("");
-  const [cheatMealCalories, setCheatMealCalories] = useState("");
-  const [cheatMealProteins, setCheatMealProteins] = useState("");
+  const [cheatMealSearch, setCheatMealSearch] = useState("");
+  const [selectedCheatMeal, setSelectedCheatMeal] = useState<any>(null);
   const { toast } = useToast();
+
+  // Fetch cheat meal library
+  const { data: cheatMeals = [] } = useQuery({
+    queryKey: ['cheat-meal-library', cheatMealSearch],
+    queryFn: async () => {
+      const query = supabase
+        .from('cheat_meal_library')
+        .select('*');
+      
+      if (cheatMealSearch) {
+        query.ilike('name', `%${cheatMealSearch}%`);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const handleAddCheatMeal = async () => {
     try {
@@ -31,9 +49,9 @@ export const DailyMeals = () => {
         .from('food_journal_entries')
         .insert({
           user_id: user.id,
-          name: `🍕 ${cheatMealName} (Cheat Meal)`,
-          calories: parseInt(cheatMealCalories),
-          proteins: parseInt(cheatMealProteins),
+          name: `🍕 ${selectedCheatMeal.name} (Cheat Meal)`,
+          calories: selectedCheatMeal.calories,
+          proteins: selectedCheatMeal.proteins,
           meal_type: 'cheat_meal'
         });
 
@@ -45,9 +63,8 @@ export const DailyMeals = () => {
       });
 
       setIsCheatMealOpen(false);
-      setCheatMealName("");
-      setCheatMealCalories("");
-      setCheatMealProteins("");
+      setSelectedCheatMeal(null);
+      setCheatMealSearch("");
     } catch (error) {
       console.error('Error adding cheat meal:', error);
       toast({
@@ -75,35 +92,42 @@ export const DailyMeals = () => {
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Nom du repas</label>
+                <label className="text-sm font-medium">Rechercher un plat</label>
                 <Input
-                  placeholder="Ex: Pizza 4 fromages"
-                  value={cheatMealName}
-                  onChange={(e) => setCheatMealName(e.target.value)}
+                  placeholder="Ex: Pizza, Burger..."
+                  value={cheatMealSearch}
+                  onChange={(e) => setCheatMealSearch(e.target.value)}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Calories estimées</label>
-                <Input
-                  type="number"
-                  placeholder="Ex: 800"
-                  value={cheatMealCalories}
-                  onChange={(e) => setCheatMealCalories(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Protéines estimées (g)</label>
-                <Input
-                  type="number"
-                  placeholder="Ex: 25"
-                  value={cheatMealProteins}
-                  onChange={(e) => setCheatMealProteins(e.target.value)}
-                />
-              </div>
+              <ScrollArea className="h-[200px]">
+                <div className="space-y-2">
+                  {cheatMeals.map((meal) => (
+                    <div
+                      key={meal.id}
+                      className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                        selectedCheatMeal?.id === meal.id
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-muted'
+                      }`}
+                      onClick={() => setSelectedCheatMeal(meal)}
+                    >
+                      <div className="font-medium">{meal.name}</div>
+                      <div className="text-sm opacity-90">
+                        {meal.calories} kcal • {meal.proteins}g protéines
+                      </div>
+                      <div className="text-xs opacity-75 capitalize">
+                        {meal.category === 'food' ? 'Plat' : 
+                         meal.category === 'drink' ? 'Boisson' :
+                         meal.category === 'alcohol' ? 'Alcool' : 'Dessert'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
               <Button 
                 className="w-full" 
                 onClick={handleAddCheatMeal}
-                disabled={!cheatMealName || !cheatMealCalories || !cheatMealProteins}
+                disabled={!selectedCheatMeal}
               >
                 Ajouter
               </Button>

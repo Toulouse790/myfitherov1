@@ -118,6 +118,36 @@ export type Database = {
         }
         Relationships: []
       }
+      cheat_meal_library: {
+        Row: {
+          calories: number
+          category: string
+          created_at: string
+          id: string
+          name: string
+          proteins: number
+          updated_at: string
+        }
+        Insert: {
+          calories: number
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          proteins: number
+          updated_at?: string
+        }
+        Update: {
+          calories?: number
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          proteins?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       common_foods: {
         Row: {
           calories: number
