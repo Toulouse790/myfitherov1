@@ -34,17 +34,52 @@ export const MealPlanGenerator = () => {
         .eq('user_id', user.id)
         .gte('created_at', today.toISOString());
 
-      // Ajouter les nouveaux repas
-      const entries = Object.entries(plan).map(([mealType, meal]: [string, any]) => {
-        console.log("Processing meal entry:", mealType, meal);
-        return {
+      // Transformer le plan en entrées de journal
+      const entries = [];
+      
+      // Ajouter le petit-déjeuner
+      if (plan.breakfast) {
+        entries.push({
           user_id: user.id,
-          name: meal.name || 'Repas suggéré',
-          calories: meal.calories || 0,
-          proteins: meal.proteins || 0,
-          meal_type: mealType,
-        };
-      });
+          name: plan.breakfast.name || 'Petit-déjeuner',
+          calories: plan.breakfast.calories || 0,
+          proteins: plan.breakfast.proteins || 0,
+          meal_type: 'breakfast'
+        });
+      }
+
+      // Ajouter le déjeuner
+      if (plan.lunch) {
+        entries.push({
+          user_id: user.id,
+          name: plan.lunch.name || 'Déjeuner',
+          calories: plan.lunch.calories || 0,
+          proteins: plan.lunch.proteins || 0,
+          meal_type: 'lunch'
+        });
+      }
+
+      // Ajouter le dîner
+      if (plan.dinner) {
+        entries.push({
+          user_id: user.id,
+          name: plan.dinner.name || 'Dîner',
+          calories: plan.dinner.calories || 0,
+          proteins: plan.dinner.proteins || 0,
+          meal_type: 'dinner'
+        });
+      }
+
+      // Ajouter la collation
+      if (plan.snack) {
+        entries.push({
+          user_id: user.id,
+          name: plan.snack.name || 'Collation',
+          calories: plan.snack.calories || 0,
+          proteins: plan.snack.proteins || 0,
+          meal_type: 'snack'
+        });
+      }
 
       console.log("Inserting entries:", entries);
       const { error } = await supabase
@@ -69,9 +104,9 @@ export const MealPlanGenerator = () => {
 
   const handleGenerateMealPlan = async () => {
     await generateMealPlan();
-    if (generatedPlan?.[0]?.meals) {
-      console.log("Generated plan to save:", generatedPlan[0].meals);
-      await saveMealPlanToJournal(generatedPlan[0].meals);
+    if (generatedPlan?.[0]) {
+      console.log("Generated plan to save:", generatedPlan[0]);
+      await saveMealPlanToJournal(generatedPlan[0]);
     }
   };
 
