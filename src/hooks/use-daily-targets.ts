@@ -33,8 +33,12 @@ export const useDailyTargets = () => {
   const { data: userPreferences } = useQuery({
     queryKey: ['user-nutrition-preferences'],
     queryFn: async () => {
+      console.log("Fetching user nutrition preferences...");
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
+      if (!user) {
+        console.log("No user found");
+        return null;
+      }
 
       const { data: preferences } = await supabase
         .from('user_nutrition_preferences')
@@ -58,6 +62,7 @@ export const useDailyTargets = () => {
         .limit(1)
         .single();
 
+      console.log("Fetched data:", { preferences, questionnaire, measurements });
       return {
         preferences,
         questionnaire,
@@ -67,6 +72,7 @@ export const useDailyTargets = () => {
   });
 
   const calculateDailyTargets = (data: any) => {
+    console.log("Calculating daily targets with data:", data);
     if (!data?.questionnaire || !data?.measurements) {
       return {
         calories: 2000,
@@ -124,6 +130,9 @@ export const useDailyTargets = () => {
 
   const dailyTargets = calculateDailyTargets(userPreferences);
   const mealPlan = generateMealPlan(dailyTargets);
+
+  console.log("Final daily targets:", dailyTargets);
+  console.log("Final meal plan:", mealPlan);
 
   return {
     dailyTargets,

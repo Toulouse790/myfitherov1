@@ -14,9 +14,13 @@ export const DailyMeals = () => {
   const { mealPlan } = useDailyTargets();
   const { entriesByMealType, refetchEntries } = useFoodEntries();
 
-  console.log("MealPlan dans DailyMeals:", mealPlan);
+  console.log("=== DailyMeals Component ===");
+  console.log("Current mealPlan:", mealPlan);
+  console.log("Current entriesByMealType:", entriesByMealType);
+  console.log("Current expandedMeal:", expandedMeal);
 
   const handleCheatMealDialogChange = (open: boolean) => {
+    console.log("CheatMeal dialog state changed:", open);
     setIsCheatMealOpen(open);
     if (!open) {
       refetchEntries();
@@ -35,7 +39,10 @@ export const DailyMeals = () => {
       <CardContent className="p-2 sm:p-4">
         <div className="space-y-2 sm:space-y-3">
           {Object.entries(mealTypes).map(([type, label]) => {
-            console.log(`Type: ${type}, Label: ${label}, MealPlan:`, mealPlan[type]);
+            console.log(`Rendering meal type: ${type}`);
+            console.log(`Meal data for ${type}:`, mealPlan[type]);
+            console.log(`Entries for ${type}:`, entriesByMealType[type]);
+            
             return (
               <MealSection
                 key={type}
@@ -43,7 +50,7 @@ export const DailyMeals = () => {
                 label={label}
                 mealEntries={entriesByMealType[type] || []}
                 generatedMeal={mealPlan[type] ? {
-                  name: `${mealPlan[type].name || 'Repas suggéré'}`,
+                  name: mealPlan[type].name || 'Repas suggéré',
                   calories: mealPlan[type].calories,
                   proteins: mealPlan[type].proteins,
                 } : undefined}
