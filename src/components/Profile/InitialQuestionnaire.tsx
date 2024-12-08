@@ -9,6 +9,7 @@ import { TrainingFrequencyStep } from "./QuestionnaireSteps/TrainingFrequencySte
 import { ActivityLevelStep } from "./QuestionnaireSteps/ActivityLevelStep";
 import { TrainingLocationStep } from "./QuestionnaireSteps/TrainingLocationStep";
 import { DietTypeStep } from "./QuestionnaireSteps/DietTypeStep";
+import { PersonalInfoStep } from "./QuestionnaireSteps/PersonalInfoStep";
 
 interface QuestionnaireResponses {
   objective: string;
@@ -17,6 +18,10 @@ interface QuestionnaireResponses {
   available_equipment: string;
   workout_duration: string;
   diet_type: string;
+  gender: string;
+  age: string;
+  weight: string;
+  height: string;
 }
 
 const INITIAL_RESPONSES: QuestionnaireResponses = {
@@ -26,6 +31,10 @@ const INITIAL_RESPONSES: QuestionnaireResponses = {
   available_equipment: "",
   workout_duration: "60",
   diet_type: "omnivore",
+  gender: "male",
+  age: "",
+  weight: "",
+  height: "",
 };
 
 export const InitialQuestionnaire = () => {
@@ -47,20 +56,44 @@ export const InitialQuestionnaire = () => {
       return;
     }
 
-    const { error } = await supabase
+    // Save questionnaire responses
+    const { error: questionnaireError } = await supabase
       .from("questionnaire_responses")
-      .insert([
-        {
-          user_id: user.id,
-          ...finalResponses
-        }
-      ]);
+      .insert([{
+        user_id: user.id,
+        objective: finalResponses.objective,
+        training_frequency: finalResponses.training_frequency,
+        experience_level: finalResponses.experience_level,
+        available_equipment: finalResponses.available_equipment,
+        workout_duration: finalResponses.workout_duration,
+        diet_type: finalResponses.diet_type,
+        gender: finalResponses.gender,
+      }]);
 
-    if (error) {
-      console.error("Erreur lors de la sauvegarde:", error);
+    if (questionnaireError) {
+      console.error("Erreur lors de la sauvegarde du questionnaire:", questionnaireError);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de la sauvegarde de vos réponses",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Save measurements
+    const { error: measurementsError } = await supabase
+      .from("muscle_measurements")
+      .insert([{
+        user_id: user.id,
+        height_cm: parseFloat(finalResponses.height),
+        weight_kg: parseFloat(finalResponses.weight),
+      }]);
+
+    if (measurementsError) {
+      console.error("Erreur lors de la sauvegarde des mesures:", measurementsError);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la sauvegarde de vos mesures",
         variant: "destructive",
       });
       return;
@@ -81,7 +114,7 @@ export const InitialQuestionnaire = () => {
   };
 
   const handleNext = async () => {
-    if (step < 5) {
+    if (step < 6) {
       setStep(step + 1);
     } else {
       await saveResponse(responses);
@@ -96,12 +129,25 @@ export const InitialQuestionnaire = () => {
     switch (step) {
       case 1:
         return (
+          <PersonalInfoStep
+            age={responses.age}
+            weight={responses.weight}
+            height={responses.height}
+            gender={responses.gender}
+            onAgeChange={(value) => handleResponseChange("age", value)}
+            onWeightChange={(value) => handleResponseChange("weight", value)}
+            onHeightChange={(value) => handleResponseChange("height", value)}
+            onGenderChange={(value) => handleResponseChange("gender", value)}
+          />
+        );
+      case 2:
+        return (
           <ObjectiveStep
             objective={responses.objective}
             onObjectiveChange={(value) => handleResponseChange("objective", value)}
           />
         );
-      case 2:
+      case 3:
         return (
           <TrainingFrequencyStep
             workoutsPerWeek={responses.training_frequency}
@@ -110,21 +156,21 @@ export const InitialQuestionnaire = () => {
             onWorkoutDurationChange={(value) => handleResponseChange("workout_duration", value)}
           />
         );
-      case 3:
+      case 4:
         return (
           <ActivityLevelStep
             activityLevel={responses.experience_level}
             onActivityLevelChange={(value) => handleResponseChange("experience_level", value)}
           />
         );
-      case 4:
+      case 5:
         return (
           <TrainingLocationStep
             trainingLocation={responses.available_equipment}
             onTrainingLocationChange={(value) => handleResponseChange("available_equipment", value)}
           />
         );
-      case 5:
+      case 6:
         return (
           <DietTypeStep
             dietType={responses.diet_type}
@@ -139,14 +185,16 @@ export const InitialQuestionnaire = () => {
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return !!responses.objective;
+        return !!responses.gender && !!responses.age && !!responses.weight && !!responses.height;
       case 2:
-        return !!responses.training_frequency && !!responses.workout_duration;
+        return !!responses.objective;
       case 3:
-        return !!responses.experience_level;
+        return !!responses.training_frequency && !!responses.workout_duration;
       case 4:
-        return !!responses.available_equipment;
+        return !!responses.experience_level;
       case 5:
+        return !!responses.available_equipment;
+      case 6:
         return !!responses.diet_type;
       default:
         return false;
@@ -171,13 +219,13 @@ export const InitialQuestionnaire = () => {
               Précédent
             </Button>
             <div className="text-sm text-muted-foreground">
-              Étape {step} sur 5
+              Étape {step} sur 6
             </div>
             <Button
               onClick={handleNext}
               disabled={!isStepValid()}
             >
-              {step === 5 ? "Terminer" : "Suivant"}
+              {step === 6 ? "Terminer" : "Suivant"}
             </Button>
           </div>
         </CardContent>
