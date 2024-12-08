@@ -76,7 +76,8 @@ export const MealSection = ({
             <div className="font-medium">{label}</div>
             {(mealEntries.length > 0 || generatedMeal) && (
               <div className="text-sm text-muted-foreground">
-                {generatedMeal.calories} kcal • {generatedMeal.proteins}g protéines
+                {mealEntries.reduce((sum, entry) => sum + entry.calories, 0) || generatedMeal.calories} kcal • 
+                {mealEntries.reduce((sum, entry) => sum + entry.proteins, 0) || generatedMeal.proteins}g protéines
               </div>
             )}
           </div>
