@@ -20,6 +20,7 @@ export const MealPlanGenerator = () => {
 
   const saveMealPlanToJournal = async (plan: any) => {
     try {
+      console.log("Saving meal plan to journal:", plan);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
@@ -34,14 +35,18 @@ export const MealPlanGenerator = () => {
         .gte('created_at', today.toISOString());
 
       // Ajouter les nouveaux repas
-      const entries = Object.entries(plan).map(([mealType, meal]: [string, any]) => ({
-        user_id: user.id,
-        name: meal.name,
-        calories: meal.calories,
-        proteins: meal.proteins,
-        meal_type: mealType,
-      }));
+      const entries = Object.entries(plan).map(([mealType, meal]: [string, any]) => {
+        console.log("Processing meal entry:", mealType, meal);
+        return {
+          user_id: user.id,
+          name: meal.name || 'Repas suggéré',
+          calories: meal.calories || 0,
+          proteins: meal.proteins || 0,
+          meal_type: mealType,
+        };
+      });
 
+      console.log("Inserting entries:", entries);
       const { error } = await supabase
         .from('food_journal_entries')
         .insert(entries);
@@ -65,6 +70,7 @@ export const MealPlanGenerator = () => {
   const handleGenerateMealPlan = async () => {
     await generateMealPlan();
     if (generatedPlan?.[0]?.meals) {
+      console.log("Generated plan to save:", generatedPlan[0].meals);
       await saveMealPlanToJournal(generatedPlan[0].meals);
     }
   };
