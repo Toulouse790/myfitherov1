@@ -99,7 +99,7 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
         <DialogHeader>
           <DialogTitle>Ajouter des Cheat Meals</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 pt-4">
+        <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Rechercher</label>
             <Input
@@ -179,7 +179,7 @@ export const CheatMealDialog = ({ isOpen, onOpenChange }: CheatMealDialogProps) 
             </div>
           )}
         </div>
-        <DialogFooter>
+        <DialogFooter className="mt-4">
           <Button 
             className="w-full" 
             onClick={handleAddCheatMeals}
