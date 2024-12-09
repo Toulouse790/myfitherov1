@@ -3,6 +3,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Check, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useFoodEntries } from "@/hooks/use-food-entries";
 
 interface DayMealsProps {
   meals: Record<string, any>;
@@ -27,6 +30,8 @@ export const DayMeals = ({
 }: DayMealsProps) => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
   const [mealStatus, setMealStatus] = useState<Record<string, 'taken' | 'skipped' | null>>({});
+  const { toast } = useToast();
+  const { refetchEntries } = useFoodEntries();
 
   console.log("DayMeals - Received props:", {
     meals,
@@ -50,11 +55,59 @@ export const DayMeals = ({
       : "Entraînement le soir - Glucides répartis dans la journée";
   };
 
-  const handleMealStatus = (mealType: string, status: 'taken' | 'skipped') => {
-    setMealStatus(prev => ({
-      ...prev,
-      [mealType]: status
-    }));
+  const handleMealStatus = async (mealType: string, status: 'taken' | 'skipped') => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Si le repas est marqué comme pris, on l'ajoute au journal
+      if (status === 'taken' && meals[mealType]) {
+        console.log("Saving meal to journal:", meals[mealType]);
+        
+        const mealEntry = {
+          user_id: user.id,
+          name: meals[mealType].name,
+          calories: meals[mealType].calories,
+          proteins: meals[mealType].proteins,
+          meal_type: mealType,
+          notes: meals[mealType].preparation || ''
+        };
+
+        const { error } = await supabase
+          .from('food_journal_entries')
+          .insert(mealEntry);
+
+        if (error) {
+          console.error('Error inserting meal entry:', error);
+          throw error;
+        }
+
+        // Rafraîchir les entrées du journal alimentaire
+        await refetchEntries();
+
+        toast({
+          title: "Repas validé",
+          description: "Le repas a été ajouté à votre journal et vos objectifs ont été mis à jour",
+        });
+      } else if (status === 'skipped') {
+        toast({
+          title: "Repas non pris",
+          description: "Le repas a été marqué comme non pris",
+        });
+      }
+
+      setMealStatus(prev => ({
+        ...prev,
+        [mealType]: status
+      }));
+    } catch (error) {
+      console.error('Error updating meal status:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut du repas",
+        variant: "destructive",
+      });
+    }
   };
 
   // Filtrer les types de repas selon les préférences
