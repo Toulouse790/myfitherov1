@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
-import { FoodEntry } from "@/types/food";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getPreparationInstructions } from "../MealPlan/PreparationInstructions";
@@ -9,7 +8,7 @@ import { getPreparationInstructions } from "../MealPlan/PreparationInstructions"
 interface MealSectionProps {
   type: string;
   label: string;
-  mealEntries: FoodEntry[];
+  mealEntries: any[];
   generatedMeal?: {
     name: string;
     calories: number;
@@ -48,7 +47,7 @@ export const MealSection = ({
           calories: generatedMeal.calories,
           proteins: generatedMeal.proteins,
           meal_type: type,
-          notes: generatedMeal.notes || ''
+          notes: getPreparationInstructions(generatedMeal.name) || ''
         };
 
         // Ajouter les ingrédients comme note si disponibles
