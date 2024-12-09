@@ -94,6 +94,10 @@ export const ExerciseRow = ({
     ?.filter(m => m.media_type === 'video')
     .map(m => m.media_url) || [];
 
+  // Ensure location and difficulty are always arrays
+  const normalizedLocation = Array.isArray(exercise.location) ? exercise.location : [];
+  const normalizedDifficulty = Array.isArray(exercise.difficulty) ? exercise.difficulty : [];
+
   return (
     <Card className="mb-4 p-4">
       <div className="flex flex-col space-y-4">
@@ -101,7 +105,7 @@ export const ExerciseRow = ({
           <ExerciseHeader
             name={exercise.name}
             muscleGroup={exercise.muscle_group}
-            difficulties={exercise.difficulty || []}
+            difficulties={normalizedDifficulty}
             selectedDifficulties={selectedDifficulties}
             onDifficultyChange={onDifficultyChange}
           />
@@ -120,8 +124,8 @@ export const ExerciseRow = ({
               type={showImageUpload ? "image" : "video"}
               onUpload={onUpload}
               selectedFile={selectedFile}
-              difficulty={exercise.difficulty || []}
-              location={exercise.location || []}
+              difficulty={normalizedDifficulty}
+              location={normalizedLocation}
             />
           </div>
         )}
