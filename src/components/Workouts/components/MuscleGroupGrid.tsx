@@ -28,7 +28,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
             name,
             muscle_group
           `)
-          .eq('is_published', true);
+          .eq('is_published', true); // Ne compter que les exercices publiés
 
         if (error) throw error;
 
