@@ -23,9 +23,9 @@ export const reverseMuscleGroupTranslations: { [key: string]: string } = {
 };
 
 export const translateMuscleGroup = (muscleGroup: string): string => {
-  return muscleGroupTranslations[muscleGroup] || muscleGroup;
+  return muscleGroupTranslations[muscleGroup.toLowerCase()] || muscleGroup;
 };
 
 export const reverseTranslateMuscleGroup = (muscleGroup: string): string => {
-  return reverseMuscleGroupTranslations[muscleGroup] || muscleGroup;
+  return reverseMuscleGroupTranslations[muscleGroup.toLowerCase()] || muscleGroup;
 };
