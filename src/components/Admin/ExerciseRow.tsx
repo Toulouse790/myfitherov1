@@ -5,15 +5,10 @@ import { MediaButtons } from "./MediaButtons";
 import { ExerciseHeader } from "./ExerciseHeader";
 import { UploadSection } from "./ExerciseMedia/UploadSection";
 import { MediaManager } from "./ExerciseMedia/MediaManager";
+import { AdminExercise } from "./types/exercise";
 
 interface ExerciseRowProps {
-  exercise: {
-    id: string;
-    name: string;
-    muscle_group: string;
-    difficulty: string[];
-    location?: string[];
-  };
+  exercise: AdminExercise;
   onUpload: () => void;
   selectedFile: File | null;
   media?: ExerciseMedia[];

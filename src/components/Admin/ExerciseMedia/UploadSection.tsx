@@ -1,10 +1,10 @@
 import { UploadForm } from "../UploadForm";
-import { Exercise } from "@/components/Workouts/exercises/types/exercise";
+import { AdminExercise } from "../types/exercise";
 
 interface UploadSectionProps {
   showImageUpload: boolean;
   showVideoUpload: boolean;
-  exercise: Exercise;
+  exercise: AdminExercise;
   onUpload: () => void;
   selectedFile: File | null;
 }

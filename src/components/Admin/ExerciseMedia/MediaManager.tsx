@@ -4,11 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { MediaSection } from "../MediaSection";
 import { MediaPreview } from "../MediaPreview";
 import { MediaButtons } from "../MediaButtons";
-import { Exercise } from "@/components/Workouts/exercises/types/exercise";
+import { AdminExercise } from "../types/exercise";
 import { ExerciseMedia } from "@/types/exercise-media";
 
 interface MediaManagerProps {
-  exercise: Exercise;
+  exercise: AdminExercise;
   media: ExerciseMedia[];
   onUpload: () => void;
 }
