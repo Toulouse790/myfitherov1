@@ -75,11 +75,13 @@ export const ExerciseRow = ({
   };
 
   const handlePublish = async () => {
+    console.log("Opening preview dialog");
     setShowPreview(true);
   };
 
   const handleConfirmPublish = async () => {
     try {
+      console.log("Publishing exercise:", exercise.id);
       const { error } = await supabase
         .from('exercises')
         .update({ is_published: true })
@@ -112,6 +114,9 @@ export const ExerciseRow = ({
     .map(m => ({ type: 'video' as const, url: m.media_url })) || [];
 
   const allMediaUrls = [...imageMediaUrls, ...videoMediaUrls];
+
+  console.log("Media URLs:", allMediaUrls);
+  console.log("Show preview state:", showPreview);
 
   return (
     <Card className="mb-4 p-4">

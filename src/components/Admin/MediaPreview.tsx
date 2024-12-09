@@ -11,6 +11,9 @@ interface MediaPreviewProps {
 }
 
 export const MediaPreview = ({ isOpen, onClose, onConfirm, mediaUrls, exerciseName }: MediaPreviewProps) => {
+  console.log("MediaPreview - isOpen:", isOpen);
+  console.log("MediaPreview - mediaUrls:", mediaUrls);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">
