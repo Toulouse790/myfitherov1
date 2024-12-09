@@ -1,34 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfDay, endOfDay } from "date-fns";
-
-const calculateBMR = (weight: number, height: number, age: number, gender: string) => {
-  const base = (10 * weight) + (6.25 * height) - (5 * age);
-  return gender === 'female' ? base - 161 : base + 5;
-};
-
-const getActivityMultiplier = (activityLevel: string) => {
-  const multipliers = {
-    sedentary: 1.2,
-    lightly_active: 1.375,
-    moderately_active: 1.55,
-    very_active: 1.725,
-    extra_active: 1.9
-  };
-  return multipliers[activityLevel as keyof typeof multipliers] || 1.375;
-};
-
-const getObjectiveMultiplier = (objective: string) => {
-  switch (objective) {
-    case 'weight_loss':
-      return 0.8;
-    case 'muscle_gain':
-      return 1.1;
-    case 'maintenance':
-    default:
-      return 1;
-  }
-};
+import { calculateBMR, getActivityMultiplier, getObjectiveMultiplier } from "./nutrition/use-bmr-calculation";
+import { generateMealDistribution } from "./nutrition/use-meal-distribution";
 
 export const useDailyTargets = () => {
   const { data: userPreferences } = useQuery({
@@ -103,8 +76,8 @@ export const useDailyTargets = () => {
     const activityMultiplier = getActivityMultiplier(data.questionnaire.experience_level);
     const objectiveMultiplier = getObjectiveMultiplier(data.questionnaire.objective);
     const dailyCalories = Math.round(bmr * activityMultiplier * objectiveMultiplier);
-    let proteinMultiplier = 2;
     
+    let proteinMultiplier = 2;
     if (data.questionnaire.objective === 'weight_loss') {
       proteinMultiplier = 2.2;
     } else if (data.questionnaire.objective === 'muscle_gain') {
@@ -119,96 +92,12 @@ export const useDailyTargets = () => {
     };
   };
 
-  const generateMealPlan = (dailyTargets: { calories: number, proteins: number }) => {
-    console.log("Generating meal plan with targets:", dailyTargets);
-    
-    const hasMorningSnack = userPreferences?.questionnaire?.has_morning_snack ?? true;
-    const hasAfternoonSnack = userPreferences?.questionnaire?.has_afternoon_snack ?? true;
-    
-    // Si nous avons un plan pour aujourd'hui, utilisons-le
-    if (userPreferences?.todayPlan) {
-      const today = new Date();
-      const dayIndex = today.getDay(); // 0 = Dimanche, 1 = Lundi, etc.
-      const adjustedDayIndex = dayIndex === 0 ? 6 : dayIndex - 1; // Convertir pour que 0 = Lundi
-      const todayPlan = userPreferences.todayPlan.plan_data[adjustedDayIndex];
-
-      if (todayPlan) {
-        console.log("Using today's plan:", todayPlan);
-        return {
-          breakfast: {
-            name: todayPlan.breakfast.name,
-            calories: todayPlan.breakfast.calories,
-            proteins: todayPlan.breakfast.proteins
-          },
-          lunch: {
-            name: todayPlan.lunch.name,
-            calories: todayPlan.lunch.calories,
-            proteins: todayPlan.lunch.proteins
-          },
-          dinner: {
-            name: todayPlan.dinner.name,
-            calories: todayPlan.dinner.calories,
-            proteins: todayPlan.dinner.proteins
-          },
-          ...(hasMorningSnack && todayPlan.snack ? {
-            morning_snack: {
-              name: todayPlan.snack.name,
-              calories: Math.round(todayPlan.snack.calories / 2),
-              proteins: Math.round(todayPlan.snack.proteins / 2)
-            }
-          } : {}),
-          ...(hasAfternoonSnack && todayPlan.snack ? {
-            afternoon_snack: {
-              name: todayPlan.snack.name,
-              calories: Math.round(todayPlan.snack.calories / 2),
-              proteins: Math.round(todayPlan.snack.proteins / 2)
-            }
-          } : {})
-        };
-      }
-    }
-
-    // Plan par défaut si aucun plan n'est trouvé
-    let mealDistribution: Record<string, { calories: number, proteins: number, name: string }> = {
-      breakfast: { 
-        calories: Math.round(dailyTargets.calories * 0.25), 
-        proteins: Math.round(dailyTargets.proteins * 0.25),
-        name: "Petit-déjeuner équilibré" 
-      },
-      lunch: { 
-        calories: Math.round(dailyTargets.calories * 0.35), 
-        proteins: Math.round(dailyTargets.proteins * 0.35),
-        name: "Déjeuner nutritif" 
-      },
-      dinner: { 
-        calories: Math.round(dailyTargets.calories * 0.30), 
-        proteins: Math.round(dailyTargets.proteins * 0.30),
-        name: "Dîner léger" 
-      }
-    };
-
-    if (hasMorningSnack) {
-      mealDistribution.morning_snack = {
-        calories: Math.round(dailyTargets.calories * 0.05),
-        proteins: Math.round(dailyTargets.proteins * 0.05),
-        name: "Collation matinale"
-      };
-    }
-
-    if (hasAfternoonSnack) {
-      mealDistribution.afternoon_snack = {
-        calories: Math.round(dailyTargets.calories * 0.05),
-        proteins: Math.round(dailyTargets.proteins * 0.05),
-        name: "Collation"
-      };
-    }
-
-    console.log("Generated default meal plan:", mealDistribution);
-    return mealDistribution;
-  };
-
   const dailyTargets = calculateDailyTargets(userPreferences);
-  const mealPlan = generateMealPlan(dailyTargets);
+  const mealPlan = generateMealDistribution(
+    dailyTargets,
+    userPreferences,
+    userPreferences?.todayPlan?.plan_data?.[new Date().getDay()]
+  );
 
   console.log("Final daily targets:", dailyTargets);
   console.log("Final meal plan:", mealPlan);
