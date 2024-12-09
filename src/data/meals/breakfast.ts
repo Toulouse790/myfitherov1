@@ -62,20 +62,19 @@ export const breakfastMeals: Meal[] = [
     notes: "Battre les œufs, les cuire à feu doux en remuant. Toaster le pain, écraser l'avocat dessus"
   },
   {
-    name: "Pancakes protéinés",
+    name: "Omelette aux légumes",
     calories: 400,
     proteins: 28,
-    carbs: 42,
-    fats: 14,
+    carbs: 12,
+    fats: 28,
     estimated_cost: 4,
     quantities: [
-      { item: "Farine d'avoine", amount: "80g" },
-      { item: "Protéine en poudre vanille", amount: "30g" },
-      { item: "Œuf", amount: "1 unité" },
-      { item: "Lait écrémé", amount: "150ml" },
-      { item: "Fruits rouges", amount: "100g" }
+      { item: "Œufs", amount: "4 unités" },
+      { item: "Champignons", amount: "100g" },
+      { item: "Épinards", amount: "100g" },
+      { item: "Fromage râpé", amount: "30g" }
     ],
-    notes: "Mélanger les ingrédients secs, ajouter l'œuf et le lait. Cuire à la poêle 2-3min de chaque côté"
+    notes: "Battre les œufs. Faire revenir les champignons et les épinards dans une poêle. Verser les œufs battus, ajouter le fromage. Cuire à feu moyen jusqu'à ce que l'omelette soit dorée."
   }
 ];
 
