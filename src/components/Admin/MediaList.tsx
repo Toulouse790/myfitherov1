@@ -40,7 +40,8 @@ export const MediaList = ({
   // Filtrer les exercices en fonction des difficultés sélectionnées
   const filteredExercises = exercises.filter(exercise => {
     if (selectedDifficulties.length === 0) return true;
-    return exercise.difficulty.some(diff => selectedDifficulties.includes(diff));
+    return exercise.difficulty && Array.isArray(exercise.difficulty) && 
+           exercise.difficulty.some(diff => selectedDifficulties.includes(diff));
   });
 
   return (
@@ -60,6 +61,7 @@ export const MediaList = ({
             onUpload={onUpload}
             selectedFile={selectedFile}
             media={getMediaForExercise(exercise.id)}
+            selectedDifficulties={selectedDifficulties}
           />
         </TabsContent>
       ))}
