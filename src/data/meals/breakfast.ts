@@ -45,6 +45,37 @@ export const breakfastMeals: Meal[] = [
       { item: "Granola", amount: "30g" }
     ],
     notes: "Mixer tous les ingrédients sauf le granola, ajouter le granola au moment de servir"
+  },
+  {
+    name: "Œufs brouillés sur toast complet",
+    calories: 380,
+    proteins: 22,
+    carbs: 35,
+    fats: 18,
+    estimated_cost: 3,
+    quantities: [
+      { item: "Œufs", amount: "3 unités" },
+      { item: "Pain complet", amount: "2 tranches" },
+      { item: "Avocat", amount: "1/2" },
+      { item: "Tomates cerises", amount: "6 unités" }
+    ],
+    notes: "Battre les œufs, les cuire à feu doux en remuant. Toaster le pain, écraser l'avocat dessus"
+  },
+  {
+    name: "Pancakes protéinés",
+    calories: 400,
+    proteins: 28,
+    carbs: 42,
+    fats: 14,
+    estimated_cost: 4,
+    quantities: [
+      { item: "Farine d'avoine", amount: "80g" },
+      { item: "Protéine en poudre vanille", amount: "30g" },
+      { item: "Œuf", amount: "1 unité" },
+      { item: "Lait écrémé", amount: "150ml" },
+      { item: "Fruits rouges", amount: "100g" }
+    ],
+    notes: "Mélanger les ingrédients secs, ajouter l'œuf et le lait. Cuire à la poêle 2-3min de chaque côté"
   }
 ];
 
