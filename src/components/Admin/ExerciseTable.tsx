@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ExerciseRow } from "./ExerciseRow";
 import { AdminHeader } from "./AdminHeader";
 import { FilterDialog } from "./FilterDialog";
+import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 export const ExerciseTable = () => {
   const { toast } = useToast();
@@ -30,8 +31,9 @@ export const ExerciseTable = () => {
         `);
 
       if (selectedMuscleGroup) {
-        console.log('Filtering by muscle group:', selectedMuscleGroup);
-        query = query.eq('muscle_group', selectedMuscleGroup.toLowerCase());
+        const englishMuscleGroup = reverseTranslateMuscleGroup(selectedMuscleGroup);
+        console.log('Filtering by muscle group:', englishMuscleGroup);
+        query = query.eq('muscle_group', englishMuscleGroup.toLowerCase());
       }
 
       const { data, error } = await query;
