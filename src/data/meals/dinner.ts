@@ -32,21 +32,6 @@ export const dinnerMeals: Meal[] = [
     notes: "Griller le saumon 4-5min de chaque côté. Faire revenir les légumes à la poêle"
   },
   {
-    name: "Tofu aux légumes et quinoa",
-    calories: 380,
-    proteins: 20,
-    carbs: 45,
-    fats: 12,
-    estimated_cost: 5,
-    quantities: [
-      { item: "Tofu ferme", amount: "200g" },
-      { item: "Quinoa", amount: "80g cru" },
-      { item: "Légumes variés", amount: "300g" },
-      { item: "Sauce soja", amount: "2 càs" }
-    ],
-    notes: "Faire mariner le tofu dans la sauce soja. Cuire le quinoa. Faire revenir le tout"
-  },
-  {
     name: "Steak haché et riz complet",
     calories: 520,
     proteins: 40,
@@ -59,7 +44,7 @@ export const dinnerMeals: Meal[] = [
       { item: "Haricots verts", amount: "200g" },
       { item: "Huile d'olive", amount: "1 càs" }
     ],
-    notes: "Cuire le riz. Griller le steak selon la cuisson désirée. Cuire les haricots à la vapeur"
+    notes: "Cuire le riz selon les instructions. Griller le steak selon la cuisson désirée. Cuire les haricots à la vapeur"
   },
   {
     name: "Omelette aux légumes",
