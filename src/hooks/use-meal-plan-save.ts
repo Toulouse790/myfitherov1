@@ -64,16 +64,28 @@ export const useMealPlanSave = () => {
         });
       }
 
-      // Ajouter la collation
+      // Ajouter les collations
       if (plan.snack) {
-        entries.push({
+        // Diviser la collation en deux si nécessaire
+        const morningSnack = {
           user_id: user.id,
-          name: plan.snack.name,
-          calories: plan.snack.calories,
-          proteins: plan.snack.proteins,
-          meal_type: 'snack',
+          name: `${plan.snack.name} (matin)`,
+          calories: Math.round(plan.snack.calories / 2),
+          proteins: Math.round(plan.snack.proteins / 2),
+          meal_type: 'morning_snack',
           notes: plan.snack.preparation || ''
-        });
+        };
+
+        const afternoonSnack = {
+          user_id: user.id,
+          name: `${plan.snack.name} (après-midi)`,
+          calories: Math.round(plan.snack.calories / 2),
+          proteins: Math.round(plan.snack.proteins / 2),
+          meal_type: 'afternoon_snack',
+          notes: plan.snack.preparation || ''
+        };
+
+        entries.push(morningSnack, afternoonSnack);
       }
 
       console.log("Inserting entries:", entries);
@@ -97,7 +109,7 @@ export const useMealPlanSave = () => {
           user_id: user.id,
           start_date: startDate.toISOString(),
           end_date: endDate.toISOString(),
-          plan_data: plan
+          plan_data: Array(parseInt(durationDays)).fill(plan)
         });
 
       if (planError) {
