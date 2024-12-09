@@ -4,6 +4,7 @@ export interface CommonFood {
   calories: number;
   proteins: number;
   category: "Protéines" | "Féculents" | "Légumes" | "Fruits" | "Produits laitiers" | "Autres";
+  description?: string;
 }
 
 export interface FoodEntry {
@@ -13,4 +14,5 @@ export interface FoodEntry {
   proteins: number;
   mealType?: string;
   notes?: string;
+  description?: string;
 }

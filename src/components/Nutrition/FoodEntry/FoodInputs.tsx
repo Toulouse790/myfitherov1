@@ -55,52 +55,62 @@ export const FoodInputs = ({
     }
   };
 
+  const selectedFood = commonFoods.find(food => food.name === newFood);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      <div className="space-y-2">
-        <div className="relative">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Nom de l'aliment"
+              value={newFood}
+              onChange={(e) => handleFoodChange(e.target.value)}
+              className="bg-white"
+              list="food-suggestions"
+            />
+            <datalist id="food-suggestions" className="hidden">
+              {commonFoods.map((food) => (
+                <option key={food.id} value={food.name} />
+              ))}
+            </datalist>
+          </div>
+
           <Input
-            type="text"
-            placeholder="Nom de l'aliment"
-            value={newFood}
-            onChange={(e) => handleFoodChange(e.target.value)}
+            type="number"
+            placeholder="Quantité (g)"
+            value={weight}
+            onChange={(e) => handleWeightChange(e.target.value)}
             className="bg-white"
-            list="food-suggestions"
           />
-          <datalist id="food-suggestions" className="hidden">
-            {commonFoods.map((food) => (
-              <option key={food.id} value={food.name} />
-            ))}
-          </datalist>
         </div>
 
-        <Input
-          type="number"
-          placeholder="Quantité (g)"
-          value={weight}
-          onChange={(e) => handleWeightChange(e.target.value)}
-          className="bg-white"
-        />
+        <div className="space-y-2">
+          <Input
+            type="number"
+            placeholder="Calories"
+            value={calories}
+            onChange={(e) => onCaloriesChange(e.target.value)}
+            className={isCustomFood ? "bg-white" : "bg-gray-50"}
+            readOnly={!isCustomFood}
+          />
+          <Input
+            type="number"
+            placeholder="Protéines (g)"
+            value={proteins}
+            onChange={(e) => onProteinsChange(e.target.value)}
+            className={isCustomFood ? "bg-white" : "bg-gray-50"}
+            readOnly={!isCustomFood}
+          />
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <Input
-          type="number"
-          placeholder="Calories"
-          value={calories}
-          onChange={(e) => onCaloriesChange(e.target.value)}
-          className={isCustomFood ? "bg-white" : "bg-gray-50"}
-          readOnly={!isCustomFood}
-        />
-        <Input
-          type="number"
-          placeholder="Protéines (g)"
-          value={proteins}
-          onChange={(e) => onProteinsChange(e.target.value)}
-          className={isCustomFood ? "bg-white" : "bg-gray-50"}
-          readOnly={!isCustomFood}
-        />
-      </div>
+      {selectedFood?.description && (
+        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
+          <p className="italic">💡 {selectedFood.description}</p>
+        </div>
+      )}
     </div>
   );
 };

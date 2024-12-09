@@ -153,6 +153,7 @@ export type Database = {
           calories: number
           carbs: number
           created_at: string
+          description: string | null
           diet_types: string[] | null
           fats: number
           food_category: string
@@ -167,6 +168,7 @@ export type Database = {
           calories: number
           carbs: number
           created_at?: string
+          description?: string | null
           diet_types?: string[] | null
           fats: number
           food_category: string
@@ -181,6 +183,7 @@ export type Database = {
           calories?: number
           carbs?: number
           created_at?: string
+          description?: string | null
           diet_types?: string[] | null
           fats?: number
           food_category?: string
