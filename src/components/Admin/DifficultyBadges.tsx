@@ -6,6 +6,13 @@ interface DifficultyBadgesProps {
   selectedDifficulties: string[];
 }
 
+const difficultyTranslations: { [key: string]: string } = {
+  "beginner": "débutant",
+  "intermediate": "intermédiaire",
+  "advanced": "avancé",
+  "expert": "expert"
+};
+
 export const DifficultyBadges = ({
   difficulties,
   onDifficultyChange,
@@ -26,9 +33,7 @@ export const DifficultyBadges = ({
           }`}
           onClick={() => onDifficultyChange?.(difficulty)}
         >
-          {difficulty === "beginner" ? "débutant" : 
-           difficulty === "intermediate" ? "intermédiaire" : 
-           difficulty === "advanced" ? "avancé" : "expert"}
+          {difficultyTranslations[difficulty] || difficulty}
         </Badge>
       ))}
     </div>

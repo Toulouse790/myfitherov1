@@ -20,6 +20,7 @@ export const MediaList = ({
   onUpload,
   selectedFile,
   selectedDifficulties,
+  onDifficultyChange,
 }: MediaListProps) => {
   const { data: exerciseMedia } = useQuery({
     queryKey: ['exerciseMedia'],
@@ -37,10 +38,9 @@ export const MediaList = ({
     return exerciseMedia?.filter(media => media.exercise_id === exerciseId) || [];
   };
 
-  // Filtrer les exercices en fonction des difficultés sélectionnées
   const filteredExercises = exercises.filter(exercise => {
     if (selectedDifficulties.length === 0) return true;
-    return exercise.difficulty && Array.isArray(exercise.difficulty) && 
+    return Array.isArray(exercise.difficulty) && 
            exercise.difficulty.some(diff => selectedDifficulties.includes(diff));
   });
 
@@ -49,7 +49,6 @@ export const MediaList = ({
       {filteredExercises.map((exercise) => (
         <TabsContent key={exercise.id} value={exercise.muscleGroup}>
           <ExerciseRow
-            key={exercise.id}
             exercise={{
               id: exercise.id,
               name: exercise.name,
@@ -62,6 +61,7 @@ export const MediaList = ({
             selectedFile={selectedFile}
             media={getMediaForExercise(exercise.id)}
             selectedDifficulties={selectedDifficulties}
+            onDifficultyChange={onDifficultyChange}
           />
         </TabsContent>
       ))}
