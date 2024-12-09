@@ -1,3 +1,5 @@
+import { getPreparationInstructions } from "./PreparationInstructions";
+
 interface MealContentProps {
   meal: {
     name: string;
@@ -8,6 +10,8 @@ interface MealContentProps {
 }
 
 export const MealContent = ({ meal }: MealContentProps) => {
+  const preparation = getPreparationInstructions(meal.name);
+
   return (
     <div className="p-4 pt-0 space-y-4 text-sm">
       <div>
@@ -15,9 +19,9 @@ export const MealContent = ({ meal }: MealContentProps) => {
         <p className="text-muted-foreground">
           {meal.calories} kcal | {meal.proteins}g protéines
         </p>
-        {meal.preparation && (
+        {preparation && preparation !== "Aucune instruction disponible" && (
           <p className="mt-2 text-sm text-muted-foreground italic">
-            💡 {meal.preparation}
+            💡 {preparation}
           </p>
         )}
       </div>
