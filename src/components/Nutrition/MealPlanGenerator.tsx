@@ -100,6 +100,25 @@ export const MealPlanGenerator = () => {
         throw insertError;
       }
 
+      // Sauvegarder le plan complet dans la table meal_plans
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + parseInt(durationDays) - 1);
+
+      const { error: planError } = await supabase
+        .from('meal_plans')
+        .insert({
+          user_id: user.id,
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+          plan_data: generatedPlan
+        });
+
+      if (planError) {
+        console.error('Error saving meal plan:', planError);
+        throw planError;
+      }
+
       toast({
         title: "Plan de repas enregistré",
         description: "Les repas ont été ajoutés à votre journal alimentaire",

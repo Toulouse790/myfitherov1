@@ -17,6 +17,30 @@ export const GeneratedPlanDisplay = ({
 }: GeneratedPlanDisplayProps) => {
   console.log("GeneratedPlanDisplay - generatedPlan:", generatedPlan);
 
+  // Charger les plans sauvegardés
+  const { data: savedPlan } = useQuery({
+    queryKey: ['meal-plan'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('meal_plans')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) {
+        console.error('Error loading meal plan:', error);
+        return null;
+      }
+
+      return data;
+    }
+  });
+
   const { data: workoutSessions } = useQuery({
     queryKey: ['workout-sessions'],
     queryFn: async () => {
@@ -31,7 +55,10 @@ export const GeneratedPlanDisplay = ({
     }
   });
 
-  if (!generatedPlan) return null;
+  // Utiliser le plan sauvegardé s'il existe, sinon utiliser le plan généré
+  const planToDisplay = savedPlan?.plan_data || generatedPlan;
+
+  if (!planToDisplay) return null;
 
   const getWorkoutTime = (dayIndex: number): 'morning' | 'evening' | undefined => {
     if (!workoutSessions) return undefined;
@@ -66,7 +93,7 @@ export const GeneratedPlanDisplay = ({
               </TabsTrigger>
             ))}
           </TabsList>
-          {generatedPlan.map((day, index) => {
+          {planToDisplay.map((day: any, index: number) => {
             const dayIndex = index % 7;
             const workoutTime = getWorkoutTime(dayIndex);
             const isTrainingDay = Boolean(workoutTime);
