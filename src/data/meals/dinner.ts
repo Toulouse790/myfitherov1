@@ -14,7 +14,7 @@ export const dinnerMeals: Meal[] = [
       { item: "Haricots verts", amount: "200g" },
       { item: "Huile d'olive", amount: "1 càs" }
     ],
-    notes: "Cuire le riz selon les instructions du paquet. Griller le steak 3-4min de chaque côté selon la cuisson désirée. Cuire les haricots à la vapeur"
+    notes: "Cuire le riz selon les instructions. Griller le steak 3-4min de chaque côté. Cuire les haricots à la vapeur."
   },
   {
     name: "Poulet grillé et légumes",
@@ -29,7 +29,7 @@ export const dinnerMeals: Meal[] = [
       { item: "Carottes", amount: "150g" },
       { item: "Huile d'olive", amount: "1 càs" }
     ],
-    notes: "Griller le poulet 6-7min de chaque côté. Cuire les légumes à la vapeur"
+    notes: "Griller le poulet 6-7min de chaque côté. Cuire les légumes à la vapeur."
   },
   {
     name: "Saumon aux légumes",
@@ -44,22 +44,7 @@ export const dinnerMeals: Meal[] = [
       { item: "Poivrons", amount: "150g" },
       { item: "Huile d'olive", amount: "1 càs" }
     ],
-    notes: "Griller le saumon 4-5min de chaque côté. Faire revenir les légumes à la poêle"
-  },
-  {
-    name: "Omelette aux légumes",
-    calories: 400,
-    proteins: 28,
-    carbs: 12,
-    fats: 28,
-    estimated_cost: 4,
-    quantities: [
-      { item: "Œufs", amount: "4 unités" },
-      { item: "Champignons", amount: "100g" },
-      { item: "Épinards", amount: "100g" },
-      { item: "Fromage râpé", amount: "30g" }
-    ],
-    notes: "Battre les œufs. Faire revenir les champignons et les épinards dans une poêle. Verser les œufs battus, ajouter le fromage. Cuire à feu moyen jusqu'à ce que l'omelette soit dorée."
+    notes: "Griller le saumon 4-5min de chaque côté. Faire revenir les légumes à la poêle."
   },
   {
     name: "Tofu croustillant aux légumes sautés",

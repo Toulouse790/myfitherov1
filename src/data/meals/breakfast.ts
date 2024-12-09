@@ -14,10 +14,10 @@ export const breakfastMeals: Meal[] = [
       { item: "Protéine en poudre", amount: "30g" },
       { item: "Lait d'amande", amount: "250ml" }
     ],
-    notes: "Faire chauffer le lait, ajouter les flocons et la protéine, mélanger et ajouter les fruits"
+    notes: "Faire chauffer le lait, ajouter les flocons et la protéine, mélanger et ajouter les fruits."
   },
   {
-    name: "Bowl de skyr aux myrtilles et graines de chia",
+    name: "Bowl de skyr aux myrtilles",
     calories: 320,
     proteins: 25,
     carbs: 40,
@@ -29,7 +29,7 @@ export const breakfastMeals: Meal[] = [
       { item: "Graines de chia", amount: "15g" },
       { item: "Miel", amount: "10g" }
     ],
-    notes: "Préparer la veille pour laisser les graines de chia gonfler"
+    notes: "Préparer la veille pour laisser les graines de chia gonfler. Mélanger le skyr avec le miel, ajouter les myrtilles et les graines."
   },
   {
     name: "Smoothie bowl banane-épinards",
@@ -44,7 +44,7 @@ export const breakfastMeals: Meal[] = [
       { item: "Lait végétal", amount: "200ml" },
       { item: "Granola", amount: "30g" }
     ],
-    notes: "Mixer tous les ingrédients sauf le granola, ajouter le granola au moment de servir"
+    notes: "Mixer la banane, les épinards et le lait. Verser dans un bol et ajouter le granola au moment de servir."
   },
   {
     name: "Œufs brouillés sur toast complet",
@@ -59,7 +59,7 @@ export const breakfastMeals: Meal[] = [
       { item: "Avocat", amount: "1/2" },
       { item: "Tomates cerises", amount: "6 unités" }
     ],
-    notes: "Battre les œufs, les cuire à feu doux en remuant. Toaster le pain, écraser l'avocat dessus"
+    notes: "Battre les œufs, les cuire à feu doux en remuant. Toaster le pain, écraser l'avocat dessus. Ajouter les œufs et les tomates."
   },
   {
     name: "Omelette aux légumes",
