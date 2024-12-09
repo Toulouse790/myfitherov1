@@ -38,6 +38,8 @@ export const MealSection = ({
 
       // Si le repas est marqué comme pris, on ajoute les détails au journal
       if (status === 'taken' && generatedMeal) {
+        console.log("Saving meal to journal:", generatedMeal);
+        
         // Créer une entrée pour le repas principal
         const mealEntry = {
           user_id: user.id,
@@ -56,11 +58,15 @@ export const MealSection = ({
           mealEntry.notes = `${mealEntry.notes}\n\nIngrédients:\n${ingredientsList}`;
         }
 
+        console.log("Inserting meal entry:", mealEntry);
         const { error } = await supabase
           .from('food_journal_entries')
           .insert(mealEntry);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error inserting meal entry:', error);
+          throw error;
+        }
 
         toast({
           title: "Repas validé",
