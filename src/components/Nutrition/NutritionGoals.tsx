@@ -9,11 +9,14 @@ export const NutritionGoals = () => {
   // Calculer les totaux réalisés des entrées du journal
   const actualTotals = Object.values(entriesByMealType).flat().reduce(
     (acc, entry) => ({
-      calories: acc.calories + entry.calories,
-      proteins: acc.proteins + entry.proteins,
+      calories: acc.calories + (entry.calories || 0),
+      proteins: acc.proteins + (entry.proteins || 0),
     }),
     { calories: 0, proteins: 0 }
   );
+
+  console.log("Actual totals:", actualTotals);
+  console.log("Entries by meal type:", entriesByMealType);
 
   const goals = [
     { 
