@@ -23,18 +23,13 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const fetchExercises = async () => {
     try {
       setIsLoading(true);
-      let query = supabase
+      const { data, error } = await supabase
         .from('exercises')
         .select(`
           *,
           exercise_media (*)
-        `);
-
-      if (isPublished) {
-        query = query.eq('is_published', true);
-      }
-
-      const { data, error } = await query;
+        `)
+        .eq('is_published', isPublished);
 
       if (error) throw error;
 
