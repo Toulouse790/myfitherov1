@@ -3,8 +3,8 @@ import { useExerciseManagement } from "@/hooks/use-exercise-management";
 interface AdminHeaderProps {
   selectedExercises: string[];
   onExercisesDeleted: () => void;
-  onFilterClick: () => void;
-  onFilterReset: () => void;
+  onFilterClick?: () => void;  // Made optional with ?
+  onFilterReset?: () => void;  // Made optional with ?
   hasActiveFilter: boolean;
   showPublishButton: boolean;
 }
