@@ -59,22 +59,7 @@ export const dinnerMeals: Meal[] = [
       { item: "Épinards", amount: "100g" },
       { item: "Fromage râpé", amount: "30g" }
     ],
-    notes: "Battre les œufs. Faire revenir les légumes. Ajouter les œufs et le fromage. Cuire à feu moyen"
-  },
-  {
-    name: "Poisson blanc et quinoa",
-    calories: 420,
-    proteins: 35,
-    carbs: 40,
-    fats: 14,
-    estimated_cost: 7,
-    quantities: [
-      { item: "Filet de cabillaud", amount: "180g" },
-      { item: "Quinoa", amount: "80g cru" },
-      { item: "Tomates cerises", amount: "150g" },
-      { item: "Huile d'olive", amount: "1 càs" }
-    ],
-    notes: "Cuire le quinoa selon les instructions. Cuire le poisson à la vapeur 8-10min. Ajouter les tomates en fin de cuisson"
+    notes: "Battre les œufs. Faire revenir les champignons et les épinards dans une poêle. Verser les œufs battus, ajouter le fromage. Cuire à feu moyen jusqu'à ce que l'omelette soit dorée."
   }
 ];
 
