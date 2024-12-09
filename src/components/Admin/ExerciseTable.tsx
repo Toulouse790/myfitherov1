@@ -4,8 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ExerciseRow } from "./ExerciseRow";
 import { AdminHeader } from "./AdminHeader";
-import { FilterDialog } from "./FilterDialog";
-import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 import { SearchBar } from "@/components/Workouts/components/SearchBar";
 
 interface ExerciseTableProps {
@@ -16,13 +14,11 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const { toast } = useToast();
   const [exercises, setExercises] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showFilterDialog, setShowFilterDialog] = useState(false);
-  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchExercises();
-  }, [selectedMuscleGroup, isPublished]);
+  }, [isPublished]);
 
   const fetchExercises = async () => {
     try {
@@ -34,15 +30,8 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
           exercise_media (*)
         `);
 
-      // Si nous sommes sur l'onglet "à publier", on récupère tous les exercices
-      // Si nous sommes sur l'onglet "publiés", on ne récupère que les exercices publiés
       if (isPublished) {
         query = query.eq('is_published', true);
-      }
-
-      if (selectedMuscleGroup) {
-        const englishMuscleGroup = reverseTranslateMuscleGroup(selectedMuscleGroup);
-        query = query.eq('muscle_group', englishMuscleGroup.toLowerCase());
       }
 
       const { data, error } = await query;
@@ -62,27 +51,6 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
     }
   };
 
-  const handleFilterClick = () => {
-    setShowFilterDialog(true);
-  };
-
-  const handleFilterApply = (muscleGroup: string) => {
-    setSelectedMuscleGroup(muscleGroup);
-    setShowFilterDialog(false);
-    toast({
-      title: "Filtre appliqué",
-      description: `Affichage des exercices pour : ${muscleGroup}`,
-    });
-  };
-
-  const handleFilterReset = () => {
-    setSelectedMuscleGroup(null);
-    toast({
-      title: "Filtres réinitialisés",
-      description: "Affichage de tous les exercices",
-    });
-  };
-
   const filteredExercises = exercises.filter((exercise) =>
     exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -100,9 +68,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       <AdminHeader 
         selectedExercises={[]}
         onExercisesDeleted={fetchExercises}
-        onFilterClick={handleFilterClick}
-        onFilterReset={handleFilterReset}
-        hasActiveFilter={!!selectedMuscleGroup}
+        hasActiveFilter={false}
         showPublishButton={!isPublished}
       />
       <div className="flex justify-between items-center">
@@ -111,11 +77,6 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
           onChange={setSearchQuery}
         />
       </div>
-      <FilterDialog 
-        open={showFilterDialog} 
-        onOpenChange={setShowFilterDialog}
-        onFilterApply={handleFilterApply}
-      />
       <Card className="p-6">
         <div className="space-y-4">
           {filteredExercises.map((exercise) => (
