@@ -9,6 +9,8 @@ interface MediaButtonsProps {
 }
 
 export const MediaButtons = ({ onImageClick, onVideoClick, onPublish, hasMedia }: MediaButtonsProps) => {
+  console.log("MediaButtons - hasMedia:", hasMedia);
+  
   return (
     <div className="flex items-center space-x-2">
       <Button

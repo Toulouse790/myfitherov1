@@ -114,8 +114,10 @@ export const ExerciseRow = ({
     .map(m => ({ type: 'video' as const, url: m.media_url })) || [];
 
   const allMediaUrls = [...imageMediaUrls, ...videoMediaUrls];
+  const hasMedia = allMediaUrls.length > 0;
 
   console.log("Media URLs:", allMediaUrls);
+  console.log("Has media:", hasMedia);
   console.log("Show preview state:", showPreview);
 
   return (
@@ -133,7 +135,7 @@ export const ExerciseRow = ({
             onImageClick={handleImageClick}
             onVideoClick={handleVideoClick}
             onPublish={handlePublish}
-            hasMedia={allMediaUrls.length > 0}
+            hasMedia={hasMedia}
           />
         </div>
 
