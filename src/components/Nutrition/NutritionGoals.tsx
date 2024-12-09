@@ -3,19 +3,10 @@ import { useDailyTargets } from "@/hooks/use-daily-targets";
 import { useFoodEntries } from "@/hooks/use-food-entries";
 
 export const NutritionGoals = () => {
-  const { dailyTargets, mealPlan } = useDailyTargets();
+  const { dailyTargets } = useDailyTargets();
   const { entriesByMealType } = useFoodEntries();
 
-  // Calculer les totaux prévus du plan alimentaire
-  const plannedTotals = Object.values(mealPlan).reduce(
-    (acc, meal) => ({
-      calories: acc.calories + (meal?.calories || 0),
-      proteins: acc.proteins + (meal?.proteins || 0),
-    }),
-    { calories: 0, proteins: 0 }
-  );
-
-  // Calculer les totaux réalisés des entrées du journal
+  // Calculer les totaux réalisés des entrées du journal uniquement
   const actualTotals = Object.values(entriesByMealType).flat().reduce(
     (acc, entry) => ({
       calories: acc.calories + entry.calories,
@@ -27,28 +18,24 @@ export const NutritionGoals = () => {
   const goals = [
     { 
       name: "Calories", 
-      planned: plannedTotals.calories,
       actual: actualTotals.calories,
       target: dailyTargets.calories || 2000, 
       unit: "kcal" 
     },
     { 
       name: "Protéines", 
-      planned: plannedTotals.proteins,
       actual: actualTotals.proteins,
       target: dailyTargets.proteins || 150, 
       unit: "g" 
     },
     { 
       name: "Glucides", 
-      planned: Math.round((plannedTotals.calories) * 0.5 / 4),
       actual: Math.round((actualTotals.calories) * 0.5 / 4),
       target: Math.round((dailyTargets.calories || 2000) * 0.5 / 4), 
       unit: "g" 
     },
     { 
       name: "Lipides", 
-      planned: Math.round((plannedTotals.calories) * 0.3 / 9),
       actual: Math.round((actualTotals.calories) * 0.3 / 9),
       target: Math.round((dailyTargets.calories || 2000) * 0.3 / 9), 
       unit: "g" 
@@ -66,27 +53,19 @@ export const NutritionGoals = () => {
             <div className="flex justify-between text-xs sm:text-sm">
               <span>{goal.name}</span>
               <div className="text-muted-foreground space-x-2">
-                <span className="text-blue-500">{goal.planned}</span>
-                <span>/</span>
                 <span className="text-green-500">{goal.actual}</span>
                 <span>/</span>
                 <span>{goal.target} {goal.unit}</span>
               </div>
             </div>
             <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-              <div className="relative w-full h-full">
-                <div
-                  className="absolute top-0 left-0 h-full bg-blue-500/20"
-                  style={{ width: `${Math.min((goal.planned / goal.target) * 100, 100)}%` }}
-                />
-                <div
-                  className="absolute top-0 left-0 h-full transition-all duration-500"
-                  style={{
-                    width: `${Math.min((goal.actual / goal.target) * 100, 100)}%`,
-                    backgroundColor: goal.actual >= goal.target ? '#22c55e' : '#0EA5E9'
-                  }}
-                />
-              </div>
+              <div
+                className="h-full transition-all duration-500"
+                style={{
+                  width: `${Math.min((goal.actual / goal.target) * 100, 100)}%`,
+                  backgroundColor: goal.actual >= goal.target ? '#22c55e' : '#0EA5E9'
+                }}
+              />
             </div>
           </div>
         ))}
