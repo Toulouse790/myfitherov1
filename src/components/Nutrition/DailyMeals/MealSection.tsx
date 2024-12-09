@@ -4,6 +4,7 @@ import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getPreparationInstructions } from "../MealPlan/PreparationInstructions";
+import { useFoodEntries } from "@/hooks/use-food-entries";
 
 interface MealSectionProps {
   type: string;
@@ -30,6 +31,7 @@ export const MealSection = ({
 }: MealSectionProps) => {
   const [mealStatus, setMealStatus] = useState<'taken' | 'skipped' | null>(null);
   const { toast } = useToast();
+  const { refetchEntries } = useFoodEntries();
 
   const handleMealStatus = async (status: 'taken' | 'skipped') => {
     try {
@@ -67,6 +69,9 @@ export const MealSection = ({
           console.error('Error inserting meal entry:', error);
           throw error;
         }
+
+        // Rafraîchir les entrées après l'ajout
+        await refetchEntries();
 
         toast({
           title: "Repas validé",
