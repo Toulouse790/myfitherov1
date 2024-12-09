@@ -9,8 +9,7 @@ interface DifficultyBadgesProps {
 const difficultyTranslations: { [key: string]: string } = {
   "beginner": "débutant",
   "intermediate": "intermédiaire",
-  "advanced": "avancé",
-  "expert": "expert"
+  "advanced": "avancé"
 };
 
 export const DifficultyBadges = ({
@@ -18,7 +17,7 @@ export const DifficultyBadges = ({
   onDifficultyChange,
   selectedDifficulties,
 }: DifficultyBadgesProps) => {
-  const difficultyLevels = ["beginner", "intermediate", "advanced", "expert"];
+  const difficultyLevels = ["beginner", "intermediate", "advanced"];
 
   return (
     <div className="flex gap-2 flex-wrap flex-1">
