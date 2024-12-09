@@ -44,7 +44,7 @@ export const dinnerMeals: Meal[] = [
       { item: "Haricots verts", amount: "200g" },
       { item: "Huile d'olive", amount: "1 càs" }
     ],
-    notes: "Cuire le riz selon les instructions du paquet. Griller le steak selon la cuisson désirée. Cuire les haricots à la vapeur"
+    notes: "Cuire le riz selon les instructions du paquet. Griller le steak 3-4min de chaque côté selon la cuisson désirée. Cuire les haricots à la vapeur"
   },
   {
     name: "Omelette aux légumes",
