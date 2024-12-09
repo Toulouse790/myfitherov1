@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Image, Video } from "lucide-react";
+import { Image, Video, Check, Upload } from "lucide-react";
 import { DifficultyBadges } from "./DifficultyBadges";
 import { UploadForm } from "./UploadForm";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,7 @@ interface ExerciseRowProps {
     name: string;
     muscle_group: string;
     difficulty: string[];
+    is_published?: boolean;
     exercise_media?: {
       media_type: string;
       media_url: string;
@@ -25,6 +26,7 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(exercise.difficulty || []);
+  const [isPublishing, setIsPublishing] = useState(false);
   const { toast } = useToast();
 
   const handleDifficultyChange = async (difficulty: string) => {
@@ -55,6 +57,35 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
     }
   };
 
+  const handlePublishToggle = async () => {
+    setIsPublishing(true);
+    try {
+      const { error } = await supabase
+        .from('exercises')
+        .update({ is_published: !exercise.is_published })
+        .eq('id', exercise.id);
+
+      if (error) throw error;
+
+      onUpdate();
+      toast({
+        title: "Succès",
+        description: exercise.is_published 
+          ? "Exercice retiré de la publication" 
+          : "Exercice publié avec succès",
+      });
+    } catch (error) {
+      console.error('Error toggling publish status:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le statut de publication",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   return (
     <Card className="p-4">
       <div className="space-y-4">
@@ -69,6 +100,24 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
             />
           </div>
           <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePublishToggle}
+              disabled={isPublishing}
+              className={`${
+                exercise.is_published 
+                  ? "bg-green-500 hover:bg-green-600" 
+                  : "bg-blue-500 hover:bg-blue-600"
+              } text-white`}
+            >
+              {exercise.is_published ? (
+                <Check className="mr-2 h-4 w-4" />
+              ) : (
+                <Upload className="mr-2 h-4 w-4" />
+              )}
+              {exercise.is_published ? "Publié" : "Publier"}
+            </Button>
             <Button
               variant="outline"
               size="sm"
