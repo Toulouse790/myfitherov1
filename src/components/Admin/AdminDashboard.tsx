@@ -52,6 +52,10 @@ const SortableCard = ({ id, children, isEditing }: { id: string; children: React
 
 export const AdminDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [widgets, setWidgets] = useState([
+    { id: "users", label: "Nouveaux utilisateurs" },
+    { id: "workouts", label: "Séances d'entraînement" }
+  ]);
 
   const { data: monthlyUsers } = useQuery({
     queryKey: ['admin-monthly-users'],
@@ -108,11 +112,6 @@ export const AdminDashboard = () => {
       return workoutsByDay;
     }
   });
-
-  const [widgets] = useState([
-    { id: "users", label: "Nouveaux utilisateurs" },
-    { id: "workouts", label: "Séances d'entraînement" }
-  ]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
