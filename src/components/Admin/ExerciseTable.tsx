@@ -100,9 +100,12 @@ export const ExerciseTable = () => {
       const exercise = exercises.find(e => e.id === exerciseId);
       if (!exercise) return;
 
+      // Standardize difficulty values to English
+      const standardizedDifficulty = difficulty.toLowerCase();
+      
       const newDifficulties = checked
-        ? [...(exercise.difficulty || []), difficulty]
-        : (exercise.difficulty || []).filter((d: string) => d !== difficulty);
+        ? [...(exercise.difficulty || []), standardizedDifficulty]
+        : (exercise.difficulty || []).filter((d: string) => d !== standardizedDifficulty);
 
       console.log('Updating exercise difficulties:', {
         exerciseId,

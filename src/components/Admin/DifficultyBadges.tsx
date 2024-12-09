@@ -11,7 +11,7 @@ export const DifficultyBadges = ({
   onDifficultyChange,
   selectedDifficulties,
 }: DifficultyBadgesProps) => {
-  const difficultyLevels = ["débutant", "intermédiaire", "avancé", "expert"];
+  const difficultyLevels = ["beginner", "intermediate", "advanced", "expert"];
 
   return (
     <div className="flex gap-2 flex-wrap flex-1">
@@ -26,7 +26,9 @@ export const DifficultyBadges = ({
           }`}
           onClick={() => onDifficultyChange?.(difficulty)}
         >
-          {difficulty}
+          {difficulty === "beginner" ? "débutant" : 
+           difficulty === "intermediate" ? "intermédiaire" : 
+           difficulty === "advanced" ? "avancé" : "expert"}
         </Badge>
       ))}
     </div>
