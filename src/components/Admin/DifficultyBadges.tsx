@@ -3,11 +3,13 @@ import { Badge } from "@/components/ui/badge";
 interface DifficultyBadgesProps {
   difficulties: string[];
   onDifficultyChange?: (difficulty: string) => void;
+  selectedDifficulties: string[];
 }
 
 export const DifficultyBadges = ({
   difficulties,
   onDifficultyChange,
+  selectedDifficulties,
 }: DifficultyBadgesProps) => {
   const difficultyLevels = ["débutant", "intermédiaire", "avancé", "expert"];
 
@@ -16,9 +18,9 @@ export const DifficultyBadges = ({
       {difficultyLevels.map((difficulty) => (
         <Badge
           key={difficulty}
-          variant={difficulties.includes(difficulty) ? "default" : "outline"}
+          variant={selectedDifficulties.includes(difficulty) ? "default" : "outline"}
           className={`cursor-pointer ${
-            difficulties.includes(difficulty)
+            selectedDifficulties.includes(difficulty)
               ? "bg-[#9b87f5] hover:bg-[#7E69AB]"
               : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white"
           }`}

@@ -18,13 +18,17 @@ interface ExerciseRowProps {
   onUpload: () => void;
   selectedFile: File | null;
   media?: ExerciseMedia[];
+  selectedDifficulties: string[];
+  onDifficultyChange?: (difficulty: string) => void;
 }
 
 export const ExerciseRow = ({ 
   exercise, 
   onUpload,
   selectedFile,
-  media = []
+  media = [],
+  selectedDifficulties,
+  onDifficultyChange
 }: ExerciseRowProps) => {
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
@@ -90,6 +94,8 @@ export const ExerciseRow = ({
             name={exercise.name}
             muscleGroup={exercise.muscle_group}
             difficulties={exercise.difficulty}
+            selectedDifficulties={selectedDifficulties}
+            onDifficultyChange={onDifficultyChange}
           />
           <MediaButtons
             onImageClick={handleImageClick}
