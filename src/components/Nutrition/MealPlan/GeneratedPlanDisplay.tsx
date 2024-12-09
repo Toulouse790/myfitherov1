@@ -21,37 +21,47 @@ export const GeneratedPlanDisplay = ({
   const { data: savedPlan } = useQuery({
     queryKey: ['meal-plan'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return null;
 
-      const { data, error } = await supabase
-        .from('meal_plans')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+        const { data, error } = await supabase
+          .from('meal_plans')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1);
 
-      if (error) {
-        console.error('Error loading meal plan:', error);
+        if (error) {
+          console.error('Error loading meal plan:', error);
+          return null;
+        }
+
+        // Retourner le premier plan s'il existe, sinon null
+        return data && data.length > 0 ? data[0] : null;
+      } catch (error) {
+        console.error('Error in meal plan query:', error);
         return null;
       }
-
-      return data;
     }
   });
 
   const { data: workoutSessions } = useQuery({
     queryKey: ['workout-sessions'],
     queryFn: async () => {
-      const { data: sessions, error } = await supabase
-        .from('workout_sessions')
-        .select('*')
-        .eq('status', 'completed')
-        .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
-      
-      if (error) throw error;
-      return sessions;
+      try {
+        const { data: sessions, error } = await supabase
+          .from('workout_sessions')
+          .select('*')
+          .eq('status', 'completed')
+          .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+        
+        if (error) throw error;
+        return sessions;
+      } catch (error) {
+        console.error('Error loading workout sessions:', error);
+        return [];
+      }
     }
   });
 
