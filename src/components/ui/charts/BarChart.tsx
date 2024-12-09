@@ -6,7 +6,7 @@ interface BarChartProps {
   index: string;
   categories: string[];
   colors?: string[];
-  valueFormatter?: (value: number) => string;
+  valueFormatter?: (value: number, category?: string) => string;
   yAxisWidth?: number;
   showLegend?: boolean;
   showGridLines?: boolean;
@@ -61,7 +61,7 @@ export const BarChart = ({
             tickLine={false}
             fontSize={12}
             tickMargin={8}
-            tickFormatter={valueFormatter}
+            tickFormatter={value => valueFormatter(value)}
           />
           <Tooltip
             content={customTooltip}
