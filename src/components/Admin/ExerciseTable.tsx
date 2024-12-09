@@ -17,7 +17,7 @@ export const ExerciseTable = () => {
 
   useEffect(() => {
     fetchExercises();
-  }, []);
+  }, [selectedMuscleGroup]); // Add selectedMuscleGroup as dependency
 
   const fetchExercises = async () => {
     try {
@@ -59,7 +59,6 @@ export const ExerciseTable = () => {
   const handleFilterApply = (muscleGroup: string) => {
     setSelectedMuscleGroup(muscleGroup);
     setShowFilterDialog(false);
-    fetchExercises();
     toast({
       title: "Filtre appliqué",
       description: `Affichage des exercices pour : ${muscleGroup}`,
@@ -68,7 +67,6 @@ export const ExerciseTable = () => {
 
   const handleFilterReset = () => {
     setSelectedMuscleGroup(null);
-    fetchExercises();
     toast({
       title: "Filtres réinitialisés",
       description: "Affichage de tous les exercices",
