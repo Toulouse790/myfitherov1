@@ -16,11 +16,6 @@ export interface Meal {
   is_cheat_meal?: boolean;
 }
 
-export interface MealWithTitle {
-  title: string;
-  meal: Meal;
-}
-
 export interface MealPlan {
   day: string;
   meals: Record<string, Meal>;

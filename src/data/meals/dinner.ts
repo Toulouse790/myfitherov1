@@ -1,6 +1,21 @@
-import { Meal } from "./types";
+import { Meal } from './types';
 
 export const dinnerMeals: Meal[] = [
+  {
+    name: "Steak haché et riz complet",
+    calories: 520,
+    proteins: 40,
+    carbs: 45,
+    fats: 18,
+    estimated_cost: 7,
+    quantities: [
+      { item: "Steak haché 5%", amount: "200g" },
+      { item: "Riz complet", amount: "80g cru" },
+      { item: "Haricots verts", amount: "200g" },
+      { item: "Huile d'olive", amount: "1 càs" }
+    ],
+    notes: "Cuire le riz selon les instructions du paquet. Griller le steak 3-4min de chaque côté selon la cuisson désirée. Cuire les haricots à la vapeur"
+  },
   {
     name: "Poulet grillé et légumes",
     calories: 450,
@@ -30,21 +45,6 @@ export const dinnerMeals: Meal[] = [
       { item: "Huile d'olive", amount: "1 càs" }
     ],
     notes: "Griller le saumon 4-5min de chaque côté. Faire revenir les légumes à la poêle"
-  },
-  {
-    name: "Steak haché et riz complet",
-    calories: 520,
-    proteins: 40,
-    carbs: 45,
-    fats: 18,
-    estimated_cost: 7,
-    quantities: [
-      { item: "Steak haché 5%", amount: "200g" },
-      { item: "Riz complet", amount: "80g cru" },
-      { item: "Haricots verts", amount: "200g" },
-      { item: "Huile d'olive", amount: "1 càs" }
-    ],
-    notes: "Cuire le riz selon les instructions du paquet. Griller le steak 3-4min de chaque côté selon la cuisson désirée. Cuire les haricots à la vapeur"
   },
   {
     name: "Omelette aux légumes",
