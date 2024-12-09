@@ -4,11 +4,19 @@ import { AdminHeaderActions } from "./AdminHeaderActions";
 interface AdminHeaderProps {
   selectedExercises: string[];
   onExercisesDeleted: () => void;
+  onFilterClick: () => void;
+  onFilterReset: () => void;
+  hasActiveFilter: boolean;
+  showPublishButton: boolean;
 }
 
 export const AdminHeader = ({ 
   selectedExercises,
   onExercisesDeleted,
+  onFilterClick,
+  onFilterReset,
+  hasActiveFilter,
+  showPublishButton
 }: AdminHeaderProps) => {
   const { handlePublish } = useExerciseManagement(onExercisesDeleted);
 
@@ -17,13 +25,17 @@ export const AdminHeader = ({
       <div>
         <h1 className="text-3xl font-bold">Gestion des exercices</h1>
         <p className="text-muted-foreground">
-          Publiez les exercices pour les rendre disponibles aux utilisateurs
+          {showPublishButton 
+            ? "Sélectionnez les exercices à publier"
+            : "Liste des exercices publiés"}
         </p>
       </div>
-      <AdminHeaderActions
-        selectedExercises={selectedExercises}
-        onPublish={() => handlePublish(selectedExercises)}
-      />
+      {showPublishButton && (
+        <AdminHeaderActions
+          selectedExercises={selectedExercises}
+          onPublish={() => handlePublish(selectedExercises)}
+        />
+      )}
     </div>
   );
 };

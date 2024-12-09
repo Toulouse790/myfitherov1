@@ -7,18 +7,21 @@ import { AdminHeader } from "./AdminHeader";
 import { FilterDialog } from "./FilterDialog";
 import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
-export const ExerciseTable = () => {
+interface ExerciseTableProps {
+  isPublished: boolean;
+}
+
+export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const { toast } = useToast();
   const [exercises, setExercises] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
 
   useEffect(() => {
     fetchExercises();
-  }, [selectedMuscleGroup]);
+  }, [selectedMuscleGroup, isPublished]);
 
   const fetchExercises = async () => {
     try {
@@ -28,7 +31,8 @@ export const ExerciseTable = () => {
         .select(`
           *,
           exercise_media (*)
-        `);
+        `)
+        .eq('is_published', isPublished);
 
       if (selectedMuscleGroup) {
         const englishMuscleGroup = reverseTranslateMuscleGroup(selectedMuscleGroup);
@@ -87,13 +91,12 @@ export const ExerciseTable = () => {
   return (
     <div className="space-y-4">
       <AdminHeader 
-        isEditing={isEditing}
-        onEditingChange={setIsEditing}
         selectedExercises={selectedExercises}
         onExercisesDeleted={fetchExercises}
         onFilterClick={handleFilterClick}
         onFilterReset={handleFilterReset}
         hasActiveFilter={!!selectedMuscleGroup}
+        showPublishButton={!isPublished}
       />
       <FilterDialog 
         open={showFilterDialog} 
