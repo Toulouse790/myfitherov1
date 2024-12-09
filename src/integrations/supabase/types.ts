@@ -157,6 +157,7 @@ export type Database = {
           fats: number
           food_category: string
           id: string
+          ingredients: Json | null
           name: string
           proteins: number
           serving_size: number
@@ -170,6 +171,7 @@ export type Database = {
           fats: number
           food_category: string
           id?: string
+          ingredients?: Json | null
           name: string
           proteins: number
           serving_size?: number
@@ -183,6 +185,7 @@ export type Database = {
           fats?: number
           food_category?: string
           id?: string
+          ingredients?: Json | null
           name?: string
           proteins?: number
           serving_size?: number

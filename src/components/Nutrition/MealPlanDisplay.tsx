@@ -63,7 +63,6 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
         .eq('user_id', user.id)
         .single();
 
-      // If no preferences exist yet, create them
       if (error && error.code === 'PGRST116') {
         const { data: newPreferences, error: insertError } = await supabase
           .from('user_nutrition_preferences')
@@ -80,7 +79,6 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
         throw error;
       }
 
-      // Update existing preferences
       if (preferences) {
         const excludedFoods = preferences.excluded_foods || [];
         const updatedExcludedFoods = [...new Set([...excludedFoods, food.name])];
@@ -124,10 +122,17 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
                     className="flex items-center justify-between p-2 rounded bg-muted/50"
                   >
                     <div>
-                      <p>{food.name}</p>
+                      <p className="font-medium">{food.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {food.quantity} {food.unit} - {food.calories} kcal
+                        {food.calories} kcal | {food.proteins}g protéines
                       </p>
+                      {food.quantities && food.quantities.length > 0 && (
+                        <div className="mt-1 text-sm text-muted-foreground">
+                          {food.quantities.map((q, idx) => (
+                            <p key={idx}>{q.item}: {q.amount}</p>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-2">
                       {food.alternatives && food.alternatives.length > 0 && (
