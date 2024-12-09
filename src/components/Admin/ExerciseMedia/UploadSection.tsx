@@ -1,13 +1,5 @@
 import { UploadForm } from "../UploadForm";
-import { AdminExercise } from "../types/exercise";
-
-interface UploadSectionProps {
-  showImageUpload: boolean;
-  showVideoUpload: boolean;
-  exercise: AdminExercise;
-  onUpload: () => void;
-  selectedFile: File | null;
-}
+import { UploadSectionProps } from "../types/media";
 
 export const UploadSection = ({
   showImageUpload,

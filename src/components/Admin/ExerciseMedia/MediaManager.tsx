@@ -4,14 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MediaSection } from "../MediaSection";
 import { MediaPreview } from "../MediaPreview";
 import { MediaButtons } from "../MediaButtons";
-import { AdminExercise } from "../types/exercise";
-import { ExerciseMedia } from "@/types/exercise-media";
-
-interface MediaManagerProps {
-  exercise: AdminExercise;
-  media: ExerciseMedia[];
-  onUpload: () => void;
-}
+import { MediaManagerProps } from "../types/media";
 
 export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) => {
   const [showPreview, setShowPreview] = useState(false);
@@ -29,20 +22,14 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
         .from('exercise-media')
         .remove([fileName]);
 
-      if (storageError) {
-        console.error('Error deleting file from storage:', storageError);
-        throw storageError;
-      }
+      if (storageError) throw storageError;
 
       const { error: dbError } = await supabase
         .from('exercise_media')
         .delete()
         .eq('media_url', url);
 
-      if (dbError) {
-        console.error('Error deleting media from database:', dbError);
-        throw dbError;
-      }
+      if (dbError) throw dbError;
 
       toast({
         title: "Média supprimé",
@@ -55,37 +42,6 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
       toast({
         title: "Erreur",
         description: "Impossible de supprimer le média",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handlePublish = async () => {
-    console.log("Opening preview dialog");
-    setShowPreview(true);
-  };
-
-  const handleConfirmPublish = async () => {
-    try {
-      console.log("Publishing exercise:", exercise.id);
-      const { error } = await supabase
-        .from('exercises')
-        .update({ is_published: true })
-        .eq('id', exercise.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Publication réussie",
-        description: "L'exercice a été publié avec succès",
-      });
-
-      setShowPreview(false);
-    } catch (error) {
-      console.error('Error publishing exercise:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de publier l'exercice",
         variant: "destructive",
       });
     }
@@ -110,7 +66,7 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
         <MediaButtons
           onImageClick={() => {}}
           onVideoClick={() => {}}
-          onPublish={handlePublish}
+          onPublish={() => setShowPreview(true)}
           hasMedia={hasMedia}
         />
       </div>
@@ -132,7 +88,7 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
       <MediaPreview
         isOpen={showPreview}
         onClose={() => setShowPreview(false)}
-        onConfirm={handleConfirmPublish}
+        onConfirm={() => {}}
         mediaUrls={allMediaUrls}
         exerciseName={exercise.name}
       />
