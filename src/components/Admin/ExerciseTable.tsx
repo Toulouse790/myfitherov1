@@ -71,12 +71,10 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
         hasActiveFilter={false}
         showPublishButton={!isPublished}
       />
-      <div className="flex justify-between items-center">
-        <SearchBar 
-          value={searchQuery}
-          onChange={setSearchQuery}
-        />
-      </div>
+      <SearchBar 
+        value={searchQuery}
+        onChange={setSearchQuery}
+      />
       <Card className="p-6">
         <div className="space-y-4">
           {filteredExercises.map((exercise) => (
