@@ -1,74 +1,133 @@
-import { Card } from "@/components/ui/card";
 import { useState } from "react";
-import { ExerciseMedia } from "@/types/exercise-media";
-import { MediaButtons } from "./MediaButtons";
-import { ExerciseHeader } from "./ExerciseHeader";
-import { UploadSection } from "./ExerciseMedia/UploadSection";
-import { MediaManager } from "./ExerciseMedia/MediaManager";
-import { AdminExercise } from "./types/exercise";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Image, Video } from "lucide-react";
+import { DifficultyBadges } from "./DifficultyBadges";
+import { UploadForm } from "./UploadForm";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseRowProps {
-  exercise: AdminExercise;
-  onUpload: () => void;
-  selectedFile: File | null;
-  media?: ExerciseMedia[];
-  selectedDifficulties: string[];
-  onDifficultyChange?: (difficulty: string) => void;
+  exercise: {
+    id: string;
+    name: string;
+    muscle_group: string;
+    difficulty: string[];
+    exercise_media?: {
+      media_type: string;
+      media_url: string;
+    }[];
+  };
+  onUpdate: () => void;
 }
 
-export const ExerciseRow = ({ 
-  exercise, 
-  onUpload,
-  selectedFile,
-  media = [],
-  selectedDifficulties,
-  onDifficultyChange
-}: ExerciseRowProps) => {
+export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
+  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(exercise.difficulty || []);
+  const { toast } = useToast();
 
-  const handleImageClick = () => {
-    setShowImageUpload(!showImageUpload);
-    setShowVideoUpload(false);
-  };
+  const handleDifficultyChange = async (difficulty: string) => {
+    const newDifficulties = selectedDifficulties.includes(difficulty)
+      ? selectedDifficulties.filter(d => d !== difficulty)
+      : [...selectedDifficulties, difficulty];
 
-  const handleVideoClick = () => {
-    setShowVideoUpload(!showVideoUpload);
-    setShowImageUpload(false);
+    try {
+      const { error } = await supabase
+        .from('exercises')
+        .update({ difficulty: newDifficulties })
+        .eq('id', exercise.id);
+
+      if (error) throw error;
+
+      setSelectedDifficulties(newDifficulties);
+      toast({
+        title: "Succès",
+        description: "Difficulté mise à jour",
+      });
+    } catch (error) {
+      console.error('Error updating difficulty:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour la difficulté",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
-    <Card className="mb-4 p-4">
-      <div className="flex flex-col space-y-4">
+    <Card className="p-4">
+      <div className="space-y-4">
         <div className="flex items-start justify-between">
-          <ExerciseHeader
-            name={exercise.name}
-            muscleGroup={exercise.muscle_group}
-            difficulties={exercise.difficulty}
-            selectedDifficulties={selectedDifficulties}
-            onDifficultyChange={onDifficultyChange}
-          />
-          <MediaButtons
-            onImageClick={handleImageClick}
-            onVideoClick={handleVideoClick}
-            onPublish={() => {}}
-            hasMedia={media.length > 0}
-          />
+          <div>
+            <h3 className="text-lg font-semibold">{exercise.name}</h3>
+            <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
+            <DifficultyBadges
+              difficulties={["beginner", "intermediate", "advanced"]}
+              selectedDifficulties={selectedDifficulties}
+              onDifficultyChange={handleDifficultyChange}
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+              onClick={() => {
+                setShowImageUpload(!showImageUpload);
+                setShowVideoUpload(false);
+              }}
+            >
+              <Image className="mr-2 h-4 w-4" />
+              Image
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-purple-500 hover:bg-purple-600 text-white"
+              onClick={() => {
+                setShowVideoUpload(!showVideoUpload);
+                setShowImageUpload(false);
+              }}
+            >
+              <Video className="mr-2 h-4 w-4" />
+              Vidéo
+            </Button>
+          </div>
         </div>
 
-        <UploadSection
-          showImageUpload={showImageUpload}
-          showVideoUpload={showVideoUpload}
-          exercise={exercise}
-          onUpload={onUpload}
-          selectedFile={selectedFile}
-        />
+        {(showImageUpload || showVideoUpload) && (
+          <UploadForm
+            exerciseId={exercise.id}
+            exerciseName={exercise.name}
+            type={showImageUpload ? "image" : "video"}
+            onSuccess={() => {
+              setShowImageUpload(false);
+              setShowVideoUpload(false);
+              onUpdate();
+            }}
+          />
+        )}
 
-        <MediaManager
-          exercise={exercise}
-          media={media}
-          onUpload={onUpload}
-        />
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          {exercise.exercise_media?.map((media, index) => (
+            <div key={index} className="relative aspect-video rounded-lg overflow-hidden">
+              {media.media_type === "image" ? (
+                <img
+                  src={media.media_url}
+                  alt={exercise.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <video
+                  src={media.media_url}
+                  controls
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </Card>
   );

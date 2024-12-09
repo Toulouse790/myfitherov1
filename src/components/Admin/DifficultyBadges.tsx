@@ -17,11 +17,9 @@ export const DifficultyBadges = ({
   onDifficultyChange,
   selectedDifficulties,
 }: DifficultyBadgesProps) => {
-  const difficultyLevels = ["beginner", "intermediate", "advanced"];
-
   return (
     <div className="flex gap-2 flex-wrap flex-1">
-      {difficultyLevels.map((difficulty) => (
+      {difficulties.map((difficulty) => (
         <Badge
           key={difficulty}
           variant={selectedDifficulties.includes(difficulty) ? "default" : "outline"}
