@@ -585,6 +585,8 @@ export type Database = {
           excluded_foods: string[] | null
           id: string
           intolerances: string[] | null
+          meal_validation_notifications: boolean | null
+          meal_validation_times: Json | null
           updated_at: string
           user_id: string | null
         }
@@ -594,6 +596,8 @@ export type Database = {
           excluded_foods?: string[] | null
           id?: string
           intolerances?: string[] | null
+          meal_validation_notifications?: boolean | null
+          meal_validation_times?: Json | null
           updated_at?: string
           user_id?: string | null
         }
@@ -603,6 +607,8 @@ export type Database = {
           excluded_foods?: string[] | null
           id?: string
           intolerances?: string[] | null
+          meal_validation_notifications?: boolean | null
+          meal_validation_times?: Json | null
           updated_at?: string
           user_id?: string | null
         }
