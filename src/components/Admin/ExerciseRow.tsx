@@ -1,13 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { ExerciseMedia } from "@/types/exercise-media";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { MediaButtons } from "./MediaButtons";
 import { ExerciseHeader } from "./ExerciseHeader";
-import { MediaSection } from "./MediaSection";
-import { UploadForm } from "./UploadForm";
-import { MediaPreview } from "./MediaPreview";
+import { UploadSection } from "./ExerciseMedia/UploadSection";
+import { MediaManager } from "./ExerciseMedia/MediaManager";
 
 interface ExerciseRowProps {
   exercise: {
@@ -34,8 +31,6 @@ export const ExerciseRow = ({
 }: ExerciseRowProps) => {
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const { toast } = useToast();
 
   const handleImageClick = () => {
     setShowImageUpload(!showImageUpload);
@@ -46,97 +41,6 @@ export const ExerciseRow = ({
     setShowVideoUpload(!showVideoUpload);
     setShowImageUpload(false);
   };
-
-  const handleDelete = async (url: string, exerciseName: string, type: 'image' | 'video') => {
-    try {
-      console.log("Deleting media:", { url, exerciseName, type });
-      
-      // Supprime d'abord le fichier du stockage
-      const urlParts = url.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      
-      const { error: storageError } = await supabase
-        .storage
-        .from('exercise-media')
-        .remove([fileName]);
-
-      if (storageError) {
-        console.error('Error deleting file from storage:', storageError);
-        throw storageError;
-      }
-
-      // Puis supprime l'entrée de la base de données
-      const { error: dbError } = await supabase
-        .from('exercise_media')
-        .delete()
-        .eq('media_url', url);
-
-      if (dbError) {
-        console.error('Error deleting media from database:', dbError);
-        throw dbError;
-      }
-
-      toast({
-        title: "Média supprimé",
-        description: `${type === 'image' ? 'L\'image' : 'La vidéo'} a été supprimée`,
-      });
-
-      onUpload();
-    } catch (error) {
-      console.error('Error deleting media:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le média",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handlePublish = async () => {
-    console.log("Opening preview dialog");
-    setShowPreview(true);
-  };
-
-  const handleConfirmPublish = async () => {
-    try {
-      console.log("Publishing exercise:", exercise.id);
-      const { error } = await supabase
-        .from('exercises')
-        .update({ is_published: true })
-        .eq('id', exercise.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Publication réussie",
-        description: "L'exercice a été publié avec succès",
-      });
-
-      setShowPreview(false);
-    } catch (error) {
-      console.error('Error publishing exercise:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de publier l'exercice",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const imageMediaUrls = media
-    ?.filter(m => m.media_type === 'image')
-    .map(m => ({ type: 'image' as const, url: m.media_url })) || [];
-
-  const videoMediaUrls = media
-    ?.filter(m => m.media_type === 'video')
-    .map(m => ({ type: 'video' as const, url: m.media_url })) || [];
-
-  const allMediaUrls = [...imageMediaUrls, ...videoMediaUrls];
-  const hasMedia = allMediaUrls.length > 0;
-
-  console.log("Media URLs:", allMediaUrls);
-  console.log("Has media:", hasMedia);
-  console.log("Show preview state:", showPreview);
 
   return (
     <Card className="mb-4 p-4">
@@ -152,45 +56,23 @@ export const ExerciseRow = ({
           <MediaButtons
             onImageClick={handleImageClick}
             onVideoClick={handleVideoClick}
-            onPublish={handlePublish}
-            hasMedia={hasMedia}
+            onPublish={() => {}}
+            hasMedia={media.length > 0}
           />
         </div>
 
-        {(showImageUpload || showVideoUpload) && (
-          <div className="mt-4">
-            <UploadForm
-              exercise_id={exercise.id}
-              exercise_name={exercise.name}
-              type={showImageUpload ? "image" : "video"}
-              onUpload={onUpload}
-              selectedFile={selectedFile}
-              difficulty={exercise.difficulty}
-              location={exercise.location || []}
-            />
-          </div>
-        )}
-
-        <MediaSection
-          mediaUrls={imageMediaUrls.map(m => m.url)}
-          onDelete={handleDelete}
-          exerciseName={exercise.name}
-          type="image"
+        <UploadSection
+          showImageUpload={showImageUpload}
+          showVideoUpload={showVideoUpload}
+          exercise={exercise}
+          onUpload={onUpload}
+          selectedFile={selectedFile}
         />
 
-        <MediaSection
-          mediaUrls={videoMediaUrls.map(m => m.url)}
-          onDelete={handleDelete}
-          exerciseName={exercise.name}
-          type="video"
-        />
-
-        <MediaPreview
-          isOpen={showPreview}
-          onClose={() => setShowPreview(false)}
-          onConfirm={handleConfirmPublish}
-          mediaUrls={allMediaUrls}
-          exerciseName={exercise.name}
+        <MediaManager
+          exercise={exercise}
+          media={media}
+          onUpload={onUpload}
         />
       </div>
     </Card>
