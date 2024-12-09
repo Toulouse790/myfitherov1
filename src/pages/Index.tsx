@@ -12,11 +12,20 @@ const Index = () => {
   const { toast } = useToast();
   const [showDialog, setShowDialog] = useState(false);
 
+  const handleCreateWorkout = () => {
+    console.log("Redirection vers la création de séance");
+    toast({
+      title: "Création de séance",
+      description: "Vous allez pouvoir composer votre séance d'entraînement",
+    });
+    navigate("/workouts");
+  };
+
   const mainActions = [
     {
       icon: <Plus className="w-6 h-6" />,
       label: "Créer ma séance",
-      onClick: () => navigate("/workouts")
+      onClick: handleCreateWorkout
     },
     {
       icon: <Activity className="w-6 h-6" />,
