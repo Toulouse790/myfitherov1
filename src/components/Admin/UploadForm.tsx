@@ -20,24 +20,27 @@ export const UploadForm = ({
   exercise_name,
   onUpload,
   difficulty,
-  location
+  location,
+  selectedFile: initialSelectedFile
 }: UploadFormProps) => {
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(initialSelectedFile);
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
-  console.log("UploadForm - Props received:", {
+  console.log("UploadForm - Initial props:", {
     exercise_id,
     exercise_name,
     type,
     difficulty,
-    location
+    location,
+    file
   });
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
+      console.log("File selected:", selectedFile.name);
     }
   };
 
@@ -54,26 +57,40 @@ export const UploadForm = ({
     setIsUploading(true);
 
     try {
+      console.log("Starting upload process with data:", {
+        file_name: file.name,
+        exercise_id,
+        exercise_name,
+        type,
+        difficulty,
+        location
+      });
+
       const fileExt = file.name.split('.').pop();
       const filePath = `${crypto.randomUUID()}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from('exercise-media')
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error("Storage upload error:", uploadError);
+        throw uploadError;
+      }
+
+      console.log("File uploaded successfully:", uploadData);
 
       const { data: { publicUrl } } = supabase.storage
         .from('exercise-media')
         .getPublicUrl(filePath);
 
-      console.log("Uploading media with data:", {
+      console.log("Inserting media record with data:", {
         exercise_id,
         exercise_name,
         media_type: type,
         media_url: publicUrl,
-        difficulty,
-        location
+        difficulty: Array.isArray(difficulty) ? difficulty : [],
+        location: Array.isArray(location) ? location : []
       });
 
       const { error: dbError } = await supabase
@@ -83,11 +100,14 @@ export const UploadForm = ({
           exercise_name,
           media_type: type,
           media_url: publicUrl,
-          difficulty,
-          location
+          difficulty: Array.isArray(difficulty) ? difficulty : [],
+          location: Array.isArray(location) ? location : []
         });
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error("Database insert error:", dbError);
+        throw dbError;
+      }
 
       toast({
         title: "Succès",
