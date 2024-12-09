@@ -51,15 +51,29 @@ export const ExerciseRow = ({
     try {
       console.log("Deleting media:", { url, exerciseName, type });
       
-      const { error } = await supabase
+      // Supprime d'abord le fichier du stockage
+      const urlParts = url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      
+      const { error: storageError } = await supabase
+        .storage
+        .from('exercise-media')
+        .remove([fileName]);
+
+      if (storageError) {
+        console.error('Error deleting file from storage:', storageError);
+        throw storageError;
+      }
+
+      // Puis supprime l'entrée de la base de données
+      const { error: dbError } = await supabase
         .from('exercise_media')
         .delete()
-        .eq('media_url', url)
-        .eq('exercise_id', exercise.id);
+        .eq('media_url', url);
 
-      if (error) {
-        console.error('Error deleting media:', error);
-        throw error;
+      if (dbError) {
+        console.error('Error deleting media from database:', dbError);
+        throw dbError;
       }
 
       toast({
