@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Lock } from "lucide-react";
+import { Lock, CalendarCheck, Dumbbell, Apple } from "lucide-react";
 import { MealPlanForm } from "./MealPlan/MealPlanForm";
 import { GeneratedPlanDisplay } from "./MealPlan/GeneratedPlanDisplay";
 import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
@@ -146,20 +146,38 @@ export const MealPlanGenerator = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <CardTitle>Générer un plan alimentaire personnalisé</CardTitle>
-            <Lock className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">(Premium - Mode démo)</span>
+            <CardTitle className="flex items-center gap-2">
+              <CalendarCheck className="h-5 w-5 text-primary" />
+              Générer un plan alimentaire personnalisé
+            </CardTitle>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4" />
+              <span>(Premium - Mode démo)</span>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <MealPlanForm
-            durationDays={durationDays}
-            maxBudget={maxBudget}
-            isGenerating={isGenerating}
-            onDurationChange={setDurationDays}
-            onBudgetChange={setMaxBudget}
-            onGenerate={handleGenerateMealPlan}
-          />
+          <div className="grid gap-6">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Dumbbell className="h-4 w-4" />
+                <span>Adapté à vos objectifs</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Apple className="h-4 w-4" />
+                <span>Basé sur vos préférences</span>
+              </div>
+            </div>
+
+            <MealPlanForm
+              durationDays={durationDays}
+              maxBudget={maxBudget}
+              isGenerating={isGenerating}
+              onDurationChange={setDurationDays}
+              onBudgetChange={setMaxBudget}
+              onGenerate={handleGenerateMealPlan}
+            />
+          </div>
         </CardContent>
       </Card>
 
