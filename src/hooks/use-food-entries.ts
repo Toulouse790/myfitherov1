@@ -47,7 +47,9 @@ export const useFoodEntries = () => {
       setEntries(mappedEntries);
       return mappedEntries;
     },
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Force refetch every time
+    cacheTime: 0  // Don't cache the data
   });
 
   const entriesByMealType = entries.reduce((acc, entry) => {

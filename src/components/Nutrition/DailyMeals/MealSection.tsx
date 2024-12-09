@@ -67,6 +67,7 @@ export const MealSection = ({
           throw error;
         }
 
+        // Rafraîchir les données immédiatement après l'insertion
         await refetchEntries();
 
         toast({
