@@ -35,6 +35,13 @@ export const ExerciseRow = ({
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const { toast } = useToast();
 
+  console.log("ExerciseRow - Exercise data:", {
+    id: exercise.id,
+    name: exercise.name,
+    difficulty: exercise.difficulty,
+    location: exercise.location
+  });
+
   const handleImageClick = () => {
     setShowImageUpload(!showImageUpload);
     setShowVideoUpload(false);

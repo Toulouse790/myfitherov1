@@ -26,6 +26,14 @@ export const UploadForm = ({
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
+  console.log("UploadForm - Props received:", {
+    exercise_id,
+    exercise_name,
+    type,
+    difficulty,
+    location
+  });
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
@@ -58,6 +66,15 @@ export const UploadForm = ({
       const { data: { publicUrl } } = supabase.storage
         .from('exercise-media')
         .getPublicUrl(filePath);
+
+      console.log("Uploading media with data:", {
+        exercise_id,
+        exercise_name,
+        media_type: type,
+        media_url: publicUrl,
+        difficulty,
+        location
+      });
 
       const { error: dbError } = await supabase
         .from('exercise_media')
