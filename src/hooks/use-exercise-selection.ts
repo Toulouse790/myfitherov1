@@ -40,7 +40,7 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
         if (muscleGroup) {
           const translatedGroup = translateMuscleGroup(muscleGroup);
           console.log('Filtering by muscle group:', translatedGroup);
-          query = query.eq('muscle_group', translatedGroup.toLowerCase());
+          query = query.ilike('muscle_group', translatedGroup.toLowerCase());
         }
 
         // Filtrer par niveau de difficulté
