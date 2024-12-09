@@ -36,8 +36,15 @@ export const BarChart = ({
     uniqueId: `${item[index]}-${idx}`
   }));
 
+  const chartConfig = Object.fromEntries(
+    categories.map((category, i) => [
+      category,
+      { color: colors[i % colors.length] },
+    ])
+  );
+
   return (
-    <ChartContainer className={className}>
+    <ChartContainer config={chartConfig}>
       <ResponsiveContainer width="100%" height={300}>
         <RechartsBarChart data={dataWithIds} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
           <XAxis
@@ -67,8 +74,7 @@ export const BarChart = ({
               fill={colors[i % colors.length]}
               radius={[4, 4, 0, 0]}
               isAnimationActive={showAnimation}
-              // Utiliser l'ID unique comme clé pour chaque rectangle
-              id={(entry) => `rectangle-${entry.uniqueId}-${i}`}
+              name={category}
             />
           ))}
         </RechartsBarChart>
