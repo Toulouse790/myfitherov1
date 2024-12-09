@@ -62,37 +62,52 @@ export const generateMealDistribution = (
     };
   }
 
-  // Plan par défaut si aucun plan n'est trouvé
+  // Distribution des calories selon les repas
+  const breakfastRatio = 0.25; // 25% des calories pour le petit-déjeuner
+  const lunchRatio = 0.35;     // 35% des calories pour le déjeuner
+  const dinnerRatio = 0.30;    // 30% des calories pour le dîner
+  const snackRatio = 0.10;     // 10% des calories pour les collations (5% chacune si deux collations)
+
+  // Distribution des protéines selon les repas (similaire aux calories)
+  const breakfastProteinRatio = 0.25;
+  const lunchProteinRatio = 0.35;
+  const dinnerProteinRatio = 0.30;
+  const snackProteinRatio = 0.10;
+
   let mealDistribution: Record<string, MealDistribution> = {
     breakfast: {
-      calories: Math.round(dailyTargets.calories * 0.25),
-      proteins: Math.round(dailyTargets.proteins * 0.25),
+      calories: Math.round(dailyTargets.calories * breakfastRatio),
+      proteins: Math.round(dailyTargets.proteins * breakfastProteinRatio),
       name: "Petit-déjeuner équilibré"
     },
     lunch: {
-      calories: Math.round(dailyTargets.calories * 0.35),
-      proteins: Math.round(dailyTargets.proteins * 0.35),
+      calories: Math.round(dailyTargets.calories * lunchRatio),
+      proteins: Math.round(dailyTargets.proteins * lunchProteinRatio),
       name: "Déjeuner nutritif"
     },
     dinner: {
-      calories: Math.round(dailyTargets.calories * 0.30),
-      proteins: Math.round(dailyTargets.proteins * 0.30),
+      calories: Math.round(dailyTargets.calories * dinnerRatio),
+      proteins: Math.round(dailyTargets.proteins * dinnerProteinRatio),
       name: "Dîner léger"
     }
   };
 
+  // Ajuster les collations en fonction des préférences utilisateur
+  const individualSnackRatio = snackRatio / (hasMorningSnack && hasAfternoonSnack ? 2 : 1);
+  const individualSnackProteinRatio = snackProteinRatio / (hasMorningSnack && hasAfternoonSnack ? 2 : 1);
+
   if (hasMorningSnack) {
     mealDistribution.morning_snack = {
-      calories: Math.round(dailyTargets.calories * 0.05),
-      proteins: Math.round(dailyTargets.proteins * 0.05),
+      calories: Math.round(dailyTargets.calories * individualSnackRatio),
+      proteins: Math.round(dailyTargets.proteins * individualSnackProteinRatio),
       name: "Collation matinale"
     };
   }
 
   if (hasAfternoonSnack) {
     mealDistribution.afternoon_snack = {
-      calories: Math.round(dailyTargets.calories * 0.05),
-      proteins: Math.round(dailyTargets.proteins * 0.05),
+      calories: Math.round(dailyTargets.calories * individualSnackRatio),
+      proteins: Math.round(dailyTargets.proteins * individualSnackProteinRatio),
       name: "Collation"
     };
   }
