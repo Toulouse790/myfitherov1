@@ -34,8 +34,11 @@ export const useExerciseSelection = (muscleGroup?: string) => {
 
         if (muscleGroup) {
           const englishGroup = reverseTranslateMuscleGroup(muscleGroup);
-          console.log('English muscle group:', englishGroup);
-          query = query.eq('muscle_group', englishGroup.toLowerCase());
+          console.log('Muscle group translation:', {
+            original: muscleGroup,
+            english: englishGroup
+          });
+          query = query.eq('muscle_group', 'pectoraux');
         }
 
         const { data, error } = await query;
