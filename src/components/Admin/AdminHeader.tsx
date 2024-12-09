@@ -2,44 +2,27 @@ import { useExerciseManagement } from "@/hooks/use-exercise-management";
 import { AdminHeaderActions } from "./AdminHeaderActions";
 
 interface AdminHeaderProps {
-  isEditing: boolean;
-  onEditingChange: (editing: boolean) => void;
   selectedExercises: string[];
   onExercisesDeleted: () => void;
-  onFilterClick?: () => void;
-  onFilterReset?: () => void;
-  hasActiveFilter?: boolean;
 }
 
 export const AdminHeader = ({ 
-  isEditing, 
-  onEditingChange,
   selectedExercises,
   onExercisesDeleted,
-  onFilterClick,
-  onFilterReset,
-  hasActiveFilter
 }: AdminHeaderProps) => {
-  const { handlePublish, handleDelete, handleExport } = useExerciseManagement(onExercisesDeleted);
+  const { handlePublish } = useExerciseManagement(onExercisesDeleted);
 
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-3xl font-bold">Tableau de bord administrateur</h1>
+        <h1 className="text-3xl font-bold">Gestion des exercices</h1>
         <p className="text-muted-foreground">
-          Gérez votre application et suivez vos statistiques
+          Publiez les exercices pour les rendre disponibles aux utilisateurs
         </p>
       </div>
       <AdminHeaderActions
-        isEditing={isEditing}
-        onEditingChange={onEditingChange}
-        onPublish={() => handlePublish(selectedExercises)}
-        onDelete={() => handleDelete(selectedExercises)}
-        onExport={handleExport}
         selectedExercises={selectedExercises}
-        onFilterClick={onFilterClick}
-        onFilterReset={onFilterReset}
-        hasActiveFilter={hasActiveFilter}
+        onPublish={() => handlePublish(selectedExercises)}
       />
     </div>
   );

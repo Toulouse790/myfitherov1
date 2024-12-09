@@ -6,10 +6,15 @@ import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 interface Exercise {
   id: string;
   name: string;
-  media_url?: string | null;
+  muscle_group: string;
+  difficulty: string[];
+  exercise_media?: {
+    media_url: string;
+    media_type: string;
+  }[];
 }
 
-export const useExerciseSelection = (muscleGroup?: string) => {
+export const useExerciseSelection = (muscleGroup?: string, userLevel: string = 'beginner') => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
@@ -23,49 +28,33 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         let query = supabase
           .from('exercises')
           .select(`
-            id,
-            name,
-            muscle_group,
+            *,
             exercise_media (
               media_url,
               media_type
             )
           `)
-          .eq('is_published', true); // Ne récupérer que les exercices publiés
+          .eq('is_published', true);
 
         if (muscleGroup) {
           const translatedGroup = translateMuscleGroup(muscleGroup);
-          console.log('Muscle group translation:', {
-            original: muscleGroup,
-            translated: translatedGroup
-          });
+          console.log('Filtering by muscle group:', translatedGroup);
           query = query.eq('muscle_group', translatedGroup.toLowerCase());
         }
+
+        // Filtrer par niveau de difficulté
+        query = query.contains('difficulty', [userLevel]);
 
         const { data, error } = await query;
 
         if (error) {
-          console.error('Error fetching exercises:', error);
           throw error;
         }
 
-        console.log('Raw exercises data:', data);
-
-        if (!data) {
-          setExercises([]);
-          return;
-        }
-
-        const exercisesWithMedia = data.map(exercise => ({
-          id: exercise.id,
-          name: exercise.name,
-          media_url: exercise.exercise_media?.[0]?.media_url || null
-        }));
-
-        console.log('Processed exercises:', exercisesWithMedia);
-        setExercises(exercisesWithMedia);
+        console.log('Fetched exercises:', data);
+        setExercises(data || []);
       } catch (error) {
-        console.error('Error in fetchExercises:', error);
+        console.error('Error fetching exercises:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les exercices",
@@ -77,7 +66,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
     };
 
     fetchExercises();
-  }, [muscleGroup, toast]);
+  }, [muscleGroup, userLevel, toast]);
 
   return { exercises, isLoading };
 };
