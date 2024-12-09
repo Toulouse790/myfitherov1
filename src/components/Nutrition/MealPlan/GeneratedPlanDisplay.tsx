@@ -2,7 +2,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DayMeals } from "./DayMeals";
 import { defaultMeals } from "@/data/meals/mealPlanGenerator";
-import { MealPlan } from "@/types/nutrition";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -37,7 +36,6 @@ export const GeneratedPlanDisplay = ({
           return null;
         }
 
-        // Retourner le premier plan s'il existe, sinon null
         return data && data.length > 0 ? data[0] : null;
       } catch (error) {
         console.error('Error in meal plan query:', error);
@@ -89,6 +87,10 @@ export const GeneratedPlanDisplay = ({
     "Vendredi", "Samedi", "Dimanche"
   ];
 
+  // Convert single day plan to array if necessary
+  const planArray = Array.isArray(planToDisplay) ? planToDisplay : [planToDisplay];
+  console.log("Plan array:", planArray);
+
   return (
     <Card>
       <CardHeader>
@@ -103,7 +105,7 @@ export const GeneratedPlanDisplay = ({
               </TabsTrigger>
             ))}
           </TabsList>
-          {planToDisplay.map((day: any, index: number) => {
+          {planArray.map((day: any, index: number) => {
             const dayIndex = index % 7;
             const workoutTime = getWorkoutTime(dayIndex);
             const isTrainingDay = Boolean(workoutTime);
