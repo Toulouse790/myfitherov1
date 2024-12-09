@@ -29,7 +29,7 @@ export const lunchMeals: Meal[] = [
       { item: "Pois chiches", amount: "100g" },
       { item: "Légumes variés", amount: "200g" }
     ],
-    notes: "Mariner le tofu 30min avant la cuisson. Rôtir les légumes 25min au four à 180°C"
+    notes: "Couper les légumes et la patate douce en cubes. Les disposer sur une plaque avec les pois chiches, assaisonner et rôtir 25min au four à 180°C. Pendant ce temps, couper le tofu en cubes, l'assaisonner et le griller à la poêle 3-4min de chaque côté jusqu'à ce qu'il soit doré."
   }
 ];
 
