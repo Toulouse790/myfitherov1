@@ -15,7 +15,6 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const { toast } = useToast();
   const [exercises, setExercises] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
 
@@ -31,12 +30,16 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
         .select(`
           *,
           exercise_media (*)
-        `)
-        .eq('is_published', isPublished);
+        `);
+
+      // Si nous sommes sur l'onglet "à publier", on récupère tous les exercices
+      // Si nous sommes sur l'onglet "publiés", on ne récupère que les exercices publiés
+      if (isPublished) {
+        query = query.eq('is_published', true);
+      }
 
       if (selectedMuscleGroup) {
         const englishMuscleGroup = reverseTranslateMuscleGroup(selectedMuscleGroup);
-        console.log('Filtering by muscle group:', englishMuscleGroup);
         query = query.eq('muscle_group', englishMuscleGroup.toLowerCase());
       }
 
@@ -44,7 +47,6 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
 
       if (error) throw error;
 
-      console.log('Fetched exercises:', data);
       setExercises(data || []);
     } catch (error) {
       console.error('Error fetching exercises:', error);
@@ -63,7 +65,6 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   };
 
   const handleFilterApply = (muscleGroup: string) => {
-    console.log('Applying filter for muscle group:', muscleGroup);
     setSelectedMuscleGroup(muscleGroup);
     setShowFilterDialog(false);
     toast({
@@ -91,7 +92,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   return (
     <div className="space-y-4">
       <AdminHeader 
-        selectedExercises={selectedExercises}
+        selectedExercises={[]}
         onExercisesDeleted={fetchExercises}
         onFilterClick={handleFilterClick}
         onFilterReset={handleFilterReset}
