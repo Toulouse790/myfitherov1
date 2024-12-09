@@ -55,7 +55,10 @@ export const MediaList = ({
               muscle_group: exercise.muscleGroup,
               difficulty: Array.isArray(exercise.difficulty) 
                 ? exercise.difficulty 
-                : [exercise.difficulty]
+                : [exercise.difficulty],
+              location: Array.isArray(exercise.location) 
+                ? exercise.location 
+                : []
             }}
             onUpload={onUpload}
             selectedFile={selectedFile}
