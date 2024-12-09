@@ -9,11 +9,17 @@ export const useFoodEntries = () => {
   const { refetch } = useQuery({
     queryKey: ['food-journal-today'],
     queryFn: async () => {
+      console.log("Fetching food entries...");
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log("No user found, skipping fetch");
+        return;
+      }
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+
+      console.log("Fetching entries for date:", today.toISOString());
 
       const { data, error } = await supabase
         .from('food_journal_entries')
@@ -27,6 +33,8 @@ export const useFoodEntries = () => {
         return;
       }
 
+      console.log("Fetched entries:", data);
+
       const mappedEntries: FoodEntry[] = (data || []).map(entry => ({
         id: entry.id,
         name: entry.name,
@@ -35,6 +43,7 @@ export const useFoodEntries = () => {
         mealType: entry.meal_type
       }));
 
+      console.log("Mapped entries:", mappedEntries);
       setEntries(mappedEntries);
       return mappedEntries;
     },
@@ -48,6 +57,8 @@ export const useFoodEntries = () => {
     acc[entry.mealType].push(entry);
     return acc;
   }, {} as Record<string, FoodEntry[]>);
+
+  console.log("Entries by meal type:", entriesByMealType);
 
   return {
     entries,
