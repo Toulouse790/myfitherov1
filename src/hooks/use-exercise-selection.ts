@@ -8,6 +8,7 @@ interface Exercise {
   name: string;
   muscle_group: string;
   difficulty: string[];
+  is_published?: boolean;
   exercise_media?: {
     media_url: string;
     media_type: string;
