@@ -6,15 +6,22 @@ export const NutritionGoals = () => {
   const { dailyTargets } = useDailyTargets();
   const { entriesByMealType } = useFoodEntries();
 
-  // Calculer les totaux réalisés des entrées du journal
+  // Calculate totals from today's entries only
   const actualTotals = Object.values(entriesByMealType).flat().reduce(
-    (acc, entry) => ({
-      calories: acc.calories + (entry.calories || 0),
-      proteins: acc.proteins + (entry.proteins || 0),
-    }),
+    (acc, entry) => {
+      // Ensure we're working with numbers
+      const calories = typeof entry.calories === 'number' ? entry.calories : 0;
+      const proteins = typeof entry.proteins === 'number' ? entry.proteins : 0;
+
+      return {
+        calories: acc.calories + calories,
+        proteins: acc.proteins + proteins,
+      };
+    },
     { calories: 0, proteins: 0 }
   );
 
+  console.log("Daily targets:", dailyTargets);
   console.log("Actual totals:", actualTotals);
   console.log("Entries by meal type:", entriesByMealType);
 
