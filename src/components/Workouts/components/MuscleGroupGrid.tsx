@@ -20,6 +20,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   useEffect(() => {
     const fetchExerciseCounts = async () => {
       try {
+        console.log('Fetching exercise counts...');
         const { data, error } = await supabase
           .from('exercises')
           .select('muscle_group, id')
@@ -32,13 +33,14 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
         
         // Compter les exercices pour chaque groupe musculaire
         if (data) {
+          console.log('Raw exercise data:', data);
           data.forEach(exercise => {
             const muscleGroup = exercise.muscle_group.toLowerCase();
             counts[muscleGroup] = (counts[muscleGroup] || 0) + 1;
           });
         }
 
-        console.log('Exercise counts:', counts);
+        console.log('Exercise counts by muscle group:', counts);
         setExerciseCounts(counts);
       } catch (error) {
         console.error('Error fetching exercise counts:', error);
@@ -58,13 +60,17 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   );
 
   const handleClick = (muscleId: string) => {
+    console.log('Muscle group clicked:', muscleId);
     setSelectedId(muscleId);
     onMuscleGroupClick(muscleId);
   };
 
   const getMuscleGroupCount = (muscleId: string): number => {
     const englishName = reverseTranslateMuscleGroup(muscleGroups.find(group => group.id === muscleId)?.name || '');
-    return exerciseCounts[englishName.toLowerCase()] || 0;
+    console.log(`Getting count for muscle group: ${muscleId}, English name: ${englishName}`);
+    const count = exerciseCounts[englishName.toLowerCase()] || 0;
+    console.log(`Count for ${englishName}: ${count}`);
+    return count;
   };
 
   return (
