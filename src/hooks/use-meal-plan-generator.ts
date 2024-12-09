@@ -42,6 +42,50 @@ export const useMealPlanGenerator = () => {
     fetchUserData();
   }, []);
 
+  const saveMealPlan = async (plan: any[]) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + parseInt(durationDays) - 1);
+
+      console.log("Saving meal plan:", {
+        user_id: user.id,
+        start_date: startDate.toISOString(),
+        end_date: endDate.toISOString(),
+        plan_data: plan
+      });
+
+      const { error } = await supabase
+        .from('meal_plans')
+        .insert({
+          user_id: user.id,
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+          plan_data: plan
+        });
+
+      if (error) {
+        console.error('Error saving meal plan:', error);
+        throw error;
+      }
+
+      toast({
+        title: "Plan sauvegardé",
+        description: "Votre plan alimentaire a été sauvegardé avec succès",
+      });
+    } catch (error) {
+      console.error('Error in saveMealPlan:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder le plan alimentaire",
+        variant: "destructive",
+      });
+    }
+  };
+
   const generateMealPlan = useCallback(async () => {
     setIsGenerating(true);
     try {
@@ -93,12 +137,18 @@ export const useMealPlanGenerator = () => {
       }));
 
       console.log("Formatted plan:", formattedPlan);
+      
+      // Sauvegarder le plan dans la base de données
+      await saveMealPlan(formattedPlan);
+      
       setGeneratedPlan(formattedPlan);
       
       toast({
         title: "Plan généré",
         description: "Votre plan alimentaire a été généré avec succès",
       });
+
+      return formattedPlan;
     } catch (error) {
       console.error('Error generating meal plan:', error);
       toast({
