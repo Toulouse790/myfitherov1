@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Edit, Upload, Trash2 } from "lucide-react";
+import { Edit, Upload, Trash2, Filter } from "lucide-react";
 
 interface AdminHeaderActionsProps {
   isEditing: boolean;
@@ -8,6 +8,7 @@ interface AdminHeaderActionsProps {
   onDelete: () => void;
   onExport: () => void;
   selectedExercises: string[];
+  onFilterClick?: () => void;
 }
 
 export const AdminHeaderActions = ({
@@ -17,9 +18,19 @@ export const AdminHeaderActions = ({
   onDelete,
   onExport,
   selectedExercises,
+  onFilterClick,
 }: AdminHeaderActionsProps) => {
   return (
     <div className="flex gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onFilterClick}
+        className="gap-2"
+      >
+        <Filter className="w-4 h-4" />
+        Filtrer
+      </Button>
       <Button
         variant={isEditing ? "secondary" : "outline"}
         onClick={() => onEditingChange(!isEditing)}
