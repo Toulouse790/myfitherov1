@@ -193,25 +193,31 @@ export type Database = {
       exercise_media: {
         Row: {
           created_at: string
+          difficulty: string[] | null
           exercise_id: string | null
           exercise_name: string
           id: string
+          location: string[] | null
           media_type: string
           media_url: string
         }
         Insert: {
           created_at?: string
+          difficulty?: string[] | null
           exercise_id?: string | null
           exercise_name: string
           id?: string
+          location?: string[] | null
           media_type: string
           media_url: string
         }
         Update: {
           created_at?: string
+          difficulty?: string[] | null
           exercise_id?: string | null
           exercise_name?: string
           id?: string
+          location?: string[] | null
           media_type?: string
           media_url?: string
         }
