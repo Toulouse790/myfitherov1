@@ -17,7 +17,7 @@ export const ExerciseTable = () => {
 
   useEffect(() => {
     fetchExercises();
-  }, [selectedMuscleGroup]); // Add selectedMuscleGroup as dependency
+  }, [selectedMuscleGroup]);
 
   const fetchExercises = async () => {
     try {
@@ -27,11 +27,11 @@ export const ExerciseTable = () => {
         .select(`
           *,
           exercise_media (*)
-        `)
-        .order('muscle_group', { ascending: true });
+        `);
 
       if (selectedMuscleGroup) {
-        query = query.eq('muscle_group', selectedMuscleGroup);
+        console.log('Filtering by muscle group:', selectedMuscleGroup);
+        query = query.eq('muscle_group', selectedMuscleGroup.toLowerCase());
       }
 
       const { data, error } = await query;
@@ -57,6 +57,7 @@ export const ExerciseTable = () => {
   };
 
   const handleFilterApply = (muscleGroup: string) => {
+    console.log('Applying filter for muscle group:', muscleGroup);
     setSelectedMuscleGroup(muscleGroup);
     setShowFilterDialog(false);
     toast({
