@@ -108,24 +108,46 @@ export const useDailyTargets = () => {
   const generateMealPlan = (dailyTargets: { calories: number, proteins: number }) => {
     console.log("Generating meal plan with targets:", dailyTargets);
     
-    const mealDistribution = {
-      breakfast: { calories: 0.25, proteins: 0.25, name: "Petit-déjeuner équilibré" },
-      lunch: { calories: 0.35, proteins: 0.35, name: "Déjeuner nutritif" },
-      dinner: { calories: 0.3, proteins: 0.3, name: "Dîner léger" },
-      snack: { calories: 0.1, proteins: 0.1, name: "Collation saine" }
+    const hasMorningSnack = userPreferences?.questionnaire?.has_morning_snack ?? true;
+    const hasAfternoonSnack = userPreferences?.questionnaire?.has_afternoon_snack ?? true;
+    
+    let mealDistribution: Record<string, { calories: number, proteins: number, name: string }> = {
+      breakfast: { 
+        calories: Math.round(dailyTargets.calories * 0.25), 
+        proteins: Math.round(dailyTargets.proteins * 0.25),
+        name: "Petit-déjeuner équilibré" 
+      },
+      lunch: { 
+        calories: Math.round(dailyTargets.calories * 0.35), 
+        proteins: Math.round(dailyTargets.proteins * 0.35),
+        name: "Déjeuner nutritif" 
+      },
+      dinner: { 
+        calories: Math.round(dailyTargets.calories * 0.30), 
+        proteins: Math.round(dailyTargets.proteins * 0.30),
+        name: "Dîner léger" 
+      }
     };
 
-    const plan = Object.entries(mealDistribution).reduce((acc, [meal, ratios]) => {
-      acc[meal] = {
-        calories: Math.round(dailyTargets.calories * ratios.calories),
-        proteins: Math.round(dailyTargets.proteins * ratios.proteins),
-        name: ratios.name
+    // Ajouter les collations selon les préférences
+    if (hasMorningSnack) {
+      mealDistribution.morning_snack = {
+        calories: Math.round(dailyTargets.calories * 0.05),
+        proteins: Math.round(dailyTargets.proteins * 0.05),
+        name: "Collation matinale"
       };
-      return acc;
-    }, {} as Record<string, { calories: number, proteins: number, name: string }>);
+    }
 
-    console.log("Generated meal plan:", plan);
-    return plan;
+    if (hasAfternoonSnack) {
+      mealDistribution.afternoon_snack = {
+        calories: Math.round(dailyTargets.calories * 0.05),
+        proteins: Math.round(dailyTargets.proteins * 0.05),
+        name: "Collation"
+      };
+    }
+
+    console.log("Generated meal plan:", mealDistribution);
+    return mealDistribution;
   };
 
   const dailyTargets = calculateDailyTargets(userPreferences);
