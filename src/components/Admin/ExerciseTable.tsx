@@ -6,6 +6,7 @@ import { ExerciseRow } from "./ExerciseRow";
 import { AdminHeader } from "./AdminHeader";
 import { FilterDialog } from "./FilterDialog";
 import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { SearchBar } from "@/components/Workouts/components/SearchBar";
 
 interface ExerciseTableProps {
   isPublished: boolean;
@@ -17,6 +18,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchExercises();
@@ -81,6 +83,10 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
     });
   };
 
+  const filteredExercises = exercises.filter((exercise) =>
+    exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -99,6 +105,12 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
         hasActiveFilter={!!selectedMuscleGroup}
         showPublishButton={!isPublished}
       />
+      <div className="flex justify-between items-center">
+        <SearchBar 
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+      </div>
       <FilterDialog 
         open={showFilterDialog} 
         onOpenChange={setShowFilterDialog}
@@ -106,7 +118,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       />
       <Card className="p-6">
         <div className="space-y-4">
-          {exercises.map((exercise) => (
+          {filteredExercises.map((exercise) => (
             <ExerciseRow 
               key={exercise.id}
               exercise={exercise}
