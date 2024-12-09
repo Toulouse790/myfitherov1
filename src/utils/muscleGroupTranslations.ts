@@ -3,7 +3,7 @@ const muscleGroupTranslations: { [key: string]: string } = {
   biceps: 'biceps',
   triceps: 'triceps',
   shoulders: 'épaules',
-  pectoraux: 'pectoraux',
+  chest: 'pectoraux',
   abs: 'abdominaux',
   legs: 'jambes',
   calves: 'mollets',
@@ -15,11 +15,12 @@ const reverseMuscleGroupTranslations: { [key: string]: string } = {
   biceps: 'biceps',
   triceps: 'triceps',
   épaules: 'shoulders',
-  pectoraux: 'pectoraux',
+  pectoraux: 'chest',
   abdominaux: 'abs',
   jambes: 'legs',
   mollets: 'calves',
-  'avant-bras': 'forearms'
+  'avant-bras': 'forearms',
+  poitrine: 'chest'  // Ajout de cette traduction pour gérer les deux termes
 };
 
 export const translateMuscleGroup = (muscleGroup: string): string => {
