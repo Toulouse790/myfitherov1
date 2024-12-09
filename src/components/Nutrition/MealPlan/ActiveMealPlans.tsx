@@ -18,7 +18,8 @@ export const ActiveMealPlans = () => {
         .select('*')
         .eq('user_id', user.id)
         .gte('end_date', today.toISOString())
-        .order('start_date', { ascending: true });
+        .order('start_date', { ascending: false }) // Plus récent en premier
+        .limit(1); // Limiter à 1 plan actif
 
       if (error) {
         console.error('Error fetching meal plans:', error);
