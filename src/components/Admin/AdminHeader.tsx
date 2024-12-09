@@ -7,6 +7,8 @@ interface AdminHeaderProps {
   selectedExercises: string[];
   onExercisesDeleted: () => void;
   onFilterClick?: () => void;
+  onFilterReset?: () => void;
+  hasActiveFilter?: boolean;
 }
 
 export const AdminHeader = ({ 
@@ -14,7 +16,9 @@ export const AdminHeader = ({
   onEditingChange,
   selectedExercises,
   onExercisesDeleted,
-  onFilterClick
+  onFilterClick,
+  onFilterReset,
+  hasActiveFilter
 }: AdminHeaderProps) => {
   const { handlePublish, handleDelete, handleExport } = useExerciseManagement(onExercisesDeleted);
 
@@ -34,6 +38,8 @@ export const AdminHeader = ({
         onExport={handleExport}
         selectedExercises={selectedExercises}
         onFilterClick={onFilterClick}
+        onFilterReset={onFilterReset}
+        hasActiveFilter={hasActiveFilter}
       />
     </div>
   );
