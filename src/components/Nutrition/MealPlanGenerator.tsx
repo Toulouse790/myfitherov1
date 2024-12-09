@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Lock, CalendarCheck, Dumbbell, Apple } from "lucide-react";
 import { MealPlanForm } from "./MealPlan/MealPlanForm";
 import { GeneratedPlanDisplay } from "./MealPlan/GeneratedPlanDisplay";
+import { ActiveMealPlans } from "./MealPlan/ActiveMealPlans";
 import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -143,6 +144,8 @@ export const MealPlanGenerator = () => {
 
   return (
     <div className="space-y-4">
+      <ActiveMealPlans />
+
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
