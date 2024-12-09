@@ -6,6 +6,8 @@ interface FoodDetailsProps {
 }
 
 export const FoodDetails = ({ food }: FoodDetailsProps) => {
+  const preparation = getPreparationInstructions(food.name);
+  
   return (
     <div>
       <p className="font-medium">{food.name}</p>
@@ -19,9 +21,11 @@ export const FoodDetails = ({ food }: FoodDetailsProps) => {
           ))}
         </div>
       )}
-      <p className="mt-2 text-sm text-muted-foreground italic">
-        💡 {getPreparationInstructions(food.name)}
-      </p>
+      {preparation !== "Aucune instruction disponible" && (
+        <p className="mt-2 text-sm text-muted-foreground italic">
+          💡 {preparation}
+        </p>
+      )}
     </div>
   );
 };
