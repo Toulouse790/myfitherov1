@@ -7,6 +7,7 @@ import { MediaButtons } from "./MediaButtons";
 import { ExerciseHeader } from "./ExerciseHeader";
 import { MediaSection } from "./MediaSection";
 import { UploadForm } from "./UploadForm";
+import { MediaPreview } from "./MediaPreview";
 
 interface ExerciseRowProps {
   exercise: {
@@ -33,14 +34,8 @@ export const ExerciseRow = ({
 }: ExerciseRowProps) => {
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const { toast } = useToast();
-
-  console.log("ExerciseRow - Exercise data:", {
-    id: exercise.id,
-    name: exercise.name,
-    difficulty: exercise.difficulty,
-    location: exercise.location
-  });
 
   const handleImageClick = () => {
     setShowImageUpload(!showImageUpload);
@@ -79,24 +74,44 @@ export const ExerciseRow = ({
     }
   };
 
-  const handlePublish = () => {
-    toast({
-      title: "Publication en cours",
-      description: "Les médias sont en cours de publication...",
-    });
+  const handlePublish = async () => {
+    setShowPreview(true);
+  };
+
+  const handleConfirmPublish = async () => {
+    try {
+      const { error } = await supabase
+        .from('exercises')
+        .update({ is_published: true })
+        .eq('id', exercise.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Publication réussie",
+        description: "L'exercice a été publié avec succès",
+      });
+
+      setShowPreview(false);
+    } catch (error) {
+      console.error('Error publishing exercise:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de publier l'exercice",
+        variant: "destructive",
+      });
+    }
   };
 
   const imageMediaUrls = media
     ?.filter(m => m.media_type === 'image')
-    .map(m => m.media_url) || [];
+    .map(m => ({ type: 'image' as const, url: m.media_url })) || [];
 
   const videoMediaUrls = media
     ?.filter(m => m.media_type === 'video')
-    .map(m => m.media_url) || [];
+    .map(m => ({ type: 'video' as const, url: m.media_url })) || [];
 
-  // Ensure location and difficulty are always arrays
-  const normalizedLocation = Array.isArray(exercise.location) ? exercise.location : [];
-  const normalizedDifficulty = Array.isArray(exercise.difficulty) ? exercise.difficulty : [];
+  const allMediaUrls = [...imageMediaUrls, ...videoMediaUrls];
 
   return (
     <Card className="mb-4 p-4">
@@ -105,7 +120,7 @@ export const ExerciseRow = ({
           <ExerciseHeader
             name={exercise.name}
             muscleGroup={exercise.muscle_group}
-            difficulties={normalizedDifficulty}
+            difficulties={exercise.difficulty}
             selectedDifficulties={selectedDifficulties}
             onDifficultyChange={onDifficultyChange}
           />
@@ -113,6 +128,7 @@ export const ExerciseRow = ({
             onImageClick={handleImageClick}
             onVideoClick={handleVideoClick}
             onPublish={handlePublish}
+            hasMedia={allMediaUrls.length > 0}
           />
         </div>
 
@@ -124,24 +140,32 @@ export const ExerciseRow = ({
               type={showImageUpload ? "image" : "video"}
               onUpload={onUpload}
               selectedFile={selectedFile}
-              difficulty={normalizedDifficulty}
-              location={normalizedLocation}
+              difficulty={exercise.difficulty}
+              location={exercise.location || []}
             />
           </div>
         )}
 
         <MediaSection
-          mediaUrls={imageMediaUrls}
+          mediaUrls={imageMediaUrls.map(m => m.url)}
           onDelete={handleDelete}
           exerciseName={exercise.name}
           type="image"
         />
 
         <MediaSection
-          mediaUrls={videoMediaUrls}
+          mediaUrls={videoMediaUrls.map(m => m.url)}
           onDelete={handleDelete}
           exerciseName={exercise.name}
           type="video"
+        />
+
+        <MediaPreview
+          isOpen={showPreview}
+          onClose={() => setShowPreview(false)}
+          onConfirm={handleConfirmPublish}
+          mediaUrls={allMediaUrls}
+          exerciseName={exercise.name}
         />
       </div>
     </Card>

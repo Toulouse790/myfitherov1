@@ -5,9 +5,10 @@ interface MediaButtonsProps {
   onImageClick: () => void;
   onVideoClick: () => void;
   onPublish: () => void;
+  hasMedia: boolean;
 }
 
-export const MediaButtons = ({ onImageClick, onVideoClick, onPublish }: MediaButtonsProps) => {
+export const MediaButtons = ({ onImageClick, onVideoClick, onPublish, hasMedia }: MediaButtonsProps) => {
   return (
     <div className="flex items-center space-x-2">
       <Button
@@ -33,6 +34,7 @@ export const MediaButtons = ({ onImageClick, onVideoClick, onPublish }: MediaBut
         size="sm"
         className="bg-green-600 hover:bg-green-700"
         onClick={onPublish}
+        disabled={!hasMedia}
       >
         <Upload className="mr-2 h-4 w-4" />
         Publier
