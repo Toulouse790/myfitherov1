@@ -4,7 +4,7 @@ export const chestExercises: Exercise[] = [
   {
     id: "chest-1",
     name: "Développé couché",
-    muscleGroup: "poitrine",
+    muscleGroup: "pectoraux",
     description: "Un exercice fondamental pour le développement des pectoraux",
     difficulty: "intermediate",
     equipment: "Banc, Barre, Poids",
@@ -37,54 +37,89 @@ export const chestExercises: Exercise[] = [
   },
   {
     id: "chest-2",
-    name: "Pompes classiques",
-    muscleGroup: "poitrine",
-    description: "Exercice de base pour les pectoraux sans matériel",
-    difficulty: "beginner",
-    equipment: "Aucun",
-    location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
-    instructions: [
-      "Position de planche, mains largeur d'épaules",
-      "Descendez le corps en gardant une ligne droite",
-      "Poussez pour revenir à la position initiale"
-    ],
-    targetMuscles: ["pectoraux", "deltoïdes", "triceps"],
-    objectives: ["muscle_gain", "endurance"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 5
-    },
-    reps: {
-      beginner: 8,
-      intermediate: 12,
-      advanced: 15
-    },
-    restTime: {
-      beginner: 90,
-      intermediate: 60,
-      advanced: 45
-    },
-    calories: 100
-  },
-  {
-    id: "chest-3",
-    name: "Développé incliné haltères",
-    muscleGroup: "poitrine",
+    name: "Développé incliné",
+    muscleGroup: "pectoraux",
     description: "Cible la partie supérieure des pectoraux",
     difficulty: "intermediate",
-    equipment: "Banc incliné, Haltères",
+    equipment: "Banc incliné, Barre, Poids",
     location: ["gym"],
     image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
-      "Position assise sur banc incliné",
-      "Haltères au niveau des épaules",
-      "Poussez vers le haut",
-      "Contrôlez la descente"
+      "Réglez le banc à 30-45 degrés",
+      "Saisissez la barre avec une prise légèrement plus large que les épaules",
+      "Descendez la barre vers le haut de la poitrine",
+      "Poussez la barre vers le haut"
     ],
-    targetMuscles: ["pectoraux supérieurs", "deltoïdes", "triceps"],
-    objectives: ["muscle_gain"],
+    targetMuscles: ["pectoraux supérieurs", "deltoïdes antérieurs", "triceps"],
+    objectives: ["muscle_gain", "maintenance"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 8,
+      intermediate: 10,
+      advanced: 12
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 60
+    },
+    calories: 140
+  },
+  {
+    id: "chest-3",
+    name: "Développé décliné",
+    muscleGroup: "pectoraux",
+    description: "Cible la partie inférieure des pectoraux",
+    difficulty: "intermediate",
+    equipment: "Banc décliné, Barre, Poids",
+    location: ["gym"],
+    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    instructions: [
+      "Installez-vous sur un banc décliné",
+      "Saisissez la barre avec une prise légèrement plus large que les épaules",
+      "Descendez la barre vers le bas de la poitrine",
+      "Poussez la barre vers le haut"
+    ],
+    targetMuscles: ["pectoraux inférieurs", "deltoïdes antérieurs", "triceps"],
+    objectives: ["muscle_gain", "maintenance"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 8,
+      intermediate: 10,
+      advanced: 12
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 60
+    },
+    calories: 140
+  },
+  {
+    id: "chest-4",
+    name: "Écarté avec haltères",
+    muscleGroup: "pectoraux",
+    description: "Excellent exercice d'isolation pour les pectoraux",
+    difficulty: "intermediate",
+    equipment: "Banc, Haltères",
+    location: ["gym"],
+    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    instructions: [
+      "Allongez-vous sur un banc plat",
+      "Tenez les haltères au-dessus de la poitrine",
+      "Écartez les bras en gardant un léger pli aux coudes",
+      "Ramenez les haltères en position initiale"
+    ],
+    targetMuscles: ["pectoraux", "deltoïdes antérieurs"],
+    objectives: ["muscle_gain", "maintenance"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -92,40 +127,6 @@ export const chestExercises: Exercise[] = [
     },
     reps: {
       beginner: 10,
-      intermediate: 12,
-      advanced: 15
-    },
-    restTime: {
-      beginner: 90,
-      intermediate: 75,
-      advanced: 60
-    },
-    calories: 130
-  },
-  {
-    id: "chest-4",
-    name: "Pompes diamant",
-    muscleGroup: "poitrine",
-    description: "Variante des pompes ciblant les triceps et le centre des pectoraux",
-    difficulty: "intermediate",
-    equipment: "Aucun",
-    location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
-    instructions: [
-      "Mains en forme de diamant sous la poitrine",
-      "Gardez les coudes près du corps",
-      "Descendez en contrôlant le mouvement",
-      "Poussez pour remonter"
-    ],
-    targetMuscles: ["pectoraux", "triceps"],
-    objectives: ["muscle_gain", "endurance"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 4
-    },
-    reps: {
-      beginner: 8,
       intermediate: 12,
       advanced: 15
     },
@@ -138,36 +139,70 @@ export const chestExercises: Exercise[] = [
   },
   {
     id: "chest-5",
-    name: "Écarté avec haltères",
-    muscleGroup: "poitrine",
-    description: "Isolation des pectoraux",
-    difficulty: "intermediate",
-    equipment: "Banc, Haltères",
-    location: ["gym"],
+    name: "Pompes",
+    muscleGroup: "pectoraux",
+    description: "Exercice de base pour les pectoraux sans matériel",
+    difficulty: "beginner",
+    equipment: "Aucun",
+    location: ["home", "gym", "outdoor"],
     image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
-      "Allongé sur un banc plat",
-      "Bras tendus à la verticale",
-      "Descendez les bras sur les côtés",
-      "Remontez en contractant les pectoraux"
+      "Position de planche, mains largeur d'épaules",
+      "Gardez le corps aligné",
+      "Descendez la poitrine près du sol",
+      "Poussez pour revenir en position initiale"
     ],
-    targetMuscles: ["pectoraux"],
-    objectives: ["muscle_gain"],
+    targetMuscles: ["pectoraux", "deltoïdes antérieurs", "triceps"],
+    objectives: ["muscle_gain", "endurance"],
     sets: {
       beginner: 3,
       intermediate: 4,
-      advanced: 4
+      advanced: 5
     },
     reps: {
-      beginner: 10,
-      intermediate: 12,
-      advanced: 15
+      beginner: 8,
+      intermediate: 15,
+      advanced: 20
     },
     restTime: {
       beginner: 90,
       intermediate: 60,
       advanced: 45
     },
-    calories: 120
+    calories: 80
+  },
+  {
+    id: "chest-6",
+    name: "Dips",
+    muscleGroup: "pectoraux",
+    description: "Excellent exercice composé pour les pectoraux et triceps",
+    difficulty: "intermediate",
+    equipment: "Barres parallèles",
+    location: ["gym"],
+    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    instructions: [
+      "Saisissez les barres parallèles",
+      "Penchez-vous légèrement vers l'avant",
+      "Descendez en fléchissant les coudes",
+      "Poussez pour revenir en position initiale"
+    ],
+    targetMuscles: ["pectoraux inférieurs", "triceps", "deltoïdes antérieurs"],
+    objectives: ["muscle_gain", "strength"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 4
+    },
+    reps: {
+      beginner: 6,
+      intermediate: 10,
+      advanced: 15
+    },
+    restTime: {
+      beginner: 120,
+      intermediate: 90,
+      advanced: 60
+    },
+    calories: 100
   }
 ];
