@@ -19,8 +19,7 @@ const reverseMuscleGroupTranslations: { [key: string]: string } = {
   abdominaux: 'abs',
   jambes: 'legs',
   mollets: 'calves',
-  'avant-bras': 'forearms',
-  pectoraux: 'chest'  // Traduction standard pour les pectoraux
+  'avant-bras': 'forearms'
 };
 
 export const translateMuscleGroup = (muscleGroup: string): string => {
