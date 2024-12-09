@@ -49,18 +49,22 @@ export const ExerciseRow = ({
 
   const handleDelete = async (url: string, exerciseName: string, type: 'image' | 'video') => {
     try {
+      console.log("Deleting media:", { url, exerciseName, type });
+      
       const { error } = await supabase
         .from('exercise_media')
         .delete()
         .eq('media_url', url)
-        .eq('exercise_name', exerciseName)
-        .eq('media_type', type);
+        .eq('exercise_id', exercise.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting media:', error);
+        throw error;
+      }
 
       toast({
         title: "Média supprimé",
-        description: `Le ${type === 'image' ? 'l\'image' : 'la vidéo'} a été supprimé(e)`,
+        description: `${type === 'image' ? 'L\'image' : 'La vidéo'} a été supprimée`,
       });
 
       onUpload();
