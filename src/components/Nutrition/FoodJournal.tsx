@@ -4,6 +4,7 @@ import { BarcodeScanner } from "./BarcodeScanner";
 import { useFoodJournal } from "@/hooks/use-food-journal";
 import { Clock8 } from "lucide-react";
 import { FoodSearch } from "./FoodSearch";
+import { useAiTraining } from "@/hooks/use-ai-training";
 
 interface FoodJournalProps {
   userAllergies?: string[];
@@ -28,6 +29,8 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
     handleDeleteEntry,
   } = useFoodJournal();
 
+  const { logTrainingData } = useAiTraining();
+
   // Get current hour to determine greeting and meal suggestion
   const currentHour = new Date().getHours();
   let greeting = "";
@@ -49,6 +52,31 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
     greeting = "Bonsoir !";
     mealSuggestion = "Un petit encas avant de dormir ?";
   }
+
+  const handleAddEntryWithLogging = async (mealType: string) => {
+    await logTrainingData(
+      "food_entry_add",
+      {
+        food: newFood,
+        calories,
+        proteins,
+        mealType,
+        hour: currentHour
+      }
+    );
+    handleAddEntry(mealType);
+  };
+
+  const handleDeleteEntryWithLogging = async (id: string) => {
+    const entryToDelete = entries.find(entry => entry.id === id);
+    await logTrainingData(
+      "food_entry_delete",
+      {
+        entry: entryToDelete
+      }
+    );
+    handleDeleteEntry(id);
+  };
 
   return (
     <Card className="bg-white">
@@ -73,12 +101,12 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
           onCaloriesChange={setCalories}
           onProteinsChange={setProteins}
           onWeightChange={setWeight}
-          onAddEntry={handleAddEntry}
+          onAddEntry={handleAddEntryWithLogging}
         />
         
         <FoodSearch
           entries={entries}
-          onDeleteEntry={handleDeleteEntry}
+          onDeleteEntry={handleDeleteEntryWithLogging}
         />
 
         <BarcodeScanner onScan={handleBarcodeScan} />
