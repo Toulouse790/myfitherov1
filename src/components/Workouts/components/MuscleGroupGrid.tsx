@@ -26,11 +26,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
           .select(`
             id,
             name,
-            muscle_group,
-            exercise_media (
-              media_url,
-              media_type
-            )
+            muscle_group
           `)
           .eq('is_published', true);
 
@@ -73,8 +69,9 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   };
 
   const getMuscleGroupCount = (muscleId: string): number => {
-    const count = exerciseCounts[muscleId.toLowerCase()] || 0;
-    console.log(`Getting count for muscle group: ${muscleId}, count: ${count}`);
+    const translatedGroup = translateMuscleGroup(muscleId);
+    console.log(`Getting count for muscle group: ${muscleId}, translated: ${translatedGroup}`);
+    const count = exerciseCounts[translatedGroup.toLowerCase()] || 0;
     return count;
   };
 
