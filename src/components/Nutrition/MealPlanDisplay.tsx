@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -132,6 +132,11 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
                             <p key={idx}>{q.item}: {q.amount}</p>
                           ))}
                         </div>
+                      )}
+                      {food.preparation && (
+                        <p className="mt-2 text-sm text-muted-foreground italic">
+                          💡 {food.preparation}
+                        </p>
                       )}
                     </div>
                     <div className="flex gap-2">

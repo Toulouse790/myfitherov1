@@ -14,6 +14,7 @@ export interface Meal {
   totalCalories: number;
   totalProteins: number;
   preparation?: string;
+  quantities?: Array<{ item: string; amount: string; }>;
 }
 
 export interface FoodItem {
@@ -24,6 +25,8 @@ export interface FoodItem {
   quantity: number;
   unit: string;
   alternatives?: FoodItem[];
+  preparation?: string;
+  quantities?: Array<{ item: string; amount: string; }>;
 }
 
 export interface NutritionPreferences {
