@@ -8,4 +8,5 @@ export interface Exercise {
   location: string[];
   image?: string;
   instructions: string[];
+  is_published?: boolean;
 }
