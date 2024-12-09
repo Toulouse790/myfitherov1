@@ -13,11 +13,11 @@ export const muscleGroupTranslations: { [key: string]: string } = {
 export const reverseMuscleGroupTranslations: { [key: string]: string } = {
   pectoraux: 'chest',
   dos: 'back',
+  jambes: 'legs',
   épaules: 'shoulders',
   biceps: 'biceps',
   triceps: 'triceps',
   abdominaux: 'abs',
-  jambes: 'legs',
   mollets: 'calves',
   'avant-bras': 'forearms'
 };
