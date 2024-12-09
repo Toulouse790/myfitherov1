@@ -1,7 +1,48 @@
 import { Card } from "@/components/ui/card";
 import { Users, DollarSign, Activity, TrendingUp } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const AdminStats = () => {
+  const { data: usersCount } = useQuery({
+    queryKey: ['admin-users-count'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+      return count || 0;
+    }
+  });
+
+  const { data: workoutCount } = useQuery({
+    queryKey: ['admin-workouts-count'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('workout_sessions')
+        .select('*', { count: 'exact', head: true });
+      return count || 0;
+    }
+  });
+
+  const { data: retentionRate } = useQuery({
+    queryKey: ['admin-retention-rate'],
+    queryFn: async () => {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { count: activeUsers } = await supabase
+        .from('workout_sessions')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', thirtyDaysAgo.toISOString());
+
+      const { count: totalUsers } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      return totalUsers ? Math.round((activeUsers || 0) / totalUsers * 100) : 0;
+    }
+  });
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card className="p-6">
@@ -11,7 +52,7 @@ export const AdminStats = () => {
             <p className="text-sm font-medium text-muted-foreground">
               Utilisateurs actifs
             </p>
-            <h3 className="text-2xl font-bold">2,350</h3>
+            <h3 className="text-2xl font-bold">{usersCount || 0}</h3>
           </div>
         </div>
       </Card>
@@ -23,7 +64,7 @@ export const AdminStats = () => {
             <p className="text-sm font-medium text-muted-foreground">
               Revenu mensuel
             </p>
-            <h3 className="text-2xl font-bold">4,250€</h3>
+            <h3 className="text-2xl font-bold">-</h3>
           </div>
         </div>
       </Card>
@@ -35,7 +76,7 @@ export const AdminStats = () => {
             <p className="text-sm font-medium text-muted-foreground">
               Séances créées
             </p>
-            <h3 className="text-2xl font-bold">1,240</h3>
+            <h3 className="text-2xl font-bold">{workoutCount || 0}</h3>
           </div>
         </div>
       </Card>
@@ -47,7 +88,7 @@ export const AdminStats = () => {
             <p className="text-sm font-medium text-muted-foreground">
               Taux de rétention
             </p>
-            <h3 className="text-2xl font-bold">85%</h3>
+            <h3 className="text-2xl font-bold">{retentionRate || 0}%</h3>
           </div>
         </div>
       </Card>
