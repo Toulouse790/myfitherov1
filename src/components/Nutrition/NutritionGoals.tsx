@@ -9,8 +9,8 @@ export const NutritionGoals = () => {
   // Calculer les totaux réalisés des entrées du journal
   const actualTotals = Object.values(entriesByMealType).flat().reduce(
     (acc, entry) => ({
-      calories: acc.calories + (entry.calories || 0),
-      proteins: acc.proteins + (entry.proteins || 0),
+      calories: acc.calories + entry.calories,
+      proteins: acc.proteins + entry.proteins,
     }),
     { calories: 0, proteins: 0 }
   );
@@ -53,9 +53,7 @@ export const NutritionGoals = () => {
             <div className="flex justify-between text-xs sm:text-sm">
               <span>{goal.name}</span>
               <div className="text-muted-foreground space-x-2">
-                <span className={goal.actual >= goal.target ? "text-green-500" : "text-blue-500"}>
-                  {goal.actual}
-                </span>
+                <span className="text-green-500">{goal.actual}</span>
                 <span>/</span>
                 <span>{goal.target} {goal.unit}</span>
               </div>
