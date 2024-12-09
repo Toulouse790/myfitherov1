@@ -49,7 +49,7 @@ export const useFoodEntries = () => {
     },
     refetchOnWindowFocus: true,
     staleTime: 0, // Force refetch every time
-    cacheTime: 0  // Don't cache the data
+    gcTime: 0  // Don't cache the data (previously cacheTime)
   });
 
   const entriesByMealType = entries.reduce((acc, entry) => {
