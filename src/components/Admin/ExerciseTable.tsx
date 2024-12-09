@@ -2,20 +2,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ExerciseTableContent } from "./ExerciseTableContent";
 import { AdminHeader } from "./AdminHeader";
-
-const locations = [
-  { id: "gym", name: "Salle" },
-  { id: "home", name: "Maison" },
-  { id: "outdoor", name: "Extérieur" }
-];
-
-const difficulties = [
-  { id: "beginner", name: "Débutant" },
-  { id: "intermediate", name: "Intermédiaire" },
-  { id: "advanced", name: "Avancé" }
-];
 
 export const ExerciseTable = () => {
   const { toast } = useToast();
@@ -52,100 +39,6 @@ export const ExerciseTable = () => {
     }
   };
 
-  const handleLocationChange = async (exerciseId: string, location: string, checked: boolean) => {
-    try {
-      const exercise = exercises.find(e => e.id === exerciseId);
-      if (!exercise) return;
-
-      const newLocations = checked 
-        ? [...(exercise.location || []), location]
-        : (exercise.location || []).filter((l: string) => l !== location);
-
-      console.log('Updating exercise locations:', {
-        exerciseId,
-        newLocations,
-        checked
-      });
-
-      const { error } = await supabase
-        .from('exercises')
-        .update({ location: newLocations })
-        .eq('id', exerciseId);
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-
-      setExercises(exercises.map(e => 
-        e.id === exerciseId ? { ...e, location: newLocations } : e
-      ));
-
-      toast({
-        title: "Mise à jour réussie",
-        description: "Les lieux d'entraînement ont été mis à jour",
-      });
-    } catch (error) {
-      console.error('Error updating exercise locations:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour les lieux d'entraînement",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleDifficultyChange = async (exerciseId: string, difficulty: string, checked: boolean) => {
-    try {
-      const exercise = exercises.find(e => e.id === exerciseId);
-      if (!exercise) return;
-
-      // Standardize difficulty values to English
-      const standardizedDifficulty = difficulty.toLowerCase();
-      
-      const newDifficulties = checked
-        ? [...(exercise.difficulty || []), standardizedDifficulty]
-        : (exercise.difficulty || []).filter((d: string) => d !== standardizedDifficulty);
-
-      console.log('Updating exercise difficulties:', {
-        exerciseId,
-        newDifficulties,
-        checked
-      });
-
-      const { error } = await supabase
-        .from('exercises')
-        .update({ difficulty: newDifficulties })
-        .eq('id', exerciseId);
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-
-      setExercises(exercises.map(e =>
-        e.id === exerciseId ? { ...e, difficulty: newDifficulties } : e
-      ));
-
-      toast({
-        title: "Mise à jour réussie",
-        description: "Les niveaux de difficulté ont été mis à jour",
-      });
-    } catch (error) {
-      console.error('Error updating exercise difficulties:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour les niveaux de difficulté",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleSelectionChange = (selectedIds: string[]) => {
-    setSelectedExercises(selectedIds);
-    console.log('Selected exercises:', selectedIds);
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -166,14 +59,26 @@ export const ExerciseTable = () => {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Liste des exercices ({exercises.length})</h3>
           <div className="overflow-x-auto">
-            <ExerciseTableContent
-              exercises={exercises}
-              locations={locations}
-              difficulties={difficulties}
-              onLocationChange={handleLocationChange}
-              onDifficultyChange={handleDifficultyChange}
-              onSelectionChange={handleSelectionChange}
-            />
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-2">Nom</th>
+                  <th className="text-left p-2">Groupe musculaire</th>
+                  <th className="text-left p-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {exercises.map((exercise) => (
+                  <tr key={exercise.id} className="border-b">
+                    <td className="p-2">{exercise.name}</td>
+                    <td className="p-2">{exercise.muscle_group}</td>
+                    <td className="p-2">
+                      {/* Actions buttons will be added here */}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </Card>
