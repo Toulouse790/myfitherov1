@@ -14,6 +14,7 @@ interface ExerciseRowProps {
     name: string;
     muscle_group: string;
     difficulty: string[];
+    location?: string[];
   };
   onUpload: () => void;
   selectedFile: File | null;
@@ -93,7 +94,7 @@ export const ExerciseRow = ({
           <ExerciseHeader
             name={exercise.name}
             muscleGroup={exercise.muscle_group}
-            difficulties={exercise.difficulty}
+            difficulties={exercise.difficulty || []}
             selectedDifficulties={selectedDifficulties}
             onDifficultyChange={onDifficultyChange}
           />
@@ -108,9 +109,12 @@ export const ExerciseRow = ({
           <div className="mt-4">
             <UploadForm
               exercise_id={exercise.id}
+              exercise_name={exercise.name}
               type={showImageUpload ? "image" : "video"}
               onUpload={onUpload}
               selectedFile={selectedFile}
+              difficulty={exercise.difficulty || []}
+              location={exercise.location || []}
             />
           </div>
         )}

@@ -6,12 +6,22 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface UploadFormProps {
   exercise_id: string;
+  exercise_name: string;
   type: "image" | "video";
   onUpload: () => void;
   selectedFile: File | null;
+  difficulty: string[];
+  location: string[];
 }
 
-export const UploadForm = ({ type, exercise_id, onUpload }: UploadFormProps) => {
+export const UploadForm = ({ 
+  type, 
+  exercise_id,
+  exercise_name,
+  onUpload,
+  difficulty,
+  location
+}: UploadFormProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
@@ -53,8 +63,11 @@ export const UploadForm = ({ type, exercise_id, onUpload }: UploadFormProps) => 
         .from('exercise_media')
         .insert({
           exercise_id,
+          exercise_name,
           media_type: type,
-          media_url: publicUrl
+          media_url: publicUrl,
+          difficulty,
+          location
         });
 
       if (dbError) throw dbError;
