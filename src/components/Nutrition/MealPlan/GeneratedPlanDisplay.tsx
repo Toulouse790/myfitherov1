@@ -111,23 +111,18 @@ export const GeneratedPlanDisplay = ({
             const formattedMeals = {
               breakfast: {
                 ...day.breakfast,
-                preparation: defaultMeals.breakfast.meal.notes
               },
               morning_snack: {
                 ...day.snack,
-                preparation: defaultMeals.morning_snack.meal.notes
               },
               lunch: {
                 ...day.lunch,
-                preparation: defaultMeals.lunch.meal.notes
               },
               afternoon_snack: {
                 ...day.snack,
-                preparation: defaultMeals.afternoon_snack.meal.notes
               },
               dinner: {
                 ...day.dinner,
-                preparation: defaultMeals.dinner.meal.notes
               }
             };
 

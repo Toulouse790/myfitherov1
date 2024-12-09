@@ -4,6 +4,7 @@ import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
 import { FoodEntry } from "@/types/food";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { getPreparationInstructions } from "../MealPlan/PreparationInstructions";
 
 interface MealSectionProps {
   type: string;
@@ -90,6 +91,9 @@ export const MealSection = ({
     }
   };
 
+  // Récupérer les instructions de préparation pour le repas généré
+  const preparation = generatedMeal ? getPreparationInstructions(generatedMeal.name) : null;
+
   return (
     <div className="mb-2">
       <Button
@@ -133,7 +137,7 @@ export const MealSection = ({
                 </div>
                 {entry.notes && (
                   <p className="mt-2 text-sm text-muted-foreground italic">
-                    💡 {entry.notes}
+                    {entry.notes}
                   </p>
                 )}
               </div>
@@ -157,9 +161,9 @@ export const MealSection = ({
                     </ul>
                   </div>
                 )}
-                {generatedMeal.notes && (
+                {preparation && preparation !== "Aucune instruction disponible" && (
                   <p className="mt-2 text-sm text-muted-foreground italic">
-                    💡 {generatedMeal.notes}
+                    💡 {preparation}
                   </p>
                 )}
               </div>
