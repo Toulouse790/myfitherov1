@@ -60,6 +60,51 @@ export const dinnerMeals: Meal[] = [
       { item: "Fromage râpé", amount: "30g" }
     ],
     notes: "Battre les œufs. Faire revenir les champignons et les épinards dans une poêle. Verser les œufs battus, ajouter le fromage. Cuire à feu moyen jusqu'à ce que l'omelette soit dorée."
+  },
+  {
+    name: "Tofu croustillant aux légumes sautés",
+    calories: 440,
+    proteins: 32,
+    carbs: 35,
+    fats: 20,
+    estimated_cost: 6,
+    quantities: [
+      { item: "Tofu ferme", amount: "200g" },
+      { item: "Brocolis", amount: "200g" },
+      { item: "Carottes", amount: "150g" },
+      { item: "Sauce soja", amount: "2 càs" }
+    ],
+    notes: "Presser le tofu 30min pour retirer l'excès d'eau. Couper en cubes, enrober de fécule. Faire revenir jusqu'à ce qu'il soit doré. Cuire les légumes dans le wok."
+  },
+  {
+    name: "Cabillaud et purée de patates douces",
+    calories: 420,
+    proteins: 35,
+    carbs: 45,
+    fats: 12,
+    estimated_cost: 9,
+    quantities: [
+      { item: "Filet de cabillaud", amount: "200g" },
+      { item: "Patates douces", amount: "300g" },
+      { item: "Épinards", amount: "150g" },
+      { item: "Lait végétal", amount: "100ml" }
+    ],
+    notes: "Cuire les patates douces à l'eau, les réduire en purée avec le lait. Cuire le poisson à la vapeur 8-10min. Faire revenir les épinards."
+  },
+  {
+    name: "Lentilles corail et légumes curry",
+    calories: 460,
+    proteins: 30,
+    carbs: 55,
+    fats: 15,
+    estimated_cost: 5,
+    quantities: [
+      { item: "Lentilles corail", amount: "150g" },
+      { item: "Lait de coco", amount: "200ml" },
+      { item: "Curry en poudre", amount: "2 càc" },
+      { item: "Légumes variés", amount: "300g" }
+    ],
+    notes: "Rincer les lentilles. Les cuire 15-20min avec le lait de coco et le curry. Ajouter les légumes en cours de cuisson. Assaisonner selon vos goûts."
   }
 ];
 
