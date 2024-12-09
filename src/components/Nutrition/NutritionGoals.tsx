@@ -9,9 +9,16 @@ export const NutritionGoals = () => {
   // Calculate totals from today's entries only
   const actualTotals = Object.values(entriesByMealType).flat().reduce(
     (acc, entry) => {
-      // Ensure we're working with numbers
-      const calories = typeof entry.calories === 'number' ? entry.calories : 0;
-      const proteins = typeof entry.proteins === 'number' ? entry.proteins : 0;
+      // Ensure we're working with numbers and not strings
+      const calories = Number(entry.calories) || 0;
+      const proteins = Number(entry.proteins) || 0;
+
+      console.log("Adding entry to totals:", {
+        name: entry.name,
+        calories,
+        proteins,
+        currentTotal: acc
+      });
 
       return {
         calories: acc.calories + calories,
@@ -21,9 +28,10 @@ export const NutritionGoals = () => {
     { calories: 0, proteins: 0 }
   );
 
-  console.log("Daily targets:", dailyTargets);
-  console.log("Actual totals:", actualTotals);
-  console.log("Entries by meal type:", entriesByMealType);
+  console.log("Final totals:", {
+    actual: actualTotals,
+    targets: dailyTargets
+  });
 
   const goals = [
     { 
