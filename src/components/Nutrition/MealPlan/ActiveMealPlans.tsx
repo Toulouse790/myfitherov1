@@ -44,7 +44,7 @@ export const ActiveMealPlans = () => {
           <CardContent>
             <GeneratedPlanDisplay 
               generatedPlan={plan.plan_data} 
-              durationDays={(new Date(plan.end_date).getTime() - new Date(plan.start_date).getTime()) / (1000 * 60 * 60 * 24) + 1}
+              durationDays={String((new Date(plan.end_date).getTime() - new Date(plan.start_date).getTime()) / (1000 * 60 * 60 * 24) + 1)}
             />
           </CardContent>
         </Card>
