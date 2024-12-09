@@ -56,15 +56,9 @@ export const MediaList = ({
               difficulty: Array.isArray(exercise.difficulty) 
                 ? exercise.difficulty 
                 : [exercise.difficulty],
-              location: Array.isArray(exercise.location) 
-                ? exercise.location 
-                : []
+              exercise_media: getMediaForExercise(exercise.id)
             }}
-            onUpload={onUpload}
-            selectedFile={selectedFile}
-            media={getMediaForExercise(exercise.id)}
-            selectedDifficulties={selectedDifficulties}
-            onDifficultyChange={onDifficultyChange}
+            onUpdate={onUpload}
           />
         </TabsContent>
       ))}

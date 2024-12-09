@@ -14,24 +14,18 @@ export const UploadSection = ({
     <div className="mt-4">
       {showImageUpload && (
         <UploadForm
-          exercise_id={exercise.id}
-          exercise_name={exercise.name}
+          exerciseId={exercise.id}
+          exerciseName={exercise.name}
           type="image"
-          onUpload={onUpload}
-          selectedFile={selectedFile}
-          difficulty={exercise.difficulty}
-          location={exercise.location || []}
+          onSuccess={onUpload}
         />
       )}
       {showVideoUpload && (
         <UploadForm
-          exercise_id={exercise.id}
-          exercise_name={exercise.name}
+          exerciseId={exercise.id}
+          exerciseName={exercise.name}
           type="video"
-          onUpload={onUpload}
-          selectedFile={selectedFile}
-          difficulty={exercise.difficulty}
-          location={exercise.location || []}
+          onSuccess={onUpload}
         />
       )}
     </div>

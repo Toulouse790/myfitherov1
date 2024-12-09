@@ -22,8 +22,6 @@ export interface UploadSectionProps {
   exercise: {
     id: string;
     name: string;
-    difficulty: string[];
-    location?: string[];
   };
   onUpload: () => void;
   selectedFile: File | null;
