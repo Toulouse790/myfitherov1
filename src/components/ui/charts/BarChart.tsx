@@ -1,91 +1,78 @@
-import * as React from "react"
-import * as RechartsPrimitive from "recharts"
-import { ChartContainer } from "./ChartContainer"
+import { Bar, BarChart as RechartsBarChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { ChartContainer } from "./ChartContainer";
 
 interface BarChartProps {
-  data: any[]
-  index: string
-  categories: string[]
-  colors?: string[]
-  valueFormatter?: (value: number) => string
-  yAxisWidth?: number
-  ticks?: number[]
-  showLegend?: boolean
-  showGridLines?: boolean
-  startEndOnly?: boolean
-  showAnimation?: boolean
-  className?: string
-  customTooltip?: (props: any) => React.ReactElement
+  data: any[];
+  index: string;
+  categories: string[];
+  colors?: string[];
+  valueFormatter?: (value: number) => string;
+  yAxisWidth?: number;
+  showLegend?: boolean;
+  showGridLines?: boolean;
+  startEndOnly?: boolean;
+  showAnimation?: boolean;
+  className?: string;
+  customTooltip?: (props: any) => JSX.Element;
 }
 
 export const BarChart = ({
   data,
   index,
   categories,
-  colors = ["#0ea5e9"],
-  valueFormatter = (value: number) => value.toString(),
-  yAxisWidth = 56,
-  ticks,
-  showLegend = true,
+  colors = ["#0EA5E9"],
+  valueFormatter = (value: number) => `${value}`,
+  yAxisWidth = 40,
+  showLegend = false,
   showGridLines = true,
   startEndOnly = false,
-  showAnimation = false,
+  showAnimation = true,
   className,
-  customTooltip,
+  customTooltip
 }: BarChartProps) => {
+  // Générer des IDs uniques pour chaque barre
+  const dataWithIds = data.map((item, idx) => ({
+    ...item,
+    uniqueId: `${item[index]}-${idx}`
+  }));
+
   return (
-    <ChartContainer
-      config={{
-        ...Object.fromEntries(
-          categories.map((category, i) => [
-            category,
-            { color: colors[i % colors.length] },
-          ])
-        ),
-      }}
-    >
-      <RechartsPrimitive.ResponsiveContainer>
-        <RechartsPrimitive.BarChart data={data} className={className}>
-          <RechartsPrimitive.XAxis
+    <ChartContainer className={className}>
+      <ResponsiveContainer width="100%" height={300}>
+        <RechartsBarChart data={dataWithIds} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+          <XAxis
             dataKey={index}
-            stroke="#888888"
-            fontSize={12}
-            tickLine={false}
             axisLine={false}
-            scale="point"
-            padding={{ left: 10, right: 10 }}
+            tickLine={false}
+            fontSize={12}
+            tickMargin={8}
+            interval={startEndOnly ? "preserveStartEnd" : 0}
           />
-          <RechartsPrimitive.YAxis
-            stroke="#888888"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
+          <YAxis
             width={yAxisWidth}
+            axisLine={false}
+            tickLine={false}
+            fontSize={12}
+            tickMargin={8}
             tickFormatter={valueFormatter}
-            ticks={ticks}
-            scale="linear"
-            padding={{ top: 10, bottom: 10 }}
           />
-          {showGridLines && (
-            <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
-          )}
-          {customTooltip ? (
-            <RechartsPrimitive.Tooltip content={customTooltip} />
-          ) : (
-            <RechartsPrimitive.Tooltip />
-          )}
-          {showLegend && <RechartsPrimitive.Legend />}
+          <Tooltip
+            content={customTooltip}
+            cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
+          />
           {categories.map((category, i) => (
-            <RechartsPrimitive.Bar
+            <Bar
               key={category}
               dataKey={category}
               fill={colors[i % colors.length]}
               radius={[4, 4, 0, 0]}
-              animationDuration={showAnimation ? 1000 : 0}
+              isAnimationActive={showAnimation}
+              // Utiliser l'ID unique comme clé pour chaque rectangle
+              id={(entry) => `rectangle-${entry.uniqueId}-${i}`}
             />
           ))}
-        </RechartsPrimitive.BarChart>
-      </RechartsPrimitive.ResponsiveContainer>
+        </RechartsBarChart>
+      </ResponsiveContainer>
     </ChartContainer>
-  )
-}
+  );
+};
