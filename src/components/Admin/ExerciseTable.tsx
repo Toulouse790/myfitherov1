@@ -3,11 +3,14 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ExerciseRow } from "./ExerciseRow";
+import { AdminHeader } from "./AdminHeader";
 
 export const ExerciseTable = () => {
   const { toast } = useToast();
   const [exercises, setExercises] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
 
   useEffect(() => {
     fetchExercises();
@@ -40,6 +43,14 @@ export const ExerciseTable = () => {
     }
   };
 
+  const handleFilterClick = () => {
+    toast({
+      title: "Filtres",
+      description: "Ouverture des filtres",
+    });
+    // Ici nous pouvons ajouter la logique de filtrage plus tard
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -50,6 +61,13 @@ export const ExerciseTable = () => {
 
   return (
     <div className="space-y-4">
+      <AdminHeader 
+        isEditing={isEditing}
+        onEditingChange={setIsEditing}
+        selectedExercises={selectedExercises}
+        onExercisesDeleted={fetchExercises}
+        onFilterClick={handleFilterClick}
+      />
       <Card className="p-6">
         <div className="space-y-4">
           {exercises.map((exercise) => (
