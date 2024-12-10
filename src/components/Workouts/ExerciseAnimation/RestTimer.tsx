@@ -3,12 +3,11 @@ import { Timer, Plus, Minus } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface RestTimerProps {
-  remainingTime: number;
   restTime: number;
-  onRestTimeChange: (newTime: number) => void;
+  onRestTimeChange: (adjustment: number) => void;
 }
 
-export const RestTimer = ({ remainingTime, restTime, onRestTimeChange }: RestTimerProps) => {
+export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
   const handleTimeChange = (adjustment: number) => {
     const newTime = Math.max(15, restTime + adjustment);
     onRestTimeChange(newTime);
@@ -24,7 +23,7 @@ export const RestTimer = ({ remainingTime, restTime, onRestTimeChange }: RestTim
       <div className="space-y-4">
         <div className="flex items-center justify-center gap-2 text-2xl font-bold">
           <Timer className="h-6 w-6 text-primary" />
-          <span>{remainingTime}s</span>
+          <span>{restTime}s</span>
         </div>
         <div className="flex justify-center items-center gap-4">
           <Button
