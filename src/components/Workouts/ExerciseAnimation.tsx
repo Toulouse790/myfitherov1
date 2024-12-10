@@ -12,7 +12,6 @@ interface ExerciseAnimationProps {
   sets: number;
   currentSet: number;
   isResting: boolean;
-  progress: number;
   sessionId?: string | null;
   weight?: number;
   exerciseName: string;
@@ -61,12 +60,13 @@ export const ExerciseAnimation = ({
             onAddSet={handleAddSet}
           />
           
-          <div className="space-y-4">
-            <div className="flex justify-between text-sm text-muted-foreground mb-2">
-              <span>Série actuelle</span>
-              <span>{currentSet}/{sets}</span>
-            </div>
+          <div className="text-center mb-4">
+            <span className="text-lg font-semibold">
+              Série {currentSet}/{sets}
+            </span>
+          </div>
 
+          <div className="space-y-4">
             {Array.from({ length: sets }).map((_, index) => (
               <SetCard
                 key={index}
