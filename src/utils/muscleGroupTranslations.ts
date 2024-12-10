@@ -8,7 +8,10 @@ export const translateMuscleGroup = (muscleId: string): string => {
     triceps: 'triceps',
     abdominaux: 'abdominaux',
     abs: 'abdominaux',
-    jambes: 'jambes' // Pour gérer le cas où c'est déjà traduit
+    jambes: 'jambes',
+    pectoraux: 'pectoraux',
+    dos: 'dos',
+    épaules: 'épaules'
   };
 
   console.log('Traduction du groupe musculaire:', muscleId, 'en:', translations[muscleId.toLowerCase()] || muscleId);

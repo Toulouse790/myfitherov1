@@ -6,6 +6,7 @@ import { ExerciseRow } from "./ExerciseRow";
 import { AdminHeader } from "./AdminHeader";
 import { SearchBar } from "@/components/Workouts/components/SearchBar";
 import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
+import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface ExerciseTableProps {
   isPublished: boolean;
@@ -41,6 +42,8 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       const uniqueExercises = data?.reduce((acc: any[], current: any) => {
         const exists = acc.find(item => item.id === current.id);
         if (!exists) {
+          // Translate muscle group before adding to the array
+          current.muscle_group = translateMuscleGroup(current.muscle_group);
           acc.push(current);
         } else {
           console.log('Found duplicate exercise:', current.name, 'with ID:', current.id);
@@ -51,9 +54,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       console.log('Total exercises before deduplication:', data?.length);
       console.log('Total exercises after deduplication:', uniqueExercises.length);
 
-      // Translate exercises after deduplication
-      const translatedExercises = translateExercises(uniqueExercises);
-      setExercises(translatedExercises);
+      setExercises(uniqueExercises);
     } catch (error) {
       console.error('Error fetching exercises:', error);
       toast({
