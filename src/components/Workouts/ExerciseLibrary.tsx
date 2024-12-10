@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { FloatingWorkoutButton } from "./FloatingWorkoutButton";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
 import { LibraryHeader } from "./components/LibraryHeader";
 import { supabase } from "@/integrations/supabase/client";
@@ -113,11 +112,6 @@ export const ExerciseLibrary = () => {
           onMuscleGroupClick={handleMuscleGroupClick}
         />
       )}
-
-      <FloatingWorkoutButton 
-        selectedCount={selectedExercises.length}
-        onClick={handleStartWorkout}
-      />
     </div>
   );
 };
