@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { ExerciseBadges } from "./ExerciseBadges";
-import { MediaButtons } from "../MediaButtons";
+import { MediaButtons } from "./MediaButtons";
 import { UploadForm } from "../UploadForm";
 
 interface ExerciseRowProps {
