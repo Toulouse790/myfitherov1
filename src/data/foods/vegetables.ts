@@ -6,6 +6,8 @@ export const vegetableFoods: CommonFood[] = [
     name: "Brocoli (100g)",
     calories: 34,
     proteins: 2.8,
+    carbs: 7,
+    fats: 0.4,
     category: "Légumes"
   },
   {
@@ -13,6 +15,8 @@ export const vegetableFoods: CommonFood[] = [
     name: "Épinards (100g)",
     calories: 23,
     proteins: 2.9,
+    carbs: 3.6,
+    fats: 0.4,
     category: "Légumes"
   },
   {
@@ -20,6 +24,8 @@ export const vegetableFoods: CommonFood[] = [
     name: "Carottes (100g)",
     calories: 41,
     proteins: 0.9,
+    carbs: 10,
+    fats: 0.2,
     category: "Légumes"
   },
   {
@@ -27,6 +33,8 @@ export const vegetableFoods: CommonFood[] = [
     name: "Courgettes (100g)",
     calories: 17,
     proteins: 1.2,
+    carbs: 3.1,
+    fats: 0.3,
     category: "Légumes"
   },
   {
@@ -34,6 +42,8 @@ export const vegetableFoods: CommonFood[] = [
     name: "Haricots verts (100g)",
     calories: 31,
     proteins: 1.8,
+    carbs: 7,
+    fats: 0.2,
     category: "Légumes"
   },
   {
@@ -41,6 +51,8 @@ export const vegetableFoods: CommonFood[] = [
     name: "Poivron (100g)",
     calories: 20,
     proteins: 0.9,
+    carbs: 4.6,
+    fats: 0.2,
     category: "Légumes"
   }
 ];

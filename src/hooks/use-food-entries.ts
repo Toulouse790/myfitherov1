@@ -40,6 +40,8 @@ export const useFoodEntries = () => {
         name: entry.name,
         calories: entry.calories,
         proteins: entry.proteins,
+        carbs: entry.carbs,
+        fats: entry.fats,
         mealType: entry.meal_type
       }));
 
@@ -48,8 +50,8 @@ export const useFoodEntries = () => {
       return mappedEntries;
     },
     refetchOnWindowFocus: true,
-    staleTime: 0, // Force refetch every time
-    gcTime: 0  // Don't cache the data (previously cacheTime)
+    staleTime: 0,
+    gcTime: 0
   });
 
   const entriesByMealType = entries.reduce((acc, entry) => {
