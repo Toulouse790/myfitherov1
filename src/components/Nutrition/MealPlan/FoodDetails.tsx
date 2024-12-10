@@ -1,13 +1,10 @@
 import { FoodItem } from "@/types/nutrition";
-import { getPreparationInstructions } from "./PreparationInstructions";
 
 interface FoodDetailsProps {
   food: FoodItem;
 }
 
 export const FoodDetails = ({ food }: FoodDetailsProps) => {
-  const preparation = getPreparationInstructions(food.name);
-  
   return (
     <div>
       <p className="font-medium">{food.name}</p>
@@ -20,11 +17,6 @@ export const FoodDetails = ({ food }: FoodDetailsProps) => {
             <p key={idx}>{q.item}: {q.amount}</p>
           ))}
         </div>
-      )}
-      {preparation !== "Aucune instruction disponible" && (
-        <p className="mt-2 text-sm text-muted-foreground italic">
-          💡 {preparation}
-        </p>
       )}
     </div>
   );
