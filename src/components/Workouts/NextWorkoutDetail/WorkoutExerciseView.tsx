@@ -48,9 +48,16 @@ export const WorkoutExerciseView = ({
               Terminer la séance
             </Button>
           )}
-          <h2 className="text-xl sm:text-2xl font-bold">
-            {currentExercise || "Sélectionnez un exercice"}
-          </h2>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold">
+              {currentExercise || "Sélectionnez un exercice"}
+            </h2>
+            {currentExercise && (
+              <p className="text-sm text-muted-foreground">
+                Charge recommandée : 20-30kg
+              </p>
+            )}
+          </div>
         </div>
         <span className="text-muted-foreground">
           {currentExerciseIndex !== null ? `${currentExerciseIndex + 1}/${exercises.length}` : ""}
