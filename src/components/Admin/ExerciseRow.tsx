@@ -6,9 +6,8 @@ import { UploadForm } from "./UploadForm";
 import { useDifficultyManagement } from "@/hooks/use-difficulty-management";
 import { useLocationManagement } from "@/hooks/use-location-management";
 import { usePublishManagement } from "@/hooks/use-publish-management";
-import { MediaButtons } from "./ExerciseMedia/MediaButtons";
-import { MediaPreview } from "./ExerciseMedia/MediaPreview";
-import { ExerciseInfo } from "./ExerciseHeader/ExerciseInfo";
+import { MediaButtons } from "./MediaButtons";
+import { MediaPreview } from "./MediaPreview";
 
 interface ExerciseRowProps {
   exercise: {
@@ -60,15 +59,20 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
     onUpdate();
   };
 
+  const mediaUrls = [
+    ...(exercise.image_url ? [{ type: 'image' as const, url: exercise.image_url }] : []),
+    ...(exercise.video_url ? [{ type: 'video' as const, url: exercise.video_url }] : [])
+  ];
+
   return (
     <Card className="p-4">
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <div className="space-y-2">
-            <ExerciseInfo 
-              name={exercise.name}
-              muscleGroup={exercise.muscle_group}
-            />
+            <div>
+              <h3 className="text-lg font-semibold">{exercise.name}</h3>
+              <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
+            </div>
             <div className="space-y-2">
               <DifficultyBadges 
                 difficulties={["beginner", "intermediate", "advanced"]}
@@ -83,7 +87,7 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
             </div>
           </div>
           <MediaButtons 
-            isPublished={exercise.is_published || false}
+            isPublished={exercise.is_published}
             isPublishing={isPublishing}
             onPublishToggle={handlePublishToggle}
             onImageClick={handleImageClick}
@@ -101,8 +105,10 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
         )}
 
         <MediaPreview 
-          imageUrl={exercise.image_url}
-          videoUrl={exercise.video_url}
+          isOpen={false}
+          onClose={() => {}}
+          onConfirm={() => {}}
+          mediaUrls={mediaUrls}
           exerciseName={exercise.name}
         />
       </div>
