@@ -141,6 +141,12 @@ export const ExerciseAnimation = ({
     }
   };
 
+  const handleRepsChange = (index: number, value: number) => {
+    const newRepsPerSet = [...repsPerSet];
+    newRepsPerSet[index] = value;
+    setRepsPerSet(newRepsPerSet);
+  };
+
   return (
     <div className="space-y-6">
       <ExerciseHeader 
