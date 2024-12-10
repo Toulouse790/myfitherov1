@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExerciseHeader } from "./ExerciseAnimation/ExerciseHeader";
 import { SetCard } from "./ExerciseAnimation/SetCard";
@@ -28,7 +27,6 @@ export const ExerciseAnimation = ({
   sets,
   currentSet,
   isResting,
-  progress,
   sessionId,
   weight: initialWeight = 0,
   exerciseName,
@@ -82,14 +80,6 @@ export const ExerciseAnimation = ({
                 onSetComplete={onSetComplete || (() => {})}
               />
             ))}
-
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Progression</span>
-                <span>{Math.round(progress)}%</span>
-              </div>
-              <Progress value={progress} className="h-3" />
-            </div>
             
             <AnimatePresence mode="wait">
               {isResting && (
