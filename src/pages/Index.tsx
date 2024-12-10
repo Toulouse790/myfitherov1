@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { GenerateWorkoutDialog } from "@/components/Dashboard/WorkoutSuggestions/GenerateWorkoutDialog";
+import { WorkoutPlan } from "@/components/Dashboard/WorkoutSuggestions/workoutPlanGenerator";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -19,6 +20,14 @@ const Index = () => {
       description: "Vous allez pouvoir composer votre séance d'entraînement",
     });
     navigate("/workouts");
+  };
+
+  const handleWorkoutGenerated = (workout: WorkoutPlan) => {
+    console.log("Workout generated:", workout);
+    toast({
+      title: "Programme généré",
+      description: "Votre programme d'entraînement a été généré avec succès",
+    });
   };
 
   const mainActions = [
@@ -78,6 +87,7 @@ const Index = () => {
         <GenerateWorkoutDialog
           open={showDialog}
           onOpenChange={setShowDialog}
+          onWorkoutGenerated={handleWorkoutGenerated}
         />
       </main>
       <BottomNav />

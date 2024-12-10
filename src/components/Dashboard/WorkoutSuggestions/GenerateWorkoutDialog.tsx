@@ -5,11 +5,12 @@ import { useExerciseFetching } from "@/hooks/use-exercise-fetching";
 import { Button } from "@/components/ui/button";
 import { generateWorkoutPlan } from "./workoutPlanGenerator";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
+import { WorkoutPlan } from "./workoutPlanGenerator";
 
 interface GenerateWorkoutDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onWorkoutGenerated: (workout: any) => void;
+  onWorkoutGenerated?: (workout: WorkoutPlan) => void;
 }
 
 export const GenerateWorkoutDialog = ({
@@ -18,19 +19,28 @@ export const GenerateWorkoutDialog = ({
   onWorkoutGenerated
 }: GenerateWorkoutDialogProps) => {
   const [availableExercises, setAvailableExercises] = useState<string[]>([]);
-  const [generatedWorkout, setGeneratedWorkout] = useState<any>(null);
+  const [generatedWorkout, setGeneratedWorkout] = useState<WorkoutPlan | null>(null);
   const { toast } = useToast();
   const { fetchExercises } = useExerciseFetching();
 
   useEffect(() => {
     if (open) {
       const loadExercises = async () => {
-        const exercises = await fetchExercises();
-        setAvailableExercises(exercises);
+        try {
+          const exercises = await fetchExercises();
+          setAvailableExercises(exercises);
+        } catch (error) {
+          console.error('Error loading exercises:', error);
+          toast({
+            title: "Erreur",
+            description: "Impossible de charger les exercices",
+            variant: "destructive",
+          });
+        }
       };
       loadExercises();
     }
-  }, [open]);
+  }, [open, fetchExercises, toast]);
 
   const handleGenerateWorkout = async () => {
     if (availableExercises.length === 0) {
@@ -47,7 +57,7 @@ export const GenerateWorkoutDialog = ({
   };
 
   const handleConfirm = () => {
-    if (generatedWorkout) {
+    if (generatedWorkout && onWorkoutGenerated) {
       onWorkoutGenerated(generatedWorkout);
       onOpenChange(false);
     }
@@ -71,7 +81,7 @@ export const GenerateWorkoutDialog = ({
             </Button>
           ) : (
             <div className="space-y-4">
-              <GeneratedWorkoutPreview workout={generatedWorkout} />
+              <GeneratedWorkoutPreview plan={generatedWorkout} />
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setGeneratedWorkout(null)}>
                   Regénérer
