@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,13 +27,13 @@ export const WorkoutInProgress = ({
   const { toast } = useToast();
   const { restTimers, startRestTimer } = useRestTimer();
 
-  const currentExerciseId = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
-  const currentRestTimer = currentExerciseId ? restTimers[currentExerciseId] : null;
+  const currentExerciseName = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
+  const currentRestTimer = currentExerciseName ? restTimers[currentExerciseName] : null;
 
   const handleSetComplete = () => {
-    if (currentSet < 4 && currentExerciseId) {
+    if (currentSet < 4 && currentExerciseName) {
       setCurrentSet(prev => prev + 1);
-      startRestTimer(currentExerciseId);
+      startRestTimer(currentExerciseName);
       
       const calories = Math.round(reps * weight * 0.15);
       

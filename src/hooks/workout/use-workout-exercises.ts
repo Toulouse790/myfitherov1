@@ -13,7 +13,6 @@ export const useWorkoutExercises = (sessionId: string | null) => {
       try {
         console.log("Fetching exercises for session:", sessionId);
         
-        // First, get the exercise names from the session
         const { data: session, error: sessionError } = await supabase
           .from('workout_sessions')
           .select('exercises')
@@ -28,18 +27,11 @@ export const useWorkoutExercises = (sessionId: string | null) => {
           return;
         }
 
-        console.log("IDs des exercices récupérés:", session.exercises);
-        
-        // Since we store exercise names directly, we can use them
+        console.log("Exercices récupérés:", session.exercises);
         setExercises(session.exercises);
 
       } catch (err) {
-        console.error("Error fetching session exercises:", {
-          message: err.message,
-          details: err,
-          hint: "",
-          code: ""
-        });
+        console.error("Error fetching session exercises:", err);
         setError(err as Error);
       } finally {
         setIsLoading(false);
