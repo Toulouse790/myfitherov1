@@ -52,7 +52,6 @@ export const ExerciseTableContent = ({
 
   const handleNameChange = async (exerciseId: string, newName: string) => {
     try {
-      // First check if the name already exists
       const { data: existingExercises } = await supabase
         .from('exercises')
         .select('name')
@@ -60,7 +59,6 @@ export const ExerciseTableContent = ({
 
       let uniqueName = newName;
       if (existingExercises && existingExercises.length > 0) {
-        // If name exists, append a number
         const similarNames = existingExercises.map(e => e.name);
         let counter = 1;
         while (similarNames.includes(uniqueName)) {
@@ -107,39 +105,45 @@ export const ExerciseTableContent = ({
         </tr>
       </thead>
       <tbody>
-        {exercises.map((exercise) => (
-          <tr key={exercise.id} className="border-b">
-            <td className="p-2">
-              <Checkbox 
-                checked={selectedExercises.includes(exercise.id)}
-                onCheckedChange={(checked) => handleSelectExercise(exercise.id, checked as boolean)}
-              />
-            </td>
-            <td className="p-2">
-              <input
-                type="text"
-                value={exercise.name}
-                onChange={(e) => handleNameChange(exercise.id, e.target.value)}
-                className="w-full p-1 border rounded"
-              />
-            </td>
-            <td className="p-2">{translateMuscleGroup(exercise.muscle_group)}</td>
-            <td className="p-2">
-              <LocationCheckboxes
-                exercise={exercise}
-                locations={locations}
-                onChange={onLocationChange}
-              />
-            </td>
-            <td className="p-2">
-              <DifficultyCheckboxes
-                exercise={exercise}
-                difficulties={difficulties}
-                onChange={onDifficultyChange}
-              />
-            </td>
-          </tr>
-        ))}
+        {exercises.map((exercise) => {
+          const translatedMuscleGroup = translateMuscleGroup(exercise.muscle_group);
+          console.log('Muscle group before translation:', exercise.muscle_group);
+          console.log('Muscle group after translation:', translatedMuscleGroup);
+          
+          return (
+            <tr key={exercise.id} className="border-b">
+              <td className="p-2">
+                <Checkbox 
+                  checked={selectedExercises.includes(exercise.id)}
+                  onCheckedChange={(checked) => handleSelectExercise(exercise.id, checked as boolean)}
+                />
+              </td>
+              <td className="p-2">
+                <input
+                  type="text"
+                  value={exercise.name}
+                  onChange={(e) => handleNameChange(exercise.id, e.target.value)}
+                  className="w-full p-1 border rounded"
+                />
+              </td>
+              <td className="p-2">{translatedMuscleGroup}</td>
+              <td className="p-2">
+                <LocationCheckboxes
+                  exercise={exercise}
+                  locations={locations}
+                  onChange={onLocationChange}
+                />
+              </td>
+              <td className="p-2">
+                <DifficultyCheckboxes
+                  exercise={exercise}
+                  difficulties={difficulties}
+                  onChange={onDifficultyChange}
+                />
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
