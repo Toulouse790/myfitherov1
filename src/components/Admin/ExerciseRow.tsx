@@ -5,7 +5,9 @@ import { Image, Video, Check, Upload } from "lucide-react";
 import { DifficultyBadges } from "./DifficultyBadges";
 import { UploadForm } from "./UploadForm";
 import { useDifficultyManagement } from "@/hooks/use-difficulty-management";
+import { useLocationManagement } from "@/hooks/use-location-management";
 import { usePublishManagement } from "@/hooks/use-publish-management";
+import { ExerciseHeader } from "./ExerciseHeader";
 
 interface ExerciseRowProps {
   exercise: {
@@ -13,6 +15,7 @@ interface ExerciseRowProps {
     name: string;
     muscle_group: string;
     difficulty: string[];
+    location?: string[];
     is_published?: boolean;
     exercise_media?: {
       media_type: string;
@@ -30,6 +33,11 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
     exercise.id,
     exercise.difficulty || []
   );
+
+  const { selectedLocations, handleLocationChange } = useLocationManagement(
+    exercise.id,
+    exercise.location || []
+  );
   
   const { isPublishing, handlePublishToggle } = usePublishManagement(
     exercise.id,
@@ -41,15 +49,16 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
     <Card className="p-4">
       <div className="space-y-4">
         <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">{exercise.name}</h3>
-            <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
-            <DifficultyBadges
-              difficulties={["beginner", "intermediate", "advanced"]}
-              selectedDifficulties={selectedDifficulties}
-              onDifficultyChange={handleDifficultyChange}
-            />
-          </div>
+          <ExerciseHeader
+            name={exercise.name}
+            muscleGroup={exercise.muscle_group}
+            difficulties={["beginner", "intermediate", "advanced"]}
+            selectedDifficulties={selectedDifficulties}
+            onDifficultyChange={handleDifficultyChange}
+            locations={["home", "gym", "outdoor"]}
+            selectedLocations={selectedLocations}
+            onLocationChange={handleLocationChange}
+          />
           <div className="flex gap-2">
             <Button
               variant="outline"
