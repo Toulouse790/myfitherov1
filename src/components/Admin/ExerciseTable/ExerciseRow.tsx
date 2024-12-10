@@ -1,5 +1,4 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { ExerciseBadges } from "./ExerciseBadges";
@@ -89,13 +88,7 @@ export const ExerciseRow = ({
         )}
       </TableCell>
       <TableCell>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onPublish}
-        >
-          {exercise.is_published ? 'Dépublier' : 'Publier'}
-        </Button>
+        {/* Removed duplicate publish button */}
       </TableCell>
     </TableRow>
   );
