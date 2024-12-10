@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ChevronUp, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { RestTimer } from "./ExerciseSets/RestTimer";
-import { SetButton } from "./ExerciseSets/SetButton";
 import { SessionTimer } from "./ExerciseSets/SessionTimer";
+import { ExerciseCard } from "./ExerciseSets/ExerciseCard";
 
 interface ExerciseSetsProps {
   exercises: string[];
@@ -94,7 +89,6 @@ export const ExerciseSets = ({
         [exerciseName]: 90
       }));
 
-      // Save set data to database
       if (sessionId) {
         try {
           const { error } = await supabase
@@ -110,7 +104,6 @@ export const ExerciseSets = ({
 
           if (error) throw error;
 
-          // Update session stats
           await supabase
             .from('workout_sessions')
             .update({ 
@@ -147,97 +140,22 @@ export const ExerciseSets = ({
     }
   };
 
-  const handleWeightChange = (exerciseName: string, value: number) => {
-    setWeights(prev => ({ ...prev, [exerciseName]: value }));
-  };
-
-  const handleRepsChange = (exerciseName: string, value: number) => {
-    setReps(prev => ({ ...prev, [exerciseName]: value }));
-  };
-
   return (
     <div className="space-y-6">
-      <SessionTimer />
+      <SessionTimer duration={sessionDuration} />
 
       {exercises.map((exerciseName) => (
-        <motion.div
+        <ExerciseCard
           key={exerciseName}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Card className="p-6">
-            <div className="space-y-6">
-              <h3 className="text-xl font-semibold">{exerciseName}</h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Poids (kg)</label>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleWeightChange(exerciseName, weights[exerciseName] - 2.5)}
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                    <Input
-                      type="number"
-                      value={weights[exerciseName] || 0}
-                      onChange={(e) => handleWeightChange(exerciseName, Number(e.target.value))}
-                      className="text-center"
-                    />
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleWeightChange(exerciseName, weights[exerciseName] + 2.5)}
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Répétitions</label>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleRepsChange(exerciseName, reps[exerciseName] - 1)}
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                    <Input
-                      type="number"
-                      value={reps[exerciseName] || 0}
-                      onChange={(e) => handleRepsChange(exerciseName, Number(e.target.value))}
-                      className="text-center"
-                    />
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleRepsChange(exerciseName, reps[exerciseName] + 1)}
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <RestTimer restTimer={restTimers[exerciseName]} />
-                
-                <SetButton
-                  isResting={restTimers[exerciseName] !== null}
-                  currentSet={(completedSets[exerciseName] || 0) + 1}
-                  maxSets={3}
-                  onComplete={() => handleSetComplete(exerciseName)}
-                  restTime={restTimers[exerciseName] || 0}
-                />
-              </div>
-            </div>
-          </Card>
-        </motion.div>
+          exerciseName={exerciseName}
+          weight={weights[exerciseName] || 0}
+          reps={reps[exerciseName] || 0}
+          completedSets={completedSets[exerciseName] || 0}
+          restTimer={restTimers[exerciseName]}
+          onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseName]: value }))}
+          onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseName]: value }))}
+          onSetComplete={() => handleSetComplete(exerciseName)}
+        />
       ))}
     </div>
   );
