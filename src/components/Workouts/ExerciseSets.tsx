@@ -3,6 +3,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { SessionTimer } from "./ExerciseSets/SessionTimer";
 import { ExerciseCard } from "./ExerciseSets/ExerciseCard";
+import { useExerciseData } from "./ExerciseSets/useExerciseData";
+import { ExerciseProgress } from "./ExerciseSets/ExerciseProgress";
 
 interface ExerciseSetsProps {
   exercises: string[];
@@ -23,42 +25,8 @@ export const ExerciseSets = ({
   const [restTimers, setRestTimers] = useState<{ [key: string]: number | null }>({});
   const [sessionDuration, setSessionDuration] = useState<number>(0);
   const [totalRestTime, setTotalRestTime] = useState<number>(0);
-  const [exerciseNames, setExerciseNames] = useState<{ [key: string]: string }>({});
+  const { exerciseNames } = useExerciseData(exercises);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchExerciseNames = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('unified_exercises')
-          .select('id, name')
-          .in('id', exercises);
-
-        if (error) throw error;
-
-        const namesMap = (data || []).reduce((acc: { [key: string]: string }, exercise) => {
-          acc[exercise.id] = exercise.name;
-          return acc;
-        }, {});
-
-        setExerciseNames(namesMap);
-      } catch (error) {
-        console.error('Error fetching exercise names:', error);
-      }
-    };
-
-    if (exercises.length > 0) {
-      fetchExerciseNames();
-    }
-  }, [exercises]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSessionDuration(prev => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const initialWeights: { [key: string]: number } = {};
@@ -70,6 +38,14 @@ export const ExerciseSets = ({
     setWeights(initialWeights);
     setReps(initialReps);
   }, [exercises]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSessionDuration(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const intervals: { [key: string]: NodeJS.Timeout } = {};
@@ -103,7 +79,7 @@ export const ExerciseSets = ({
 
   const handleSetComplete = async (exerciseId: string) => {
     const currentSets = completedSets[exerciseId] || 0;
-    const exerciseName = exerciseNames[exerciseId] || exerciseId;
+    const exerciseName = exerciseNames[exerciseId] || "Exercice inconnu";
     
     if (currentSets < 3) {
       const newSetsCount = currentSets + 1;
@@ -173,17 +149,22 @@ export const ExerciseSets = ({
       <SessionTimer sessionDuration={sessionDuration} />
 
       {exercises.map((exerciseId) => (
-        <ExerciseCard
-          key={exerciseId}
-          exerciseName={exerciseNames[exerciseId] || "Chargement..."}
-          weight={weights[exerciseId] || 0}
-          reps={reps[exerciseId] || 0}
-          completedSets={completedSets[exerciseId] || 0}
-          restTimer={restTimers[exerciseId]}
-          onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseId]: value }))}
-          onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseId]: value }))}
-          onSetComplete={() => handleSetComplete(exerciseId)}
-        />
+        <div key={exerciseId} className="space-y-4">
+          <ExerciseProgress 
+            completedSets={completedSets[exerciseId] || 0}
+            totalSets={3}
+          />
+          <ExerciseCard
+            exerciseName={exerciseNames[exerciseId] || "Chargement..."}
+            weight={weights[exerciseId] || 0}
+            reps={reps[exerciseId] || 0}
+            completedSets={completedSets[exerciseId] || 0}
+            restTimer={restTimers[exerciseId]}
+            onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseId]: value }))}
+            onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseId]: value }))}
+            onSetComplete={() => handleSetComplete(exerciseId)}
+          />
+        </div>
       ))}
     </div>
   );
