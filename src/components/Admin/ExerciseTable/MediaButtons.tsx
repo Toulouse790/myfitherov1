@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Image, Video, Globe, GlobeSlash } from "lucide-react";
+import { Image, Video, Globe2 } from "lucide-react";
 
 interface MediaButtonsProps {
   isPublished: boolean;
@@ -39,13 +39,13 @@ export const MediaButtons = ({
         size="icon"
         onClick={onPublishToggle}
         disabled={isPublishing}
-        className="h-8 w-8"
+        className={`h-8 w-8 ${
+          isPublished 
+            ? "bg-green-500 hover:bg-green-600" 
+            : "bg-gray-500 hover:bg-gray-600"
+        } text-white`}
       >
-        {isPublished ? (
-          <Globe className="h-4 w-4" />
-        ) : (
-          <GlobeSlash className="h-4 w-4" />
-        )}
+        <Globe2 className="h-4 w-4" />
       </Button>
     </div>
   );
