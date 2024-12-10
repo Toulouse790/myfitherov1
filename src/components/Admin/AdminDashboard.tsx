@@ -54,7 +54,8 @@ export const AdminDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [widgets, setWidgets] = useState([
     { id: "users", label: "Nouveaux utilisateurs" },
-    { id: "workouts", label: "Séances d'entraînement" }
+    { id: "workouts", label: "Séances d'entraînement" },
+    { id: "ai_training", label: "Données d'entraînement IA" }
   ]);
 
   const { data: monthlyUsers } = useQuery({
@@ -113,6 +114,34 @@ export const AdminDashboard = () => {
     }
   });
 
+  const { data: aiTrainingData } = useQuery({
+    queryKey: ['admin-ai-training'],
+    queryFn: async () => {
+      const startDate = startOfMonth(new Date());
+      const endDate = endOfMonth(new Date());
+      const days = eachDayOfInterval({ start: startDate, end: endDate });
+
+      const { data: trainingData } = await supabase
+        .from('ai_training_data')
+        .select('created_at')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString());
+
+      const trainingByDay = days.map(day => {
+        const dayTraining = trainingData?.filter(entry => 
+          format(parseISO(entry.created_at), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
+        ).length || 0;
+
+        return {
+          day: format(day, 'EEE', { locale: fr }),
+          interactions: dayTraining
+        };
+      });
+
+      return trainingByDay;
+    }
+  });
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -151,16 +180,32 @@ export const AdminDashboard = () => {
         </Card>
       );
     }
+    if (widget.id === "workouts") {
+      return (
+        <Card className="p-6 relative">
+          <h3 className="font-semibold mb-4">{widget.label}</h3>
+          {monthlyWorkouts && (
+            <BarChart
+              data={monthlyWorkouts}
+              index="day"
+              categories={["workouts"]}
+              colors={["#10B981"]}
+              valueFormatter={(value: number) => `${value} séances`}
+            />
+          )}
+        </Card>
+      );
+    }
     return (
       <Card className="p-6 relative">
         <h3 className="font-semibold mb-4">{widget.label}</h3>
-        {monthlyWorkouts && (
+        {aiTrainingData && (
           <BarChart
-            data={monthlyWorkouts}
+            data={aiTrainingData}
             index="day"
-            categories={["workouts"]}
-            colors={["#10B981"]}
-            valueFormatter={(value: number) => `${value} séances`}
+            categories={["interactions"]}
+            colors={["#F59E0B"]}
+            valueFormatter={(value: number) => `${value} interactions`}
           />
         )}
       </Card>

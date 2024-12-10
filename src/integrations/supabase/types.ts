@@ -57,7 +57,14 @@ export type Database = {
           created_at: string
           feedback: boolean | null
           id: string
+          input_tokens: number | null
+          metadata: Json | null
+          model_name: string | null
+          output_tokens: number | null
+          prompt_template: string | null
+          response_time_ms: number | null
           result: string | null
+          session_id: string | null
           updated_at: string
           user_id: string | null
         }
@@ -67,7 +74,14 @@ export type Database = {
           created_at?: string
           feedback?: boolean | null
           id?: string
+          input_tokens?: number | null
+          metadata?: Json | null
+          model_name?: string | null
+          output_tokens?: number | null
+          prompt_template?: string | null
+          response_time_ms?: number | null
           result?: string | null
+          session_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -77,7 +91,14 @@ export type Database = {
           created_at?: string
           feedback?: boolean | null
           id?: string
+          input_tokens?: number | null
+          metadata?: Json | null
+          model_name?: string | null
+          output_tokens?: number | null
+          prompt_template?: string | null
+          response_time_ms?: number | null
           result?: string | null
+          session_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -715,10 +736,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      ai_training_analytics: {
+        Row: {
+          action_type: string | null
+          avg_input_tokens: number | null
+          avg_output_tokens: number | null
+          avg_response_time_ms: number | null
+          day: string | null
+          negative_feedback: number | null
+          positive_feedback: number | null
+          total_requests: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_ai_usage_stats: {
+        Args: {
+          start_date?: string
+          end_date?: string
+        }
+        Returns: {
+          total_requests: number
+          avg_response_time: number
+          success_rate: number
+          top_actions: string[]
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
