@@ -9,7 +9,7 @@ export const backExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barre de traction",
     location: ["gym", "outdoor"],
-    image: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
+    image_url: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
     instructions: [
       "Saisissez la barre avec une prise plus large que les épaules",
       "Tirez votre corps vers le haut jusqu'à ce que votre menton dépasse la barre",
@@ -43,7 +43,7 @@ export const backExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barre, Poids",
     location: ["gym"],
-    image: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
+    image_url: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
     instructions: [
       "Penchez-vous en avant avec le dos droit",
       "Saisissez la barre",
@@ -77,7 +77,7 @@ export const backExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltère, Banc",
     location: ["gym", "home"],
-    image: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
+    image_url: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
     instructions: [
       "Un genou et une main sur le banc",
       "Haltère dans l'autre main",
@@ -111,7 +111,7 @@ export const backExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Machine de tirage",
     location: ["gym"],
-    image: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
+    image_url: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
     instructions: [
       "Assis face à la machine",
       "Saisissez la barre large",
@@ -145,7 +145,7 @@ export const backExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
+    image_url: "/lovable-uploads/257202c1-1845-4cf0-b979-a3505069c9e7.png",
     instructions: [
       "Allongé sur le ventre",
       "Mains derrière la tête",

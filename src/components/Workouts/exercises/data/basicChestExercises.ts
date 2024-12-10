@@ -9,7 +9,7 @@ export const basicChestExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Banc, Barre, Poids",
     location: ["gym"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Allongez-vous sur le banc",
       "Saisissez la barre avec une prise légèrement plus large que les épaules",
@@ -43,7 +43,7 @@ export const basicChestExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Banc incliné, Barre, Poids",
     location: ["gym"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Réglez le banc à 30-45 degrés",
       "Saisissez la barre avec une prise légèrement plus large que les épaules",
