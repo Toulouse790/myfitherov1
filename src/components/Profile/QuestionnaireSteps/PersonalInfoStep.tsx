@@ -1,77 +1,83 @@
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface PersonalInfoStepProps {
-  age: string;
-  weight: string;
-  height: string;
   gender: string;
-  onAgeChange: (value: string) => void;
-  onWeightChange: (value: string) => void;
-  onHeightChange: (value: string) => void;
+  wakeUpTime: string;
+  trainingTime: string;
   onGenderChange: (value: string) => void;
+  onWakeUpTimeChange: (value: string) => void;
+  onTrainingTimeChange: (value: string) => void;
 }
 
 export const PersonalInfoStep = ({
-  age,
-  weight,
-  height,
   gender,
-  onAgeChange,
-  onWeightChange,
-  onHeightChange,
+  wakeUpTime,
+  trainingTime,
   onGenderChange,
+  onWakeUpTimeChange,
+  onTrainingTimeChange,
 }: PersonalInfoStepProps) => {
-  return (
-    <div className="space-y-4">
-      <h3 className="font-medium">Informations personnelles</h3>
-      
-      <div className="space-y-4">
-        <div>
-          <Label>Genre</Label>
-          <RadioGroup value={gender} onValueChange={onGenderChange} className="mt-2">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="male" id="male" />
-              <Label htmlFor="male">Homme</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="female" id="female" />
-              <Label htmlFor="female">Femme</Label>
-            </div>
-          </RadioGroup>
-        </div>
+  const timeOptions = Array.from({ length: 24 }, (_, i) => {
+    const hour = i.toString().padStart(2, '0');
+    return `${hour}:00`;
+  });
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="age">Âge</Label>
-            <Input
-              id="age"
-              type="number"
-              value={age}
-              onChange={(e) => onAgeChange(e.target.value)}
-            />
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Genre</h2>
+            <RadioGroup value={gender} onValueChange={onGenderChange}>
+              <div className="flex space-x-4">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="male" id="gender-male" />
+                  <Label htmlFor="gender-male">Homme</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="female" id="gender-female" />
+                  <Label htmlFor="gender-female">Femme</Label>
+                </div>
+              </div>
+            </RadioGroup>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="weight">Poids (kg)</Label>
-            <Input
-              id="weight"
-              type="number"
-              value={weight}
-              onChange={(e) => onWeightChange(e.target.value)}
-            />
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Heure de réveil</h2>
+            <Select value={wakeUpTime} onValueChange={onWakeUpTimeChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionnez une heure" />
+              </SelectTrigger>
+              <SelectContent>
+                {timeOptions.map((time) => (
+                  <SelectItem key={time} value={time}>
+                    {time}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="height">Taille (cm)</Label>
-            <Input
-              id="height"
-              type="number"
-              value={height}
-              onChange={(e) => onHeightChange(e.target.value)}
-            />
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Heure d'entraînement préférée</h2>
+            <Select value={trainingTime} onValueChange={onTrainingTimeChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionnez une heure" />
+              </SelectTrigger>
+              <SelectContent>
+                {timeOptions.map((time) => (
+                  <SelectItem key={time} value={time}>
+                    {time}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

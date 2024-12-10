@@ -1,61 +1,44 @@
+import { Card, CardContent } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface TrainingFrequencyStepProps {
-  workoutsPerWeek: string;
-  onWorkoutsPerWeekChange: (value: string) => void;
-  workoutDuration: string;
-  onWorkoutDurationChange: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export const TrainingFrequencyStep = ({
-  workoutsPerWeek,
-  onWorkoutsPerWeekChange,
-  workoutDuration,
-  onWorkoutDurationChange,
-}: TrainingFrequencyStepProps) => {
+export const TrainingFrequencyStep = ({ value, onChange }: TrainingFrequencyStepProps) => {
   return (
-    <div className="space-y-4">
-      <h3 className="font-medium">Paramètres d'entraînement</h3>
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="workoutsPerWeek">Nombre d'entraînements par semaine</Label>
-          <Select value={workoutsPerWeek} onValueChange={onWorkoutsPerWeekChange}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Sélectionnez le nombre de jours" />
-            </SelectTrigger>
-            <SelectContent>
-              {[2, 3, 4, 5, 6].map((days) => (
-                <SelectItem key={days} value={days.toString()}>
-                  {days} jours par semaine
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <Card>
+      <CardContent className="pt-6">
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">À quelle fréquence souhaitez-vous vous entraîner ?</h2>
+          <RadioGroup value={value} onValueChange={onChange}>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="1" id="frequency-1" />
+                <Label htmlFor="frequency-1">1 fois par semaine</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2" id="frequency-2" />
+                <Label htmlFor="frequency-2">2 fois par semaine</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="3" id="frequency-3" />
+                <Label htmlFor="frequency-3">3 fois par semaine</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="4" id="frequency-4" />
+                <Label htmlFor="frequency-4">4 fois par semaine</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="5" id="frequency-5" />
+                <Label htmlFor="frequency-5">5 fois par semaine</Label>
+              </div>
+            </div>
+          </RadioGroup>
         </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="workoutDuration">Durée d'entraînement (minutes)</Label>
-          <Select value={workoutDuration} onValueChange={onWorkoutDurationChange}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Sélectionnez la durée" />
-            </SelectTrigger>
-            <SelectContent>
-              {[30, 45, 60, 75, 90].map((duration) => (
-                <SelectItem key={duration} value={duration.toString()}>
-                  {duration} minutes
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
