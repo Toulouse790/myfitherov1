@@ -50,7 +50,6 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleExerciseSelect = (index: number) => {
-    console.log("Sélection de l'exercice:", index);
     if (currentExerciseIndex !== index) {
       setCurrentSet(1);
       setIsResting(false);
@@ -66,16 +65,9 @@ export const NextWorkoutDetail = () => {
     return <NoSessionView />;
   }
 
-  console.log("Current session state:", {
-    exercises,
-    currentExerciseIndex,
-    workoutStarted,
-    sessionId
-  });
-
   return (
-    <div className="container max-w-4xl mx-auto p-4 space-y-6">
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-6 rounded-lg">
+    <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 sm:p-6 rounded-lg">
         <WorkoutExerciseView
           currentExercise={currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null}
           currentExerciseIndex={currentExerciseIndex}

@@ -32,8 +32,8 @@ export const WorkoutExerciseView = ({
 }: WorkoutExerciseViewProps) => {
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-xl sm:text-2xl font-bold">
           {currentExercise || "Sélectionnez un exercice"}
         </h2>
         <span className="text-muted-foreground">
@@ -56,7 +56,7 @@ export const WorkoutExerciseView = ({
         />
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {exercises.map((exercise, index) => (
           <Button
             key={index}
