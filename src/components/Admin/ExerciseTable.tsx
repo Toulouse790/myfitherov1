@@ -158,7 +158,6 @@ export const ExerciseTable = () => {
             <TableHead>Nom</TableHead>
             <TableHead>Informations</TableHead>
             <TableHead>Médias</TableHead>
-            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
