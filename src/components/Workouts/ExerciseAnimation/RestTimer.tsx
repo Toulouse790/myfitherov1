@@ -1,5 +1,5 @@
-import { Timer, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Timer, Plus, Minus } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface RestTimerProps {
@@ -19,7 +19,7 @@ export const RestTimer = ({ remainingTime, restTime, onRestTimeChange }: RestTim
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="fixed bottom-20 right-4 left-4 bg-card p-4 rounded-lg shadow-lg border"
+      className="space-y-4"
     >
       <div className="space-y-4">
         <div className="flex items-center justify-center gap-2 text-2xl font-bold">
@@ -32,9 +32,9 @@ export const RestTimer = ({ remainingTime, restTime, onRestTimeChange }: RestTim
             size="icon"
             onClick={() => handleTimeChange(-15)}
           >
-            <ChevronDown className="h-4 w-4" />
+            <Minus className="h-4 w-4" />
           </Button>
-          <span className="text-lg font-medium min-w-[3ch] text-center">
+          <span className="text-lg font-medium w-16 text-center">
             {restTime}s
           </span>
           <Button
@@ -42,7 +42,7 @@ export const RestTimer = ({ remainingTime, restTime, onRestTimeChange }: RestTim
             size="icon"
             onClick={() => handleTimeChange(15)}
           >
-            <ChevronUp className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
       </div>
