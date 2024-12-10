@@ -68,31 +68,33 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
     <Card className="p-4">
       <div className="space-y-4">
         <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <div>
-              <h3 className="text-lg font-semibold">{exercise.name}</h3>
-              <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
-            </div>
+          <div className="flex items-start gap-4">
+            <MediaButtons 
+              isPublished={exercise.is_published}
+              isPublishing={isPublishing}
+              onPublishToggle={handlePublishToggle}
+              onImageClick={handleImageClick}
+              onVideoClick={handleVideoClick}
+            />
             <div className="space-y-2">
-              <DifficultyBadges 
-                difficulties={["beginner", "intermediate", "advanced"]}
-                selectedDifficulties={selectedDifficulties}
-                onDifficultyChange={handleDifficultyChange}
-              />
-              <LocationBadges 
-                locations={["home", "gym", "outdoor"]}
-                selectedLocations={selectedLocations}
-                onLocationChange={handleLocationChange}
-              />
+              <div>
+                <h3 className="text-lg font-semibold">{exercise.name}</h3>
+                <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
+              </div>
+              <div className="space-y-2">
+                <DifficultyBadges 
+                  difficulties={["beginner", "intermediate", "advanced"]}
+                  selectedDifficulties={selectedDifficulties}
+                  onDifficultyChange={handleDifficultyChange}
+                />
+                <LocationBadges 
+                  locations={["home", "gym", "outdoor"]}
+                  selectedLocations={selectedLocations}
+                  onLocationChange={handleLocationChange}
+                />
+              </div>
             </div>
           </div>
-          <MediaButtons 
-            isPublished={exercise.is_published}
-            isPublishing={isPublishing}
-            onPublishToggle={handlePublishToggle}
-            onImageClick={handleImageClick}
-            onVideoClick={handleVideoClick}
-          />
         </div>
 
         {(showImageUpload || showVideoUpload) && (
