@@ -20,32 +20,36 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   useEffect(() => {
     const fetchExerciseCounts = async () => {
       try {
-        console.log('Fetching exercise counts...');
+        console.log('Début du comptage des exercices...');
         const { data: exercises, error } = await supabase
           .from('exercises')
           .select('id, name, muscle_group')
           .eq('is_published', true);
 
         if (error) {
-          console.error('Error fetching exercises:', error);
+          console.error('Erreur lors de la récupération des exercices:', error);
           throw error;
         }
 
         const counts: {[key: string]: number} = {};
         
         if (exercises) {
-          console.log('Raw exercise data:', exercises);
+          console.log(`Nombre total d'exercices récupérés:`, exercises.length);
           exercises.forEach(exercise => {
+            if (!exercise.muscle_group) {
+              console.warn(`Exercice sans groupe musculaire:`, exercise);
+              return;
+            }
             const muscleGroup = exercise.muscle_group.toLowerCase();
-            console.log(`Processing exercise: ${exercise.name}, muscle group: ${muscleGroup}`);
+            console.log(`Traitement de l'exercice: ${exercise.name}, groupe musculaire: ${muscleGroup}`);
             counts[muscleGroup] = (counts[muscleGroup] || 0) + 1;
           });
         }
 
-        console.log('Final exercise counts:', counts);
+        console.log('Comptage final des exercices par groupe:', counts);
         setExerciseCounts(counts);
       } catch (error) {
-        console.error('Error fetching exercise counts:', error);
+        console.error('Erreur lors du comptage des exercices:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les exercices",
@@ -57,21 +61,23 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
     fetchExerciseCounts();
   }, [toast]);
 
-  const filteredMuscleGroups = muscleGroups.filter(group => 
-    group.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleClick = (muscleId: string) => {
-    console.log('Muscle group clicked:', muscleId);
+    console.log('Groupe musculaire cliqué:', muscleId);
     setSelectedId(muscleId);
     onMuscleGroupClick(muscleId);
   };
 
   const getMuscleGroupCount = (muscleId: string): number => {
     const translatedGroup = translateMuscleGroup(muscleId);
-    console.log(`Getting count for muscle group: ${muscleId}, translated: ${translatedGroup}`);
-    return exerciseCounts[translatedGroup.toLowerCase()] || 0;
+    console.log(`Récupération du compte pour: ${muscleId}, traduit en: ${translatedGroup}`);
+    const count = exerciseCounts[translatedGroup.toLowerCase()] || 0;
+    console.log(`Nombre d'exercices trouvés: ${count}`);
+    return count;
   };
+
+  const filteredMuscleGroups = muscleGroups.filter(group => 
+    group.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
