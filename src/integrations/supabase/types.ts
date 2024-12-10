@@ -114,6 +114,7 @@ export type Database = {
       }
       cardio_exercises: {
         Row: {
+          calories_burned: number | null
           calories_formula: string
           created_at: string
           id: string
@@ -122,6 +123,7 @@ export type Database = {
           type: string
         }
         Insert: {
+          calories_burned?: number | null
           calories_formula: string
           created_at?: string
           id?: string
@@ -130,6 +132,7 @@ export type Database = {
           type: string
         }
         Update: {
+          calories_burned?: number | null
           calories_formula?: string
           created_at?: string
           id?: string
