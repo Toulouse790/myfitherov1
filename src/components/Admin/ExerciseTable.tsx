@@ -23,6 +23,8 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const fetchExercises = async () => {
     try {
       setIsLoading(true);
+      console.log('Fetching exercises with isPublished:', isPublished);
+      
       const { data, error } = await supabase
         .from('exercises')
         .select(`
@@ -33,7 +35,21 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
 
       if (error) throw error;
 
-      setExercises(data || []);
+      // Remove duplicates based on exercise ID
+      const uniqueExercises = data?.reduce((acc: any[], current: any) => {
+        const exists = acc.find(item => item.id === current.id);
+        if (!exists) {
+          acc.push(current);
+        } else {
+          console.log('Found duplicate exercise:', current.name, 'with ID:', current.id);
+        }
+        return acc;
+      }, []) || [];
+
+      console.log('Total exercises before deduplication:', data?.length);
+      console.log('Total exercises after deduplication:', uniqueExercises.length);
+
+      setExercises(uniqueExercises);
     } catch (error) {
       console.error('Error fetching exercises:', error);
       toast({
