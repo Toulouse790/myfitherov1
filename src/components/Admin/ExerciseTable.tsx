@@ -71,11 +71,15 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
     );
   };
 
-  const handleNameChange = async (exerciseId: string, newName: string) => {
+  const handlePublish = async (exerciseId: string, name: string) => {
     try {
+      console.log('Publishing exercise:', exerciseId);
       const { error } = await supabase
         .from('unified_exercises')
-        .update({ name: newName })
+        .update({ 
+          is_published: !isPublished,
+          name: name 
+        })
         .eq('id', exerciseId);
 
       if (error) throw error;
@@ -87,10 +91,10 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       
       fetchExercises();
     } catch (error) {
-      console.error('Error updating exercise name:', error);
+      console.error('Error updating exercise:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour le nom de l'exercice",
+        description: "Impossible de mettre à jour l'exercice",
         variant: "destructive",
       });
     }
@@ -116,7 +120,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
         <div className="mb-4">
           <AdminHeaderActions
             selectedExercises={selectedExercises}
-            onPublish={handleNameChange}
+            onPublish={handlePublish}
           />
         </div>
       )}
@@ -148,7 +152,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
                 <Input
                   type="text"
                   value={exercise.name}
-                  onChange={(e) => handleNameChange(exercise.id, e.target.value)}
+                  onChange={(e) => handlePublish(exercise.id, e.target.value)}
                   className="w-full"
                 />
               </TableCell>
@@ -157,7 +161,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
                 <MediaButtons
                   isPublished={exercise.is_published}
                   isPublishing={false}
-                  onPublishToggle={() => handleNameChange(exercise.id, exercise.name)}
+                  onPublishToggle={() => handlePublish(exercise.id, exercise.name)}
                   onImageClick={() => setShowImageUpload(exercise.id)}
                   onVideoClick={() => setShowVideoUpload(exercise.id)}
                 />
@@ -186,7 +190,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleNameChange(exercise.id, exercise.name)}
+                  onClick={() => handlePublish(exercise.id, exercise.name)}
                 >
                   Publier
                 </Button>

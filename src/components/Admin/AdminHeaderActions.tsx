@@ -5,7 +5,7 @@ import { MediaButtons } from "./MediaButtons";
 
 interface AdminHeaderActionsProps {
   selectedExercises: string[];
-  onPublish: () => void;
+  onPublish: (exerciseId: string, name: string) => void;
 }
 
 export const AdminHeaderActions = ({
@@ -27,9 +27,14 @@ export const AdminHeaderActions = ({
   };
 
   const handlePublishToggle = async () => {
+    if (selectedExercises.length === 0) return;
+    
     setIsPublishing(true);
     try {
-      await onPublish();
+      // Publish each selected exercise
+      for (const exerciseId of selectedExercises) {
+        await onPublish(exerciseId, ''); // Empty string as we don't need to update the name
+      }
     } finally {
       setIsPublishing(false);
     }
@@ -40,7 +45,7 @@ export const AdminHeaderActions = ({
       <Button 
         variant="default"
         size="sm" 
-        onClick={onPublish}
+        onClick={handlePublishToggle}
         className="gap-2 bg-green-600 hover:bg-green-700"
         disabled={selectedExercises.length === 0}
       >
