@@ -1,29 +1,20 @@
 import { useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
-import { SetManager } from "./ExerciseSets/SetManager";
-import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { EndWorkoutButton } from "./NextWorkoutDetail/EndWorkoutButton";
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const NextWorkoutDetail = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const sessionId = searchParams.get("session");
   const { exercises, currentExerciseIndex, workoutStarted, duration, handleConfirmEndWorkout } = useWorkoutSession();
   const { toast } = useToast();
   const [showSummary, setShowSummary] = useState(false);
-
-  const currentExercise = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
-
-  const handleSetComplete = () => {
-    toast({
-      title: "Série complétée !",
-      description: "Prenez une pause de 90 secondes avant la prochaine série.",
-    });
-  };
 
   const handleEndWorkout = () => {
     setShowSummary(true);
@@ -100,23 +91,10 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="container max-w-4xl mx-auto p-4">
-      <Card className="p-6 space-y-6">
-        {currentExercise ? (
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold">{currentExercise}</h2>
-              <div className="text-muted-foreground">
-                <p>Séries totales : 3</p>
-              </div>
-            </div>
-            
-            <SetManager onSetComplete={handleSetComplete} />
-          </div>
-        ) : (
-          <p className="text-center text-muted-foreground">
-            Aucun exercice sélectionné
-          </p>
-        )}
+      <Card className="p-6">
+        <p className="text-center text-muted-foreground">
+          Session ID: {sessionId}
+        </p>
       </Card>
 
       <EndWorkoutButton 
