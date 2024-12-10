@@ -1,51 +1,52 @@
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
-export const useWorkoutCompletion = (sessionId: string | null, userId: string | null) => {
-  const navigate = useNavigate();
+export const useWorkoutCompletion = (sessionId: string | null, userId: string | undefined) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleConfirmEndWorkout = async (difficulty: "easy" | "medium" | "hard", duration: number) => {
+  const handleConfirmEndWorkout = async (
+    difficulty: string,
+    duration: number,
+    muscleGroups: string[]
+  ) => {
+    if (!sessionId || !userId) {
+      console.error("Session ID or User ID is missing");
+      return;
+    }
+
     try {
-      if (!sessionId || !userId) return;
-
-      const { error: sessionError } = await supabase
+      // Mettre à jour le statut de la session
+      await supabase
         .from('workout_sessions')
-        .update({ 
-          status: 'completed',
-          updated_at: new Date().toISOString()
-        })
+        .update({ status: 'completed' })
         .eq('id', sessionId);
 
-      if (sessionError) throw sessionError;
-
+      // Enregistrer les statistiques d'entraînement
       const { error: statsError } = await supabase
         .from('training_stats')
         .insert({
           user_id: userId,
           session_id: sessionId,
-          duration_minutes: Math.round(duration / 60), // Convert seconds to minutes
+          session_duration_minutes: duration,
           perceived_difficulty: difficulty,
-          total_sets: 0,
-          total_reps: 0,
-          total_weight: 0
+          muscle_groups_worked: muscleGroups,
         });
 
       if (statsError) throw statsError;
 
       toast({
         title: "Séance terminée !",
-        description: `Durée : ${Math.round(duration / 60)} minutes`,
+        description: "Vos statistiques ont été enregistrées avec succès.",
       });
 
-      navigate('/workouts');
-
+      navigate('/');
     } catch (error) {
       console.error('Error ending workout:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de terminer la séance",
+        description: "Impossible de sauvegarder les statistiques de la séance.",
         variant: "destructive",
       });
     }
