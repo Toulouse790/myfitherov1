@@ -9,7 +9,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltères ou Barre",
     location: ["gym", "home"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, bras le long du corps",
       "Montez les poids en fléchissant les coudes",
@@ -43,7 +43,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Poulie haute",
     location: ["gym"],
-    image: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
+    image_url: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
     instructions: [
       "Face à la poulie, coudes près du corps",
       "Tendez les bras vers le bas",
@@ -77,7 +77,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltères",
     location: ["gym", "home"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, haltères en pronation",
       "Montez les poids en gardant les paumes face à face",
@@ -111,7 +111,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barres parallèles ou chaise",
     location: ["gym", "home"],
-    image: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
+    image_url: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
     instructions: [
       "En appui sur les barres",
       "Descendez en pliant les coudes",
@@ -145,7 +145,7 @@ export const armsExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
+    image_url: "/lovable-uploads/09ce8973-60de-4f3f-9825-a7e506fd2814.png",
     instructions: [
       "Mains en forme de diamant sous la poitrine",
       "Descendez en pliant les coudes",
