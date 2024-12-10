@@ -6,11 +6,15 @@ interface FoodInputsProps {
   weight: string;
   calories: string;
   proteins: string;
+  carbs: string;
+  fats: string;
   isCustomFood: boolean;
   onFoodChange: (value: string) => void;
   onWeightChange: (value: string) => void;
   onCaloriesChange: (value: string) => void;
   onProteinsChange: (value: string) => void;
+  onCarbsChange: (value: string) => void;
+  onFatsChange: (value: string) => void;
   setIsCustomFood: (value: boolean) => void;
 }
 
@@ -19,11 +23,15 @@ export const FoodInputs = ({
   weight,
   calories,
   proteins,
+  carbs,
+  fats,
   isCustomFood,
   onFoodChange,
   onWeightChange,
   onCaloriesChange,
   onProteinsChange,
+  onCarbsChange,
+  onFatsChange,
   setIsCustomFood,
 }: FoodInputsProps) => {
   const handleFoodChange = (value: string) => {
@@ -32,7 +40,7 @@ export const FoodInputs = ({
     
     const selectedFood = commonFoods.find(food => food.name === value);
     if (selectedFood && weight) {
-      updateNutrients(selectedFood.calories, selectedFood.proteins, weight);
+      updateNutrients(selectedFood.calories, selectedFood.proteins, selectedFood.carbs || 0, selectedFood.fats || 0, weight);
     }
   };
 
@@ -41,17 +49,21 @@ export const FoodInputs = ({
     
     const selectedFood = commonFoods.find(food => food.name === newFood);
     if (selectedFood && newWeight) {
-      updateNutrients(selectedFood.calories, selectedFood.proteins, newWeight);
+      updateNutrients(selectedFood.calories, selectedFood.proteins, selectedFood.carbs || 0, selectedFood.fats || 0, newWeight);
     }
   };
 
-  const updateNutrients = (baseCalories: number, baseProteins: number, currentWeight: string) => {
+  const updateNutrients = (baseCalories: number, baseProteins: number, baseCarbs: number, baseFats: number, currentWeight: string) => {
     const weightNum = parseFloat(currentWeight);
     if (!isNaN(weightNum)) {
       const newCalories = Math.round((baseCalories * weightNum) / 100);
       const newProteins = Math.round((baseProteins * weightNum) / 100);
+      const newCarbs = Math.round((baseCarbs * weightNum) / 100);
+      const newFats = Math.round((baseFats * weightNum) / 100);
       onCaloriesChange(newCalories.toString());
       onProteinsChange(newProteins.toString());
+      onCarbsChange(newCarbs.toString());
+      onFatsChange(newFats.toString());
     }
   };
 
@@ -100,6 +112,22 @@ export const FoodInputs = ({
             placeholder="Protéines (g)"
             value={proteins}
             onChange={(e) => onProteinsChange(e.target.value)}
+            className={isCustomFood ? "bg-white" : "bg-gray-50"}
+            readOnly={!isCustomFood}
+          />
+          <Input
+            type="number"
+            placeholder="Glucides (g)"
+            value={carbs}
+            onChange={(e) => onCarbsChange(e.target.value)}
+            className={isCustomFood ? "bg-white" : "bg-gray-50"}
+            readOnly={!isCustomFood}
+          />
+          <Input
+            type="number"
+            placeholder="Lipides (g)"
+            value={fats}
+            onChange={(e) => onFatsChange(e.target.value)}
             className={isCustomFood ? "bg-white" : "bg-gray-50"}
             readOnly={!isCustomFood}
           />

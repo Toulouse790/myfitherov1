@@ -11,6 +11,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
   const [newFood, setNewFood] = useState("");
   const [calories, setCalories] = useState("");
   const [proteins, setProteins] = useState("");
+  const [carbs, setCarbs] = useState("");
+  const [fats, setFats] = useState("");
   const [weight, setWeight] = useState("");
   const [baseCalories, setBaseCalories] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -38,6 +40,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
           name: entry.name,
           calories: entry.calories,
           proteins: entry.proteins,
+          carbs: entry.carbs,
+          fats: entry.fats,
           mealType: entry.meal_type,
         })));
       } catch (error: any) {
@@ -85,6 +89,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
         name: `${newFood} (${weight}g)`,
         calories: parseInt(calories),
         proteins: parseInt(proteins),
+        carbs: parseInt(carbs),
+        fats: parseInt(fats),
         mealType: mealType,
       });
 
@@ -93,6 +99,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
         name: data.name,
         calories: data.calories,
         proteins: data.proteins,
+        carbs: data.carbs,
+        fats: data.fats,
         mealType: data.meal_type,
       };
 
@@ -100,6 +108,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
       setNewFood("");
       setCalories("");
       setProteins("");
+      setCarbs("");
+      setFats("");
       setWeight("");
       setBaseCalories(0);
 
@@ -123,6 +133,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
       setNewFood(selectedFood.name);
       setBaseCalories(selectedFood.calories);
       setProteins(selectedFood.proteins.toString());
+      setCarbs((selectedFood.carbs || 0).toString());
+      setFats((selectedFood.fats || 0).toString());
       setSelectedCategory(selectedFood.category);
       setWeight("");
       setCalories("");
@@ -136,6 +148,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
       setNewFood(scannedFood.name);
       setBaseCalories(scannedFood.calories);
       setProteins(scannedFood.proteins.toString());
+      setCarbs((scannedFood.carbs || 0).toString());
+      setFats((scannedFood.fats || 0).toString());
       setSelectedCategory(scannedFood.category);
       setWeight("");
       setCalories("");
@@ -175,6 +189,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
     newFood,
     calories,
     proteins,
+    carbs,
+    fats,
     weight,
     baseCalories,
     selectedCategory,
@@ -182,6 +198,8 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
     setNewFood,
     setCalories,
     setProteins,
+    setCarbs,
+    setFats,
     setWeight,
     setSelectedCategory,
     handleAddEntry,

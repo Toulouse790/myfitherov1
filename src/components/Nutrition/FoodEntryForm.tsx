@@ -13,12 +13,16 @@ interface FoodEntryFormProps {
   newFood: string;
   calories: string;
   proteins: string;
+  carbs: string;
+  fats: string;
   weight: string;
   baseCalories: number;
   selectedCategory: string;
   onFoodChange: (value: string) => void;
   onCaloriesChange: (value: string) => void;
   onProteinsChange: (value: string) => void;
+  onCarbsChange: (value: string) => void;
+  onFatsChange: (value: string) => void;
   onWeightChange: (value: string) => void;
   onAddEntry: (mealType: string) => void;
 }
@@ -27,12 +31,16 @@ export const FoodEntryForm = ({
   newFood,
   calories,
   proteins,
+  carbs,
+  fats,
   weight,
   baseCalories,
   selectedCategory,
   onFoodChange,
   onCaloriesChange,
   onProteinsChange,
+  onCarbsChange,
+  onFatsChange,
   onWeightChange,
   onAddEntry,
 }: FoodEntryFormProps) => {
@@ -75,11 +83,15 @@ export const FoodEntryForm = ({
             weight={weight}
             calories={calories}
             proteins={proteins}
+            carbs={carbs}
+            fats={fats}
             isCustomFood={isCustomFood}
             onFoodChange={onFoodChange}
             onWeightChange={handleWeightChange}
             onCaloriesChange={onCaloriesChange}
             onProteinsChange={onProteinsChange}
+            onCarbsChange={onCarbsChange}
+            onFatsChange={onFatsChange}
             setIsCustomFood={setIsCustomFood}
           />
 

@@ -15,6 +15,8 @@ interface FoodSearchProps {
     name: string;
     calories: number;
     proteins: number;
+    carbs: number;
+    fats: number;
     mealType: string;
   }>;
   onDeleteEntry?: (id: string) => void;
@@ -70,10 +72,14 @@ export const FoodSearch = ({ entries, onDeleteEntry }: FoodSearchProps) => {
                     >
                       <div className="space-y-1">
                         <p className="font-medium text-gray-900">{entry.name}</p>
-                        <div className="text-sm text-gray-700 flex gap-3">
+                        <div className="text-sm text-gray-700 flex flex-wrap gap-2">
                           <span>{entry.calories} kcal</span>
                           <span>•</span>
-                          <span>{entry.proteins} protéines</span>
+                          <span>{entry.proteins}g protéines</span>
+                          <span>•</span>
+                          <span>{entry.carbs}g glucides</span>
+                          <span>•</span>
+                          <span>{entry.fats}g lipides</span>
                         </div>
                       </div>
                     </div>

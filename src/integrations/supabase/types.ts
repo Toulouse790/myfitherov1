@@ -300,7 +300,9 @@ export type Database = {
       food_journal_entries: {
         Row: {
           calories: number
+          carbs: number
           created_at: string
+          fats: number
           id: string
           meal_type: string
           name: string
@@ -311,7 +313,9 @@ export type Database = {
         }
         Insert: {
           calories: number
+          carbs?: number
           created_at?: string
+          fats?: number
           id?: string
           meal_type?: string
           name: string
@@ -322,7 +326,9 @@ export type Database = {
         }
         Update: {
           calories?: number
+          carbs?: number
           created_at?: string
+          fats?: number
           id?: string
           meal_type?: string
           name?: string
