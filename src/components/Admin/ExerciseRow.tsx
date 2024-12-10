@@ -43,6 +43,16 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
     onUpdate
   );
 
+  const onDifficultyChange = (difficulty: string) => {
+    const isSelected = selectedDifficulties.includes(difficulty);
+    handleDifficultyChange(difficulty, !isSelected);
+  };
+
+  const onLocationChange = (location: string) => {
+    const isSelected = selectedLocations.includes(location);
+    handleLocationChange(location, !isSelected);
+  };
+
   return (
     <Card className="p-4">
       <div className="space-y-4">
@@ -52,10 +62,10 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
             muscleGroup={exercise.muscle_group}
             difficulties={["beginner", "intermediate", "advanced"]}
             selectedDifficulties={selectedDifficulties}
-            onDifficultyChange={handleDifficultyChange}
+            onDifficultyChange={onDifficultyChange}
             locations={["home", "gym", "outdoor"]}
             selectedLocations={selectedLocations}
-            onLocationChange={handleLocationChange}
+            onLocationChange={onLocationChange}
           />
           <div className="flex gap-2">
             <Button
