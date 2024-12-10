@@ -6,8 +6,7 @@ export const translateMuscleGroup = (muscleId: string): string => {
     shoulders: 'épaules',
     biceps: 'biceps',
     triceps: 'triceps',
-    abs: 'abdominaux',
-    arms: 'bras'
+    abs: 'abdominaux'
   };
 
   console.log('Traduction du groupe musculaire:', muscleId, 'en:', translations[muscleId]);
@@ -22,8 +21,7 @@ export const reverseTranslateMuscleGroup = (frenchName: string): string => {
     épaules: 'shoulders',
     biceps: 'biceps',
     triceps: 'triceps',
-    abdominaux: 'abs',
-    bras: 'arms'
+    abdominaux: 'abs'
   };
 
   return reverseTranslations[frenchName.toLowerCase()] || frenchName;

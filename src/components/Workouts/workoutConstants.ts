@@ -56,14 +56,6 @@ export const muscleGroups = [
     image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
     selectedExercises: 0,
     totalExercises: 0
-  },
-  { 
-    id: 'arms', 
-    name: 'Bras',
-    color: 'bg-primary',
-    image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
-    selectedExercises: 0,
-    totalExercises: 0
   }
 ];
 
@@ -73,13 +65,13 @@ export const locations = [
   { id: 'outdoor', name: 'Extérieur' }
 ];
 
-// Pour maintenir la compatibilité, on garde difficultyLevels tout en ajoutant difficulties
 export const difficulties = [
   { id: 'beginner', name: 'Débutant' },
   { id: 'intermediate', name: 'Intermédiaire' },
   { id: 'advanced', name: 'Avancé' }
 ];
 
+// Pour maintenir la compatibilité, on garde difficultyLevels tout en ajoutant difficulties
 export const difficultyLevels = difficulties;
 
 export interface WorkoutFormData {
