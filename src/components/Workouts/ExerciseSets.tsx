@@ -23,7 +23,34 @@ export const ExerciseSets = ({
   const [restTimers, setRestTimers] = useState<{ [key: string]: number | null }>({});
   const [sessionDuration, setSessionDuration] = useState<number>(0);
   const [totalRestTime, setTotalRestTime] = useState<number>(0);
+  const [exerciseNames, setExerciseNames] = useState<{ [key: string]: string }>({});
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchExerciseNames = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('unified_exercises')
+          .select('id, name')
+          .in('id', exercises);
+
+        if (error) throw error;
+
+        const namesMap = (data || []).reduce((acc: { [key: string]: string }, exercise) => {
+          acc[exercise.id] = exercise.name;
+          return acc;
+        }, {});
+
+        setExerciseNames(namesMap);
+      } catch (error) {
+        console.error('Error fetching exercise names:', error);
+      }
+    };
+
+    if (exercises.length > 0) {
+      fetchExerciseNames();
+    }
+  }, [exercises]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -47,20 +74,20 @@ export const ExerciseSets = ({
   useEffect(() => {
     const intervals: { [key: string]: NodeJS.Timeout } = {};
 
-    Object.entries(restTimers).forEach(([exerciseName, timer]) => {
+    Object.entries(restTimers).forEach(([exerciseId, timer]) => {
       if (timer !== null && timer > 0) {
-        intervals[exerciseName] = setInterval(() => {
+        intervals[exerciseId] = setInterval(() => {
           setRestTimers(prev => {
-            const currentTimer = prev[exerciseName];
+            const currentTimer = prev[exerciseId];
             if (currentTimer === null || currentTimer <= 1) {
-              clearInterval(intervals[exerciseName]);
+              clearInterval(intervals[exerciseId]);
               toast({
                 title: "Repos terminé !",
                 description: "C'est reparti ! Commencez la série suivante.",
               });
-              return { ...prev, [exerciseName]: null };
+              return { ...prev, [exerciseId]: null };
             }
-            return { ...prev, [exerciseName]: currentTimer - 1 };
+            return { ...prev, [exerciseId]: currentTimer - 1 };
           });
           setTotalRestTime(prev => prev + 1);
         }, 1000);
@@ -74,19 +101,20 @@ export const ExerciseSets = ({
     };
   }, [restTimers, toast]);
 
-  const handleSetComplete = async (exerciseName: string) => {
-    const currentSets = completedSets[exerciseName] || 0;
+  const handleSetComplete = async (exerciseId: string) => {
+    const currentSets = completedSets[exerciseId] || 0;
+    const exerciseName = exerciseNames[exerciseId] || exerciseId;
     
     if (currentSets < 3) {
       const newSetsCount = currentSets + 1;
       setCompletedSets(prev => ({
         ...prev,
-        [exerciseName]: newSetsCount
+        [exerciseId]: newSetsCount
       }));
       
       setRestTimers(prev => ({
         ...prev,
-        [exerciseName]: 90
+        [exerciseId]: 90
       }));
 
       if (sessionId) {
@@ -97,8 +125,8 @@ export const ExerciseSets = ({
               session_id: sessionId,
               exercise_name: exerciseName,
               set_number: newSetsCount,
-              reps: reps[exerciseName],
-              weight: weights[exerciseName],
+              reps: reps[exerciseId],
+              weight: weights[exerciseId],
               rest_time_seconds: 90
             });
 
@@ -122,7 +150,7 @@ export const ExerciseSets = ({
         }
       }
 
-      const calories = Math.round(reps[exerciseName] * weights[exerciseName] * 0.15);
+      const calories = Math.round(reps[exerciseId] * weights[exerciseId] * 0.15);
       toast({
         title: "Série complétée !",
         description: `${calories} calories brûlées. Repos de 90 secondes.`,
@@ -144,17 +172,17 @@ export const ExerciseSets = ({
     <div className="space-y-6">
       <SessionTimer sessionDuration={sessionDuration} />
 
-      {exercises.map((exerciseName) => (
+      {exercises.map((exerciseId) => (
         <ExerciseCard
-          key={exerciseName}
-          exerciseName={exerciseName}
-          weight={weights[exerciseName] || 0}
-          reps={reps[exerciseName] || 0}
-          completedSets={completedSets[exerciseName] || 0}
-          restTimer={restTimers[exerciseName]}
-          onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseName]: value }))}
-          onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseName]: value }))}
-          onSetComplete={() => handleSetComplete(exerciseName)}
+          key={exerciseId}
+          exerciseName={exerciseNames[exerciseId] || "Chargement..."}
+          weight={weights[exerciseId] || 0}
+          reps={reps[exerciseId] || 0}
+          completedSets={completedSets[exerciseId] || 0}
+          restTimer={restTimers[exerciseId]}
+          onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseId]: value }))}
+          onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseId]: value }))}
+          onSetComplete={() => handleSetComplete(exerciseId)}
         />
       ))}
     </div>
