@@ -56,15 +56,22 @@ export const WorkoutExerciseView = ({
         />
       )}
 
-      <div className="flex gap-4 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {exercises.map((exercise, index) => (
           <Button
             key={index}
             variant={currentExerciseIndex === index ? "default" : "outline"}
             onClick={() => onExerciseSelect(index)}
-            className="flex-1"
+            className={`w-full justify-start px-4 py-6 text-left ${
+              currentExerciseIndex === index ? "bg-primary text-primary-foreground" : ""
+            }`}
           >
-            {exercise}
+            <div className="flex flex-col">
+              <span className="font-medium">{exercise}</span>
+              <span className="text-sm opacity-80">
+                {currentExerciseIndex === index ? "En cours" : `Exercice ${index + 1}`}
+              </span>
+            </div>
           </Button>
         ))}
       </div>
