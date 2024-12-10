@@ -26,7 +26,17 @@ interface UserProfile {
   recoveryCapacity: 'low' | 'medium' | 'high';
 }
 
-export const generateWorkoutPlan = (profile: UserProfile, availableExercises: string[]): WorkoutPlan => {
+const defaultProfile: UserProfile = {
+  age: 30,
+  weight: 75,
+  height: 175,
+  goal: 'muscle_gain',
+  workoutsPerWeek: 3,
+  dailyCalories: 2500,
+  recoveryCapacity: 'medium'
+};
+
+export const generateWorkoutPlan = (availableExercises: string[], profile: UserProfile = defaultProfile): WorkoutPlan => {
   console.log("Génération avec", availableExercises.length, "exercices disponibles");
   
   // Calcul de l'intensité en fonction du profil
