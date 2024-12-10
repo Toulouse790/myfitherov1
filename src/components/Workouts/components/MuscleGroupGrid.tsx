@@ -41,7 +41,6 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
               return;
             }
             const translatedGroup = translateMuscleGroup(exercise.muscle_group).toLowerCase();
-            console.log(`Traitement de l'exercice: ${exercise.name}, groupe musculaire: ${translatedGroup}`);
             counts[translatedGroup] = (counts[translatedGroup] || 0) + 1;
           });
         }

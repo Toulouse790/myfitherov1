@@ -61,7 +61,7 @@ export const ExerciseSelection = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">
-          Sélectionnez vos exercices
+          Sélectionnez vos exercices ({filteredExercises.length})
         </h2>
         <Button variant="outline" onClick={onClose}>
           Retour aux groupes musculaires

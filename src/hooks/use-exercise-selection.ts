@@ -49,24 +49,10 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
           throw error;
         }
 
-        // Supprimer les doublons basés sur l'ID
-        const uniqueExercises = data?.reduce((acc: Exercise[], current) => {
-          const exists = acc.find((exercise) => exercise.id === current.id);
-          if (!exists) {
-            // Traduire le muscle_group avant d'ajouter l'exercice
-            const translatedExercise = {
-              ...current,
-              muscle_group: translateMuscleGroup(current.muscle_group)
-            };
-            acc.push(translatedExercise);
-          } else {
-            console.log('Duplicate exercise found:', current.name);
-          }
-          return acc;
-        }, []) || [];
-
-        console.log('Fetched exercises:', uniqueExercises);
-        setExercises(uniqueExercises);
+        if (data) {
+          console.log('Fetched exercises:', data);
+          setExercises(data);
+        }
       } catch (error) {
         console.error('Error fetching exercises:', error);
         toast({
