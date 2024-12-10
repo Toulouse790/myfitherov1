@@ -23,6 +23,7 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleSetComplete = () => {
+    console.log("Set completed, starting rest timer");
     if (currentSet < 3) {
       setCurrentSet(prev => prev + 1);
       setIsResting(true);

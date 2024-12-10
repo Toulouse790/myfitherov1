@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface WorkoutExerciseViewProps {
   currentExercise: string | null;
@@ -37,6 +38,7 @@ export const WorkoutExerciseView = ({
 }: WorkoutExerciseViewProps) => {
   const [previousWeight, setPreviousWeight] = useState<number>(20);
   const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchPreviousWeight = async () => {
@@ -64,6 +66,7 @@ export const WorkoutExerciseView = ({
   }, [currentExercise, user]);
 
   const handleSetComplete = async () => {
+    console.log("Handling set completion");
     if (currentExercise && sessionId) {
       try {
         const { error } = await supabase
@@ -78,10 +81,24 @@ export const WorkoutExerciseView = ({
             completed_at: new Date().toISOString()
           });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Database error:', error);
+          toast({
+            title: "Erreur",
+            description: "Impossible de sauvegarder la série",
+            variant: "destructive",
+          });
+          throw error;
+        }
         
-        // Start rest timer automatically after set completion
+        console.log("Set saved, starting rest timer");
+        // Démarrer le timer de repos après la sauvegarde réussie
         onSetComplete();
+        
+        toast({
+          title: "Série complétée !",
+          description: "Début de la période de repos",
+        });
       } catch (error) {
         console.error('Error saving set:', error);
       }
