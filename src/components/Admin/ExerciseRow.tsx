@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Image, Video, Check, Upload } from "lucide-react";
 import { DifficultyBadges } from "./DifficultyBadges";
 import { UploadForm } from "./UploadForm";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useDifficultyManagement } from "@/hooks/use-difficulty-management";
+import { usePublishManagement } from "@/hooks/use-publish-management";
 
 interface ExerciseRowProps {
   exercise: {
@@ -25,66 +25,17 @@ interface ExerciseRowProps {
 export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
-  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(exercise.difficulty || []);
-  const [isPublishing, setIsPublishing] = useState(false);
-  const { toast } = useToast();
-
-  const handleDifficultyChange = async (difficulty: string) => {
-    const newDifficulties = selectedDifficulties.includes(difficulty)
-      ? selectedDifficulties.filter(d => d !== difficulty)
-      : [...selectedDifficulties, difficulty];
-
-    try {
-      const { error } = await supabase
-        .from('exercises')
-        .update({ difficulty: newDifficulties })
-        .eq('id', exercise.id);
-
-      if (error) throw error;
-
-      setSelectedDifficulties(newDifficulties);
-      toast({
-        title: "Succès",
-        description: "Difficulté mise à jour",
-      });
-    } catch (error) {
-      console.error('Error updating difficulty:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour la difficulté",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handlePublishToggle = async () => {
-    setIsPublishing(true);
-    try {
-      const { error } = await supabase
-        .from('exercises')
-        .update({ is_published: !exercise.is_published })
-        .eq('id', exercise.id);
-
-      if (error) throw error;
-
-      onUpdate();
-      toast({
-        title: "Succès",
-        description: exercise.is_published 
-          ? "Exercice retiré de la publication" 
-          : "Exercice publié avec succès",
-      });
-    } catch (error) {
-      console.error('Error toggling publish status:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de modifier le statut de publication",
-        variant: "destructive",
-      });
-    } finally {
-      setIsPublishing(false);
-    }
-  };
+  
+  const { selectedDifficulties, handleDifficultyChange } = useDifficultyManagement(
+    exercise.id,
+    exercise.difficulty || []
+  );
+  
+  const { isPublishing, handlePublishToggle } = usePublishManagement(
+    exercise.id,
+    exercise.is_published || false,
+    onUpdate
+  );
 
   return (
     <Card className="p-4">
