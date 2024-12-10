@@ -34,7 +34,6 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
         const counts: {[key: string]: number} = {};
         
         if (exercises) {
-          console.log(`Nombre total d'exercices récupérés:`, exercises.length);
           exercises.forEach(exercise => {
             if (!exercise.muscle_group) {
               console.warn(`Exercice sans groupe musculaire:`, exercise);
@@ -68,10 +67,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
 
   const getMuscleGroupCount = (muscleId: string): number => {
     const translatedGroup = translateMuscleGroup(muscleId);
-    console.log(`Récupération du compte pour: ${muscleId}, traduit en: ${translatedGroup}`);
-    const count = exerciseCounts[translatedGroup.toLowerCase()] || 0;
-    console.log(`Nombre d'exercices trouvés: ${count}`);
-    return count;
+    return exerciseCounts[translatedGroup.toLowerCase()] || 0;
   };
 
   const filteredMuscleGroups = muscleGroups.filter(group => 

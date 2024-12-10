@@ -20,10 +20,7 @@ export const ExerciseSelection = ({
 }: ExerciseSelectionProps) => {
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
   
-  // Filtrer les exercices pour ne garder que ceux qui sont publiés
-  const publishedExercises = exercises?.filter(exercise => exercise.is_published);
-  
-  const filteredExercises = publishedExercises?.filter(exercise => 
+  const filteredExercises = exercises?.filter(exercise => 
     exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
