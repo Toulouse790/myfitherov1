@@ -11,6 +11,13 @@ export const useDifficultyManagement = (
 
   const handleDifficultyChange = async (difficulty: string, checked: boolean) => {
     try {
+      console.log('Changing difficulty:', {
+        exerciseId,
+        difficulty,
+        checked,
+        currentSelection: selectedDifficulties
+      });
+
       const newDifficulties = checked
         ? [...selectedDifficulties, difficulty]
         : selectedDifficulties.filter(d => d !== difficulty);
@@ -23,6 +30,11 @@ export const useDifficultyManagement = (
       if (error) throw error;
 
       setSelectedDifficulties(newDifficulties);
+      
+      toast({
+        title: "Succès",
+        description: "Difficulté mise à jour avec succès",
+      });
     } catch (error) {
       console.error('Error updating exercise difficulty:', error);
       toast({
