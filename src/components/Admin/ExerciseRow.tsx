@@ -3,11 +3,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Image, Video, Check, Upload } from "lucide-react";
 import { DifficultyBadges } from "./DifficultyBadges";
+import { LocationBadges } from "./LocationBadges";
 import { UploadForm } from "./UploadForm";
 import { useDifficultyManagement } from "@/hooks/use-difficulty-management";
 import { useLocationManagement } from "@/hooks/use-location-management";
 import { usePublishManagement } from "@/hooks/use-publish-management";
-import { ExerciseHeader } from "./ExerciseHeader";
 
 interface ExerciseRowProps {
   exercise: {
@@ -43,30 +43,32 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
     onUpdate
   );
 
-  const onDifficultyChange = (difficulty: string) => {
-    const isSelected = selectedDifficulties.includes(difficulty);
-    handleDifficultyChange(difficulty, !isSelected);
-  };
-
-  const onLocationChange = (location: string) => {
-    const isSelected = selectedLocations.includes(location);
-    handleLocationChange(location, !isSelected);
-  };
-
   return (
     <Card className="p-4">
       <div className="space-y-4">
         <div className="flex items-start justify-between">
-          <ExerciseHeader
-            name={exercise.name}
-            muscleGroup={exercise.muscle_group}
-            difficulties={["beginner", "intermediate", "advanced"]}
-            selectedDifficulties={selectedDifficulties}
-            onDifficultyChange={onDifficultyChange}
-            locations={["home", "gym", "outdoor"]}
-            selectedLocations={selectedLocations}
-            onLocationChange={onLocationChange}
-          />
+          <div className="space-y-2">
+            <div>
+              <h3 className="text-lg font-semibold">{exercise.name}</h3>
+              <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
+            </div>
+            <div className="space-y-2">
+              <DifficultyBadges 
+                difficulties={["beginner", "intermediate", "advanced"]}
+                selectedDifficulties={selectedDifficulties}
+                onDifficultyChange={(difficulty, checked) => 
+                  handleDifficultyChange(difficulty, checked)
+                }
+              />
+              <LocationBadges 
+                locations={["home", "gym", "outdoor"]}
+                selectedLocations={selectedLocations}
+                onLocationChange={(location, checked) => 
+                  handleLocationChange(location, checked)
+                }
+              />
+            </div>
+          </div>
           <div className="flex gap-2">
             <Button
               variant="outline"
