@@ -27,6 +27,10 @@ export const NextWorkoutDetail = () => {
     setShowSummary(true);
   };
 
+  const handleConfirm = (difficulty: string, duration: number, muscleGroups: string[]) => {
+    handleConfirmEndWorkout(difficulty, duration, muscleGroups);
+  };
+
   const stats = {
     duration: Math.floor(duration / 60),
     totalWeight: 0, // À calculer en fonction des séries
@@ -63,7 +67,7 @@ export const NextWorkoutDetail = () => {
         open={showSummary}
         onOpenChange={setShowSummary}
         stats={stats}
-        onConfirm={handleConfirmEndWorkout}
+        onConfirm={handleConfirm}
       />
     </div>
   );
