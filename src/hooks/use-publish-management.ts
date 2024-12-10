@@ -1,30 +1,35 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-export const usePublishManagement = (exerciseId: string, initialPublishState: boolean, onUpdate: () => void) => {
+export const usePublishManagement = (
+  exerciseId: string,
+  initialIsPublished: boolean,
+  onUpdate: () => void
+) => {
   const [isPublishing, setIsPublishing] = useState(false);
   const { toast } = useToast();
 
   const handlePublishToggle = async () => {
-    setIsPublishing(true);
     try {
+      setIsPublishing(true);
       const { error } = await supabase
-        .from('exercises')
-        .update({ is_published: !initialPublishState })
+        .from('unified_exercises')
+        .update({ is_published: !initialIsPublished })
         .eq('id', exerciseId);
 
       if (error) throw error;
 
-      onUpdate();
       toast({
         title: "Succès",
-        description: initialPublishState 
-          ? "Exercice retiré de la publication" 
-          : "Exercice publié avec succès",
+        description: !initialIsPublished 
+          ? "L'exercice a été publié" 
+          : "L'exercice a été dépublié",
       });
+
+      onUpdate();
     } catch (error) {
-      console.error('Error toggling publish status:', error);
+      console.error('Error toggling exercise publish status:', error);
       toast({
         title: "Erreur",
         description: "Impossible de modifier le statut de publication",
@@ -37,6 +42,6 @@ export const usePublishManagement = (exerciseId: string, initialPublishState: bo
 
   return {
     isPublishing,
-    handlePublishToggle
+    handlePublishToggle,
   };
 };

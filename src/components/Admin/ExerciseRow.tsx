@@ -17,10 +17,8 @@ interface ExerciseRowProps {
     difficulty: string[];
     location?: string[];
     is_published?: boolean;
-    exercise_media?: {
-      media_type: string;
-      media_url: string;
-    }[];
+    image_url?: string;
+    video_url?: string;
   };
   onUpdate: () => void;
 }
@@ -116,23 +114,24 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
         )}
 
         <div className="grid grid-cols-2 gap-4 mt-4">
-          {exercise.exercise_media?.map((media, index) => (
-            <div key={index} className="relative aspect-video rounded-lg overflow-hidden">
-              {media.media_type === "image" ? (
-                <img
-                  src={media.media_url}
-                  alt={exercise.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <video
-                  src={media.media_url}
-                  controls
-                  className="w-full h-full object-cover"
-                />
-              )}
+          {exercise.image_url && (
+            <div className="relative aspect-video rounded-lg overflow-hidden">
+              <img
+                src={exercise.image_url}
+                alt={exercise.name}
+                className="w-full h-full object-cover"
+              />
             </div>
-          ))}
+          )}
+          {exercise.video_url && (
+            <div className="relative aspect-video rounded-lg overflow-hidden">
+              <video
+                src={exercise.video_url}
+                controls
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
         </div>
       </div>
     </Card>

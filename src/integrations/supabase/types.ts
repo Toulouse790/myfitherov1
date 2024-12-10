@@ -223,7 +223,7 @@ export type Database = {
         }
         Relationships: []
       }
-      exercise_media: {
+      exercise_media_old: {
         Row: {
           created_at: string
           difficulty: string[] | null
@@ -259,12 +259,12 @@ export type Database = {
             foreignKeyName: "exercise_media_exercise_id_fkey"
             columns: ["exercise_id"]
             isOneToOne: false
-            referencedRelation: "exercises"
+            referencedRelation: "exercises_old"
             referencedColumns: ["id"]
           },
         ]
       }
-      exercises: {
+      exercises_old: {
         Row: {
           created_at: string
           difficulty: string[]
@@ -610,6 +610,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      unified_exercises: {
+        Row: {
+          created_at: string
+          difficulty: string[]
+          id: string
+          image_url: string | null
+          is_published: boolean | null
+          location: string[] | null
+          muscle_group: string
+          name: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          difficulty?: string[]
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          location?: string[] | null
+          muscle_group: string
+          name: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          difficulty?: string[]
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          location?: string[] | null
+          muscle_group?: string
+          name?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
       }
       user_nutrition_preferences: {
         Row: {

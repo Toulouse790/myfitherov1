@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,44 +26,46 @@ export const UploadForm = ({ exerciseId, exerciseName, type, onSuccess }: Upload
       return;
     }
 
-    setIsUploading(true);
-
     try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${crypto.randomUUID()}.${fileExt}`;
+      setIsUploading(true);
 
-      const { error: uploadError } = await supabase.storage
+      // Upload file to storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${exerciseId}-${type}.${fileExt}`;
+      const { error: uploadError, data } = await supabase.storage
         .from('exercise-media')
-        .upload(filePath, file);
+        .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
+      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('exercise-media')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
-      const { error: dbError } = await supabase
-        .from('exercise_media')
-        .insert({
-          exercise_id: exerciseId,
-          exercise_name: exerciseName,
-          media_type: type,
-          media_url: publicUrl,
-        });
+      // Update exercise record
+      const updateData = type === 'image' 
+        ? { image_url: publicUrl }
+        : { video_url: publicUrl };
 
-      if (dbError) throw dbError;
+      const { error: updateError } = await supabase
+        .from('unified_exercises')
+        .update(updateData)
+        .eq('id', exerciseId);
+
+      if (updateError) throw updateError;
 
       toast({
         title: "Succès",
-        description: "Média téléchargé avec succès",
+        description: "Le média a été téléchargé",
       });
-      
+
       onSuccess();
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('Error uploading media:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de télécharger le fichier",
+        description: "Impossible de télécharger le média",
         variant: "destructive",
       });
     } finally {
@@ -72,16 +74,16 @@ export const UploadForm = ({ exerciseId, exerciseName, type, onSuccess }: Upload
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
       <Input
         type="file"
         accept={type === "image" ? "image/*" : "video/*"}
         onChange={(e) => setFile(e.target.files?.[0] || null)}
-        className="w-[200px]"
       />
       <Button 
         onClick={handleUpload}
         disabled={!file || isUploading}
+        className="w-full"
       >
         {isUploading ? "Téléchargement..." : "Télécharger"}
       </Button>

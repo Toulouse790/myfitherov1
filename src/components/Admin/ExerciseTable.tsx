@@ -29,11 +29,8 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       console.log('Fetching exercises with isPublished:', isPublished);
       
       const { data, error } = await supabase
-        .from('exercises')
-        .select(`
-          *,
-          exercise_media (*)
-        `)
+        .from('unified_exercises')
+        .select('*')
         .eq('is_published', isPublished);
 
       if (error) throw error;

@@ -1,48 +1,33 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-export const useDifficultyManagement = (exerciseId: string, initialDifficulties: string[]) => {
+export const useDifficultyManagement = (
+  exerciseId: string,
+  initialDifficulties: string[]
+) => {
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(initialDifficulties);
   const { toast } = useToast();
 
-  const handleDifficultyChange = async (difficulty: string) => {
-    console.log('Changing difficulty:', {
-      exerciseId,
-      difficulty,
-      currentDifficulties: selectedDifficulties
-    });
-
-    const newDifficulties = selectedDifficulties.includes(difficulty)
-      ? selectedDifficulties.filter(d => d !== difficulty)
-      : [...selectedDifficulties, difficulty];
-
-    console.log('New difficulties array:', newDifficulties);
-
+  const handleDifficultyChange = async (difficulty: string, checked: boolean) => {
     try {
-      const { data, error } = await supabase
-        .from('exercises')
+      const newDifficulties = checked
+        ? [...selectedDifficulties, difficulty]
+        : selectedDifficulties.filter(d => d !== difficulty);
+
+      const { error } = await supabase
+        .from('unified_exercises')
         .update({ difficulty: newDifficulties })
-        .eq('id', exerciseId)
-        .select();
+        .eq('id', exerciseId);
 
-      if (error) {
-        console.error('Error updating difficulty:', error);
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log('Update successful:', data);
       setSelectedDifficulties(newDifficulties);
-      
-      toast({
-        title: "Succès",
-        description: "Niveau de difficulté mis à jour",
-      });
     } catch (error) {
-      console.error('Error updating difficulty:', error);
+      console.error('Error updating exercise difficulty:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour le niveau de difficulté",
+        description: "Impossible de mettre à jour la difficulté",
         variant: "destructive",
       });
     }
@@ -50,6 +35,6 @@ export const useDifficultyManagement = (exerciseId: string, initialDifficulties:
 
   return {
     selectedDifficulties,
-    handleDifficultyChange
+    handleDifficultyChange,
   };
 };
