@@ -17,7 +17,7 @@ interface WorkoutSummaryDialogProps {
     totalWeight: number;
     totalCalories: number;
   };
-  onConfirm: () => void;
+  onConfirm: (difficulty: string, duration: number, muscleGroups: string[]) => void;
 }
 
 export const WorkoutSummaryDialog = ({
@@ -37,7 +37,7 @@ export const WorkoutSummaryDialog = ({
         <CompletionMessage />
 
         <DialogFooter>
-          <Button onClick={onConfirm} className="w-full">
+          <Button onClick={() => onConfirm("medium", stats.duration, ["chest", "shoulders"])} className="w-full">
             Terminer la séance
           </Button>
         </DialogFooter>
