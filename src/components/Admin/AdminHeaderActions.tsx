@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Image, Video } from "lucide-react";
+import { useState } from "react";
+import { MediaButtons } from "./MediaButtons";
 
 interface AdminHeaderActionsProps {
   selectedExercises: string[];
@@ -10,8 +12,31 @@ export const AdminHeaderActions = ({
   selectedExercises,
   onPublish,
 }: AdminHeaderActionsProps) => {
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [showVideoUpload, setShowVideoUpload] = useState(false);
+
+  const handleImageClick = () => {
+    setShowImageUpload(!showImageUpload);
+    setShowVideoUpload(false);
+  };
+
+  const handleVideoClick = () => {
+    setShowVideoUpload(!showVideoUpload);
+    setShowImageUpload(false);
+  };
+
+  const handlePublishToggle = async () => {
+    setIsPublishing(true);
+    try {
+      await onPublish();
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center justify-between w-full">
       <Button 
         variant="default"
         size="sm" 
@@ -22,6 +47,15 @@ export const AdminHeaderActions = ({
         <Upload className="w-4 h-4" />
         Publier les exercices sélectionnés
       </Button>
+
+      <div className="flex gap-2">
+        <MediaButtons
+          isPublishing={isPublishing}
+          onPublishToggle={handlePublishToggle}
+          onImageClick={handleImageClick}
+          onVideoClick={handleVideoClick}
+        />
+      </div>
     </div>
   );
 };
