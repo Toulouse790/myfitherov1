@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Flame } from "lucide-react";
 
 interface WorkoutSummaryDialogProps {
   open: boolean;
@@ -58,8 +59,11 @@ export const WorkoutSummaryDialog = ({
               <div className="text-2xl font-bold">{stats.duration}</div>
               <div className="text-sm text-muted-foreground">minutes</div>
             </div>
-            <div className="text-center p-4 bg-secondary/10 rounded-lg">
-              <div className="text-2xl font-bold">{stats.totalCalories}</div>
+            <div className="text-center p-4 bg-secondary/10 rounded-lg flex flex-col items-center">
+              <div className="text-2xl font-bold flex items-center gap-2">
+                {stats.totalCalories}
+                <Flame className="h-5 w-5 text-orange-500" />
+              </div>
               <div className="text-sm text-muted-foreground">calories</div>
             </div>
           </div>

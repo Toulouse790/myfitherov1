@@ -34,6 +34,9 @@ export const NextWorkoutDetail = () => {
     ? (completedExercises.length / exercises.length) * 100 
     : 0;
 
+  // Calcul approximatif des calories (7.5 calories par minute d'exercice)
+  const estimatedCalories = Math.round(duration / 60 * 7.5 * exercises.length);
+
   const handleStartWorkout = () => {
     setIsRunning(true);
     handleExerciseClick(0);
@@ -48,7 +51,6 @@ export const NextWorkoutDetail = () => {
       setCompletedExercises(prev => [...prev, index]);
     }
     
-    // Si ce n'est pas le dernier exercice, passer au suivant
     if (index < exercises.length - 1) {
       handleExerciseClick(index + 1);
     }
@@ -151,7 +153,7 @@ export const NextWorkoutDetail = () => {
         stats={{
           duration: Math.round(duration / 60),
           totalWeight: 0,
-          totalCalories: 0
+          totalCalories: estimatedCalories
         }}
         onConfirm={handleConfirmEndWorkout}
       />
