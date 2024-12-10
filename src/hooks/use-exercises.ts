@@ -19,7 +19,7 @@ export const useExercises = (exerciseIds?: string[]) => {
         console.log("Fetching exercises with IDs:", exerciseIds);
 
         let query = supabase
-          .from('unified_exercises')  // Changed from 'exercises' to 'unified_exercises'
+          .from('unified_exercises')
           .select('*')
           .order('muscle_group', { ascending: true });
         
