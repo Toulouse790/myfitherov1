@@ -3,12 +3,16 @@ import { Card } from "@/components/ui/card";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { SetManager } from "./ExerciseSets/SetManager";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
+import { EndWorkoutButton } from "./NextWorkoutDetail/EndWorkoutButton";
 
 export const NextWorkoutDetail = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session");
-  const { exercises, currentExerciseIndex } = useWorkoutSession();
+  const { exercises, currentExerciseIndex, workoutStarted, duration, handleConfirmEndWorkout } = useWorkoutSession();
   const { toast } = useToast();
+  const [showSummary, setShowSummary] = useState(false);
 
   const currentExercise = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
 
@@ -17,6 +21,16 @@ export const NextWorkoutDetail = () => {
       title: "Série complétée !",
       description: "Prenez une pause de 90 secondes avant la prochaine série.",
     });
+  };
+
+  const handleEndWorkout = () => {
+    setShowSummary(true);
+  };
+
+  const stats = {
+    duration: Math.floor(duration / 60),
+    totalWeight: 0, // À calculer en fonction des séries
+    totalCalories: Math.round(duration / 60 * 7.5), // Estimation basique
   };
 
   return (
@@ -39,6 +53,18 @@ export const NextWorkoutDetail = () => {
           </p>
         )}
       </Card>
+
+      <EndWorkoutButton 
+        workoutStarted={workoutStarted}
+        onEndWorkout={handleEndWorkout}
+      />
+
+      <WorkoutSummaryDialog
+        open={showSummary}
+        onOpenChange={setShowSummary}
+        stats={stats}
+        onConfirm={handleConfirmEndWorkout}
+      />
     </div>
   );
 };
