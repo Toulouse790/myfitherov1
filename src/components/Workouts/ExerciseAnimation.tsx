@@ -4,6 +4,7 @@ import { Timer, RotateCcw, RefreshCw, ChevronUp, ChevronDown } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useWorkoutData } from "@/hooks/workout/use-workout-data";
 
 interface ExerciseAnimationProps {
   reps: number;
@@ -12,6 +13,8 @@ interface ExerciseAnimationProps {
   currentSet: number;
   isResting: boolean;
   progress: number;
+  sessionId?: string | null;
+  weight?: number;
   onSetComplete?: () => void;
   onSetsChange?: (newSets: number) => void;
   onRestTimeChange?: (newTime: number) => void;
@@ -24,12 +27,15 @@ export const ExerciseAnimation = ({
   currentSet,
   isResting,
   progress,
+  sessionId,
+  weight = 0,
   onSetComplete,
   onSetsChange,
   onRestTimeChange
 }: ExerciseAnimationProps) => {
   const [remainingRestTime, setRemainingRestTime] = useState<number | null>(null);
   const { toast } = useToast();
+  const { updateStats } = useWorkoutData(sessionId);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -50,8 +56,10 @@ export const ExerciseAnimation = ({
     return () => clearInterval(interval);
   }, [isResting, remainingRestTime, toast]);
 
-  const handleSetComplete = () => {
+  const handleSetComplete = async () => {
     if (onSetComplete) {
+      // Update stats before completing the set
+      await updateStats(weight, reps);
       onSetComplete();
       setRemainingRestTime(restTime);
     }
