@@ -43,15 +43,21 @@ export const WorkoutExerciseView = ({
   useEffect(() => {
     const fetchPreviousWeight = async () => {
       if (currentExercise && user) {
-        const { data, error } = await supabase
-          .from('user_exercise_weights')
-          .select('weight')
-          .eq('user_id', user.id)
-          .eq('exercise_name', currentExercise)
-          .single();
+        try {
+          const { data, error } = await supabase
+            .from('user_exercise_weights')
+            .select('weight')
+            .eq('user_id', user.id)
+            .eq('exercise_name', currentExercise);
 
-        if (data && !error) {
-          setPreviousWeight(data.weight);
+          if (!error && data && data.length > 0) {
+            setPreviousWeight(data[0].weight);
+          } else {
+            // If no weight found, keep default weight (20)
+            console.log('No previous weight found for exercise:', currentExercise);
+          }
+        } catch (error) {
+          console.error('Error fetching weight:', error);
         }
       }
     };
