@@ -27,7 +27,7 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
         console.log('Fetching exercises for muscle group:', muscleGroup);
 
         let query = supabase
-          .from('exercises')
+          .from('unified_exercises')
           .select(`
             *,
             exercise_media (
