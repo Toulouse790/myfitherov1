@@ -27,6 +27,14 @@ export const ExerciseCard = ({
   onRepsChange,
   onSetComplete
 }: ExerciseCardProps) => {
+  const handleRestTimeChange = (adjustment: number) => {
+    // Since we need to handle rest timer changes at a higher level,
+    // we'll trigger the set completion which will handle the rest timer
+    if (adjustment !== 0) {
+      onSetComplete();
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -92,7 +100,10 @@ export const ExerciseCard = ({
           </div>
 
           <div className="space-y-4">
-            <RestTimer restTimer={restTimer} />
+            <RestTimer 
+              restTimer={restTimer} 
+              onRestTimeChange={handleRestTimeChange}
+            />
             
             <SetButton
               isResting={restTimer !== null}
