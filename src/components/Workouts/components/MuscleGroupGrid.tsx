@@ -71,8 +71,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   const getMuscleGroupCount = (muscleId: string): number => {
     const translatedGroup = translateMuscleGroup(muscleId);
     console.log(`Getting count for muscle group: ${muscleId}, translated: ${translatedGroup}`);
-    const count = exerciseCounts[translatedGroup.toLowerCase()] || 0;
-    return count;
+    return exerciseCounts[translatedGroup.toLowerCase()] || 0;
   };
 
   return (
