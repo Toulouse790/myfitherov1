@@ -11,7 +11,7 @@ import { WorkoutExerciseView } from "./NextWorkoutDetail/WorkoutExerciseView";
 export const NextWorkoutDetail = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session");
-  const { exercises, currentExerciseIndex, workoutStarted, duration, handleConfirmEndWorkout } = useWorkoutSession();
+  const { exercises, currentExerciseIndex, workoutStarted, duration, handleConfirmEndWorkout, handleExerciseClick } = useWorkoutSession();
   const { toast } = useToast();
   const [showSummary, setShowSummary] = useState(false);
   const [currentSet, setCurrentSet] = useState(1);
@@ -51,9 +51,11 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleExerciseSelect = (index: number) => {
+    console.log("Sélection de l'exercice:", index);
     if (currentExerciseIndex !== index) {
       setCurrentSet(1);
       setIsResting(false);
+      handleExerciseClick(index);
     }
   };
 
@@ -65,13 +67,18 @@ export const NextWorkoutDetail = () => {
     return <NoSessionView />;
   }
 
-  const currentExercise = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
+  console.log("Current session state:", {
+    exercises,
+    currentExerciseIndex,
+    workoutStarted,
+    sessionId
+  });
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-6">
       <Card className="p-6">
         <WorkoutExerciseView
-          currentExercise={currentExercise}
+          currentExercise={currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null}
           currentExerciseIndex={currentExerciseIndex}
           exercises={exercises}
           currentSet={currentSet}

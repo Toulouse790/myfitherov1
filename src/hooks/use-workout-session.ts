@@ -6,10 +6,12 @@ import { useWorkoutCompletion } from "./workout/use-workout-completion";
 import { useWorkoutRegeneration } from "./workout/use-workout-regeneration";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export const useWorkoutSession = () => {
   const location = useLocation();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isCardio, setIsCardio] = useState(false);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
@@ -31,25 +33,58 @@ export const useWorkoutSession = () => {
 
   const checkSessionType = async (sessionId: string) => {
     try {
-      const { data: session } = await supabase
+      console.log("Checking session type for:", sessionId);
+      const { data: session, error } = await supabase
         .from('workout_sessions')
-        .select('type')
+        .select('type, exercises')
         .eq('id', sessionId)
         .single();
 
+      if (error) {
+        console.error('Error checking session:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger la session d'entraînement",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log("Session data:", session);
       if (session?.type === 'cardio') {
         setIsCardio(true);
       }
     } catch (error) {
-      console.error('Error checking session type:', error);
+      console.error('Error in checkSessionType:', error);
     }
   };
 
   const handleExerciseClick = (index: number) => {
-    console.log("Setting current exercise index to:", index);
-    setCurrentExerciseIndex(index);
-    setWorkoutStarted(true);
+    console.log("Handling exercise click:", {
+      index,
+      currentExerciseIndex,
+      exercises: exercises.length
+    });
+    
+    if (index >= 0 && index < exercises.length) {
+      setCurrentExerciseIndex(index);
+      setWorkoutStarted(true);
+      
+      console.log("Updated exercise index to:", index);
+    } else {
+      console.error("Invalid exercise index:", index);
+    }
   };
+
+  // Log state changes
+  useEffect(() => {
+    console.log("Workout session state updated:", {
+      sessionId,
+      exercises,
+      currentExerciseIndex,
+      workoutStarted
+    });
+  }, [sessionId, exercises, currentExerciseIndex, workoutStarted]);
 
   return {
     user,
