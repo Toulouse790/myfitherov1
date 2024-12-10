@@ -39,25 +39,39 @@ export const useExerciseTable = () => {
 
   // Mise en place de la souscription en temps réel
   useEffect(() => {
-    const channel = supabase
-      .channel('unified_exercises_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'unified_exercises'
-        },
-        (payload) => {
-          console.log('Changement détecté:', payload);
-          // Invalider le cache pour forcer un rafraîchissement des données
-          queryClient.invalidateQueries({ queryKey: ['exercises'] });
-        }
-      )
-      .subscribe();
+    let channel = supabase.channel('unified_exercises_changes');
+    
+    // S'assurer que le canal est correctement configuré avant de souscrire
+    if (channel) {
+      channel = channel
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'unified_exercises'
+          },
+          (payload) => {
+            console.log('Changement détecté:', payload);
+            // Invalider le cache pour forcer un rafraîchissement des données
+            queryClient.invalidateQueries({ queryKey: ['exercises'] });
+          }
+        )
+        .subscribe();
+    }
 
+    // Cleanup function
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        // Utiliser une fonction asynchrone auto-exécutée pour la désinscription
+        (async () => {
+          try {
+            await supabase.removeChannel(channel);
+          } catch (error) {
+            console.error('Error removing channel:', error);
+          }
+        })();
+      }
     };
   }, [queryClient]);
 
