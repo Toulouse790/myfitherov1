@@ -1,11 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Timer, RotateCcw, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
+import { Timer, Check, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useWorkoutData } from "@/hooks/workout/use-workout-data";
 import { motion, AnimatePresence } from "framer-motion";
+import { Input } from "@/components/ui/input";
 
 interface ExerciseAnimationProps {
   reps: number;
@@ -23,20 +24,21 @@ interface ExerciseAnimationProps {
 }
 
 export const ExerciseAnimation = ({
-  reps,
+  reps: initialReps,
   restTime,
   sets,
   currentSet,
   isResting,
   progress,
   sessionId,
-  weight = 0,
+  weight: initialWeight = 0,
   exerciseName,
   onSetComplete,
-  onSetsChange,
   onRestTimeChange
 }: ExerciseAnimationProps) => {
   const [remainingRestTime, setRemainingRestTime] = useState<number | null>(null);
+  const [currentReps, setCurrentReps] = useState(initialReps);
+  const [currentWeight, setCurrentWeight] = useState(initialWeight);
   const { toast } = useToast();
   const { updateStats } = useWorkoutData(sessionId);
 
@@ -61,23 +63,9 @@ export const ExerciseAnimation = ({
 
   const handleSetComplete = async () => {
     if (onSetComplete) {
-      await updateStats(weight, reps, exerciseName);
+      await updateStats(currentWeight, currentReps, exerciseName);
       onSetComplete();
       setRemainingRestTime(restTime);
-    }
-  };
-
-  const adjustSets = (increment: boolean) => {
-    if (onSetsChange) {
-      const newSets = increment ? sets + 1 : Math.max(1, sets - 1);
-      onSetsChange(newSets);
-    }
-  };
-
-  const adjustRestTime = (increment: boolean) => {
-    if (onRestTimeChange) {
-      const newTime = increment ? restTime + 15 : Math.max(15, restTime - 15);
-      onRestTimeChange(newTime);
     }
   };
 
@@ -88,109 +76,96 @@ export const ExerciseAnimation = ({
       exit={{ opacity: 0, y: -20 }}
       className="space-y-6"
     >
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-6 flex flex-col items-center justify-center space-y-3 hover:shadow-lg transition-shadow">
-          <div className="relative">
-            <RefreshCw className="w-10 h-10 text-primary animate-exercise-spin" />
-            <span className="absolute -top-2 -right-2 bg-primary text-white text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center">
-              {reps}
-            </span>
-          </div>
-          <span className="text-sm font-medium">Répétitions</span>
-        </Card>
-
-        <Card className="p-6 flex flex-col items-center justify-center space-y-3 hover:shadow-lg transition-shadow">
-          <div className="relative">
-            <Timer className="w-10 h-10 text-primary animate-exercise-pulse" />
-            <div className="flex items-center gap-2 mt-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="h-8 w-8 rounded-full"
-                onClick={() => adjustRestTime(false)}
-                disabled={isResting}
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              <span className="text-lg font-bold min-w-[3ch] text-center">{restTime}s</span>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="h-8 w-8 rounded-full"
-                onClick={() => adjustRestTime(true)}
-                disabled={isResting}
-              >
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          <span className="text-sm font-medium">Repos</span>
-        </Card>
-
-        <Card className="p-6 flex flex-col items-center justify-center space-y-3 hover:shadow-lg transition-shadow">
-          <div className="relative">
-            <RotateCcw className="w-10 h-10 text-primary animate-exercise-bounce" />
-            <div className="flex items-center gap-2 mt-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="h-8 w-8 rounded-full"
-                onClick={() => adjustSets(false)}
-                disabled={isResting || sets <= 1}
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              <span className="text-lg font-bold">{currentSet}/{sets}</span>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="h-8 w-8 rounded-full"
-                onClick={() => adjustSets(true)}
-                disabled={isResting}
-              >
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          <span className="text-sm font-medium">Séries</span>
-        </Card>
-      </div>
-
       <div className="space-y-4">
+        <h2 className="text-2xl font-bold text-center">{exerciseName}</h2>
+        
+        <div className="space-y-4">
+          {Array.from({ length: sets }).map((_, index) => (
+            <Card 
+              key={index} 
+              className={`p-4 ${index + 1 === currentSet ? 'border-primary' : ''}`}
+            >
+              <div className="flex items-center gap-4">
+                <Button
+                  size="sm"
+                  className="w-12 h-12 rounded-full"
+                  onClick={handleSetComplete}
+                  disabled={index + 1 !== currentSet || isResting}
+                >
+                  <Check className="h-6 w-6" />
+                </Button>
+
+                <div className="flex-1 grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">Répétitions</label>
+                    <Input
+                      type="number"
+                      value={currentReps}
+                      onChange={(e) => setCurrentReps(Number(e.target.value))}
+                      className="text-center"
+                      disabled={index + 1 !== currentSet || isResting}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">Charge (kg)</label>
+                    <Input
+                      type="number"
+                      value={currentWeight}
+                      onChange={(e) => setCurrentWeight(Number(e.target.value))}
+                      className="text-center"
+                      disabled={index + 1 !== currentSet || isResting}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>Progression</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <Progress value={progress} className="h-3 bg-muted" />
+          <Progress value={progress} className="h-3" />
         </div>
         
         <AnimatePresence mode="wait">
-          <motion.div
-            key={isResting ? 'rest' : 'active'}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Button 
-              className="w-full h-16 text-xl font-bold shadow-lg hover:shadow-xl transition-all"
-              onClick={handleSetComplete}
-              disabled={isResting || currentSet > sets}
-              variant={isResting ? "secondary" : "default"}
+          {isResting && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed bottom-20 right-4 left-4 bg-card p-4 rounded-lg shadow-lg border"
             >
-              {isResting ? (
-                <div className="flex items-center gap-3">
-                  <Timer className="h-6 w-6 animate-exercise-pulse" />
-                  <span>Repos: {remainingRestTime || restTime}s</span>
+              <div className="space-y-4">
+                <div className="flex items-center justify-center gap-2 text-2xl font-bold">
+                  <Timer className="h-6 w-6 text-primary" />
+                  <span>{remainingRestTime || restTime}s</span>
                 </div>
-              ) : currentSet > sets ? (
-                "Exercice terminé"
-              ) : (
-                "Valider la série"
-              )}
-            </Button>
-          </motion.div>
+                <div className="flex justify-center items-center gap-4">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => onRestTimeChange?.(Math.max(15, restTime - 15))}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                  <span className="text-lg font-medium min-w-[3ch] text-center">
+                    {restTime}s
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => onRestTimeChange?.(restTime + 15)}
+                  >
+                    <ChevronUp className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </motion.div>
