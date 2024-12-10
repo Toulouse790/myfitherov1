@@ -2,8 +2,6 @@ import { TabsContent } from "@/components/ui/tabs";
 import { ExerciseRow } from "./ExerciseRow";
 import { Exercise } from "@/components/Workouts/exercises/types/exercise";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { ExerciseMedia } from "@/types/exercise-media";
 
 interface MediaListProps {
   exercises: Exercise[];
@@ -22,22 +20,6 @@ export const MediaList = ({
   selectedDifficulties,
   onDifficultyChange,
 }: MediaListProps) => {
-  const { data: exerciseMedia } = useQuery({
-    queryKey: ['exerciseMedia'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('exercise_media')
-        .select('*');
-      
-      if (error) throw error;
-      return data as ExerciseMedia[];
-    }
-  });
-
-  const getMediaForExercise = (exerciseId: string) => {
-    return exerciseMedia?.filter(media => media.exercise_id === exerciseId) || [];
-  };
-
   const filteredExercises = exercises.filter(exercise => {
     if (selectedDifficulties.length === 0) return true;
     return Array.isArray(exercise.difficulty) && 
@@ -56,7 +38,9 @@ export const MediaList = ({
               difficulty: Array.isArray(exercise.difficulty) 
                 ? exercise.difficulty 
                 : [exercise.difficulty],
-              exercise_media: getMediaForExercise(exercise.id)
+              image_url: exercise.image_url,
+              video_url: exercise.video_url,
+              is_published: exercise.is_published
             }}
             onUpdate={onUpload}
           />

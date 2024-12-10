@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 
 interface DifficultyBadgesProps {
   difficulties: string[];
-  onDifficultyChange?: (difficulty: string) => void;
+  onDifficultyChange?: (difficulty: string, checked: boolean) => void;
   selectedDifficulties: string[];
 }
 
@@ -18,12 +18,8 @@ export const DifficultyBadges = ({
   selectedDifficulties,
 }: DifficultyBadgesProps) => {
   const handleClick = (difficulty: string) => {
-    console.log('Badge clicked:', {
-      difficulty,
-      isSelected: selectedDifficulties.includes(difficulty),
-      currentSelection: selectedDifficulties
-    });
-    onDifficultyChange?.(difficulty);
+    const isSelected = selectedDifficulties.includes(difficulty);
+    onDifficultyChange?.(difficulty, !isSelected);
   };
 
   return (
