@@ -40,7 +40,7 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
         if (muscleGroup) {
           const translatedGroup = translateMuscleGroup(muscleGroup);
           console.log('Filtering by muscle group (translated):', translatedGroup);
-          query = query.ilike('muscle_group', translatedGroup);
+          query = query.eq('muscle_group', translatedGroup);
         }
 
         const { data, error } = await query;
@@ -51,14 +51,7 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
 
         if (data) {
           console.log('Fetched exercises:', data);
-          const uniqueExercises = data.reduce((acc: Exercise[], current) => {
-            const exists = acc.find(ex => ex.id === current.id);
-            if (!exists) {
-              acc.push(current);
-            }
-            return acc;
-          }, []);
-          setExercises(uniqueExercises);
+          setExercises(data);
         }
       } catch (error) {
         console.error('Error fetching exercises:', error);

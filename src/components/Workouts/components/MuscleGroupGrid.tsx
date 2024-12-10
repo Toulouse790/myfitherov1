@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Dumbbell, ChevronRight } from "lucide-react";
 import { muscleGroups } from "../workoutConstants";
 import { useState, useEffect } from "react";
