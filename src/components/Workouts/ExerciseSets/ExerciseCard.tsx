@@ -15,6 +15,7 @@ interface ExerciseCardProps {
   onWeightChange: (value: number) => void;
   onRepsChange: (value: number) => void;
   onSetComplete: () => void;
+  isTransitioning?: boolean;
 }
 
 export const ExerciseCard = ({
@@ -25,11 +26,10 @@ export const ExerciseCard = ({
   restTimer,
   onWeightChange,
   onRepsChange,
-  onSetComplete
+  onSetComplete,
+  isTransitioning = false
 }: ExerciseCardProps) => {
   const handleRestTimeChange = (adjustment: number) => {
-    // Since we need to handle rest timer changes at a higher level,
-    // we'll trigger the set completion which will handle the rest timer
     if (adjustment !== 0) {
       onSetComplete();
     }
@@ -41,7 +41,7 @@ export const ExerciseCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="p-6">
+      <Card className={`p-6 ${isTransitioning ? 'bg-primary/5' : ''}`}>
         <div className="space-y-6">
           <h3 className="text-xl font-semibold">{exerciseName}</h3>
           
@@ -111,6 +111,7 @@ export const ExerciseCard = ({
               maxSets={3}
               onComplete={onSetComplete}
               restTime={restTimer || 0}
+              isTransitioning={isTransitioning}
             />
           </div>
         </div>

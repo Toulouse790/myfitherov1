@@ -5,6 +5,7 @@ import { ExerciseProgress } from "./ExerciseSets/ExerciseProgress";
 import { useExerciseTimers } from "./ExerciseSets/hooks/useExerciseTimers";
 import { useSetManagement } from "./ExerciseSets/hooks/useSetManagement";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseSetsProps {
   exercises: string[];
@@ -20,6 +21,7 @@ export const ExerciseSets = ({
   sessionId
 }: ExerciseSetsProps) => {
   const { exerciseNames } = useExerciseData(exercises);
+  const { toast } = useToast();
   
   const {
     restTimers,
@@ -51,6 +53,11 @@ export const ExerciseSets = ({
           .eq('id', sessionId);
       } catch (error) {
         console.error('Error updating session stats:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour les statistiques de la séance",
+          variant: "destructive"
+        });
       }
     }
   };
@@ -84,6 +91,7 @@ export const ExerciseSets = ({
             onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseId]: value }))}
             onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseId]: value }))}
             onSetComplete={() => handleExerciseSetComplete(exerciseId)}
+            isTransitioning={isExerciseTransition}
           />
         </div>
       ))}
