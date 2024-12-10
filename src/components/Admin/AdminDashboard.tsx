@@ -54,7 +54,8 @@ export const AdminDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [widgets, setWidgets] = useState([
     { id: "users", label: "Nouveaux utilisateurs" },
-    { id: "workouts", label: "Séances d'entraînement" }
+    { id: "workouts", label: "Séances d'entraînement" },
+    { id: "ai_training", label: "Données d'entraînement IA" }
   ]);
 
   const { data: monthlyUsers } = useQuery({
@@ -113,6 +114,39 @@ export const AdminDashboard = () => {
     }
   });
 
+  const { data: aiTrainingData } = useQuery({
+    queryKey: ['admin-ai-training'],
+    queryFn: async () => {
+      const startDate = startOfMonth(new Date());
+      const endDate = endOfMonth(new Date());
+      const days = eachDayOfInterval({ start: startDate, end: endDate });
+
+      const { data: trainingData } = await supabase
+        .from('ai_training_data')
+        .select('created_at, action_type, context, result, feedback')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString());
+
+      console.log('AI Training Data:', trainingData);
+
+      const trainingByDay = days.map(day => {
+        const dayTraining = trainingData?.filter(data => 
+          format(parseISO(data.created_at), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
+        ).length || 0;
+
+        return {
+          day: format(day, 'EEE', { locale: fr }),
+          training: dayTraining
+        };
+      });
+
+      return {
+        byDay: trainingByDay,
+        details: trainingData || []
+      };
+    }
+  });
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -151,17 +185,48 @@ export const AdminDashboard = () => {
         </Card>
       );
     }
+    if (widget.id === "workouts") {
+      return (
+        <Card className="p-6 relative">
+          <h3 className="font-semibold mb-4">{widget.label}</h3>
+          {monthlyWorkouts && (
+            <BarChart
+              data={monthlyWorkouts}
+              index="day"
+              categories={["workouts"]}
+              colors={["#10B981"]}
+              valueFormatter={(value: number) => `${value} séances`}
+            />
+          )}
+        </Card>
+      );
+    }
     return (
       <Card className="p-6 relative">
         <h3 className="font-semibold mb-4">{widget.label}</h3>
-        {monthlyWorkouts && (
-          <BarChart
-            data={monthlyWorkouts}
-            index="day"
-            categories={["workouts"]}
-            colors={["#10B981"]}
-            valueFormatter={(value: number) => `${value} séances`}
-          />
+        {aiTrainingData?.byDay && (
+          <>
+            <BarChart
+              data={aiTrainingData.byDay}
+              index="day"
+              categories={["training"]}
+              colors={["#F59E0B"]}
+              valueFormatter={(value: number) => `${value} données`}
+            />
+            <div className="mt-4 space-y-2">
+              <h4 className="font-medium text-sm">Dernières données collectées :</h4>
+              <div className="max-h-40 overflow-y-auto">
+                {aiTrainingData.details.slice(0, 5).map((data: any, index: number) => (
+                  <div key={index} className="text-sm p-2 bg-gray-50 rounded mb-2">
+                    <div className="font-medium">{data.action_type}</div>
+                    <div className="text-gray-500 text-xs">
+                      {format(parseISO(data.created_at), 'dd/MM/yyyy HH:mm')}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
         )}
       </Card>
     );
