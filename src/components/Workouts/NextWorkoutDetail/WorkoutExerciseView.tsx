@@ -10,7 +10,6 @@ interface WorkoutExerciseViewProps {
   exercises: string[];
   currentSet: number;
   isResting: boolean;
-  progress: number;
   sessionId: string | null;
   restTime: number;
   onSetComplete: () => void;
@@ -27,7 +26,6 @@ export const WorkoutExerciseView = ({
   exercises,
   currentSet,
   isResting,
-  progress,
   sessionId,
   restTime,
   onSetComplete,
@@ -53,7 +51,6 @@ export const WorkoutExerciseView = ({
           if (!error && data && data.length > 0) {
             setPreviousWeight(data[0].weight);
           } else {
-            // If no weight found, keep default weight (20)
             console.log('No previous weight found for exercise:', currentExercise);
           }
         } catch (error) {
@@ -100,7 +97,6 @@ export const WorkoutExerciseView = ({
           sets={3}
           currentSet={currentSet}
           isResting={isResting}
-          progress={progress}
           sessionId={sessionId}
           weight={previousWeight}
           exerciseName={currentExercise}

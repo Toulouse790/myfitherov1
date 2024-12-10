@@ -8,6 +8,13 @@ interface RestTimerProps {
 }
 
 export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
+  const handleTimeAdjustment = (adjustment: number) => {
+    // Calculate the new time by adding or subtracting 15 seconds
+    const newTime = restTime + adjustment;
+    // Pass the exact difference to maintain the precise adjustment
+    onRestTimeChange(adjustment);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -23,7 +30,7 @@ export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onRestTimeChange(-15)}
+          onClick={() => handleTimeAdjustment(-15)}
           disabled={restTime <= 15}
         >
           -15s
@@ -31,7 +38,7 @@ export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onRestTimeChange(15)}
+          onClick={() => handleTimeAdjustment(15)}
           disabled={restTime >= 180}
         >
           +15s
