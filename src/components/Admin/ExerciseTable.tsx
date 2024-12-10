@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { AdminHeaderActions } from "./AdminHeaderActions";
 
 interface Exercise {
   id: string;
@@ -89,6 +90,32 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
     }
   };
 
+  const handlePublish = async () => {
+    try {
+      const { error } = await supabase
+        .from('unified_exercises')
+        .update({ is_published: true })
+        .in('id', selectedExercises);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Les exercices ont été publiés",
+      });
+
+      fetchExercises();
+      setSelectedExercises([]);
+    } catch (error) {
+      console.error('Error publishing exercises:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de publier les exercices",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -99,6 +126,14 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
 
   return (
     <Card className="p-6">
+      {!isPublished && (
+        <div className="mb-4">
+          <AdminHeaderActions
+            selectedExercises={selectedExercises}
+            onPublish={handlePublish}
+          />
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
