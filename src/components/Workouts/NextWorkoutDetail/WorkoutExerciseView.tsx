@@ -64,7 +64,7 @@ export const WorkoutExerciseView = ({
             onClick={() => onExerciseSelect(index)}
             className={`p-4 transition-all ${
               currentExerciseIndex === index 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+                ? "bg-primary text-primary-foreground" 
                 : "hover:bg-muted"
             }`}
           >

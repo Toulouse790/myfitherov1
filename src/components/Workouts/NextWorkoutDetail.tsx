@@ -75,7 +75,7 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-6">
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-6 rounded-lg shadow-sm">
+      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-6 rounded-lg">
         <WorkoutExerciseView
           currentExercise={currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null}
           currentExerciseIndex={currentExerciseIndex}
