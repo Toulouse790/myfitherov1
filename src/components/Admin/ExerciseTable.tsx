@@ -71,6 +71,33 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
     );
   };
 
+  const handleDelete = async (exerciseIds: string[]) => {
+    try {
+      console.log('Deleting exercises:', exerciseIds);
+      const { error } = await supabase
+        .from('unified_exercises')
+        .delete()
+        .in('id', exerciseIds);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Exercices supprimés avec succès",
+      });
+      
+      setSelectedExercises([]);
+      fetchExercises();
+    } catch (error) {
+      console.error('Error deleting exercises:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer les exercices",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handlePublish = async (exerciseId: string, name: string) => {
     try {
       console.log('Publishing exercise:', exerciseId);
@@ -120,7 +147,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
         <div className="mb-4">
           <AdminHeaderActions
             selectedExercises={selectedExercises}
-            onPublish={handlePublish}
+            onDelete={handleDelete}
           />
         </div>
       )}
