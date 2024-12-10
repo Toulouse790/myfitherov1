@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 export const calculateBMR = (weight: number, height: number, age: number, gender: string) => {
   const base = (10 * weight) + (6.25 * height) - (5 * age);
   return gender === 'female' ? base - 161 : base + 5;
