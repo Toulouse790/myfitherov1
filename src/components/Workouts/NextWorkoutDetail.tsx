@@ -33,7 +33,7 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleRestTimeChange = (newTime: number) => {
-    setRestTime(newTime);
+    setRestTime(prev => prev + newTime);
   };
 
   const handleSetsChange = (newSets: number) => {
@@ -48,10 +48,6 @@ export const NextWorkoutDetail = () => {
     }
   };
 
-  const progress = currentExerciseIndex !== null 
-    ? ((currentExerciseIndex + (currentSet - 1) / 3) / exercises.length) * 100
-    : 0;
-
   if (!sessionId) {
     return <NoSessionView />;
   }
@@ -65,7 +61,6 @@ export const NextWorkoutDetail = () => {
           exercises={exercises}
           currentSet={currentSet}
           isResting={isResting}
-          progress={progress}
           sessionId={sessionId}
           restTime={restTime}
           onSetComplete={handleSetComplete}
