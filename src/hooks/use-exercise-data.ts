@@ -9,6 +9,8 @@ export const useExerciseData = (exerciseIds: string[]) => {
   useEffect(() => {
     const fetchExerciseNames = async () => {
       try {
+        if (!exerciseIds.length) return;
+
         const { data, error } = await supabase
           .from('unified_exercises')
           .select('id, name')
@@ -32,9 +34,7 @@ export const useExerciseData = (exerciseIds: string[]) => {
       }
     };
 
-    if (exerciseIds.length > 0) {
-      fetchExerciseNames();
-    }
+    fetchExerciseNames();
   }, [exerciseIds, toast]);
 
   return { exerciseNames };

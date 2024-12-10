@@ -1,162 +1,176 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { WorkoutHeader } from "./WorkoutHeader";
-import { ExerciseList } from "./ExerciseList";
-import { WorkoutInProgress } from "./WorkoutInProgress";
-import { WorkoutSummaryDialog } from "./WorkoutSummaryDialog";
-import { CardioSession } from "./CardioSession";
-import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Timer } from "lucide-react";
-import { formatWorkoutTime } from "@/utils/time";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { WorkoutTimer } from "./WorkoutTimer";
+import { ExerciseProgress } from "./ExerciseProgress";
+import { ExerciseControls } from "./ExerciseControls";
+import { ExerciseSet } from "./ExerciseSet";
+import { useExerciseData } from "@/hooks/use-exercise-data";
 
 export const NextWorkoutDetail = () => {
-  const {
-    user,
-    sessionId,
-    isCardio,
-    duration,
-    isRunning,
-    exercises,
-    currentExerciseIndex,
-    workoutStarted,
-    setIsRunning,
-    handleRegenerateWorkout,
-    handleExerciseClick,
-    handleConfirmEndWorkout
-  } = useWorkoutSession();
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get("session");
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-  const [showSummary, setShowSummary] = useState(false);
-  const [completedExercises, setCompletedExercises] = useState<number[]>([]);
+  const [duration, setDuration] = useState(0);
+  const [exercises, setExercises] = useState<string[]>([]);
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
+  const [currentSet, setCurrentSet] = useState(1);
+  const [weight, setWeight] = useState(20);
+  const [reps, setReps] = useState(12);
+  const [restTimer, setRestTimer] = useState<number | null>(null);
+  const [completedSets, setCompletedSets] = useState<number>(0);
 
-  const progress = exercises.length > 0 
-    ? (completedExercises.length / exercises.length) * 100 
-    : 0;
+  const { exerciseNames } = useExerciseData(exercises);
 
-  // Calcul approximatif des calories (7.5 calories par minute d'exercice)
-  const estimatedCalories = Math.round(duration / 60 * 7.5 * exercises.length);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setDuration(prev => prev + 1);
+    }, 1000);
 
-  const handleStartWorkout = () => {
-    setIsRunning(true);
-    handleExerciseClick(0);
-  };
+    return () => clearInterval(timer);
+  }, []);
 
-  const handleEndWorkout = () => {
-    setShowSummary(true);
-  };
+  useEffect(() => {
+    const fetchSessionExercises = async () => {
+      if (!sessionId) return;
 
-  const handleExerciseComplete = (index: number) => {
-    if (!completedExercises.includes(index)) {
-      setCompletedExercises(prev => [...prev, index]);
+      try {
+        const { data: session, error } = await supabase
+          .from('workout_sessions')
+          .select('exercises')
+          .eq('id', sessionId)
+          .single();
+
+        if (error) throw error;
+        if (session?.exercises) {
+          setExercises(session.exercises);
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger la séance",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchSessionExercises();
+  }, [sessionId, toast]);
+
+  const handleSetComplete = async () => {
+    if (!sessionId || !user?.id) return;
+
+    try {
+      const exerciseName = exerciseNames[exercises[currentExerciseIndex]] || "Unknown";
+
+      await supabase
+        .from('exercise_sets')
+        .insert({
+          session_id: sessionId,
+          exercise_name: exerciseName,
+          set_number: currentSet,
+          reps: reps,
+          weight: weight,
+          rest_time_seconds: 90
+        });
+
+      setCompletedSets(prev => prev + 1);
+      
+      if (currentSet < 3) {
+        setCurrentSet(prev => prev + 1);
+        setRestTimer(90);
+
+        const interval = setInterval(() => {
+          setRestTimer(prev => {
+            if (prev === null || prev <= 1) {
+              clearInterval(interval);
+              return null;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      } else {
+        // Si c'est la dernière série
+        if (currentExerciseIndex < exercises.length - 1) {
+          setCurrentExerciseIndex(prev => prev + 1);
+          setCurrentSet(1);
+          setCompletedSets(0);
+        } else {
+          // Fin de la séance
+          await supabase
+            .from('workout_sessions')
+            .update({
+              status: 'completed',
+              total_duration_minutes: Math.floor(duration / 60)
+            })
+            .eq('id', sessionId);
+
+          toast({
+            title: "Séance terminée !",
+            description: "Bravo, vous avez terminé votre séance d'entraînement !",
+          });
+          navigate('/workouts');
+        }
+      }
+    } catch (error) {
+      console.error('Error completing set:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'enregistrer la série",
+        variant: "destructive",
+      });
     }
-    
-    if (index < exercises.length - 1) {
-      handleExerciseClick(index + 1);
-    }
   };
 
-  if (!user) return null;
-
-  if (isCardio) {
+  if (!exercises.length) {
     return (
-      <CardioSession
-        sessionId={sessionId}
-        duration={duration}
-        isRunning={isRunning}
-        userId={user.id}
-        setIsRunning={setIsRunning}
-      />
+      <div className="container max-w-4xl mx-auto p-4">
+        <Card className="p-6">
+          <p className="text-center text-muted-foreground">
+            Chargement de la séance...
+          </p>
+        </Card>
+      </div>
     );
   }
 
+  const currentExerciseName = exerciseNames[exercises[currentExerciseIndex]];
+
   return (
-    <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-6 sm:space-y-8">
-      <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-4 sm:py-6 border-b">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <Timer className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-            <span className="font-mono text-base sm:text-xl">
-              {formatWorkoutTime(Math.round(duration))}
-            </span>
-          </div>
-          
-          {!workoutStarted && (
-            <Button 
-              size="lg"
-              className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-semibold px-6 sm:px-8"
-              onClick={handleStartWorkout}
-            >
-              Commencer ma séance
-            </Button>
-          )}
-        </div>
-
-        {workoutStarted && (
-          <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
-            <div className="flex justify-between text-xs sm:text-sm text-muted-foreground">
-              <span>Progression de la séance</span>
-              <span>{Math.round(progress)}%</span>
-            </div>
-            <Progress value={progress} className="h-2" />
-          </div>
-        )}
+    <div className="container max-w-4xl mx-auto p-4 space-y-6">
+      <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-4 border-b">
+        <WorkoutTimer duration={duration} />
       </div>
 
-      <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1fr_2fr]">
-        <div className="space-y-4 sm:space-y-6">
-          <ExerciseList
-            exercises={exercises}
-            currentExerciseIndex={currentExerciseIndex}
-            isWorkoutStarted={workoutStarted}
-            onExerciseClick={handleExerciseClick}
-            completedExercises={completedExercises}
-          />
+      <Card className="p-6 space-y-6">
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold">{currentExerciseName || "Chargement..."}</h2>
+          <ExerciseProgress currentSet={currentSet} totalSets={3} />
         </div>
 
-        <div>
-          {workoutStarted ? (
-            <WorkoutInProgress
-              exercises={exercises}
-              currentExerciseIndex={currentExerciseIndex}
-              onExerciseClick={handleExerciseClick}
-              sessionId={sessionId}
-              onRegenerateWorkout={handleRegenerateWorkout}
-              onExerciseComplete={handleExerciseComplete}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full p-6 sm:p-12 text-center space-y-4 sm:space-y-6 text-muted-foreground bg-muted/10 rounded-lg border-2 border-dashed">
-              <p className="text-base sm:text-xl">
-                Cliquez sur "Commencer ma séance" pour démarrer votre entraînement
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+        <ExerciseControls
+          weight={weight}
+          reps={reps}
+          onWeightChange={setWeight}
+          onRepsChange={setReps}
+        />
 
-      <div className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8">
-        {workoutStarted && (
-          <Button 
-            variant="destructive"
-            size="lg"
-            onClick={handleEndWorkout}
-            className="shadow-lg px-4 sm:px-6 w-full sm:w-auto"
-          >
-            Terminer la séance
-          </Button>
-        )}
-      </div>
-
-      <WorkoutSummaryDialog
-        open={showSummary}
-        onOpenChange={setShowSummary}
-        stats={{
-          duration: Math.round(duration / 60),
-          totalWeight: 0,
-          totalCalories: estimatedCalories
-        }}
-        onConfirm={handleConfirmEndWorkout}
-      />
+        <ExerciseSet
+          setNumber={currentSet}
+          totalSets={3}
+          isCompleted={false}
+          restTimer={restTimer}
+          onComplete={handleSetComplete}
+        />
+      </Card>
     </div>
   );
 };
