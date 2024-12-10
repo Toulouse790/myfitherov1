@@ -1,12 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Check, X } from "lucide-react";
-
-interface MealHeaderProps {
-  label: string;
-  mealStatus: 'taken' | 'skipped' | null;
-  isExpanded: boolean;
-  onToggle: () => void;
-}
+import { MealHeaderProps } from "./types";
 
 export const MealHeader = ({ label, mealStatus, isExpanded, onToggle }: MealHeaderProps) => {
   return (

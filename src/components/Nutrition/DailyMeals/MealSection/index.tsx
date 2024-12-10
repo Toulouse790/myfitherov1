@@ -1,0 +1,90 @@
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { MealHeader } from "./MealHeader";
+import { MealContent } from "./MealContent";
+import { MealSectionProps } from "./types";
+
+export const MealSection = ({
+  type,
+  label,
+  mealEntries,
+  generatedMeal,
+  isExpanded,
+  onToggle,
+}: MealSectionProps) => {
+  const [mealStatus, setMealStatus] = useState<'taken' | 'skipped' | null>(null);
+  const { toast } = useToast();
+
+  const handleMealStatus = async (status: 'taken' | 'skipped') => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      if (status === 'taken' && generatedMeal) {
+        console.log("Saving meal to journal:", generatedMeal);
+        
+        const mealEntry = {
+          user_id: user.id,
+          name: generatedMeal.name,
+          calories: generatedMeal.calories,
+          proteins: generatedMeal.proteins,
+          meal_type: type,
+          notes: generatedMeal.notes || ''
+        };
+
+        if (generatedMeal.quantities && generatedMeal.quantities.length > 0) {
+          const ingredientsList = generatedMeal.quantities
+            .map(q => `${q.item}: ${q.amount}`)
+            .join('\n');
+          mealEntry.notes = `${mealEntry.notes}\n\nIngrédients:\n${ingredientsList}`;
+        }
+
+        console.log("Inserting meal entry:", mealEntry);
+        const { error } = await supabase
+          .from('food_journal_entries')
+          .insert(mealEntry);
+
+        if (error) throw error;
+
+        toast({
+          title: "Repas validé",
+          description: "Le repas a été ajouté à votre journal et vos objectifs ont été mis à jour",
+        });
+      } else if (status === 'skipped') {
+        toast({
+          title: "Repas non pris",
+          description: "Le repas a été marqué comme non pris",
+        });
+      }
+
+      setMealStatus(status);
+    } catch (error) {
+      console.error('Error updating meal status:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut du repas",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="mb-2">
+      <MealHeader
+        label={label}
+        mealStatus={mealStatus}
+        isExpanded={isExpanded}
+        onToggle={onToggle}
+      />
+
+      {isExpanded && (
+        <MealContent
+          mealEntries={mealEntries}
+          generatedMeal={generatedMeal}
+          onMealStatus={handleMealStatus}
+        />
+      )}
+    </div>
+  );
+};

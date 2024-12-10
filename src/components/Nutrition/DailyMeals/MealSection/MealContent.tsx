@@ -1,21 +1,8 @@
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MealContentProps } from "./types";
 
-interface MealContentProps {
-  mealEntries: any[];
-  generatedMeal?: {
-    name: string;
-    calories: number;
-    proteins: number;
-    carbs?: number;
-    fats?: number;
-    quantities?: Array<{ item: string; amount: string; }>;
-  };
-  preparation?: string | null;
-  onMealStatus: (status: 'taken' | 'skipped') => void;
-}
-
-export const MealContent = ({ mealEntries, generatedMeal, preparation, onMealStatus }: MealContentProps) => {
+export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealContentProps) => {
   return (
     <div className="pl-4 pr-2 py-2 space-y-2">
       {mealEntries.length > 0 ? (
@@ -26,7 +13,9 @@ export const MealContent = ({ mealEntries, generatedMeal, preparation, onMealSta
           >
             <div className="font-medium text-gray-800">{entry.name}</div>
             <div className="text-sm text-muted-foreground">
-              {entry.calories} kcal | {entry.proteins}g protéines | {entry.carbs}g glucides | {entry.fats}g lipides
+              {entry.calories} kcal | {entry.proteins}g protéines
+              {entry.carbs !== undefined && ` | ${entry.carbs}g glucides`}
+              {entry.fats !== undefined && ` | ${entry.fats}g lipides`}
             </div>
             {entry.notes && (
               <p className="mt-2 text-sm text-muted-foreground italic">
@@ -55,11 +44,6 @@ export const MealContent = ({ mealEntries, generatedMeal, preparation, onMealSta
                   ))}
                 </ul>
               </div>
-            )}
-            {preparation && preparation !== "Aucune instruction disponible" && (
-              <p className="mt-2 text-sm text-muted-foreground italic">
-                💡 {preparation}
-              </p>
             )}
           </div>
           <div className="flex gap-2 justify-end">
