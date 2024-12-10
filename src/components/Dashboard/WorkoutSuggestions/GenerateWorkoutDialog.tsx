@@ -1,132 +1,88 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { generateWorkoutPlan } from "./workoutPlanGenerator";
 import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { useExerciseFetching } from "@/hooks/use-exercise-fetching";
+import { Button } from "@/components/ui/button";
+import { generateWorkoutPlan } from "./workoutPlanGenerator";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
-import type { WorkoutPlan } from "./workoutPlanGenerator";
 
 interface GenerateWorkoutDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onWorkoutGenerated: (workout: any) => void;
 }
 
-export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDialogProps) => {
-  const { toast } = useToast();
-  const [generatedPlan, setGeneratedPlan] = useState<WorkoutPlan | null>(null);
+export const GenerateWorkoutDialog = ({
+  open,
+  onOpenChange,
+  onWorkoutGenerated
+}: GenerateWorkoutDialogProps) => {
   const [availableExercises, setAvailableExercises] = useState<string[]>([]);
+  const [generatedWorkout, setGeneratedWorkout] = useState<any>(null);
+  const { toast } = useToast();
+  const { fetchExercises } = useExerciseFetching();
 
   useEffect(() => {
-    fetchExercises();
-  }, []);
-
-  const fetchExercises = async () => {
-    try {
-      console.log('Fetching exercises...');
-      const { data: exercises, error } = await supabase
-        .from('unified_exercises')
-        .select('id, name')
-        .eq('is_published', true);
-
-      if (error) {
-        console.error('Error fetching exercises:', error);
-        throw error;
-      }
-
-      if (exercises) {
-        console.log("Available exercises:", exercises.length);
-        setAvailableExercises(exercises.map(ex => ex.name));
-      }
-    } catch (error) {
-      console.error('Error fetching exercises:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les exercices",
-        variant: "destructive",
-      });
+    if (open) {
+      const loadExercises = async () => {
+        const exercises = await fetchExercises();
+        setAvailableExercises(exercises);
+      };
+      loadExercises();
     }
-  };
+  }, [open]);
 
   const handleGenerateWorkout = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      toast({
-        title: "Connexion requise",
-        description: "Veuillez vous connecter pour générer un programme personnalisé",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const { data: profiles, error } = await supabase
-      .from('questionnaire_responses')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    if (error) {
+    if (availableExercises.length === 0) {
       toast({
         title: "Erreur",
-        description: "Impossible de récupérer votre profil",
+        description: "Aucun exercice disponible",
         variant: "destructive",
       });
       return;
     }
 
-    if (!profiles || profiles.length === 0) {
-      toast({
-        title: "Profil incomplet",
-        description: "Veuillez d'abord remplir le questionnaire initial",
-        variant: "destructive",
-      });
-      return;
+    const workout = generateWorkoutPlan(availableExercises);
+    setGeneratedWorkout(workout);
+  };
+
+  const handleConfirm = () => {
+    if (generatedWorkout) {
+      onWorkoutGenerated(generatedWorkout);
+      onOpenChange(false);
     }
-
-    const profile = profiles[0];
-    console.log("Génération du programme avec profil:", profile);
-
-    const userProfile = {
-      age: 30,
-      weight: 75,
-      height: 175,
-      goal: profile.objective,
-      workoutsPerWeek: parseInt(profile.training_frequency),
-      dailyCalories: 2500,
-      recoveryCapacity: "medium" as const
-    };
-
-    const plan = generateWorkoutPlan(userProfile, availableExercises);
-    console.log("Programme généré:", plan);
-    setGeneratedPlan(plan);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Générer votre programme personnalisé</DialogTitle>
+          <DialogTitle>Générer un programme</DialogTitle>
         </DialogHeader>
-        
-        {!generatedPlan ? (
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              Nous allons utiliser vos réponses au questionnaire initial pour générer un programme adapté à vos objectifs.
-              {availableExercises.length > 0 && (
-                <span className="block mt-2">
-                  {availableExercises.length} exercices disponibles
-                </span>
-              )}
-            </p>
-            <Button onClick={handleGenerateWorkout} className="w-full">
-              Générer mon programme
+
+        <div className="space-y-6">
+          {!generatedWorkout ? (
+            <Button 
+              onClick={handleGenerateWorkout}
+              className="w-full"
+              disabled={availableExercises.length === 0}
+            >
+              Générer un programme
             </Button>
-          </div>
-        ) : (
-          <GeneratedWorkoutPreview plan={generatedPlan} />
-        )}
+          ) : (
+            <div className="space-y-4">
+              <GeneratedWorkoutPreview workout={generatedWorkout} />
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setGeneratedWorkout(null)}>
+                  Regénérer
+                </Button>
+                <Button onClick={handleConfirm}>
+                  Confirmer
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
