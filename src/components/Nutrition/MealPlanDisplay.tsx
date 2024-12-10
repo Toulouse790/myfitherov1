@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { MealPlan, Meal, FoodItem } from "@/types/nutrition";
 import { FoodDetails } from "./MealPlan/FoodDetails";
 import { AlternativesDialog } from "./MealPlan/AlternativesDialog";
-import { getPreparationInstructions } from "./MealPlan/PreparationInstructions";
 
 interface MealPlanDisplayProps {
   mealPlan: MealPlan;
@@ -24,7 +23,7 @@ export const MealPlanDisplay = ({ mealPlan, onUpdateMealPlan }: MealPlanDisplayP
         const updatedFoods = m.foods.map((f) => 
           f.id === oldFood.id ? {
             ...newFood,
-            preparation: getPreparationInstructions(newFood.name)
+            quantities: newFood.quantities || []
           } : f
         );
         return {

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { getPreparationInstructions } from "../MealPlan/PreparationInstructions";
 import { useFoodEntries } from "@/hooks/use-food-entries";
 import { MealHeader } from "./MealSection/MealHeader";
 import { MealContent } from "./MealSection/MealContent";
@@ -47,7 +46,7 @@ export const MealSection = ({
           calories: generatedMeal.calories,
           proteins: generatedMeal.proteins,
           meal_type: type,
-          notes: getPreparationInstructions(generatedMeal.name) || ''
+          notes: generatedMeal.notes || ''
         };
 
         if (generatedMeal.quantities && generatedMeal.quantities.length > 0) {
@@ -67,7 +66,6 @@ export const MealSection = ({
           throw error;
         }
 
-        // Rafraîchir les données immédiatement après l'insertion
         await refetchEntries();
 
         toast({
@@ -92,8 +90,6 @@ export const MealSection = ({
     }
   };
 
-  const preparation = generatedMeal ? getPreparationInstructions(generatedMeal.name) : null;
-
   return (
     <div className="mb-2">
       <MealHeader
@@ -107,7 +103,6 @@ export const MealSection = ({
         <MealContent
           mealEntries={mealEntries}
           generatedMeal={generatedMeal}
-          preparation={preparation}
           onMealStatus={handleMealStatus}
         />
       )}

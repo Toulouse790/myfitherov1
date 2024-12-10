@@ -1,7 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FoodItem, Meal } from "@/types/nutrition";
-import { getPreparationInstructions } from "./PreparationInstructions";
 
 interface AlternativesDialogProps {
   food: FoodItem;
@@ -32,7 +31,7 @@ export const AlternativesDialog = ({ food, meal, onFoodChange }: AlternativesDia
               onClick={() => {
                 const newFood = {
                   ...alt,
-                  preparation: getPreparationInstructions(alt.name)
+                  quantities: alt.quantities || []
                 };
                 onFoodChange(meal, food, newFood);
               }}
