@@ -16,6 +16,7 @@ interface ExerciseAnimationProps {
   progress: number;
   sessionId?: string | null;
   weight?: number;
+  exerciseName: string;
   onSetComplete?: () => void;
   onSetsChange?: (newSets: number) => void;
   onRestTimeChange?: (newTime: number) => void;
@@ -30,6 +31,7 @@ export const ExerciseAnimation = ({
   progress,
   sessionId,
   weight = 0,
+  exerciseName,
   onSetComplete,
   onSetsChange,
   onRestTimeChange
@@ -59,7 +61,7 @@ export const ExerciseAnimation = ({
 
   const handleSetComplete = async () => {
     if (onSetComplete) {
-      await updateStats(weight, reps);
+      await updateStats(weight, reps, exerciseName);
       onSetComplete();
       setRemainingRestTime(restTime);
     }

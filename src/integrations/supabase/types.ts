@@ -656,6 +656,41 @@ export type Database = {
         }
         Relationships: []
       }
+      user_exercise_weights: {
+        Row: {
+          created_at: string
+          exercise_name: string
+          id: string
+          updated_at: string
+          user_id: string | null
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          exercise_name: string
+          id?: string
+          updated_at?: string
+          user_id?: string | null
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          exercise_name?: string
+          id?: string
+          updated_at?: string
+          user_id?: string | null
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_exercise_weights_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_nutrition_preferences: {
         Row: {
           allergies: string[] | null

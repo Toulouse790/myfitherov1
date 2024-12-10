@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface WorkoutStats {
   totalWeight: number;
@@ -17,6 +18,7 @@ export const useWorkoutData = (sessionId: string | null) => {
     caloriesBurned: 0,
   });
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Calculate calories based on exercise intensity
   const calculateCalories = (weight: number, reps: number): number => {
@@ -26,7 +28,7 @@ export const useWorkoutData = (sessionId: string | null) => {
   };
 
   // Update stats when a set is completed
-  const updateStats = async (weight: number, reps: number) => {
+  const updateStats = async (weight: number, reps: number, exerciseName: string) => {
     setStats(prev => {
       const newStats = {
         totalWeight: prev.totalWeight + (weight * reps),
@@ -41,19 +43,31 @@ export const useWorkoutData = (sessionId: string | null) => {
       return newStats;
     });
 
-    if (sessionId) {
+    if (sessionId && user) {
       try {
-        const duration = Math.floor(stats.totalSets * 3 / 60); // Estimation basée sur 3 minutes par série
-        
+        // Update training stats
+        const duration = Math.floor(stats.totalSets * 3 / 60);
         await supabase
           .from('training_stats')
           .upsert({
             session_id: sessionId,
             session_duration_minutes: duration,
-            muscle_groups_worked: ['biceps'], // À adapter selon l'exercice
-            energy_level: 8, // Valeur par défaut
+            muscle_groups_worked: ['biceps'],
+            energy_level: 8,
             perceived_difficulty: 'moderate'
           });
+
+        // Update user's weight for this exercise
+        await supabase
+          .from('user_exercise_weights')
+          .upsert({
+            user_id: user.id,
+            exercise_name: exerciseName,
+            weight: weight
+          }, {
+            onConflict: 'user_id,exercise_name'
+          });
+
       } catch (error) {
         console.error('Error saving workout stats:', error);
         toast({

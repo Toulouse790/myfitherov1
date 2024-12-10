@@ -1,5 +1,8 @@
 import { ExerciseAnimation } from "../ExerciseAnimation";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface WorkoutExerciseViewProps {
   currentExercise: string | null;
@@ -34,30 +37,50 @@ export const WorkoutExerciseView = ({
   onEndWorkout,
   workoutStarted,
 }: WorkoutExerciseViewProps) => {
+  const [previousWeight, setPreviousWeight] = useState<number>(20);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchPreviousWeight = async () => {
+      if (currentExercise && user) {
+        const { data, error } = await supabase
+          .from('user_exercise_weights')
+          .select('weight')
+          .eq('user_id', user.id)
+          .eq('exercise_name', currentExercise)
+          .single();
+
+        if (data && !error) {
+          setPreviousWeight(data.weight);
+        }
+      }
+    };
+
+    fetchPreviousWeight();
+  }, [currentExercise, user]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-4">
-          {workoutStarted && onEndWorkout && (
-            <Button 
-              variant="destructive"
-              onClick={onEndWorkout}
-              size="sm"
-              className="whitespace-nowrap"
-            >
-              Terminer la séance
-            </Button>
+        {workoutStarted && onEndWorkout && (
+          <Button 
+            variant="destructive"
+            onClick={onEndWorkout}
+            size="sm"
+            className="whitespace-nowrap"
+          >
+            Terminer la séance
+          </Button>
+        )}
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold">
+            {currentExercise || "Sélectionnez un exercice"}
+          </h2>
+          {currentExercise && (
+            <p className="text-sm text-muted-foreground">
+              Charge recommandée : {previousWeight}kg
+            </p>
           )}
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold">
-              {currentExercise || "Sélectionnez un exercice"}
-            </h2>
-            {currentExercise && (
-              <p className="text-sm text-muted-foreground">
-                Charge recommandée : 20-30kg
-              </p>
-            )}
-          </div>
         </div>
         <span className="text-muted-foreground">
           {currentExerciseIndex !== null ? `${currentExerciseIndex + 1}/${exercises.length}` : ""}
@@ -73,6 +96,8 @@ export const WorkoutExerciseView = ({
           isResting={isResting}
           progress={progress}
           sessionId={sessionId}
+          weight={previousWeight}
+          exerciseName={currentExercise}
           onSetComplete={onSetComplete}
           onSetsChange={onSetsChange}
           onRestTimeChange={onRestTimeChange}
