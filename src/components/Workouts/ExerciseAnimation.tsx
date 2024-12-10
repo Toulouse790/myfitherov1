@@ -64,6 +64,11 @@ export const ExerciseAnimation = ({
           />
           
           <div className="space-y-4">
+            <div className="flex justify-between text-sm text-muted-foreground mb-2">
+              <span>Série actuelle</span>
+              <span>{currentSet}/{sets}</span>
+            </div>
+
             {Array.from({ length: sets }).map((_, index) => (
               <SetCard
                 key={index}
