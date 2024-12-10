@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,22 +8,57 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Check, X } from "lucide-react";
+import { Check, X, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface FoodSuggestion {
   id: string;
   name: string;
   calories: number;
   proteins: number;
+  carbs: number;
+  fats: number;
   category: string;
   status: string;
 }
 
+// Valeurs nutritionnelles de référence (pour 100g)
+const NUTRITIONAL_RANGES = {
+  proteins: { min: 0, max: 100, warning: 50 }, // g
+  carbs: { min: 0, max: 100, warning: 75 }, // g
+  fats: { min: 0, max: 100, warning: 40 }, // g
+  calories: { min: 0, max: 900, warning: 500 }, // kcal
+};
+
 export const FoodSuggestionsTable = () => {
   const [suggestions, setSuggestions] = useState<FoodSuggestion[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const loadSuggestions = async () => {
+      const { data, error } = await supabase
+        .from('user_suggested_foods')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading suggestions:', error);
+        return;
+      }
+
+      setSuggestions(data);
+    };
+
+    loadSuggestions();
+  }, []);
 
   const handleApprove = async (suggestion: FoodSuggestion) => {
     try {
@@ -34,6 +69,8 @@ export const FoodSuggestionsTable = () => {
           name: suggestion.name,
           calories: suggestion.calories,
           proteins: suggestion.proteins,
+          carbs: suggestion.carbs,
+          fats: suggestion.fats,
           food_category: suggestion.category,
         }]);
 
@@ -52,7 +89,6 @@ export const FoodSuggestionsTable = () => {
         description: `${suggestion.name} a été ajouté à la base de données`,
       });
 
-      // Mettre à jour la liste
       setSuggestions(prev => 
         prev.map(s => 
           s.id === suggestion.id ? { ...s, status: 'approved' } : s
@@ -97,25 +133,10 @@ export const FoodSuggestionsTable = () => {
     }
   };
 
-  // Charger les suggestions au montage du composant
-  useState(() => {
-    const loadSuggestions = async () => {
-      const { data, error } = await supabase
-        .from('user_suggested_foods')
-        .select('*')
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error loading suggestions:', error);
-        return;
-      }
-
-      setSuggestions(data);
-    };
-
-    loadSuggestions();
-  }, []);
+  const isValueSuspicious = (value: number, type: keyof typeof NUTRITIONAL_RANGES) => {
+    const range = NUTRITIONAL_RANGES[type];
+    return value < range.min || value > range.warning;
+  };
 
   return (
     <div className="space-y-4">
@@ -126,6 +147,8 @@ export const FoodSuggestionsTable = () => {
             <TableHead>Nom</TableHead>
             <TableHead>Calories</TableHead>
             <TableHead>Protéines</TableHead>
+            <TableHead>Glucides</TableHead>
+            <TableHead>Lipides</TableHead>
             <TableHead>Catégorie</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -134,8 +157,66 @@ export const FoodSuggestionsTable = () => {
           {suggestions.map((suggestion) => (
             <TableRow key={suggestion.id}>
               <TableCell>{suggestion.name}</TableCell>
-              <TableCell>{suggestion.calories}</TableCell>
-              <TableCell>{suggestion.proteins}g</TableCell>
+              <TableCell>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1">
+                      {suggestion.calories}
+                      {isValueSuspicious(suggestion.calories, 'calories') && (
+                        <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Valeurs typiques: 0-500 kcal/100g</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+              <TableCell>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1">
+                      {suggestion.proteins}g
+                      {isValueSuspicious(suggestion.proteins, 'proteins') && (
+                        <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Valeurs typiques: 0-50g/100g</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+              <TableCell>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1">
+                      {suggestion.carbs}g
+                      {isValueSuspicious(suggestion.carbs, 'carbs') && (
+                        <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Valeurs typiques: 0-75g/100g</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+              <TableCell>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1">
+                      {suggestion.fats}g
+                      {isValueSuspicious(suggestion.fats, 'fats') && (
+                        <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Valeurs typiques: 0-40g/100g</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
               <TableCell>{suggestion.category}</TableCell>
               <TableCell className="space-x-2">
                 <Button
@@ -159,7 +240,7 @@ export const FoodSuggestionsTable = () => {
           ))}
           {suggestions.length === 0 && (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-muted-foreground">
+              <TableCell colSpan={7} className="text-center text-muted-foreground">
                 Aucune suggestion en attente
               </TableCell>
             </TableRow>

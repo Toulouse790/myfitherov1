@@ -653,8 +653,10 @@ export type Database = {
       user_suggested_foods: {
         Row: {
           calories: number
+          carbs: number
           category: string
           created_at: string
+          fats: number
           id: string
           name: string
           proteins: number
@@ -664,8 +666,10 @@ export type Database = {
         }
         Insert: {
           calories: number
+          carbs?: number
           category: string
           created_at?: string
+          fats?: number
           id?: string
           name: string
           proteins: number
@@ -675,8 +679,10 @@ export type Database = {
         }
         Update: {
           calories?: number
+          carbs?: number
           category?: string
           created_at?: string
+          fats?: number
           id?: string
           name?: string
           proteins?: number
