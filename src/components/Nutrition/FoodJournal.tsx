@@ -29,7 +29,7 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
     handleDeleteEntry,
   } = useFoodJournal();
 
-  const { logTrainingData } = useAiTraining();
+  const { logAiInteraction } = useAiTraining();
 
   // Get current hour to determine greeting and meal suggestion
   const currentHour = new Date().getHours();
@@ -54,7 +54,7 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
   }
 
   const handleAddEntryWithLogging = async (mealType: string) => {
-    await logTrainingData(
+    await logAiInteraction(
       "food_entry_add",
       {
         food: newFood,
@@ -62,6 +62,15 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
         proteins,
         mealType,
         hour: currentHour
+      },
+      "Food entry added successfully",
+      "gpt-3.5-turbo",
+      0,
+      0,
+      0,
+      {
+        entryType: "manual",
+        mealTime: mealType
       }
     );
     handleAddEntry(mealType);
@@ -69,10 +78,19 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
 
   const handleDeleteEntryWithLogging = async (id: string) => {
     const entryToDelete = entries.find(entry => entry.id === id);
-    await logTrainingData(
+    await logAiInteraction(
       "food_entry_delete",
       {
         entry: entryToDelete
+      },
+      "Food entry deleted successfully",
+      "gpt-3.5-turbo",
+      0,
+      0,
+      0,
+      {
+        entryType: "manual",
+        deletedEntryId: id
       }
     );
     handleDeleteEntry(id);
