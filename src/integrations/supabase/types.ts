@@ -819,6 +819,12 @@ export type Database = {
           top_actions: string[]
         }[]
       }
+      get_date: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

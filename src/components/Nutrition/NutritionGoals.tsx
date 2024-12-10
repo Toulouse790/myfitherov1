@@ -12,20 +12,26 @@ export const NutritionGoals = () => {
       // Ensure we're working with numbers and not strings
       const calories = Number(entry.calories) || 0;
       const proteins = Number(entry.proteins) || 0;
+      const carbs = Number(entry.carbs) || 0;
+      const fats = Number(entry.fats) || 0;
 
       console.log("Adding entry to totals:", {
         name: entry.name,
         calories,
         proteins,
+        carbs,
+        fats,
         currentTotal: acc
       });
 
       return {
         calories: acc.calories + calories,
         proteins: acc.proteins + proteins,
+        carbs: acc.carbs + carbs,
+        fats: acc.fats + fats,
       };
     },
-    { calories: 0, proteins: 0 }
+    { calories: 0, proteins: 0, carbs: 0, fats: 0 }
   );
 
   console.log("Final totals:", {
@@ -48,13 +54,13 @@ export const NutritionGoals = () => {
     },
     { 
       name: "Glucides", 
-      actual: Math.round((actualTotals.calories) * 0.5 / 4),
+      actual: actualTotals.carbs,
       target: Math.round((dailyTargets.calories || 2000) * 0.5 / 4), 
       unit: "g" 
     },
     { 
       name: "Lipides", 
-      actual: Math.round((actualTotals.calories) * 0.3 / 9),
+      actual: actualTotals.fats,
       target: Math.round((dailyTargets.calories || 2000) * 0.3 / 9), 
       unit: "g" 
     },

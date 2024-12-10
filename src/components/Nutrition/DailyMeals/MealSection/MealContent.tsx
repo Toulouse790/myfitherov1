@@ -7,6 +7,8 @@ interface MealContentProps {
     name: string;
     calories: number;
     proteins: number;
+    carbs?: number;
+    fats?: number;
     quantities?: Array<{ item: string; amount: string; }>;
   };
   preparation: string | null;
@@ -24,7 +26,7 @@ export const MealContent = ({ mealEntries, generatedMeal, preparation, onMealSta
           >
             <div className="font-medium text-gray-800">{entry.name}</div>
             <div className="text-sm text-muted-foreground">
-              {entry.calories} kcal | {entry.proteins}g protéines
+              {entry.calories} kcal | {entry.proteins}g protéines | {entry.carbs}g glucides | {entry.fats}g lipides
             </div>
             {entry.notes && (
               <p className="mt-2 text-sm text-muted-foreground italic">
@@ -39,6 +41,8 @@ export const MealContent = ({ mealEntries, generatedMeal, preparation, onMealSta
             <div className="font-medium text-gray-800">{generatedMeal.name}</div>
             <div className="text-sm text-muted-foreground">
               {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
+              {generatedMeal.carbs !== undefined && ` | ${generatedMeal.carbs}g glucides`}
+              {generatedMeal.fats !== undefined && ` | ${generatedMeal.fats}g lipides`}
             </div>
             {generatedMeal.quantities && generatedMeal.quantities.length > 0 && (
               <div className="mt-2 space-y-1">
