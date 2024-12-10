@@ -121,9 +121,11 @@ export const AdminDashboard = () => {
       const endDate = endOfMonth(new Date());
       const days = eachDayOfInterval({ start: startDate, end: endDate });
 
+      // Ajout du filtre is_published pour ne compter que les exercices publiés
       const { data: trainingData } = await supabase
-        .from('ai_training_data')
+        .from('unified_exercises')
         .select('created_at')
+        .eq('is_published', true)
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString());
 
@@ -205,7 +207,7 @@ export const AdminDashboard = () => {
             index="day"
             categories={["interactions"]}
             colors={["#F59E0B"]}
-            valueFormatter={(value: number) => `${value} interactions`}
+            valueFormatter={(value: number) => `${value} exercices publiés`}
           />
         )}
       </Card>
