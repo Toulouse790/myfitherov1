@@ -25,6 +25,7 @@ export const ExerciseSets = ({
   const [restTimers, setRestTimers] = useState<{ [key: string]: number | null }>({});
   const [sessionDuration, setSessionDuration] = useState<number>(0);
   const [totalRestTime, setTotalRestTime] = useState<number>(0);
+  const [isExerciseTransition, setIsExerciseTransition] = useState<boolean>(false);
   const { exerciseNames } = useExerciseData(exercises);
   const { toast } = useToast();
 
@@ -57,10 +58,17 @@ export const ExerciseSets = ({
             const currentTimer = prev[exerciseId];
             if (currentTimer === null || currentTimer <= 1) {
               clearInterval(intervals[exerciseId]);
-              toast({
-                title: "Repos terminé !",
-                description: "C'est reparti ! Commencez la série suivante.",
-              });
+              if (isExerciseTransition) {
+                setIsExerciseTransition(false);
+                if (onExerciseComplete && currentExerciseIndex !== undefined) {
+                  onExerciseComplete(currentExerciseIndex);
+                }
+              } else {
+                toast({
+                  title: "Repos terminé !",
+                  description: "C'est reparti ! Commencez la série suivante.",
+                });
+              }
               return { ...prev, [exerciseId]: null };
             }
             return { ...prev, [exerciseId]: currentTimer - 1 };
@@ -75,7 +83,7 @@ export const ExerciseSets = ({
         clearInterval(interval);
       });
     };
-  }, [restTimers, toast]);
+  }, [restTimers, toast, isExerciseTransition, onExerciseComplete, currentExerciseIndex]);
 
   const handleSetComplete = async (exerciseId: string) => {
     const currentSets = completedSets[exerciseId] || 0;
@@ -133,13 +141,15 @@ export const ExerciseSets = ({
       });
 
       if (newSetsCount === 3) {
+        setIsExerciseTransition(true);
         toast({
           title: "Exercice terminé !",
-          description: "Passez à l'exercice suivant.",
+          description: "Repos de 90 secondes avant le prochain exercice.",
         });
-        if (onExerciseComplete && currentExerciseIndex !== undefined) {
-          onExerciseComplete(currentExerciseIndex);
-        }
+        setRestTimers(prev => ({
+          ...prev,
+          [exerciseId]: 90
+        }));
       }
     }
   };
