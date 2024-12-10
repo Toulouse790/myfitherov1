@@ -2,8 +2,6 @@ import { useSearchParams } from "react-router-dom";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { useState } from "react";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
-import { EndWorkoutButton } from "./NextWorkoutDetail/EndWorkoutButton";
-import { useToast } from "@/hooks/use-toast";
 import { NoSessionView } from "./NextWorkoutDetail/NoSessionView";
 import { WorkoutExerciseView } from "./NextWorkoutDetail/WorkoutExerciseView";
 
@@ -11,7 +9,6 @@ export const NextWorkoutDetail = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session");
   const { exercises, currentExerciseIndex, workoutStarted, duration, handleConfirmEndWorkout, handleExerciseClick } = useWorkoutSession();
-  const { toast } = useToast();
   const [showSummary, setShowSummary] = useState(false);
   const [currentSet, setCurrentSet] = useState(1);
   const [isResting, setIsResting] = useState(false);
@@ -32,12 +29,6 @@ export const NextWorkoutDetail = () => {
     } else {
       setCurrentSet(1);
       setIsResting(false);
-      if (currentExerciseIndex !== null && currentExerciseIndex < exercises.length - 1) {
-        toast({
-          title: "Exercice terminé !",
-          description: "Passez à l'exercice suivant.",
-        });
-      }
     }
   };
 
@@ -67,7 +58,7 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 sm:p-6 rounded-lg">
+      <div className="bg-background p-4 sm:p-6 rounded-lg">
         <WorkoutExerciseView
           currentExercise={currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null}
           currentExerciseIndex={currentExerciseIndex}
@@ -83,11 +74,6 @@ export const NextWorkoutDetail = () => {
           onExerciseSelect={handleExerciseSelect}
         />
       </div>
-
-      <EndWorkoutButton 
-        workoutStarted={workoutStarted}
-        onEndWorkout={handleEndWorkout}
-      />
 
       <WorkoutSummaryDialog
         open={showSummary}
