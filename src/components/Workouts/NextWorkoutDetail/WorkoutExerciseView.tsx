@@ -37,23 +37,24 @@ export const WorkoutExerciseView = ({
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-xl sm:text-2xl font-bold">
-          {currentExercise || "Sélectionnez un exercice"}
-        </h2>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">
-            {currentExerciseIndex !== null ? `${currentExerciseIndex + 1}/${exercises.length}` : ""}
-          </span>
+        <div className="flex items-center gap-4">
           {workoutStarted && onEndWorkout && (
             <Button 
               variant="destructive"
               onClick={onEndWorkout}
+              size="sm"
               className="whitespace-nowrap"
             >
               Terminer la séance
             </Button>
           )}
+          <h2 className="text-xl sm:text-2xl font-bold">
+            {currentExercise || "Sélectionnez un exercice"}
+          </h2>
         </div>
+        <span className="text-muted-foreground">
+          {currentExerciseIndex !== null ? `${currentExerciseIndex + 1}/${exercises.length}` : ""}
+        </span>
       </div>
 
       {currentExercise && (
