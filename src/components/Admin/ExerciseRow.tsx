@@ -40,7 +40,10 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
   const { isPublishing, handlePublishToggle } = usePublishManagement(
     exercise.id,
     exercise.is_published || false,
-    onUpdate
+    () => {
+      console.log("Publication status changed, calling onUpdate");
+      onUpdate();
+    }
   );
 
   const handleImageClick = () => {
