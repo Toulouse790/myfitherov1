@@ -45,7 +45,17 @@ export const ExerciseLibrary = () => {
     }
 
     try {
-      console.log("Creating workout session with exercises:", selectedExercises);
+      // Récupérer les noms des exercices sélectionnés
+      const { data: exerciseNames, error: exerciseError } = await supabase
+        .from('unified_exercises')
+        .select('name')
+        .in('id', selectedExercises);
+
+      if (exerciseError) throw exerciseError;
+
+      const exerciseNamesList = exerciseNames.map(ex => ex.name);
+      console.log("Creating workout session with exercises:", exerciseNamesList);
+
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
@@ -53,7 +63,7 @@ export const ExerciseLibrary = () => {
             user_id: user.id,
             type: 'strength', 
             status: 'in_progress',
-            exercises: selectedExercises,
+            exercises: exerciseNamesList,
             initial_energy_level: 'good'
           }
         ])
