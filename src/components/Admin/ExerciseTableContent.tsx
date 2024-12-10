@@ -53,7 +53,7 @@ export const ExerciseTableContent = ({
   const handleNameChange = async (exerciseId: string, newName: string) => {
     try {
       const { data: existingExercises } = await supabase
-        .from('exercises')
+        .from('unified_exercises')
         .select('name')
         .ilike('name', `${newName}%`);
 
@@ -68,7 +68,7 @@ export const ExerciseTableContent = ({
       }
 
       const { error } = await supabase
-        .from('exercises')
+        .from('unified_exercises')
         .update({ name: uniqueName })
         .eq('id', exerciseId);
 
@@ -107,8 +107,6 @@ export const ExerciseTableContent = ({
       <tbody>
         {exercises.map((exercise) => {
           const translatedMuscleGroup = translateMuscleGroup(exercise.muscle_group);
-          console.log('Muscle group before translation:', exercise.muscle_group);
-          console.log('Muscle group after translation:', translatedMuscleGroup);
           
           return (
             <tr key={exercise.id} className="border-b">

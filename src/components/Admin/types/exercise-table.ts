@@ -14,6 +14,9 @@ export interface Exercise {
   muscle_group: string;
   location?: string[];
   difficulty?: string[];
+  image_url?: string;
+  video_url?: string;
+  is_published?: boolean;
 }
 
 export interface ExerciseTableContentProps {
