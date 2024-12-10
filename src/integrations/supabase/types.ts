@@ -229,6 +229,50 @@ export type Database = {
         }
         Relationships: []
       }
+      exercise_sets: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          exercise_name: string
+          id: string
+          reps: number
+          rest_time_seconds: number | null
+          session_id: string | null
+          set_number: number
+          weight: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          exercise_name: string
+          id?: string
+          reps: number
+          rest_time_seconds?: number | null
+          session_id?: string | null
+          set_number: number
+          weight?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          exercise_name?: string
+          id?: string
+          reps?: number
+          rest_time_seconds?: number | null
+          session_id?: string | null
+          set_number?: number
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_sets_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       favorite_workouts: {
         Row: {
           created_at: string

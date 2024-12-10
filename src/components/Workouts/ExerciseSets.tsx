@@ -142,7 +142,7 @@ export const ExerciseSets = ({
 
   return (
     <div className="space-y-6">
-      <SessionTimer duration={sessionDuration} />
+      <SessionTimer sessionDuration={sessionDuration} />
 
       {exercises.map((exerciseName) => (
         <ExerciseCard

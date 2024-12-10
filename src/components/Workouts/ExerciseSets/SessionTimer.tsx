@@ -1,18 +1,11 @@
-import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Timer } from "lucide-react";
 
-export const SessionTimer = () => {
-  const [sessionDuration, setSessionDuration] = useState<number>(0);
+interface SessionTimerProps {
+  sessionDuration: number;
+}
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSessionDuration(prev => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
+export const SessionTimer = ({ sessionDuration }: SessionTimerProps) => {
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
