@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Timer, ChevronUp, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ChevronUp, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { RestTimer } from "./ExerciseSets/RestTimer";
+import { SetButton } from "./ExerciseSets/SetButton";
+import { SessionTimer } from "./ExerciseSets/SessionTimer";
 
 interface ExerciseSetsProps {
   exercises: string[];
@@ -28,7 +30,6 @@ export const ExerciseSets = ({
   const [totalRestTime, setTotalRestTime] = useState<number>(0);
   const { toast } = useToast();
 
-  // Timer pour la durée totale de la séance
   useEffect(() => {
     const interval = setInterval(() => {
       setSessionDuration(prev => prev + 1);
@@ -38,7 +39,6 @@ export const ExerciseSets = ({
   }, []);
 
   useEffect(() => {
-    // Initialiser les poids et répétitions pour chaque exercice
     const initialWeights: { [key: string]: number } = {};
     const initialReps: { [key: string]: number } = {};
     exercises.forEach(exercise => {
@@ -94,9 +94,42 @@ export const ExerciseSets = ({
         [exerciseName]: 90
       }));
 
-      // Calculer les calories (estimation simple)
-      const calories = Math.round(reps[exerciseName] * weights[exerciseName] * 0.15);
+      // Save set data to database
+      if (sessionId) {
+        try {
+          const { error } = await supabase
+            .from('exercise_sets')
+            .insert({
+              session_id: sessionId,
+              exercise_name: exerciseName,
+              set_number: newSetsCount,
+              reps: reps[exerciseName],
+              weight: weights[exerciseName],
+              rest_time_seconds: 90
+            });
 
+          if (error) throw error;
+
+          // Update session stats
+          await supabase
+            .from('workout_sessions')
+            .update({ 
+              total_duration_minutes: Math.floor(sessionDuration / 60),
+              total_rest_time_seconds: totalRestTime
+            })
+            .eq('id', sessionId);
+
+        } catch (error) {
+          console.error('Error saving set data:', error);
+          toast({
+            title: "Erreur",
+            description: "Impossible de sauvegarder les données de la série",
+            variant: "destructive",
+          });
+        }
+      }
+
+      const calories = Math.round(reps[exerciseName] * weights[exerciseName] * 0.15);
       toast({
         title: "Série complétée !",
         description: `${calories} calories brûlées. Repos de 90 secondes.`,
@@ -110,21 +143,6 @@ export const ExerciseSets = ({
         if (onExerciseComplete && currentExerciseIndex !== undefined) {
           onExerciseComplete(currentExerciseIndex);
         }
-
-        // Mettre à jour les statistiques dans la base de données
-        if (sessionId) {
-          try {
-            await supabase
-              .from('workout_sessions')
-              .update({ 
-                total_duration_minutes: Math.floor(sessionDuration / 60),
-                total_rest_time_seconds: totalRestTime
-              })
-              .eq('id', sessionId);
-          } catch (error) {
-            console.error('Error updating workout stats:', error);
-          }
-        }
       }
     }
   };
@@ -137,22 +155,9 @@ export const ExerciseSets = ({
     setReps(prev => ({ ...prev, [exerciseName]: value }));
   };
 
-  const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center p-4 bg-secondary/10 rounded-lg">
-        <div className="text-sm">
-          <span className="font-medium">Durée totale:</span> {formatTime(sessionDuration)}
-        </div>
-        <div className="text-sm">
-          <span className="font-medium">Temps de repos:</span> {formatTime(totalRestTime)}
-        </div>
-      </div>
+      <SessionTimer />
 
       {exercises.map((exerciseName) => (
         <motion.div
@@ -219,27 +224,17 @@ export const ExerciseSets = ({
                 </div>
               </div>
 
-              <AnimatePresence>
-                {restTimers[exerciseName] !== null ? (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="flex items-center justify-center gap-2 text-2xl font-bold text-primary"
-                  >
-                    <Timer className="h-6 w-6" />
-                    <span>{restTimers[exerciseName]}s</span>
-                  </motion.div>
-                ) : (
-                  <Button
-                    className="w-full h-12 text-lg"
-                    onClick={() => handleSetComplete(exerciseName)}
-                    disabled={restTimers[exerciseName] !== null || (completedSets[exerciseName] || 0) >= 3}
-                  >
-                    {(completedSets[exerciseName] || 0) >= 3 ? "Exercice terminé" : "Valider la série"}
-                  </Button>
-                )}
-              </AnimatePresence>
+              <div className="space-y-4">
+                <RestTimer restTimer={restTimers[exerciseName]} />
+                
+                <SetButton
+                  isResting={restTimers[exerciseName] !== null}
+                  currentSet={(completedSets[exerciseName] || 0) + 1}
+                  maxSets={3}
+                  onComplete={() => handleSetComplete(exerciseName)}
+                  restTime={restTimers[exerciseName] || 0}
+                />
+              </div>
             </div>
           </Card>
         </motion.div>
