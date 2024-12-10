@@ -8,12 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { AdminHeaderActions } from "./AdminHeaderActions";
+import { MediaButtons } from "./MediaButtons";
+import { UploadForm } from "./UploadForm";
 
 interface Exercise {
   id: string;
   name: string;
   muscle_group: string;
   is_published: boolean;
+  image_url?: string;
+  video_url?: string;
 }
 
 interface ExerciseTableProps {
@@ -25,6 +29,8 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [showImageUpload, setShowImageUpload] = useState<string | null>(null);
+  const [showVideoUpload, setShowVideoUpload] = useState<string | null>(null);
 
   useEffect(() => {
     fetchExercises();
@@ -116,6 +122,12 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
     }
   };
 
+  const handleUploadSuccess = () => {
+    setShowImageUpload(null);
+    setShowVideoUpload(null);
+    fetchExercises();
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -145,6 +157,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
             </TableHead>
             <TableHead>Nom</TableHead>
             <TableHead>Groupe musculaire</TableHead>
+            <TableHead>Médias</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -166,6 +179,35 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
                 />
               </TableCell>
               <TableCell>{translateMuscleGroup(exercise.muscle_group)}</TableCell>
+              <TableCell>
+                <MediaButtons
+                  isPublished={exercise.is_published}
+                  isPublishing={false}
+                  onPublishToggle={() => {}}
+                  onImageClick={() => setShowImageUpload(exercise.id)}
+                  onVideoClick={() => setShowVideoUpload(exercise.id)}
+                />
+                {showImageUpload === exercise.id && (
+                  <div className="mt-2">
+                    <UploadForm
+                      exerciseId={exercise.id}
+                      exerciseName={exercise.name}
+                      type="image"
+                      onSuccess={handleUploadSuccess}
+                    />
+                  </div>
+                )}
+                {showVideoUpload === exercise.id && (
+                  <div className="mt-2">
+                    <UploadForm
+                      exerciseId={exercise.id}
+                      exerciseName={exercise.name}
+                      type="video"
+                      onSuccess={handleUploadSuccess}
+                    />
+                  </div>
+                )}
+              </TableCell>
               <TableCell>
                 <Button
                   variant="ghost"

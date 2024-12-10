@@ -571,10 +571,12 @@ export type Database = {
         Row: {
           created_at: string
           difficulty: string[]
+          exercise_media: Json | null
           id: string
           image_url: string | null
           is_published: boolean | null
           location: string[] | null
+          media_type: string[] | null
           muscle_group: string
           name: string
           updated_at: string
@@ -583,10 +585,12 @@ export type Database = {
         Insert: {
           created_at?: string
           difficulty?: string[]
+          exercise_media?: Json | null
           id?: string
           image_url?: string | null
           is_published?: boolean | null
           location?: string[] | null
+          media_type?: string[] | null
           muscle_group: string
           name: string
           updated_at?: string
@@ -595,10 +599,12 @@ export type Database = {
         Update: {
           created_at?: string
           difficulty?: string[]
+          exercise_media?: Json | null
           id?: string
           image_url?: string | null
           is_published?: boolean | null
           location?: string[] | null
+          media_type?: string[] | null
           muscle_group?: string
           name?: string
           updated_at?: string
