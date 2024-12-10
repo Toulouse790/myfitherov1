@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useWorkoutData } from "@/hooks/workout/use-workout-data";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { AnimatePresence } from "framer-motion";
-import { useWorkoutData } from "@/hooks/workout/use-workout-data";
 import { ExerciseHeader } from "./ExerciseAnimation/ExerciseHeader";
 import { SetCard } from "./ExerciseAnimation/SetCard";
 import { RestTimer } from "./ExerciseAnimation/RestTimer";
@@ -40,7 +39,6 @@ export const ExerciseAnimation = ({
   const [remainingRestTime, setRemainingRestTime] = useState<number | null>(null);
   const [repsPerSet, setRepsPerSet] = useState<number[]>(Array(sets).fill(initialReps));
   const [currentWeight, setCurrentWeight] = useState(initialWeight);
-  const { toast } = useToast();
   const { updateStats } = useWorkoutData(sessionId);
 
   useEffect(() => {
@@ -84,6 +82,13 @@ export const ExerciseAnimation = ({
     });
   };
 
+  const handleRestTimeChange = (newTime: number) => {
+    if (onRestTimeChange) {
+      onRestTimeChange(newTime);
+      setRemainingRestTime(newTime);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <ExerciseHeader 
@@ -120,7 +125,7 @@ export const ExerciseAnimation = ({
             <RestTimer
               remainingTime={remainingRestTime || 0}
               restTime={restTime}
-              onRestTimeChange={onRestTimeChange || (() => {})}
+              onRestTimeChange={handleRestTimeChange}
             />
           )}
         </AnimatePresence>

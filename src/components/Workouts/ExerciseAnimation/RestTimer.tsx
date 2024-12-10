@@ -9,6 +9,11 @@ interface RestTimerProps {
 }
 
 export const RestTimer = ({ remainingTime, restTime, onRestTimeChange }: RestTimerProps) => {
+  const handleTimeChange = (adjustment: number) => {
+    const newTime = Math.max(15, restTime + adjustment);
+    onRestTimeChange(newTime);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -19,13 +24,13 @@ export const RestTimer = ({ remainingTime, restTime, onRestTimeChange }: RestTim
       <div className="space-y-4">
         <div className="flex items-center justify-center gap-2 text-2xl font-bold">
           <Timer className="h-6 w-6 text-primary" />
-          <span>{remainingTime || restTime}s</span>
+          <span>{remainingTime}s</span>
         </div>
         <div className="flex justify-center items-center gap-4">
           <Button
             variant="outline"
             size="icon"
-            onClick={() => onRestTimeChange(Math.max(15, restTime - 15))}
+            onClick={() => handleTimeChange(-15)}
           >
             <ChevronDown className="h-4 w-4" />
           </Button>
@@ -35,7 +40,7 @@ export const RestTimer = ({ remainingTime, restTime, onRestTimeChange }: RestTim
           <Button
             variant="outline"
             size="icon"
-            onClick={() => onRestTimeChange(restTime + 15)}
+            onClick={() => handleTimeChange(15)}
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
