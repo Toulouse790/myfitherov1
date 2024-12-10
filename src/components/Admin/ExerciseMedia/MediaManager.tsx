@@ -26,7 +26,7 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
       if (storageError) throw storageError;
 
       const { error: dbError } = await supabase
-        .from('exercise_media')
+        .from('unified_exercises')
         .delete()
         .eq('media_url', url);
 
@@ -91,11 +91,11 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
     <div className="space-y-4">
       <div className="flex justify-end">
         <MediaButtons
-          onImageClick={() => {}}
-          onVideoClick={() => {}}
           isPublished={exercise.is_published}
           isPublishing={isPublishing}
           onPublishToggle={handlePublishToggle}
+          onImageClick={() => {}}
+          onVideoClick={() => {}}
         />
       </div>
 
