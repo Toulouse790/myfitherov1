@@ -86,7 +86,6 @@ export const ExerciseAnimation = ({
       const newSetsCount = sets + 1;
       
       try {
-        // Vérifier d'abord que la session appartient à l'utilisateur
         const { data: session, error: sessionError } = await supabase
           .from('workout_sessions')
           .select('user_id')
@@ -99,7 +98,6 @@ export const ExerciseAnimation = ({
           throw new Error("Vous n'êtes pas autorisé à modifier cette séance");
         }
 
-        // Ajouter la nouvelle série dans la base de données
         const { error } = await supabase
           .from('exercise_sets')
           .insert({
@@ -114,7 +112,6 @@ export const ExerciseAnimation = ({
 
         if (error) throw error;
 
-        // Mettre à jour l'état local
         setRepsPerSet(prev => [...prev, initialReps]);
         onSetsChange(newSetsCount);
         console.log("New sets count:", newSetsCount);
