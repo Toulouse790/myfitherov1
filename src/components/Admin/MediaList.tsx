@@ -29,6 +29,14 @@ export const MediaList = ({
     // Si aucun lieu n'est défini pour l'exercice, on ne le montre pas
     const hasLocation = Array.isArray(exercise.location) && exercise.location.length > 0;
 
+    console.log('Filtering exercise:', {
+      name: exercise.name,
+      difficulty: exercise.difficulty,
+      location: exercise.location,
+      difficultyMatch,
+      hasLocation
+    });
+
     return difficultyMatch && hasLocation;
   });
 
