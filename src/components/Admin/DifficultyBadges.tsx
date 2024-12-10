@@ -17,6 +17,15 @@ export const DifficultyBadges = ({
   onDifficultyChange,
   selectedDifficulties,
 }: DifficultyBadgesProps) => {
+  const handleClick = (difficulty: string) => {
+    console.log('Badge clicked:', {
+      difficulty,
+      isSelected: selectedDifficulties.includes(difficulty),
+      currentSelection: selectedDifficulties
+    });
+    onDifficultyChange?.(difficulty);
+  };
+
   return (
     <div className="flex gap-2 flex-wrap flex-1">
       {difficulties.map((difficulty) => (
@@ -28,7 +37,7 @@ export const DifficultyBadges = ({
               ? "bg-[#9b87f5] hover:bg-[#7E69AB]"
               : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white"
           }`}
-          onClick={() => onDifficultyChange?.(difficulty)}
+          onClick={() => handleClick(difficulty)}
         >
           {difficultyTranslations[difficulty] || difficulty}
         </Badge>
