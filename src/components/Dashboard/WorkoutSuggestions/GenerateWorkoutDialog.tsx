@@ -24,11 +24,14 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
   const fetchExercises = async () => {
     try {
       const { data: exercises, error } = await supabase
-        .from('unified_exercises')
+        .from('unified_exercises')  // Changé de 'exercises' à 'unified_exercises'
         .select('id, name')
         .eq('is_published', true);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur lors de la récupération des exercices:', error);
+        throw error;
+      }
 
       if (exercises) {
         console.log("Exercices disponibles:", exercises.length);
