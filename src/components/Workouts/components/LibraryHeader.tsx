@@ -15,18 +15,16 @@ export const LibraryHeader = ({
   onStartWorkout,
 }: LibraryHeaderProps) => {
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
-        <h1 className="text-xl sm:text-2xl font-bold">Bibliothèque d'exercices</h1>
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
-        </div>
+    <div className="flex flex-col gap-4 mb-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Bibliothèque d'exercices</h1>
+        {selectedExercisesCount > 0 && (
+          <Button onClick={onStartWorkout}>
+            Commencer la séance
+          </Button>
+        )}
       </div>
-      {selectedExercisesCount > 0 && (
-        <Button onClick={onStartWorkout} className="w-full sm:w-auto">
-          C'est parti !
-        </Button>
-      )}
+      <SearchBar value={searchQuery} onChange={setSearchQuery} />
     </div>
   );
 };
