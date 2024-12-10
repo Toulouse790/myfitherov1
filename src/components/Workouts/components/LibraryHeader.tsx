@@ -24,7 +24,7 @@ export const LibraryHeader = ({
       </div>
       {selectedExercisesCount > 0 && (
         <Button onClick={onStartWorkout} className="w-full sm:w-auto">
-          C'est parti ! ({selectedExercisesCount})
+          C'est parti !
         </Button>
       )}
     </div>
