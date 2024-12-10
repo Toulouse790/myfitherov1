@@ -89,10 +89,11 @@ export const ExerciseTable = () => {
 
   const handlePublish = async (exerciseId: string, name: string) => {
     try {
+      const newPublishState = !publishFilter;
       const { error } = await supabase
         .from('unified_exercises')
         .update({ 
-          is_published: !publishFilter,
+          is_published: newPublishState,
           name: name 
         })
         .eq('id', exerciseId);
@@ -101,7 +102,7 @@ export const ExerciseTable = () => {
 
       toast({
         title: "Succès",
-        description: `Exercice ${publishFilter ? 'dépublié' : 'publié'}`,
+        description: `Exercice ${newPublishState ? 'publié' : 'dépublié'}`,
       });
       
       fetchExercises();
