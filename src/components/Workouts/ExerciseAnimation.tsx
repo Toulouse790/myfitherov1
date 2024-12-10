@@ -6,6 +6,8 @@ import { AnimatePresence } from "framer-motion";
 import { ExerciseHeader } from "./ExerciseAnimation/ExerciseHeader";
 import { SetCard } from "./ExerciseAnimation/SetCard";
 import { RestTimer } from "./ExerciseAnimation/RestTimer";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseAnimationProps {
   reps: number;
@@ -40,6 +42,7 @@ export const ExerciseAnimation = ({
   const [repsPerSet, setRepsPerSet] = useState<number[]>(Array(sets).fill(initialReps));
   const [currentWeight, setCurrentWeight] = useState(initialWeight);
   const { updateStats } = useWorkoutData(sessionId);
+  const { toast } = useToast();
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -66,13 +69,44 @@ export const ExerciseAnimation = ({
     }
   };
 
-  const handleAddSet = () => {
-    if (onSetsChange) {
+  const handleAddSet = async () => {
+    if (onSetsChange && sessionId) {
       console.log("Adding new set. Current sets:", sets);
       const newSetsCount = sets + 1;
-      setRepsPerSet(prev => [...prev, initialReps]);
-      onSetsChange(newSetsCount);
-      console.log("New sets count:", newSetsCount);
+      
+      try {
+        // Ajouter la nouvelle série dans la base de données
+        const { error } = await supabase
+          .from('exercise_sets')
+          .insert({
+            session_id: sessionId,
+            exercise_name: exerciseName,
+            set_number: newSetsCount,
+            reps: initialReps,
+            weight: currentWeight,
+            rest_time_seconds: restTime,
+            completed_at: null
+          });
+
+        if (error) throw error;
+
+        // Mettre à jour l'état local
+        setRepsPerSet(prev => [...prev, initialReps]);
+        onSetsChange(newSetsCount);
+        console.log("New sets count:", newSetsCount);
+
+        toast({
+          title: "Série ajoutée",
+          description: `Série ${newSetsCount} ajoutée avec succès`,
+        });
+      } catch (error) {
+        console.error('Error adding set:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible d'ajouter la série",
+          variant: "destructive",
+        });
+      }
     }
   };
 
