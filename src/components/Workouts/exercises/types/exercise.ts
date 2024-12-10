@@ -7,6 +7,7 @@ export interface Exercise {
   equipment: string;
   location: string[];
   image_url?: string;
+  video_url?: string;
   instructions: string[];
   targetMuscles?: string[];
   objectives?: string[];
@@ -26,4 +27,5 @@ export interface Exercise {
     advanced: number;
   };
   calories?: number;
+  is_published?: boolean;
 }

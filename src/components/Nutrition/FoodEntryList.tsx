@@ -4,12 +4,12 @@ import { FoodEntry } from "@/types/food";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface FoodEntryListProps {
+export interface FoodEntryListProps {
   entries: FoodEntry[];
-  onDeleteEntry: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
 }
 
-export const FoodEntryList = ({ entries, onDeleteEntry }: FoodEntryListProps) => {
+export const FoodEntryList = ({ entries, onDelete }: FoodEntryListProps) => {
   return (
     <Card className="p-4 bg-white border border-gray-200">
       <ScrollArea className="h-[300px]">
@@ -30,7 +30,7 @@ export const FoodEntryList = ({ entries, onDeleteEntry }: FoodEntryListProps) =>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => onDeleteEntry(entry.id)}
+                onClick={() => onDelete(entry.id)}
                 className="text-gray-500 hover:text-red-600 hover:bg-red-50"
               >
                 <Trash2 className="w-4 h-4" />
