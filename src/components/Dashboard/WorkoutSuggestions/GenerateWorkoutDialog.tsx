@@ -24,7 +24,7 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
   const fetchExercises = async () => {
     try {
       const { data: exercises, error } = await supabase
-        .from('exercises')
+        .from('unified_exercises')
         .select('id, name')
         .eq('is_published', true);
 

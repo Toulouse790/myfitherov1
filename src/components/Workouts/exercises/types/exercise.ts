@@ -2,8 +2,8 @@ export interface Exercise {
   id: string;
   name: string;
   muscleGroup: string;
-  difficulty: string | string[];
   description: string;
+  difficulty: string | string[];
   equipment: string;
   location: string[];
   image_url?: string;

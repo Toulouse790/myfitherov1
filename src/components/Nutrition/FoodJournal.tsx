@@ -16,12 +16,16 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
     newFood,
     calories,
     proteins,
+    carbs,
+    fats,
     weight,
     baseCalories,
     selectedCategory,
     setNewFood,
     setCalories,
     setProteins,
+    setCarbs,
+    setFats,
     setWeight,
     setSelectedCategory,
     handleAddEntry,
@@ -112,12 +116,16 @@ export const FoodJournal = ({ userAllergies = [] }: FoodJournalProps) => {
           newFood={newFood}
           calories={calories}
           proteins={proteins}
+          carbs={carbs}
+          fats={fats}
           weight={weight}
           baseCalories={baseCalories}
           selectedCategory={selectedCategory}
           onFoodChange={setNewFood}
           onCaloriesChange={setCalories}
           onProteinsChange={setProteins}
+          onCarbsChange={setCarbs}
+          onFatsChange={setFats}
           onWeightChange={setWeight}
           onAddEntry={handleAddEntryWithLogging}
         />

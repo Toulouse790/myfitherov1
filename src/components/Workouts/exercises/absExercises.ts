@@ -9,7 +9,7 @@ export const absExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Tapis",
     location: ["home", "gym", "outdoor"],
-    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
+    image_url: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "Allongé sur le dos, genoux fléchis",
       "Mains derrière la tête",
@@ -43,7 +43,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "gym", "outdoor"],
-    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
+    image_url: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "En appui sur les avant-bras",
       "Corps aligné",
@@ -77,7 +77,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "gym", "outdoor"],
-    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
+    image_url: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "Allongé sur le dos",
       "Jambes tendues",
@@ -111,7 +111,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Poids (optionnel)",
     location: ["home", "gym", "outdoor"],
-    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
+    image_url: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "Assis, genoux pliés",
       "Penchez-vous légèrement en arrière",
@@ -145,7 +145,7 @@ export const absExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "gym", "outdoor"],
-    image: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
+    image_url: "/lovable-uploads/5cefaf8e-f3fb-4c8c-95ab-650179ce7655.png",
     instructions: [
       "Position de planche",
       "Ramenez alternativement les genoux vers la poitrine",
