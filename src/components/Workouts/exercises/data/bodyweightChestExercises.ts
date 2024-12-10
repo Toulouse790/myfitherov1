@@ -9,7 +9,7 @@ export const bodyweightChestExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Aucun",
     location: ["home", "gym", "outdoor"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Position de planche, mains largeur d'épaules",
       "Gardez le corps aligné",
@@ -43,7 +43,7 @@ export const bodyweightChestExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barres parallèles",
     location: ["gym"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Saisissez les barres parallèles",
       "Penchez-vous légèrement vers l'avant",

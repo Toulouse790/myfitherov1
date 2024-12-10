@@ -3,13 +3,11 @@ export interface Exercise {
   name: string;
   muscleGroup: string;
   description: string;
-  difficulty: string | string[];
+  difficulty: string;
   equipment: string;
   location: string[];
   image_url?: string;
-  video_url?: string;
-  is_published?: boolean;
-  instructions?: string[];
+  instructions: string[];
   targetMuscles?: string[];
   objectives?: string[];
   sets?: {

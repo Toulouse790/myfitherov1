@@ -9,7 +9,7 @@ export const advancedChestExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Banc décliné, Barre, Poids",
     location: ["gym"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Installez-vous sur un banc décliné",
       "Saisissez la barre avec une prise légèrement plus large que les épaules",
@@ -43,7 +43,7 @@ export const advancedChestExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Banc, Haltères",
     location: ["gym"],
-    image: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
     instructions: [
       "Allongez-vous sur un banc plat",
       "Tenez les haltères au-dessus de la poitrine",

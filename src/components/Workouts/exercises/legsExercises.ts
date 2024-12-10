@@ -9,7 +9,7 @@ export const legsExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barre et poids",
     location: ["gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Placez la barre sur vos trapèzes",
       "Pieds largeur d'épaules",
@@ -43,7 +43,7 @@ export const legsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltères (optionnel)",
     location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Position debout, pieds joints",
       "Faites un grand pas en avant",
@@ -77,7 +77,7 @@ export const legsExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Machine à extension",
     location: ["gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Asseyez-vous sur la machine",
       "Ajustez le coussin sur vos chevilles",
@@ -111,7 +111,7 @@ export const legsExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Position de squat",
       "Descendez à mi-chemin",
@@ -145,7 +145,7 @@ export const legsExercises: Exercise[] = [
     difficulty: "advanced",
     equipment: "Barre et poids",
     location: ["gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Pieds largeur d'épaules",
       "Saisissez la barre",

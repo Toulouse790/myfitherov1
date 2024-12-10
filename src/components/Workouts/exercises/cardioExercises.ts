@@ -9,7 +9,7 @@ export const cardioExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
+    image_url: "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
     instructions: [
       "Commencez debout",
       "Descendez en position de pompe",
@@ -43,7 +43,7 @@ export const cardioExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
+    image_url: "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
     instructions: [
       "Position de planche",
       "Ramenez alternativement les genoux vers la poitrine",

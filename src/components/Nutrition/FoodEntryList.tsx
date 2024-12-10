@@ -14,7 +14,7 @@ export const FoodEntryList = ({ entries, onDeleteEntry }: FoodEntryListProps) =>
     <Card className="p-4 bg-white border border-gray-200">
       <ScrollArea className="h-[300px]">
         <div className="space-y-2">
-          {entries.map((entry, index) => (
+          {entries.map((entry) => (
             <div
               key={entry.id}
               className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"

@@ -9,7 +9,7 @@ export const shouldersExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Barre ou Haltères",
     location: ["gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout ou assis, dos droit",
       "Barre au niveau des clavicules",
@@ -43,7 +43,7 @@ export const shouldersExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltères",
     location: ["gym", "home"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, haltères le long du corps",
       "Levez les bras sur les côtés",
@@ -77,7 +77,7 @@ export const shouldersExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltères",
     location: ["gym", "home"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, haltères devant les cuisses",
       "Levez les bras devant vous",
@@ -111,7 +111,7 @@ export const shouldersExercises: Exercise[] = [
     difficulty: "intermediate",
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Position de pompe, fesses vers le haut",
       "Tête vers le sol",
@@ -145,7 +145,7 @@ export const shouldersExercises: Exercise[] = [
     difficulty: "beginner",
     equipment: "Haltères",
     location: ["gym", "home"],
-    image: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
+    image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
     instructions: [
       "Debout, haltères le long du corps",
       "Haussez les épaules",
