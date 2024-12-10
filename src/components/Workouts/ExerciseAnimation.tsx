@@ -34,11 +34,11 @@ export const ExerciseAnimation = ({
   weight: initialWeight = 0,
   exerciseName,
   onSetComplete,
-  onRestTimeChange,
-  onSetsChange
+  onSetsChange,
+  onRestTimeChange
 }: ExerciseAnimationProps) => {
   const [remainingRestTime, setRemainingRestTime] = useState<number | null>(null);
-  const [currentReps, setCurrentReps] = useState(initialReps);
+  const [repsPerSet, setRepsPerSet] = useState<number[]>(Array(sets).fill(initialReps));
   const [currentWeight, setCurrentWeight] = useState(initialWeight);
   const { toast } = useToast();
   const { updateStats } = useWorkoutData(sessionId);
@@ -64,20 +64,36 @@ export const ExerciseAnimation = ({
 
   const handleSetComplete = async () => {
     if (onSetComplete) {
+      const currentReps = repsPerSet[currentSet - 1];
+      const totalWeight = currentWeight * currentReps;
       await updateStats(currentWeight, currentReps, exerciseName);
       onSetComplete();
       setRemainingRestTime(restTime);
+      toast({
+        title: "Série complétée !",
+        description: `Poids total soulevé : ${totalWeight}kg (${currentReps} répétitions à ${currentWeight}kg)`,
+      });
     }
   };
 
   const handleAddSet = () => {
     if (onSetsChange) {
-      onSetsChange(sets + 1);
+      const newSetsCount = sets + 1;
+      setRepsPerSet(prev => [...prev, initialReps]);
+      onSetsChange(newSetsCount);
       toast({
         title: "Série ajoutée",
         description: `Une nouvelle série a été ajoutée à ${exerciseName}`,
       });
     }
+  };
+
+  const handleRepsChange = (setIndex: number, value: number) => {
+    setRepsPerSet(prev => {
+      const newReps = [...prev];
+      newReps[setIndex] = value;
+      return newReps;
+    });
   };
 
   return (
@@ -122,8 +138,8 @@ export const ExerciseAnimation = ({
                     <label className="text-sm font-medium">Répétitions</label>
                     <Input
                       type="number"
-                      value={currentReps}
-                      onChange={(e) => setCurrentReps(Number(e.target.value))}
+                      value={repsPerSet[index]}
+                      onChange={(e) => handleRepsChange(index, Number(e.target.value))}
                       className="text-center"
                       disabled={index + 1 !== currentSet || isResting}
                     />
