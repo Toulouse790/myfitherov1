@@ -4,7 +4,7 @@ import { MapPin, Home, Building2, TreePine } from "lucide-react";
 interface LocationBadgesProps {
   locations: string[];
   selectedLocations: string[];
-  onLocationChange?: (location: string) => void;
+  onLocationChange?: (location: string, checked: boolean) => void;
 }
 
 const locationTranslations: { [key: string]: string } = {
@@ -25,12 +25,13 @@ export const LocationBadges = ({
   onLocationChange,
 }: LocationBadgesProps) => {
   const handleClick = (location: string) => {
+    const isSelected = selectedLocations.includes(location);
     console.log('Location badge clicked:', {
       location,
-      isSelected: selectedLocations.includes(location),
+      isSelected,
       currentSelection: selectedLocations
     });
-    onLocationChange?.(location);
+    onLocationChange?.(location, !isSelected);
   };
 
   return (

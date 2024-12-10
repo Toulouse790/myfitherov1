@@ -6,10 +6,10 @@ interface ExerciseHeaderProps {
   muscleGroup: string;
   difficulties: string[];
   selectedDifficulties: string[];
-  onDifficultyChange?: (difficulty: string) => void;
+  onDifficultyChange?: (difficulty: string, checked: boolean) => void;
   locations: string[];
   selectedLocations: string[];
-  onLocationChange?: (location: string) => void;
+  onLocationChange?: (location: string, checked: boolean) => void;
 }
 
 export const ExerciseHeader = ({ 
