@@ -11,6 +11,13 @@ export const useLocationManagement = (
 
   const handleLocationChange = async (location: string, checked: boolean) => {
     try {
+      console.log('Location change:', {
+        exerciseId,
+        location,
+        checked,
+        currentSelection: selectedLocations
+      });
+
       const newLocations = checked
         ? [...selectedLocations, location]
         : selectedLocations.filter(l => l !== location);
@@ -23,6 +30,11 @@ export const useLocationManagement = (
       if (error) throw error;
 
       setSelectedLocations(newLocations);
+
+      toast({
+        title: "Succès",
+        description: "Lieu mis à jour avec succès",
+      });
     } catch (error) {
       console.error('Error updating exercise location:', error);
       toast({
