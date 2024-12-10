@@ -43,13 +43,16 @@ export const useWorkoutData = (sessionId: string | null) => {
 
     if (sessionId) {
       try {
+        const duration = Math.floor(stats.totalSets * 3 / 60); // Estimation basée sur 3 minutes par série
+        
         await supabase
           .from('training_stats')
           .upsert({
             session_id: sessionId,
-            total_weight: stats.totalWeight,
-            total_reps: stats.totalReps,
-            calories_burned: stats.caloriesBurned,
+            session_duration_minutes: duration,
+            muscle_groups_worked: ['biceps'], // À adapter selon l'exercice
+            energy_level: 8, // Valeur par défaut
+            perceived_difficulty: 'moderate'
           });
       } catch (error) {
         console.error('Error saving workout stats:', error);
