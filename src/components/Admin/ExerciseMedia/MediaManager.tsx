@@ -8,6 +8,7 @@ import { MediaManagerProps } from "../types/media";
 
 export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) => {
   const [showPreview, setShowPreview] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const { toast } = useToast();
 
   const handleDelete = async (url: string, exerciseName: string, type: 'image' | 'video') => {
@@ -47,6 +48,34 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
     }
   };
 
+  const handlePublishToggle = async () => {
+    setIsPublishing(true);
+    try {
+      const { error } = await supabase
+        .from('unified_exercises')
+        .update({ is_published: !exercise.is_published })
+        .eq('id', exercise.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Statut mis à jour",
+        description: `L'exercice a été ${exercise.is_published ? 'dépublié' : 'publié'}`,
+      });
+
+      onUpload();
+    } catch (error) {
+      console.error('Error toggling publish status:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   const imageMediaUrls = media
     ?.filter(m => m.media_type === 'image')
     .map(m => m.media_url) || [];
@@ -58,16 +87,15 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
   const allMediaUrls = [...imageMediaUrls.map(url => ({ type: 'image' as const, url })), 
                        ...videoMediaUrls.map(url => ({ type: 'video' as const, url }))];
   
-  const hasMedia = allMediaUrls.length > 0;
-
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
         <MediaButtons
           onImageClick={() => {}}
           onVideoClick={() => {}}
-          onPublish={() => setShowPreview(true)}
-          hasMedia={hasMedia}
+          isPublished={exercise.is_published}
+          isPublishing={isPublishing}
+          onPublishToggle={handlePublishToggle}
         />
       </div>
 
