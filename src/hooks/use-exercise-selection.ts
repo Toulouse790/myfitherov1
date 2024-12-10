@@ -39,12 +39,9 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
 
         if (muscleGroup) {
           const translatedGroup = translateMuscleGroup(muscleGroup);
-          console.log('Filtering by muscle group:', translatedGroup);
+          console.log('Filtering by muscle group (translated):', translatedGroup);
           query = query.ilike('muscle_group', translatedGroup.toLowerCase());
         }
-
-        // Filtrer par niveau de difficulté
-        query = query.contains('difficulty', [userLevel]);
 
         const { data, error } = await query;
 
@@ -56,7 +53,12 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
         const uniqueExercises = data?.reduce((acc: Exercise[], current) => {
           const exists = acc.find((exercise) => exercise.id === current.id);
           if (!exists) {
-            acc.push(current);
+            // Traduire le muscle_group avant d'ajouter l'exercice
+            const translatedExercise = {
+              ...current,
+              muscle_group: translateMuscleGroup(current.muscle_group)
+            };
+            acc.push(translatedExercise);
           } else {
             console.log('Duplicate exercise found:', current.name);
           }

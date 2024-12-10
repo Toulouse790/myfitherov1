@@ -40,9 +40,10 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
               console.warn(`Exercice sans groupe musculaire:`, exercise);
               return;
             }
-            const muscleGroup = exercise.muscle_group.toLowerCase();
-            console.log(`Traitement de l'exercice: ${exercise.name}, groupe musculaire: ${muscleGroup}`);
-            counts[muscleGroup] = (counts[muscleGroup] || 0) + 1;
+            // Traduire le groupe musculaire avant le comptage
+            const translatedGroup = translateMuscleGroup(exercise.muscle_group).toLowerCase();
+            console.log(`Traitement de l'exercice: ${exercise.name}, groupe musculaire: ${translatedGroup}`);
+            counts[translatedGroup] = (counts[translatedGroup] || 0) + 1;
           });
         }
 
