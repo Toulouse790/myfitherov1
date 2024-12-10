@@ -33,45 +33,30 @@ export const useExerciseTable = () => {
         return [];
       }
 
+      console.log('Fetched exercises:', data);
       return data || [];
     },
   });
 
   // Mise en place de la souscription en temps réel
   useEffect(() => {
-    let channel = supabase.channel('unified_exercises_changes');
-    
-    // S'assurer que le canal est correctement configuré avant de souscrire
-    if (channel) {
-      channel = channel
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'unified_exercises'
-          },
-          (payload) => {
-            console.log('Changement détecté:', payload);
-            // Invalider le cache pour forcer un rafraîchissement des données
-            queryClient.invalidateQueries({ queryKey: ['exercises'] });
-          }
-        )
-        .subscribe();
-    }
+    const channel = supabase.channel('unified_exercises_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'unified_exercises'
+        },
+        (payload) => {
+          console.log('Change detected:', payload);
+          queryClient.invalidateQueries({ queryKey: ['exercises'] });
+        }
+      )
+      .subscribe();
 
-    // Cleanup function
     return () => {
-      if (channel) {
-        // Utiliser une fonction asynchrone auto-exécutée pour la désinscription
-        (async () => {
-          try {
-            await supabase.removeChannel(channel);
-          } catch (error) {
-            console.error('Error removing channel:', error);
-          }
-        })();
-      }
+      supabase.removeChannel(channel);
     };
   }, [queryClient]);
 
@@ -90,6 +75,7 @@ export const useExerciseTable = () => {
       });
       
       setSelectedExercises([]);
+      queryClient.invalidateQueries({ queryKey: ['exercises'] });
     } catch (error) {
       console.error('Error deleting exercises:', error);
       toast({
@@ -102,7 +88,9 @@ export const useExerciseTable = () => {
 
   const handlePublish = async (exerciseId: string, name: string) => {
     try {
+      console.log('Publishing exercise:', exerciseId, 'Current filter:', publishFilter);
       const newPublishState = !publishFilter;
+      
       const { error } = await supabase
         .from('unified_exercises')
         .update({ 
@@ -112,6 +100,9 @@ export const useExerciseTable = () => {
         .eq('id', exerciseId);
 
       if (error) throw error;
+
+      console.log('Exercise published successfully');
+      queryClient.invalidateQueries({ queryKey: ['exercises'] });
 
       toast({
         title: "Succès",
