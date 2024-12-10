@@ -51,7 +51,7 @@ export const useWorkoutRegeneration = (sessionId: string | null) => {
         recoveryCapacity: "low" as const
       };
 
-      const newPlan = generateWorkoutPlan(userProfile, availableExercises);
+      const newPlan = generateWorkoutPlan(availableExercises, userProfile);
       console.log("Nouveau plan généré:", newPlan);
 
       if (sessionId) {
