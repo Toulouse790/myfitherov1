@@ -60,7 +60,7 @@ export const useWorkoutData = (sessionId: string | null) => {
             session_duration_minutes: duration,
             muscle_groups_worked: ['biceps'],
             energy_level: 8,
-            perceived_difficulty: 'moderate'
+            perceived_difficulty: 'easy', // Valid values: 'easy', 'moderate', 'hard'
           });
 
         if (statsError) {
