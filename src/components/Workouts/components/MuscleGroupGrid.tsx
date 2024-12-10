@@ -21,22 +21,21 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
     const fetchExerciseCounts = async () => {
       try {
         console.log('Fetching exercise counts...');
-        const { data, error } = await supabase
+        const { data: exercises, error } = await supabase
           .from('exercises')
-          .select(`
-            id,
-            name,
-            muscle_group
-          `)
-          .eq('is_published', true); // Ne compter que les exercices publiés
+          .select('id, name, muscle_group')
+          .eq('is_published', true);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching exercises:', error);
+          throw error;
+        }
 
         const counts: {[key: string]: number} = {};
         
-        if (data) {
-          console.log('Raw exercise data:', data);
-          data.forEach(exercise => {
+        if (exercises) {
+          console.log('Raw exercise data:', exercises);
+          exercises.forEach(exercise => {
             const muscleGroup = exercise.muscle_group.toLowerCase();
             console.log(`Processing exercise: ${exercise.name}, muscle group: ${muscleGroup}`);
             counts[muscleGroup] = (counts[muscleGroup] || 0) + 1;
