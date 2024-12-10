@@ -95,7 +95,7 @@ export const NextWorkoutDetail = () => {
           totalWeight: 0,
           totalCalories: 0
         }}
-        onConfirm={(difficulty) => handleConfirmEndWorkout(difficulty, duration)}
+        onConfirm={(difficulty, duration, muscleGroups) => handleConfirmEndWorkout(difficulty, duration, muscleGroups)}
       />
     </div>
   );
