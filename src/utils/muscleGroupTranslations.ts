@@ -14,8 +14,9 @@ export const translateMuscleGroup = (muscleId: string): string => {
     épaules: 'épaules'
   };
 
-  console.log('Traduction du groupe musculaire:', muscleId, 'en:', translations[muscleId.toLowerCase()] || muscleId);
-  return translations[muscleId.toLowerCase()] || muscleId;
+  const lowerCaseId = muscleId?.toLowerCase();
+  console.log('Traduction du groupe musculaire:', muscleId, 'en:', translations[lowerCaseId] || muscleId);
+  return translations[lowerCaseId] || muscleId;
 };
 
 export const reverseTranslateMuscleGroup = (frenchName: string): string => {
