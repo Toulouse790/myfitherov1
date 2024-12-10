@@ -1,4 +1,4 @@
-import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableHead, TableHeader as ShadcnTableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface TableHeaderProps {
@@ -8,7 +8,7 @@ interface TableHeaderProps {
 
 export const TableHeader = ({ onSelectAll, allSelected }: TableHeaderProps) => {
   return (
-    <TableHeader>
+    <ShadcnTableHeader>
       <TableRow>
         <TableHead className="w-10">
           <Checkbox 
@@ -20,6 +20,6 @@ export const TableHeader = ({ onSelectAll, allSelected }: TableHeaderProps) => {
         <TableHead>Informations</TableHead>
         <TableHead>Médias</TableHead>
       </TableRow>
-    </TableHeader>
+    </ShadcnTableHeader>
   );
 };
