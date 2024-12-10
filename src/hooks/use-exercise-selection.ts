@@ -9,10 +9,8 @@ interface Exercise {
   muscle_group: string;
   difficulty: string[];
   is_published?: boolean;
-  exercise_media?: {
-    media_url: string;
-    media_type: string;
-  }[];
+  image_url?: string;
+  video_url?: string;
 }
 
 export const useExerciseSelection = (muscleGroup?: string, userLevel: string = 'beginner') => {
@@ -34,7 +32,8 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
             muscle_group,
             difficulty,
             is_published,
-            exercise_media
+            image_url,
+            video_url
           `)
           .eq('is_published', true);
 

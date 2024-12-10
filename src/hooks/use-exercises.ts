@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 export interface Exercise {
   id: string;
   name: string;
+  muscle_group: string;
   defaultSets: number;
   defaultReps: number;
+  image_url?: string;
+  video_url?: string;
 }
 
 export const useExercises = (exerciseIds?: string[]) => {
@@ -20,8 +23,15 @@ export const useExercises = (exerciseIds?: string[]) => {
 
         let query = supabase
           .from('unified_exercises')
-          .select('id, name')
-          .eq('is_published', true);
+          .select(`
+            id, 
+            name,
+            muscle_group,
+            image_url,
+            video_url
+          `)
+          .eq('is_published', true)
+          .order('muscle_group', { ascending: true });
         
         if (exerciseIds && exerciseIds.length > 0) {
           query = query.in('id', exerciseIds);
@@ -39,8 +49,11 @@ export const useExercises = (exerciseIds?: string[]) => {
           const formattedExercises = data.map(ex => ({
             id: ex.id,
             name: ex.name,
+            muscle_group: ex.muscle_group,
             defaultSets: 3,
-            defaultReps: 12
+            defaultReps: 12,
+            image_url: ex.image_url,
+            video_url: ex.video_url
           }));
           setExercises(formattedExercises);
         }
