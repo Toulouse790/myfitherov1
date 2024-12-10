@@ -6,7 +6,7 @@ export const translateMuscleGroup = (muscleId: string): string => {
     shoulders: 'épaules',
     biceps: 'biceps',
     triceps: 'triceps',
-    abs: 'abdominaux'
+    abdominaux: 'abdominaux'
   };
 
   console.log('Traduction du groupe musculaire:', muscleId, 'en:', translations[muscleId]);

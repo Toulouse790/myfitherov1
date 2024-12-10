@@ -50,7 +50,7 @@ export const muscleGroups = [
     totalExercises: 0
   },
   { 
-    id: 'abs', 
+    id: 'abdominaux', 
     name: 'Abdominaux',
     color: 'bg-primary',
     image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
