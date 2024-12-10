@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { AdminHeaderActions } from "./AdminHeaderActions";
 import { MediaButtons } from "./MediaButtons";
 import { UploadForm } from "./UploadForm";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Exercise {
   id: string;
@@ -20,29 +21,29 @@ interface Exercise {
   video_url?: string;
 }
 
-interface ExerciseTableProps {
-  isPublished: boolean;
-}
-
-export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
+export const ExerciseTable = () => {
   const { toast } = useToast();
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showImageUpload, setShowImageUpload] = useState<string | null>(null);
   const [showVideoUpload, setShowVideoUpload] = useState<string | null>(null);
+  const [publishFilter, setPublishFilter] = useState<boolean | null>(false);
 
   useEffect(() => {
     fetchExercises();
-  }, [isPublished]);
+  }, [publishFilter]);
 
   const fetchExercises = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('unified_exercises')
-        .select('*')
-        .eq('is_published', isPublished);
+      let query = supabase.from('unified_exercises').select('*');
+      
+      if (publishFilter !== null) {
+        query = query.eq('is_published', publishFilter);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
@@ -104,7 +105,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       const { error } = await supabase
         .from('unified_exercises')
         .update({ 
-          is_published: !isPublished,
+          is_published: !publishFilter,
           name: name 
         })
         .eq('id', exerciseId);
@@ -113,7 +114,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
 
       toast({
         title: "Succès",
-        description: "Exercice publié",
+        description: `Exercice ${publishFilter ? 'dépublié' : 'publié'}`,
       });
       
       fetchExercises();
@@ -143,14 +144,24 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
 
   return (
     <Card className="p-6">
-      {!isPublished && (
-        <div className="mb-4">
+      <div className="mb-4 space-y-4">
+        <Tabs value={publishFilter === null ? "all" : publishFilter ? "published" : "unpublished"} 
+              onValueChange={(value) => setPublishFilter(value === "all" ? null : value === "published")}>
+          <TabsList>
+            <TabsTrigger value="unpublished">À publier</TabsTrigger>
+            <TabsTrigger value="published">Publiés</TabsTrigger>
+            <TabsTrigger value="all">Tous</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {!publishFilter && (
           <AdminHeaderActions
             selectedExercises={selectedExercises}
             onDelete={handleDelete}
           />
-        </div>
-      )}
+        )}
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -219,7 +230,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
                   size="sm"
                   onClick={() => handlePublish(exercise.id, exercise.name)}
                 >
-                  Publier
+                  {exercise.is_published ? 'Dépublier' : 'Publier'}
                 </Button>
               </TableCell>
             </TableRow>

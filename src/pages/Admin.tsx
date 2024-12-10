@@ -6,11 +6,10 @@ import { FoodSuggestionsTable } from "@/components/Admin/FoodSuggestions/FoodSug
 const Admin = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <Tabs defaultValue="unpublished" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="dashboard" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="dashboard">Tableau de bord</TabsTrigger>
-          <TabsTrigger value="unpublished">Exercices à publier</TabsTrigger>
-          <TabsTrigger value="published">Exercices publiés</TabsTrigger>
+          <TabsTrigger value="exercises">Gestion des exercices</TabsTrigger>
           <TabsTrigger value="food-suggestions">Suggestions d'aliments</TabsTrigger>
         </TabsList>
         
@@ -18,12 +17,8 @@ const Admin = () => {
           <AdminDashboard />
         </TabsContent>
         
-        <TabsContent value="unpublished">
-          <ExerciseTable isPublished={false} />
-        </TabsContent>
-
-        <TabsContent value="published">
-          <ExerciseTable isPublished={true} />
+        <TabsContent value="exercises">
+          <ExerciseTable />
         </TabsContent>
 
         <TabsContent value="food-suggestions">
