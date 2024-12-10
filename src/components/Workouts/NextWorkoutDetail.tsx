@@ -5,14 +5,14 @@ import { useState } from "react";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { EndWorkoutButton } from "./NextWorkoutDetail/EndWorkoutButton";
 import { Button } from "@/components/ui/button";
-import { Timer } from "lucide-react";
+import { Timer, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ExerciseAnimation } from "./ExerciseAnimation";
 import { Progress } from "@/components/ui/progress";
 
 export const NextWorkoutDetail = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session");
   const { exercises, currentExerciseIndex, workoutStarted, duration, handleConfirmEndWorkout } = useWorkoutSession();
   const { toast } = useToast();
@@ -50,7 +50,6 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleSetsChange = (newSets: number) => {
-    // Cette fonction pourrait être utilisée pour ajuster le nombre total de séries
     console.log("Nouveau nombre de séries:", newSets);
   };
 
