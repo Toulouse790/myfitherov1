@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ExerciseRow } from "./ExerciseRow";
 import { AdminHeader } from "./AdminHeader";
 import { SearchBar } from "@/components/Workouts/components/SearchBar";
+import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface ExerciseTableProps {
   isPublished: boolean;
@@ -39,6 +40,10 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       const uniqueExercises = data?.reduce((acc: any[], current: any) => {
         const exists = acc.find(item => item.id === current.id);
         if (!exists) {
+          // Translate muscle group from 'abs' to 'abdominaux' if needed
+          if (current.muscle_group === 'abs') {
+            current.muscle_group = 'abdominaux';
+          }
           acc.push(current);
         } else {
           console.log('Found duplicate exercise:', current.name, 'with ID:', current.id);
