@@ -3,6 +3,8 @@ import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 import { LocationCheckboxes, DifficultyCheckboxes } from "./ExerciseCheckboxes";
 import { ExerciseTableContentProps } from "./types/exercise-table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export const ExerciseTableContent = ({
   exercises,
@@ -13,20 +15,79 @@ export const ExerciseTableContent = ({
   onSelectionChange
 }: ExerciseTableContentProps) => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const { toast } = useToast();
 
-  const handleSelectAll = (checked: boolean) => {
-    const newSelection = checked ? exercises.map(e => e.id) : [];
-    setSelectedExercises(newSelection);
-    onSelectionChange?.(newSelection);
+  const handleSelectAll = async (checked: boolean) => {
+    try {
+      const newSelection = checked ? exercises.map(e => e.id) : [];
+      setSelectedExercises(newSelection);
+      onSelectionChange?.(newSelection);
+    } catch (error) {
+      console.error('Error selecting all exercises:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la sélection des exercices",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleSelectExercise = (exerciseId: string, checked: boolean) => {
-    const newSelection = checked 
-      ? [...selectedExercises, exerciseId]
-      : selectedExercises.filter(id => id !== exerciseId);
-    
-    setSelectedExercises(newSelection);
-    onSelectionChange?.(newSelection);
+  const handleSelectExercise = async (exerciseId: string, checked: boolean) => {
+    try {
+      const newSelection = checked 
+        ? [...selectedExercises, exerciseId]
+        : selectedExercises.filter(id => id !== exerciseId);
+      
+      setSelectedExercises(newSelection);
+      onSelectionChange?.(newSelection);
+    } catch (error) {
+      console.error('Error selecting exercise:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la sélection de l'exercice",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleNameChange = async (exerciseId: string, newName: string) => {
+    try {
+      // First check if the name already exists
+      const { data: existingExercises } = await supabase
+        .from('exercises')
+        .select('name')
+        .ilike('name', `${newName}%`);
+
+      let uniqueName = newName;
+      if (existingExercises && existingExercises.length > 0) {
+        // If name exists, append a number
+        const similarNames = existingExercises.map(e => e.name);
+        let counter = 1;
+        while (similarNames.includes(uniqueName)) {
+          uniqueName = `${newName} (${counter})`;
+          counter++;
+        }
+      }
+
+      const { error } = await supabase
+        .from('exercises')
+        .update({ name: uniqueName })
+        .eq('id', exerciseId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Nom de l'exercice mis à jour",
+      });
+    } catch (error) {
+      console.error('Error updating exercise name:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le nom de l'exercice",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -54,7 +115,14 @@ export const ExerciseTableContent = ({
                 onCheckedChange={(checked) => handleSelectExercise(exercise.id, checked as boolean)}
               />
             </td>
-            <td className="p-2">{exercise.name}</td>
+            <td className="p-2">
+              <input
+                type="text"
+                value={exercise.name}
+                onChange={(e) => handleNameChange(exercise.id, e.target.value)}
+                className="w-full p-1 border rounded"
+              />
+            </td>
             <td className="p-2">{translateMuscleGroup(exercise.muscle_group)}</td>
             <td className="p-2">
               <LocationCheckboxes
