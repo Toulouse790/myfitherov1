@@ -82,7 +82,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
 
       toast({
         title: "Succès",
-        description: "Nom de l'exercice mis à jour",
+        description: "Exercice publié",
       });
       
       fetchExercises();
@@ -91,32 +91,6 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour le nom de l'exercice",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handlePublish = async () => {
-    try {
-      const { error } = await supabase
-        .from('unified_exercises')
-        .update({ is_published: true })
-        .in('id', selectedExercises);
-
-      if (error) throw error;
-
-      toast({
-        title: "Succès",
-        description: "Les exercices ont été publiés",
-      });
-
-      fetchExercises();
-      setSelectedExercises([]);
-    } catch (error) {
-      console.error('Error publishing exercises:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de publier les exercices",
         variant: "destructive",
       });
     }
@@ -142,7 +116,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
         <div className="mb-4">
           <AdminHeaderActions
             selectedExercises={selectedExercises}
-            onPublish={handlePublish}
+            onPublish={handleNameChange}
           />
         </div>
       )}
@@ -183,7 +157,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
                 <MediaButtons
                   isPublished={exercise.is_published}
                   isPublishing={false}
-                  onPublishToggle={() => {}}
+                  onPublishToggle={() => handleNameChange(exercise.id, exercise.name)}
                   onImageClick={() => setShowImageUpload(exercise.id)}
                   onVideoClick={() => setShowVideoUpload(exercise.id)}
                 />
@@ -214,7 +188,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
                   size="sm"
                   onClick={() => handleNameChange(exercise.id, exercise.name)}
                 >
-                  Sauvegarder
+                  Publier
                 </Button>
               </TableCell>
             </TableRow>

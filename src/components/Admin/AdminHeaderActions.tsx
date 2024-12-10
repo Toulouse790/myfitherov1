@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Upload, Image, Video } from "lucide-react";
+import { Upload } from "lucide-react";
 import { useState } from "react";
 import { MediaButtons } from "./MediaButtons";
 
@@ -50,6 +50,7 @@ export const AdminHeaderActions = ({
 
       <div className="flex gap-2">
         <MediaButtons
+          isPublished={false}
           isPublishing={isPublishing}
           onPublishToggle={handlePublishToggle}
           onImageClick={handleImageClick}
