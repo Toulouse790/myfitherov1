@@ -46,10 +46,11 @@ export const WorkoutExerciseView = ({
             .from('user_exercise_weights')
             .select('weight')
             .eq('user_id', user.id)
-            .eq('exercise_name', currentExercise);
+            .eq('exercise_name', currentExercise)
+            .single();
 
-          if (!error && data && data.length > 0) {
-            setPreviousWeight(data[0].weight);
+          if (!error && data) {
+            setPreviousWeight(data.weight);
           } else {
             console.log('No previous weight found for exercise:', currentExercise);
           }
@@ -61,6 +62,31 @@ export const WorkoutExerciseView = ({
 
     fetchPreviousWeight();
   }, [currentExercise, user]);
+
+  const handleSetComplete = async () => {
+    if (currentExercise && sessionId) {
+      try {
+        const { error } = await supabase
+          .from('exercise_sets')
+          .insert({
+            session_id: sessionId,
+            exercise_name: currentExercise,
+            set_number: currentSet,
+            reps: 12,
+            weight: previousWeight,
+            rest_time_seconds: restTime,
+            completed_at: new Date().toISOString()
+          });
+
+        if (error) throw error;
+        
+        // Start rest timer automatically after set completion
+        onSetComplete();
+      } catch (error) {
+        console.error('Error saving set:', error);
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -100,7 +126,7 @@ export const WorkoutExerciseView = ({
           sessionId={sessionId}
           weight={previousWeight}
           exerciseName={currentExercise}
-          onSetComplete={onSetComplete}
+          onSetComplete={handleSetComplete}
           onSetsChange={onSetsChange}
           onRestTimeChange={onRestTimeChange}
         />

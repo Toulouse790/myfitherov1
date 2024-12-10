@@ -26,6 +26,7 @@ export const NextWorkoutDetail = () => {
     if (currentSet < 3) {
       setCurrentSet(prev => prev + 1);
       setIsResting(true);
+      setRestTime(90); // Reset rest timer to 90s when starting rest
     } else {
       setCurrentSet(1);
       setIsResting(false);
@@ -33,7 +34,7 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleRestTimeChange = (newTime: number) => {
-    setRestTime(prev => prev + newTime);
+    setRestTime(prev => Math.max(15, prev + newTime));
   };
 
   const handleSetsChange = (newSets: number) => {
