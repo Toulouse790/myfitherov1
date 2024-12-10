@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ExerciseRow } from "./ExerciseRow";
-import { AdminHeader } from "./AdminHeader";
-import { SearchBar } from "@/components/Workouts/components/SearchBar";
-import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+
+interface Exercise {
+  id: string;
+  name: string;
+  muscle_group: string;
+  is_published: boolean;
+}
 
 interface ExerciseTableProps {
   isPublished: boolean;
@@ -14,10 +21,9 @@ interface ExerciseTableProps {
 
 export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const { toast } = useToast();
-  const [exercises, setExercises] = useState<any[]>([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const { translateExercises } = useExerciseTranslation();
+  const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
 
   useEffect(() => {
     fetchExercises();
@@ -26,8 +32,6 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   const fetchExercises = async () => {
     try {
       setIsLoading(true);
-      console.log('Fetching exercises with isPublished:', isPublished);
-      
       const { data, error } = await supabase
         .from('unified_exercises')
         .select('*')
@@ -35,23 +39,7 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
 
       if (error) throw error;
 
-      // Remove duplicates and translate muscle groups
-      const uniqueExercises = data?.reduce((acc: any[], current: any) => {
-        const exists = acc.find(item => item.id === current.id);
-        if (!exists) {
-          // Translate muscle group before adding to the array
-          current.muscle_group = translateMuscleGroup(current.muscle_group);
-          acc.push(current);
-        } else {
-          console.log('Found duplicate exercise:', current.name, 'with ID:', current.id);
-        }
-        return acc;
-      }, []) || [];
-
-      console.log('Total exercises before deduplication:', data?.length);
-      console.log('Total exercises after deduplication:', uniqueExercises.length);
-
-      setExercises(uniqueExercises);
+      setExercises(data || []);
     } catch (error) {
       console.error('Error fetching exercises:', error);
       toast({
@@ -64,9 +52,42 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
     }
   };
 
-  const filteredExercises = exercises.filter((exercise) =>
-    exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedExercises(checked ? exercises.map(e => e.id) : []);
+  };
+
+  const handleSelectExercise = (exerciseId: string, checked: boolean) => {
+    setSelectedExercises(prev => 
+      checked 
+        ? [...prev, exerciseId]
+        : prev.filter(id => id !== exerciseId)
+    );
+  };
+
+  const handleNameChange = async (exerciseId: string, newName: string) => {
+    try {
+      const { error } = await supabase
+        .from('unified_exercises')
+        .update({ name: newName })
+        .eq('id', exerciseId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Nom de l'exercice mis à jour",
+      });
+      
+      fetchExercises();
+    } catch (error) {
+      console.error('Error updating exercise name:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le nom de l'exercice",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -77,28 +98,52 @@ export const ExerciseTable = ({ isPublished }: ExerciseTableProps) => {
   }
 
   return (
-    <div className="space-y-4">
-      <AdminHeader 
-        selectedExercises={[]}
-        onExercisesDeleted={fetchExercises}
-        hasActiveFilter={false}
-        showPublishButton={!isPublished}
-      />
-      <SearchBar 
-        value={searchQuery}
-        onChange={setSearchQuery}
-      />
-      <Card className="p-6">
-        <div className="space-y-4">
-          {filteredExercises.map((exercise) => (
-            <ExerciseRow 
-              key={exercise.id}
-              exercise={exercise}
-              onUpdate={fetchExercises}
-            />
+    <Card className="p-6">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-10">
+              <Checkbox 
+                checked={selectedExercises.length === exercises.length}
+                onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+              />
+            </TableHead>
+            <TableHead>Nom</TableHead>
+            <TableHead>Groupe musculaire</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {exercises.map((exercise) => (
+            <TableRow key={exercise.id}>
+              <TableCell>
+                <Checkbox 
+                  checked={selectedExercises.includes(exercise.id)}
+                  onCheckedChange={(checked) => handleSelectExercise(exercise.id, checked as boolean)}
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  type="text"
+                  value={exercise.name}
+                  onChange={(e) => handleNameChange(exercise.id, e.target.value)}
+                  className="w-full"
+                />
+              </TableCell>
+              <TableCell>{translateMuscleGroup(exercise.muscle_group)}</TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleNameChange(exercise.id, exercise.name)}
+                >
+                  Sauvegarder
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-        </div>
-      </Card>
-    </div>
+        </TableBody>
+      </Table>
+    </Card>
   );
 };
