@@ -89,7 +89,7 @@ export const ExerciseAnimation = ({
             <AnimatePresence mode="wait">
               {isResting && (
                 <RestTimer
-                  restTimer={restTime}
+                  restTime={restTime}
                   onRestTimeChange={handleRestTimeChange}
                 />
               )}
