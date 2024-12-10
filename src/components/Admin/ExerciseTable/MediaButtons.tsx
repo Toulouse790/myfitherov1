@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Image, Video, Globe, GlobeOff } from "lucide-react";
+import { Image, Video, Globe, GlobeSlash } from "lucide-react";
 
 interface MediaButtonsProps {
   isPublished: boolean;
@@ -44,7 +44,7 @@ export const MediaButtons = ({
         {isPublished ? (
           <Globe className="h-4 w-4" />
         ) : (
-          <GlobeOff className="h-4 w-4" />
+          <GlobeSlash className="h-4 w-4" />
         )}
       </Button>
     </div>
