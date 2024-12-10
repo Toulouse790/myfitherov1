@@ -29,6 +29,11 @@ export const useWorkoutData = (sessionId: string | null) => {
 
   // Update stats when a set is completed
   const updateStats = async (weight: number, reps: number, exerciseName: string) => {
+    if (!user) {
+      console.error('No user found when trying to update stats');
+      return;
+    }
+
     setStats(prev => {
       const newStats = {
         totalWeight: prev.totalWeight + (weight * reps),
@@ -47,9 +52,10 @@ export const useWorkoutData = (sessionId: string | null) => {
       try {
         // Update training stats
         const duration = Math.floor(stats.totalSets * 3 / 60);
-        await supabase
+        const { error: statsError } = await supabase
           .from('training_stats')
-          .upsert({
+          .insert({
+            user_id: user.id,
             session_id: sessionId,
             session_duration_minutes: duration,
             muscle_groups_worked: ['biceps'],
@@ -57,8 +63,13 @@ export const useWorkoutData = (sessionId: string | null) => {
             perceived_difficulty: 'moderate'
           });
 
+        if (statsError) {
+          console.error('Error inserting training stats:', statsError);
+          throw statsError;
+        }
+
         // Update user's weight for this exercise
-        await supabase
+        const { error: weightError } = await supabase
           .from('user_exercise_weights')
           .upsert({
             user_id: user.id,
@@ -67,6 +78,11 @@ export const useWorkoutData = (sessionId: string | null) => {
           }, {
             onConflict: 'user_id,exercise_name'
           });
+
+        if (weightError) {
+          console.error('Error updating exercise weight:', weightError);
+          throw weightError;
+        }
 
       } catch (error) {
         console.error('Error saving workout stats:', error);
