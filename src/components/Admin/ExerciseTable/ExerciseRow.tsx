@@ -1,9 +1,12 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ExerciseBadges } from "./ExerciseBadges";
+import { DifficultyBadges } from "../DifficultyBadges";
+import { LocationBadges } from "../LocationBadges";
 import { MediaButtons } from "./MediaButtons";
 import { UploadForm } from "../UploadForm";
+import { useDifficultyManagement } from "@/hooks/use-difficulty-management";
+import { useLocationManagement } from "@/hooks/use-location-management";
 
 interface ExerciseRowProps {
   exercise: {
@@ -36,6 +39,16 @@ export const ExerciseRow = ({
   onVideoClick,
   onUploadSuccess,
 }: ExerciseRowProps) => {
+  const { selectedDifficulties, handleDifficultyChange } = useDifficultyManagement(
+    exercise.id,
+    exercise.difficulty || []
+  );
+
+  const { selectedLocations, handleLocationChange } = useLocationManagement(
+    exercise.id,
+    exercise.location || []
+  );
+
   return (
     <TableRow>
       <TableCell>
@@ -53,10 +66,18 @@ export const ExerciseRow = ({
         />
       </TableCell>
       <TableCell>
-        <ExerciseBadges 
-          difficulties={exercise.difficulty} 
-          locations={exercise.location || []}
-        />
+        <div className="space-y-2">
+          <DifficultyBadges 
+            difficulties={["beginner", "intermediate", "advanced"]}
+            selectedDifficulties={selectedDifficulties}
+            onDifficultyChange={handleDifficultyChange}
+          />
+          <LocationBadges 
+            locations={["home", "gym", "outdoor"]}
+            selectedLocations={selectedLocations}
+            onLocationChange={handleLocationChange}
+          />
+        </div>
       </TableCell>
       <TableCell>
         <MediaButtons
@@ -86,9 +107,6 @@ export const ExerciseRow = ({
             />
           </div>
         )}
-      </TableCell>
-      <TableCell>
-        {/* Removed duplicate publish button */}
       </TableCell>
     </TableRow>
   );
