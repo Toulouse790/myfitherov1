@@ -17,16 +17,15 @@ export const WorkoutSummary = () => {
       if (error) throw error;
       
       const dailyStats = data[0] || {
-        duration_minutes: 0,
-        total_sets: 0,
-        average_intensity: 0
+        session_duration_minutes: 0,
+        rest_time_seconds: 90
       };
 
       const weeklyStats = {
         workouts: data.length,
-        totalDuration: data.reduce((acc, stat) => acc + (stat.duration_minutes || 0), 0),
-        avgIntensity: Math.round(
-          data.reduce((acc, stat) => acc + (stat.average_intensity || 0), 0) / data.length
+        totalDuration: data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0),
+        avgRestTime: Math.round(
+          data.reduce((acc, stat) => acc + (stat.rest_time_seconds || 90), 0) / data.length
         )
       };
 
@@ -66,21 +65,21 @@ export const WorkoutSummary = () => {
           <div className="grid grid-cols-3 gap-4 mt-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {stats?.dailyStats.duration_minutes || 0} min
+                {stats?.dailyStats.session_duration_minutes || 0} min
               </p>
               <p className="text-sm text-muted-foreground">Durée</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {Math.round((stats?.dailyStats.duration_minutes || 0) * 7.5)} kcal
+                {Math.round((stats?.dailyStats.session_duration_minutes || 0) * 7.5)} kcal
               </p>
               <p className="text-sm text-muted-foreground">Calories</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {stats?.dailyStats.total_sets || 0}
+                {stats?.dailyStats.rest_time_seconds || 90}s
               </p>
-              <p className="text-sm text-muted-foreground">Séries</p>
+              <p className="text-sm text-muted-foreground">Repos</p>
             </div>
           </div>
         </TabsContent>
@@ -101,9 +100,9 @@ export const WorkoutSummary = () => {
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {stats?.weeklyStats.avgIntensity || 0}%
+                {stats?.weeklyStats.avgRestTime || 90}s
               </p>
-              <p className="text-sm text-muted-foreground">Intensité moy.</p>
+              <p className="text-sm text-muted-foreground">Repos moyen</p>
             </div>
           </div>
         </TabsContent>

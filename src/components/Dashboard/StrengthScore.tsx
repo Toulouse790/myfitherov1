@@ -10,7 +10,7 @@ export const StrengthScore = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('training_stats')
-        .select('total_weight, average_intensity')
+        .select('session_duration_minutes, rest_time_seconds')
         .order('created_at', { ascending: false })
         .limit(1);
       
@@ -19,7 +19,8 @@ export const StrengthScore = () => {
     }
   });
 
-  const score = Math.round((stats?.average_intensity || 0) * 0.8);
+  // Calculate score based on session duration and optimal rest time
+  const score = Math.round((stats?.session_duration_minutes || 0) * 1.5);
   const maxScore = 100;
   const level = getLevel(score);
   const nextLevel = getNextLevel(level);

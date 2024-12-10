@@ -16,7 +16,7 @@ const getMetricHistory = async (days: number) => {
 
   const dailyData = data.map(stat => ({
     date: new Date(stat.created_at).toLocaleDateString(),
-    value: stat.total_sets
+    value: stat.session_duration_minutes
   }));
 
   const weeklyData = Array.from({ length: 4 }, (_, i) => ({
@@ -53,24 +53,24 @@ export const TrendMetrics = () => {
       history: stats || { daily: [], weekly: [], monthly: [] }
     },
     { 
-      label: "Volume total", 
-      value: "31 209", 
+      label: "Durée totale", 
+      value: `${stats?.daily.reduce((acc, curr) => acc + curr.value, 0) || 0}`, 
       color: "text-cyan-400",
-      unit: "kg",
+      unit: "min",
       history: stats || { daily: [], weekly: [], monthly: [] }
     },
     { 
-      label: "Calories", 
-      value: "1 506", 
+      label: "Temps de repos moyen", 
+      value: "90", 
       color: "text-pink-400",
-      unit: "kcal",
+      unit: "sec",
       history: stats || { daily: [], weekly: [], monthly: [] }
     },
     { 
-      label: "Séries", 
-      value: "91", 
+      label: "Séances complétées", 
+      value: stats?.daily.length.toString() || "0", 
       color: "text-purple-400",
-      unit: "séries",
+      unit: "séances",
       history: stats || { daily: [], weekly: [], monthly: [] }
     }
   ];

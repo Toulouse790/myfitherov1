@@ -479,47 +479,38 @@ export type Database = {
       }
       training_stats: {
         Row: {
-          average_intensity: number | null
           created_at: string
-          duration_minutes: number
           energy_level: number | null
           id: string
           muscle_groups_worked: string[] | null
           perceived_difficulty: string | null
+          rest_time_seconds: number | null
+          session_duration_minutes: number
           session_id: string | null
-          total_reps: number
-          total_sets: number
-          total_weight: number
           updated_at: string
           user_id: string | null
         }
         Insert: {
-          average_intensity?: number | null
           created_at?: string
-          duration_minutes?: number
           energy_level?: number | null
           id?: string
           muscle_groups_worked?: string[] | null
           perceived_difficulty?: string | null
+          rest_time_seconds?: number | null
+          session_duration_minutes?: number
           session_id?: string | null
-          total_reps?: number
-          total_sets?: number
-          total_weight?: number
           updated_at?: string
           user_id?: string | null
         }
         Update: {
-          average_intensity?: number | null
           created_at?: string
-          duration_minutes?: number
           energy_level?: number | null
           id?: string
           muscle_groups_worked?: string[] | null
           perceived_difficulty?: string | null
+          rest_time_seconds?: number | null
+          session_duration_minutes?: number
           session_id?: string | null
-          total_reps?: number
-          total_sets?: number
-          total_weight?: number
           updated_at?: string
           user_id?: string | null
         }
