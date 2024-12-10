@@ -56,13 +56,17 @@ export const WorkoutExerciseView = ({
         />
       )}
 
-      <div className="flex flex-wrap gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {exercises.map((exercise, index) => (
           <Button
             key={index}
-            variant={currentExerciseIndex === index ? "default" : "outline"}
+            variant={currentExerciseIndex === index ? "default" : "ghost"}
             onClick={() => onExerciseSelect(index)}
-            className="flex-1 min-w-[200px] p-4"
+            className={`p-4 transition-all ${
+              currentExerciseIndex === index 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "hover:bg-muted"
+            }`}
           >
             {exercise}
           </Button>
