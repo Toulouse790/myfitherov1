@@ -705,6 +705,39 @@ export type Database = {
           },
         ]
       }
+      workout_suggestions: {
+        Row: {
+          created_at: string
+          description: string
+          icon_name: string
+          id: string
+          is_active: boolean | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon_name: string
+          id?: string
+          is_active?: boolean | null
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       ai_training_analytics: {
