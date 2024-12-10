@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Timer, Check, ChevronUp, ChevronDown } from "lucide-react";
+import { Timer, Check, ChevronUp, ChevronDown, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -34,7 +34,8 @@ export const ExerciseAnimation = ({
   weight: initialWeight = 0,
   exerciseName,
   onSetComplete,
-  onRestTimeChange
+  onRestTimeChange,
+  onSetsChange
 }: ExerciseAnimationProps) => {
   const [remainingRestTime, setRemainingRestTime] = useState<number | null>(null);
   const [currentReps, setCurrentReps] = useState(initialReps);
@@ -69,6 +70,16 @@ export const ExerciseAnimation = ({
     }
   };
 
+  const handleAddSet = () => {
+    if (onSetsChange) {
+      onSetsChange(sets + 1);
+      toast({
+        title: "Série ajoutée",
+        description: `Une nouvelle série a été ajoutée à ${exerciseName}`,
+      });
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -77,7 +88,18 @@ export const ExerciseAnimation = ({
       className="space-y-6"
     >
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-center">{exerciseName}</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">{exerciseName}</h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAddSet}
+            className="gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Ajouter une série
+          </Button>
+        </div>
         
         <div className="space-y-4">
           {Array.from({ length: sets }).map((_, index) => (
