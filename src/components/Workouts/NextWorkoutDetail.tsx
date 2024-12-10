@@ -72,6 +72,8 @@ export const NextWorkoutDetail = () => {
           onSetsChange={handleSetsChange}
           onRestTimeChange={handleRestTimeChange}
           onExerciseSelect={handleExerciseSelect}
+          onEndWorkout={handleEndWorkout}
+          workoutStarted={workoutStarted}
         />
       </div>
 

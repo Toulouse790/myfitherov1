@@ -14,6 +14,8 @@ interface WorkoutExerciseViewProps {
   onSetsChange: (newSets: number) => void;
   onRestTimeChange: (newTime: number) => void;
   onExerciseSelect: (index: number) => void;
+  onEndWorkout?: () => void;
+  workoutStarted?: boolean;
 }
 
 export const WorkoutExerciseView = ({
@@ -29,6 +31,8 @@ export const WorkoutExerciseView = ({
   onSetsChange,
   onRestTimeChange,
   onExerciseSelect,
+  onEndWorkout,
+  workoutStarted,
 }: WorkoutExerciseViewProps) => {
   return (
     <div className="space-y-6">
@@ -36,9 +40,20 @@ export const WorkoutExerciseView = ({
         <h2 className="text-xl sm:text-2xl font-bold">
           {currentExercise || "Sélectionnez un exercice"}
         </h2>
-        <span className="text-muted-foreground">
-          {currentExerciseIndex !== null ? `${currentExerciseIndex + 1}/${exercises.length}` : ""}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">
+            {currentExerciseIndex !== null ? `${currentExerciseIndex + 1}/${exercises.length}` : ""}
+          </span>
+          {workoutStarted && onEndWorkout && (
+            <Button 
+              variant="destructive"
+              onClick={onEndWorkout}
+              className="whitespace-nowrap"
+            >
+              Terminer la séance
+            </Button>
+          )}
+        </div>
       </div>
 
       {currentExercise && (
