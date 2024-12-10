@@ -118,6 +118,7 @@ export type Database = {
           calories_formula: string
           created_at: string
           id: string
+          is_base_male: boolean | null
           name: string
           parameters: Json
           type: string
@@ -127,6 +128,7 @@ export type Database = {
           calories_formula: string
           created_at?: string
           id?: string
+          is_base_male?: boolean | null
           name: string
           parameters: Json
           type: string
@@ -136,6 +138,7 @@ export type Database = {
           calories_formula?: string
           created_at?: string
           id?: string
+          is_base_male?: boolean | null
           name?: string
           parameters?: Json
           type?: string
@@ -731,6 +734,13 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_calories_by_gender: {
+        Args: {
+          base_calories: number
+          gender: string
+        }
+        Returns: number
+      }
       get_ai_usage_stats: {
         Args: {
           start_date?: string
