@@ -68,9 +68,11 @@ export const ExerciseAnimation = ({
 
   const handleAddSet = () => {
     if (onSetsChange) {
+      console.log("Adding new set. Current sets:", sets);
       const newSetsCount = sets + 1;
       setRepsPerSet(prev => [...prev, initialReps]);
       onSetsChange(newSetsCount);
+      console.log("New sets count:", newSetsCount);
     }
   };
 
