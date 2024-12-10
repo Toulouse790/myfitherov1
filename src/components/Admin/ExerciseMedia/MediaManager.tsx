@@ -25,10 +25,14 @@ export const MediaManager = ({ exercise, media, onUpload }: MediaManagerProps) =
 
       if (storageError) throw storageError;
 
+      const updateData = type === 'image' 
+        ? { image_url: null }
+        : { video_url: null };
+
       const { error: dbError } = await supabase
         .from('unified_exercises')
-        .delete()
-        .eq('media_url', url);
+        .update(updateData)
+        .eq('id', exercise.id);
 
       if (dbError) throw dbError;
 
