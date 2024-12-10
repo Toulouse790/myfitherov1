@@ -8,6 +8,7 @@ import { SetCard } from "./ExerciseAnimation/SetCard";
 import { RestTimer } from "./ExerciseAnimation/RestTimer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface ExerciseAnimationProps {
   reps: number;
@@ -43,6 +44,7 @@ export const ExerciseAnimation = ({
   const [currentWeight, setCurrentWeight] = useState(initialWeight);
   const { updateStats } = useWorkoutData(sessionId);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -70,11 +72,33 @@ export const ExerciseAnimation = ({
   };
 
   const handleAddSet = async () => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour ajouter une série",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (onSetsChange && sessionId) {
       console.log("Adding new set. Current sets:", sets);
       const newSetsCount = sets + 1;
       
       try {
+        // Vérifier d'abord que la session appartient à l'utilisateur
+        const { data: session, error: sessionError } = await supabase
+          .from('workout_sessions')
+          .select('user_id')
+          .eq('id', sessionId)
+          .single();
+
+        if (sessionError) throw sessionError;
+        
+        if (session.user_id !== user.id) {
+          throw new Error("Vous n'êtes pas autorisé à modifier cette séance");
+        }
+
         // Ajouter la nouvelle série dans la base de données
         const { error } = await supabase
           .from('exercise_sets')
@@ -103,19 +127,11 @@ export const ExerciseAnimation = ({
         console.error('Error adding set:', error);
         toast({
           title: "Erreur",
-          description: "Impossible d'ajouter la série",
+          description: error instanceof Error ? error.message : "Impossible d'ajouter la série",
           variant: "destructive",
         });
       }
     }
-  };
-
-  const handleRepsChange = (setIndex: number, value: number) => {
-    setRepsPerSet(prev => {
-      const newReps = [...prev];
-      newReps[setIndex] = value;
-      return newReps;
-    });
   };
 
   const handleRestTimeChange = (newTime: number) => {
