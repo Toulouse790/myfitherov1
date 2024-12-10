@@ -102,7 +102,7 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
           <div className="flex gap-2">
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={handlePublishToggle}
               disabled={isPublishing}
               className={`${
@@ -112,35 +112,32 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
               } text-white`}
             >
               {exercise.is_published ? (
-                <Check className="mr-2 h-4 w-4" />
+                <Check className="h-4 w-4" />
               ) : (
-                <Upload className="mr-2 h-4 w-4" />
+                <Upload className="h-4 w-4" />
               )}
-              {exercise.is_published ? "Publié" : "Publier"}
             </Button>
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
               className="bg-blue-500 hover:bg-blue-600 text-white"
               onClick={() => {
                 setShowImageUpload(!showImageUpload);
                 setShowVideoUpload(false);
               }}
             >
-              <Image className="mr-2 h-4 w-4" />
-              Image
+              <Image className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
               className="bg-purple-500 hover:bg-purple-600 text-white"
               onClick={() => {
                 setShowVideoUpload(!showVideoUpload);
                 setShowImageUpload(false);
               }}
             >
-              <Video className="mr-2 h-4 w-4" />
-              Vidéo
+              <Video className="h-4 w-4" />
             </Button>
           </div>
         </div>

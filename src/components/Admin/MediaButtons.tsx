@@ -15,31 +15,28 @@ export const MediaButtons = ({ onImageClick, onVideoClick, onPublish, hasMedia }
     <div className="flex items-center space-x-2">
       <Button
         variant="outline"
-        size="sm"
+        size="icon"
         className="bg-blue-500 hover:bg-blue-600 text-white"
         onClick={onImageClick}
       >
-        <Image className="mr-2 h-4 w-4" />
-        Image
+        <Image className="h-4 w-4" />
       </Button>
       <Button
         variant="outline"
-        size="sm"
+        size="icon"
         className="bg-purple-500 hover:bg-purple-600 text-white"
         onClick={onVideoClick}
       >
-        <Video className="mr-2 h-4 w-4" />
-        Vidéo
+        <Video className="h-4 w-4" />
       </Button>
       <Button
         variant="default"
-        size="sm"
+        size="icon"
         className="bg-green-600 hover:bg-green-700"
         onClick={onPublish}
         disabled={!hasMedia}
       >
-        <Upload className="mr-2 h-4 w-4" />
-        Publier
+        <Upload className="h-4 w-4" />
       </Button>
     </div>
   );
