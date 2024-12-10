@@ -11,6 +11,7 @@ export interface MediaManagerProps {
   exercise: {
     id: string;
     name: string;
+    is_published?: boolean;
   };
   media: ExerciseMedia[];
   onUpload: () => void;
