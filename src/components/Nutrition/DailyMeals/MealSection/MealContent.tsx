@@ -11,7 +11,7 @@ interface MealContentProps {
     fats?: number;
     quantities?: Array<{ item: string; amount: string; }>;
   };
-  preparation: string | null;
+  preparation?: string | null;
   onMealStatus: (status: 'taken' | 'skipped') => void;
 }
 
