@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
+import { RestTimer } from "./RestTimer";
 
 interface SetManagerProps {
   onSetComplete: () => void;
@@ -9,6 +10,7 @@ interface SetManagerProps {
 export const SetManager = ({ onSetComplete }: SetManagerProps) => {
   const [sets, setSets] = useState<number>(3);
   const [currentSet, setCurrentSet] = useState<number>(1);
+  const [restTimer, setRestTimer] = useState<number | null>(null);
 
   const handleAddSet = () => {
     setSets(prev => prev + 1);
@@ -26,8 +28,13 @@ export const SetManager = ({ onSetComplete }: SetManagerProps) => {
   const handleSetComplete = () => {
     if (currentSet < sets) {
       setCurrentSet(prev => prev + 1);
+      setRestTimer(90); // Démarrer le minuteur de repos
     }
     onSetComplete();
+  };
+
+  const handleRestTimeChange = (adjustment: number) => {
+    setRestTimer(prev => prev !== null ? Math.max(15, Math.min(180, prev + adjustment)) : null);
   };
 
   return (
@@ -57,13 +64,20 @@ export const SetManager = ({ onSetComplete }: SetManagerProps) => {
         </div>
       </div>
 
-      <Button 
-        className="w-full"
-        onClick={handleSetComplete}
-        disabled={currentSet > sets}
-      >
-        {currentSet > sets ? "Exercice terminé" : "Valider la série"}
-      </Button>
+      <RestTimer 
+        restTimer={restTimer}
+        onRestTimeChange={handleRestTimeChange}
+      />
+
+      {restTimer === null && (
+        <Button 
+          className="w-full"
+          onClick={handleSetComplete}
+          disabled={currentSet > sets}
+        >
+          {currentSet > sets ? "Exercice terminé" : "Valider la série"}
+        </Button>
+      )}
     </div>
   );
 };
