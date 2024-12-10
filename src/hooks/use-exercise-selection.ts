@@ -29,11 +29,12 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
         let query = supabase
           .from('unified_exercises')
           .select(`
-            *,
-            exercise_media (
-              media_url,
-              media_type
-            )
+            id,
+            name,
+            muscle_group,
+            difficulty,
+            is_published,
+            exercise_media
           `)
           .eq('is_published', true);
 

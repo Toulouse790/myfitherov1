@@ -20,7 +20,8 @@ export const useExercises = (exerciseIds?: string[]) => {
 
         let query = supabase
           .from('unified_exercises')
-          .select('*')
+          .select('id, name, muscle_group')
+          .eq('is_published', true)
           .order('muscle_group', { ascending: true });
         
         if (exerciseIds && exerciseIds.length > 0) {
