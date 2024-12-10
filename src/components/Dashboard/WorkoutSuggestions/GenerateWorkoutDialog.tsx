@@ -23,22 +23,23 @@ export const GenerateWorkoutDialog = ({ open, onOpenChange }: GenerateWorkoutDia
 
   const fetchExercises = async () => {
     try {
+      console.log('Fetching exercises...');
       const { data: exercises, error } = await supabase
-        .from('unified_exercises')  // Changé de 'exercises' à 'unified_exercises'
+        .from('unified_exercises')
         .select('id, name')
         .eq('is_published', true);
 
       if (error) {
-        console.error('Erreur lors de la récupération des exercices:', error);
+        console.error('Error fetching exercises:', error);
         throw error;
       }
 
       if (exercises) {
-        console.log("Exercices disponibles:", exercises.length);
+        console.log("Available exercises:", exercises.length);
         setAvailableExercises(exercises.map(ex => ex.name));
       }
     } catch (error) {
-      console.error('Erreur lors de la récupération des exercices:', error);
+      console.error('Error fetching exercises:', error);
       toast({
         title: "Erreur",
         description: "Impossible de charger les exercices",

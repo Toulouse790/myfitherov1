@@ -19,14 +19,14 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   useEffect(() => {
     const fetchExerciseCounts = async () => {
       try {
-        console.log('Début du comptage des exercices...');
+        console.log('Starting exercise count...');
         const { data: exercises, error } = await supabase
-          .from('exercises')
+          .from('unified_exercises')
           .select('id, name, muscle_group')
           .eq('is_published', true);
 
         if (error) {
-          console.error('Erreur lors de la récupération des exercices:', error);
+          console.error('Error fetching exercises:', error);
           throw error;
         }
 
@@ -35,7 +35,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
         if (exercises) {
           exercises.forEach(exercise => {
             if (!exercise.muscle_group) {
-              console.warn(`Exercice sans groupe musculaire:`, exercise);
+              console.warn(`Exercise without muscle group:`, exercise);
               return;
             }
             const translatedGroup = translateMuscleGroup(exercise.muscle_group).toLowerCase();
@@ -43,10 +43,10 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
           });
         }
 
-        console.log('Comptage final des exercices par groupe:', counts);
+        console.log('Final exercise count by group:', counts);
         setExerciseCounts(counts);
       } catch (error) {
-        console.error('Erreur lors du comptage des exercices:', error);
+        console.error('Error counting exercises:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les exercices",
@@ -59,7 +59,7 @@ export const MuscleGroupGrid = ({ searchQuery, onMuscleGroupClick }: MuscleGroup
   }, [toast]);
 
   const handleClick = (muscleId: string) => {
-    console.log('Groupe musculaire cliqué:', muscleId);
+    console.log('Muscle group clicked:', muscleId);
     setSelectedId(muscleId);
     onMuscleGroupClick(muscleId);
   };
