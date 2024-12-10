@@ -25,3 +25,22 @@ export const getObjectiveMultiplier = (objective: string) => {
       return 1;
   }
 };
+
+// Nouvelle fonction qui utilise la fonction SQL avec tous les paramètres
+export const calculateCaloriesByGender = async (baseCalories: number, gender: string, weight: number, height: number, age: number) => {
+  const { data, error } = await supabase
+    .rpc('calculate_calories_by_gender', {
+      base_calories: baseCalories,
+      gender: gender,
+      weight_kg: weight,
+      height_cm: height,
+      age: age
+    });
+
+  if (error) {
+    console.error('Error calculating calories:', error);
+    return baseCalories; // Retourne la valeur de base en cas d'erreur
+  }
+
+  return data;
+};

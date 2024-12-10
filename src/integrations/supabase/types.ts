@@ -738,6 +738,9 @@ export type Database = {
         Args: {
           base_calories: number
           gender: string
+          weight_kg?: number
+          height_cm?: number
+          age?: number
         }
         Returns: number
       }
