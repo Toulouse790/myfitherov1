@@ -1,6 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
-import { Activity, Calendar, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -9,23 +7,26 @@ export const WorkoutSummary = () => {
     queryKey: ['workout-summary'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('training_stats')
-        .select('*')
+        .from('workout_sessions')
+        .select(`
+          *,
+          training_stats (*)
+        `)
         .order('created_at', { ascending: false })
         .limit(30);
       
       if (error) throw error;
       
       const dailyStats = data[0] || {
-        session_duration_minutes: 0,
-        rest_time_seconds: 90
+        total_duration_minutes: 0,
+        total_rest_time_seconds: 90
       };
 
       const weeklyStats = {
         workouts: data.length,
-        totalDuration: data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0),
+        totalDuration: data.reduce((acc, stat) => acc + (stat.total_duration_minutes || 0), 0),
         avgRestTime: Math.round(
-          data.reduce((acc, stat) => acc + (stat.rest_time_seconds || 90), 0) / data.length
+          data.reduce((acc, stat) => acc + (stat.total_rest_time_seconds || 90), 0) / data.length
         )
       };
 
@@ -45,91 +46,24 @@ export const WorkoutSummary = () => {
 
   return (
     <Card className="p-4">
-      <Tabs defaultValue="daily" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="daily" className="text-xs sm:text-sm">
-            <Activity className="w-4 h-4 mr-2" />
-            Aujourd'hui
-          </TabsTrigger>
-          <TabsTrigger value="weekly" className="text-xs sm:text-sm">
-            <Calendar className="w-4 h-4 mr-2" />
-            Semaine
-          </TabsTrigger>
-          <TabsTrigger value="monthly" className="text-xs sm:text-sm">
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Mois
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="daily" className="space-y-4">
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {stats?.dailyStats.session_duration_minutes || 0} min
-              </p>
-              <p className="text-sm text-muted-foreground">Durée</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {Math.round((stats?.dailyStats.session_duration_minutes || 0) * 7.5)} kcal
-              </p>
-              <p className="text-sm text-muted-foreground">Calories</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {stats?.dailyStats.rest_time_seconds || 90}s
-              </p>
-              <p className="text-sm text-muted-foreground">Repos</p>
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="weekly" className="space-y-4">
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {stats?.weeklyStats.workouts || 0}
-              </p>
-              <p className="text-sm text-muted-foreground">Entraînements</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {stats?.weeklyStats.totalDuration || 0} min
-              </p>
-              <p className="text-sm text-muted-foreground">Durée totale</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {stats?.weeklyStats.avgRestTime || 90}s
-              </p>
-              <p className="text-sm text-muted-foreground">Repos moyen</p>
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="monthly" className="space-y-4">
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {stats?.monthlyStats.totalWorkouts || 0}
-              </p>
-              <p className="text-sm text-muted-foreground">Total séances</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {stats?.monthlyStats.progress || 0}%
-              </p>
-              <p className="text-sm text-muted-foreground">Progression</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {stats?.monthlyStats.streak || 0} jours
-              </p>
-              <p className="text-sm text-muted-foreground">Série active</p>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+      <h2 className="text-lg font-semibold">Résumé des entraînements</h2>
+      <div className="mt-4">
+        <h3 className="text-md font-medium">Statistiques quotidiennes</h3>
+        <p>Durée totale: {stats?.dailyStats.total_duration_minutes} minutes</p>
+        <p>Temps de repos total: {stats?.dailyStats.total_rest_time_seconds} secondes</p>
+      </div>
+      <div className="mt-4">
+        <h3 className="text-md font-medium">Statistiques hebdomadaires</h3>
+        <p>Nombre d'entraînements: {stats?.weeklyStats.workouts}</p>
+        <p>Durée totale: {stats?.weeklyStats.totalDuration} minutes</p>
+        <p>Temps de repos moyen: {stats?.weeklyStats.avgRestTime} secondes</p>
+      </div>
+      <div className="mt-4">
+        <h3 className="text-md font-medium">Statistiques mensuelles</h3>
+        <p>Nombre total d'entraînements: {stats?.monthlyStats.totalWorkouts}</p>
+        <p>Progression: {stats?.monthlyStats.progress}%</p>
+        <p>Série active: {stats?.monthlyStats.streak} jours</p>
+      </div>
     </Card>
   );
 };

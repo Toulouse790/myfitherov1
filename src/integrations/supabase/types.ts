@@ -715,6 +715,8 @@ export type Database = {
           is_adapted: boolean | null
           started_at: string | null
           status: string | null
+          total_duration_minutes: number | null
+          total_rest_time_seconds: number | null
           type: string | null
           updated_at: string | null
           user_id: string | null
@@ -727,6 +729,8 @@ export type Database = {
           is_adapted?: boolean | null
           started_at?: string | null
           status?: string | null
+          total_duration_minutes?: number | null
+          total_rest_time_seconds?: number | null
           type?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -739,6 +743,8 @@ export type Database = {
           is_adapted?: boolean | null
           started_at?: string | null
           status?: string | null
+          total_duration_minutes?: number | null
+          total_rest_time_seconds?: number | null
           type?: string | null
           updated_at?: string | null
           user_id?: string | null

@@ -2,38 +2,52 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Timer, CheckCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { Timer, ChevronUp, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ExerciseSetsProps {
   exercises: string[];
   onExerciseComplete?: (index: number) => void;
   currentExerciseIndex?: number;
+  sessionId?: string | null;
 }
 
 export const ExerciseSets = ({ 
-  exercises: exerciseNames,
+  exercises,
   onExerciseComplete,
-  currentExerciseIndex = 0
+  currentExerciseIndex = 0,
+  sessionId
 }: ExerciseSetsProps) => {
   const [completedSets, setCompletedSets] = useState<{ [key: string]: number }>({});
   const [weights, setWeights] = useState<{ [key: string]: number }>({});
   const [reps, setReps] = useState<{ [key: string]: number }>({});
   const [restTimers, setRestTimers] = useState<{ [key: string]: number | null }>({});
+  const [sessionDuration, setSessionDuration] = useState<number>(0);
+  const [totalRestTime, setTotalRestTime] = useState<number>(0);
   const { toast } = useToast();
 
+  // Timer pour la durée totale de la séance
   useEffect(() => {
-    // Initialize weights and reps for each exercise
+    const interval = setInterval(() => {
+      setSessionDuration(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Initialiser les poids et répétitions pour chaque exercice
     const initialWeights: { [key: string]: number } = {};
     const initialReps: { [key: string]: number } = {};
-    exerciseNames.forEach(exercise => {
-      initialWeights[exercise] = 10;
+    exercises.forEach(exercise => {
+      initialWeights[exercise] = 20;
       initialReps[exercise] = 12;
     });
     setWeights(initialWeights);
     setReps(initialReps);
-  }, [exerciseNames]);
+  }, [exercises]);
 
   useEffect(() => {
     const intervals: { [key: string]: NodeJS.Timeout } = {};
@@ -53,6 +67,7 @@ export const ExerciseSets = ({
             }
             return { ...prev, [exerciseName]: currentTimer - 1 };
           });
+          setTotalRestTime(prev => prev + 1);
         }, 1000);
       }
     });
@@ -64,7 +79,7 @@ export const ExerciseSets = ({
     };
   }, [restTimers, toast]);
 
-  const handleSetComplete = (exerciseName: string) => {
+  const handleSetComplete = async (exerciseName: string) => {
     const currentSets = completedSets[exerciseName] || 0;
     
     if (currentSets < 3) {
@@ -79,7 +94,7 @@ export const ExerciseSets = ({
         [exerciseName]: 90
       }));
 
-      // Calculate calories (simple estimation)
+      // Calculer les calories (estimation simple)
       const calories = Math.round(reps[exerciseName] * weights[exerciseName] * 0.15);
 
       toast({
@@ -95,6 +110,21 @@ export const ExerciseSets = ({
         if (onExerciseComplete && currentExerciseIndex !== undefined) {
           onExerciseComplete(currentExerciseIndex);
         }
+
+        // Mettre à jour les statistiques dans la base de données
+        if (sessionId) {
+          try {
+            await supabase
+              .from('workout_sessions')
+              .update({ 
+                total_duration_minutes: Math.floor(sessionDuration / 60),
+                total_rest_time_seconds: totalRestTime
+              })
+              .eq('id', sessionId);
+          } catch (error) {
+            console.error('Error updating workout stats:', error);
+          }
+        }
       }
     }
   };
@@ -107,9 +137,24 @@ export const ExerciseSets = ({
     setReps(prev => ({ ...prev, [exerciseName]: value }));
   };
 
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="space-y-6">
-      {exerciseNames.map((exerciseName) => (
+      <div className="flex justify-between items-center p-4 bg-secondary/10 rounded-lg">
+        <div className="text-sm">
+          <span className="font-medium">Durée totale:</span> {formatTime(sessionDuration)}
+        </div>
+        <div className="text-sm">
+          <span className="font-medium">Temps de repos:</span> {formatTime(totalRestTime)}
+        </div>
+      </div>
+
+      {exercises.map((exerciseName) => (
         <motion.div
           key={exerciseName}
           initial={{ opacity: 0, y: 20 }}
@@ -123,58 +168,78 @@ export const ExerciseSets = ({
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Poids (kg)</label>
-                  <Input
-                    type="number"
-                    value={weights[exerciseName] || 0}
-                    onChange={(e) => handleWeightChange(exerciseName, Number(e.target.value))}
-                    min={0}
-                    className="w-full"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleWeightChange(exerciseName, weights[exerciseName] - 2.5)}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                    <Input
+                      type="number"
+                      value={weights[exerciseName] || 0}
+                      onChange={(e) => handleWeightChange(exerciseName, Number(e.target.value))}
+                      className="text-center"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleWeightChange(exerciseName, weights[exerciseName] + 2.5)}
+                    >
+                      <ChevronUp className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Répétitions</label>
-                  <Input
-                    type="number"
-                    value={reps[exerciseName] || 0}
-                    onChange={(e) => handleRepsChange(exerciseName, Number(e.target.value))}
-                    min={1}
-                    className="w-full"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleRepsChange(exerciseName, reps[exerciseName] - 1)}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                    <Input
+                      type="number"
+                      value={reps[exerciseName] || 0}
+                      onChange={(e) => handleRepsChange(exerciseName, Number(e.target.value))}
+                      className="text-center"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleRepsChange(exerciseName, reps[exerciseName] + 1)}
+                    >
+                      <ChevronUp className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium">
-                    Série {(completedSets[exerciseName] || 0) + 1}/3
-                  </h4>
-                  {restTimers[exerciseName] !== null && (
-                    <div className="flex items-center gap-2 text-primary animate-pulse">
-                      <Timer className="h-4 w-4" />
-                      <span>{restTimers[exerciseName]}s</span>
-                    </div>
-                  )}
-                </div>
-
-                <Button
-                  onClick={() => handleSetComplete(exerciseName)}
-                  className="w-full flex items-center justify-center gap-2"
-                  disabled={restTimers[exerciseName] !== null || (completedSets[exerciseName] || 0) >= 3}
-                  size="lg"
-                >
-                  {(completedSets[exerciseName] || 0) >= 3 ? (
-                    <>
-                      <CheckCircle className="h-5 w-5" />
-                      <span>Exercice terminé</span>
-                    </>
-                  ) : (
-                    <>
-                      <Timer className="h-5 w-5" />
-                      <span>Valider la série</span>
-                    </>
-                  )}
-                </Button>
-              </div>
+              <AnimatePresence>
+                {restTimers[exerciseName] !== null ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="flex items-center justify-center gap-2 text-2xl font-bold text-primary"
+                  >
+                    <Timer className="h-6 w-6" />
+                    <span>{restTimers[exerciseName]}s</span>
+                  </motion.div>
+                ) : (
+                  <Button
+                    className="w-full h-12 text-lg"
+                    onClick={() => handleSetComplete(exerciseName)}
+                    disabled={restTimers[exerciseName] !== null || (completedSets[exerciseName] || 0) >= 3}
+                  >
+                    {(completedSets[exerciseName] || 0) >= 3 ? "Exercice terminé" : "Valider la série"}
+                  </Button>
+                )}
+              </AnimatePresence>
             </div>
           </Card>
         </motion.div>
