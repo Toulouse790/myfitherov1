@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -15,17 +15,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Vous pouvez modifier ces valeurs pour changer les couleurs */
-    --primary: 255 92% 76%;    /* Violet primaire */
+    --primary: 255 92% 76%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 260 33% 54%;  /* Violet secondaire */
+    --secondary: 260 33% 54%;
     --secondary-foreground: 0 0% 98%;
 
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 24 95% 53%;      /* Orange d'accent */
+    --accent: 24 95% 53%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -41,7 +40,7 @@
   .dark {
     --background: 20 14.3% 4.1%;
     --foreground: 0 0% 95%;
-
+    
     --card: 24 9.8% 10%;
     --card-foreground: 0 0% 95%;
 

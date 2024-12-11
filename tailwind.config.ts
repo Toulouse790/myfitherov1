@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        heading: ['Poppins', 'sans-serif'],
+        sans: ['Roboto', 'system-ui', 'sans-serif'],
+        heading: ['Montserrat', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -24,18 +24,15 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          // Vous pouvez modifier cette couleur
-          DEFAULT: "#9b87f5", // Couleur primaire (violet)
+          DEFAULT: "#9b87f5",
           foreground: "#FFFFFF",
         },
         secondary: {
-          // Vous pouvez modifier cette couleur
-          DEFAULT: "#7E69AB", // Couleur secondaire (violet foncé)
+          DEFAULT: "#7E69AB",
           foreground: "#FFFFFF",
         },
         accent: {
-          // Vous pouvez modifier cette couleur
-          DEFAULT: "#F97316", // Couleur d'accent (orange)
+          DEFAULT: "#F97316",
           foreground: "#FFFFFF",
         },
         destructive: {
