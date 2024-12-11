@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useWorkoutTimer } from "./use-workout-timer";
 import { useWorkoutExercises } from "./use-workout-exercises";
@@ -12,10 +12,9 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export const useWorkoutSession = () => {
-  const location = useLocation();
+  const { sessionId } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
   const [workoutStarted, setWorkoutStarted] = useState(false);
 
@@ -37,17 +36,21 @@ export const useWorkoutSession = () => {
   const { updateMuscleRecovery } = useMuscleRecoveryManagement(user?.id);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const session = params.get("session");
-    if (session) {
-      setSessionId(session);
+    if (!sessionId) {
+      console.error("No session ID provided");
+      toast({
+        title: "Erreur",
+        description: "ID de séance manquant",
+        variant: "destructive",
+      });
+      return;
     }
 
     return () => {
       stopTimer();
       setWorkoutStarted(false);
     };
-  }, [location, stopTimer]);
+  }, [sessionId, stopTimer, toast]);
 
   const handleExerciseClick = async (index: number) => {
     try {

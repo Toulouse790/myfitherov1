@@ -20,7 +20,7 @@ function App() {
         <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
         <Route 
-          path="/workouts/exercise/next-workout" 
+          path="/workouts/session/:sessionId" 
           element={<ProtectedRoute><NextWorkoutDetail /></ProtectedRoute>} 
         />
         <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />

@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useWorkoutSession } from "@/hooks/workout/use-workout-session";
 import { useState, useEffect } from "react";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
@@ -7,8 +7,7 @@ import { WorkoutProgress } from "./NextWorkoutDetail/WorkoutProgress";
 import { WorkoutExerciseView } from "./NextWorkoutDetail/WorkoutExerciseView";
 
 export const NextWorkoutDetail = () => {
-  const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get("session");
+  const { sessionId } = useParams();
   const { 
     exercises, 
     currentExerciseIndex, 

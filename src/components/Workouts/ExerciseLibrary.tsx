@@ -44,7 +44,6 @@ export const ExerciseLibrary = () => {
     }
 
     try {
-      // Récupérer les noms des exercices sélectionnés
       const { data: exerciseNames, error: exerciseError } = await supabase
         .from('unified_exercises')
         .select('name')
@@ -77,7 +76,7 @@ export const ExerciseLibrary = () => {
       });
 
       if (session) {
-        navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+        navigate(`/workouts/session/${session.id}`);
       }
     } catch (error) {
       console.error('Error creating workout session:', error);
