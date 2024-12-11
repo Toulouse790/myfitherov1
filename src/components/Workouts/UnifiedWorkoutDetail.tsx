@@ -8,7 +8,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { WorkoutHeader } from "./WorkoutDetail/WorkoutHeader";
 import { ExerciseSection } from "./WorkoutDetail/ExerciseSection";
 import { WorkoutNotes } from "./WorkoutDetail/WorkoutNotes";
-import { Timer } from "lucide-react";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -172,15 +171,6 @@ export const UnifiedWorkoutDetail = () => {
               onExerciseComplete={() => handleExerciseComplete(currentExerciseIndex)}
               sessionId={sessionId}
             />
-
-            {restTimer !== null && (
-              <div className="fixed bottom-20 right-4 bg-primary text-primary-foreground px-6 py-3 rounded-full animate-pulse">
-                <div className="flex items-center gap-2">
-                  <Timer className="h-5 w-5" />
-                  <span className="font-medium">Repos: {restTimer}s</span>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       </motion.div>

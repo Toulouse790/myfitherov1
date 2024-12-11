@@ -1,5 +1,4 @@
 import { useExerciseData } from "./ExerciseSets/useExerciseData";
-import { SessionTimer } from "./ExerciseSets/SessionTimer";
 import { ExerciseCard } from "./ExerciseSets/ExerciseCard";
 import { ExerciseProgress } from "./ExerciseSets/ExerciseProgress";
 import { useExerciseTimers } from "./ExerciseSets/hooks/useExerciseTimers";
@@ -26,7 +25,6 @@ export const ExerciseSets = ({
   const {
     restTimers,
     setRestTimers,
-    sessionDuration,
     totalRestTime,
     isExerciseTransition,
     setIsExerciseTransition
@@ -51,7 +49,6 @@ export const ExerciseSets = ({
         await supabase
           .from('workout_sessions')
           .update({ 
-            total_duration_minutes: Math.floor(sessionDuration / 60),
             total_rest_time_seconds: totalRestTime
           })
           .eq('id', sessionId);
@@ -85,8 +82,6 @@ export const ExerciseSets = ({
 
   return (
     <div className="space-y-6">
-      <SessionTimer sessionDuration={sessionDuration} />
-
       {exercises.map((exerciseName) => (
         <div key={exerciseName} className="space-y-4">
           <ExerciseProgress 
