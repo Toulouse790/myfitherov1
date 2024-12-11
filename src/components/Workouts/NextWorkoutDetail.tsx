@@ -3,12 +3,20 @@ import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { useState } from "react";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { NoSessionView } from "./NextWorkoutDetail/NoSessionView";
+import { WorkoutProgress } from "./NextWorkoutDetail/WorkoutProgress";
 import { WorkoutExerciseView } from "./NextWorkoutDetail/WorkoutExerciseView";
 
 export const NextWorkoutDetail = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session");
-  const { exercises, currentExerciseIndex, workoutStarted, duration, handleConfirmEndWorkout, handleExerciseClick } = useWorkoutSession();
+  const { 
+    exercises, 
+    currentExerciseIndex, 
+    workoutStarted, 
+    duration,
+    handleConfirmEndWorkout, 
+    handleExerciseClick 
+  } = useWorkoutSession();
   const [showSummary, setShowSummary] = useState(false);
   const [currentSet, setCurrentSet] = useState(1);
   const [isResting, setIsResting] = useState(false);
@@ -27,7 +35,7 @@ export const NextWorkoutDetail = () => {
     if (currentSet < 3) {
       setCurrentSet(prev => prev + 1);
       setIsResting(true);
-      setRestTime(90); // Reset rest timer to 90s when starting rest
+      setRestTime(90);
     } else {
       setCurrentSet(1);
       setIsResting(false);
@@ -56,6 +64,13 @@ export const NextWorkoutDetail = () => {
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <WorkoutProgress
+        duration={duration}
+        progress={((currentExerciseIndex || 0) / (exercises.length || 1)) * 100}
+        workoutStarted={workoutStarted}
+        onStartWorkout={() => handleExerciseClick(0)}
+      />
+
       <div className="bg-background p-4 sm:p-6 rounded-lg">
         <WorkoutExerciseView
           currentExercise={currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null}
