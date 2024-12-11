@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Bookmark, Dumbbell, Target, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -48,35 +47,6 @@ export const WorkoutSuggestions = () => {
           description: "Cette fonctionnalité sera disponible prochainement",
         });
         return;
-      }
-
-      // Vérifier si une session en cours existe déjà
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const { data: existingSessions, error: sessionError } = await supabase
-        .from('workout_sessions')
-        .select('id')
-        .gte('created_at', today.toISOString())
-        .eq('status', 'in_progress')
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      if (sessionError) throw sessionError;
-
-      // Si une session existe, supprimer l'ancienne session
-      if (existingSessions && existingSessions.length > 0) {
-        const { error: deleteError } = await supabase
-          .rpc('delete_workout_session', {
-            session_id: existingSessions[0].id
-          });
-
-        if (deleteError) throw deleteError;
-
-        toast({
-          title: "Session précédente supprimée",
-          description: "Une nouvelle session va être créée",
-        });
       }
 
       // Créer une nouvelle session

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import Index from "@/pages/Index";
 import Profile from "@/pages/Profile";
@@ -23,6 +23,9 @@ function App() {
         <Route path="/stats" element={<Stats />} />
         <Route path="/sleep" element={<Sleep />} />
         <Route path="/training-preferences" element={<TrainingPreferences />} />
+        <Route path="/signin" element={<Navigate to="/" replace />} />
+        <Route path="/signup" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster />
     </>
