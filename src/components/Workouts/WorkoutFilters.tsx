@@ -34,12 +34,9 @@ export const WorkoutFilters = ({
   const [selectedExercises, setSelectedExercises] = useLocalStorage<string[]>("selectedExercises", []);
 
   const handleMuscleGroupClick = (muscleId: string) => {
-    if (muscleId === muscleGroup) {
-      setSelectedMuscleGroup(muscleId);
-      setShowExerciseSelection(true);
-    } else {
-      onMuscleGroupChange(muscleId);
-    }
+    console.log('Muscle group clicked:', muscleId);
+    setSelectedMuscleGroup(muscleId);
+    setShowExerciseSelection(true);
   };
 
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
@@ -58,9 +55,8 @@ export const WorkoutFilters = ({
             key={muscle.id}
             id={muscle.id}
             name={muscle.name}
-            image={muscle.image}
-            isSelected={muscleGroup === muscle.id}
-            onClick={() => handleMuscleGroupClick(muscle.id)}
+            isSelected={selectedId === muscle.id}
+            onClick={() => handleClick(muscle.id)}
           />
         ))}
       </div>
