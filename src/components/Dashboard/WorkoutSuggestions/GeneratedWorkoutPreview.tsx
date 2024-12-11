@@ -4,7 +4,6 @@ import { Dumbbell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { WorkoutPlan } from "./workoutPlanGenerator";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 
 interface GeneratedWorkoutPreviewProps {
@@ -13,25 +12,14 @@ interface GeneratedWorkoutPreviewProps {
 
 export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
 
   const handleStartWorkout = async () => {
-    if (!user) {
-      toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour démarrer une séance",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
           { 
-            user_id: user.id,
             status: 'in_progress',
             type: 'strength',
             exercises: plan.exercises.map(ex => ex.name),
@@ -48,7 +36,6 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
         description: "Votre séance d'entraînement a été créée avec succès",
       });
 
-      // Correction de la redirection pour aller directement à la page de la séance
       if (session) {
         navigate(`/workout/${session.id}`);
       }
