@@ -29,20 +29,12 @@ export const TrainingStylePage = () => {
     }
   };
 
-  const handleToggleWidget = (widget: any) => {
-    // Logique à implémenter si nécessaire
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Style d'entraînement</h2>
         <div className="flex gap-2">
-          <AddWidgetSheet
-            availableWidgets={availableWidgets}
-            widgetConfigs={widgetConfigs}
-            onToggleWidget={handleToggleWidget}
-          />
+          <AddWidgetSheet availableWidgets={availableWidgets} />
           <Button 
             variant="outline" 
             size="sm"

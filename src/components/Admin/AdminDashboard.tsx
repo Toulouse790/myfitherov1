@@ -12,7 +12,7 @@ export const AdminDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { monthlyUsers, monthlyWorkouts, publishedExercises } = useAdminStats();
   const { data: availableWidgets } = useAvailableWidgets();
-  const { widgetConfigs, updateConfig } = useWidgetConfigs();
+  const { widgetConfigs, updateConfig, deleteConfig } = useWidgetConfigs();
 
   const handleDragEnd = (event: any) => {
     if (!isEditing || !widgetConfigs) return;
