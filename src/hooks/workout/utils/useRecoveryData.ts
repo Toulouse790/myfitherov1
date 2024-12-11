@@ -1,30 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { normalizeMuscleGroup } from './muscleGroupUtils';
-import { useToast } from '@/hooks/use-toast';
 
-interface RecoveryData {
-  muscle_group: string;
-  last_trained_at: string;
-  intensity: number;
-  estimated_recovery_hours: number;
+interface RecoveryStatus {
+  muscleGroup: string;
+  status: string;
+  remainingHours: number;
 }
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000;
-
-export const useRecoveryData = () => {
+export const useRecoveryData = (muscleGroups: string[]) => {
+  const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchRecoveryData = async (
-    muscleGroups: string[],
-    retryCount = 0
-  ): Promise<RecoveryData[] | null> => {
-    if (!user || !muscleGroups.length) return null;
-    
+  const fetchRecoveryData = async () => {
+    if (!user || !muscleGroups.length) {
+      console.log('No user or muscle groups provided');
+      return [];
+    }
+
     try {
       setIsLoading(true);
       
@@ -32,7 +27,7 @@ export const useRecoveryData = () => {
       const normalizedGroups = muscleGroups
         .filter(Boolean)
         .map(group => normalizeMuscleGroup(group));
-      
+
       console.log('Normalized muscle groups for query:', normalizedGroups);
       
       const { data, error } = await supabase
@@ -42,71 +37,60 @@ export const useRecoveryData = () => {
         .in('muscle_group', normalizedGroups);
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Error fetching recovery data:', error);
         throw error;
       }
-      
+
       console.log('Recovery data fetched:', data);
-      return data;
+      return data || [];
+
     } catch (error) {
-      console.error('Error fetching recovery data:', error);
-      
-      if (retryCount < MAX_RETRIES) {
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-        return fetchRecoveryData(muscleGroups, retryCount + 1);
-      }
-      
-      toast({
-        title: "Erreur",
-        description: "Impossible de récupérer les données de récupération",
-        variant: "destructive",
-      });
-      return null;
+      console.error('Error in fetchRecoveryData:', error);
+      return [];
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateRecoveryData = async (
-    muscleGroup: string,
-    intensity: number,
-    estimatedRecoveryHours: number
-  ): Promise<boolean> => {
-    if (!user) return false;
+  const updateRecoveryStatus = (data: any[]) => {
+    const currentTime = new Date().getTime();
+    const updatedStatus = muscleGroups.map(group => {
+      const normalizedGroup = normalizeMuscleGroup(group);
+      const recoveryData = data.find(d => d.muscle_group === normalizedGroup);
 
-    try {
-      const normalizedGroup = normalizeMuscleGroup(muscleGroup);
-      console.log('Updating recovery data for normalized group:', normalizedGroup);
-      
-      const { error } = await supabase
-        .from('muscle_recovery')
-        .upsert({
-          user_id: user.id,
-          muscle_group: normalizedGroup,
-          last_trained_at: new Date().toISOString(),
-          intensity,
-          recovery_status: 'fatigued',
-          estimated_recovery_hours: estimatedRecoveryHours
-        }, {
-          onConflict: 'user_id,muscle_group'
-        });
+      if (!recoveryData) {
+        return {
+          muscleGroup: group,
+          status: 'recovered',
+          remainingHours: 0
+        };
+      }
 
-      if (error) throw error;
-      return true;
-    } catch (error) {
-      console.error('Error updating recovery data:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour les données de récupération",
-        variant: "destructive",
-      });
-      return false;
-    }
+      const lastTrainedTime = new Date(recoveryData.last_trained_at).getTime();
+      const recoveryTimeMs = recoveryData.estimated_recovery_hours * 60 * 60 * 1000;
+      const remainingTimeMs = Math.max(0, (lastTrainedTime + recoveryTimeMs) - currentTime);
+      const remainingHours = Math.ceil(remainingTimeMs / (60 * 60 * 1000));
+
+      return {
+        muscleGroup: group,
+        status: remainingHours > 0 ? 'fatigued' : 'recovered',
+        remainingHours
+      };
+    });
+
+    console.log('Updated recovery status:', updatedStatus);
+    setRecoveryStatus(updatedStatus);
   };
 
-  return {
-    fetchRecoveryData,
-    updateRecoveryData,
-    isLoading
-  };
+  useEffect(() => {
+    const loadRecoveryData = async () => {
+      console.log('Fetching recovery data for muscle groups:', muscleGroups);
+      const data = await fetchRecoveryData();
+      updateRecoveryStatus(data);
+    };
+
+    loadRecoveryData();
+  }, [user, muscleGroups.join(',')]);
+
+  return { recoveryStatus, isLoading };
 };
