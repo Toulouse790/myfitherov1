@@ -54,24 +54,23 @@ export const useExerciseData = (exerciseNames: string[]) => {
         console.log('Fetched exercise names:', namesMap);
         setExerciseData(namesMap);
 
-        // Fetch weights for each exercise individually to avoid encoding issues
         if (user) {
           const weightsMap: { [key: string]: number } = {};
           
           for (const exerciseName of validNames) {
-            const { data: weightData, error: weightError } = await supabase
-              .from('user_exercise_weights')
-              .select('exercise_name, weight')
-              .eq('exercise_name', exerciseName)
-              .eq('user_id', user.id)
-              .maybeSingle();
+            try {
+              const { data: weightData } = await supabase
+                .from('user_exercise_weights')
+                .select('weight')
+                .eq('user_id', user.id)
+                .eq('exercise_name', exerciseName)
+                .single();
 
-            if (weightError) {
-              console.error('Error fetching weight for exercise:', exerciseName, weightError);
-              continue;
+              weightsMap[exerciseName] = weightData?.weight || 20;
+            } catch (weightError) {
+              console.log(`No weight found for ${exerciseName}, using default`);
+              weightsMap[exerciseName] = 20;
             }
-
-            weightsMap[exerciseName] = weightData?.weight || 20;
           }
 
           console.log('Fetched weights:', weightsMap);
