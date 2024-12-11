@@ -112,6 +112,50 @@ export type Database = {
           },
         ]
       }
+      app_styles: {
+        Row: {
+          accent_color: string
+          created_at: string
+          heading_font: string
+          id: string
+          primary_color: string
+          primary_font: string
+          secondary_color: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          accent_color?: string
+          created_at?: string
+          heading_font?: string
+          id?: string
+          primary_color?: string
+          primary_font?: string
+          secondary_color?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          accent_color?: string
+          created_at?: string
+          heading_font?: string
+          id?: string
+          primary_color?: string
+          primary_font?: string
+          secondary_color?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_styles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cardio_exercises: {
         Row: {
           calories_burned: number | null
