@@ -1,5 +1,11 @@
 export const normalizeMuscleGroup = (group: string): string => {
-  return group.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  // Convertir en minuscules et supprimer les accents
+  return group
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    // Remplacer les espaces par des underscores
+    .replace(/\s+/g, '_');
 };
 
 export const calculateRecoveryStatus = (

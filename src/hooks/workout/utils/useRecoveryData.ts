@@ -27,6 +27,7 @@ export const useRecoveryData = () => {
     
     try {
       const normalizedGroups = muscleGroups.map(normalizeMuscleGroup);
+      console.log('Normalized muscle groups for query:', normalizedGroups);
       
       const { data, error } = await supabase
         .from('muscle_recovery')
@@ -35,6 +36,8 @@ export const useRecoveryData = () => {
         .in('muscle_group', normalizedGroups);
 
       if (error) throw error;
+      
+      console.log('Recovery data fetched:', data);
       return data;
     } catch (error) {
       console.error('Error fetching recovery data:', error);
@@ -62,6 +65,7 @@ export const useRecoveryData = () => {
 
     try {
       const normalizedGroup = normalizeMuscleGroup(muscleGroup);
+      console.log('Updating recovery data for normalized group:', normalizedGroup);
       
       const { error } = await supabase
         .from('muscle_recovery')
