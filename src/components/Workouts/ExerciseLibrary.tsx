@@ -44,14 +44,22 @@ export const ExerciseLibrary = () => {
     }
 
     try {
+      // Récupérer les noms des exercices sélectionnés
       const { data: exerciseNames, error: exerciseError } = await supabase
         .from('unified_exercises')
         .select('name')
         .in('id', selectedExercises);
 
-      if (exerciseError) throw exerciseError;
+      if (exerciseError) {
+        console.error('Error fetching exercise names:', exerciseError);
+        throw exerciseError;
+      }
 
-      const sanitizedExerciseNames = exerciseNames?.map(ex => ex.name) || [];
+      // S'assurer que les noms sont valides et nettoyés
+      const sanitizedExerciseNames = exerciseNames
+        ?.map(ex => ex.name?.trim())
+        .filter(Boolean) || [];
+
       console.log("Creating workout session with exercises:", sanitizedExerciseNames);
 
       const { data: session, error: sessionError } = await supabase
@@ -68,11 +76,14 @@ export const ExerciseLibrary = () => {
         .select()
         .single();
 
-      if (sessionError) throw sessionError;
+      if (sessionError) {
+        console.error('Error creating session:', sessionError);
+        throw sessionError;
+      }
 
       toast({
         title: "Séance créée",
-        description: `${selectedExercises.length} exercices ajoutés à votre séance`,
+        description: `${sanitizedExerciseNames.length} exercices ajoutés à votre séance`,
       });
 
       if (session) {

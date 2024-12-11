@@ -34,11 +34,20 @@ export const useWorkoutExercises = (sessionId: string | null) => {
         }
 
         if (session?.exercises) {
+          // Nettoyage et validation des noms d'exercices
           const sanitizedExercises = session.exercises
             .filter(Boolean)
-            .map(exercise => exercise.trim());
+            .map(exercise => {
+              // S'assurer que c'est une chaîne de caractères
+              if (typeof exercise !== 'string') {
+                console.warn('Invalid exercise format:', exercise);
+                return '';
+              }
+              return exercise.trim();
+            })
+            .filter(exercise => exercise.length > 0); // Enlever les chaînes vides
             
-          console.log('Fetched exercises:', sanitizedExercises);
+          console.log('Fetched and sanitized exercises:', sanitizedExercises);
           setExercises(sanitizedExercises);
         }
 
@@ -46,8 +55,8 @@ export const useWorkoutExercises = (sessionId: string | null) => {
         console.error('Error fetching exercises:', err);
         setError(err instanceof Error ? err : new Error('Failed to fetch exercises'));
         toast({
-          title: "Erreur",
-          description: "Impossible de charger les exercices",
+          title: "Erreur de chargement",
+          description: "Impossible de charger les exercices. Veuillez réessayer.",
           variant: "destructive",
         });
       } finally {
