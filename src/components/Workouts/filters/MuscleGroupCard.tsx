@@ -16,8 +16,6 @@ export const MuscleGroupCard = ({
   name, 
   image, 
   isSelected, 
-  selectedExercises,
-  totalExercises,
   onClick 
 }: MuscleGroupCardProps) => {
   return (
@@ -37,9 +35,6 @@ export const MuscleGroupCard = ({
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
             <p className="text-xs sm:text-sm font-medium text-white drop-shadow-lg">
               {name}
-            </p>
-            <p className="text-xs text-white/90 drop-shadow-lg">
-              {selectedExercises}/{totalExercises}
             </p>
           </div>
         </AspectRatio>
