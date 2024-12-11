@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRecoveryData } from './utils/useRecoveryData';
-import { calculateRecoveryStatus, calculateRecoveryHours } from './utils/muscleGroupUtils';
+import { calculateRecoveryStatus } from './utils/muscleGroupUtils';
 import { muscleRecoveryData } from '../../data/muscleRecoveryData';
 
 interface RecoveryStatus {
@@ -20,7 +20,7 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
       try {
         console.log('Fetching recovery data for muscle groups:', muscleGroups);
         
-        // Remove accents and normalize muscle group names
+        // Normaliser les noms des groupes musculaires
         const normalizedGroups = muscleGroups.map(group => 
           group.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         );
@@ -68,7 +68,7 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
   ) => {
     const normalizedGroup = muscleGroup.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const baseRecovery = muscleRecoveryData[muscleGroup]?.recoveryTime || 48;
-    const estimatedRecoveryHours = calculateRecoveryHours(baseRecovery, intensity, sessionDuration);
+    const estimatedRecoveryHours = Math.round(baseRecovery * intensity);
     
     console.log('Updating recovery status for:', {
       originalGroup: muscleGroup,
