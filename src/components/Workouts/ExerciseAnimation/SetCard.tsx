@@ -65,24 +65,34 @@ export const SetCard = ({
 
     // Mettre à jour les records si nécessaire
     if (isNewRecord) {
-      const { error } = await supabase
-        .from('user_exercise_weights')
-        .update({
-          personal_record: weight,
-          last_used_weight: weight,
-          last_used_at: new Date().toISOString()
-        })
-        .eq('user_id', user.id);
+      try {
+        const { error } = await supabase
+          .from('user_exercise_weights')
+          .upsert({
+            user_id: user.id,
+            exercise_name: exerciseName,
+            personal_record: weight,
+            last_used_weight: weight,
+            last_used_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id,exercise_name'
+          });
 
-      if (error) {
+        if (error) throw error;
+
+        toast({
+          title: "Nouveau record personnel !",
+          description: `Félicitations ! Vous avez établi un nouveau record à ${weight}kg.`,
+        });
+      } catch (error) {
         console.error('Error updating records:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour le record",
+          variant: "destructive",
+        });
         return;
       }
-
-      toast({
-        title: "Nouveau record personnel !",
-        description: `Félicitations ! Vous avez établi un nouveau record à ${weight}kg.`,
-      });
     }
 
     onSetComplete();
