@@ -1,63 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Bookmark, Dumbbell, Target, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
-
-interface WorkoutSuggestion {
-  id: string;
-  title: string;
-  description: string;
-  icon_name: string;
-  type: string;
-}
-
-const iconMap = {
-  'Bookmark': Bookmark,
-  'Target': Target,
-  'Zap': Zap,
-  'Dumbbell': Dumbbell
-};
 
 export const WorkoutSuggestions = () => {
   const [showDialog, setShowDialog] = useState(false);
-  const [suggestions, setSuggestions] = useState<WorkoutSuggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
 
-  useEffect(() => {
-    fetchSuggestions();
-  }, []);
-
-  const fetchSuggestions = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('workout_suggestions')
-        .select('*')
-        .eq('is_active', true);
-
-      if (error) {
-        throw error;
-      }
-
-      if (data) {
-        console.log("Suggestions récupérées:", data);
-        setSuggestions(data);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la récupération des suggestions:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les suggestions d'entraînement",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleSuggestionClick = (type: string) => {
+  const handleSuggestionClick = async (type: string) => {
     switch (type) {
       case 'favorites':
         toast({
@@ -68,7 +22,30 @@ export const WorkoutSuggestions = () => {
       case 'daily':
       case 'quick':
       case 'full_body':
-        navigate("/workouts");
+        try {
+          const { data: session, error } = await supabase
+            .from('workout_sessions')
+            .insert({
+              user_id: (await supabase.auth.getUser()).data.user?.id,
+              type: 'strength',
+              status: 'in_progress'
+            })
+            .select()
+            .single();
+
+          if (error) throw error;
+
+          if (session) {
+            navigate(`/workout/${session.id}`);
+          }
+        } catch (error) {
+          console.error('Error creating workout:', error);
+          toast({
+            title: "Erreur",
+            description: "Impossible de créer la séance",
+            variant: "destructive",
+          });
+        }
         break;
       default:
         console.warn('Type de suggestion non géré:', type);
@@ -107,4 +84,11 @@ export const WorkoutSuggestions = () => {
       </div>
     </div>
   );
+};
+
+const iconMap = {
+  'Bookmark': Bookmark,
+  'Target': Target,
+  'Zap': Zap,
+  'Dumbbell': Dumbbell
 };
