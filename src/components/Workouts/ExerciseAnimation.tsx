@@ -6,6 +6,7 @@ import { SetCard } from "./ExerciseAnimation/SetCard";
 import { RestTimer } from "./ExerciseAnimation/RestTimer";
 import { useSetManagement } from "@/hooks/workout/use-set-management";
 import { useToast } from "@/hooks/use-toast";
+import { useExerciseData } from "./ExerciseSets/useExerciseData";
 
 interface ExerciseAnimationProps {
   reps: number;
@@ -28,13 +29,13 @@ export const ExerciseAnimation = ({
   currentSet,
   isResting,
   sessionId,
-  weight: initialWeight = 0,
   exerciseName,
   onSetComplete,
   onSetsChange = () => {},
   onRestTimeChange,
 }: ExerciseAnimationProps) => {
-  const [currentWeight, setCurrentWeight] = useState(initialWeight);
+  const { previousWeights } = useExerciseData([exerciseName]);
+  const [currentWeight, setCurrentWeight] = useState(previousWeights[exerciseName] || 20);
   const [sets, setSets] = useState(initialSets);
   const { toast } = useToast();
   const { repsPerSet, handleAddSet, handleRepsChange } = useSetManagement({
