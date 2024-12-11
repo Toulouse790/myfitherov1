@@ -6,15 +6,17 @@ import { Activity, Dumbbell, Scale, Flame } from "lucide-react";
 
 const COLORS = ['#FF8042', '#00C49F', '#FFBB28', '#0088FE'];
 
+interface WorkoutSession {
+  muscle_groups_worked: string[];
+}
+
 interface ExerciseSet {
   weight: number;
   reps: number;
   calories_burned: number;
   exercise_name: string;
   session_id: string;
-  workout_sessions: {
-    muscle_groups_worked: string[];
-  } | null;
+  workout_sessions: WorkoutSession | null;
 }
 
 interface Measurement {
@@ -54,28 +56,32 @@ export const DetailedStats = () => {
       if (measurementsError) throw measurementsError;
 
       // Calculer les statistiques
-      const totalWeight = (sets as ExerciseSet[])?.reduce((acc, set) => acc + (set.weight * set.reps), 0) || 0;
-      const totalCalories = (sets as ExerciseSet[])?.reduce((acc, set) => acc + (set.calories_burned || 0), 0) || 0;
+      const totalWeight = (sets || []).reduce((acc, set) => 
+        acc + ((set.weight || 0) * (set.reps || 0)), 0);
+      
+      const totalCalories = (sets || []).reduce((acc, set) => 
+        acc + (set.calories_burned || 0), 0);
 
       // Grouper par groupe musculaire
-      const muscleGroups = (sets as ExerciseSet[])?.reduce((acc: { [key: string]: number }, set) => {
-        const groups = set.workout_sessions?.muscle_groups_worked || [];
-        groups.forEach((group: string) => {
-          acc[group] = (acc[group] || 0) + 1;
-        });
+      const muscleGroups = (sets || []).reduce((acc: { [key: string]: number }, set) => {
+        if (set.workout_sessions?.muscle_groups_worked) {
+          set.workout_sessions.muscle_groups_worked.forEach((group: string) => {
+            acc[group] = (acc[group] || 0) + 1;
+          });
+        }
         return acc;
       }, {});
 
-      const muscleGroupData = Object.entries(muscleGroups || {}).map(([name, value]) => ({
+      const muscleGroupData = Object.entries(muscleGroups).map(([name, value]) => ({
         name,
         value
       }));
 
       // Préparer les données de poids
-      const weightData = (measurements as Measurement[])?.map(m => ({
+      const weightData = (measurements || []).map(m => ({
         date: new Date(m.measurement_date).toLocaleDateString(),
         weight: m.weight_kg
-      })) || [];
+      }));
 
       return {
         totalWeight,
