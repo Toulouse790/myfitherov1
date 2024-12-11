@@ -18,14 +18,14 @@ export const useWorkoutSession = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
   const [workoutStarted, setWorkoutStarted] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
-  const { duration, isRunning, startTimer, stopTimer, resetTimer } = useWorkoutTimer();
+  const { duration } = useWorkoutTimer(isRunning);
   const { exercises, isLoading, error } = useWorkoutExercises(sessionId);
   const { handleConfirmEndWorkout } = useWorkoutCompletion(sessionId, user?.id);
   const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
   const { isCardio } = useSessionManagement(sessionId);
 
-  // Normaliser les noms des groupes musculaires
   const muscleGroups = exercises.map(exercise => {
     return exercise.toLowerCase()
       .normalize('NFD')
@@ -42,6 +42,12 @@ export const useWorkoutSession = () => {
     if (session) {
       setSessionId(session);
     }
+
+    // Cleanup function
+    return () => {
+      setIsRunning(false);
+      setWorkoutStarted(false);
+    };
   }, [location]);
 
   const handleExerciseClick = async (index: number) => {
@@ -105,16 +111,6 @@ export const useWorkoutSession = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("Workout session state updated:", {
-      sessionId,
-      exercises,
-      currentExerciseIndex,
-      workoutStarted,
-      recoveryStatus
-    });
-  }, [sessionId, exercises, currentExerciseIndex, workoutStarted, recoveryStatus]);
-
   return {
     user,
     sessionId,
@@ -125,9 +121,7 @@ export const useWorkoutSession = () => {
     currentExerciseIndex,
     workoutStarted,
     recoveryStatus,
-    startTimer,
-    stopTimer,
-    resetTimer,
+    setIsRunning,
     handleRegenerateWorkout: () => user && handleRegenerateWorkout(user.id),
     handleExerciseClick,
     handleConfirmEndWorkout
