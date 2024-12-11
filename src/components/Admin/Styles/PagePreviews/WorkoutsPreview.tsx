@@ -4,49 +4,34 @@ import { StyleSettings } from "../types";
 
 interface WorkoutsPreviewProps {
   styles: StyleSettings;
+  widgets?: any[];
 }
 
-export const WorkoutsPreview = ({ styles }: WorkoutsPreviewProps) => {
+export const WorkoutsPreview = ({ styles, widgets }: WorkoutsPreviewProps) => {
   return (
     <div className="space-y-4">
       <h3 style={{ fontFamily: styles.heading_font }} className="text-2xl font-bold">
         Mes entraînements
       </h3>
       <div className="grid gap-4">
-        <div
-          className="p-4 rounded"
-          style={{
-            backgroundColor: styles.primary_color,
-            borderRadius: styles.widget_radius,
-            boxShadow: styles.widget_shadow,
-          }}
-        >
-          <p className="text-white" style={{ fontFamily: styles.primary_font }}>
-            Prochain entraînement
-          </p>
-          <Button
+        {widgets?.map((widget) => (
+          <div
+            key={widget.id}
+            className="p-4 rounded"
             style={{
-              borderRadius: styles.button_radius,
-              boxShadow: styles.button_shadow,
-              backgroundColor: styles.accent_color,
+              backgroundColor: styles.primary_color,
+              borderRadius: styles.widget_radius,
+              boxShadow: styles.widget_shadow,
             }}
-            className="mt-2"
           >
-            Commencer
-          </Button>
-        </div>
-        <div
-          className="p-4 rounded"
-          style={{
-            backgroundColor: styles.secondary_color,
-            borderRadius: styles.widget_radius,
-            boxShadow: styles.widget_shadow,
-          }}
-        >
-          <p className="text-white" style={{ fontFamily: styles.primary_font }}>
-            Historique des séances
-          </p>
-        </div>
+            <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+              {widget.name}
+            </p>
+            <p className="text-white/80 text-sm mt-1">
+              {widget.description}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
