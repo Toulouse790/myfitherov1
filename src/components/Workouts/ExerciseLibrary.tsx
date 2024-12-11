@@ -25,27 +25,31 @@ export const ExerciseLibrary = () => {
     }
 
     try {
-      const { data: exerciseNames, error: exerciseError } = await supabase
+      // First get the exercise names from the unified_exercises table
+      const { data: exerciseData, error: exerciseError } = await supabase
         .from('unified_exercises')
         .select('name')
-        .in('id', selectedExercises);
+        .in('muscle_group', selectedExercises.map(id => {
+          // Extract muscle group from the ID (e.g., "chest" from "chest-0")
+          return id.split('-')[0];
+        }));
 
       if (exerciseError) {
         console.error('Error fetching exercise names:', exerciseError);
         throw exerciseError;
       }
 
-      const normalizedExerciseNames = exerciseNames
+      const exerciseNames = exerciseData
         ?.map(ex => ex.name?.trim())
         .filter(Boolean)
         .map(name => normalizeExerciseName(name as string)) || [];
 
-      console.log("Creating workout session with normalized exercises:", normalizedExerciseNames);
+      console.log("Creating workout session with exercises:", exerciseNames);
 
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert({
-          exercises: normalizedExerciseNames,
+          exercises: exerciseNames,
           type: 'strength',
           status: 'in_progress'
         })
@@ -59,7 +63,7 @@ export const ExerciseLibrary = () => {
 
       toast({
         title: "Séance créée",
-        description: `${normalizedExerciseNames.length} exercices ajoutés à votre séance`,
+        description: `${exerciseNames.length} exercices ajoutés à votre séance`,
       });
 
       if (session) {
