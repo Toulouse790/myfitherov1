@@ -62,30 +62,28 @@ export const useExerciseData = (exerciseNames: string[]) => {
           
           for (const exerciseName of validNames) {
             try {
-              // First try to get existing weight
-              const { data: existingWeight } = await supabase
+              // Utiliser upsert pour gérer les poids existants
+              const { data: weightData, error: upsertError } = await supabase
                 .from('user_exercise_weights')
-                .select('weight')
-                .eq('user_id', user.id)
-                .eq('exercise_name', exerciseName);
-
-              if (!existingWeight || existingWeight.length === 0) {
-                // If no weight exists, create one with default value
-                const { data: newWeight, error: insertError } = await supabase
-                  .from('user_exercise_weights')
-                  .insert({
+                .upsert(
+                  {
                     user_id: user.id,
                     exercise_name: exerciseName,
-                    weight: 20
-                  })
-                  .select('weight')
-                  .single();
+                    weight: 20,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                  },
+                  {
+                    onConflict: 'user_id,exercise_name',
+                    ignoreDuplicates: false
+                  }
+                )
+                .select('weight')
+                .single();
 
-                if (insertError) throw insertError;
-                weightsMap[exerciseName] = newWeight?.weight || 20;
-              } else {
-                weightsMap[exerciseName] = existingWeight[0]?.weight || 20;
-              }
+              if (upsertError) throw upsertError;
+              weightsMap[exerciseName] = weightData?.weight || 20;
+              
             } catch (error) {
               console.error(`Error handling weight for ${exerciseName}:`, error);
               weightsMap[exerciseName] = 20;
