@@ -32,15 +32,15 @@ export const useExerciseData = (exerciseNames: string[]) => {
 
         console.log('Fetching exercises with names:', validNames);
 
-        // Encodons correctement les noms pour la requête
-        const encodedNames = validNames.map(name => encodeURIComponent(name));
-
         const { data, error } = await supabase
           .from('unified_exercises')
           .select('name')
           .in('name', validNames);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching exercise data:', error);
+          throw error;
+        }
 
         if (!data) {
           console.log('No data returned from query');
@@ -62,10 +62,12 @@ export const useExerciseData = (exerciseNames: string[]) => {
           const { data: weightData, error: weightError } = await supabase
             .from('user_exercise_weights')
             .select('exercise_name, weight')
-            .in('exercise_name', validNames)
-            .eq('user_id', user.id);
+            .in('exercise_name', validNames);
 
-          if (weightError) throw weightError;
+          if (weightError) {
+            console.error('Error fetching weights:', weightError);
+            throw weightError;
+          }
 
           const weightsMap = weightData?.reduce<{ [key: string]: number }>((acc, record) => {
             acc[record.exercise_name] = record.weight || 20;
