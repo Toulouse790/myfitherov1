@@ -26,9 +26,13 @@ export const useRecoveryData = () => {
       // Filter out empty values and normalize muscle groups
       const normalizedGroups = muscleGroups
         .filter(Boolean)
-        .map(group => normalizeMuscleGroup(group));
+        .map(group => {
+          const normalized = normalizeMuscleGroup(group);
+          console.log(`Normalized muscle group: ${group} -> ${normalized}`);
+          return normalized;
+        });
 
-      console.log('Normalized muscle groups for query:', normalizedGroups);
+      console.log('Querying muscle groups:', normalizedGroups);
       
       const { data, error } = await supabase
         .from('muscle_recovery')
@@ -61,6 +65,12 @@ export const useRecoveryData = () => {
 
     try {
       const normalizedGroup = normalizeMuscleGroup(muscleGroup);
+      console.log('Updating recovery data for:', {
+        muscleGroup,
+        normalizedGroup,
+        intensity,
+        estimatedRecoveryHours
+      });
       
       const { error } = await supabase
         .from('muscle_recovery')
@@ -70,6 +80,8 @@ export const useRecoveryData = () => {
           intensity,
           estimated_recovery_hours: estimatedRecoveryHours,
           last_trained_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,muscle_group'
         });
 
       if (error) throw error;

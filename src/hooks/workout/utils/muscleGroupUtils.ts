@@ -1,41 +1,36 @@
-export const normalizeMuscleGroup = (group: string): string => {
-  if (!group) return '';
-  
-  // Convert to lowercase, remove accents, and replace special characters with underscores
-  const normalized = group
+export const normalizeMuscleGroup = (muscleGroup: string): string => {
+  return muscleGroup
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove accents
-    .replace(/[^a-z0-9]+/g, '_') // Replace special chars with underscore
-    .replace(/^_+|_+$/g, '') // Remove leading/trailing underscores
-    .replace(/_+/g, '_'); // Replace multiple underscores with single
-
-  return normalized;
+    .replace(/[\u0300-\u036f]/g, '')  // Remove accents
+    .replace(/[^a-z0-9]/g, '_')       // Replace non-alphanumeric with underscore
+    .replace(/_+/g, '_')              // Replace multiple underscores with single
+    .replace(/^_|_$/g, '');           // Remove leading/trailing underscores
 };
 
 export const calculateRecoveryStatus = (
   lastTrainingDate: Date | null,
-  recoveryHours: number
-): { status: 'recovered' | 'partial' | 'fatigued'; remainingHours: number } => {
+  estimatedRecoveryHours: number
+) => {
   if (!lastTrainingDate) {
     return { status: 'recovered', remainingHours: 0 };
   }
 
   const now = new Date();
-  const timeDiffHours = (now.getTime() - lastTrainingDate.getTime()) / (1000 * 60 * 60);
-  const remainingHours = Math.max(0, recoveryHours - timeDiffHours);
+  const hoursSinceTraining = (now.getTime() - lastTrainingDate.getTime()) / (1000 * 60 * 60);
+  const remainingHours = Math.max(0, estimatedRecoveryHours - hoursSinceTraining);
 
   if (remainingHours <= 0) {
     return { status: 'recovered', remainingHours: 0 };
-  } else if (remainingHours < recoveryHours / 2) {
-    return { status: 'partial', remainingHours: Math.ceil(remainingHours) };
+  } else if (remainingHours <= estimatedRecoveryHours / 2) {
+    return { status: 'partial', remainingHours: Math.round(remainingHours) };
   } else {
-    return { status: 'fatigued', remainingHours: Math.ceil(remainingHours) };
+    return { status: 'fatigued', remainingHours: Math.round(remainingHours) };
   }
 };
 
 export const calculateRecoveryHours = (
-  baseRecoveryHours: number,
+  baseRecovery: number,
   intensity: number,
   sessionDuration: number
 ): number => {
@@ -43,5 +38,5 @@ export const calculateRecoveryHours = (
   const intensityFactor = 1 + (intensity - 0.5);  // 0.5 is considered moderate intensity
   const durationFactor = Math.max(1, sessionDuration / 60);  // Normalize to hours, minimum 1
   
-  return Math.round(baseRecoveryHours * intensityFactor * durationFactor);
+  return Math.round(baseRecovery * intensityFactor * durationFactor);
 };
