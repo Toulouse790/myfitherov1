@@ -41,6 +41,11 @@ export const ExerciseSets = ({
     handleSetComplete
   } = useSetManagement({ exercises, sessionId, onExerciseComplete, currentExerciseIndex });
 
+  const calculateCalories = (weight: number, reps: number): number => {
+    // Formule simplifiée : 0.15 calories par répétition par kg
+    return Math.round(reps * weight * 0.15);
+  };
+
   const updateSessionStats = async () => {
     if (sessionId) {
       try {
@@ -62,12 +67,19 @@ export const ExerciseSets = ({
     }
   };
 
-  const handleExerciseSetComplete = async (exerciseName: string) => {
+  const handleExerciseSetComplete = async (exerciseName: string, difficulty: string, notes: string) => {
+    const weight = weights[exerciseName] || 0;
+    const currentReps = reps[exerciseName] || 0;
+    const calories = calculateCalories(weight, currentReps);
+
     await handleSetComplete(
       exerciseName,
       exerciseNames[exerciseName] || exerciseName,
       setRestTimers,
-      setIsExerciseTransition
+      setIsExerciseTransition,
+      difficulty,
+      notes,
+      calories
     );
     await updateSessionStats();
   };
@@ -90,7 +102,7 @@ export const ExerciseSets = ({
             restTimer={restTimers[exerciseName]}
             onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseName]: value }))}
             onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseName]: value }))}
-            onSetComplete={() => handleExerciseSetComplete(exerciseName)}
+            onSetComplete={(difficulty, notes) => handleExerciseSetComplete(exerciseName, difficulty, notes)}
             isTransitioning={isExerciseTransition}
           />
         </div>

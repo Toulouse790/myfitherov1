@@ -35,7 +35,10 @@ export const useSetManagement = ({
     exerciseId: string,
     exerciseName: string,
     setRestTimers: (fn: (prev: { [key: string]: number | null }) => { [key: string]: number | null }) => void,
-    setIsExerciseTransition: (value: boolean) => void
+    setIsExerciseTransition: (value: boolean) => void,
+    difficulty: string,
+    notes: string,
+    calories: number
   ) => {
     const currentSets = completedSets[exerciseId] || 0;
     
@@ -61,7 +64,10 @@ export const useSetManagement = ({
               set_number: newSetsCount,
               reps: reps[exerciseId],
               weight: weights[exerciseId],
-              rest_time_seconds: 90
+              rest_time_seconds: 90,
+              perceived_difficulty: difficulty,
+              notes: notes,
+              calories_burned: calories
             });
 
           if (error) throw error;
@@ -75,7 +81,6 @@ export const useSetManagement = ({
         }
       }
 
-      const calories = Math.round(reps[exerciseId] * weights[exerciseId] * 0.15);
       toast({
         title: "Série complétée !",
         description: `${calories} calories brûlées. Repos de 90 secondes.`,

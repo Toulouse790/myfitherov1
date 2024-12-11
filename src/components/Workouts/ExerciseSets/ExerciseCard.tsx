@@ -5,6 +5,8 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { RestTimer } from "./RestTimer";
 import { SetButton } from "./SetButton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -14,7 +16,7 @@ interface ExerciseCardProps {
   restTimer: number | null;
   onWeightChange: (value: number) => void;
   onRepsChange: (value: number) => void;
-  onSetComplete: () => void;
+  onSetComplete: (difficulty: string, notes: string) => void;
   isTransitioning?: boolean;
 }
 
@@ -29,10 +31,19 @@ export const ExerciseCard = ({
   onSetComplete,
   isTransitioning = false
 }: ExerciseCardProps) => {
+  const [difficulty, setDifficulty] = useState("moderate");
+  const [notes, setNotes] = useState("");
+
   const handleRestTimeChange = (adjustment: number) => {
     if (adjustment !== 0) {
-      onSetComplete();
+      onSetComplete(difficulty, notes);
     }
+  };
+
+  const handleSetComplete = () => {
+    onSetComplete(difficulty, notes);
+    setDifficulty("moderate");
+    setNotes("");
   };
 
   return (
@@ -100,6 +111,31 @@ export const ExerciseCard = ({
           </div>
 
           <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Difficulté perçue</label>
+              <Select value={difficulty} onValueChange={setDifficulty}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir la difficulté" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="easy">Facile</SelectItem>
+                  <SelectItem value="moderate">Modérée</SelectItem>
+                  <SelectItem value="hard">Difficile</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Notes</label>
+              <Textarea
+                placeholder="Ajouter des notes sur cette série..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="resize-none"
+                rows={2}
+              />
+            </div>
+
             <RestTimer 
               restTimer={restTimer} 
               onRestTimeChange={handleRestTimeChange}
@@ -109,7 +145,7 @@ export const ExerciseCard = ({
               isResting={restTimer !== null}
               currentSet={completedSets + 1}
               maxSets={3}
-              onComplete={onSetComplete}
+              onComplete={handleSetComplete}
               restTime={restTimer || 0}
               isTransitioning={isTransitioning}
             />

@@ -231,36 +231,51 @@ export type Database = {
       }
       exercise_sets: {
         Row: {
+          calories_burned: number | null
           completed_at: string | null
           created_at: string | null
           exercise_name: string
           id: string
+          notes: string | null
+          one_rep_max: number | null
+          perceived_difficulty: string | null
           reps: number
           rest_time_seconds: number | null
           session_id: string | null
           set_number: number
+          volume: number | null
           weight: number | null
         }
         Insert: {
+          calories_burned?: number | null
           completed_at?: string | null
           created_at?: string | null
           exercise_name: string
           id?: string
+          notes?: string | null
+          one_rep_max?: number | null
+          perceived_difficulty?: string | null
           reps: number
           rest_time_seconds?: number | null
           session_id?: string | null
           set_number: number
+          volume?: number | null
           weight?: number | null
         }
         Update: {
+          calories_burned?: number | null
           completed_at?: string | null
           created_at?: string | null
           exercise_name?: string
           id?: string
+          notes?: string | null
+          one_rep_max?: number | null
+          perceived_difficulty?: string | null
           reps?: number
           rest_time_seconds?: number | null
           session_id?: string | null
           set_number?: number
+          volume?: number | null
           weight?: number | null
         }
         Relationships: [
