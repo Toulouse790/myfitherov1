@@ -23,11 +23,10 @@ export const useRecoveryData = () => {
     try {
       setIsLoading(true);
       
-      // Filter out empty values and normalize muscle groups
       const normalizedGroups = muscleGroups
         .filter(Boolean)
         .map(group => {
-          const normalized = encodeURIComponent(normalizeMuscleGroup(group));
+          const normalized = normalizeMuscleGroup(group);
           console.log(`Normalized muscle group: ${group} -> ${normalized}`);
           return normalized;
         });

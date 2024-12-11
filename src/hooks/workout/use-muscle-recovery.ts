@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRecoveryData } from './utils/useRecoveryData';
 import { calculateRecoveryStatus } from './utils/muscleGroupUtils';
 import { muscleRecoveryData } from '../../data/muscleRecoveryData';
+import { normalizeMuscleGroup } from './utils/muscleGroupUtils';
 
 interface RecoveryStatus {
   muscleGroup: string;
@@ -20,13 +21,7 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
       try {
         console.log('Fetching recovery data for muscle groups:', muscleGroups);
         
-        // Normaliser les noms des groupes musculaires
-        const normalizedGroups = muscleGroups.map(group => 
-          group.toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/\s+/g, '_')
-        );
+        const normalizedGroups = muscleGroups.map(group => normalizeMuscleGroup(group));
         
         console.log('Normalized muscle groups:', normalizedGroups);
         
@@ -41,10 +36,7 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
         const currentStatus = muscleGroups.map((group, index) => {
           const normalizedGroup = normalizedGroups[index];
           const lastTraining = recoveryData.find(d => 
-            d.muscle_group.toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .replace(/\s+/g, '_') === normalizedGroup
+            normalizeMuscleGroup(d.muscle_group) === normalizedGroup
           );
           
           const baseRecovery = muscleRecoveryData[group]?.recoveryTime || 48;
@@ -76,11 +68,7 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     intensity: number,
     sessionDuration: number
   ) => {
-    const normalizedGroup = muscleGroup.toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '_');
-
+    const normalizedGroup = normalizeMuscleGroup(muscleGroup);
     const baseRecovery = muscleRecoveryData[muscleGroup]?.recoveryTime || 48;
     const estimatedRecoveryHours = Math.round(baseRecovery * intensity);
     
