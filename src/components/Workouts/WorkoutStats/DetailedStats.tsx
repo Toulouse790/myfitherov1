@@ -56,14 +56,14 @@ export const DetailedStats = () => {
       if (measurementsError) throw measurementsError;
 
       // Calculer les statistiques
-      const totalWeight = (sets || []).reduce((acc, set) => 
+      const totalWeight = (sets || []).reduce((acc, set: ExerciseSet) => 
         acc + ((set.weight || 0) * (set.reps || 0)), 0);
       
-      const totalCalories = (sets || []).reduce((acc, set) => 
+      const totalCalories = (sets || []).reduce((acc, set: ExerciseSet) => 
         acc + (set.calories_burned || 0), 0);
 
       // Grouper par groupe musculaire
-      const muscleGroups = (sets || []).reduce((acc: { [key: string]: number }, set) => {
+      const muscleGroups = (sets || []).reduce((acc: { [key: string]: number }, set: any) => {
         if (set.workout_sessions?.muscle_groups_worked) {
           set.workout_sessions.muscle_groups_worked.forEach((group: string) => {
             acc[group] = (acc[group] || 0) + 1;
@@ -78,7 +78,7 @@ export const DetailedStats = () => {
       }));
 
       // Préparer les données de poids
-      const weightData = (measurements || []).map(m => ({
+      const weightData = (measurements || []).map((m: Measurement) => ({
         date: new Date(m.measurement_date).toLocaleDateString(),
         weight: m.weight_kg
       }));
