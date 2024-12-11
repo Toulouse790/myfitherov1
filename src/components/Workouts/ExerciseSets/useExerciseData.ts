@@ -32,6 +32,7 @@ export const useExerciseData = (exerciseNames: string[]) => {
 
         console.log('Fetching exercises with names:', validNames);
 
+        // Properly handle the query for names with special characters
         const { data, error } = await supabase
           .from('unified_exercises')
           .select('name')
@@ -74,10 +75,12 @@ export const useExerciseData = (exerciseNames: string[]) => {
                 // Create a new weight record if none exists
                 const { error: insertError } = await supabase
                   .from('user_exercise_weights')
-                  .insert({
+                  .upsert({
                     user_id: user.id,
                     exercise_name: exercise,
                     weight: 20 // Default weight
+                  }, {
+                    onConflict: 'user_id,exercise_name'
                   });
 
                 if (insertError) throw insertError;
