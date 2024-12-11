@@ -714,6 +714,11 @@ export type Database = {
           created_at: string
           exercise_name: string
           id: string
+          last_used_at: string | null
+          last_used_weight: number | null
+          notes: string | null
+          personal_record: number | null
+          progression_goal: number | null
           updated_at: string
           user_id: string | null
           weight: number | null
@@ -722,6 +727,11 @@ export type Database = {
           created_at?: string
           exercise_name: string
           id?: string
+          last_used_at?: string | null
+          last_used_weight?: number | null
+          notes?: string | null
+          personal_record?: number | null
+          progression_goal?: number | null
           updated_at?: string
           user_id?: string | null
           weight?: number | null
@@ -730,6 +740,11 @@ export type Database = {
           created_at?: string
           exercise_name?: string
           id?: string
+          last_used_at?: string | null
+          last_used_weight?: number | null
+          notes?: string | null
+          personal_record?: number | null
+          progression_goal?: number | null
           updated_at?: string
           user_id?: string | null
           weight?: number | null
