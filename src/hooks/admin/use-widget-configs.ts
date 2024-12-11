@@ -10,6 +10,7 @@ export interface WidgetConfig {
   is_active: boolean;
   config: Record<string, any>;
   position: number;
+  user_id: string;
 }
 
 export const useWidgetConfigs = () => {
@@ -24,7 +25,10 @@ export const useWidgetConfigs = () => {
         .select('*')
         .order('position');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching widget configs:', error);
+        throw error;
+      }
       return data as WidgetConfig[];
     }
   });
@@ -46,12 +50,12 @@ export const useWidgetConfigs = () => {
       });
     },
     onError: (error) => {
+      console.error('Error updating widget config:', error);
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour la configuration.",
         variant: "destructive",
       });
-      console.error('Error updating widget config:', error);
     }
   });
 
@@ -72,12 +76,37 @@ export const useWidgetConfigs = () => {
       });
     },
     onError: (error) => {
+      console.error('Error deleting widget config:', error);
       toast({
         title: "Erreur",
         description: "Impossible de supprimer le widget.",
         variant: "destructive",
       });
-      console.error('Error deleting widget config:', error);
+    }
+  });
+
+  const addConfig = useMutation({
+    mutationFn: async (config: Omit<WidgetConfig, 'id'>) => {
+      const { error } = await supabase
+        .from('admin_widget_configs')
+        .insert(config);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['widget-configs'] });
+      toast({
+        title: "Widget ajouté",
+        description: "Le nouveau widget a été ajouté avec succès.",
+      });
+    },
+    onError: (error) => {
+      console.error('Error adding widget config:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter le widget.",
+        variant: "destructive",
+      });
     }
   });
 
@@ -85,6 +114,7 @@ export const useWidgetConfigs = () => {
     widgetConfigs,
     isLoading,
     updateConfig,
-    deleteConfig
+    deleteConfig,
+    addConfig
   };
 };

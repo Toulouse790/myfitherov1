@@ -12,7 +12,7 @@ export const AdminDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { monthlyUsers, monthlyWorkouts, publishedExercises } = useAdminStats();
   const { data: availableWidgets } = useAvailableWidgets();
-  const { widgetConfigs, updateConfig, deleteConfig } = useWidgetConfigs();
+  const { widgetConfigs, updateConfig } = useWidgetConfigs();
 
   const handleDragEnd = (event: any) => {
     if (!isEditing || !widgetConfigs) return;
@@ -29,20 +29,12 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handleToggleWidget = (widget: any) => {
-    // Logique d'ajout/suppression à implémenter
-  };
-
   return (
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold">Tableau de bord</h2>
         <div className="flex gap-2">
-          <AddWidgetSheet
-            availableWidgets={availableWidgets}
-            widgetConfigs={widgetConfigs}
-            onToggleWidget={handleToggleWidget}
-          />
+          <AddWidgetSheet availableWidgets={availableWidgets} />
           <Button 
             variant="outline" 
             size="sm"

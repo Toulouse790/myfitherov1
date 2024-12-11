@@ -4,14 +4,35 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useWidgetConfigs } from "@/hooks/admin/use-widget-configs";
 
 interface AddWidgetSheetProps {
   availableWidgets: any[];
-  widgetConfigs: any[];
-  onToggleWidget: (widget: any) => void;
 }
 
-export const AddWidgetSheet = ({ availableWidgets, widgetConfigs, onToggleWidget }: AddWidgetSheetProps) => {
+export const AddWidgetSheet = ({ availableWidgets }: AddWidgetSheetProps) => {
+  const { user } = useAuth();
+  const { widgetConfigs, addConfig, deleteConfig } = useWidgetConfigs();
+
+  const handleToggleWidget = async (widget: any) => {
+    const existingConfig = widgetConfigs?.find(w => w.widget_id === widget.id);
+    
+    if (existingConfig) {
+      await deleteConfig.mutate(existingConfig.id);
+    } else {
+      await addConfig.mutate({
+        widget_id: widget.id,
+        title: widget.name,
+        description: widget.description,
+        is_active: true,
+        config: {},
+        position: widgetConfigs?.length || 0,
+        user_id: user?.id || ''
+      });
+    }
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -34,7 +55,7 @@ export const AddWidgetSheet = ({ availableWidgets, widgetConfigs, onToggleWidget
                 </div>
                 <Switch
                   checked={widgetConfigs?.some(w => w.widget_id === widget.id)}
-                  onCheckedChange={() => onToggleWidget(widget)}
+                  onCheckedChange={() => handleToggleWidget(widget)}
                 />
               </div>
             ))}
