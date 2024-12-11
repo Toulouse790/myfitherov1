@@ -37,16 +37,29 @@ export const useWorkoutExercises = (sessionId: string | null) => {
             .filter(isValidExerciseName)
             .map(exercise => {
               const normalizedName = normalizeExerciseName(exercise);
-              console.log(`Normalized exercise name: ${exercise} -> ${normalizedName}`);
-              return exercise.trim();
+              console.log(`Exercise name normalization: ${exercise} -> ${normalizedName}`);
+              return normalizedName;
             });
             
-          console.log('Fetched and sanitized exercises:', sanitizedExercises);
+          console.log('Fetched and normalized exercises:', sanitizedExercises);
+          
+          // Vérification des exercices dans unified_exercises
+          const { data: exerciseData, error: exerciseError } = await supabase
+            .from('unified_exercises')
+            .select('name')
+            .in('name', sanitizedExercises);
+
+          if (exerciseError) {
+            console.error('Exercise fetch error:', exerciseError);
+            throw exerciseError;
+          }
+
+          console.log('Validated exercises from database:', exerciseData);
           setExercises(sanitizedExercises);
         }
 
       } catch (err) {
-        console.error('Error fetching exercises:', err);
+        console.error('Error in exercise fetch process:', err);
         setError(err instanceof Error ? err : new Error('Failed to fetch exercises'));
         toast({
           title: "Erreur de chargement",
