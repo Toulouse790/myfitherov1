@@ -37,7 +37,10 @@ export const useExerciseData = (exerciseNames: string[]) => {
           .select('name')
           .in('name', validNames);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching exercise data:', error);
+          throw error;
+        }
 
         if (!data) {
           console.log('No data returned from query');
@@ -59,25 +62,41 @@ export const useExerciseData = (exerciseNames: string[]) => {
           
           for (const exerciseName of validNames) {
             try {
-              const { data: weightData } = await supabase
+              // First try to get existing weight
+              const { data: existingWeight } = await supabase
                 .from('user_exercise_weights')
                 .select('weight')
                 .eq('user_id', user.id)
-                .eq('exercise_name', exerciseName)
-                .single();
+                .eq('exercise_name', exerciseName);
 
-              weightsMap[exerciseName] = weightData?.weight || 20;
-            } catch (weightError) {
-              console.log(`No weight found for ${exerciseName}, using default`);
+              if (!existingWeight || existingWeight.length === 0) {
+                // If no weight exists, create one with default value
+                const { data: newWeight, error: insertError } = await supabase
+                  .from('user_exercise_weights')
+                  .insert({
+                    user_id: user.id,
+                    exercise_name: exerciseName,
+                    weight: 20
+                  })
+                  .select('weight')
+                  .single();
+
+                if (insertError) throw insertError;
+                weightsMap[exerciseName] = newWeight?.weight || 20;
+              } else {
+                weightsMap[exerciseName] = existingWeight[0]?.weight || 20;
+              }
+            } catch (error) {
+              console.error(`Error handling weight for ${exerciseName}:`, error);
               weightsMap[exerciseName] = 20;
             }
           }
 
-          console.log('Fetched weights:', weightsMap);
+          console.log('Fetched/created weights:', weightsMap);
           setPreviousWeights(weightsMap);
         }
       } catch (error) {
-        console.error('Error fetching exercise data:', error);
+        console.error('Error in fetchExerciseData:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les données des exercices",
