@@ -8,31 +8,46 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ExerciseSets } from "./ExerciseSets";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/use-auth";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [exercises, setExercises] = useState<string[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [notes, setNotes] = useState("");
   const [restTimer, setRestTimer] = useState<number | null>(null);
   const [sessionDuration, setSessionDuration] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSessionData = async () => {
-      if (!sessionId) return;
+      if (!sessionId) {
+        toast({
+          title: "Erreur",
+          description: "ID de séance manquant",
+          variant: "destructive",
+        });
+        navigate('/workouts');
+        return;
+      }
 
       try {
+        setIsLoading(true);
         const { data: session, error } = await supabase
           .from('workout_sessions')
-          .select('exercises')
+          .select('exercises, notes')
           .eq('id', sessionId)
           .single();
 
         if (error) throw error;
+
         if (session?.exercises) {
-          setExercises(session.exercises);
+          console.log("Exercices récupérés:", session.exercises);
+          setExercises(session.exercises.filter(Boolean));
+          setNotes(session.notes || "");
         }
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -41,6 +56,8 @@ export const UnifiedWorkoutDetail = () => {
           description: "Impossible de charger la séance",
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -52,9 +69,9 @@ export const UnifiedWorkoutDetail = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [sessionId, toast]);
+  }, [sessionId, toast, navigate]);
 
-  const handleExerciseComplete = (index: number) => {
+  const handleExerciseComplete = async (index: number) => {
     if (index < exercises.length - 1) {
       setCurrentExerciseIndex(index + 1);
       setRestTimer(90);
@@ -63,15 +80,42 @@ export const UnifiedWorkoutDetail = () => {
         description: "Passez à l'exercice suivant après la période de repos.",
       });
     } else {
-      toast({
-        title: "Séance terminée !",
-        description: "Bravo ! Vous avez terminé tous les exercices.",
-      });
-      navigate('/workouts');
+      try {
+        await supabase
+          .from('workout_sessions')
+          .update({
+            status: 'completed',
+            notes: notes,
+            total_duration_minutes: Math.floor(sessionDuration / 60)
+          })
+          .eq('id', sessionId);
+
+        toast({
+          title: "Séance terminée !",
+          description: "Bravo ! Vous avez terminé tous les exercices.",
+        });
+        navigate('/workouts');
+      } catch (error) {
+        console.error('Error completing workout:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de terminer la séance",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const handleAddSet = async () => {
+    if (!exercises[currentExerciseIndex]) {
+      toast({
+        title: "Erreur",
+        description: "Aucun exercice sélectionné",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('exercise_sets')
@@ -98,6 +142,21 @@ export const UnifiedWorkoutDetail = () => {
       });
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="container max-w-4xl mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+              <div className="h-40 bg-gray-200 rounded"></div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">

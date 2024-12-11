@@ -15,7 +15,6 @@ import { UserProfile } from "./components/Profile/UserProfile";
 import TrainingPreferencesPage from "./pages/TrainingPreferences";
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { UnifiedWorkoutDetail } from "./components/Workouts/UnifiedWorkoutDetail";
-import { NextWorkoutDetail } from "./components/Workouts/NextWorkoutDetail";
 
 function App() {
   return (
@@ -31,7 +30,6 @@ function App() {
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
             <Route path="/workout/:sessionId" element={<ProtectedRoute><UnifiedWorkoutDetail /></ProtectedRoute>} />
-            <Route path="/workouts/exercise/next-workout" element={<ProtectedRoute><NextWorkoutDetail /></ProtectedRoute>} />
             <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
             <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
