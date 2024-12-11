@@ -6,49 +6,84 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 export const WorkoutSuggestions = () => {
-  const [showDialog, setShowDialog] = useState(false);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const suggestions = [
+    {
+      id: 1,
+      title: "Séance favorite",
+      description: "Reprendre une séance sauvegardée",
+      icon_name: "Bookmark",
+      type: "favorites"
+    },
+    {
+      id: 2,
+      title: "Séance du jour",
+      description: "Séance adaptée à vos objectifs",
+      icon_name: "Target",
+      type: "daily"
+    },
+    {
+      id: 3,
+      title: "Séance rapide",
+      description: "20-30 minutes d'entraînement",
+      icon_name: "Zap",
+      type: "quick"
+    },
+    {
+      id: 4,
+      title: "Full body",
+      description: "Entraînement complet du corps",
+      icon_name: "Dumbbell",
+      type: "full_body"
+    }
+  ];
+
   const handleSuggestionClick = async (type: string) => {
-    switch (type) {
-      case 'favorites':
+    try {
+      if (type === 'favorites') {
         toast({
           title: "Bientôt disponible",
           description: "Cette fonctionnalité sera disponible prochainement",
         });
-        break;
-      case 'daily':
-      case 'quick':
-      case 'full_body':
-        try {
-          const { data: session, error } = await supabase
-            .from('workout_sessions')
-            .insert({
-              user_id: (await supabase.auth.getUser()).data.user?.id,
-              type: 'strength',
-              status: 'in_progress'
-            })
-            .select()
-            .single();
+        return;
+      }
 
-          if (error) throw error;
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour créer une séance",
+          variant: "destructive",
+        });
+        navigate('/signin');
+        return;
+      }
 
-          if (session) {
-            navigate(`/workout/${session.id}`);
-          }
-        } catch (error) {
-          console.error('Error creating workout:', error);
-          toast({
-            title: "Erreur",
-            description: "Impossible de créer la séance",
-            variant: "destructive",
-          });
-        }
-        break;
-      default:
-        console.warn('Type de suggestion non géré:', type);
+      const { data: session, error } = await supabase
+        .from('workout_sessions')
+        .insert({
+          user_id: user.id,
+          type: 'strength',
+          status: 'in_progress'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (session) {
+        navigate(`/workout/${session.id}`);
+      }
+    } catch (error) {
+      console.error('Error creating workout:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la séance",
+        variant: "destructive",
+      });
     }
   };
 
@@ -79,8 +114,8 @@ export const WorkoutSuggestions = () => {
                 </div>
               </div>
             </Card>
-          )}
-        )}
+          );
+        })}
       </div>
     </div>
   );

@@ -17,23 +17,17 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
-        <Route 
-          path="/workout/:sessionId" 
-          element={<ProtectedRoute><UnifiedWorkoutDetail /></ProtectedRoute>} 
-        />
+        <Route path="/workout/:sessionId" element={<ProtectedRoute><UnifiedWorkoutDetail /></ProtectedRoute>} />
         <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
         <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />
         <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
-        <Route 
-          path="/training-preferences" 
-          element={<ProtectedRoute><TrainingPreferences /></ProtectedRoute>} 
-        />
+        <Route path="/training-preferences" element={<ProtectedRoute><TrainingPreferences /></ProtectedRoute>} />
       </Routes>
       <Toaster />
     </>
