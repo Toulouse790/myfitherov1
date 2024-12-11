@@ -7,6 +7,7 @@ import { FontSection } from "./FontSection";
 import { ColorSection } from "./ColorSection";
 import { ButtonSection } from "./ButtonSection";
 import { WidgetSection } from "./WidgetSection";
+import { StylePreview } from "./StylePreview";
 import type { StyleSettings } from "./types";
 
 export const StylesManager = () => {
@@ -53,34 +54,42 @@ export const StylesManager = () => {
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="fonts" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="fonts">Polices</TabsTrigger>
-          <TabsTrigger value="colors">Couleurs</TabsTrigger>
-          <TabsTrigger value="buttons">Boutons</TabsTrigger>
-          <TabsTrigger value="widgets">Widgets</TabsTrigger>
-        </TabsList>
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="space-y-6">
+          <Tabs defaultValue="fonts" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="fonts">Polices</TabsTrigger>
+              <TabsTrigger value="colors">Couleurs</TabsTrigger>
+              <TabsTrigger value="buttons">Boutons</TabsTrigger>
+              <TabsTrigger value="widgets">Widgets</TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="fonts">
-          <FontSection styles={styles} onStyleChange={handleStyleChange} />
-        </TabsContent>
+            <TabsContent value="fonts">
+              <FontSection styles={styles} onStyleChange={handleStyleChange} />
+            </TabsContent>
 
-        <TabsContent value="colors">
-          <ColorSection styles={styles} onStyleChange={handleStyleChange} />
-        </TabsContent>
+            <TabsContent value="colors">
+              <ColorSection styles={styles} onStyleChange={handleStyleChange} />
+            </TabsContent>
 
-        <TabsContent value="buttons">
-          <ButtonSection styles={styles} onStyleChange={handleStyleChange} />
-        </TabsContent>
+            <TabsContent value="buttons">
+              <ButtonSection styles={styles} onStyleChange={handleStyleChange} />
+            </TabsContent>
 
-        <TabsContent value="widgets">
-          <WidgetSection styles={styles} onStyleChange={handleStyleChange} />
-        </TabsContent>
-      </Tabs>
+            <TabsContent value="widgets">
+              <WidgetSection styles={styles} onStyleChange={handleStyleChange} />
+            </TabsContent>
+          </Tabs>
 
-      <Button onClick={saveStyles} className="w-full">
-        Sauvegarder les modifications
-      </Button>
+          <Button onClick={saveStyles} className="w-full">
+            Sauvegarder les modifications
+          </Button>
+        </div>
+
+        <div className="sticky top-6">
+          <StylePreview styles={styles} />
+        </div>
+      </div>
     </div>
   );
 };
