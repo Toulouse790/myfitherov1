@@ -1,4 +1,6 @@
 export const normalizeMuscleGroup = (muscleGroup: string): string => {
+  if (!muscleGroup) return '';
+  
   return muscleGroup
     .toLowerCase()
     .normalize('NFD')
@@ -11,7 +13,7 @@ export const normalizeMuscleGroup = (muscleGroup: string): string => {
 export const calculateRecoveryStatus = (
   lastTrainingDate: Date | null,
   estimatedRecoveryHours: number
-) => {
+): { status: 'recovered' | 'partial' | 'fatigued'; remainingHours: number } => {
   if (!lastTrainingDate) {
     return { status: 'recovered', remainingHours: 0 };
   }

@@ -5,7 +5,7 @@ import { normalizeMuscleGroup } from './muscleGroupUtils';
 
 interface RecoveryStatus {
   muscleGroup: string;
-  status: string;
+  status: 'recovered' | 'partial' | 'fatigued';
   remainingHours: number;
 }
 
@@ -27,7 +27,7 @@ export const useRecoveryData = () => {
       const normalizedGroups = muscleGroups
         .filter(Boolean)
         .map(group => {
-          const normalized = normalizeMuscleGroup(group);
+          const normalized = encodeURIComponent(normalizeMuscleGroup(group));
           console.log(`Normalized muscle group: ${group} -> ${normalized}`);
           return normalized;
         });
