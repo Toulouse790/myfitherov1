@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useWorkoutSession } from "@/hooks/workout/use-workout-session";
+import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { useState, useEffect } from "react";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { NoSessionView } from "./NextWorkoutDetail/NoSessionView";
 import { WorkoutProgress } from "./NextWorkoutDetail/WorkoutProgress";
 import { WorkoutExerciseView } from "./NextWorkoutDetail/WorkoutExerciseView";
+import { UnifiedWorkoutDetail } from "./UnifiedWorkoutDetail";
 
 export const NextWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -78,43 +79,5 @@ export const NextWorkoutDetail = () => {
     return <NoSessionView />;
   }
 
-  return (
-    <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
-      <WorkoutProgress
-        duration={duration}
-        progress={((currentExerciseIndex || 0) / (exercises.length || 1)) * 100}
-        workoutStarted={workoutStarted}
-        onStartWorkout={() => handleExerciseClick(0)}
-      />
-
-      <div className="bg-background p-4 sm:p-6 rounded-lg">
-        <WorkoutExerciseView
-          currentExercise={currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null}
-          currentExerciseIndex={currentExerciseIndex}
-          exercises={exercises}
-          currentSet={currentSet}
-          isResting={isResting}
-          sessionId={sessionId}
-          restTime={restTime}
-          onSetComplete={handleSetComplete}
-          onSetsChange={handleSetsChange}
-          onRestTimeChange={handleRestTimeChange}
-          onExerciseSelect={handleExerciseSelect}
-          onEndWorkout={handleEndWorkout}
-          workoutStarted={workoutStarted}
-        />
-      </div>
-
-      <WorkoutSummaryDialog
-        open={showSummary}
-        onOpenChange={setShowSummary}
-        stats={{
-          duration: Math.floor(duration / 60),
-          totalWeight: 0,
-          totalCalories: Math.round(duration / 60 * 7.5),
-        }}
-        onConfirm={handleConfirm}
-      />
-    </div>
-  );
+  return <UnifiedWorkoutDetail />;
 };
