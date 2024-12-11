@@ -1,110 +1,52 @@
-import { sampleWorkouts } from './data/sampleWorkouts';
-
 export const muscleGroups = [
-  { 
-    id: 'chest', 
-    name: 'Pectoraux',
-    color: 'bg-primary',
-    image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
-    selectedExercises: 0,
-    totalExercises: 0
-  },
-  { 
-    id: 'back', 
-    name: 'Dos',
-    color: 'bg-primary',
-    image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
-    selectedExercises: 0,
-    totalExercises: 0
-  },
-  { 
-    id: 'legs', 
-    name: 'Jambes',
-    color: 'bg-primary',
-    image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
-    selectedExercises: 0,
-    totalExercises: 0
-  },
-  { 
-    id: 'shoulders', 
-    name: 'Épaules',
-    color: 'bg-primary',
-    image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
-    selectedExercises: 0,
-    totalExercises: 0
-  },
-  { 
-    id: 'biceps', 
-    name: 'Biceps',
-    color: 'bg-primary',
-    image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
-    selectedExercises: 0,
-    totalExercises: 0
-  },
-  { 
-    id: 'triceps', 
-    name: 'Triceps',
-    color: 'bg-primary',
-    image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
-    selectedExercises: 0,
-    totalExercises: 0
-  },
-  { 
-    id: 'abdominaux', 
-    name: 'Abdominaux',
-    color: 'bg-primary',
-    image: '/lovable-uploads/86a01e96-7001-446f-a664-90f1a5414d5b.png',
-    selectedExercises: 0,
-    totalExercises: 0
-  }
+  { id: "pectoraux", name: "Pectoraux" },
+  { id: "dos", name: "Dos" },
+  { id: "jambes", name: "Jambes" },
+  { id: "épaules", name: "Épaules" },
+  { id: "biceps", name: "Biceps" },
+  { id: "triceps", name: "Triceps" },
+  { id: "abdominaux", name: "Abdominaux" }
+];
+
+export const workoutTypes = [
+  { id: "strength", name: "Force" },
+  { id: "hypertrophy", name: "Volume" },
+  { id: "endurance", name: "Endurance" },
+  { id: "cardio", name: "Cardio" }
 ];
 
 export const locations = [
-  { id: 'home', name: 'Maison' },
-  { id: 'gym', name: 'Salle de sport' },
-  { id: 'outdoor', name: 'Extérieur' }
+  { id: "home", name: "Maison" },
+  { id: "gym", name: "Salle" },
+  { id: "outdoor", name: "Extérieur" }
 ];
 
 export const difficulties = [
-  { id: 'beginner', name: 'Débutant' },
-  { id: 'intermediate', name: 'Intermédiaire' },
-  { id: 'advanced', name: 'Avancé' }
+  { id: "beginner", name: "Débutant" },
+  { id: "intermediate", name: "Intermédiaire" },
+  { id: "advanced", name: "Avancé" }
 ];
 
-// Pour maintenir la compatibilité, on garde difficultyLevels tout en ajoutant difficulties
-export const difficultyLevels = difficulties;
+export const objectives = [
+  { id: "weight_loss", name: "Perte de poids" },
+  { id: "muscle_gain", name: "Prise de masse" },
+  { id: "maintenance", name: "Maintien" },
+  { id: "endurance", name: "Endurance" }
+];
 
-export interface WorkoutFormData {
+export interface WorkoutData {
+  id: string;
   title: string;
   muscleGroups: string[];
-  duration: string;
-  exercises: string;
-  difficulty: string;
-  location: string;
-}
-
-export const initialFormData: WorkoutFormData = {
-  title: "",
-  muscleGroups: [],
-  duration: "45",
-  exercises: "",
-  difficulty: "beginner",
-  location: "home"
-};
-
-export interface WorkoutData extends Omit<WorkoutFormData, 'duration' | 'exercises'> {
-  id: string;
-  duration: number;
-  exercises: Array<{
+  exercises: {
     name: string;
     sets?: number;
     reps?: number;
     calories?: number;
-    image?: string;
-  }>;
-  lastPerformed?: string;
-  completedCount?: number;
-  totalCalories: number;
+  }[];
+  duration: number;
+  difficulty: string;
+  location: string;
+  type: string;
+  objectives: string[];
 }
-
-export const workouts = sampleWorkouts;
