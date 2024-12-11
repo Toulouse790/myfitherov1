@@ -19,12 +19,12 @@ export const useWorkoutSession = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
   const [workoutStarted, setWorkoutStarted] = useState(false);
 
-  const { duration, isRunning, setIsRunning } = useWorkoutTimer();
+  const { duration, isRunning, startTimer, stopTimer } = useWorkoutTimer();
   const { exercises, isLoading, error } = useWorkoutExercises(sessionId);
   const { handleConfirmEndWorkout } = useWorkoutCompletion(sessionId, user?.id);
   const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
   const { isCardio } = useSessionManagement(sessionId);
-  
+
   // Normaliser les noms des groupes musculaires
   const muscleGroups = exercises.map(exercise => {
     return exercise.toLowerCase()
@@ -126,6 +126,8 @@ export const useWorkoutSession = () => {
     workoutStarted,
     recoveryStatus,
     setIsRunning,
+    startTimer,
+    stopTimer,
     handleRegenerateWorkout: () => user && handleRegenerateWorkout(user.id),
     handleExerciseClick,
     handleConfirmEndWorkout

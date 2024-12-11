@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { NoSessionView } from "./NextWorkoutDetail/NoSessionView";
 import { WorkoutProgress } from "./NextWorkoutDetail/WorkoutProgress";
@@ -15,14 +15,27 @@ export const NextWorkoutDetail = () => {
     workoutStarted, 
     duration,
     handleConfirmEndWorkout, 
-    handleExerciseClick 
+    handleExerciseClick,
+    startTimer,
+    stopTimer 
   } = useWorkoutSession();
   const [showSummary, setShowSummary] = useState(false);
   const [currentSet, setCurrentSet] = useState(1);
   const [isResting, setIsResting] = useState(false);
   const [restTime, setRestTime] = useState(90);
 
+  useEffect(() => {
+    if (workoutStarted) {
+      console.log("Workout started, starting timer");
+      startTimer();
+    } else {
+      console.log("Workout not started or ended, stopping timer");
+      stopTimer();
+    }
+  }, [workoutStarted, startTimer, stopTimer]);
+
   const handleEndWorkout = () => {
+    stopTimer();
     setShowSummary(true);
   };
 

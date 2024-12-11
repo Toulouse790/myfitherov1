@@ -6,17 +6,50 @@ export const useWorkoutTimer = () => {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
+
     if (isRunning) {
+      console.log("Timer started - initial duration:", duration);
       interval = setInterval(() => {
-        setDuration(prev => prev + 1);
+        setDuration(prev => {
+          const newDuration = prev + 1;
+          console.log("Timer tick - new duration:", newDuration);
+          return newDuration;
+        });
       }, 1000);
+    } else {
+      console.log("Timer stopped at duration:", duration);
     }
-    return () => clearInterval(interval);
+
+    return () => {
+      if (interval) {
+        console.log("Clearing timer interval");
+        clearInterval(interval);
+      }
+    };
   }, [isRunning]);
+
+  const startTimer = () => {
+    console.log("Starting timer");
+    setIsRunning(true);
+  };
+
+  const stopTimer = () => {
+    console.log("Stopping timer");
+    setIsRunning(false);
+  };
+
+  const resetTimer = () => {
+    console.log("Resetting timer");
+    setIsRunning(false);
+    setDuration(0);
+  };
 
   return {
     duration,
     isRunning,
-    setIsRunning
+    setIsRunning,
+    startTimer,
+    stopTimer,
+    resetTimer
   };
 };
