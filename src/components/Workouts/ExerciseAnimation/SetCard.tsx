@@ -1,19 +1,22 @@
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
-import { Timer, Check } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 
-interface SetCardProps {
+export interface SetCardProps {
   index: number;
   currentSet: number;
   isResting: boolean;
   reps: number;
   weight: number;
-  onRepsChange: (value: number) => void;
-  onWeightChange: (value: number) => void;
-  onSetComplete: () => void;
   exerciseName: string;
+  onRepsChange: (value: number) => void;
+  onWeightChange: Dispatch<SetStateAction<number>>;
+  onSetComplete: () => void;
 }
 
 export const SetCard = ({
@@ -22,79 +25,138 @@ export const SetCard = ({
   isResting,
   reps,
   weight,
+  exerciseName,
   onRepsChange,
   onWeightChange,
   onSetComplete,
-  exerciseName
 }: SetCardProps) => {
-  const { user } = useAuth();
+  const [isCompleted, setIsCompleted] = useState(false);
   const { toast } = useToast();
-  const [restTimer, setRestTimer] = useState<number | null>(null);
+  const { user } = useAuth();
 
-  const handleSetComplete = async () => {
-    if (!user) {
+  const handleComplete = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('user_exercise_weights')
+        .upsert({
+          user_id: user.id,
+          exercise_name: exerciseName,
+          weight: weight,
+          last_used_weight: weight,
+          last_used_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,exercise_name'
+        });
+
+      if (error) throw error;
+
+      setIsCompleted(true);
+      onSetComplete();
+    } catch (error) {
+      console.error('Error saving weight:', error);
       toast({
         title: "Erreur",
-        description: "Vous devez être connecté pour enregistrer vos séries",
+        description: "Impossible de sauvegarder le poids",
         variant: "destructive",
       });
-      return;
     }
+  };
 
-    // Vérifier si c'est un nouveau record
-    const isNewRecord = true; // À implémenter: logique de vérification des records
+  const handleWeightChange = (adjustment: number) => {
+    onWeightChange(prev => Math.max(0, prev + adjustment));
+  };
 
-    // Mettre à jour les records si nécessaire
-    if (isNewRecord) {
-      try {
-        const { error } = await supabase
-          .from('user_exercise_weights')
-          .upsert({
-            user_id: user.id,
-            exercise_name: exerciseName,
-            personal_record: weight,
-            last_used_weight: weight,
-            last_used_at: new Date().toISOString()
-          }, {
-            onConflict: 'user_id,exercise_name'
-          });
-
-        if (error) throw error;
-
-        toast({
-          title: "Nouveau record personnel !",
-          description: `Félicitations ! Vous avez établi un nouveau record à ${weight}kg.`,
-        });
-      } catch (error) {
-        console.error('Error updating records:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour le record",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
-    onSetComplete();
+  const handleRepsChange = (adjustment: number) => {
+    onRepsChange(Math.max(1, reps + adjustment));
   };
 
   return (
-    <div className="space-y-4">
-      {restTimer !== null ? (
-        <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary animate-pulse">
-          <Timer className="h-6 w-6" />
-          <span>{restTimer}s</span>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`p-4 rounded-lg border ${
+        isCompleted ? 'bg-muted/20' : index + 1 === currentSet ? 'border-primary' : ''
+      }`}
+    >
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Poids (kg)</label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handleWeightChange(-2.5)}
+                disabled={isCompleted || isResting}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+              <Input
+                type="number"
+                value={weight}
+                onChange={(e) => onWeightChange(Number(e.target.value))}
+                className="text-center"
+                disabled={isCompleted || isResting}
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handleWeightChange(2.5)}
+                disabled={isCompleted || isResting}
+              >
+                <ChevronUp className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Répétitions</label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handleRepsChange(-1)}
+                disabled={isCompleted || isResting}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+              <Input
+                type="number"
+                value={reps}
+                onChange={(e) => onRepsChange(Number(e.target.value))}
+                className="text-center"
+                disabled={isCompleted || isResting}
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handleRepsChange(1)}
+                disabled={isCompleted || isResting}
+              >
+                <ChevronUp className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
-      ) : (
+
         <Button
-          onClick={handleSetComplete}
-          className="w-full h-12 text-lg"
-          disabled={isResting}
+          onClick={handleComplete}
+          className="w-full"
+          disabled={isCompleted || isResting || index + 1 !== currentSet}
         >
-          {currentSet === 3 ? "Terminer l'exercice" : "Valider la série"}
+          {isCompleted ? (
+            <div className="flex items-center gap-2">
+              <Check className="h-5 w-5" />
+              <span>Série complétée</span>
+            </div>
+          ) : (
+            "Valider la série"
+          )}
         </Button>
-      )}
-    </div>
+      </div>
+    </motion.div>
   );
 };

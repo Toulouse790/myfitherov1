@@ -32,16 +32,12 @@ export const useExerciseData = (exerciseNames: string[]) => {
 
         console.log('Fetching exercises with names:', validNames);
 
-        // Properly handle the query for names with special characters
         const { data, error } = await supabase
           .from('unified_exercises')
           .select('name')
           .in('name', validNames);
 
-        if (error) {
-          console.error('Supabase query error:', error);
-          throw error;
-        }
+        if (error) throw error;
 
         if (!data) {
           console.log('No data returned from query');
@@ -60,56 +56,33 @@ export const useExerciseData = (exerciseNames: string[]) => {
 
         // Fetch or create weight records for each exercise
         if (user) {
-          for (const exercise of validNames) {
-            try {
-              const { data: weightData, error: weightError } = await supabase
-                .from('user_exercise_weights')
-                .select('weight')
-                .eq('user_id', user.id)
-                .eq('exercise_name', exercise)
-                .maybeSingle();
+          const { data: weightData, error: weightError } = await supabase
+            .from('user_exercise_weights')
+            .select('exercise_name, weight')
+            .in('exercise_name', validNames)
+            .eq('user_id', user.id);
 
-              if (weightError) throw weightError;
+          if (weightError) throw weightError;
 
-              if (!weightData) {
-                // Create a new weight record if none exists
-                const { error: insertError } = await supabase
-                  .from('user_exercise_weights')
-                  .upsert({
-                    user_id: user.id,
-                    exercise_name: exercise,
-                    weight: 20 // Default weight
-                  }, {
-                    onConflict: 'user_id,exercise_name'
-                  });
+          const weightsMap = weightData?.reduce<{ [key: string]: number }>((acc, record) => {
+            acc[record.exercise_name] = record.weight || 20;
+            return acc;
+          }, {}) || {};
 
-                if (insertError) throw insertError;
-                
-                setPreviousWeights(prev => ({
-                  ...prev,
-                  [exercise]: 20
-                }));
-              } else {
-                setPreviousWeights(prev => ({
-                  ...prev,
-                  [exercise]: weightData.weight
-                }));
-              }
-            } catch (error) {
-              console.error('Error managing weight data:', error);
-              toast({
-                title: "Erreur",
-                description: "Impossible de gérer les données de poids",
-                variant: "destructive",
-              });
+          // Set default weight for exercises without records
+          validNames.forEach(name => {
+            if (!weightsMap[name]) {
+              weightsMap[name] = 20;
             }
-          }
+          });
+
+          setPreviousWeights(weightsMap);
         }
       } catch (error) {
-        console.error('Error fetching exercise names:', error);
+        console.error('Error fetching exercise data:', error);
         toast({
           title: "Erreur",
-          description: "Impossible de charger les noms des exercices",
+          description: "Impossible de charger les données des exercices",
           variant: "destructive",
         });
       }

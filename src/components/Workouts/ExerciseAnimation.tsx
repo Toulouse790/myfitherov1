@@ -98,6 +98,7 @@ export const ExerciseAnimation = ({
             {Array.from({ length: sets }).map((_, index) => (
               <SetCard
                 key={index}
+                exerciseName={exerciseName}
                 index={index}
                 currentSet={currentSet}
                 isResting={isResting}
