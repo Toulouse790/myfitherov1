@@ -18,9 +18,8 @@ export const useWorkoutSession = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
   const [workoutStarted, setWorkoutStarted] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
 
-  const { duration } = useWorkoutTimer(isRunning);
+  const { duration, isRunning, setIsRunning } = useWorkoutTimer(false);
   const { exercises, isLoading, error } = useWorkoutExercises(sessionId);
   const { handleConfirmEndWorkout } = useWorkoutCompletion(sessionId, user?.id);
   const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
@@ -48,7 +47,7 @@ export const useWorkoutSession = () => {
       setIsRunning(false);
       setWorkoutStarted(false);
     };
-  }, [location]);
+  }, [location, setIsRunning]);
 
   const handleExerciseClick = async (index: number) => {
     try {

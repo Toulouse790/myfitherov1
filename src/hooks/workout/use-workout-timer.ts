@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 
-export const useWorkoutTimer = (isRunning: boolean) => {
+export const useWorkoutTimer = (initialIsRunning: boolean = false) => {
   const [duration, setDuration] = useState(0);
+  const [isRunning, setIsRunning] = useState(initialIsRunning);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -27,6 +28,7 @@ export const useWorkoutTimer = (isRunning: boolean) => {
 
   return {
     duration,
-    isRunning
+    isRunning,
+    setIsRunning
   };
 };
