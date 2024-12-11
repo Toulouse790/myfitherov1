@@ -27,7 +27,6 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
     }
 
     try {
-      // Créer une nouvelle session d'entraînement avec les noms d'exercices directement
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert([
@@ -35,7 +34,7 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
             user_id: user.id,
             status: 'in_progress',
             type: 'strength',
-            exercises: plan.exercises.map(ex => ex.name), // Utiliser directement les noms
+            exercises: plan.exercises.map(ex => ex.name),
             initial_energy_level: 'good'
           }
         ])
@@ -49,8 +48,8 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
         description: "Votre séance d'entraînement a été créée avec succès",
       });
 
-      // Rediriger vers la page d'entraînement avec l'ID de la session
-      navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+      // Utiliser la nouvelle route simplifiée
+      navigate(`/workout/${session.id}`);
     } catch (error) {
       console.error('Error starting workout:', error);
       toast({

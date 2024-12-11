@@ -1,13 +1,13 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { Index } from "@/pages/Index";
-import { Profile } from "@/pages/Profile";
-import { Admin } from "@/pages/Admin";
+import Index from "@/pages/Index";
+import Profile from "@/pages/Profile";
+import Admin from "@/pages/Admin";
 import { Workouts } from "@/pages/Workouts";
-import { Nutrition } from "@/pages/Nutrition";
-import { Stats } from "@/pages/Stats";
-import { Sleep } from "@/pages/Sleep";
-import { TrainingPreferences } from "@/pages/TrainingPreferences";
+import Nutrition from "@/pages/Nutrition";
+import Stats from "@/pages/Stats";
+import Sleep from "@/pages/Sleep";
+import TrainingPreferences from "@/pages/TrainingPreferences";
 import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
@@ -20,7 +20,7 @@ function App() {
         <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
         <Route 
-          path="/workouts/exercise/next-workout" 
+          path="/workout/:id" 
           element={<ProtectedRoute><NextWorkoutDetail /></ProtectedRoute>} 
         />
         <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
