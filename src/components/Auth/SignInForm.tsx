@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -10,7 +10,6 @@ export const SignInForm = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -23,12 +22,6 @@ export const SignInForm = () => {
         password,
       });
 
-      console.log("Sign in attempt:", { 
-        success: !!data.session,
-        error: error?.message,
-        email 
-      });
-
       if (error) {
         toast({
           variant: "destructive",
@@ -39,12 +32,10 @@ export const SignInForm = () => {
       }
 
       if (data.session) {
-        const from = location.state?.from?.pathname || "/";
-        console.log("Login successful, redirecting to:", from);
-        navigate(from, { replace: true });
+        navigate('/');
       }
     } catch (error) {
-      console.error("Unexpected error during login:", error);
+      console.error('Unexpected error during login:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
