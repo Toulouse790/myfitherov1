@@ -25,15 +25,16 @@ export const ExerciseSelection = ({
   );
 
   const handleExerciseToggle = (exerciseName: string) => {
-    console.log('Toggle exercise:', exerciseName);
-    console.log('Current selected:', selectedExercises);
-    
     const newSelection = selectedExercises.includes(exerciseName)
       ? selectedExercises.filter(name => name !== exerciseName)
       : [...selectedExercises, exerciseName];
     
-    console.log('New selection:', newSelection);
     onSelectionChange(newSelection);
+  };
+
+  const handleValidateSelection = () => {
+    onSelectionChange(selectedExercises);
+    onClose();
   };
 
   if (isLoading) {
@@ -75,10 +76,7 @@ export const ExerciseSelection = ({
             Retour aux groupes musculaires
           </Button>
           {selectedExercises.length > 0 && (
-            <Button onClick={() => {
-              console.log('Validating selection:', selectedExercises);
-              onClose();
-            }}>
+            <Button onClick={handleValidateSelection}>
               Valider la sélection
             </Button>
           )}
