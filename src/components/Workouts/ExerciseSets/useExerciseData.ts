@@ -17,6 +17,16 @@ export const useExerciseData = (exerciseNames: string[]) => {
           return;
         }
 
+        if (!user) {
+          console.log('No user found - authentication required');
+          toast({
+            title: "Authentification requise",
+            description: "Veuillez vous connecter pour accéder à vos données d'exercices",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const validNames = exerciseNames.filter((name): name is string => {
           const isValid = name && typeof name === 'string';
           if (!isValid) {
@@ -57,42 +67,46 @@ export const useExerciseData = (exerciseNames: string[]) => {
         console.log('Fetched exercise names:', namesMap);
         setExerciseData(namesMap);
 
-        if (user) {
-          const weightsMap: { [key: string]: number } = {};
-          
-          for (const exerciseName of validNames) {
-            try {
-              // Utiliser upsert pour gérer les poids existants
-              const { data: weightData, error: upsertError } = await supabase
-                .from('user_exercise_weights')
-                .upsert(
-                  {
-                    user_id: user.id,
-                    exercise_name: exerciseName,
-                    weight: 20,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                  },
-                  {
-                    onConflict: 'user_id,exercise_name',
-                    ignoreDuplicates: false
-                  }
-                )
-                .select('weight')
-                .single();
+        // Gestion des poids
+        const weightsMap: { [key: string]: number } = {};
+        
+        for (const exerciseName of validNames) {
+          try {
+            // Utiliser upsert pour gérer les poids existants
+            const { data: weightData, error: upsertError } = await supabase
+              .from('user_exercise_weights')
+              .upsert(
+                {
+                  user_id: user.id,
+                  exercise_name: exerciseName,
+                  weight: 20,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                },
+                {
+                  onConflict: 'user_id,exercise_name',
+                  ignoreDuplicates: false
+                }
+              )
+              .select('weight')
+              .single();
 
-              if (upsertError) throw upsertError;
-              weightsMap[exerciseName] = weightData?.weight || 20;
-              
-            } catch (error) {
-              console.error(`Error handling weight for ${exerciseName}:`, error);
-              weightsMap[exerciseName] = 20;
+            if (upsertError) {
+              console.error('Error upserting weight:', upsertError);
+              throw upsertError;
             }
-          }
 
-          console.log('Fetched/created weights:', weightsMap);
-          setPreviousWeights(weightsMap);
+            weightsMap[exerciseName] = weightData?.weight || 20;
+            
+          } catch (error) {
+            console.error(`Error handling weight for ${exerciseName}:`, error);
+            weightsMap[exerciseName] = 20;
+          }
         }
+
+        console.log('Fetched/created weights:', weightsMap);
+        setPreviousWeights(weightsMap);
+
       } catch (error) {
         console.error('Error in fetchExerciseData:', error);
         toast({
