@@ -62,7 +62,10 @@ export const useExerciseData = (exerciseNames: string[]) => {
             .in('exercise_name', validNames)
             .eq('user_id', user.id);
 
-          if (weightError) throw weightError;
+          if (weightError) {
+            console.error('Error fetching weights:', weightError);
+            throw weightError;
+          }
 
           const weightsMap = weightData?.reduce<{ [key: string]: number }>((acc, record) => {
             acc[record.exercise_name] = record.weight || 20;
