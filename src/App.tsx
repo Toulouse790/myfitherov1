@@ -9,25 +9,20 @@ import Stats from "@/pages/Stats";
 import Sleep from "@/pages/Sleep";
 import TrainingPreferences from "@/pages/TrainingPreferences";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
-import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
-import { SignIn } from "@/components/Auth/SignIn";
-import { SignUp } from "@/components/Auth/SignUp";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-        <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
-        <Route path="/workout/:sessionId" element={<ProtectedRoute><UnifiedWorkoutDetail /></ProtectedRoute>} />
-        <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
-        <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />
-        <Route path="/sleep" element={<ProtectedRoute><Sleep /></ProtectedRoute>} />
-        <Route path="/training-preferences" element={<ProtectedRoute><TrainingPreferences /></ProtectedRoute>} />
+        <Route path="/" element={<Index />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin/*" element={<Admin />} />
+        <Route path="/workouts" element={<Workouts />} />
+        <Route path="/workout/:sessionId" element={<UnifiedWorkoutDetail />} />
+        <Route path="/nutrition" element={<Nutrition />} />
+        <Route path="/stats" element={<Stats />} />
+        <Route path="/sleep" element={<Sleep />} />
+        <Route path="/training-preferences" element={<TrainingPreferences />} />
       </Routes>
       <Toaster />
     </>
