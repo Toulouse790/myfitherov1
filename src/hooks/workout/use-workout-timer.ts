@@ -45,6 +45,7 @@ export const useWorkoutTimer = () => {
   return {
     duration,
     isRunning,
+    setIsRunning,
     startTimer,
     stopTimer,
     resetTimer
