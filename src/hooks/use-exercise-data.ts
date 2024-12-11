@@ -9,12 +9,26 @@ export const useExerciseData = (exerciseIds: string[]) => {
   useEffect(() => {
     const fetchExerciseNames = async () => {
       try {
-        if (!exerciseIds.length) return;
+        // Vérifie si exerciseIds est défini et non vide
+        if (!exerciseIds?.length) {
+          console.log('No exercise IDs provided');
+          return;
+        }
+
+        // Filtre les IDs undefined ou null
+        const validIds = exerciseIds.filter(id => id);
+        
+        if (validIds.length === 0) {
+          console.log('No valid exercise IDs found');
+          return;
+        }
+
+        console.log('Fetching exercises with IDs:', validIds);
 
         const { data, error } = await supabase
           .from('unified_exercises')
           .select('id, name')
-          .in('id', exerciseIds);
+          .in('id', validIds);
 
         if (error) throw error;
 
