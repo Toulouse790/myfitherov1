@@ -56,10 +56,10 @@ export const DetailedStats = () => {
       if (measurementsError) throw measurementsError;
 
       // Calculer les statistiques
-      const totalWeight = (sets || []).reduce((acc, set: ExerciseSet) => 
+      const totalWeight = (sets || []).reduce((acc: number, set: any) => 
         acc + ((set.weight || 0) * (set.reps || 0)), 0);
       
-      const totalCalories = (sets || []).reduce((acc, set: ExerciseSet) => 
+      const totalCalories = (sets || []).reduce((acc: number, set: any) => 
         acc + (set.calories_burned || 0), 0);
 
       // Grouper par groupe musculaire
