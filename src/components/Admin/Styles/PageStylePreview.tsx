@@ -5,8 +5,7 @@ import { WorkoutsPreview } from "./PagePreviews/WorkoutsPreview";
 import { NutritionPreview } from "./PagePreviews/NutritionPreview";
 import { StatsPreview } from "./PagePreviews/StatsPreview";
 import { SleepPreview } from "./PagePreviews/SleepPreview";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { DashboardPreview } from "./PagePreviews/DashboardPreview";
 
 interface PageStylePreviewProps {
   styles: StyleSettings;
@@ -14,29 +13,18 @@ interface PageStylePreviewProps {
 }
 
 export const PageStylePreview = ({ styles, pageName }: PageStylePreviewProps) => {
-  const { data: widgets } = useQuery({
-    queryKey: ['available-widgets'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('available_widgets')
-        .select('*')
-        .eq('category', pageName);
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-
   const getPageSpecificContent = () => {
     switch (pageName) {
+      case "home":
+        return <DashboardPreview styles={styles} />;
       case "workouts":
-        return <WorkoutsPreview styles={styles} widgets={widgets} />;
+        return <WorkoutsPreview styles={styles} />;
       case "nutrition":
-        return <NutritionPreview styles={styles} widgets={widgets} />;
+        return <NutritionPreview styles={styles} />;
       case "stats":
-        return <StatsPreview styles={styles} widgets={widgets} />;
+        return <StatsPreview styles={styles} />;
       case "sleep":
-        return <SleepPreview styles={styles} widgets={widgets} />;
+        return <SleepPreview styles={styles} />;
       default:
         return (
           <div className="space-y-4">
