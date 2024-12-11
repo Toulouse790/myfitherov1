@@ -7,11 +7,13 @@ import { FontSection } from "./FontSection";
 import { ColorSection } from "./ColorSection";
 import { ButtonSection } from "./ButtonSection";
 import { WidgetSection } from "./WidgetSection";
-import { StylePreview } from "./StylePreview";
+import { PageStylePreview } from "./PageStylePreview";
+import { PageSelector } from "./PageSelector";
 import type { StyleSettings } from "./types";
 
 export const StylesManager = () => {
   const { toast } = useToast();
+  const [selectedPage, setSelectedPage] = useState("home");
   const [styles, setStyles] = useState<StyleSettings>({
     primary_font: "Roboto",
     heading_font: "Montserrat",
@@ -31,9 +33,10 @@ export const StylesManager = () => {
   const saveStyles = async () => {
     try {
       const { error } = await supabase
-        .from('app_styles')
+        .from('admin_page_styles')
         .upsert({
           ...styles,
+          page_name: selectedPage,
           user_id: (await supabase.auth.getUser()).data.user?.id
         });
 
@@ -41,7 +44,7 @@ export const StylesManager = () => {
 
       toast({
         title: "Styles mis à jour",
-        description: "Les modifications ont été enregistrées avec succès.",
+        description: `Les modifications pour la page ${selectedPage} ont été enregistrées.`,
       });
     } catch (error) {
       toast({
@@ -54,6 +57,8 @@ export const StylesManager = () => {
 
   return (
     <div className="space-y-6">
+      <PageSelector selectedPage={selectedPage} onPageChange={setSelectedPage} />
+      
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-6">
           <Tabs defaultValue="fonts" className="w-full">
@@ -87,7 +92,7 @@ export const StylesManager = () => {
         </div>
 
         <div className="sticky top-6">
-          <StylePreview styles={styles} />
+          <PageStylePreview styles={styles} pageName={selectedPage} />
         </div>
       </div>
     </div>

@@ -9,3 +9,7 @@ export interface StyleSettings {
   widget_radius: string;
   widget_shadow: string;
 }
+
+export interface PageStyle extends StyleSettings {
+  page_name: string;
+}
