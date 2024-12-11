@@ -480,6 +480,50 @@ export type Database = {
           },
         ]
       }
+      muscle_recovery: {
+        Row: {
+          created_at: string | null
+          estimated_recovery_hours: number | null
+          id: string
+          intensity: number | null
+          last_trained_at: string | null
+          muscle_group: string
+          recovery_status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          estimated_recovery_hours?: number | null
+          id?: string
+          intensity?: number | null
+          last_trained_at?: string | null
+          muscle_group: string
+          recovery_status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          estimated_recovery_hours?: number | null
+          id?: string
+          intensity?: number | null
+          last_trained_at?: string | null
+          muscle_group?: string
+          recovery_status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "muscle_recovery_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
