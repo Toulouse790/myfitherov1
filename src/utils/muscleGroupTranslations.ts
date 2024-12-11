@@ -1,34 +1,29 @@
-export const translateMuscleGroup = (muscleId: string): string => {
+// Fonction pour traduire les noms de groupes musculaires du français vers l'anglais
+export const reverseTranslateMuscleGroup = (frenchName: string): string => {
   const translations: { [key: string]: string } = {
-    chest: 'pectoraux',
-    back: 'dos',
-    legs: 'jambes',
-    shoulders: 'épaules',
-    biceps: 'biceps',
-    triceps: 'triceps',
-    abdominaux: 'abdominaux',
-    abs: 'abdominaux',
-    jambes: 'jambes',
-    pectoraux: 'pectoraux',
-    dos: 'dos',
-    épaules: 'épaules'
+    'Pectoraux': 'chest',
+    'Dos': 'back',
+    'Jambes': 'legs',
+    'Épaules': 'shoulders',
+    'Biceps': 'biceps',
+    'Triceps': 'triceps',
+    'Abdominaux': 'abs'
   };
 
-  const lowerCaseId = muscleId?.toLowerCase();
-  console.log('Traduction du groupe musculaire:', muscleId, 'en:', translations[lowerCaseId] || muscleId);
-  return translations[lowerCaseId] || muscleId;
+  return translations[frenchName] || frenchName;
 };
 
-export const reverseTranslateMuscleGroup = (frenchName: string): string => {
-  const reverseTranslations: { [key: string]: string } = {
-    pectoraux: 'chest',
-    dos: 'back',
-    jambes: 'legs',
-    épaules: 'shoulders',
-    biceps: 'biceps',
-    triceps: 'triceps',
-    abdominaux: 'abs'
+// Fonction pour traduire les noms de groupes musculaires de l'anglais vers le français
+export const translateMuscleGroup = (englishName: string): string => {
+  const translations: { [key: string]: string } = {
+    'chest': 'Pectoraux',
+    'back': 'Dos',
+    'legs': 'Jambes',
+    'shoulders': 'Épaules',
+    'biceps': 'Biceps',
+    'triceps': 'Triceps',
+    'abs': 'Abdominaux'
   };
 
-  return reverseTranslations[frenchName.toLowerCase()] || frenchName;
+  return translations[englishName] || englishName;
 };

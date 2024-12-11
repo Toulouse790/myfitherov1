@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface Exercise {
   id: string;
@@ -23,6 +24,15 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         setIsLoading(true);
         console.log('Fetching exercises for muscle group:', muscleGroup);
 
+        if (!muscleGroup) {
+          setExercises([]);
+          return;
+        }
+
+        // Convertir le nom du groupe musculaire en français vers l'anglais pour la base de données
+        const englishMuscleGroup = reverseTranslateMuscleGroup(muscleGroup);
+        console.log('English muscle group:', englishMuscleGroup);
+
         let query = supabase
           .from('unified_exercises')
           .select(`
@@ -34,11 +44,8 @@ export const useExerciseSelection = (muscleGroup?: string) => {
             image_url,
             video_url
           `)
-          .eq('is_published', true);
-
-        if (muscleGroup) {
-          query = query.eq('muscle_group', muscleGroup.toLowerCase());
-        }
+          .eq('is_published', true)
+          .eq('muscle_group', englishMuscleGroup.toLowerCase());
 
         const { data, error } = await query;
 
