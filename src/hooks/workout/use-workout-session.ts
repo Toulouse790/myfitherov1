@@ -19,7 +19,7 @@ export const useWorkoutSession = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
   const [workoutStarted, setWorkoutStarted] = useState(false);
 
-  const { duration, isRunning, setIsRunning } = useWorkoutTimer(false);
+  const { duration, isRunning, startTimer, stopTimer } = useWorkoutTimer();
   const { exercises, isLoading, error } = useWorkoutExercises(sessionId);
   const { handleConfirmEndWorkout } = useWorkoutCompletion(sessionId, user?.id);
   const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
@@ -44,16 +44,17 @@ export const useWorkoutSession = () => {
 
     // Cleanup function
     return () => {
-      setIsRunning(false);
+      stopTimer();
       setWorkoutStarted(false);
     };
-  }, [location, setIsRunning]);
+  }, [location, stopTimer]);
 
   const handleExerciseClick = async (index: number) => {
     try {
       if (index >= 0 && index < exercises.length) {
         setCurrentExerciseIndex(index);
         setWorkoutStarted(true);
+        startTimer();
         
         if (!user || !sessionId) {
           console.error("No user or session ID available");
@@ -120,7 +121,8 @@ export const useWorkoutSession = () => {
     currentExerciseIndex,
     workoutStarted,
     recoveryStatus,
-    setIsRunning,
+    startTimer,
+    stopTimer,
     handleRegenerateWorkout: () => user && handleRegenerateWorkout(user.id),
     handleExerciseClick,
     handleConfirmEndWorkout

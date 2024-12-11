@@ -17,7 +17,8 @@ export const NextWorkoutDetail = () => {
     handleConfirmEndWorkout, 
     handleExerciseClick,
     isRunning,
-    setIsRunning
+    startTimer,
+    stopTimer
   } = useWorkoutSession();
   const [showSummary, setShowSummary] = useState(false);
   const [currentSet, setCurrentSet] = useState(1);
@@ -26,22 +27,18 @@ export const NextWorkoutDetail = () => {
 
   useEffect(() => {
     if (workoutStarted) {
-      console.log("Workout started, setting isRunning to true");
-      setIsRunning(true);
-    } else {
-      console.log("Workout not started or ended, setting isRunning to false");
-      setIsRunning(false);
+      console.log("Workout started");
+      startTimer();
     }
 
-    // Cleanup function
     return () => {
       console.log("Cleaning up workout session");
-      setIsRunning(false);
+      stopTimer();
     };
-  }, [workoutStarted, setIsRunning]);
+  }, [workoutStarted, startTimer, stopTimer]);
 
   const handleEndWorkout = () => {
-    setIsRunning(false);
+    stopTimer();
     setShowSummary(true);
   };
 
