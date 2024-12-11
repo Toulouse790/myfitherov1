@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { DetailedStats } from "../Workouts/WorkoutStats/DetailedStats";
 
 export const DashboardStats = () => {
   const { toast } = useToast();
@@ -27,7 +28,7 @@ export const DashboardStats = () => {
   const workoutsThisMonth = trainingStats?.length || 0;
   const plannedWorkouts = 16;
   const totalMinutes = trainingStats?.reduce((acc, stat) => acc + (stat.duration_minutes || 0), 0) || 0;
-  const totalCalories = Math.round((totalMinutes * 7.5)); // Estimation basique des calories
+  const totalCalories = Math.round((totalMinutes * 7.5));
 
   useEffect(() => {
     if (workoutsThisMonth > 24) {
@@ -41,7 +42,7 @@ export const DashboardStats = () => {
   }, [workoutsThisMonth, toast]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {workoutsThisMonth > 24 && (
         <Alert variant="destructive" className="mb-4">
           <AlertTriangle className="h-4 w-4" />
@@ -74,6 +75,8 @@ export const DashboardStats = () => {
           icon={<Heart className="w-5 h-5" />}
         />
       </div>
+
+      <DetailedStats />
     </div>
   );
 };
