@@ -17,33 +17,8 @@ export const ExerciseLibrary = () => {
   const { user } = useAuth();
 
   const handleExerciseSelection = (exerciseIds: string[]) => {
+    console.log("Handling exercise selection:", exerciseIds);
     setSelectedExercises(exerciseIds);
-    setShowSelection(false);
-    
-    toast({
-      title: `${exerciseIds.length} exercice(s) sélectionné(s)`,
-      description: "Vous pouvez sélectionner d'autres exercices ou commencer la séance",
-      action: (
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setShowSelection(false)}
-          >
-            Terminer
-          </Button>
-          <Button 
-            size="sm"
-            onClick={() => {
-              setSelectedMuscleGroup(null);
-              setShowSelection(true);
-            }}
-          >
-            Ajouter d'autres exercices
-          </Button>
-        </div>
-      ),
-    });
   };
 
   const handleStartWorkout = async () => {
@@ -93,8 +68,14 @@ export const ExerciseLibrary = () => {
   };
 
   const handleMuscleGroupSelect = (muscleGroup: string) => {
+    console.log("Selected muscle group:", muscleGroup);
     setSelectedMuscleGroup(muscleGroup);
     setShowSelection(true);
+  };
+
+  const handleClose = () => {
+    setShowSelection(false);
+    setSelectedMuscleGroup(null);
   };
 
   return (
@@ -113,7 +94,7 @@ export const ExerciseLibrary = () => {
           <ExerciseSelection
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelection}
-            onClose={() => setShowSelection(false)}
+            onClose={handleClose}
             muscleGroup={selectedMuscleGroup || ""}
           />
         ) : (
