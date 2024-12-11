@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { muscleGroups } from "../workoutConstants";
-import { useExerciseFetching } from "@/hooks/use-exercise-fetching";
-import { MuscleGroupCard } from "./MuscleGroupCard";
+import { MuscleGroupCard } from "../filters/MuscleGroupCard";
 
 interface MuscleGroupGridProps {
   searchQuery: string;
