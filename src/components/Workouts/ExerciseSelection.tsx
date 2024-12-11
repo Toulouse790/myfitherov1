@@ -20,6 +20,9 @@ export const ExerciseSelection = ({
 }: ExerciseSelectionProps) => {
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
   
+  console.log('Exercises loaded:', exercises);
+  console.log('For muscle group:', muscleGroup);
+
   const filteredExercises = exercises?.filter(exercise => 
     exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
