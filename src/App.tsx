@@ -10,12 +10,16 @@ import Sleep from "@/pages/Sleep";
 import TrainingPreferences from "@/pages/TrainingPreferences";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+import { SignIn } from "@/components/Auth/SignIn";
+import { SignUp } from "@/components/Auth/SignUp";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
