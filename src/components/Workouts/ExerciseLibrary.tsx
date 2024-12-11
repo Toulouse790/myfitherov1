@@ -6,6 +6,7 @@ import { Header } from "@/components/Layout/Header";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { useToast } from "@/hooks/use-toast";
 import { muscleGroups } from "./workoutConstants";
+import { useAuth } from "@/hooks/use-auth";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
@@ -13,6 +14,7 @@ export const ExerciseLibrary = () => {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleExerciseSelection = (exerciseIds: string[]) => {
     setSelectedExercises(exerciseIds);
@@ -45,6 +47,15 @@ export const ExerciseLibrary = () => {
   };
 
   const handleStartWorkout = async () => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour créer une séance",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (selectedExercises.length === 0) {
       toast({
         title: "Aucun exercice sélectionné",
@@ -58,6 +69,7 @@ export const ExerciseLibrary = () => {
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert({
+          user_id: user.id,
           exercises: selectedExercises,
           type: 'strength',
           status: 'in_progress'
