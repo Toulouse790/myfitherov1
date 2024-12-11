@@ -56,7 +56,8 @@ export const ButtonLibrary = ({ onSelectStyle }: ButtonLibraryProps) => {
       <CardContent>
         <div className="grid grid-cols-2 gap-4">
           {buttons?.map((button) => {
-            const IconComponent = Icons[button.icon_name as keyof typeof Icons];
+            // Get the icon component from lucide-react
+            const IconComponent = button.icon_name ? Icons[button.icon_name as keyof typeof Icons] : undefined;
             
             return (
               <Button

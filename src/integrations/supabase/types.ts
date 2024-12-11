@@ -227,6 +227,33 @@ export type Database = {
           },
         ]
       }
+      available_buttons: {
+        Row: {
+          category: string | null
+          created_at: string
+          icon_name: string | null
+          id: string
+          name: string
+          style: Json
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          icon_name?: string | null
+          id?: string
+          name: string
+          style: Json
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          icon_name?: string | null
+          id?: string
+          name?: string
+          style?: Json
+        }
+        Relationships: []
+      }
       cardio_exercises: {
         Row: {
           calories_burned: number | null
