@@ -42,7 +42,6 @@ export const ExerciseSets = ({
   } = useSetManagement({ exercises, sessionId, onExerciseComplete, currentExerciseIndex });
 
   const calculateCalories = (weight: number, reps: number): number => {
-    // Formule simplifiée : 0.15 calories par répétition par kg
     return Math.round(reps * weight * 0.15);
   };
 
