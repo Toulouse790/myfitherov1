@@ -9,12 +9,16 @@ import Stats from "@/pages/Stats";
 import Sleep from "@/pages/Sleep";
 import TrainingPreferences from "@/pages/TrainingPreferences";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
+import { SignIn } from "@/components/Auth/SignIn";
+import { SignUp } from "@/components/Auth/SignUp";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/workouts" element={<Workouts />} />
