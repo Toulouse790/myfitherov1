@@ -69,7 +69,7 @@ export const useWorkoutSession = () => {
     }
   };
 
-  const handleExerciseClick = (index: number) => {
+  const handleExerciseClick = async (index: number) => {
     console.log("Handling exercise click:", {
       index,
       currentExerciseIndex,
@@ -80,10 +80,60 @@ export const useWorkoutSession = () => {
       setCurrentExerciseIndex(index);
       setWorkoutStarted(true);
       
-      // Mettre à jour le statut de récupération pour le groupe musculaire
-      const muscleGroup = exercises[index].split('_')[0];
-      const intensity = 0.7; // À ajuster en fonction de la difficulté réelle
-      updateRecoveryStatus(muscleGroup, intensity, duration / 60);
+      if (user) {
+        try {
+          const exerciseName = exercises[index];
+          const intensity = 0.7; // À ajuster en fonction de la difficulté réelle
+          const estimatedRecoveryHours = 48; // Valeur par défaut de 48h
+
+          // Vérifier si un enregistrement existe déjà
+          const { data: existingRecord } = await supabase
+            .from('muscle_recovery')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('muscle_group', exerciseName)
+            .single();
+
+          if (existingRecord) {
+            // Mettre à jour l'enregistrement existant
+            const { error: updateError } = await supabase
+              .from('muscle_recovery')
+              .update({
+                last_trained_at: new Date().toISOString(),
+                intensity,
+                recovery_status: 'fatigued',
+                estimated_recovery_hours: estimatedRecoveryHours
+              })
+              .eq('user_id', user.id)
+              .eq('muscle_group', exerciseName);
+
+            if (updateError) throw updateError;
+          } else {
+            // Créer un nouvel enregistrement
+            const { error: insertError } = await supabase
+              .from('muscle_recovery')
+              .insert({
+                user_id: user.id,
+                muscle_group: exerciseName,
+                intensity,
+                recovery_status: 'fatigued',
+                estimated_recovery_hours: estimatedRecoveryHours
+              });
+
+            if (insertError) throw insertError;
+          }
+
+          // Mettre à jour le statut de récupération local
+          updateRecoveryStatus(exerciseName, intensity, duration / 60);
+        } catch (error) {
+          console.error('Error updating muscle recovery:', error);
+          toast({
+            title: "Erreur",
+            description: "Impossible de mettre à jour le statut de récupération",
+            variant: "destructive",
+          });
+        }
+      }
       
       console.log("Updated exercise index to:", index);
     } else {
