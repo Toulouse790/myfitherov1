@@ -4,10 +4,12 @@ import { Bookmark, Dumbbell, Target, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const WorkoutSuggestions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const suggestions = [
     {
@@ -41,24 +43,22 @@ export const WorkoutSuggestions = () => {
   ];
 
   const handleSuggestionClick = async (type: string) => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour créer une séance",
+        variant: "destructive",
+      });
+      navigate('/signin');
+      return;
+    }
+
     try {
       if (type === 'favorites') {
         toast({
           title: "Bientôt disponible",
           description: "Cette fonctionnalité sera disponible prochainement",
         });
-        return;
-      }
-
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté pour créer une séance",
-          variant: "destructive",
-        });
-        navigate('/signin');
         return;
       }
 
