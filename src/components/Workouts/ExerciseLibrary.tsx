@@ -1,22 +1,42 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Layout/Header";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { useToast } from "@/hooks/use-toast";
-import { muscleGroups } from "./workoutConstants";
+import { supabase } from "@/integrations/supabase/client";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showSelection, setShowSelection] = useState(false);
-  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleExerciseSelection = (exerciseIds: string[]) => {
-    console.log("Handling exercise selection:", exerciseIds);
     setSelectedExercises(exerciseIds);
+    setShowSelection(false);
+    
+    toast({
+      title: "Groupe musculaire ajouté",
+      description: "Veux-tu entraîner un autre groupe musculaire ?",
+      action: (
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowSelection(false)}
+          >
+            Non
+          </Button>
+          <Button 
+            size="sm"
+            onClick={() => setShowSelection(true)}
+          >
+            Oui
+          </Button>
+        </div>
+      ),
+    });
   };
 
   const handleStartWorkout = async () => {
@@ -32,15 +52,20 @@ export const ExerciseLibrary = () => {
     try {
       const { data: session, error } = await supabase
         .from('workout_sessions')
-        .insert({
-          exercises: selectedExercises,
-          type: 'strength',
-          status: 'in_progress'
-        })
+        .insert([
+          { 
+            exercises: selectedExercises,
+            type: 'strength',
+            status: 'in_progress'
+          }
+        ])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating workout:', error);
+        throw error;
+      }
 
       if (session) {
         navigate(`/workout/${session.id}`);
@@ -53,16 +78,6 @@ export const ExerciseLibrary = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const handleMuscleGroupSelect = (muscleGroup: string) => {
-    console.log("Selected muscle group:", muscleGroup);
-    setSelectedMuscleGroup(muscleGroup);
-    setShowSelection(true);
-  };
-
-  const handleClose = () => {
-    setShowSelection(false);
   };
 
   return (
@@ -81,22 +96,11 @@ export const ExerciseLibrary = () => {
           <ExerciseSelection
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelection}
-            onClose={handleClose}
-            muscleGroup={selectedMuscleGroup || ""}
+            onClose={() => setShowSelection(false)}
+            muscleGroup=""
           />
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {muscleGroups.map((group) => (
-              <Button
-                key={group.id}
-                variant="outline"
-                className="h-24 flex flex-col items-center justify-center gap-2"
-                onClick={() => handleMuscleGroupSelect(group.id)}
-              >
-                <span>{group.name}</span>
-              </Button>
-            ))}
-          </div>
+          <ExerciseLibrary />
         )}
       </div>
     </div>
