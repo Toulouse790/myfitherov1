@@ -24,15 +24,18 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#9b87f5",
+          // Vous pouvez modifier cette couleur
+          DEFAULT: "#9b87f5", // Couleur primaire (violet)
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#7E69AB",
+          // Vous pouvez modifier cette couleur
+          DEFAULT: "#7E69AB", // Couleur secondaire (violet foncé)
           foreground: "#FFFFFF",
         },
         accent: {
-          DEFAULT: "#F97316",
+          // Vous pouvez modifier cette couleur
+          DEFAULT: "#F97316", // Couleur d'accent (orange)
           foreground: "#FFFFFF",
         },
         destructive: {
