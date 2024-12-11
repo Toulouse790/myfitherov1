@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRecoveryData } from './utils/useRecoveryData';
 import { calculateRecoveryStatus, calculateRecoveryHours } from './utils/muscleGroupUtils';
-import { muscleRecoveryData } from '@/data/muscleRecoveryData';
+import { muscleRecoveryData } from '../../data/muscleRecoveryData';
 
 interface RecoveryStatus {
   muscleGroup: string;
