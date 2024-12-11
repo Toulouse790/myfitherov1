@@ -19,6 +19,31 @@ export const ExerciseLibrary = () => {
   const handleExerciseSelection = (exerciseIds: string[]) => {
     console.log("Handling exercise selection:", exerciseIds);
     setSelectedExercises(exerciseIds);
+    
+    toast({
+      title: `${exerciseIds.length} exercice(s) sélectionné(s)`,
+      description: "Vous pouvez sélectionner d'autres exercices ou commencer la séance",
+      action: (
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowSelection(false)}
+          >
+            Terminer
+          </Button>
+          <Button 
+            size="sm"
+            onClick={() => {
+              setSelectedMuscleGroup(null);
+              setShowSelection(true);
+            }}
+          >
+            Ajouter d'autres exercices
+          </Button>
+        </div>
+      ),
+    });
   };
 
   const handleStartWorkout = async () => {
@@ -75,7 +100,6 @@ export const ExerciseLibrary = () => {
 
   const handleClose = () => {
     setShowSelection(false);
-    setSelectedMuscleGroup(null);
   };
 
   return (
