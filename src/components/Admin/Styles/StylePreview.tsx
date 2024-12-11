@@ -5,105 +5,197 @@ import { StyleSettings } from "./types";
 
 interface StylePreviewProps {
   styles: StyleSettings;
+  pageName: string;
 }
 
-export const StylePreview = ({ styles }: StylePreviewProps) => {
+export const StylePreview = ({ styles, pageName }: StylePreviewProps) => {
+  const getPageSpecificContent = () => {
+    switch (pageName) {
+      case "workouts":
+        return (
+          <div className="space-y-4">
+            <h3 style={{ fontFamily: styles.heading_font }} className="text-2xl font-bold">
+              Mes entraînements
+            </h3>
+            <div className="grid gap-4">
+              <div
+                className="p-4 rounded"
+                style={{
+                  backgroundColor: styles.primary_color,
+                  borderRadius: styles.widget_radius,
+                  boxShadow: styles.widget_shadow,
+                }}
+              >
+                <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+                  Prochain entraînement
+                </p>
+                <Button
+                  style={{
+                    borderRadius: styles.button_radius,
+                    boxShadow: styles.button_shadow,
+                    backgroundColor: styles.accent_color,
+                  }}
+                  className="mt-2"
+                >
+                  Commencer
+                </Button>
+              </div>
+              <div
+                className="p-4 rounded"
+                style={{
+                  backgroundColor: styles.secondary_color,
+                  borderRadius: styles.widget_radius,
+                  boxShadow: styles.widget_shadow,
+                }}
+              >
+                <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+                  Historique des séances
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      case "nutrition":
+        return (
+          <div className="space-y-4">
+            <h3 style={{ fontFamily: styles.heading_font }} className="text-2xl font-bold">
+              Mon suivi nutritionnel
+            </h3>
+            <div
+              className="p-4 rounded"
+              style={{
+                backgroundColor: styles.primary_color,
+                borderRadius: styles.widget_radius,
+                boxShadow: styles.widget_shadow,
+              }}
+            >
+              <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+                Objectifs journaliers
+              </p>
+              <div className="mt-2 space-y-2">
+                <div className="bg-white/20 p-2 rounded">
+                  <p className="text-white text-sm">Calories: 2000 kcal</p>
+                </div>
+                <div className="bg-white/20 p-2 rounded">
+                  <p className="text-white text-sm">Protéines: 150g</p>
+                </div>
+              </div>
+            </div>
+            <div
+              className="p-4 rounded"
+              style={{
+                backgroundColor: styles.secondary_color,
+                borderRadius: styles.widget_radius,
+                boxShadow: styles.widget_shadow,
+              }}
+            >
+              <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+                Journal alimentaire
+              </p>
+              <Button
+                style={{
+                  borderRadius: styles.button_radius,
+                  boxShadow: styles.button_shadow,
+                  backgroundColor: styles.accent_color,
+                }}
+                className="mt-2"
+              >
+                Ajouter un repas
+              </Button>
+            </div>
+          </div>
+        );
+      case "stats":
+        return (
+          <div className="space-y-4">
+            <h3 style={{ fontFamily: styles.heading_font }} className="text-2xl font-bold">
+              Mes statistiques
+            </h3>
+            <div className="grid gap-4">
+              <div
+                className="p-4 rounded"
+                style={{
+                  backgroundColor: styles.primary_color,
+                  borderRadius: styles.widget_radius,
+                  boxShadow: styles.widget_shadow,
+                }}
+              >
+                <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+                  Progression mensuelle
+                </p>
+              </div>
+              <div
+                className="p-4 rounded"
+                style={{
+                  backgroundColor: styles.secondary_color,
+                  borderRadius: styles.widget_radius,
+                  boxShadow: styles.widget_shadow,
+                }}
+              >
+                <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+                  Records personnels
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      case "sleep":
+        return (
+          <div className="space-y-4">
+            <h3 style={{ fontFamily: styles.heading_font }} className="text-2xl font-bold">
+              Mon sommeil
+            </h3>
+            <div
+              className="p-4 rounded"
+              style={{
+                backgroundColor: styles.primary_color,
+                borderRadius: styles.widget_radius,
+                boxShadow: styles.widget_shadow,
+              }}
+            >
+              <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+                Qualité du sommeil
+              </p>
+              <div className="mt-2 bg-white/20 p-2 rounded">
+                <p className="text-white text-sm">8h de sommeil</p>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="space-y-4">
+            <h3 style={{ fontFamily: styles.heading_font }} className="text-xl font-bold">
+              Aperçu de {pageName}
+            </h3>
+            <div
+              className="p-4 rounded"
+              style={{
+                backgroundColor: styles.primary_color,
+                borderRadius: styles.widget_radius,
+                boxShadow: styles.widget_shadow,
+              }}
+            >
+              <p className="text-white" style={{ fontFamily: styles.primary_font }}>
+                Contenu exemple
+              </p>
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Eye className="h-5 w-5" />
-          Aperçu des modifications
+          Aperçu de la page {pageName}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Aperçu des polices */}
-        <div>
-          <h3 
-            style={{ fontFamily: styles.heading_font }}
-            className="text-2xl font-bold mb-2"
-          >
-            Titre d'exemple
-          </h3>
-          <p 
-            style={{ fontFamily: styles.primary_font }}
-            className="text-base"
-          >
-            Voici un exemple de texte utilisant la police principale. Il montre comment le contenu apparaîtra sur votre site.
-          </p>
-        </div>
-
-        {/* Aperçu des couleurs */}
-        <div className="grid gap-4">
-          <div 
-            style={{ backgroundColor: styles.primary_color }}
-            className="h-12 rounded flex items-center justify-center text-white"
-          >
-            Couleur primaire
-          </div>
-          <div 
-            style={{ backgroundColor: styles.secondary_color }}
-            className="h-12 rounded flex items-center justify-center text-white"
-          >
-            Couleur secondaire
-          </div>
-          <div 
-            style={{ backgroundColor: styles.accent_color }}
-            className="h-12 rounded flex items-center justify-center text-white"
-          >
-            Couleur d'accent
-          </div>
-        </div>
-
-        {/* Aperçu des boutons */}
-        <div className="space-y-4">
-          <div className="flex gap-2">
-            <Button
-              style={{
-                borderRadius: styles.button_radius,
-                boxShadow: styles.button_shadow,
-              }}
-            >
-              Bouton primaire
-            </Button>
-            <Button
-              variant="secondary"
-              style={{
-                borderRadius: styles.button_radius,
-                boxShadow: styles.button_shadow,
-              }}
-            >
-              Bouton secondaire
-            </Button>
-          </div>
-        </div>
-
-        {/* Aperçu des widgets */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <div
-            className="p-4 bg-white"
-            style={{
-              borderRadius: styles.widget_radius,
-              boxShadow: styles.widget_shadow,
-            }}
-          >
-            <h4 className="font-semibold mb-2">Widget d'exemple 1</h4>
-            <p className="text-sm text-gray-600">
-              Contenu du widget avec les nouveaux styles
-            </p>
-          </div>
-          <div
-            className="p-4 bg-white"
-            style={{
-              borderRadius: styles.widget_radius,
-              boxShadow: styles.widget_shadow,
-            }}
-          >
-            <h4 className="font-semibold mb-2">Widget d'exemple 2</h4>
-            <p className="text-sm text-gray-600">
-              Un autre exemple de widget
-            </p>
-          </div>
+      <CardContent>
+        <div className="p-4 border rounded-lg min-h-[400px] bg-gray-50">
+          {getPageSpecificContent()}
         </div>
       </CardContent>
     </Card>
