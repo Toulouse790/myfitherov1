@@ -125,7 +125,6 @@ export const useWorkoutSession = () => {
     currentExerciseIndex,
     workoutStarted,
     recoveryStatus,
-    setIsRunning,
     startTimer,
     stopTimer,
     handleRegenerateWorkout: () => user && handleRegenerateWorkout(user.id),
