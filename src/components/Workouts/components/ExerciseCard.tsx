@@ -1,10 +1,15 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
 
 interface Exercise {
   id: string;
   name: string;
-  media_url?: string | null;
+  muscle_group: string;
+  difficulty: string[];
+  location?: string[];
+  image_url?: string;
+  video_url?: string;
 }
 
 interface ExerciseCardProps {
@@ -15,33 +20,27 @@ interface ExerciseCardProps {
 
 export const ExerciseCard = ({ exercise, isSelected, onToggle }: ExerciseCardProps) => {
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow bg-card">
-      <CardHeader className="space-y-1">
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id={exercise.id}
-            checked={isSelected}
-            onCheckedChange={onToggle}
-          />
-          <label
-            htmlFor={exercise.id}
-            className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            {exercise.name}
-          </label>
+    <Card 
+      className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+        isSelected ? 'ring-2 ring-primary bg-primary/5' : ''
+      }`}
+      onClick={onToggle}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <h3 className="font-medium">{exercise.name}</h3>
+          <p className="text-sm text-muted-foreground capitalize">
+            {exercise.muscle_group}
+          </p>
         </div>
-      </CardHeader>
-      {exercise.media_url && (
-        <CardContent>
-          <div className="relative aspect-video mb-2 rounded-md overflow-hidden">
-            <img
-              src={exercise.media_url}
-              alt={`Démonstration de l'exercice ${exercise.name}`}
-              className="object-cover w-full h-full"
-            />
-          </div>
-        </CardContent>
-      )}
+        <Button 
+          variant={isSelected ? "default" : "ghost"} 
+          size="icon" 
+          className="shrink-0"
+        >
+          <Check className={`h-4 w-4 ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
+        </Button>
+      </div>
     </Card>
   );
 };
