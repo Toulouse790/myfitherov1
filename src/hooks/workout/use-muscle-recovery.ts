@@ -25,16 +25,13 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     if (!user || !muscleGroups.length) return;
 
     try {
-      // Ensure muscle groups are properly encoded
-      const encodedMuscleGroups = muscleGroups.map(group => encodeURIComponent(group));
-      
       console.log('Fetching recovery status for muscle groups:', muscleGroups);
       
       const { data: recoveryData, error } = await supabase
         .from('muscle_recovery')
         .select('*')
         .eq('user_id', user.id)
-        .in('muscle_group', muscleGroups); // Supabase handles encoding internally
+        .in('muscle_group', muscleGroups);
 
       if (error) throw error;
 
