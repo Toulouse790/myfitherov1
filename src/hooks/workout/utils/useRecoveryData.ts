@@ -23,10 +23,16 @@ export const useRecoveryData = () => {
     muscleGroups: string[],
     retryCount = 0
   ): Promise<RecoveryData[] | null> => {
-    if (!user) return null;
+    if (!user || !muscleGroups.length) return null;
     
     try {
-      const normalizedGroups = muscleGroups.map(normalizeMuscleGroup);
+      setIsLoading(true);
+      
+      // Normalize all muscle groups consistently
+      const normalizedGroups = muscleGroups
+        .filter(Boolean)
+        .map(group => normalizeMuscleGroup(group));
+      
       console.log('Normalized muscle groups for query:', normalizedGroups);
       
       const { data, error } = await supabase
@@ -53,6 +59,8 @@ export const useRecoveryData = () => {
         variant: "destructive",
       });
       return null;
+    } finally {
+      setIsLoading(false);
     }
   };
 
