@@ -25,8 +25,8 @@ export const useWorkoutSession = () => {
   const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
   const { isCardio } = useSessionManagement(sessionId);
   
+  // Normaliser les noms des groupes musculaires
   const muscleGroups = exercises.map(exercise => {
-    // Normaliser le nom de l'exercice pour la récupération
     return exercise.toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
@@ -46,12 +46,6 @@ export const useWorkoutSession = () => {
 
   const handleExerciseClick = async (index: number) => {
     try {
-      console.log("Handling exercise click:", {
-        index,
-        currentExerciseIndex,
-        exercises: exercises.length
-      });
-      
       if (index >= 0 && index < exercises.length) {
         setCurrentExerciseIndex(index);
         setWorkoutStarted(true);
@@ -67,7 +61,12 @@ export const useWorkoutSession = () => {
           .replace(/[\u0300-\u036f]/g, '')
           .replace(/\s+/g, '_');
 
-        // Mettre à jour le statut de récupération dans la base de données
+        console.log("Updating recovery status for:", {
+          exerciseName,
+          normalizedName,
+          userId: user.id
+        });
+
         const { error: recoveryError } = await supabase
           .from('muscle_recovery')
           .upsert({
@@ -91,7 +90,6 @@ export const useWorkoutSession = () => {
           return;
         }
 
-        // Mettre à jour l'état local
         await updateMuscleRecovery(exerciseName, 0.7, duration / 60);
         updateRecoveryStatus(exerciseName, 0.7, duration / 60);
       } else {

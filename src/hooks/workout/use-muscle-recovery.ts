@@ -22,8 +22,13 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
         
         // Normaliser les noms des groupes musculaires
         const normalizedGroups = muscleGroups.map(group => 
-          group.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          group.toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, '_')
         );
+        
+        console.log('Normalized muscle groups:', normalizedGroups);
         
         const recoveryData = await fetchRecoveryData(normalizedGroups);
         if (!recoveryData) {
@@ -31,10 +36,15 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
           return;
         }
 
+        console.log('Recovery data fetched:', recoveryData);
+
         const currentStatus = muscleGroups.map((group, index) => {
           const normalizedGroup = normalizedGroups[index];
           const lastTraining = recoveryData.find(d => 
-            d.muscle_group.normalize('NFD').replace(/[\u0300-\u036f]/g, '') === normalizedGroup
+            d.muscle_group.toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/\s+/g, '_') === normalizedGroup
           );
           
           const baseRecovery = muscleRecoveryData[group]?.recoveryTime || 48;
@@ -59,14 +69,18 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     };
 
     updateRecoveryStatus();
-  }, [muscleGroups]);
+  }, [muscleGroups, fetchRecoveryData]);
 
   const updateRecoveryStatus = async (
     muscleGroup: string,
     intensity: number,
     sessionDuration: number
   ) => {
-    const normalizedGroup = muscleGroup.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const normalizedGroup = muscleGroup.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '_');
+
     const baseRecovery = muscleRecoveryData[muscleGroup]?.recoveryTime || 48;
     const estimatedRecoveryHours = Math.round(baseRecovery * intensity);
     

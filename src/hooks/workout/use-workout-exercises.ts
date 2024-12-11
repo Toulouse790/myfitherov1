@@ -20,6 +20,8 @@ export const useWorkoutExercises = (sessionId: string | null) => {
         setIsLoading(true);
         setError(null);
 
+        console.log('Fetching exercises for session:', sessionId);
+
         const { data: session, error: sessionError } = await supabase
           .from('workout_sessions')
           .select('exercises')
@@ -33,9 +35,10 @@ export const useWorkoutExercises = (sessionId: string | null) => {
 
         if (session?.exercises) {
           // S'assurer que les noms d'exercices sont correctement décodés
-          const sanitizedExercises = session.exercises.map(exercise => 
-            decodeURIComponent(exercise)
-          );
+          const sanitizedExercises = session.exercises
+            .filter(Boolean)
+            .map(exercise => decodeURIComponent(exercise));
+            
           console.log('Fetched exercises:', sanitizedExercises);
           setExercises(sanitizedExercises);
         }
