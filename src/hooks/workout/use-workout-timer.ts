@@ -24,7 +24,7 @@ export const useWorkoutTimer = () => {
         clearInterval(interval);
       }
     };
-  }, [isRunning, duration]);
+  }, [isRunning]);
 
   const startTimer = useCallback(() => {
     console.log("Starting timer");
@@ -47,6 +47,6 @@ export const useWorkoutTimer = () => {
     isRunning,
     startTimer,
     stopTimer,
-    resetTimer,
+    resetTimer
   };
 };
