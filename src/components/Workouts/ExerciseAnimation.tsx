@@ -52,18 +52,24 @@ export const ExerciseAnimation = ({
   };
 
   const handleAddNewSet = async () => {
+    console.log("Attempting to add new set", {
+      currentSets: sets,
+      exerciseName,
+      sessionId
+    });
+
     try {
       await handleAddSet();
       setSets(prev => {
         const newSets = prev + 1;
-        console.log("Nouveau nombre de séries:", newSets);
+        console.log("New sets count:", newSets);
         onSetsChange(newSets);
         return newSets;
       });
       
       toast({
         title: "Série ajoutée",
-        description: "Une nouvelle série a été ajoutée à l'exercice",
+        description: `Une nouvelle série a été ajoutée à ${exerciseName}`,
       });
     } catch (error) {
       console.error("Erreur lors de l'ajout d'une série:", error);
