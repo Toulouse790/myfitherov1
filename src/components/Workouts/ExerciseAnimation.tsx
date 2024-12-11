@@ -5,6 +5,7 @@ import { ExerciseHeader } from "./ExerciseAnimation/ExerciseHeader";
 import { SetCard } from "./ExerciseAnimation/SetCard";
 import { RestTimer } from "./ExerciseAnimation/RestTimer";
 import { useSetManagement } from "@/hooks/workout/use-set-management";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseAnimationProps {
   reps: number;
@@ -23,7 +24,7 @@ interface ExerciseAnimationProps {
 export const ExerciseAnimation = ({
   reps: initialReps,
   restTime,
-  sets,
+  sets: initialSets,
   currentSet,
   isResting,
   sessionId,
@@ -34,6 +35,8 @@ export const ExerciseAnimation = ({
   onRestTimeChange,
 }: ExerciseAnimationProps) => {
   const [currentWeight, setCurrentWeight] = useState(initialWeight);
+  const [sets, setSets] = useState(initialSets);
+  const { toast } = useToast();
   const { repsPerSet, handleAddSet, handleRepsChange } = useSetManagement({
     sessionId,
     exerciseName,
@@ -47,6 +50,30 @@ export const ExerciseAnimation = ({
     }
   };
 
+  const handleAddNewSet = async () => {
+    try {
+      await handleAddSet();
+      setSets(prev => {
+        const newSets = prev + 1;
+        console.log("Nouveau nombre de séries:", newSets);
+        onSetsChange(newSets);
+        return newSets;
+      });
+      
+      toast({
+        title: "Série ajoutée",
+        description: "Une nouvelle série a été ajoutée à l'exercice",
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'ajout d'une série:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter une nouvelle série",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -57,7 +84,7 @@ export const ExerciseAnimation = ({
         <div className="space-y-6">
           <ExerciseHeader 
             exerciseName={exerciseName}
-            onAddSet={handleAddSet}
+            onAddSet={handleAddNewSet}
           />
           
           <div className="text-center mb-4">
@@ -73,7 +100,7 @@ export const ExerciseAnimation = ({
                 index={index}
                 currentSet={currentSet}
                 isResting={isResting}
-                reps={repsPerSet[index]}
+                reps={repsPerSet[index] || initialReps}
                 weight={currentWeight}
                 onRepsChange={(value) => handleRepsChange(index, value)}
                 onWeightChange={setCurrentWeight}
