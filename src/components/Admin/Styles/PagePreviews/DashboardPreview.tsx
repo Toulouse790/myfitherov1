@@ -1,8 +1,7 @@
-import { Card } from "@/components/ui/card";
 import { StyleSettings } from "../types";
-import { DashboardStats } from "@/components/Dashboard/DashboardStats";
-import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
-import { StrengthScore } from "@/components/Dashboard/StrengthScore";
+import { PreviewDashboardStats } from "./PreviewComponents/PreviewDashboardStats";
+import { PreviewTrendMetrics } from "./PreviewComponents/PreviewTrendMetrics";
+import { PreviewStrengthScore } from "./PreviewComponents/PreviewStrengthScore";
 
 interface DashboardPreviewProps {
   styles: StyleSettings;
@@ -23,7 +22,7 @@ export const DashboardPreview = ({ styles }: DashboardPreviewProps) => {
             boxShadow: styles.widget_shadow,
           }}
         >
-          <StrengthScore />
+          <PreviewStrengthScore />
         </div>
         <div
           className="p-4 rounded"
@@ -33,7 +32,7 @@ export const DashboardPreview = ({ styles }: DashboardPreviewProps) => {
             boxShadow: styles.widget_shadow,
           }}
         >
-          <TrendMetrics />
+          <PreviewTrendMetrics />
         </div>
       </div>
       <div
@@ -44,7 +43,7 @@ export const DashboardPreview = ({ styles }: DashboardPreviewProps) => {
           boxShadow: styles.widget_shadow,
         }}
       >
-        <DashboardStats />
+        <PreviewDashboardStats />
       </div>
     </div>
   );
