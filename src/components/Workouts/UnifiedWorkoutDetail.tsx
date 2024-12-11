@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { WorkoutHeader } from "./WorkoutDetail/WorkoutHeader";
 import { ExerciseSection } from "./WorkoutDetail/ExerciseSection";
 import { WorkoutNotes } from "./WorkoutDetail/WorkoutNotes";
+import { Loader2 } from "lucide-react";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -32,19 +33,36 @@ export const UnifiedWorkoutDetail = () => {
         return;
       }
 
+      if (!user) {
+        console.log("Utilisateur non authentifié, redirection vers /signin");
+        navigate('/signin');
+        return;
+      }
+
       try {
         setIsLoading(true);
         const { data: session, error } = await supabase
           .from('workout_sessions')
-          .select('exercises')
+          .select('exercises, user_id')
           .eq('id', sessionId)
           .single();
 
         if (error) throw error;
 
+        // Vérifier que la session appartient à l'utilisateur
+        if (session.user_id !== user.id) {
+          toast({
+            title: "Erreur",
+            description: "Vous n'avez pas accès à cette séance",
+            variant: "destructive",
+          });
+          navigate('/workouts');
+          return;
+        }
+
         if (session?.exercises) {
           const validExercises = session.exercises.filter(Boolean);
-          console.log("Valid exercises:", validExercises);
+          console.log("Exercices valides:", validExercises);
           setExercises(validExercises);
         }
       } catch (error) {
@@ -54,6 +72,7 @@ export const UnifiedWorkoutDetail = () => {
           description: "Impossible de charger la séance",
           variant: "destructive",
         });
+        navigate('/workouts');
       } finally {
         setIsLoading(false);
       }
@@ -66,7 +85,7 @@ export const UnifiedWorkoutDetail = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [sessionId, toast, navigate]);
+  }, [sessionId, toast, navigate, user]);
 
   const handleExerciseComplete = async (index: number) => {
     if (index < exercises.length - 1) {
@@ -141,15 +160,8 @@ export const UnifiedWorkoutDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="container max-w-4xl mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="animate-pulse space-y-4">
-              <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-              <div className="h-40 bg-gray-200 rounded"></div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="container max-w-4xl mx-auto px-4 py-8 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }

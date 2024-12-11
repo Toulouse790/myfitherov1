@@ -6,6 +6,7 @@ import { useExerciseTimers } from "./ExerciseSets/hooks/useExerciseTimers";
 import { useSetManagement } from "./ExerciseSets/hooks/useSetManagement";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface ExerciseSetsProps {
   exercises: string[];
@@ -22,6 +23,7 @@ export const ExerciseSets = ({
 }: ExerciseSetsProps) => {
   const { exerciseNames } = useExerciseData(exercises);
   const { toast } = useToast();
+  const { user } = useAuth();
   const [totalSets, setTotalSets] = useState<{ [key: string]: number }>({});
   
   const {
@@ -43,57 +45,60 @@ export const ExerciseSets = ({
 
   useEffect(() => {
     const fetchExerciseSets = async () => {
-      if (sessionId) {
-        try {
-          const { data, error } = await supabase
-            .from('exercise_sets')
-            .select('exercise_name, set_number')
-            .eq('session_id', sessionId);
+      if (!sessionId || !user) {
+        console.log("Session ID ou utilisateur manquant");
+        return;
+      }
 
-          if (error) throw error;
+      try {
+        const { data, error } = await supabase
+          .from('exercise_sets')
+          .select('exercise_name, set_number')
+          .eq('session_id', sessionId);
 
-          const setsCount: { [key: string]: number } = {};
-          data?.forEach(set => {
-            setsCount[set.exercise_name] = Math.max(
-              setsCount[set.exercise_name] || 0,
-              set.set_number
-            );
-          });
+        if (error) throw error;
 
-          // Si aucune série n'existe encore, on met 3 par défaut
-          exercises.forEach(exercise => {
-            if (!setsCount[exercise]) {
-              setsCount[exercise] = 3;
-            }
-          });
+        const setsCount: { [key: string]: number } = {};
+        data?.forEach(set => {
+          setsCount[set.exercise_name] = Math.max(
+            setsCount[set.exercise_name] || 0,
+            set.set_number
+          );
+        });
 
-          setTotalSets(setsCount);
-          console.log("Nombre de séries par exercice:", setsCount);
-        } catch (error) {
-          console.error('Erreur lors de la récupération des séries:', error);
-          exercises.forEach(exercise => {
-            setTotalSets(prev => ({ ...prev, [exercise]: 3 }));
-          });
-        }
+        exercises.forEach(exercise => {
+          if (!setsCount[exercise]) {
+            setsCount[exercise] = 3;
+          }
+        });
+
+        setTotalSets(setsCount);
+        console.log("Nombre de séries par exercice:", setsCount);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des séries:', error);
+        exercises.forEach(exercise => {
+          setTotalSets(prev => ({ ...prev, [exercise]: 3 }));
+        });
       }
     };
 
     fetchExerciseSets();
-  }, [sessionId, exercises]);
+  }, [sessionId, exercises, user]);
 
   const calculateCalories = (weight: number, reps: number): number => {
     return Math.round(reps * weight * 0.15);
   };
 
   const updateSessionStats = async () => {
-    if (sessionId) {
+    if (sessionId && user) {
       try {
         await supabase
           .from('workout_sessions')
           .update({ 
             total_rest_time_seconds: totalRestTime
           })
-          .eq('id', sessionId);
+          .eq('id', sessionId)
+          .eq('user_id', user.id);
       } catch (error) {
         console.error('Error updating session stats:', error);
         toast({
@@ -106,6 +111,15 @@ export const ExerciseSets = ({
   };
 
   const handleExerciseSetComplete = async (exerciseName: string, difficulty: string, notes: string) => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour enregistrer une série",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const weight = weights[exerciseName] || 0;
     const currentReps = reps[exerciseName] || 0;
     const calories = calculateCalories(weight, currentReps);
@@ -121,6 +135,10 @@ export const ExerciseSets = ({
     );
     await updateSessionStats();
   };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="space-y-6">
