@@ -634,7 +634,6 @@ export type Database = {
           image_url: string | null
           is_published: boolean | null
           location: string[] | null
-          media_type: string[] | null
           muscle_group: string
           name: string
           updated_at: string
@@ -647,7 +646,6 @@ export type Database = {
           image_url?: string | null
           is_published?: boolean | null
           location?: string[] | null
-          media_type?: string[] | null
           muscle_group: string
           name: string
           updated_at?: string
@@ -660,7 +658,6 @@ export type Database = {
           image_url?: string | null
           is_published?: boolean | null
           location?: string[] | null
-          media_type?: string[] | null
           muscle_group?: string
           name?: string
           updated_at?: string
