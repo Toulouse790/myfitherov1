@@ -12,9 +12,16 @@ export const useMuscleRecoveryManagement = (userId: string | undefined) => {
     if (!userId) return;
 
     try {
+      console.log('Updating muscle recovery for:', {
+        userId,
+        exerciseName,
+        intensity,
+        duration
+      });
+      
       const estimatedRecoveryHours = 48;
       
-      // Use upsert operation instead of insert
+      // Use upsert operation with onConflict option
       const { error } = await supabase
         .from('muscle_recovery')
         .upsert({
