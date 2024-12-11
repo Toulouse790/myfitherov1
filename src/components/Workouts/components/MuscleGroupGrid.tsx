@@ -30,7 +30,6 @@ export const MuscleGroupGrid = ({
           key={muscle.id}
           id={muscle.id}
           name={muscle.name}
-          image={muscle.image}
           isSelected={selectedId === muscle.id}
           onClick={() => handleClick(muscle.id)}
         />
