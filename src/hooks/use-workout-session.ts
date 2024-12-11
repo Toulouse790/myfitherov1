@@ -16,7 +16,15 @@ export const useWorkoutSession = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
   const [workoutStarted, setWorkoutStarted] = useState(false);
 
-  const { duration, isRunning, setIsRunning } = useWorkoutTimer();
+  const { 
+    duration, 
+    isRunning, 
+    setIsRunning, 
+    startTimer, 
+    stopTimer, 
+    resetTimer 
+  } = useWorkoutTimer();
+  
   const { exercises, isLoading, error } = useWorkoutExercises(sessionId);
   const { handleConfirmEndWorkout } = useWorkoutCompletion(sessionId, user?.id);
   const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
@@ -82,6 +90,9 @@ export const useWorkoutSession = () => {
     workoutStarted,
     recoveryStatus,
     setIsRunning,
+    startTimer,
+    stopTimer,
+    resetTimer,
     handleRegenerateWorkout: () => user && handleRegenerateWorkout(user.id),
     handleExerciseClick,
     handleConfirmEndWorkout
