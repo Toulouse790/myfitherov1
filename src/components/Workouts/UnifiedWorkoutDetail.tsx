@@ -45,7 +45,6 @@ export const UnifiedWorkoutDetail = () => {
         if (error) throw error;
 
         if (session?.exercises) {
-          // Filter out any null, undefined or invalid exercises
           const validExercises = session.exercises.filter(Boolean);
           console.log("Valid exercises:", validExercises);
           setExercises(validExercises);
