@@ -62,10 +62,10 @@ export const ExerciseSets = ({
     }
   };
 
-  const handleExerciseSetComplete = async (exerciseId: string) => {
+  const handleExerciseSetComplete = async (exerciseName: string) => {
     await handleSetComplete(
-      exerciseId,
-      exerciseNames[exerciseId] || "Exercice inconnu",
+      exerciseName,
+      exerciseNames[exerciseName] || exerciseName,
       setRestTimers,
       setIsExerciseTransition
     );
@@ -76,21 +76,21 @@ export const ExerciseSets = ({
     <div className="space-y-6">
       <SessionTimer sessionDuration={sessionDuration} />
 
-      {exercises.map((exerciseId) => (
-        <div key={exerciseId} className="space-y-4">
+      {exercises.map((exerciseName) => (
+        <div key={exerciseName} className="space-y-4">
           <ExerciseProgress 
-            completedSets={completedSets[exerciseId] || 0}
+            completedSets={completedSets[exerciseName] || 0}
             totalSets={3}
           />
           <ExerciseCard
-            exerciseName={exerciseNames[exerciseId] || "Chargement..."}
-            weight={weights[exerciseId] || 0}
-            reps={reps[exerciseId] || 0}
-            completedSets={completedSets[exerciseId] || 0}
-            restTimer={restTimers[exerciseId]}
-            onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseId]: value }))}
-            onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseId]: value }))}
-            onSetComplete={() => handleExerciseSetComplete(exerciseId)}
+            exerciseName={exerciseNames[exerciseName] || exerciseName}
+            weight={weights[exerciseName] || 0}
+            reps={reps[exerciseName] || 0}
+            completedSets={completedSets[exerciseName] || 0}
+            restTimer={restTimers[exerciseName]}
+            onWeightChange={(value) => setWeights(prev => ({ ...prev, [exerciseName]: value }))}
+            onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseName]: value }))}
+            onSetComplete={() => handleExerciseSetComplete(exerciseName)}
             isTransitioning={isExerciseTransition}
           />
         </div>
