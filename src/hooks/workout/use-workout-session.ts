@@ -42,7 +42,6 @@ export const useWorkoutSession = () => {
       setSessionId(session);
     }
 
-    // Cleanup function
     return () => {
       stopTimer();
       setWorkoutStarted(false);
