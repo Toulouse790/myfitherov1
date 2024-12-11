@@ -33,23 +33,14 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         const englishMuscleGroup = reverseTranslateMuscleGroup(muscleGroup);
         console.log('English muscle group:', englishMuscleGroup);
 
-        let query = supabase
+        const { data, error } = await supabase
           .from('unified_exercises')
-          .select(`
-            id,
-            name,
-            muscle_group,
-            difficulty,
-            is_published,
-            image_url,
-            video_url
-          `)
+          .select('*')
           .eq('is_published', true)
           .eq('muscle_group', englishMuscleGroup.toLowerCase());
 
-        const { data, error } = await query;
-
         if (error) {
+          console.error('Error fetching exercises:', error);
           throw error;
         }
 
