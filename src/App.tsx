@@ -8,7 +8,7 @@ import Nutrition from "@/pages/Nutrition";
 import Stats from "@/pages/Stats";
 import Sleep from "@/pages/Sleep";
 import TrainingPreferences from "@/pages/TrainingPreferences";
-import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
+import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 function App() {
@@ -20,8 +20,8 @@ function App() {
         <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
         <Route 
-          path="/workouts/session/:sessionId" 
-          element={<ProtectedRoute><NextWorkoutDetail /></ProtectedRoute>} 
+          path="/workout/:sessionId" 
+          element={<ProtectedRoute><UnifiedWorkoutDetail /></ProtectedRoute>} 
         />
         <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
         <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />

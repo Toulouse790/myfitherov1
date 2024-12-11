@@ -48,7 +48,6 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
         description: "Votre séance d'entraînement a été créée avec succès",
       });
 
-      // Utiliser la nouvelle route simplifiée
       navigate(`/workout/${session.id}`);
     } catch (error) {
       console.error('Error starting workout:', error);
