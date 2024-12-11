@@ -19,24 +19,16 @@ export const ExerciseSelection = ({
   searchQuery = ""
 }: ExerciseSelectionProps) => {
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
-  
-  console.log('Exercises loaded:', exercises);
-  console.log('For muscle group:', muscleGroup);
-  console.log('Currently selected exercises:', selectedExercises);
 
   const filteredExercises = exercises?.filter(exercise => 
     exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleExerciseToggle = (exerciseName: string) => {
-    console.log('Toggling exercise:', exerciseName);
-    console.log('Current selection:', selectedExercises);
-    
     const newSelection = selectedExercises.includes(exerciseName)
       ? selectedExercises.filter(name => name !== exerciseName)
       : [...selectedExercises, exerciseName];
     
-    console.log('New selection:', newSelection);
     onSelectionChange(newSelection);
   };
 
