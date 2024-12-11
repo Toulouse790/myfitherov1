@@ -38,24 +38,38 @@ export const SetCard = ({
     if (!user) return;
 
     try {
-      // Utilisation de upsert avec onConflict pour gérer les doublons
-      const { error } = await supabase
+      const { data: existingWeight, error: fetchError } = await supabase
+        .from('user_exercise_weights')
+        .select('weight')
+        .eq('user_id', user.id)
+        .eq('exercise_name', exerciseName)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        console.error('Error fetching weight:', fetchError);
+        throw fetchError;
+      }
+
+      const { error: upsertError } = await supabase
         .from('user_exercise_weights')
         .upsert({
           user_id: user.id,
           exercise_name: exerciseName,
           weight: weight,
           last_used_weight: weight,
-          last_used_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,exercise_name',
-          ignoreDuplicates: false
+          last_used_at: new Date().toISOString(),
+          personal_record: existingWeight?.weight && weight > existingWeight.weight ? weight : undefined
         });
 
-      if (error) throw error;
+      if (upsertError) throw upsertError;
 
       setIsCompleted(true);
       onSetComplete();
+
+      toast({
+        title: "Série complétée !",
+        description: `Poids enregistré : ${weight}kg`,
+      });
     } catch (error) {
       console.error('Error saving weight:', error);
       toast({
