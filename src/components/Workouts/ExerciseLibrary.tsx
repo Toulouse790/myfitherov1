@@ -51,8 +51,8 @@ export const ExerciseLibrary = () => {
 
       if (exerciseError) throw exerciseError;
 
-      const exerciseNamesList = exerciseNames.map(ex => ex.name);
-      console.log("Creating workout session with exercises:", exerciseNamesList);
+      const sanitizedExerciseNames = exerciseNames?.map(ex => ex.name) || [];
+      console.log("Creating workout session with exercises:", sanitizedExerciseNames);
 
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
@@ -61,7 +61,7 @@ export const ExerciseLibrary = () => {
             user_id: user.id,
             type: 'strength', 
             status: 'in_progress',
-            exercises: exerciseNamesList,
+            exercises: sanitizedExerciseNames,
             initial_energy_level: 'good'
           }
         ])

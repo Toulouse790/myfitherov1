@@ -34,10 +34,9 @@ export const useWorkoutExercises = (sessionId: string | null) => {
         }
 
         if (session?.exercises) {
-          // S'assurer que les noms d'exercices sont correctement décodés
           const sanitizedExercises = session.exercises
             .filter(Boolean)
-            .map(exercise => decodeURIComponent(exercise));
+            .map(exercise => exercise.trim());
             
           console.log('Fetched exercises:', sanitizedExercises);
           setExercises(sanitizedExercises);
