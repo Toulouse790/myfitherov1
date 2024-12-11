@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useWorkoutSession } from "@/hooks/workout/use-workout-session";
 import { useState, useEffect } from "react";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { NoSessionView } from "./NextWorkoutDetail/NoSessionView";
