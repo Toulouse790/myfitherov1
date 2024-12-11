@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { WorkoutHeader } from "./WorkoutDetail/WorkoutHeader";
 import { ExerciseSection } from "./WorkoutDetail/ExerciseSection";
 import { WorkoutNotes } from "./WorkoutDetail/WorkoutNotes";
+import { Timer } from "lucide-react";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -44,7 +45,10 @@ export const UnifiedWorkoutDetail = () => {
         if (error) throw error;
 
         if (session?.exercises) {
-          setExercises(session.exercises.filter(Boolean));
+          // Filter out any null, undefined or invalid exercises
+          const validExercises = session.exercises.filter(Boolean);
+          console.log("Valid exercises:", validExercises);
+          setExercises(validExercises);
           setNotes(session.notes || "");
         }
       } catch (error) {

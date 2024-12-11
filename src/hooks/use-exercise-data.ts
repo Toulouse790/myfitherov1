@@ -9,14 +9,14 @@ export const useExerciseData = (exerciseIds: string[]) => {
   useEffect(() => {
     const fetchExerciseNames = async () => {
       try {
-        // Vérifie si exerciseIds est défini et non vide
+        // Check if exerciseIds is defined and not empty
         if (!exerciseIds?.length) {
           console.log('No exercise IDs provided');
           return;
         }
 
-        // Filtre les IDs undefined ou null
-        const validIds = exerciseIds.filter(id => id);
+        // Filter out any undefined or null IDs
+        const validIds = exerciseIds.filter(id => id && typeof id === 'string');
         
         if (validIds.length === 0) {
           console.log('No valid exercise IDs found');
@@ -37,6 +37,7 @@ export const useExerciseData = (exerciseIds: string[]) => {
           return acc;
         }, {});
 
+        console.log('Fetched exercise names:', namesMap);
         setExerciseNames(namesMap);
       } catch (error) {
         console.error('Error fetching exercise names:', error);
