@@ -28,15 +28,19 @@ export const NextWorkoutDetail = () => {
   useEffect(() => {
     if (workoutStarted) {
       console.log("Workout started, starting timer");
-      startTimer();
+      startTimer && startTimer();
     } else {
       console.log("Workout not started or ended, stopping timer");
-      stopTimer();
+      stopTimer && stopTimer();
     }
+
+    return () => {
+      stopTimer && stopTimer();
+    };
   }, [workoutStarted, startTimer, stopTimer]);
 
   const handleEndWorkout = () => {
-    stopTimer();
+    stopTimer && stopTimer();
     setShowSummary(true);
   };
 
