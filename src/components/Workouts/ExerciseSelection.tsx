@@ -58,12 +58,29 @@ export const ExerciseSelection = ({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">
-          Sélectionnez vos exercices ({filteredExercises.length})
-        </h2>
-        <Button variant="outline" onClick={onClose}>
-          Retour aux groupes musculaires
-        </Button>
+        <div>
+          <h2 className="text-lg font-semibold">
+            Sélectionnez vos exercices ({filteredExercises.length})
+          </h2>
+          {selectedExercises.length > 0 && (
+            <p className="text-sm text-muted-foreground">
+              {selectedExercises.length} exercice(s) sélectionné(s)
+            </p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={onClose}>
+            Retour aux groupes musculaires
+          </Button>
+          {selectedExercises.length > 0 && (
+            <Button onClick={() => {
+              onSelectionChange(selectedExercises);
+              onClose();
+            }}>
+              Valider la sélection
+            </Button>
+          )}
+        </div>
       </div>
       
       <div className="grid gap-4 sm:grid-cols-2">

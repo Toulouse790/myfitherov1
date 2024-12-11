@@ -21,8 +21,8 @@ export const ExerciseLibrary = () => {
     setShowSelection(false);
     
     toast({
-      title: "Groupe musculaire ajouté",
-      description: "Veux-tu entraîner un autre groupe musculaire ?",
+      title: `${exerciseIds.length} exercice(s) sélectionné(s)`,
+      description: "Vous pouvez sélectionner d'autres exercices ou commencer la séance",
       action: (
         <div className="flex gap-2">
           <Button 
@@ -30,7 +30,7 @@ export const ExerciseLibrary = () => {
             size="sm"
             onClick={() => setShowSelection(false)}
           >
-            Non
+            Terminer
           </Button>
           <Button 
             size="sm"
@@ -39,7 +39,7 @@ export const ExerciseLibrary = () => {
               setShowSelection(true);
             }}
           >
-            Oui
+            Ajouter d'autres exercices
           </Button>
         </div>
       ),
