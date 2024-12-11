@@ -11,7 +11,7 @@ interface RecoveryStatus {
 
 export const useMuscleRecovery = (muscleGroups: string[]) => {
   const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus[]>([]);
-  const { fetchRecoveryData, updateRecoveryData, isLoading } = useRecoveryData();
+  const { isLoading, fetchRecoveryData, updateRecoveryData } = useRecoveryData();
 
   useEffect(() => {
     const updateRecoveryStatus = async () => {
@@ -66,7 +66,6 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     intensity: number,
     sessionDuration: number
   ) => {
-    // Normalize the muscle group name before saving
     const normalizedGroup = muscleGroup.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const baseRecovery = muscleRecoveryData[muscleGroup]?.recoveryTime || 48;
     const estimatedRecoveryHours = calculateRecoveryHours(baseRecovery, intensity, sessionDuration);

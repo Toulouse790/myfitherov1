@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { normalizeMuscleGroup } from './muscleGroupUtils';
@@ -9,12 +9,12 @@ interface RecoveryStatus {
   remainingHours: number;
 }
 
-export const useRecoveryData = (muscleGroups: string[]) => {
+export const useRecoveryData = () => {
   const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
-  const fetchRecoveryData = async () => {
+  const fetchRecoveryData = async (muscleGroups: string[]) => {
     if (!user || !muscleGroups.length) {
       console.log('No user or muscle groups provided');
       return [];
@@ -52,45 +52,38 @@ export const useRecoveryData = (muscleGroups: string[]) => {
     }
   };
 
-  const updateRecoveryStatus = (data: any[]) => {
-    const currentTime = new Date().getTime();
-    const updatedStatus = muscleGroups.map(group => {
-      const normalizedGroup = normalizeMuscleGroup(group);
-      const recoveryData = data.find(d => d.muscle_group === normalizedGroup);
+  const updateRecoveryData = async (
+    muscleGroup: string,
+    intensity: number,
+    estimatedRecoveryHours: number
+  ) => {
+    if (!user) return false;
 
-      if (!recoveryData) {
-        return {
-          muscleGroup: group,
-          status: 'recovered',
-          remainingHours: 0
-        };
-      }
+    try {
+      const normalizedGroup = normalizeMuscleGroup(muscleGroup);
+      
+      const { error } = await supabase
+        .from('muscle_recovery')
+        .upsert({
+          user_id: user.id,
+          muscle_group: normalizedGroup,
+          intensity,
+          estimated_recovery_hours: estimatedRecoveryHours,
+          last_trained_at: new Date().toISOString()
+        });
 
-      const lastTrainedTime = new Date(recoveryData.last_trained_at).getTime();
-      const recoveryTimeMs = recoveryData.estimated_recovery_hours * 60 * 60 * 1000;
-      const remainingTimeMs = Math.max(0, (lastTrainedTime + recoveryTimeMs) - currentTime);
-      const remainingHours = Math.ceil(remainingTimeMs / (60 * 60 * 1000));
-
-      return {
-        muscleGroup: group,
-        status: remainingHours > 0 ? 'fatigued' : 'recovered',
-        remainingHours
-      };
-    });
-
-    console.log('Updated recovery status:', updatedStatus);
-    setRecoveryStatus(updatedStatus);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error updating recovery data:', error);
+      return false;
+    }
   };
 
-  useEffect(() => {
-    const loadRecoveryData = async () => {
-      console.log('Fetching recovery data for muscle groups:', muscleGroups);
-      const data = await fetchRecoveryData();
-      updateRecoveryStatus(data);
-    };
-
-    loadRecoveryData();
-  }, [user, muscleGroups.join(',')]);
-
-  return { recoveryStatus, isLoading };
+  return {
+    recoveryStatus,
+    isLoading,
+    fetchRecoveryData,
+    updateRecoveryData
+  };
 };
