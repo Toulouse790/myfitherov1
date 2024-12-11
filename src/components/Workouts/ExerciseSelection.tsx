@@ -25,10 +25,14 @@ export const ExerciseSelection = ({
   );
 
   const handleExerciseToggle = (exerciseName: string) => {
+    console.log('Toggle exercise:', exerciseName);
+    console.log('Current selected:', selectedExercises);
+    
     const newSelection = selectedExercises.includes(exerciseName)
       ? selectedExercises.filter(name => name !== exerciseName)
       : [...selectedExercises, exerciseName];
     
+    console.log('New selection:', newSelection);
     onSelectionChange(newSelection);
   };
 
@@ -72,7 +76,7 @@ export const ExerciseSelection = ({
           </Button>
           {selectedExercises.length > 0 && (
             <Button onClick={() => {
-              onSelectionChange(selectedExercises);
+              console.log('Validating selection:', selectedExercises);
               onClose();
             }}>
               Valider la sélection
