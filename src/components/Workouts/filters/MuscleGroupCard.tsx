@@ -6,8 +6,6 @@ interface MuscleGroupCardProps {
   name: string;
   image: string;
   isSelected: boolean;
-  selectedExercises: number;
-  totalExercises: number;
   onClick: () => void;
 }
 

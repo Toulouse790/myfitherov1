@@ -13,20 +13,11 @@ export const MuscleGroupGrid = ({
   onMuscleGroupClick 
 }: MuscleGroupGridProps) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const { exerciseCounts, fetchExercises } = useExerciseFetching();
-
-  useEffect(() => {
-    fetchExercises();
-  }, []);
 
   const handleClick = (muscleId: string) => {
     console.log('Muscle group clicked:', muscleId);
     setSelectedId(muscleId);
     onMuscleGroupClick(muscleId);
-  };
-
-  const getMuscleGroupCount = (muscleId: string): number => {
-    return exerciseCounts[muscleId.toLowerCase()] || 0;
   };
 
   const filteredMuscleGroups = muscleGroups.filter(group => 
@@ -40,8 +31,8 @@ export const MuscleGroupGrid = ({
           key={muscle.id}
           id={muscle.id}
           name={muscle.name}
+          image={muscle.image}
           isSelected={selectedId === muscle.id}
-          exerciseCount={getMuscleGroupCount(muscle.id)}
           onClick={() => handleClick(muscle.id)}
         />
       ))}
