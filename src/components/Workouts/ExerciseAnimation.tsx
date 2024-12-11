@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExerciseHeader } from "./ExerciseAnimation/ExerciseHeader";
@@ -7,6 +7,7 @@ import { RestTimer } from "./ExerciseAnimation/RestTimer";
 import { useSetManagement } from "@/hooks/workout/use-set-management";
 import { useToast } from "@/hooks/use-toast";
 import { useExerciseData } from "./ExerciseSets/useExerciseData";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ExerciseAnimationProps {
   reps: number;
@@ -45,6 +46,32 @@ export const ExerciseAnimation = ({
     onSetsChange,
   });
 
+  useEffect(() => {
+    const loadExerciseSets = async () => {
+      if (sessionId) {
+        try {
+          const { data: existingSets, error } = await supabase
+            .from('exercise_sets')
+            .select('set_number')
+            .eq('session_id', sessionId)
+            .eq('exercise_name', exerciseName);
+
+          if (error) throw error;
+
+          if (existingSets && existingSets.length > 0) {
+            const maxSetNumber = Math.max(...existingSets.map(set => set.set_number));
+            setSets(maxSetNumber);
+            onSetsChange(maxSetNumber);
+          }
+        } catch (error) {
+          console.error('Erreur lors du chargement des séries:', error);
+        }
+      }
+    };
+
+    loadExerciseSets();
+  }, [sessionId, exerciseName, onSetsChange]);
+
   const handleRestTimeChange = (adjustment: number) => {
     if (adjustment !== 0 && onRestTimeChange) {
       onRestTimeChange(adjustment);
@@ -52,7 +79,7 @@ export const ExerciseAnimation = ({
   };
 
   const handleAddNewSet = async () => {
-    console.log("Attempting to add new set", {
+    console.log("Tentative d'ajout d'une nouvelle série", {
       currentSets: sets,
       exerciseName,
       sessionId
@@ -62,7 +89,7 @@ export const ExerciseAnimation = ({
       await handleAddSet();
       setSets(prev => {
         const newSets = prev + 1;
-        console.log("New sets count:", newSets);
+        console.log("Nouveau nombre de séries:", newSets);
         onSetsChange(newSets);
         return newSets;
       });
