@@ -1191,6 +1191,12 @@ export type Database = {
         }
         Returns: number
       }
+      delete_workout_session: {
+        Args: {
+          session_id: string
+        }
+        Returns: undefined
+      }
       get_ai_usage_stats: {
         Args: {
           start_date?: string

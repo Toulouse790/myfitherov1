@@ -64,13 +64,22 @@ export const WorkoutSuggestions = () => {
 
       if (sessionError) throw sessionError;
 
-      // Si une session existe, rediriger vers celle-ci
+      // Si une session existe, supprimer l'ancienne session
       if (existingSessions && existingSessions.length > 0) {
-        navigate(`/workout/${existingSessions[0].id}`);
-        return;
+        const { error: deleteError } = await supabase
+          .rpc('delete_workout_session', {
+            session_id: existingSessions[0].id
+          });
+
+        if (deleteError) throw deleteError;
+
+        toast({
+          title: "Session précédente supprimée",
+          description: "Une nouvelle session va être créée",
+        });
       }
 
-      // Sinon, créer une nouvelle session
+      // Créer une nouvelle session
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert({
