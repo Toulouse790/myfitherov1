@@ -1,11 +1,12 @@
 import { Card } from "@/components/ui/card";
-import { Trophy, TrendingUp } from "lucide-react";
+import { Trophy, TrendingUp, TrendingDown } from "lucide-react";
 
 interface MetricCardProps {
   label: string;
   value: string;
   previousValue?: string;
   isRecord?: boolean;
+  color?: string;
   onClick?: () => void;
 }
 
@@ -14,6 +15,7 @@ export const MetricCard = ({
   value,
   previousValue,
   isRecord,
+  color = "text-primary",
   onClick,
 }: MetricCardProps) => {
   const improvement = previousValue ? Number(value) - Number(previousValue) : 0;
@@ -28,7 +30,7 @@ export const MetricCard = ({
     >
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">{label}</span>
+          <span className={`text-sm ${color}`}>{label}</span>
           {isRecord && <Trophy className="w-4 h-4 text-yellow-500" />}
         </div>
         
@@ -38,9 +40,11 @@ export const MetricCard = ({
           <div className={`flex items-center text-sm ${
             hasImprovement ? 'text-green-500' : 'text-red-500'
           }`}>
-            <TrendingUp className={`w-4 h-4 mr-1 ${
-              !hasImprovement && 'rotate-180'
-            }`} />
+            {hasImprovement ? (
+              <TrendingUp className="w-4 h-4 mr-1" />
+            ) : (
+              <TrendingDown className="w-4 h-4 mr-1" />
+            )}
             {hasImprovement ? '+' : ''}{improvement}
           </div>
         )}
