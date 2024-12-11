@@ -50,6 +50,27 @@ export const WorkoutSuggestions = () => {
         return;
       }
 
+      // Vérifier si une session en cours existe déjà
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const { data: existingSessions, error: sessionError } = await supabase
+        .from('workout_sessions')
+        .select('id')
+        .gte('created_at', today.toISOString())
+        .eq('status', 'in_progress')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (sessionError) throw sessionError;
+
+      // Si une session existe, rediriger vers celle-ci
+      if (existingSessions && existingSessions.length > 0) {
+        navigate(`/workout/${existingSessions[0].id}`);
+        return;
+      }
+
+      // Sinon, créer une nouvelle session
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert({
