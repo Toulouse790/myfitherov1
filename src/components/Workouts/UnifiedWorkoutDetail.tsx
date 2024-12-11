@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Timer, Plus } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ExerciseSets } from "./ExerciseSets";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
+import { WorkoutHeader } from "./WorkoutDetail/WorkoutHeader";
+import { ExerciseSection } from "./WorkoutDetail/ExerciseSection";
+import { WorkoutNotes } from "./WorkoutDetail/WorkoutNotes";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -45,7 +44,6 @@ export const UnifiedWorkoutDetail = () => {
         if (error) throw error;
 
         if (session?.exercises) {
-          console.log("Exercices récupérés:", session.exercises);
           setExercises(session.exercises.filter(Boolean));
           setNotes(session.notes || "");
         }
@@ -63,7 +61,6 @@ export const UnifiedWorkoutDetail = () => {
 
     fetchSessionData();
 
-    // Timer pour la durée de la séance
     const interval = setInterval(() => {
       setSessionDuration(prev => prev + 1);
     }, 1000);
@@ -160,22 +157,7 @@ export const UnifiedWorkoutDetail = () => {
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour
-        </Button>
-
-        <div className="flex items-center gap-2">
-          <Timer className="w-4 h-4 text-primary" />
-          <span className="font-mono">
-            {Math.floor(sessionDuration / 60)}:{(sessionDuration % 60).toString().padStart(2, '0')}
-          </span>
-        </div>
-      </div>
+      <WorkoutHeader sessionDuration={sessionDuration} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -184,24 +166,10 @@ export const UnifiedWorkoutDetail = () => {
       >
         <Card>
           <CardContent className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">
-                {exercises[currentExerciseIndex]}
-              </h2>
-              <Button
-                variant="outline"
-                onClick={handleAddSet}
-                className="flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Ajouter une série
-              </Button>
-            </div>
-
-            <ExerciseSets
-              exercises={[exercises[currentExerciseIndex]]}
+            <ExerciseSection
+              exerciseName={exercises[currentExerciseIndex]}
+              onAddSet={handleAddSet}
               onExerciseComplete={() => handleExerciseComplete(currentExerciseIndex)}
-              currentExerciseIndex={0}
               sessionId={sessionId}
             />
 
@@ -214,15 +182,7 @@ export const UnifiedWorkoutDetail = () => {
               </div>
             )}
 
-            <div className="space-y-2">
-              <h3 className="text-gray-900 font-medium">Notes</h3>
-              <Textarea
-                placeholder="Ajouter des notes..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="bg-white border text-gray-900 placeholder:text-gray-500"
-              />
-            </div>
+            <WorkoutNotes notes={notes} onChange={setNotes} />
           </CardContent>
         </Card>
       </motion.div>
