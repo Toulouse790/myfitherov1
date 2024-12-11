@@ -15,27 +15,44 @@ export const useExerciseTable = () => {
   const { data: exercises = [], isLoading } = useQuery({
     queryKey: ['exercises', publishFilter],
     queryFn: async () => {
-      let query = supabase.from('unified_exercises').select('*');
-      
-      if (publishFilter !== null) {
-        query = query.eq('is_published', publishFilter);
-      }
+      try {
+        let query = supabase.from('unified_exercises').select('*');
+        
+        if (publishFilter !== null) {
+          query = query.eq('is_published', publishFilter);
+        }
 
-      const { data, error } = await query;
+        const { data, error } = await query;
 
-      if (error) {
-        console.error('Error fetching exercises:', error);
+        if (error) {
+          console.error('Error fetching exercises:', error);
+          toast({
+            title: "Erreur",
+            description: "Impossible de charger les exercices. Veuillez réessayer.",
+            variant: "destructive",
+          });
+          return [];
+        }
+
+        if (!data) {
+          console.log('No exercises found');
+          return [];
+        }
+
+        console.log('Fetched exercises:', data);
+        return data;
+      } catch (error) {
+        console.error('Network error fetching exercises:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de charger les exercices",
+          title: "Erreur réseau",
+          description: "Impossible de se connecter au serveur. Vérifiez votre connexion.",
           variant: "destructive",
         });
         return [];
       }
-
-      console.log('Fetched exercises:', data);
-      return data || [];
     },
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   // Mise en place de la souscription en temps réel
