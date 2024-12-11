@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Layout/Header";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { useToast } from "@/hooks/use-toast";
+import { muscleGroups } from "./workoutConstants";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
@@ -105,14 +106,14 @@ export const ExerciseLibrary = () => {
           />
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {["chest", "back", "legs", "shoulders", "arms"].map((group) => (
+            {muscleGroups.map((group) => (
               <Button
-                key={group}
+                key={group.id}
                 variant="outline"
                 className="h-24 flex flex-col items-center justify-center gap-2"
-                onClick={() => handleMuscleGroupSelect(group)}
+                onClick={() => handleMuscleGroupSelect(group.id)}
               >
-                <span className="capitalize">{group}</span>
+                <span>{group.name}</span>
               </Button>
             ))}
           </div>
