@@ -38,6 +38,7 @@ export const SetCard = ({
     if (!user) return;
 
     try {
+      // Utilisation de upsert avec onConflict pour gérer les doublons
       const { error } = await supabase
         .from('user_exercise_weights')
         .upsert({
@@ -47,7 +48,8 @@ export const SetCard = ({
           last_used_weight: weight,
           last_used_at: new Date().toISOString()
         }, {
-          onConflict: 'user_id,exercise_name'
+          onConflict: 'user_id,exercise_name',
+          ignoreDuplicates: false
         });
 
       if (error) throw error;
