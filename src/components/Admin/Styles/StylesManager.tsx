@@ -30,6 +30,10 @@ export const StylesManager = () => {
     setStyles(prev => ({ ...prev, [field]: e.target.value }));
   };
 
+  const handleStyleUpdate = (updates: Partial<StyleSettings>) => {
+    setStyles(prev => ({ ...prev, ...updates }));
+  };
+
   const saveStyles = async () => {
     try {
       const { error } = await supabase
@@ -78,7 +82,11 @@ export const StylesManager = () => {
             </TabsContent>
 
             <TabsContent value="buttons">
-              <ButtonSection styles={styles} onStyleChange={handleStyleChange} />
+              <ButtonSection 
+                styles={styles} 
+                onStyleChange={handleStyleChange}
+                onStyleUpdate={handleStyleUpdate}
+              />
             </TabsContent>
 
             <TabsContent value="widgets">
