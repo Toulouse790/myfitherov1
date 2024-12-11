@@ -50,6 +50,65 @@ export type Database = {
           },
         ]
       }
+      admin_page_styles: {
+        Row: {
+          accent_color: string | null
+          button_radius: string | null
+          button_shadow: string | null
+          created_at: string
+          heading_font: string | null
+          id: string
+          page_name: string
+          primary_color: string | null
+          primary_font: string | null
+          secondary_color: string | null
+          updated_at: string
+          user_id: string | null
+          widget_radius: string | null
+          widget_shadow: string | null
+        }
+        Insert: {
+          accent_color?: string | null
+          button_radius?: string | null
+          button_shadow?: string | null
+          created_at?: string
+          heading_font?: string | null
+          id?: string
+          page_name: string
+          primary_color?: string | null
+          primary_font?: string | null
+          secondary_color?: string | null
+          updated_at?: string
+          user_id?: string | null
+          widget_radius?: string | null
+          widget_shadow?: string | null
+        }
+        Update: {
+          accent_color?: string | null
+          button_radius?: string | null
+          button_shadow?: string | null
+          created_at?: string
+          heading_font?: string | null
+          id?: string
+          page_name?: string
+          primary_color?: string | null
+          primary_font?: string | null
+          secondary_color?: string | null
+          updated_at?: string
+          user_id?: string | null
+          widget_radius?: string | null
+          widget_shadow?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_page_styles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_training_data: {
         Row: {
           action_type: string
