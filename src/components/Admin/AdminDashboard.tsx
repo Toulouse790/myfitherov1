@@ -19,6 +19,7 @@ import { GripHorizontal, Plus } from "lucide-react";
 import { useAdminStats } from "@/hooks/admin/use-admin-stats";
 import { useAvailableWidgets } from "@/hooks/admin/use-available-widgets";
 import { Button } from "@/components/ui/button";
+import { AdminStats } from "./AdminStats";
 import { UsersWidget } from "./Dashboard/UsersWidget";
 import { WorkoutsWidget } from "./Dashboard/WorkoutsWidget";
 import { ExercisesWidget } from "./Dashboard/ExercisesWidget";
@@ -167,12 +168,14 @@ export const AdminDashboard = () => {
         </div>
       </div>
 
+      <AdminStats />
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 mt-6">
           <SortableContext items={activeWidgets.map(w => w.id)} strategy={verticalListSortingStrategy}>
             {activeWidgets.map((widget) => (
               <SortableCard key={widget.id} id={widget.id} isEditing={isEditing}>
