@@ -17,28 +17,45 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     const updateRecoveryStatus = async () => {
       if (!muscleGroups.length) return;
 
-      const recoveryData = await fetchRecoveryData(muscleGroups);
-      if (!recoveryData) return;
-
-      const currentStatus = muscleGroups.map(group => {
-        const lastTraining = recoveryData.find(d => 
-          d.muscle_group === group
-        );
-        const baseRecovery = muscleRecoveryData[group]?.recoveryTime || 48;
+      try {
+        console.log('Fetching recovery data for muscle groups:', muscleGroups);
         
-        const { status, remainingHours } = calculateRecoveryStatus(
-          lastTraining ? new Date(lastTraining.last_trained_at) : null,
-          lastTraining?.estimated_recovery_hours || baseRecovery
+        // Remove accents and normalize muscle group names
+        const normalizedGroups = muscleGroups.map(group => 
+          group.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         );
+        
+        const recoveryData = await fetchRecoveryData(normalizedGroups);
+        if (!recoveryData) {
+          console.log('No recovery data returned');
+          return;
+        }
 
-        return {
-          muscleGroup: group,
-          status,
-          remainingHours
-        };
-      });
+        const currentStatus = muscleGroups.map((group, index) => {
+          const normalizedGroup = normalizedGroups[index];
+          const lastTraining = recoveryData.find(d => 
+            d.muscle_group.normalize('NFD').replace(/[\u0300-\u036f]/g, '') === normalizedGroup
+          );
+          
+          const baseRecovery = muscleRecoveryData[group]?.recoveryTime || 48;
+          
+          const { status, remainingHours } = calculateRecoveryStatus(
+            lastTraining ? new Date(lastTraining.last_trained_at) : null,
+            lastTraining?.estimated_recovery_hours || baseRecovery
+          );
 
-      setRecoveryStatus(currentStatus);
+          return {
+            muscleGroup: group,
+            status,
+            remainingHours
+          };
+        });
+
+        console.log('Updated recovery status:', currentStatus);
+        setRecoveryStatus(currentStatus);
+      } catch (error) {
+        console.error('Error updating recovery status:', error);
+      }
     };
 
     updateRecoveryStatus();
@@ -49,10 +66,19 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     intensity: number,
     sessionDuration: number
   ) => {
+    // Normalize the muscle group name before saving
+    const normalizedGroup = muscleGroup.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const baseRecovery = muscleRecoveryData[muscleGroup]?.recoveryTime || 48;
     const estimatedRecoveryHours = calculateRecoveryHours(baseRecovery, intensity, sessionDuration);
     
-    const success = await updateRecoveryData(muscleGroup, intensity, estimatedRecoveryHours);
+    console.log('Updating recovery status for:', {
+      originalGroup: muscleGroup,
+      normalizedGroup,
+      intensity,
+      estimatedRecoveryHours
+    });
+    
+    const success = await updateRecoveryData(normalizedGroup, intensity, estimatedRecoveryHours);
     
     if (success) {
       setRecoveryStatus(prev => prev.map(status => 
