@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Layout/Header";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { useToast } from "@/hooks/use-toast";
-import { muscleGroups } from "./workoutConstants";
 import { useAuth } from "@/hooks/use-auth";
 
 export const ExerciseLibrary = () => {
@@ -17,6 +16,7 @@ export const ExerciseLibrary = () => {
   const { user } = useAuth();
 
   const handleExerciseSelection = (exerciseIds: string[]) => {
+    console.log("Selected exercises:", exerciseIds);
     setSelectedExercises(exerciseIds);
     setShowSelection(false);
     
@@ -66,6 +66,38 @@ export const ExerciseLibrary = () => {
     }
 
     try {
+      console.log("Creating workout session with exercises:", selectedExercises);
+      
+      // Vérifier si une session en cours existe déjà
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const { data: existingSessions, error: sessionError } = await supabase
+        .from('workout_sessions')
+        .select('id')
+        .gte('created_at', today.toISOString())
+        .eq('status', 'in_progress')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (sessionError) throw sessionError;
+
+      // Si une session existe, supprimer l'ancienne session
+      if (existingSessions && existingSessions.length > 0) {
+        const { error: deleteError } = await supabase
+          .rpc('delete_workout_session', {
+            session_id: existingSessions[0].id
+          });
+
+        if (deleteError) throw deleteError;
+
+        toast({
+          title: "Session précédente supprimée",
+          description: "Une nouvelle session va être créée",
+        });
+      }
+
+      // Créer la nouvelle session
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert({
@@ -80,6 +112,7 @@ export const ExerciseLibrary = () => {
       if (error) throw error;
 
       if (session) {
+        console.log("Session created successfully:", session);
         navigate(`/workout/${session.id}`);
       }
     } catch (error) {
@@ -93,6 +126,7 @@ export const ExerciseLibrary = () => {
   };
 
   const handleMuscleGroupSelect = (muscleGroup: string) => {
+    console.log("Selected muscle group:", muscleGroup);
     setSelectedMuscleGroup(muscleGroup);
     setShowSelection(true);
   };
@@ -115,6 +149,7 @@ export const ExerciseLibrary = () => {
             onSelectionChange={handleExerciseSelection}
             onClose={() => setShowSelection(false)}
             muscleGroup={selectedMuscleGroup || ""}
+            searchQuery=""
           />
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -134,5 +169,14 @@ export const ExerciseLibrary = () => {
     </div>
   );
 };
+
+const muscleGroups = [
+  { id: "chest", name: "Pectoraux" },
+  { id: "back", name: "Dos" },
+  { id: "legs", name: "Jambes" },
+  { id: "shoulders", name: "Épaules" },
+  { id: "arms", name: "Bras" },
+  { id: "abs", name: "Abdominaux" }
+];
 
 export default ExerciseLibrary;
