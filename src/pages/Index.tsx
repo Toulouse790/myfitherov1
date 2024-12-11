@@ -15,10 +15,6 @@ const Index = () => {
 
   const handleCreateWorkout = () => {
     console.log("Redirection vers la création de séance");
-    toast({
-      title: "Création de séance",
-      description: "Vous allez pouvoir composer votre séance d'entraînement",
-    });
     navigate("/workouts");
   };
 
