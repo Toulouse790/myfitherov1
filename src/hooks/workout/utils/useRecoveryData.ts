@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { normalizeMuscleGroup } from './muscleGroupUtils';
+import { useToast } from '@/hooks/use-toast';
 
 interface RecoveryStatus {
   muscleGroup: string;
@@ -13,6 +14,7 @@ export const useRecoveryData = () => {
   const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const { toast } = useToast();
 
   const fetchRecoveryData = async (muscleGroups: string[]) => {
     if (!user || !muscleGroups.length) {
@@ -41,7 +43,12 @@ export const useRecoveryData = () => {
 
       if (error) {
         console.error('Error fetching recovery data:', error);
-        throw error;
+        toast({
+          title: "Erreur de connexion",
+          description: "Impossible de récupérer les données de récupération. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return [];
       }
 
       console.log('Recovery data fetched:', data);
@@ -49,6 +56,11 @@ export const useRecoveryData = () => {
 
     } catch (error) {
       console.error('Error in fetchRecoveryData:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la récupération des données",
+        variant: "destructive",
+      });
       return [];
     } finally {
       setIsLoading(false);
@@ -83,7 +95,15 @@ export const useRecoveryData = () => {
           onConflict: 'user_id,muscle_group'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating recovery data:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour les données de récupération",
+          variant: "destructive",
+        });
+        throw error;
+      }
       return true;
     } catch (error) {
       console.error('Error updating recovery data:', error);
