@@ -54,31 +54,27 @@ export const useExerciseData = (exerciseNames: string[]) => {
         console.log('Fetched exercise names:', namesMap);
         setExerciseData(namesMap);
 
-        // Fetch or create weight records for each exercise
+        // Fetch weights for each exercise individually to avoid encoding issues
         if (user) {
-          const { data: weightData, error: weightError } = await supabase
-            .from('user_exercise_weights')
-            .select('exercise_name, weight')
-            .in('exercise_name', validNames)
-            .eq('user_id', user.id);
+          const weightsMap: { [key: string]: number } = {};
+          
+          for (const exerciseName of validNames) {
+            const { data: weightData, error: weightError } = await supabase
+              .from('user_exercise_weights')
+              .select('exercise_name, weight')
+              .eq('exercise_name', exerciseName)
+              .eq('user_id', user.id)
+              .maybeSingle();
 
-          if (weightError) {
-            console.error('Error fetching weights:', weightError);
-            throw weightError;
+            if (weightError) {
+              console.error('Error fetching weight for exercise:', exerciseName, weightError);
+              continue;
+            }
+
+            weightsMap[exerciseName] = weightData?.weight || 20;
           }
 
-          const weightsMap = weightData?.reduce<{ [key: string]: number }>((acc, record) => {
-            acc[record.exercise_name] = record.weight || 20;
-            return acc;
-          }, {}) || {};
-
-          // Set default weight for exercises without records
-          validNames.forEach(name => {
-            if (!weightsMap[name]) {
-              weightsMap[name] = 20;
-            }
-          });
-
+          console.log('Fetched weights:', weightsMap);
           setPreviousWeights(weightsMap);
         }
       } catch (error) {
