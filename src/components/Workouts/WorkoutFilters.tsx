@@ -55,8 +55,8 @@ export const WorkoutFilters = ({
             key={muscle.id}
             id={muscle.id}
             name={muscle.name}
-            isSelected={selectedId === muscle.id}
-            onClick={() => handleClick(muscle.id)}
+            isSelected={muscleGroup === muscle.id}
+            onClick={() => handleMuscleGroupClick(muscle.id)}
           />
         ))}
       </div>
