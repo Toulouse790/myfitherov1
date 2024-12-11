@@ -1,23 +1,52 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { normalizeExerciseName } from "@/utils/exerciseUtils";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Header } from "@/components/Layout/Header";
+import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
+import { useToast } from "@/hooks/use-toast";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [showSelection, setShowSelection] = useState(false);
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleCreateWorkout = async () => {
+  const handleExerciseSelection = (exerciseIds: string[]) => {
+    setSelectedExercises(exerciseIds);
+    setShowSelection(false);
+    
+    toast({
+      title: "Groupe musculaire ajouté",
+      description: "Veux-tu entraîner un autre groupe musculaire ?",
+      action: (
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowSelection(false)}
+          >
+            Non
+          </Button>
+          <Button 
+            size="sm"
+            onClick={() => {
+              setSelectedMuscleGroup(null);
+              setShowSelection(true);
+            }}
+          >
+            Oui
+          </Button>
+        </div>
+      ),
+    });
+  };
+
+  const handleStartWorkout = async () => {
     if (selectedExercises.length === 0) {
       toast({
-        title: "Sélection requise",
+        title: "Aucun exercice sélectionné",
         description: "Veuillez sélectionner au moins un exercice",
         variant: "destructive",
       });
@@ -25,49 +54,20 @@ export const ExerciseLibrary = () => {
     }
 
     try {
-      // First get the exercise names from the unified_exercises table
-      const { data: exerciseData, error: exerciseError } = await supabase
-        .from('unified_exercises')
-        .select('name')
-        .in('muscle_group', selectedExercises.map(id => {
-          // Extract muscle group from the ID (e.g., "chest" from "chest-0")
-          return id.split('-')[0];
-        }));
-
-      if (exerciseError) {
-        console.error('Error fetching exercise names:', exerciseError);
-        throw exerciseError;
-      }
-
-      const exerciseNames = exerciseData
-        ?.map(ex => ex.name?.trim())
-        .filter(Boolean)
-        .map(name => normalizeExerciseName(name as string)) || [];
-
-      console.log("Creating workout session with exercises:", exerciseNames);
-
-      const { data: session, error: sessionError } = await supabase
+      const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert({
-          exercises: exerciseNames,
+          exercises: selectedExercises,
           type: 'strength',
           status: 'in_progress'
         })
         .select()
         .single();
 
-      if (sessionError) {
-        console.error('Error creating session:', sessionError);
-        throw sessionError;
-      }
-
-      toast({
-        title: "Séance créée",
-        description: `${exerciseNames.length} exercices ajoutés à votre séance`,
-      });
+      if (error) throw error;
 
       if (session) {
-        navigate(`/workouts/exercise/next-workout/${session.id}`);
+        navigate(`/workout/${session.id}`);
       }
     } catch (error) {
       console.error('Error creating workout:', error);
@@ -79,66 +79,47 @@ export const ExerciseLibrary = () => {
     }
   };
 
-  const handleExerciseToggle = (exerciseId: string) => {
-    setSelectedExercises(prev => {
-      if (prev.includes(exerciseId)) {
-        return prev.filter(id => id !== exerciseId);
-      } else {
-        return [...prev, exerciseId];
-      }
-    });
+  const handleMuscleGroupSelect = (muscleGroup: string) => {
+    setSelectedMuscleGroup(muscleGroup);
+    setShowSelection(true);
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Bibliothèque d'exercices</h1>
-        <Button
-          onClick={handleCreateWorkout}
-          disabled={selectedExercises.length === 0}
-        >
-          Créer la séance ({selectedExercises.length})
-        </Button>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        {selectedExercises.length > 0 && (
+          <div className="flex justify-end mb-6">
+            <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
+              C'est parti ! ({selectedExercises.length})
+            </Button>
+          </div>
+        )}
+
+        {showSelection ? (
+          <ExerciseSelection
+            selectedExercises={selectedExercises}
+            onSelectionChange={handleExerciseSelection}
+            onClose={() => setShowSelection(false)}
+            muscleGroup={selectedMuscleGroup || ""}
+          />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {["chest", "back", "legs", "shoulders", "arms"].map((group) => (
+              <Button
+                key={group}
+                variant="outline"
+                className="h-24 flex flex-col items-center justify-center gap-2"
+                onClick={() => handleMuscleGroupSelect(group)}
+              >
+                <span className="capitalize">{group}</span>
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
-
-      <Tabs defaultValue="chest" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="chest">Pectoraux</TabsTrigger>
-          <TabsTrigger value="back">Dos</TabsTrigger>
-          <TabsTrigger value="legs">Jambes</TabsTrigger>
-          <TabsTrigger value="shoulders">Épaules</TabsTrigger>
-          <TabsTrigger value="arms">Bras</TabsTrigger>
-        </TabsList>
-
-        {["chest", "back", "legs", "shoulders", "arms"].map((muscleGroup) => (
-          <TabsContent key={muscleGroup} value={muscleGroup}>
-            <Card className="p-4">
-              <ScrollArea className="h-[60vh]">
-                <div className="space-y-4">
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <div
-                      key={`${muscleGroup}-${index}`}
-                      className="flex items-center space-x-3 p-2 hover:bg-accent rounded-lg"
-                    >
-                      <Checkbox
-                        id={`${muscleGroup}-${index}`}
-                        checked={selectedExercises.includes(`${muscleGroup}-${index}`)}
-                        onCheckedChange={() => handleExerciseToggle(`${muscleGroup}-${index}`)}
-                      />
-                      <label
-                        htmlFor={`${muscleGroup}-${index}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Exercice {index + 1} pour {muscleGroup}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </Card>
-          </TabsContent>
-        ))}
-      </Tabs>
     </div>
   );
 };
+
+export default ExerciseLibrary;

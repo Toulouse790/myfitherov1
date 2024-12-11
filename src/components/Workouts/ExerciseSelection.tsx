@@ -24,11 +24,11 @@ export const ExerciseSelection = ({
     exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleExerciseToggle = (exerciseId: string) => {
-    console.log("Toggling exercise:", exerciseId);
-    const newSelection = selectedExercises.includes(exerciseId)
-      ? selectedExercises.filter(id => id !== exerciseId)
-      : [...selectedExercises, exerciseId];
+  const handleExerciseToggle = (exerciseName: string) => {
+    console.log("Toggling exercise:", exerciseName);
+    const newSelection = selectedExercises.includes(exerciseName)
+      ? selectedExercises.filter(name => name !== exerciseName)
+      : [...selectedExercises, exerciseName];
     console.log("New selection:", newSelection);
     onSelectionChange(newSelection);
   };
@@ -75,8 +75,8 @@ export const ExerciseSelection = ({
           >
             <ExerciseCard
               exercise={exercise}
-              isSelected={selectedExercises.includes(exercise.id)}
-              onToggle={() => handleExerciseToggle(exercise.id)}
+              isSelected={selectedExercises.includes(exercise.name)}
+              onToggle={() => handleExerciseToggle(exercise.name)}
             />
           </motion.div>
         ))}
