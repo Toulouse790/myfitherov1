@@ -630,7 +630,6 @@ export type Database = {
         Row: {
           created_at: string
           difficulty: string[]
-          exercise_media: Json | null
           id: string
           image_url: string | null
           is_published: boolean | null
@@ -644,7 +643,6 @@ export type Database = {
         Insert: {
           created_at?: string
           difficulty?: string[]
-          exercise_media?: Json | null
           id?: string
           image_url?: string | null
           is_published?: boolean | null
@@ -658,7 +656,6 @@ export type Database = {
         Update: {
           created_at?: string
           difficulty?: string[]
-          exercise_media?: Json | null
           id?: string
           image_url?: string | null
           is_published?: boolean | null
