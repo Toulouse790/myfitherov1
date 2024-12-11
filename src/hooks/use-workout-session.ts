@@ -23,13 +23,11 @@ export const useWorkoutSession = () => {
   const { handleConfirmEndWorkout } = useWorkoutCompletion(sessionId, user?.id);
   const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
   
-  // Récupérer les groupes musculaires des exercices
   const muscleGroups = exercises.map(exercise => {
     const parts = exercise.split('_');
-    return parts[0]; // Supposons que le nom commence par le groupe musculaire
+    return parts[0];
   });
 
-  // Utiliser le hook de récupération musculaire
   const { recoveryStatus, updateRecoveryStatus } = useMuscleRecovery(muscleGroups);
 
   useEffect(() => {
@@ -83,18 +81,19 @@ export const useWorkoutSession = () => {
       if (user) {
         try {
           const exerciseName = exercises[index];
-          const intensity = 0.7; // À ajuster en fonction de la difficulté réelle
-          const estimatedRecoveryHours = 48; // Valeur par défaut de 48h
+          const intensity = 0.7;
+          const estimatedRecoveryHours = 48;
 
           // Vérifier si un enregistrement existe déjà
-          const { data: existingRecord } = await supabase
+          const { data: existingRecords, error: fetchError } = await supabase
             .from('muscle_recovery')
             .select('*')
             .eq('user_id', user.id)
-            .eq('muscle_group', exerciseName)
-            .single();
+            .eq('muscle_group', exerciseName);
 
-          if (existingRecord) {
+          if (fetchError) throw fetchError;
+
+          if (existingRecords && existingRecords.length > 0) {
             // Mettre à jour l'enregistrement existant
             const { error: updateError } = await supabase
               .from('muscle_recovery')
@@ -123,7 +122,6 @@ export const useWorkoutSession = () => {
             if (insertError) throw insertError;
           }
 
-          // Mettre à jour le statut de récupération local
           updateRecoveryStatus(exerciseName, intensity, duration / 60);
         } catch (error) {
           console.error('Error updating muscle recovery:', error);
@@ -141,7 +139,6 @@ export const useWorkoutSession = () => {
     }
   };
 
-  // Log state changes
   useEffect(() => {
     console.log("Workout session state updated:", {
       sessionId,
