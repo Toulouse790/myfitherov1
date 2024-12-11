@@ -28,7 +28,7 @@ export const useRecoveryData = () => {
     try {
       setIsLoading(true);
       
-      // Normalize all muscle groups consistently
+      // Filter out empty values and normalize muscle groups
       const normalizedGroups = muscleGroups
         .filter(Boolean)
         .map(group => normalizeMuscleGroup(group));
@@ -41,7 +41,10 @@ export const useRecoveryData = () => {
         .eq('user_id', user.id)
         .in('muscle_group', normalizedGroups);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
       console.log('Recovery data fetched:', data);
       return data;

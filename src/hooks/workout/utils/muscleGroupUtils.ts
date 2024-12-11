@@ -1,7 +1,7 @@
 export const normalizeMuscleGroup = (group: string): string => {
   if (!group) return '';
   
-  // Convert to lowercase, remove accents, replace spaces with underscores
+  // Convert to lowercase and remove accents
   return group
     .toLowerCase()
     .normalize('NFD')
