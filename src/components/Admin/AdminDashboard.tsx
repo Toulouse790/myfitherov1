@@ -15,9 +15,10 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
-import { GripHorizontal, Plus } from "lucide-react";
+import { GripHorizontal, Plus, Settings, X } from "lucide-react";
 import { useAdminStats } from "@/hooks/admin/use-admin-stats";
 import { useAvailableWidgets } from "@/hooks/admin/use-available-widgets";
+import { useWidgetConfigs } from "@/hooks/admin/use-widget-configs";
 import { Button } from "@/components/ui/button";
 import { AdminStats } from "./AdminStats";
 import { UsersWidget } from "./Dashboard/UsersWidget";
@@ -27,6 +28,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const SortableCard = ({ id, children, isEditing }: { id: string; children: React.ReactNode, isEditing: boolean }) => {
   const {
@@ -55,16 +64,49 @@ const SortableCard = ({ id, children, isEditing }: { id: string; children: React
   );
 };
 
+const WidgetSettings = ({ config, onUpdate, onDelete }: { 
+  config: any; 
+  onUpdate: (data: any) => void;
+  onDelete: () => void;
+}) => {
+  const [title, setTitle] = useState(config.title);
+
+  const handleSave = () => {
+    onUpdate({ ...config, title });
+  };
+
+  return (
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Paramètres du widget</DialogTitle>
+      </DialogHeader>
+      <div className="space-y-4 py-4">
+        <div className="space-y-2">
+          <Label>Titre</Label>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Titre du widget"
+          />
+        </div>
+        <div className="flex justify-between">
+          <Button variant="outline" onClick={handleSave}>
+            Sauvegarder
+          </Button>
+          <Button variant="destructive" onClick={onDelete}>
+            Supprimer
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
+  );
+};
+
 export const AdminDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [activeWidgets, setActiveWidgets] = useState([
-    { id: "users", label: "Nouveaux utilisateurs" },
-    { id: "workouts", label: "Séances d'entraînement" },
-    { id: "exercises", label: "Exercices publiés" }
-  ]);
-
   const { monthlyUsers, monthlyWorkouts, publishedExercises } = useAdminStats();
   const { data: availableWidgets } = useAvailableWidgets();
+  const { widgetConfigs, updateConfig, deleteConfig } = useWidgetConfigs();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -74,54 +116,60 @@ export const AdminDashboard = () => {
   );
 
   const handleDragEnd = (event: any) => {
-    if (!isEditing) return;
+    if (!isEditing || !widgetConfigs) return;
     
     const { active, over } = event;
-
     if (active.id !== over.id) {
-      setActiveWidgets((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
+      const oldIndex = widgetConfigs.findIndex((w) => w.id === active.id);
+      const newIndex = widgetConfigs.findIndex((w) => w.id === over.id);
+      
+      const newConfigs = arrayMove(widgetConfigs, oldIndex, newIndex);
+      newConfigs.forEach((config, index) => {
+        updateConfig.mutate({ ...config, position: index });
       });
     }
   };
 
-  const toggleWidget = (widgetId: string) => {
-    setActiveWidgets(current => {
-      const isActive = current.some(w => w.id === widgetId);
-      if (isActive) {
-        return current.filter(w => w.id !== widgetId);
-      } else {
-        const widget = availableWidgets?.find(w => w.id === widgetId);
-        if (widget) {
-          return [...current, { id: widget.id, label: widget.name }];
-        }
-        return current;
-      }
-    });
-  };
+  const renderWidget = (config: any) => {
+    const WidgetComponent = {
+      users: UsersWidget,
+      workouts: WorkoutsWidget,
+      exercises: ExercisesWidget,
+    }[config.widget_id];
 
-  const renderWidget = (widget: typeof activeWidgets[0]) => {
-    switch (widget.id) {
-      case "users":
-        return <UsersWidget data={monthlyUsers} />;
-      case "workouts":
-        return <WorkoutsWidget data={monthlyWorkouts} />;
-      case "exercises":
-        return <ExercisesWidget data={publishedExercises} />;
-      default:
-        const availableWidget = availableWidgets?.find(w => w.id === widget.id);
-        if (availableWidget) {
-          return (
-            <div className="p-6 bg-card text-card-foreground rounded-lg shadow">
-              <h3 className="font-semibold mb-4">{availableWidget.name}</h3>
-              <p className="text-sm text-muted-foreground">{availableWidget.description}</p>
-            </div>
-          );
-        }
-        return null;
-    }
+    if (!WidgetComponent) return null;
+
+    return (
+      <div className="relative">
+        {!isEditing && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-2 right-2 z-10"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <WidgetSettings
+              config={config}
+              onUpdate={(data) => updateConfig.mutate(data)}
+              onDelete={() => deleteConfig.mutate(config.id)}
+            />
+          </Dialog>
+        )}
+        <WidgetComponent
+          data={
+            config.widget_id === 'users' ? monthlyUsers :
+            config.widget_id === 'workouts' ? monthlyWorkouts :
+            config.widget_id === 'exercises' ? publishedExercises :
+            null
+          }
+          title={config.title}
+        />
+      </div>
+    );
   };
 
   return (
@@ -149,8 +197,10 @@ export const AdminDashboard = () => {
                         <p className="text-sm text-muted-foreground">{widget.description}</p>
                       </div>
                       <Switch
-                        checked={activeWidgets.some(w => w.id === widget.id)}
-                        onCheckedChange={() => toggleWidget(widget.id)}
+                        checked={widgetConfigs?.some(w => w.widget_id === widget.id)}
+                        onCheckedChange={() => {
+                          // Logique d'ajout/suppression à implémenter
+                        }}
                       />
                     </div>
                   ))}
@@ -176,10 +226,13 @@ export const AdminDashboard = () => {
         onDragEnd={handleDragEnd}
       >
         <div className="grid gap-6 md:grid-cols-2 mt-6">
-          <SortableContext items={activeWidgets.map(w => w.id)} strategy={verticalListSortingStrategy}>
-            {activeWidgets.map((widget) => (
-              <SortableCard key={widget.id} id={widget.id} isEditing={isEditing}>
-                {renderWidget(widget)}
+          <SortableContext 
+            items={widgetConfigs?.map(w => w.id) || []} 
+            strategy={verticalListSortingStrategy}
+          >
+            {widgetConfigs?.map((config) => (
+              <SortableCard key={config.id} id={config.id} isEditing={isEditing}>
+                {renderWidget(config)}
               </SortableCard>
             ))}
           </SortableContext>
