@@ -9,7 +9,6 @@ import { ButtonSection } from "./ButtonSection";
 import { WidgetSection } from "./WidgetSection";
 import { PageStylePreview } from "./PageStylePreview";
 import { PageSelector } from "./PageSelector";
-import { TrainingStylePage } from "./TrainingStylePage";
 import type { StyleSettings } from "./types";
 
 export const StylesManager = () => {
@@ -67,12 +66,11 @@ export const StylesManager = () => {
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-6">
           <Tabs defaultValue="fonts" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="fonts">Polices</TabsTrigger>
               <TabsTrigger value="colors">Couleurs</TabsTrigger>
               <TabsTrigger value="buttons">Boutons</TabsTrigger>
               <TabsTrigger value="widgets">Widgets</TabsTrigger>
-              <TabsTrigger value="training">Entraînement</TabsTrigger>
             </TabsList>
 
             <TabsContent value="fonts">
@@ -93,10 +91,6 @@ export const StylesManager = () => {
 
             <TabsContent value="widgets">
               <WidgetSection styles={styles} onStyleChange={handleStyleChange} />
-            </TabsContent>
-
-            <TabsContent value="training">
-              <TrainingStylePage />
             </TabsContent>
           </Tabs>
 
