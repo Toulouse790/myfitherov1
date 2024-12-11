@@ -31,23 +31,29 @@ export const GenerateWorkoutDialog = ({
           setAvailableExercises(exercises);
         } catch (error) {
           console.error('Error loading exercises:', error);
+          // On affiche une notification plus discrète
           toast({
-            title: "Erreur",
+            title: "Erreur de chargement",
             description: "Impossible de charger les exercices",
             variant: "destructive",
+            duration: 2000, // Réduit la durée d'affichage
           });
+          onOpenChange(false);
         }
       };
       loadExercises();
+    } else {
+      // Reset state when dialog closes
+      setGeneratedWorkout(null);
     }
-  }, [open, fetchExercises, toast]);
+  }, [open, fetchExercises, toast, onOpenChange]);
 
   const handleGenerateWorkout = async () => {
     if (availableExercises.length === 0) {
       toast({
-        title: "Erreur",
+        title: "Information",
         description: "Aucun exercice disponible",
-        variant: "destructive",
+        duration: 2000,
       });
       return;
     }
@@ -67,7 +73,7 @@ export const GenerateWorkoutDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Générer un programme</DialogTitle>
+          <DialogTitle>Programme d'entraînement</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
