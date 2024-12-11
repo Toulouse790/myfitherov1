@@ -17,7 +17,6 @@ export const UnifiedWorkoutDetail = () => {
   const { user } = useAuth();
   const [exercises, setExercises] = useState<string[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
-  const [notes, setNotes] = useState("");
   const [restTimer, setRestTimer] = useState<number | null>(null);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +37,7 @@ export const UnifiedWorkoutDetail = () => {
         setIsLoading(true);
         const { data: session, error } = await supabase
           .from('workout_sessions')
-          .select('exercises, notes')
+          .select('exercises')
           .eq('id', sessionId)
           .single();
 
@@ -48,7 +47,6 @@ export const UnifiedWorkoutDetail = () => {
           const validExercises = session.exercises.filter(Boolean);
           console.log("Valid exercises:", validExercises);
           setExercises(validExercises);
-          setNotes(session.notes || "");
         }
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -85,7 +83,6 @@ export const UnifiedWorkoutDetail = () => {
           .from('workout_sessions')
           .update({
             status: 'completed',
-            notes: notes,
             total_duration_minutes: Math.floor(sessionDuration / 60)
           })
           .eq('id', sessionId);
@@ -184,8 +181,6 @@ export const UnifiedWorkoutDetail = () => {
                 </div>
               </div>
             )}
-
-            <WorkoutNotes notes={notes} onChange={setNotes} />
           </CardContent>
         </Card>
       </motion.div>
