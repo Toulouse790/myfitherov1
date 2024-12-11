@@ -62,7 +62,8 @@ export const useExerciseData = (exerciseNames: string[]) => {
           const { data: weightData, error: weightError } = await supabase
             .from('user_exercise_weights')
             .select('exercise_name, weight')
-            .in('exercise_name', validNames);
+            .in('exercise_name', validNames)
+            .eq('user_id', user.id);
 
           if (weightError) {
             console.error('Error fetching weights:', weightError);
