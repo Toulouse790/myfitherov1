@@ -57,6 +57,9 @@ export const TrainingStylePage = () => {
         <WidgetGrid
           isEditing={isEditing}
           widgetConfigs={widgetConfigs}
+          monthlyUsers={[]}
+          monthlyWorkouts={[]}
+          publishedExercises={[]}
           onDragEnd={handleDragEnd}
           onUpdateConfig={(data) => updateConfig.mutate(data)}
           onDeleteConfig={(id) => deleteConfig.mutate(id)}
