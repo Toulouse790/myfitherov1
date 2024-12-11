@@ -32,11 +32,6 @@ export const ExerciseSelection = ({
     onSelectionChange(newSelection);
   };
 
-  const handleValidateSelection = () => {
-    onSelectionChange(selectedExercises);
-    onClose();
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -76,7 +71,7 @@ export const ExerciseSelection = ({
             Retour aux groupes musculaires
           </Button>
           {selectedExercises.length > 0 && (
-            <Button onClick={handleValidateSelection}>
+            <Button onClick={onClose}>
               Valider la sélection
             </Button>
           )}
