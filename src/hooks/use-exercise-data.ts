@@ -1,45 +1,46 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
-export const useExerciseData = (exerciseIds: string[]) => {
-  const [exerciseNames, setExerciseNames] = useState<{ [key: string]: string }>({});
+export const useExerciseData = (exerciseNames: string[]) => {
+  const [exerciseData, setExerciseData] = useState<{ [key: string]: string }>({});
+  const [previousWeights, setPreviousWeights] = useState<{ [key: string]: number }>({});
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
-    const fetchExerciseNames = async () => {
+    const fetchExerciseData = async () => {
       try {
-        // Check if exerciseIds is defined and not empty
-        if (!exerciseIds?.length) {
-          console.log('No exercise IDs provided');
+        if (!exerciseNames?.length) {
+          console.log('No exercise names provided');
           return;
         }
 
-        // Filter out any undefined, null, or invalid IDs
-        const validIds = exerciseIds.filter((id): id is string => {
-          const isValid = id && typeof id === 'string';
+        const validNames = exerciseNames.filter((name): name is string => {
+          const isValid = name && typeof name === 'string';
           if (!isValid) {
-            console.log('Invalid exercise ID found:', id);
+            console.log('Invalid exercise name found:', name);
           }
           return isValid;
         });
         
-        if (validIds.length === 0) {
-          console.log('No valid exercise IDs found');
+        if (validNames.length === 0) {
+          console.log('No valid exercise names found');
           return;
         }
 
-        console.log('Fetching exercises with IDs:', validIds);
+        console.log('Fetching exercises with names:', validNames);
+
+        // Encodons correctement les noms pour la requête
+        const encodedNames = validNames.map(name => encodeURIComponent(name));
 
         const { data, error } = await supabase
           .from('unified_exercises')
-          .select('id, name')
-          .in('id', validIds);
+          .select('name')
+          .in('name', validNames);
 
-        if (error) {
-          console.error('Supabase query error:', error);
-          throw error;
-        }
+        if (error) throw error;
 
         if (!data) {
           console.log('No data returned from query');
@@ -47,26 +48,51 @@ export const useExerciseData = (exerciseIds: string[]) => {
         }
 
         const namesMap = data.reduce<{ [key: string]: string }>((acc, exercise) => {
-          if (exercise.id && exercise.name) {
-            acc[exercise.id] = exercise.name;
+          if (exercise.name) {
+            acc[exercise.name] = exercise.name;
           }
           return acc;
         }, {});
 
         console.log('Fetched exercise names:', namesMap);
-        setExerciseNames(namesMap);
+        setExerciseData(namesMap);
+
+        // Fetch or create weight records for each exercise
+        if (user) {
+          const { data: weightData, error: weightError } = await supabase
+            .from('user_exercise_weights')
+            .select('exercise_name, weight')
+            .in('exercise_name', validNames)
+            .eq('user_id', user.id);
+
+          if (weightError) throw weightError;
+
+          const weightsMap = weightData?.reduce<{ [key: string]: number }>((acc, record) => {
+            acc[record.exercise_name] = record.weight || 20;
+            return acc;
+          }, {}) || {};
+
+          // Set default weight for exercises without records
+          validNames.forEach(name => {
+            if (!weightsMap[name]) {
+              weightsMap[name] = 20;
+            }
+          });
+
+          setPreviousWeights(weightsMap);
+        }
       } catch (error) {
-        console.error('Error fetching exercise names:', error);
+        console.error('Error fetching exercise data:', error);
         toast({
           title: "Erreur",
-          description: "Impossible de charger les noms des exercices",
+          description: "Impossible de charger les données des exercices",
           variant: "destructive",
         });
       }
     };
 
-    fetchExerciseNames();
-  }, [exerciseIds, toast]);
+    fetchExerciseData();
+  }, [exerciseNames, toast, user]);
 
-  return { exerciseNames };
+  return { exerciseNames: exerciseData, previousWeights };
 };
