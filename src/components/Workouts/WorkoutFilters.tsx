@@ -42,10 +42,6 @@ export const WorkoutFilters = ({
     }
   };
 
-  const getSelectedExercisesCount = (muscleId: string): number => {
-    return selectedExercises.length;
-  };
-
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
     setSelectedExercises(selectedIds);
   };
@@ -64,8 +60,6 @@ export const WorkoutFilters = ({
             name={muscle.name}
             image={muscle.image}
             isSelected={muscleGroup === muscle.id}
-            selectedExercises={getSelectedExercisesCount(muscle.id)}
-            totalExercises={muscle.totalExercises}
             onClick={() => handleMuscleGroupClick(muscle.id)}
           />
         ))}
