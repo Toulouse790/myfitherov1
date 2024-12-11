@@ -15,8 +15,14 @@ export const useExerciseData = (exerciseIds: string[]) => {
           return;
         }
 
-        // Filter out any undefined or null IDs
-        const validIds = exerciseIds.filter(id => id && typeof id === 'string');
+        // Filter out any undefined, null, or invalid IDs
+        const validIds = exerciseIds.filter((id): id is string => {
+          const isValid = id && typeof id === 'string';
+          if (!isValid) {
+            console.log('Invalid exercise ID found:', id);
+          }
+          return isValid;
+        });
         
         if (validIds.length === 0) {
           console.log('No valid exercise IDs found');
@@ -30,10 +36,20 @@ export const useExerciseData = (exerciseIds: string[]) => {
           .select('id, name')
           .in('id', validIds);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase query error:', error);
+          throw error;
+        }
 
-        const namesMap = (data || []).reduce((acc: { [key: string]: string }, exercise) => {
-          acc[exercise.id] = exercise.name;
+        if (!data) {
+          console.log('No data returned from query');
+          return;
+        }
+
+        const namesMap = data.reduce<{ [key: string]: string }>((acc, exercise) => {
+          if (exercise.id && exercise.name) {
+            acc[exercise.id] = exercise.name;
+          }
           return acc;
         }, {});
 
