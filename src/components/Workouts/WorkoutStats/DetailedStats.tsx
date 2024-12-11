@@ -6,6 +6,22 @@ import { Activity, Dumbbell, Scale, Flame } from "lucide-react";
 
 const COLORS = ['#FF8042', '#00C49F', '#FFBB28', '#0088FE'];
 
+interface ExerciseSet {
+  weight: number;
+  reps: number;
+  calories_burned: number;
+  exercise_name: string;
+  session_id: string;
+  workout_sessions: {
+    muscle_groups_worked: string[];
+  } | null;
+}
+
+interface Measurement {
+  weight_kg: number;
+  measurement_date: string;
+}
+
 export const DetailedStats = () => {
   const { data: exerciseStats } = useQuery({
     queryKey: ['exercise-stats'],
@@ -38,11 +54,11 @@ export const DetailedStats = () => {
       if (measurementsError) throw measurementsError;
 
       // Calculer les statistiques
-      const totalWeight = sets?.reduce((acc, set) => acc + (set.weight * set.reps), 0) || 0;
-      const totalCalories = sets?.reduce((acc, set) => acc + (set.calories_burned || 0), 0) || 0;
+      const totalWeight = (sets as ExerciseSet[])?.reduce((acc, set) => acc + (set.weight * set.reps), 0) || 0;
+      const totalCalories = (sets as ExerciseSet[])?.reduce((acc, set) => acc + (set.calories_burned || 0), 0) || 0;
 
       // Grouper par groupe musculaire
-      const muscleGroups = sets?.reduce((acc: any, set) => {
+      const muscleGroups = (sets as ExerciseSet[])?.reduce((acc: { [key: string]: number }, set) => {
         const groups = set.workout_sessions?.muscle_groups_worked || [];
         groups.forEach((group: string) => {
           acc[group] = (acc[group] || 0) + 1;
@@ -56,7 +72,7 @@ export const DetailedStats = () => {
       }));
 
       // Préparer les données de poids
-      const weightData = measurements?.map(m => ({
+      const weightData = (measurements as Measurement[])?.map(m => ({
         date: new Date(m.measurement_date).toLocaleDateString(),
         weight: m.weight_kg
       })) || [];
