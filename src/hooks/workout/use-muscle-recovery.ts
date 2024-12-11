@@ -27,17 +27,25 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     try {
       console.log('Fetching recovery status for muscle groups:', muscleGroups);
       
+      // Normalize muscle group names to remove special characters and spaces
+      const normalizedMuscleGroups = muscleGroups.map(group => 
+        group.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      );
+
       const { data: recoveryData, error } = await supabase
         .from('muscle_recovery')
         .select('*')
         .eq('user_id', user.id)
-        .in('muscle_group', muscleGroups);
+        .in('muscle_group', normalizedMuscleGroups);
 
       if (error) throw error;
 
       const currentStatus = muscleGroups.map(group => {
-        const lastTraining = recoveryData?.find(d => d.muscle_group === group);
-        const baseRecovery = muscleRecoveryData[group]?.recoveryTime || 48;
+        const normalizedGroup = group.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const lastTraining = recoveryData?.find(d => 
+          d.muscle_group.normalize('NFD').replace(/[\u0300-\u036f]/g, '') === normalizedGroup
+        );
+        const baseRecovery = muscleRecoveryData[normalizedGroup]?.recoveryTime || 48;
         
         let status: 'recovered' | 'partial' | 'fatigued' = 'recovered';
         let remainingHours = 0;
@@ -68,7 +76,6 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     } catch (error) {
       console.error('Error fetching recovery status:', error);
       
-      // Retry logic
       if (retryCount < MAX_RETRIES) {
         console.log(`Retrying fetch (attempt ${retryCount + 1}/${MAX_RETRIES})...`);
         setTimeout(() => {
@@ -99,7 +106,8 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
     if (!user) return;
 
     try {
-      const baseRecovery = muscleRecoveryData[muscleGroup]?.recoveryTime || 48;
+      const normalizedGroup = muscleGroup.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const baseRecovery = muscleRecoveryData[normalizedGroup]?.recoveryTime || 48;
       const intensityFactor = intensity > 0.8 ? 1.2 : intensity > 0.6 ? 1 : 0.8;
       const durationFactor = sessionDuration > 60 ? 1.2 : 1;
       const estimatedRecoveryHours = Math.round(baseRecovery * intensityFactor * durationFactor);
@@ -108,7 +116,7 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
         .from('muscle_recovery')
         .upsert({
           user_id: user.id,
-          muscle_group: muscleGroup,
+          muscle_group: normalizedGroup,
           last_trained_at: new Date().toISOString(),
           intensity,
           recovery_status: 'fatigued',
@@ -119,7 +127,6 @@ export const useMuscleRecovery = (muscleGroups: string[]) => {
 
       if (error) throw error;
 
-      // Update local state
       setRecoveryStatus(prev => prev.map(status => 
         status.muscleGroup === muscleGroup
           ? {
