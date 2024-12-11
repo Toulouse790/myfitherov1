@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useExerciseData } from "./ExerciseSets/useExerciseData";
 import { ExerciseCard } from "./ExerciseSets/ExerciseCard";
 import { ExerciseProgress } from "./ExerciseSets/ExerciseProgress";
@@ -21,6 +22,7 @@ export const ExerciseSets = ({
 }: ExerciseSetsProps) => {
   const { exerciseNames } = useExerciseData(exercises);
   const { toast } = useToast();
+  const [totalSets, setTotalSets] = useState<{ [key: string]: number }>({});
   
   const {
     restTimers,
@@ -38,6 +40,46 @@ export const ExerciseSets = ({
     setReps,
     handleSetComplete
   } = useSetManagement({ exercises, sessionId, onExerciseComplete, currentExerciseIndex });
+
+  useEffect(() => {
+    const fetchExerciseSets = async () => {
+      if (sessionId) {
+        try {
+          const { data, error } = await supabase
+            .from('exercise_sets')
+            .select('exercise_name, set_number')
+            .eq('session_id', sessionId);
+
+          if (error) throw error;
+
+          const setsCount: { [key: string]: number } = {};
+          data?.forEach(set => {
+            setsCount[set.exercise_name] = Math.max(
+              setsCount[set.exercise_name] || 0,
+              set.set_number
+            );
+          });
+
+          // Si aucune série n'existe encore, on met 3 par défaut
+          exercises.forEach(exercise => {
+            if (!setsCount[exercise]) {
+              setsCount[exercise] = 3;
+            }
+          });
+
+          setTotalSets(setsCount);
+          console.log("Nombre de séries par exercice:", setsCount);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des séries:', error);
+          exercises.forEach(exercise => {
+            setTotalSets(prev => ({ ...prev, [exercise]: 3 }));
+          });
+        }
+      }
+    };
+
+    fetchExerciseSets();
+  }, [sessionId, exercises]);
 
   const calculateCalories = (weight: number, reps: number): number => {
     return Math.round(reps * weight * 0.15);
@@ -86,7 +128,7 @@ export const ExerciseSets = ({
         <div key={exerciseName} className="space-y-4">
           <ExerciseProgress 
             completedSets={completedSets[exerciseName] || 0}
-            totalSets={3}
+            totalSets={totalSets[exerciseName] || 3}
           />
           <ExerciseCard
             exerciseName={exerciseNames[exerciseName] || exerciseName}
