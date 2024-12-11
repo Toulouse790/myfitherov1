@@ -25,6 +25,7 @@ export const useRecoveryData = () => {
     try {
       setIsLoading(true);
       
+      // Normalize and encode muscle group names
       const normalizedGroups = muscleGroups
         .filter(Boolean)
         .map(group => {
@@ -35,6 +36,7 @@ export const useRecoveryData = () => {
 
       console.log('Querying muscle groups:', normalizedGroups);
       
+      // Use Supabase's built-in query builder instead of constructing URL manually
       const { data, error } = await supabase
         .from('muscle_recovery')
         .select('*')
