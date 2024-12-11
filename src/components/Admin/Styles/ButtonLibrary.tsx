@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import * as Icons from "lucide-react";
 import { StyleSettings } from "./types";
+import { LucideIcon } from "lucide-react";
 
 interface ButtonLibraryProps {
   onSelectStyle: (style: Partial<StyleSettings>) => void;
@@ -56,8 +57,8 @@ export const ButtonLibrary = ({ onSelectStyle }: ButtonLibraryProps) => {
       <CardContent>
         <div className="grid grid-cols-2 gap-4">
           {buttons?.map((button) => {
-            // Get the icon component from lucide-react
-            const IconComponent = button.icon_name ? Icons[button.icon_name as keyof typeof Icons] : undefined;
+            // Get the icon component from lucide-react with proper typing
+            const IconComponent = button.icon_name ? (Icons[button.icon_name as keyof typeof Icons] as LucideIcon) : undefined;
             
             return (
               <Button
