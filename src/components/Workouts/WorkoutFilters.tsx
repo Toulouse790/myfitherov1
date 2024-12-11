@@ -36,10 +36,12 @@ export const WorkoutFilters = ({
   const handleMuscleGroupClick = (muscleId: string) => {
     console.log('Muscle group clicked:', muscleId);
     setSelectedMuscleGroup(muscleId);
+    onMuscleGroupChange(muscleId);
     setShowExerciseSelection(true);
   };
 
   const handleExerciseSelectionChange = (selectedIds: string[]) => {
+    console.log('Selected exercises:', selectedIds);
     setSelectedExercises(selectedIds);
   };
 
