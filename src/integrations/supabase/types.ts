@@ -254,6 +254,42 @@ export type Database = {
         }
         Relationships: []
       }
+      available_widgets: {
+        Row: {
+          category: string
+          chart_type: string
+          created_at: string
+          description: string | null
+          icon_name: string
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          chart_type: string
+          created_at?: string
+          description?: string | null
+          icon_name: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          chart_type?: string
+          created_at?: string
+          description?: string | null
+          icon_name?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cardio_exercises: {
         Row: {
           calories_burned: number | null
