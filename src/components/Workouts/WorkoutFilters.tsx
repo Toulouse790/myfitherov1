@@ -34,19 +34,13 @@ export const WorkoutFilters = ({
   const [selectedExercises, setSelectedExercises] = useLocalStorage<string[]>("selectedExercises", []);
 
   const handleMuscleGroupClick = (muscleId: string) => {
-    console.log('Muscle group clicked:', muscleId);
     setSelectedMuscleGroup(muscleId);
     onMuscleGroupChange(muscleId);
     setShowExerciseSelection(true);
   };
 
-  const handleExerciseSelectionChange = (selectedIds: string[]) => {
-    console.log('Selected exercises:', selectedIds);
-    setSelectedExercises(selectedIds);
-  };
-
-  const handleClose = () => {
-    setShowExerciseSelection(false);
+  const handleExerciseSelectionChange = (selectedNames: string[]) => {
+    setSelectedExercises(selectedNames);
   };
 
   return (
@@ -73,12 +67,12 @@ export const WorkoutFilters = ({
         onReset={onReset}
       />
 
-      <Dialog open={showExerciseSelection} onOpenChange={handleClose}>
+      <Dialog open={showExerciseSelection} onOpenChange={setShowExerciseSelection}>
         <DialogContent className="sm:max-w-[800px]">
           <ExerciseSelection
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelectionChange}
-            onClose={handleClose}
+            onClose={() => setShowExerciseSelection(false)}
             muscleGroup={selectedMuscleGroup}
           />
         </DialogContent>

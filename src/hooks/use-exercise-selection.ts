@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 interface Exercise {
   id: string;
@@ -13,7 +12,7 @@ interface Exercise {
   video_url?: string;
 }
 
-export const useExerciseSelection = (muscleGroup?: string, userLevel: string = 'beginner') => {
+export const useExerciseSelection = (muscleGroup?: string) => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
@@ -38,9 +37,7 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
           .eq('is_published', true);
 
         if (muscleGroup) {
-          const translatedGroup = translateMuscleGroup(muscleGroup);
-          console.log('Filtering by muscle group (translated):', translatedGroup);
-          query = query.eq('muscle_group', translatedGroup);
+          query = query.eq('muscle_group', muscleGroup.toLowerCase());
         }
 
         const { data, error } = await query;
@@ -66,7 +63,7 @@ export const useExerciseSelection = (muscleGroup?: string, userLevel: string = '
     };
 
     fetchExercises();
-  }, [muscleGroup, userLevel, toast]);
+  }, [muscleGroup, toast]);
 
   return { exercises, isLoading };
 };
