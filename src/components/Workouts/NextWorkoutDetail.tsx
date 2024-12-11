@@ -18,7 +18,8 @@ export const NextWorkoutDetail = () => {
     handleExerciseClick,
     isRunning,
     startTimer,
-    stopTimer
+    stopTimer,
+    resetTimer
   } = useWorkoutSession();
   const [showSummary, setShowSummary] = useState(false);
   const [currentSet, setCurrentSet] = useState(1);
