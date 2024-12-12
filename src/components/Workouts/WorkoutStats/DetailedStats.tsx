@@ -188,3 +188,4 @@ export const DetailedStats = () => {
       </Card>
     </div>
   );
+};
