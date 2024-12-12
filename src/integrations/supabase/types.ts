@@ -218,62 +218,6 @@ export type Database = {
           },
         ]
       }
-      app_styles: {
-        Row: {
-          accent_color: string
-          button_radius: string | null
-          button_shadow: string | null
-          created_at: string
-          heading_font: string
-          id: string
-          primary_color: string
-          primary_font: string
-          secondary_color: string
-          updated_at: string
-          user_id: string | null
-          widget_radius: string | null
-          widget_shadow: string | null
-        }
-        Insert: {
-          accent_color?: string
-          button_radius?: string | null
-          button_shadow?: string | null
-          created_at?: string
-          heading_font?: string
-          id?: string
-          primary_color?: string
-          primary_font?: string
-          secondary_color?: string
-          updated_at?: string
-          user_id?: string | null
-          widget_radius?: string | null
-          widget_shadow?: string | null
-        }
-        Update: {
-          accent_color?: string
-          button_radius?: string | null
-          button_shadow?: string | null
-          created_at?: string
-          heading_font?: string
-          id?: string
-          primary_color?: string
-          primary_font?: string
-          secondary_color?: string
-          updated_at?: string
-          user_id?: string | null
-          widget_radius?: string | null
-          widget_shadow?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "app_styles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       available_buttons: {
         Row: {
           category: string | null
