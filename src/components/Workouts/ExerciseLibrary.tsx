@@ -5,10 +5,13 @@ import { Header } from "@/components/Layout/Header";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
+import { muscleGroups } from "./workoutConstants";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showSelection, setShowSelection] = useState(false);
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -30,7 +33,10 @@ export const ExerciseLibrary = () => {
           </Button>
           <Button 
             size="sm"
-            onClick={() => setShowSelection(true)}
+            onClick={() => {
+              setSelectedMuscleGroup("");
+              setShowSelection(true);
+            }}
           >
             Oui
           </Button>
@@ -80,6 +86,11 @@ export const ExerciseLibrary = () => {
     }
   };
 
+  const handleMuscleGroupSelect = (muscleGroup: string) => {
+    setSelectedMuscleGroup(muscleGroup);
+    setShowSelection(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -97,10 +108,13 @@ export const ExerciseLibrary = () => {
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelection}
             onClose={() => setShowSelection(false)}
-            muscleGroup=""
+            muscleGroup={selectedMuscleGroup}
           />
         ) : (
-          <ExerciseLibrary />
+          <MuscleGroupGrid
+            muscleGroups={muscleGroups}
+            onSelect={handleMuscleGroupSelect}
+          />
         )}
       </div>
     </div>
