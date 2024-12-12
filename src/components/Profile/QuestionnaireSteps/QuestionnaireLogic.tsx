@@ -36,6 +36,7 @@ export const useQuestionnaireLogic = () => {
   const navigate = useNavigate();
 
   const handleResponseChange = (field: keyof QuestionnaireResponses, value: string) => {
+    console.log(`Mise à jour du champ ${field} avec la valeur:`, value);
     setResponses(prev => ({
       ...prev,
       [field]: value
@@ -46,6 +47,7 @@ export const useQuestionnaireLogic = () => {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
+      console.error("Erreur: Utilisateur non connecté");
       toast({
         title: "Erreur",
         description: "Vous devez être connecté pour continuer",
@@ -55,8 +57,11 @@ export const useQuestionnaireLogic = () => {
       return;
     }
 
+    console.log("Tentative de sauvegarde pour l'utilisateur:", user.id);
+    console.log("Réponses finales:", finalResponses);
+
     // Save questionnaire responses
-    const { error: questionnaireError } = await supabase
+    const { data: questionnaireData, error: questionnaireError } = await supabase
       .from("questionnaire_responses")
       .insert([{
         user_id: user.id,
@@ -79,8 +84,10 @@ export const useQuestionnaireLogic = () => {
       return;
     }
 
+    console.log("Questionnaire sauvegardé avec succès:", questionnaireData);
+
     // Save measurements
-    const { error: measurementsError } = await supabase
+    const { data: measurementsData, error: measurementsError } = await supabase
       .from("muscle_measurements")
       .insert([{
         user_id: user.id,
@@ -97,6 +104,8 @@ export const useQuestionnaireLogic = () => {
       });
       return;
     }
+
+    console.log("Mesures sauvegardées avec succès:", measurementsData);
 
     toast({
       title: "Configuration terminée",
