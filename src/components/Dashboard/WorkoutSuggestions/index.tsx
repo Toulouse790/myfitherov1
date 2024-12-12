@@ -3,12 +3,35 @@ import { Bookmark, Dumbbell, Target, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 export const WorkoutSuggestions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const suggestions = [
+  const { data: suggestions = [] } = useQuery({
+    queryKey: ['workout-suggestions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('workout_suggestions')
+        .select('*')
+        .eq('is_active', true);
+
+      if (error) {
+        console.error('Error fetching suggestions:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les suggestions",
+          variant: "destructive",
+        });
+        return [];
+      }
+
+      return data || [];
+    }
+  });
+
+  const defaultSuggestions = [
     {
       id: 1,
       title: "Séance favorite",
@@ -49,7 +72,6 @@ export const WorkoutSuggestions = () => {
         return;
       }
 
-      // Créer une nouvelle session
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert({
@@ -74,6 +96,15 @@ export const WorkoutSuggestions = () => {
     }
   };
 
+  const iconMap = {
+    'Bookmark': Bookmark,
+    'Target': Target,
+    'Zap': Zap,
+    'Dumbbell': Dumbbell
+  };
+
+  const allSuggestions = [...defaultSuggestions, ...suggestions];
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -81,7 +112,7 @@ export const WorkoutSuggestions = () => {
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {suggestions.map((suggestion) => {
+        {allSuggestions.map((suggestion) => {
           const IconComponent = iconMap[suggestion.icon_name as keyof typeof iconMap];
           return (
             <Card
@@ -106,11 +137,4 @@ export const WorkoutSuggestions = () => {
       </div>
     </div>
   );
-};
-
-const iconMap = {
-  'Bookmark': Bookmark,
-  'Target': Target,
-  'Zap': Zap,
-  'Dumbbell': Dumbbell
 };
