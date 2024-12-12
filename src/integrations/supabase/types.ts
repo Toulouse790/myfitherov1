@@ -553,36 +553,51 @@ export type Database = {
         Row: {
           calories: number
           carbs: number
+          components: Json | null
           created_at: string
           fats: number
           id: string
+          is_composite: boolean | null
           meal_type: string
           name: string
+          portion_size: number | null
+          portion_unit: string | null
           proteins: number
+          source: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
           calories: number
           carbs?: number
+          components?: Json | null
           created_at?: string
           fats?: number
           id?: string
+          is_composite?: boolean | null
           meal_type?: string
           name: string
+          portion_size?: number | null
+          portion_unit?: string | null
           proteins: number
+          source?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
           calories?: number
           carbs?: number
+          components?: Json | null
           created_at?: string
           fats?: number
           id?: string
+          is_composite?: boolean | null
           meal_type?: string
           name?: string
+          portion_size?: number | null
+          portion_unit?: string | null
           proteins?: number
+          source?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -595,6 +610,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      food_journal_entries_backup: {
+        Row: {
+          calories: number | null
+          carbs: number | null
+          created_at: string | null
+          fats: number | null
+          id: string | null
+          meal_type: string | null
+          name: string | null
+          proteins: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          calories?: number | null
+          carbs?: number | null
+          created_at?: string | null
+          fats?: number | null
+          id?: string | null
+          meal_type?: string | null
+          name?: string | null
+          proteins?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          calories?: number | null
+          carbs?: number | null
+          created_at?: string | null
+          fats?: number | null
+          id?: string | null
+          meal_type?: string | null
+          name?: string | null
+          proteins?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       meal_plans: {
         Row: {
@@ -1307,6 +1361,19 @@ export type Database = {
           gender: string
         }
         Returns: number
+      }
+      calculate_macros: {
+        Args: {
+          base_calories: number
+          portion_size: number
+          food_type?: string
+        }
+        Returns: {
+          calories: number
+          proteins: number
+          carbs: number
+          fats: number
+        }[]
       }
       delete_workout_session: {
         Args: {
