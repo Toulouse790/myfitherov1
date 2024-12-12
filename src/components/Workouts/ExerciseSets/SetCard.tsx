@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Check, ChevronUp, ChevronDown, Flame, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea"; // Ajout du composant Textarea
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -36,6 +37,7 @@ export const SetCard = ({
 }: SetCardProps) => {
   const [personalRecord, setPersonalRecord] = useState<number | null>(null);
   const [lastUsedWeight, setLastUsedWeight] = useState<number | null>(null);
+  const [notes, setNotes] = useState<string>("");
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -69,32 +71,51 @@ export const SetCard = ({
   const handleSetCompleted = async () => {
     if (!user) return;
 
-    // Mettre à jour les records si nécessaire
-    if (isNewRecord) {
-      const { error } = await supabase
-        .from('user_exercise_weights')
-        .upsert({
-          user_id: user.id,
-          exercise_name: exerciseName,
-          personal_record: weight,
-          last_used_weight: weight,
-          last_used_at: new Date().toISOString()
-        })
-        .eq('user_id', user.id)
-        .eq('exercise_name', exerciseName);
+    try {
+      // Mettre à jour les records si nécessaire
+      if (isNewRecord) {
+        const { error } = await supabase
+          .from('user_exercise_weights')
+          .upsert({
+            user_id: user.id,
+            exercise_name: exerciseName,
+            personal_record: weight,
+            last_used_weight: weight,
+            last_used_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id)
+          .eq('exercise_name', exerciseName);
 
-      if (error) {
-        console.error('Error updating records:', error);
-        return;
+        if (error) {
+          console.error('Error updating records:', error);
+          return;
+        }
+
+        toast({
+          title: "Nouveau record personnel !",
+          description: `Félicitations ! Vous avez établi un nouveau record à ${weight}kg.`,
+        });
       }
 
+      // Sauvegarder les remarques avec la série
+      const { error: setError } = await supabase
+        .from('exercise_sets')
+        .update({ notes: notes })
+        .eq('set_number', setId);
+
+      if (setError) {
+        console.error('Error saving notes:', setError);
+      }
+
+      onComplete(setId);
+    } catch (error) {
+      console.error('Error completing set:', error);
       toast({
-        title: "Nouveau record personnel !",
-        description: `Félicitations ! Vous avez établi un nouveau record à ${weight}kg.`,
+        title: "Erreur",
+        description: "Impossible de sauvegarder la série",
+        variant: "destructive"
       });
     }
-
-    onComplete(setId);
   };
 
   return (
@@ -167,6 +188,19 @@ export const SetCard = ({
             </div>
           </div>
         </div>
+
+        {/* Ajout du champ de remarques */}
+        {isCurrentSet && !completed && (
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground">Remarques</label>
+            <Textarea
+              placeholder="Ajoutez des remarques sur cette série (sensations, technique, etc.)"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="h-20 resize-none"
+            />
+          </div>
+        )}
 
         <Button
           className="w-full"
