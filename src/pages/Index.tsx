@@ -2,7 +2,7 @@ import { Header } from "@/components/Layout/Header";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Dumbbell, Activity, Apple, Moon, BarChart, User } from "lucide-react";
+import { Dumbbell, Activity, BarChart, User } from "lucide-react";
 
 export default function Index() {
   return (
@@ -30,32 +30,6 @@ export default function Index() {
                 <h2 className="text-lg font-semibold">Cardio</h2>
                 <p className="text-sm text-muted-foreground text-center">
                   Gérez vos séances de cardio et votre endurance
-                </p>
-              </div>
-            </Link>
-          </Card>
-
-          {/* Nutrition */}
-          <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
-            <Link to="/nutrition" className="block">
-              <div className="flex flex-col items-center gap-3">
-                <Apple className="w-8 h-8 text-primary" />
-                <h2 className="text-lg font-semibold">Nutrition</h2>
-                <p className="text-sm text-muted-foreground text-center">
-                  Suivez votre alimentation et vos objectifs
-                </p>
-              </div>
-            </Link>
-          </Card>
-
-          {/* Sommeil */}
-          <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
-            <Link to="/sleep" className="block">
-              <div className="flex flex-col items-center gap-3">
-                <Moon className="w-8 h-8 text-primary" />
-                <h2 className="text-lg font-semibold">Sommeil</h2>
-                <p className="text-sm text-muted-foreground text-center">
-                  Analysez la qualité de votre sommeil
                 </p>
               </div>
             </Link>
