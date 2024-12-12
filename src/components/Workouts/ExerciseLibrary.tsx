@@ -14,8 +14,8 @@ export const ExerciseLibrary = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleExerciseSelection = (exerciseIds: string[]) => {
-    setSelectedExercises(exerciseIds);
+  const handleExerciseSelection = async (exerciseIds: string[]) => {
+    setSelectedExercises((prev) => [...prev, ...exerciseIds]);
     setShowSelection(false);
     
     toast({

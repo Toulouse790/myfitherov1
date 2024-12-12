@@ -14,7 +14,6 @@ export const MuscleGroupGrid = ({ onSelect }: MuscleGroupGridProps) => {
           id={muscle.id}
           name={muscle.name}
           isSelected={false}
-          exerciseCount={muscle.totalExercises}
           onClick={() => onSelect(muscle.id)}
         />
       ))}
