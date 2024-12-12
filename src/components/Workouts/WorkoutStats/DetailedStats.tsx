@@ -3,10 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Activity, Dumbbell, Scale, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { format, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from "date-fns";
+import { format, startOfWeek, startOfMonth, startOfYear } from "date-fns";
 import { fr } from "date-fns/locale";
+import { calculateExerciseCalories } from "@/utils/calorieCalculation";
+import { useAuth } from "@/hooks/use-auth";
 
 export const DetailedStats = () => {
+  const { user } = useAuth();
   const { data: exerciseStats } = useQuery({
     queryKey: ['exercise-stats'],
     queryFn: async () => {
@@ -15,9 +18,36 @@ export const DetailedStats = () => {
       const monthStart = startOfMonth(now);
       const yearStart = startOfYear(now);
 
+      // Récupérer d'abord les informations de l'utilisateur pour le calcul des calories
+      const { data: userProfile } = await supabase
+        .from('muscle_measurements')
+        .select('weight_kg')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const { data: userQuestionnaire } = await supabase
+        .from('questionnaire_responses')
+        .select('gender')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const weightKg = userProfile?.weight_kg || 75; // Valeur par défaut si non disponible
+      const gender = (userQuestionnaire?.gender || 'male') as 'male' | 'female';
+
       const { data: stats, error: statsError } = await supabase
         .from('training_stats')
-        .select('*')
+        .select(`
+          *,
+          workout_sessions (
+            total_weight_lifted,
+            session_duration_minutes,
+            perceived_difficulty
+          )
+        `)
         .order('created_at', { ascending: false })
         .limit(100);
 
@@ -29,12 +59,30 @@ export const DetailedStats = () => {
 
       const calculateTotals = (data: any[]) => ({
         weight: data.reduce((acc, stat) => acc + (stat.total_weight_lifted || 0), 0),
-        calories: data.reduce((acc, stat) => acc + (stat.session_duration_minutes * 7.5), 0),
-        duration: data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0)
+        duration: data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0),
+        calories: data.reduce((acc, stat) => {
+          const intensity = stat.perceived_difficulty === 'hard' ? 'high' : 
+                          stat.perceived_difficulty === 'easy' ? 'low' : 'moderate';
+          return acc + calculateExerciseCalories(
+            weightKg,
+            stat.session_duration_minutes || 0,
+            intensity,
+            gender
+          );
+        }, 0)
       });
 
       return {
-        stats: stats || [],
+        stats: stats?.map(stat => ({
+          ...stat,
+          calories: calculateExerciseCalories(
+            weightKg,
+            stat.session_duration_minutes || 0,
+            stat.perceived_difficulty === 'hard' ? 'high' : 
+            stat.perceived_difficulty === 'easy' ? 'low' : 'moderate',
+            gender
+          )
+        })) || [],
         weekly: calculateTotals(weeklyStats || []),
         monthly: calculateTotals(monthlyStats || []),
         yearly: calculateTotals(yearlyStats || [])
@@ -122,7 +170,7 @@ export const DetailedStats = () => {
                   </TableCell>
                   <TableCell>{stat.session_duration_minutes}</TableCell>
                   <TableCell>{Math.round(stat.total_weight_lifted || 0)}</TableCell>
-                  <TableCell>{Math.round(stat.session_duration_minutes * 7.5)}</TableCell>
+                  <TableCell>{Math.round(stat.calories)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
