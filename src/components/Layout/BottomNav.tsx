@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Dumbbell, Apple, Moon } from "lucide-react";
+import { LayoutDashboard, Dumbbell, Apple, Moon, User } from "lucide-react";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Accueil", path: "/" },
   { icon: Dumbbell, label: "Workouts", path: "/workouts" },
   { icon: Apple, label: "Nutrition", path: "/nutrition" },
-  { icon: Moon, label: "Sommeil", path: "/sleep" }
+  { icon: Moon, label: "Sommeil", path: "/sleep" },
+  { icon: User, label: "Profil", path: "/profile" }
 ];
 
 export const BottomNav = () => {
