@@ -8,6 +8,11 @@ import { WidgetSettings } from "./WidgetSettings";
 import { UsersWidget } from "./UsersWidget";
 import { WorkoutsWidget } from "./WorkoutsWidget";
 import { ExercisesWidget } from "./ExercisesWidget";
+import { NutritionWidget } from "./NutritionWidget";
+import { SleepWidget } from "./SleepWidget";
+import { PerformanceWidget } from "./PerformanceWidget";
+import { AchievementsWidget } from "./AchievementsWidget";
+import { MuscleGroupsWidget } from "./MuscleGroupsWidget";
 
 interface WidgetGridProps {
   isEditing: boolean;
@@ -42,6 +47,11 @@ export const WidgetGrid = ({
       users: UsersWidget,
       workouts: WorkoutsWidget,
       exercises: ExercisesWidget,
+      nutrition: NutritionWidget,
+      sleep: SleepWidget,
+      performance: PerformanceWidget,
+      achievements: AchievementsWidget,
+      muscle_groups: MuscleGroupsWidget,
     }[config.widget_id];
 
     if (!WidgetComponent) return null;
@@ -71,7 +81,7 @@ export const WidgetGrid = ({
             config.widget_id === 'users' ? monthlyUsers :
             config.widget_id === 'workouts' ? monthlyWorkouts :
             config.widget_id === 'exercises' ? publishedExercises :
-            null
+            []
           }
           title={config.title}
         />
