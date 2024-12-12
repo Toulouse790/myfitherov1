@@ -30,9 +30,7 @@ export const supabase = createClient(
 );
 
 // Test the connection
-Promise.resolve(
-  supabase.from('profiles').select('count', { count: 'exact', head: true })
-)
+supabase.from('profiles').select('count', { count: 'exact', head: true })
   .then(() => {
     console.log('Supabase connection successful');
   })
