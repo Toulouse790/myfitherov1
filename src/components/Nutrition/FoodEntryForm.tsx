@@ -1,10 +1,7 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { MealTypeSelect } from "./FoodEntry/MealTypeSelect";
 import { FoodInputs } from "./FoodEntry/FoodInputs";
 import { ActionButtons } from "./FoodEntry/ActionButtons";
@@ -24,7 +21,7 @@ interface FoodEntryFormProps {
   onCarbsChange: (value: string) => void;
   onFatsChange: (value: string) => void;
   onWeightChange: (value: string) => void;
-  onAddEntry: (mealType: string) => void;
+  onAddEntry: (mealType: string, isComposite?: boolean, ingredients?: Array<{ name: string; portion: string }>) => void;
 }
 
 export const FoodEntryForm = ({
@@ -47,14 +44,8 @@ export const FoodEntryForm = ({
   const { toast } = useToast();
   const [selectedMealType, setSelectedMealType] = useState("");
   const [isCustomFood, setIsCustomFood] = useState(false);
-
-  const handleWeightChange = (value: string) => {
-    onWeightChange(value);
-    if (baseCalories > 0 && value) {
-      const newCalories = Math.round((baseCalories * parseInt(value)) / 100);
-      onCaloriesChange(newCalories.toString());
-    }
-  };
+  const [isCompositeMeal, setIsCompositeMeal] = useState(false);
+  const [ingredients, setIngredients] = useState<Array<{ name: string; portion: string }>>([]);
 
   const handleAdd = () => {
     if (!selectedMealType) {
@@ -65,8 +56,32 @@ export const FoodEntryForm = ({
       });
       return;
     }
-    onAddEntry(selectedMealType);
+
+    if (isCompositeMeal) {
+      if (ingredients.length === 0) {
+        toast({
+          title: "Erreur",
+          description: "Veuillez ajouter au moins un ingrédient",
+          variant: "destructive",
+        });
+        return;
+      }
+      onAddEntry(selectedMealType, true, ingredients);
+    } else {
+      if (!newFood || !calories || !proteins) {
+        toast({
+          title: "Erreur",
+          description: "Veuillez remplir tous les champs",
+          variant: "destructive",
+        });
+        return;
+      }
+      onAddEntry(selectedMealType);
+    }
+
     setSelectedMealType("");
+    setIngredients([]);
+    setIsCompositeMeal(false);
   };
 
   return (
@@ -86,12 +101,16 @@ export const FoodEntryForm = ({
             carbs={carbs}
             fats={fats}
             isCustomFood={isCustomFood}
+            isCompositeMeal={isCompositeMeal}
+            ingredients={ingredients}
             onFoodChange={onFoodChange}
-            onWeightChange={handleWeightChange}
+            onWeightChange={onWeightChange}
             onCaloriesChange={onCaloriesChange}
             onProteinsChange={onProteinsChange}
             onCarbsChange={onCarbsChange}
             onFatsChange={onFatsChange}
+            onIsCompositeMealChange={setIsCompositeMeal}
+            onIngredientsChange={setIngredients}
             setIsCustomFood={setIsCustomFood}
           />
 
