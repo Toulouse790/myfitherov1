@@ -1,17 +1,66 @@
 import { Card } from "@/components/ui/card";
-import { ReactNode } from "react";
+import { Heart } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface WorkoutCardProps {
   title: string;
   description: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
   onClick?: () => void;
+  sessionId?: string;
 }
 
-export const WorkoutCard = ({ title, description, icon, onClick }: WorkoutCardProps) => {
+export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: WorkoutCardProps) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const { toast } = useToast();
+
+  const toggleFavorite = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Empêche le déclenchement du onClick du Card
+
+    try {
+      if (isFavorite) {
+        // Supprimer des favoris
+        const { error } = await supabase
+          .from('favorite_workouts')
+          .delete()
+          .eq('session_id', sessionId);
+
+        if (error) throw error;
+
+        setIsFavorite(false);
+        toast({
+          title: "Retiré des favoris",
+          description: "L'entraînement a été retiré de vos favoris",
+        });
+      } else {
+        // Ajouter aux favoris
+        const { error } = await supabase
+          .from('favorite_workouts')
+          .insert([{ session_id: sessionId }]);
+
+        if (error) throw error;
+
+        setIsFavorite(true);
+        toast({
+          title: "Ajouté aux favoris",
+          description: "L'entraînement a été ajouté à vos favoris",
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la gestion des favoris:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card 
-      className="bg-[#2A2F3F] p-3 cursor-pointer hover:opacity-90 transition-all duration-300 transform hover:scale-[1.02]"
+      className="bg-[#2A2F3F] p-3 cursor-pointer hover:opacity-90 transition-all duration-300 transform hover:scale-[1.02] relative"
       onClick={onClick}
     >
       <div className="space-y-2">
@@ -21,6 +70,19 @@ export const WorkoutCard = ({ title, description, icon, onClick }: WorkoutCardPr
         <h3 className="text-white font-medium text-sm sm:text-base">{title}</h3>
         <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">{description}</p>
       </div>
+      
+      {sessionId && (
+        <button
+          onClick={toggleFavorite}
+          className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-700/50 transition-colors"
+        >
+          <Heart 
+            className={`h-5 w-5 transition-colors ${
+              isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
+            }`}
+          />
+        </button>
+      )}
     </Card>
   );
 };
