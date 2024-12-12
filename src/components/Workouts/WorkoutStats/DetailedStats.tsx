@@ -10,9 +10,13 @@ import { useAuth } from "@/hooks/use-auth";
 
 export const DetailedStats = () => {
   const { user } = useAuth();
+
   const { data: exerciseStats } = useQuery({
-    queryKey: ['exercise-stats'],
+    queryKey: ['exercise-stats', user?.id],
+    enabled: !!user,
     queryFn: async () => {
+      if (!user) return null;
+
       const now = new Date();
       const weekStart = startOfWeek(now, { locale: fr });
       const monthStart = startOfMonth(now);
@@ -22,7 +26,7 @@ export const DetailedStats = () => {
       const { data: userProfile } = await supabase
         .from('muscle_measurements')
         .select('weight_kg')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
@@ -30,7 +34,7 @@ export const DetailedStats = () => {
       const { data: userQuestionnaire } = await supabase
         .from('questionnaire_responses')
         .select('gender')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
@@ -89,6 +93,14 @@ export const DetailedStats = () => {
       };
     }
   });
+
+  if (!user) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        Connectez-vous pour voir vos statistiques d'entraînement.
+      </div>
+    );
+  }
 
   if (!exerciseStats?.stats.length) {
     return (
