@@ -1,7 +1,7 @@
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { WorkoutTemplates } from "@/components/Workouts/WorkoutTemplates";
-import { Plus, Brain, Activity, ChartBar, Sparkles } from "lucide-react";
+import { Plus, Brain, Activity, ChartBar, Sparkles, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -44,9 +44,9 @@ const Index = () => {
       onClick: () => navigate("/stats")
     },
     {
-      icon: <Sparkles className="w-6 h-6" />,
-      label: "Laissez-moi faire",
-      onClick: () => setShowDialog(true)
+      icon: <Settings className="w-6 h-6" />,
+      label: "Préférences",
+      onClick: () => navigate("/training-preferences")
     }
   ];
 
