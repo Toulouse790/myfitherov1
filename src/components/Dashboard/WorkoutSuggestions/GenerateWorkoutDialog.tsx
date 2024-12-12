@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { generateWorkoutPlan } from "./workoutPlanGenerator";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
 import { WorkoutPlan } from "./workoutPlanGenerator";
+import { Loader2 } from "lucide-react";
 
 interface GenerateWorkoutDialogProps {
   open: boolean;
@@ -20,6 +21,7 @@ export const GenerateWorkoutDialog = ({
 }: GenerateWorkoutDialogProps) => {
   const [availableExercises, setAvailableExercises] = useState<string[]>([]);
   const [generatedWorkout, setGeneratedWorkout] = useState<WorkoutPlan | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
   const { fetchExercises } = useExerciseFetching();
 
@@ -27,23 +29,23 @@ export const GenerateWorkoutDialog = ({
     if (open) {
       const loadExercises = async () => {
         try {
+          console.log("Chargement des exercices disponibles...");
           const exercises = await fetchExercises();
+          console.log(`${exercises.length} exercices chargés avec succès`);
           setAvailableExercises(exercises);
         } catch (error) {
-          console.error('Error loading exercises:', error);
-          // On affiche une notification plus discrète
+          console.error('Erreur lors du chargement des exercices:', error);
           toast({
             title: "Erreur de chargement",
             description: "Impossible de charger les exercices",
             variant: "destructive",
-            duration: 2000, // Réduit la durée d'affichage
+            duration: 2000,
           });
           onOpenChange(false);
         }
       };
       loadExercises();
     } else {
-      // Reset state when dialog closes
       setGeneratedWorkout(null);
     }
   }, [open, fetchExercises, toast, onOpenChange]);
@@ -58,12 +60,32 @@ export const GenerateWorkoutDialog = ({
       return;
     }
 
-    const workout = generateWorkoutPlan(availableExercises);
-    setGeneratedWorkout(workout);
+    setIsGenerating(true);
+    console.log("Génération du programme d'entraînement...");
+    
+    try {
+      const workout = generateWorkoutPlan(availableExercises);
+      console.log("Programme généré avec succès:", workout);
+      setGeneratedWorkout(workout);
+      toast({
+        title: "Succès",
+        description: "Programme d'entraînement généré avec succès",
+      });
+    } catch (error) {
+      console.error("Erreur lors de la génération:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer le programme",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleConfirm = () => {
     if (generatedWorkout && onWorkoutGenerated) {
+      console.log("Confirmation du programme généré");
       onWorkoutGenerated(generatedWorkout);
       onOpenChange(false);
     }
@@ -81,9 +103,16 @@ export const GenerateWorkoutDialog = ({
             <Button 
               onClick={handleGenerateWorkout}
               className="w-full"
-              disabled={availableExercises.length === 0}
+              disabled={availableExercises.length === 0 || isGenerating}
             >
-              Générer un programme
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Génération en cours...
+                </>
+              ) : (
+                "Générer un programme"
+              )}
             </Button>
           ) : (
             <div className="space-y-4">
