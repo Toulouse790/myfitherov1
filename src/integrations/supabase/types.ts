@@ -843,6 +843,7 @@ export type Database = {
       }
       training_stats: {
         Row: {
+          calories_burned: number | null
           created_at: string
           energy_level: number | null
           id: string
@@ -856,6 +857,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          calories_burned?: number | null
           created_at?: string
           energy_level?: number | null
           id?: string
@@ -869,6 +871,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          calories_burned?: number | null
           created_at?: string
           energy_level?: number | null
           id?: string
@@ -1194,6 +1197,15 @@ export type Database = {
           weight_kg?: number
           height_cm?: number
           age?: number
+        }
+        Returns: number
+      }
+      calculate_exercise_calories: {
+        Args: {
+          weight_kg: number
+          duration_minutes: number
+          intensity: string
+          gender: string
         }
         Returns: number
       }
