@@ -713,7 +713,13 @@ export type Database = {
           intensity: number | null
           last_trained_at: string | null
           muscle_group: string
+          muscle_soreness_level: number | null
+          nutrition_status: string | null
+          previous_training_intensity: number | null
           recovery_status: string | null
+          sleep_quality: number | null
+          stress_level: number | null
+          training_volume: number | null
           updated_at: string | null
           user_id: string | null
         }
@@ -724,7 +730,13 @@ export type Database = {
           intensity?: number | null
           last_trained_at?: string | null
           muscle_group: string
+          muscle_soreness_level?: number | null
+          nutrition_status?: string | null
+          previous_training_intensity?: number | null
           recovery_status?: string | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          training_volume?: number | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -735,7 +747,13 @@ export type Database = {
           intensity?: number | null
           last_trained_at?: string | null
           muscle_group?: string
+          muscle_soreness_level?: number | null
+          nutrition_status?: string | null
+          previous_training_intensity?: number | null
           recovery_status?: string | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          training_volume?: number | null
           updated_at?: string | null
           user_id?: string | null
         }
