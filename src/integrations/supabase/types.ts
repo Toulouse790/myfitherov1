@@ -1134,6 +1134,7 @@ export type Database = {
       workout_suggestions: {
         Row: {
           created_at: string
+          criteria: Json | null
           description: string
           icon_name: string
           id: string
@@ -1144,6 +1145,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          criteria?: Json | null
           description: string
           icon_name: string
           id?: string
@@ -1154,6 +1156,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          criteria?: Json | null
           description?: string
           icon_name?: string
           id?: string
