@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Users, DollarSign, Activity, TrendingUp } from "lucide-react";
+import { Users, DollarSign, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -9,16 +9,6 @@ export const AdminStats = () => {
     queryFn: async () => {
       const { count } = await supabase
         .from('profiles')
-        .select('*', { count: 'exact', head: true });
-      return count || 0;
-    }
-  });
-
-  const { data: workoutCount } = useQuery({
-    queryKey: ['admin-workouts-count'],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from('workout_sessions')
         .select('*', { count: 'exact', head: true });
       return count || 0;
     }
@@ -44,7 +34,7 @@ export const AdminStats = () => {
   });
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card className="p-6">
         <div className="flex items-center space-x-4">
           <Users className="h-8 w-8 text-blue-500" />
@@ -65,18 +55,6 @@ export const AdminStats = () => {
               Revenu mensuel
             </p>
             <h3 className="text-2xl font-bold">-</h3>
-          </div>
-        </div>
-      </Card>
-
-      <Card className="p-6">
-        <div className="flex items-center space-x-4">
-          <Activity className="h-8 w-8 text-purple-500" />
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              Séances créées
-            </p>
-            <h3 className="text-2xl font-bold">{workoutCount || 0}</h3>
           </div>
         </div>
       </Card>
