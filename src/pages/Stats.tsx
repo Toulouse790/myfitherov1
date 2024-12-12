@@ -6,12 +6,10 @@ import { Header } from "@/components/Layout/Header";
 
 const Stats = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="container max-w-3xl mx-auto px-4 pt-12 pb-20">
-        <div className="mb-4 text-center">
-          <h1 className="text-xl font-bold">
+    <Header>
+      <div className="container max-w-7xl mx-auto px-4 pt-6 pb-20">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold">
             Statistiques
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -21,14 +19,14 @@ const Stats = () => {
 
         <div className="space-y-6">
           <DashboardStats />
-          <WorkoutSummary />
           <div className="grid md:grid-cols-2 gap-4">
             <StrengthScore />
             <TrendMetrics />
           </div>
+          <WorkoutSummary />
         </div>
-      </main>
-    </div>
+      </div>
+    </Header>
   );
 };
 
