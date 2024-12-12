@@ -13,7 +13,7 @@ const Admin = () => {
           <TabsTrigger value="dashboard">Tableau de bord</TabsTrigger>
           <TabsTrigger value="user-dashboard">Tableau utilisateur</TabsTrigger>
           <TabsTrigger value="exercises">Gestion des exercices</TabsTrigger>
-          <TabsTrigger value="food-suggestions">Suggestions d'aliments</TabsTrigger>
+          <TabsTrigger value="food-suggestions">Suggestions</TabsTrigger>
           <TabsTrigger value="styles">Styles</TabsTrigger>
         </TabsList>
         
