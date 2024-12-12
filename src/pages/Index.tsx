@@ -1,5 +1,6 @@
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
+import { WorkoutTemplates } from "@/components/Workouts/WorkoutTemplates";
 import { Plus, Brain, Activity, ChartBar, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -78,6 +79,7 @@ const Index = () => {
 
         <div className="space-y-8">
           <WorkoutSuggestions />
+          <WorkoutTemplates />
         </div>
 
         <GenerateWorkoutDialog

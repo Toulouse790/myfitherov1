@@ -796,6 +796,54 @@ export type Database = {
           },
         ]
       }
+      personal_records: {
+        Row: {
+          achieved_at: string | null
+          created_at: string | null
+          exercise_id: string | null
+          id: string
+          reps: number | null
+          updated_at: string | null
+          user_id: string | null
+          weight: number | null
+        }
+        Insert: {
+          achieved_at?: string | null
+          created_at?: string | null
+          exercise_id?: string | null
+          id?: string
+          reps?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          weight?: number | null
+        }
+        Update: {
+          achieved_at?: string | null
+          created_at?: string | null
+          exercise_id?: string | null
+          id?: string
+          reps?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personal_records_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "unified_exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -1081,6 +1129,44 @@ export type Database = {
           },
         ]
       }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          id: string
+          measurement_unit: string | null
+          notifications_enabled: boolean | null
+          training_days: string[] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          measurement_unit?: string | null
+          notifications_enabled?: boolean | null
+          training_days?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          measurement_unit?: string | null
+          notifications_enabled?: boolean | null
+          training_days?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_suggested_foods: {
         Row: {
           calories: number
@@ -1219,6 +1305,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      workout_templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          exercise_data: Json | null
+          id: string
+          is_public: boolean | null
+          name: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          exercise_data?: Json | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          exercise_data?: Json | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_templates_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
