@@ -942,6 +942,7 @@ export type Database = {
         Row: {
           available_equipment: string | null
           created_at: string
+          daily_energy_expenditure: number | null
           diet_type: string | null
           experience_level: string | null
           gender: string | null
@@ -960,6 +961,7 @@ export type Database = {
         Insert: {
           available_equipment?: string | null
           created_at?: string
+          daily_energy_expenditure?: number | null
           diet_type?: string | null
           experience_level?: string | null
           gender?: string | null
@@ -978,6 +980,7 @@ export type Database = {
         Update: {
           available_equipment?: string | null
           created_at?: string
+          daily_energy_expenditure?: number | null
           diet_type?: string | null
           experience_level?: string | null
           gender?: string | null
@@ -1562,6 +1565,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_daily_calories: {
+        Row: {
+          activity_level: string | null
+          height_cm: number | null
+          objective: string | null
+          total_daily_calories: number | null
+          training_frequency: string | null
+          user_id: string | null
+          weight_kg: number | null
+          workout_duration: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questionnaire_responses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       calculate_calories_by_gender: {
@@ -1595,6 +1619,15 @@ export type Database = {
           carbs: number
           fats: number
         }[]
+      }
+      calculate_total_daily_calories: {
+        Args: {
+          base_calories: number
+          training_frequency: string
+          workout_duration: string
+          activity_level: string
+        }
+        Returns: number
       }
       delete_workout_session: {
         Args: {
