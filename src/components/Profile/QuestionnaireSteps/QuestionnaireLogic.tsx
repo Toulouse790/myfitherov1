@@ -36,7 +36,7 @@ export const useQuestionnaireLogic = () => {
   const navigate = useNavigate();
 
   const handleResponseChange = (field: keyof QuestionnaireResponses, value: string) => {
-    console.log(`Mise à jour du champ ${field} avec la valeur:`, value);
+    console.log(`[DEV] Mise à jour du champ ${field}:`, value);
     setResponses(prev => ({
       ...prev,
       [field]: value
@@ -47,7 +47,7 @@ export const useQuestionnaireLogic = () => {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
-      console.error("Erreur: Utilisateur non connecté");
+      console.error("[DEV] Erreur: Utilisateur non connecté");
       toast({
         title: "Erreur",
         description: "Vous devez être connecté pour continuer",
@@ -57,8 +57,8 @@ export const useQuestionnaireLogic = () => {
       return;
     }
 
-    console.log("Tentative de sauvegarde pour l'utilisateur:", user.id);
-    console.log("Réponses finales:", finalResponses);
+    console.log("[DEV] Tentative de sauvegarde pour l'utilisateur:", user.id);
+    console.log("[DEV] Réponses finales:", finalResponses);
 
     // Save questionnaire responses
     const { data: questionnaireData, error: questionnaireError } = await supabase
@@ -75,7 +75,7 @@ export const useQuestionnaireLogic = () => {
       }]);
 
     if (questionnaireError) {
-      console.error("Erreur lors de la sauvegarde du questionnaire:", questionnaireError);
+      console.error("[DEV] Erreur lors de la sauvegarde du questionnaire:", questionnaireError);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de la sauvegarde de vos réponses",
@@ -84,7 +84,7 @@ export const useQuestionnaireLogic = () => {
       return;
     }
 
-    console.log("Questionnaire sauvegardé avec succès:", questionnaireData);
+    console.log("[DEV] Questionnaire sauvegardé avec succès:", questionnaireData);
 
     // Save measurements
     const { data: measurementsData, error: measurementsError } = await supabase
@@ -96,7 +96,7 @@ export const useQuestionnaireLogic = () => {
       }]);
 
     if (measurementsError) {
-      console.error("Erreur lors de la sauvegarde des mesures:", measurementsError);
+      console.error("[DEV] Erreur lors de la sauvegarde des mesures:", measurementsError);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de la sauvegarde de vos mesures",
@@ -105,7 +105,7 @@ export const useQuestionnaireLogic = () => {
       return;
     }
 
-    console.log("Mesures sauvegardées avec succès:", measurementsData);
+    console.log("[DEV] Mesures sauvegardées avec succès:", measurementsData);
 
     toast({
       title: "Configuration terminée",
