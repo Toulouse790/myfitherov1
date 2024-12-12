@@ -5,20 +5,63 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { GenerateWorkoutDialog } from "@/components/Dashboard/WorkoutSuggestions/GenerateWorkoutDialog";
+import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
+import { muscleGroups } from "@/components/Workouts/workoutConstants";
+import { MuscleGroupCard } from "@/components/Workouts/components/MuscleGroupCard";
 
 export default function WorkoutGenerate() {
-  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
+  const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [showSelection, setShowSelection] = useState(false);
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleWorkoutGenerated = async (workout: any) => {
+  const handleExerciseSelection = (exerciseIds: string[]) => {
+    setSelectedExercises((prev) => [...prev, ...exerciseIds]);
+    setShowSelection(false);
+    
+    toast({
+      title: "Groupe musculaire ajouté",
+      description: "Veux-tu entraîner un autre groupe musculaire ?",
+      action: (
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowSelection(false)}
+          >
+            Non
+          </Button>
+          <Button 
+            size="sm"
+            onClick={() => {
+              setSelectedMuscleGroup("");
+              setShowSelection(true);
+            }}
+          >
+            Oui
+          </Button>
+        </div>
+      ),
+    });
+  };
+
+  const handleStartWorkout = async () => {
+    if (selectedExercises.length === 0) {
+      toast({
+        title: "Aucun exercice sélectionné",
+        description: "Veuillez sélectionner au moins un exercice",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
           { 
-            exercises: workout.exercises.map((ex: any) => ex.name),
+            exercises: selectedExercises,
             type: 'strength',
             status: 'in_progress'
           }
@@ -41,32 +84,46 @@ export default function WorkoutGenerate() {
     }
   };
 
+  const handleMuscleGroupSelect = (muscleGroup: string) => {
+    setSelectedMuscleGroup(muscleGroup);
+    setShowSelection(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container max-w-4xl mx-auto p-4 space-y-6">
-        <h1 className="text-2xl font-bold">Génération d'entraînement</h1>
+        <h1 className="text-2xl font-bold">Création de séance</h1>
         
-        <Card className="p-6">
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Programme personnalisé</h2>
-            <p className="text-muted-foreground">
-              Générez un programme d'entraînement adapté à vos objectifs et à votre niveau.
-            </p>
-            <Button 
-              onClick={() => setShowGenerateDialog(true)}
-              className="w-full sm:w-auto"
-            >
-              Générer un programme
+        {selectedExercises.length > 0 && (
+          <div className="flex justify-end">
+            <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
+              C'est parti ! ({selectedExercises.length})
             </Button>
           </div>
-        </Card>
+        )}
 
-        <GenerateWorkoutDialog
-          open={showGenerateDialog}
-          onOpenChange={setShowGenerateDialog}
-          onWorkoutGenerated={handleWorkoutGenerated}
-        />
+        {showSelection ? (
+          <ExerciseSelection
+            selectedExercises={selectedExercises}
+            onSelectionChange={handleExerciseSelection}
+            onClose={() => setShowSelection(false)}
+            muscleGroup={selectedMuscleGroup}
+          />
+        ) : (
+          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+            {muscleGroups.map((muscle) => (
+              <MuscleGroupCard
+                key={muscle.id}
+                id={muscle.id}
+                name={muscle.name}
+                isSelected={false}
+                exerciseCount={0}
+                onClick={() => handleMuscleGroupSelect(muscle.id)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
