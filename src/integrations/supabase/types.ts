@@ -851,6 +851,7 @@ export type Database = {
           rest_time_seconds: number | null
           session_duration_minutes: number
           session_id: string | null
+          total_weight_lifted: number | null
           updated_at: string
           user_id: string | null
         }
@@ -863,6 +864,7 @@ export type Database = {
           rest_time_seconds?: number | null
           session_duration_minutes?: number
           session_id?: string | null
+          total_weight_lifted?: number | null
           updated_at?: string
           user_id?: string | null
         }
@@ -875,6 +877,7 @@ export type Database = {
           rest_time_seconds?: number | null
           session_duration_minutes?: number
           session_id?: string | null
+          total_weight_lifted?: number | null
           updated_at?: string
           user_id?: string | null
         }

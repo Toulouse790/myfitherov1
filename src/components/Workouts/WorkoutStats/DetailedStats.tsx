@@ -1,57 +1,33 @@
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 import { Activity, Dumbbell, Scale, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const COLORS = ['#FF8042', '#00C49F', '#FFBB28', '#0088FE'];
-
-interface ExerciseSet {
-  weight: number;
-  reps: number;
-  calories_burned: number;
-  exercise_name: string;
-  session_id: string;
-  created_at: string;
-}
-
 export const DetailedStats = () => {
-  // Récupérer les séries d'exercices
   const { data: exerciseStats } = useQuery({
     queryKey: ['exercise-stats'],
     queryFn: async () => {
-      const { data: sets, error: setsError } = await supabase
-        .from('exercise_sets')
-        .select(`
-          weight,
-          reps,
-          calories_burned,
-          exercise_name,
-          session_id,
-          created_at
-        `)
+      const { data: stats, error: statsError } = await supabase
+        .from('training_stats')
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (setsError) throw setsError;
+      if (statsError) throw statsError;
 
-      // Calculer les statistiques
-      const totalWeight = (sets || []).reduce((acc: number, set: any) => 
-        acc + ((set.weight || 0) * (set.reps || 0)), 0);
-      
-      const totalCalories = (sets || []).reduce((acc: number, set: any) => 
-        acc + (set.calories_burned || 0), 0);
+      const totalWeight = stats?.reduce((acc, stat) => acc + (stat.total_weight_lifted || 0), 0) || 0;
+      const totalCalories = stats?.reduce((acc, stat) => acc + (stat.session_duration_minutes * 7.5), 0) || 0;
 
       return {
-        sets: sets || [],
+        stats: stats || [],
         totalWeight,
         totalCalories
       };
     }
   });
 
-  if (!exerciseStats?.sets.length) {
+  if (!exerciseStats?.stats.length) {
     return (
       <div className="text-center py-8 text-muted-foreground">
         Aucune donnée d'entraînement disponible.
@@ -78,7 +54,7 @@ export const DetailedStats = () => {
             Calories brûlées
           </h3>
           <div className="text-2xl font-bold">
-            {exerciseStats.totalCalories.toLocaleString()} kcal
+            {Math.round(exerciseStats.totalCalories).toLocaleString()} kcal
           </div>
         </Card>
       </div>
@@ -90,24 +66,20 @@ export const DetailedStats = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Date</TableHead>
-                <TableHead>Exercice</TableHead>
-                <TableHead>Séries</TableHead>
-                <TableHead>Répétitions</TableHead>
-                <TableHead>Poids</TableHead>
+                <TableHead>Durée (min)</TableHead>
+                <TableHead>Poids total (kg)</TableHead>
                 <TableHead>Calories</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {exerciseStats.sets.map((set: ExerciseSet, index: number) => (
-                <TableRow key={index}>
+              {exerciseStats.stats.map((stat: any) => (
+                <TableRow key={stat.id}>
                   <TableCell>
-                    {new Date(set.created_at).toLocaleDateString()}
+                    {new Date(stat.created_at).toLocaleDateString()}
                   </TableCell>
-                  <TableCell>{set.exercise_name}</TableCell>
-                  <TableCell>1</TableCell>
-                  <TableCell>{set.reps}</TableCell>
-                  <TableCell>{set.weight} kg</TableCell>
-                  <TableCell>{set.calories_burned} kcal</TableCell>
+                  <TableCell>{stat.session_duration_minutes}</TableCell>
+                  <TableCell>{Math.round(stat.total_weight_lifted || 0)}</TableCell>
+                  <TableCell>{Math.round(stat.session_duration_minutes * 7.5)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

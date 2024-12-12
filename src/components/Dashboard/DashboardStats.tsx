@@ -14,24 +14,40 @@ export const DashboardStats = () => {
   const { data: trainingStats } = useQuery({
     queryKey: ['training-stats'],
     queryFn: async () => {
+      const now = new Date();
+      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+
       const { data, error } = await supabase
         .from('training_stats')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(30);
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+
+      const weeklyStats = data.filter(stat => new Date(stat.created_at) >= startOfWeek);
+      const monthlyStats = data.filter(stat => new Date(stat.created_at) >= startOfMonth);
+      const yearlyStats = data.filter(stat => new Date(stat.created_at) >= startOfYear);
+
+      const calculateTotalWeight = (stats: any[]) => 
+        stats.reduce((acc, stat) => acc + (stat.total_weight_lifted || 0), 0);
+
+      return {
+        weeklyWorkouts: weeklyStats.length,
+        monthlyWorkouts: monthlyStats.length,
+        yearlyWorkouts: yearlyStats.length,
+        weeklyWeight: calculateTotalWeight(weeklyStats),
+        monthlyWeight: calculateTotalWeight(monthlyStats),
+        yearlyWeight: calculateTotalWeight(yearlyStats),
+        totalMinutes: data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0),
+        totalCalories: Math.round((data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0) * 7.5))
+      };
     }
   });
 
-  const workoutsThisMonth = trainingStats?.length || 0;
-  const plannedWorkouts = 16;
-  const totalMinutes = trainingStats?.reduce((acc, stat) => acc + (stat.duration_minutes || 0), 0) || 0;
-  const totalCalories = Math.round((totalMinutes * 7.5));
-
   useEffect(() => {
-    if (workoutsThisMonth > 24) {
+    if (trainingStats?.weeklyWorkouts > 24) {
       toast({
         title: "Attention à votre santé",
         description: "Il est recommandé de ne pas dépasser 6 entraînements par semaine pour permettre une bonne récupération.",
@@ -39,11 +55,11 @@ export const DashboardStats = () => {
         duration: 6000,
       });
     }
-  }, [workoutsThisMonth, toast]);
+  }, [trainingStats?.weeklyWorkouts, toast]);
 
   return (
     <div className="space-y-8">
-      {workoutsThisMonth > 24 && (
+      {trainingStats?.weeklyWorkouts > 24 && (
         <Alert variant="destructive" className="mb-4">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Risque de surentraînement détecté</AlertTitle>
@@ -56,22 +72,21 @@ export const DashboardStats = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <DashboardCard
-          title="Séances ce mois"
-          value={workoutsThisMonth}
-          target={plannedWorkouts}
+          title="Poids soulevé (semaine)"
+          value={`${Math.round(trainingStats?.weeklyWeight || 0)} kg`}
+          target={`${Math.round((trainingStats?.weeklyWeight || 0) * 1.1)} kg`}
           icon={<Dumbbell className="w-5 h-5" />}
-          className={workoutsThisMonth > 24 ? "border-red-500" : ""}
         />
         <DashboardCard
-          title="Minutes d'entraînement"
-          value={totalMinutes}
-          target={400}
+          title="Poids soulevé (mois)"
+          value={`${Math.round(trainingStats?.monthlyWeight || 0)} kg`}
+          target={`${Math.round((trainingStats?.monthlyWeight || 0) * 1.1)} kg`}
           icon={<Activity className="w-5 h-5" />}
         />
         <DashboardCard
-          title="Calories brûlées"
-          value={totalCalories}
-          target={2800}
+          title="Poids soulevé (année)"
+          value={`${Math.round(trainingStats?.yearlyWeight || 0)} kg`}
+          target={`${Math.round((trainingStats?.yearlyWeight || 0) * 1.1)} kg`}
           icon={<Heart className="w-5 h-5" />}
         />
       </div>
