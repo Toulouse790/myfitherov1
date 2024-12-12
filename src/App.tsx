@@ -15,7 +15,7 @@ import { BottomNav } from "@/components/Layout/BottomNav";
 
 function App() {
   const location = useLocation();
-  const showBottomNav = !location.pathname.startsWith('/admin');
+  const showBottomNav = !location.pathname.startsWith('/admin') && location.pathname !== '/';
 
   return (
     <>
