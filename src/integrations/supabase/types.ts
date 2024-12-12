@@ -171,6 +171,67 @@ export type Database = {
           },
         ]
       }
+      athlete_assessments: {
+        Row: {
+          assessment_date: string | null
+          created_at: string | null
+          id: string
+          next_targets: Json | null
+          position_id: string | null
+          recommendations: Json | null
+          sport_id: string | null
+          test_results: Json | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          assessment_date?: string | null
+          created_at?: string | null
+          id?: string
+          next_targets?: Json | null
+          position_id?: string | null
+          recommendations?: Json | null
+          sport_id?: string | null
+          test_results?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          assessment_date?: string | null
+          created_at?: string | null
+          id?: string
+          next_targets?: Json | null
+          position_id?: string | null
+          recommendations?: Json | null
+          sport_id?: string | null
+          test_results?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "athlete_assessments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "sport_positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "athlete_assessments_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "athlete_assessments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       available_buttons: {
         Row: {
           category: string | null
@@ -959,25 +1020,31 @@ export type Database = {
       sport_positions: {
         Row: {
           created_at: string | null
-          description: string | null
           id: string
+          initial_tests: Json | null
           name: string
+          performance_metrics: Json | null
+          recommended_exercises: Json | null
           sport_id: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
-          description?: string | null
           id?: string
+          initial_tests?: Json | null
           name: string
+          performance_metrics?: Json | null
+          recommended_exercises?: Json | null
           sport_id?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
-          description?: string | null
           id?: string
+          initial_tests?: Json | null
           name?: string
+          performance_metrics?: Json | null
+          recommended_exercises?: Json | null
           sport_id?: string | null
           updated_at?: string | null
         }
