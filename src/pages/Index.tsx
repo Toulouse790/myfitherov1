@@ -1,4 +1,4 @@
-import { Layout } from "@/components/Layout/Header";
+import { Header } from "@/components/Layout/Header";
 import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { DashboardStats } from "@/components/Dashboard/DashboardStats";
@@ -6,7 +6,7 @@ import { WorkoutSummary } from "@/components/Dashboard/WorkoutSummary";
 
 export default function Index() {
   return (
-    <Layout>
+    <Header>
       <div className="container mx-auto px-4 py-8 space-y-6">
         <DashboardStats />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -19,6 +19,6 @@ export default function Index() {
           </div>
         </div>
       </div>
-    </Layout>
+    </Header>
   );
 }
