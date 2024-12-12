@@ -6,7 +6,6 @@ import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
-import { muscleGroups } from "./workoutConstants";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
@@ -111,10 +110,7 @@ export const ExerciseLibrary = () => {
             muscleGroup={selectedMuscleGroup}
           />
         ) : (
-          <MuscleGroupGrid
-            muscleGroups={muscleGroups}
-            onSelect={handleMuscleGroupSelect}
-          />
+          <MuscleGroupGrid onSelect={handleMuscleGroupSelect} />
         )}
       </div>
     </div>
