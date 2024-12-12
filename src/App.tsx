@@ -9,6 +9,8 @@ import Stats from "@/pages/Stats";
 import Sleep from "@/pages/Sleep";
 import TrainingPreferences from "@/pages/TrainingPreferences";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
+import Cardio from "@/pages/Cardio";
+import WorkoutGenerate from "@/pages/WorkoutGenerate";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/workouts" element={<Workouts />} />
         <Route path="/workout/:sessionId" element={<UnifiedWorkoutDetail />} />
+        <Route path="/workout/generate" element={<WorkoutGenerate />} />
+        <Route path="/cardio" element={<Cardio />} />
         <Route path="/nutrition" element={<Nutrition />} />
         <Route path="/stats" element={<Stats />} />
         <Route path="/sleep" element={<Sleep />} />
