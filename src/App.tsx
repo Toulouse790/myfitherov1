@@ -20,8 +20,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/workouts" element={<Workouts />} />
-        <Route path="/workout/:sessionId" element={<UnifiedWorkoutDetail />} />
         <Route path="/workout/generate" element={<WorkoutGenerate />} />
+        <Route path="/workout/:sessionId" element={<UnifiedWorkoutDetail />} />
         <Route path="/cardio" element={<Cardio />} />
         <Route path="/nutrition" element={<Nutrition />} />
         <Route path="/stats" element={<Stats />} />
