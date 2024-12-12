@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import Index from "@/pages/Index";
 import Profile from "@/pages/Profile";
@@ -11,8 +11,12 @@ import TrainingPreferences from "@/pages/TrainingPreferences";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 import Cardio from "@/pages/Cardio";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
+import { BottomNav } from "@/components/Layout/BottomNav";
 
 function App() {
+  const location = useLocation();
+  const showBottomNav = !location.pathname.startsWith('/admin');
+
   return (
     <>
       <Routes>
@@ -31,6 +35,7 @@ function App() {
         <Route path="/signup" element={<Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      {showBottomNav && <BottomNav />}
       <Toaster />
     </>
   );

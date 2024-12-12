@@ -3,7 +3,6 @@ import { NutritionChart } from "@/components/Nutrition/NutritionChart";
 import { FoodJournal } from "@/components/Nutrition/FoodJournal";
 import { MealPlanGenerator } from "@/components/Nutrition/MealPlanGenerator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BottomNav } from "@/components/Layout/BottomNav";
 import { DailyMeals } from "@/components/Nutrition/DailyMeals";
 
 const Nutrition = () => {
@@ -57,8 +56,6 @@ const Nutrition = () => {
           </div>
         </TabsContent>
       </Tabs>
-
-      <BottomNav />
     </div>
   );
 };
