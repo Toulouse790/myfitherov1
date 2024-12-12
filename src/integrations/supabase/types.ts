@@ -638,12 +638,8 @@ export type Database = {
         Row: {
           biceps_left_cm: number | null
           biceps_right_cm: number | null
-          calf_left_cm: number | null
-          calf_right_cm: number | null
           chest_cm: number | null
           created_at: string
-          forearm_left_cm: number | null
-          forearm_right_cm: number | null
           height_cm: number | null
           hips_cm: number | null
           id: string
@@ -658,12 +654,8 @@ export type Database = {
         Insert: {
           biceps_left_cm?: number | null
           biceps_right_cm?: number | null
-          calf_left_cm?: number | null
-          calf_right_cm?: number | null
           chest_cm?: number | null
           created_at?: string
-          forearm_left_cm?: number | null
-          forearm_right_cm?: number | null
           height_cm?: number | null
           hips_cm?: number | null
           id?: string
@@ -678,12 +670,8 @@ export type Database = {
         Update: {
           biceps_left_cm?: number | null
           biceps_right_cm?: number | null
-          calf_left_cm?: number | null
-          calf_right_cm?: number | null
           chest_cm?: number | null
           created_at?: string
-          forearm_left_cm?: number | null
-          forearm_right_cm?: number | null
           height_cm?: number | null
           hips_cm?: number | null
           id?: string
@@ -704,6 +692,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      muscle_measurements_backup: {
+        Row: {
+          biceps_left_cm: number | null
+          biceps_right_cm: number | null
+          calf_left_cm: number | null
+          calf_right_cm: number | null
+          chest_cm: number | null
+          created_at: string | null
+          forearm_left_cm: number | null
+          forearm_right_cm: number | null
+          height_cm: number | null
+          hips_cm: number | null
+          id: string | null
+          measurement_date: string | null
+          thigh_left_cm: number | null
+          thigh_right_cm: number | null
+          updated_at: string | null
+          user_id: string | null
+          waist_cm: number | null
+          weight_kg: number | null
+        }
+        Insert: {
+          biceps_left_cm?: number | null
+          biceps_right_cm?: number | null
+          calf_left_cm?: number | null
+          calf_right_cm?: number | null
+          chest_cm?: number | null
+          created_at?: string | null
+          forearm_left_cm?: number | null
+          forearm_right_cm?: number | null
+          height_cm?: number | null
+          hips_cm?: number | null
+          id?: string | null
+          measurement_date?: string | null
+          thigh_left_cm?: number | null
+          thigh_right_cm?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          waist_cm?: number | null
+          weight_kg?: number | null
+        }
+        Update: {
+          biceps_left_cm?: number | null
+          biceps_right_cm?: number | null
+          calf_left_cm?: number | null
+          calf_right_cm?: number | null
+          chest_cm?: number | null
+          created_at?: string | null
+          forearm_left_cm?: number | null
+          forearm_right_cm?: number | null
+          height_cm?: number | null
+          hips_cm?: number | null
+          id?: string | null
+          measurement_date?: string | null
+          thigh_left_cm?: number | null
+          thigh_right_cm?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          waist_cm?: number | null
+          weight_kg?: number | null
+        }
+        Relationships: []
       }
       muscle_recovery: {
         Row: {
