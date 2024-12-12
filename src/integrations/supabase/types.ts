@@ -634,6 +634,36 @@ export type Database = {
           },
         ]
       }
+      meal_plans_backup: {
+        Row: {
+          created_at: string | null
+          end_date: string | null
+          id: string | null
+          plan_data: Json | null
+          start_date: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date?: string | null
+          id?: string | null
+          plan_data?: Json | null
+          start_date?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string | null
+          id?: string | null
+          plan_data?: Json | null
+          start_date?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       muscle_measurements: {
         Row: {
           biceps_left_cm: number | null
