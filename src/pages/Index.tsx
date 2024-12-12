@@ -9,6 +9,19 @@ export default function Index() {
     <Header>
       <div className="container mx-auto px-4 py-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Créer ma séance */}
+          <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+            <Link to="/workout/generate" className="block">
+              <div className="flex flex-col items-center gap-3">
+                <Brain className="w-8 h-8 text-primary" />
+                <h2 className="text-lg font-semibold">Créer ma séance</h2>
+                <p className="text-sm text-muted-foreground text-center">
+                  Générez une séance adaptée à vos objectifs
+                </p>
+              </div>
+            </Link>
+          </Card>
+
           {/* Laisse-moi faire */}
           <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
             <Link to="/workouts" className="block">
