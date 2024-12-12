@@ -2,13 +2,26 @@ import { Header } from "@/components/Layout/Header";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Activity, BarChart, Brain } from "lucide-react";
+import { Plus, Activity, BarChart, Brain } from "lucide-react";
 
 export default function Index() {
   return (
     <Header>
       <div className="container mx-auto px-4 py-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Créer ma séance */}
+          <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+            <Link to="/workout/generate" className="block">
+              <div className="flex flex-col items-center gap-3">
+                <Plus className="w-8 h-8 text-primary" />
+                <h2 className="text-lg font-semibold">Créer ma séance</h2>
+                <p className="text-sm text-muted-foreground text-center">
+                  Générez une séance personnalisée
+                </p>
+              </div>
+            </Link>
+          </Card>
+
           {/* Laisse-moi faire */}
           <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
             <Link to="/workouts" className="block">
