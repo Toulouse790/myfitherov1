@@ -19,7 +19,6 @@ export const DetailedStats = () => {
       const monthStart = startOfMonth(now);
       const yearStart = startOfYear(now);
 
-      // Récupérer d'abord les informations de l'utilisateur pour le calcul des calories
       const { data: userProfile } = await supabase
         .from('muscle_measurements')
         .select('weight_kg')
@@ -36,7 +35,7 @@ export const DetailedStats = () => {
         .limit(1)
         .single();
 
-      const weightKg = userProfile?.weight_kg || 75; // Valeur par défaut si non disponible
+      const weightKg = userProfile?.weight_kg || 75;
       const gender = (userQuestionnaire?.gender || 'male') as 'male' | 'female';
 
       const { data: stats, error: statsError } = await supabase
