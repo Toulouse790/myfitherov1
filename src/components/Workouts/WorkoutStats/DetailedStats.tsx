@@ -9,9 +9,9 @@ import { calculateExerciseCalories } from "@/utils/calorieCalculation";
 import { useAuth } from "@/hooks/use-auth";
 
 export const DetailedStats = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  const { data: exerciseStats } = useQuery({
+  const { data: exerciseStats, isLoading } = useQuery({
     queryKey: ['exercise-stats', user?.id],
     enabled: !!user,
     queryFn: async () => {
@@ -39,7 +39,7 @@ export const DetailedStats = () => {
         .limit(1)
         .single();
 
-      const weightKg = userProfile?.weight_kg || 75; // Valeur par défaut si non disponible
+      const weightKg = userProfile?.weight_kg || 75;
       const gender = (userQuestionnaire?.gender || 'male') as 'male' | 'female';
 
       const { data: stats, error: statsError } = await supabase
@@ -52,6 +52,7 @@ export const DetailedStats = () => {
             perceived_difficulty
           )
         `)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(100);
 
@@ -93,6 +94,14 @@ export const DetailedStats = () => {
       };
     }
   });
+
+  if (loading) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        Chargement de vos statistiques...
+      </div>
+    );
+  }
 
   if (!user) {
     return (
