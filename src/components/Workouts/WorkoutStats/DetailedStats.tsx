@@ -3,11 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Activity, Dumbbell, Scale, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { format, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export const DetailedStats = () => {
   const { data: exerciseStats } = useQuery({
     queryKey: ['exercise-stats'],
     queryFn: async () => {
+      const now = new Date();
+      const weekStart = startOfWeek(now, { locale: fr });
+      const monthStart = startOfMonth(now);
+      const yearStart = startOfYear(now);
+
       const { data: stats, error: statsError } = await supabase
         .from('training_stats')
         .select('*')
@@ -16,13 +23,21 @@ export const DetailedStats = () => {
 
       if (statsError) throw statsError;
 
-      const totalWeight = stats?.reduce((acc, stat) => acc + (stat.total_weight_lifted || 0), 0) || 0;
-      const totalCalories = stats?.reduce((acc, stat) => acc + (stat.session_duration_minutes * 7.5), 0) || 0;
+      const weeklyStats = stats?.filter(stat => new Date(stat.created_at) >= weekStart);
+      const monthlyStats = stats?.filter(stat => new Date(stat.created_at) >= monthStart);
+      const yearlyStats = stats?.filter(stat => new Date(stat.created_at) >= yearStart);
+
+      const calculateTotals = (data: any[]) => ({
+        weight: data.reduce((acc, stat) => acc + (stat.total_weight_lifted || 0), 0),
+        calories: data.reduce((acc, stat) => acc + (stat.session_duration_minutes * 7.5), 0),
+        duration: data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0)
+      });
 
       return {
         stats: stats || [],
-        totalWeight,
-        totalCalories
+        weekly: calculateTotals(weeklyStats || []),
+        monthly: calculateTotals(monthlyStats || []),
+        yearly: calculateTotals(yearlyStats || [])
       };
     }
   });
@@ -37,24 +52,52 @@ export const DetailedStats = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Dumbbell className="w-5 h-5" />
-            Volume total
+            Cette semaine
           </h3>
-          <div className="text-2xl font-bold">
-            {Math.round(exerciseStats.totalWeight).toLocaleString()} kg
+          <div className="space-y-2">
+            <div className="text-2xl font-bold">
+              {Math.round(exerciseStats.weekly.weight).toLocaleString()} kg
+            </div>
+            <div className="text-sm text-muted-foreground flex items-center gap-2">
+              <Flame className="w-4 h-4" />
+              {Math.round(exerciseStats.weekly.calories).toLocaleString()} kcal
+            </div>
           </div>
         </Card>
 
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Flame className="w-5 h-5" />
-            Calories brûlées
+            <Activity className="w-5 h-5" />
+            Ce mois
           </h3>
-          <div className="text-2xl font-bold">
-            {Math.round(exerciseStats.totalCalories).toLocaleString()} kcal
+          <div className="space-y-2">
+            <div className="text-2xl font-bold">
+              {Math.round(exerciseStats.monthly.weight).toLocaleString()} kg
+            </div>
+            <div className="text-sm text-muted-foreground flex items-center gap-2">
+              <Flame className="w-4 h-4" />
+              {Math.round(exerciseStats.monthly.calories).toLocaleString()} kcal
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Scale className="w-5 h-5" />
+            Cette année
+          </h3>
+          <div className="space-y-2">
+            <div className="text-2xl font-bold">
+              {Math.round(exerciseStats.yearly.weight).toLocaleString()} kg
+            </div>
+            <div className="text-sm text-muted-foreground flex items-center gap-2">
+              <Flame className="w-4 h-4" />
+              {Math.round(exerciseStats.yearly.calories).toLocaleString()} kcal
+            </div>
           </div>
         </Card>
       </div>
@@ -75,7 +118,7 @@ export const DetailedStats = () => {
               {exerciseStats.stats.map((stat: any) => (
                 <TableRow key={stat.id}>
                   <TableCell>
-                    {new Date(stat.created_at).toLocaleDateString()}
+                    {format(new Date(stat.created_at), 'dd/MM/yyyy')}
                   </TableCell>
                   <TableCell>{stat.session_duration_minutes}</TableCell>
                   <TableCell>{Math.round(stat.total_weight_lifted || 0)}</TableCell>
