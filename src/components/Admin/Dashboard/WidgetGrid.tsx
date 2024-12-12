@@ -1,18 +1,8 @@
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { SortableCard } from "./SortableCard";
-import { WidgetSettings } from "./WidgetSettings";
-import { UsersWidget } from "./UsersWidget";
-import { WorkoutsWidget } from "./WorkoutsWidget";
-import { ExercisesWidget } from "./ExercisesWidget";
-import { NutritionWidget } from "./NutritionWidget";
-import { SleepWidget } from "./SleepWidget";
-import { PerformanceWidget } from "./PerformanceWidget";
-import { AchievementsWidget } from "./AchievementsWidget";
-import { MuscleGroupsWidget } from "./MuscleGroupsWidget";
+import { WidgetWrapper } from "./WidgetComponents/WidgetWrapper";
+import { WidgetRenderer } from "./WidgetComponents/WidgetRenderer";
 
 interface WidgetGridProps {
   isEditing: boolean;
@@ -42,51 +32,17 @@ export const WidgetGrid = ({
     })
   );
 
-  const renderWidget = (config: any) => {
-    const WidgetComponent = {
-      users: UsersWidget,
-      workouts: WorkoutsWidget,
-      exercises: ExercisesWidget,
-      nutrition: NutritionWidget,
-      sleep: SleepWidget,
-      performance: PerformanceWidget,
-      achievements: AchievementsWidget,
-      muscle_groups: MuscleGroupsWidget,
-    }[config.widget_id];
-
-    if (!WidgetComponent) return null;
-
-    return (
-      <div className="relative">
-        {!isEditing && (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 z-10"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <WidgetSettings
-              config={config}
-              onUpdate={onUpdateConfig}
-              onDelete={() => onDeleteConfig(config.id)}
-            />
-          </Dialog>
-        )}
-        <WidgetComponent
-          data={
-            config.widget_id === 'users' ? monthlyUsers :
-            config.widget_id === 'workouts' ? monthlyWorkouts :
-            config.widget_id === 'exercises' ? publishedExercises :
-            []
-          }
-          title={config.title}
-        />
-      </div>
-    );
+  const getWidgetData = (widgetId: string) => {
+    switch (widgetId) {
+      case 'users':
+        return monthlyUsers;
+      case 'workouts':
+        return monthlyWorkouts;
+      case 'exercises':
+        return publishedExercises;
+      default:
+        return [];
+    }
   };
 
   return (
@@ -102,7 +58,18 @@ export const WidgetGrid = ({
         >
           {widgetConfigs?.map((config) => (
             <SortableCard key={config.id} id={config.id} isEditing={isEditing}>
-              {renderWidget(config)}
+              <WidgetWrapper
+                config={config}
+                isEditing={isEditing}
+                onUpdateConfig={onUpdateConfig}
+                onDeleteConfig={onDeleteConfig}
+              >
+                <WidgetRenderer
+                  config={config}
+                  data={getWidgetData(config.widget_id)}
+                  title={config.title}
+                />
+              </WidgetWrapper>
             </SortableCard>
           ))}
         </SortableContext>
