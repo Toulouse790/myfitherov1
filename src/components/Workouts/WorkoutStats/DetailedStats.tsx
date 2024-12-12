@@ -189,3 +189,5 @@ export const DetailedStats = () => {
     </div>
   );
 };
+
+export default DetailedStats;
