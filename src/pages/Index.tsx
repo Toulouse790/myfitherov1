@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Plus, Dumbbell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CreateWorkoutDialog } from "@/components/Workouts/CreateWorkoutDialog";
+import { DashboardStats } from "@/components/Dashboard/DashboardStats";
+import { StrengthScore } from "@/components/Dashboard/StrengthScore";
+import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
+import { WorkoutSummary } from "@/components/Dashboard/WorkoutSummary";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -25,6 +29,17 @@ export default function Index() {
             </Button>
           </div>
         </div>
+        
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <DashboardStats />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <StrengthScore />
+          <TrendMetrics />
+        </div>
+
+        <WorkoutSummary />
         
         <div className="space-y-6">
           <WorkoutSuggestions />
