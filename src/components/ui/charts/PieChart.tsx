@@ -1,9 +1,14 @@
 import { ResponsiveContainer, PieChart as RechartsChart, Pie, Cell, Legend, Tooltip } from "recharts";
-import { useChart } from "./ChartContext";
 
-export const PieChart = ({ data, index, categories, colors, valueFormatter }: any) => {
-  const { theme } = useChart();
+interface PieChartProps {
+  data: any[];
+  index: string;
+  categories: string[];
+  colors: string[];
+  valueFormatter: (value: number) => string;
+}
 
+export const PieChart = ({ data, index, categories, colors, valueFormatter }: PieChartProps) => {
   return (
     <ResponsiveContainer width="100%" height={350}>
       <RechartsChart>
