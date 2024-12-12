@@ -43,7 +43,6 @@ export const DetailedStats = () => {
         .select(`
           *,
           workout_sessions (
-            total_weight_lifted,
             session_duration_minutes,
             perceived_difficulty
           )
