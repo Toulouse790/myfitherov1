@@ -1,13 +1,8 @@
 import { Header } from "@/components/Layout/Header";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { Button } from "@/components/ui/button";
-import { Plus, Dumbbell } from "lucide-react";
+import { FilePlus, Activity, ChartBar, Shuffle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { CreateWorkoutDialog } from "@/components/Workouts/CreateWorkoutDialog";
-import { DashboardStats } from "@/components/Dashboard/DashboardStats";
-import { StrengthScore } from "@/components/Dashboard/StrengthScore";
-import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
-import { WorkoutSummary } from "@/components/Dashboard/WorkoutSummary";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -15,31 +10,54 @@ export default function Index() {
   return (
     <Header>
       <div className="container mx-auto px-4 py-8 space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Mes entraînements</h2>
-          <div className="flex gap-2">
-            <CreateWorkoutDialog />
-            <Button 
-              variant="outline"
-              onClick={() => navigate('/workouts')}
-              className="gap-2"
-            >
-              <Dumbbell className="w-4 h-4" />
-              Bibliothèque d'exercices
-            </Button>
-          </div>
-        </div>
-        
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <DashboardStats />
-        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Button 
+            className="w-full flex items-center gap-2 h-auto py-4"
+            onClick={() => navigate('/workouts')}
+          >
+            <FilePlus className="w-5 h-5" />
+            <div className="flex flex-col items-start">
+              <span className="font-semibold">Créer ma séance</span>
+              <span className="text-xs text-muted-foreground">Personnalisez votre entraînement</span>
+            </div>
+          </Button>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <StrengthScore />
-          <TrendMetrics />
-        </div>
+          <Button 
+            variant="secondary"
+            className="w-full flex items-center gap-2 h-auto py-4"
+            onClick={() => navigate('/cardio')}
+          >
+            <Activity className="w-5 h-5" />
+            <div className="flex flex-col items-start">
+              <span className="font-semibold">Cardio</span>
+              <span className="text-xs text-muted-foreground">Entraînement cardio-vasculaire</span>
+            </div>
+          </Button>
 
-        <WorkoutSummary />
+          <Button 
+            variant="secondary"
+            className="w-full flex items-center gap-2 h-auto py-4"
+            onClick={() => navigate('/stats')}
+          >
+            <ChartBar className="w-5 h-5" />
+            <div className="flex flex-col items-start">
+              <span className="font-semibold">Statistiques</span>
+              <span className="text-xs text-muted-foreground">Suivez vos progrès</span>
+            </div>
+          </Button>
+
+          <Button 
+            variant="secondary"
+            className="w-full flex items-center gap-2 h-auto py-4"
+            onClick={() => navigate('/workout/generate')}
+          >
+            <Shuffle className="w-5 h-5" />
+            <div className="flex flex-col items-start">
+              <span className="font-semibold">Laisser moi faire</span>
+              <span className="text-xs text-muted-foreground">Séance générée automatiquement</span>
+            </div>
+          </Button>
+        </div>
         
         <div className="space-y-6">
           <WorkoutSuggestions />
