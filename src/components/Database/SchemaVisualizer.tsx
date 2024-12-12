@@ -7,6 +7,26 @@ interface TableRelation {
   type: 'one-to-many' | 'many-to-one' | 'many-to-many';
 }
 
+interface Route {
+  path: string;
+  component: string;
+  description: string;
+}
+
+const applicationRoutes: Route[] = [
+  { path: '/', component: 'Index', description: 'Page d\'accueil' },
+  { path: '/profile', component: 'Profile', description: 'Profil utilisateur' },
+  { path: '/admin/*', component: 'Admin', description: 'Administration' },
+  { path: '/workouts', component: 'Workouts', description: 'Liste des entraînements' },
+  { path: '/workout/generate', component: 'WorkoutGenerate', description: 'Génération d\'entraînement' },
+  { path: '/workout/:sessionId', component: 'UnifiedWorkoutDetail', description: 'Détail d\'une séance' },
+  { path: '/cardio', component: 'Cardio', description: 'Entraînement cardio' },
+  { path: '/nutrition', component: 'Nutrition', description: 'Suivi nutritionnel' },
+  { path: '/stats', component: 'Stats', description: 'Statistiques' },
+  { path: '/sleep', component: 'Sleep', description: 'Suivi du sommeil' },
+  { path: '/training-preferences', component: 'TrainingPreferences', description: 'Préférences d\'entraînement' }
+];
+
 const databaseRelations: TableRelation[] = [
   { from: 'profiles', to: 'questionnaire_responses', type: 'one-to-many' },
   { from: 'profiles', to: 'user_nutrition_preferences', type: 'one-to-many' },
@@ -25,7 +45,26 @@ const databaseRelations: TableRelation[] = [
 export const SchemaVisualizer = () => {
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Schéma de la Base de Données</h2>
+      <h2 className="text-2xl font-bold mb-4">Structure de l'Application</h2>
+      
+      {/* Routes Visualization */}
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold mb-4">Routes de l'Application</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {applicationRoutes.map((route, index) => (
+            <Card key={index} className="p-4">
+              <div className="space-y-2">
+                <div className="font-medium text-primary">{route.path}</div>
+                <div className="text-sm font-medium">{route.component}</div>
+                <div className="text-sm text-muted-foreground">{route.description}</div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Database Schema Visualization */}
+      <h3 className="text-xl font-semibold mb-4">Schéma de la Base de Données</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {databaseRelations.map((relation, index) => (
           <Card key={index} className="p-4">
