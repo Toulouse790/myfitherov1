@@ -38,10 +38,12 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     checkInitialSession();
 
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", { event, hasSession: !!session });
       
-      if (event === 'SIGNED_OUT') {
+      if (event === 'SIGNED_OUT' && isAuthenticated) {
         setIsAuthenticated(false);
         localStorage.removeItem('myfithero-auth');
         toast({
@@ -56,7 +58,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, [toast]);
+  }, [toast, isAuthenticated]);
 
   // During initial check
   if (isAuthenticated === null) {
