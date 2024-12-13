@@ -1,62 +1,56 @@
-import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
-interface Exercise {
-  id: string;
-  name: string;
-  muscle_group: string;
-  difficulty: string[];
-  is_published?: boolean;
-  image_url?: string;
-  video_url?: string;
-}
+import { Exercise } from "@/components/Workouts/exercises/types/exercise";
+import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 export const useExerciseSelection = (muscleGroup?: string) => {
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
+  const { data: exercises, isLoading } = useQuery({
+    queryKey: ['exercises', muscleGroup],
+    queryFn: async () => {
+      console.log('Fetching exercises for muscle group:', muscleGroup);
+      const englishGroup = muscleGroup ? reverseTranslateMuscleGroup(muscleGroup) : undefined;
+      console.log('English muscle group:', englishGroup);
 
-  useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        setIsLoading(true);
-        console.log('Fetching exercises for muscle group:', muscleGroup);
+      let query = supabase
+        .from('unified_exercises')
+        .select('*')
+        .eq('is_published', true)
+        .order('name', { ascending: true });
 
-        if (!muscleGroup) {
-          setExercises([]);
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from('unified_exercises')
-          .select('*')
-          .eq('is_published', true)
-          .eq('muscle_group', muscleGroup.toLowerCase());
-
-        if (error) {
-          console.error('Error fetching exercises:', error);
-          throw error;
-        }
-
-        if (data) {
-          console.log('Fetched exercises:', data);
-          setExercises(data);
-        }
-      } catch (error) {
-        console.error('Error fetching exercises:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les exercices",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
+      if (englishGroup) {
+        query = query.eq('muscle_group', englishGroup.toLowerCase());
       }
-    };
 
-    fetchExercises();
-  }, [muscleGroup, toast]);
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching exercises:', error);
+        throw error;
+      }
+
+      console.log('Raw exercises data:', data);
+
+      return data?.map(dbExercise => {
+        const exercise: Exercise = {
+          id: dbExercise.id,
+          name: dbExercise.name,
+          muscleGroup: muscleGroup || '',
+          difficulty: Array.isArray(dbExercise.difficulty) ? dbExercise.difficulty[0] : "beginner",
+          equipment: "",
+          location: dbExercise.location || [],
+          instructions: [],
+          targetMuscles: [],
+          objectives: [],
+          description: "",
+          sets: { beginner: 0, intermediate: 0, advanced: 0 },
+          reps: { beginner: 0, intermediate: 0, advanced: 0 },
+          restTime: { beginner: 0, intermediate: 0, advanced: 0 },
+          calories: 0
+        };
+        return exercise;
+      }) || [];
+    }
+  });
 
   return { exercises, isLoading };
 };
