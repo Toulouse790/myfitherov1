@@ -22,12 +22,7 @@ export const SignInForm = () => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          data: {
-            persistSession: rememberMe
-          }
-        }
+        password
       });
 
       if (error) {
@@ -41,6 +36,12 @@ export const SignInForm = () => {
       }
 
       if (data.session) {
+        // Set session persistence based on rememberMe option
+        await supabase.auth.updateSession({
+          refresh_token: data.session.refresh_token,
+          access_token: data.session.access_token,
+        });
+
         toast({
           title: "Connexion réussie",
           description: "Bienvenue sur MyFitHero !",
