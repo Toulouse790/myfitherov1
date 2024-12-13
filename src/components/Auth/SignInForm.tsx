@@ -23,10 +23,7 @@ export const SignInForm = () => {
     try {
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          persistSession: true // Always persist the session
-        }
+        password
       });
 
       if (error) throw error;
