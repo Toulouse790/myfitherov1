@@ -2,7 +2,8 @@ import { Header } from "@/components/Layout/Header";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Brain, Activity, BarChart, Dumbbell, motion } from "framer-motion";
+import { Brain, Activity, BarChart3, Dumbbell } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Index() {
   const MotionCard = motion(Card);
@@ -87,7 +88,7 @@ export default function Index() {
           >
             <Link to="/stats" className="block">
               <div className="flex flex-col items-center gap-4">
-                <BarChart className="w-10 h-10 text-primary" />
+                <BarChart3 className="w-10 h-10 text-primary" />
                 <div className="text-center">
                   <h2 className="text-xl font-semibold mb-2">Statistiques</h2>
                   <p className="text-sm text-muted-foreground">
