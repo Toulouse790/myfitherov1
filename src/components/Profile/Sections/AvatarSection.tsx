@@ -17,6 +17,9 @@ const AVATAR_OPTIONS = [
   "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e",
 ];
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
 export const AvatarSection = ({ username, selectedAvatar, onAvatarSelect }: AvatarSectionProps) => {
   const { toast } = useToast();
 
@@ -26,6 +29,38 @@ export const AvatarSection = ({ username, selectedAvatar, onAvatarSelect }: Avat
       title: "Avatar mis à jour",
       description: "Votre avatar a été modifié avec succès",
     });
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    
+    if (!file) return;
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      toast({
+        title: "Format non supporté",
+        description: "Seuls les formats JPG, PNG et WebP sont acceptés",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast({
+        title: "Fichier trop volumineux",
+        description: "La taille maximum autorisée est de 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        handleAvatarSelect(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -43,21 +78,35 @@ export const AvatarSection = ({ username, selectedAvatar, onAvatarSelect }: Avat
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="space-y-4">
-          <h4 className="font-medium">Choisir un avatar</h4>
-          <div className="grid grid-cols-4 gap-2">
-            {AVATAR_OPTIONS.map((avatar) => (
-              <Button
-                key={avatar}
-                variant="ghost"
-                className="p-0"
-                onClick={() => handleAvatarSelect(avatar)}
-              >
-                <Avatar>
-                  <AvatarImage src={avatar} />
-                  <AvatarFallback>Avatar</AvatarFallback>
-                </Avatar>
-              </Button>
-            ))}
+          <div>
+            <h4 className="font-medium mb-2">Choisir un avatar</h4>
+            <p className="text-sm text-muted-foreground mb-4">
+              Formats acceptés : JPG, PNG, WebP (max 5MB)
+            </p>
+            <input
+              type="file"
+              accept={ACCEPTED_IMAGE_TYPES.join(",")}
+              onChange={handleFileUpload}
+              className="w-full mb-4"
+            />
+          </div>
+          <div>
+            <h4 className="font-medium mb-2">Avatars prédéfinis</h4>
+            <div className="grid grid-cols-4 gap-2">
+              {AVATAR_OPTIONS.map((avatar) => (
+                <Button
+                  key={avatar}
+                  variant="ghost"
+                  className="p-0"
+                  onClick={() => handleAvatarSelect(avatar)}
+                >
+                  <Avatar>
+                    <AvatarImage src={avatar} />
+                    <AvatarFallback>Avatar</AvatarFallback>
+                  </Avatar>
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
       </PopoverContent>

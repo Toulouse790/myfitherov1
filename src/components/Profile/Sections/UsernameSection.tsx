@@ -14,17 +14,41 @@ interface UsernameSectionProps {
   onUsernameChange: (username: string) => void;
 }
 
-export const UsernameSection = ({ username: initialUsername, stats, isPremium, onUsernameChange }: UsernameSectionProps) => {
+const MIN_USERNAME_LENGTH = 3;
+const MAX_USERNAME_LENGTH = 30;
+const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
+
+export const UsernameSection = ({ 
+  username: initialUsername, 
+  stats, 
+  isPremium, 
+  onUsernameChange 
+}: UsernameSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState(initialUsername);
   const { toast } = useToast();
 
+  const validateUsername = (value: string) => {
+    if (value.length < MIN_USERNAME_LENGTH) {
+      return "Le nom d'utilisateur doit contenir au moins 3 caractères";
+    }
+    if (value.length > MAX_USERNAME_LENGTH) {
+      return "Le nom d'utilisateur ne peut pas dépasser 30 caractères";
+    }
+    if (!USERNAME_REGEX.test(value)) {
+      return "Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets et underscores";
+    }
+    return null;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.trim().length < 3) {
+    const error = validateUsername(username);
+    
+    if (error) {
       toast({
-        title: "Erreur",
-        description: "Le pseudo doit contenir au moins 3 caractères",
+        title: "Erreur de validation",
+        description: error,
         variant: "destructive",
       });
       return;
@@ -32,8 +56,8 @@ export const UsernameSection = ({ username: initialUsername, stats, isPremium, o
     
     onUsernameChange(username);
     toast({
-      title: "Pseudo mis à jour",
-      description: "Votre pseudo a été modifié avec succès",
+      title: "Nom d'utilisateur mis à jour",
+      description: "Votre nom d'utilisateur a été modifié avec succès",
     });
     setIsEditing(false);
   };
@@ -47,7 +71,8 @@ export const UsernameSection = ({ username: initialUsername, stats, isPremium, o
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="h-8"
-              placeholder="Nouveau pseudo"
+              placeholder="Nouveau nom d'utilisateur"
+              maxLength={MAX_USERNAME_LENGTH}
             />
             <Button type="submit" size="sm">Sauvegarder</Button>
             <Button 
