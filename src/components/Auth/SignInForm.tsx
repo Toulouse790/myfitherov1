@@ -37,9 +37,9 @@ export const SignInForm = () => {
 
       if (data.session) {
         // Set session persistence based on rememberMe option
-        await supabase.auth.updateSession({
-          refresh_token: data.session.refresh_token,
+        await supabase.auth.setSession({
           access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token
         });
 
         toast({
