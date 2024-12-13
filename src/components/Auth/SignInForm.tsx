@@ -21,12 +21,20 @@ export const SignInForm = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          persistSession: true // Always persist the session
+        }
       });
 
       if (error) throw error;
+
+      // If remember me is checked, save the session to localStorage
+      if (rememberMe && data.session) {
+        localStorage.setItem('myfithero-auth', JSON.stringify(data.session));
+      }
 
       toast({
         title: "Connexion réussie",

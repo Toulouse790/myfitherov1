@@ -10,14 +10,16 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Vérification initiale de la session
+    // Initial session check
     const checkInitialSession = async () => {
       try {
         // Try to recover session from storage first
         const savedSession = localStorage.getItem('myfithero-auth');
         if (savedSession) {
           const session = JSON.parse(savedSession);
-          if (session?.user) {
+          if (session?.access_token) {
+            // Set the session in Supabase
+            await supabase.auth.setSession(session);
             setIsAuthenticated(true);
             return;
           }
@@ -35,8 +37,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
     checkInitialSession();
 
-    // Écouter les changements d'authentification
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", { event, hasSession: !!session });
       
       if (event === 'SIGNED_OUT') {
@@ -48,7 +50,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         });
       } else if (session) {
         setIsAuthenticated(true);
-        // Save session to localStorage
+        // Save session to localStorage if it exists
         localStorage.setItem('myfithero-auth', JSON.stringify(session));
       }
     });
@@ -56,7 +58,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [toast]);
 
-  // Pendant la vérification initiale
+  // During initial check
   if (isAuthenticated === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -65,17 +67,17 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Routes publiques (signin/signup)
+  // Public routes (signin/signup)
   const publicRoutes = ["/signin", "/signup"];
   const isPublicRoute = publicRoutes.includes(location.pathname);
 
-  // Si non authentifié et sur une route protégée
+  // If not authenticated and on a protected route
   if (!isAuthenticated && !isPublicRoute) {
     console.log("Redirecting to signin:", { from: location.pathname });
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  // Si authentifié et sur une route publique
+  // If authenticated and on a public route
   if (isAuthenticated && isPublicRoute) {
     console.log("Redirecting to home: user is authenticated");
     return <Navigate to="/" replace />;
