@@ -42,27 +42,48 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         exercises: data
       });
 
-      // 5. Temporairement retourner tous les exercices sans filtrage is_published
+      // 5. Validation détaillée des exercices
       const allExercises = data || [];
       
-      // Ajout de logs détaillés pour chaque exercice avec validation des données
       allExercises.forEach(ex => {
         const validationIssues = [];
         
-        // Vérification des champs requis
+        // Validation des champs requis
         if (!ex.name) validationIssues.push('missing name');
         if (!ex.muscle_group) validationIssues.push('missing muscle_group');
-        if (!ex.difficulty || !Array.isArray(ex.difficulty)) validationIssues.push('invalid difficulty');
-        if (!ex.location || !Array.isArray(ex.location)) validationIssues.push('invalid location');
         
-        console.log(`Exercise validation:`, {
-          id: ex.id,
+        // Validation des tableaux
+        if (!ex.difficulty) {
+          validationIssues.push('missing difficulty');
+        } else if (!Array.isArray(ex.difficulty)) {
+          validationIssues.push('difficulty is not an array');
+        } else if (ex.difficulty.length === 0) {
+          validationIssues.push('empty difficulty array');
+        }
+
+        if (!ex.location) {
+          validationIssues.push('missing location');
+        } else if (!Array.isArray(ex.location)) {
+          validationIssues.push('location is not an array');
+        }
+
+        // Validation des types de données
+        if (typeof ex.name !== 'string') validationIssues.push('invalid name type');
+        if (typeof ex.muscle_group !== 'string') validationIssues.push('invalid muscle_group type');
+        
+        // Validation des URLs (optionnels)
+        if (ex.image_url && typeof ex.image_url !== 'string') validationIssues.push('invalid image_url type');
+        if (ex.video_url && typeof ex.video_url !== 'string') validationIssues.push('invalid video_url type');
+
+        console.log(`Exercise validation [${ex.id}]:`, {
           name: ex.name,
           muscleGroup: ex.muscle_group,
-          isPublished: ex.is_published,
           difficulty: ex.difficulty,
           location: ex.location,
-          validationIssues: validationIssues.length > 0 ? validationIssues : 'no issues'
+          image: ex.image_url ? 'present' : 'missing',
+          video: ex.video_url ? 'present' : 'missing',
+          validationIssues: validationIssues.length > 0 ? validationIssues : 'no issues',
+          rawData: ex // Log des données brutes pour inspection
         });
       });
 
