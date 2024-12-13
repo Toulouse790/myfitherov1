@@ -11,7 +11,7 @@ export interface Exercise {
   video_url?: string;
   instructions: string[];
   targetMuscles?: string[];
-  objectives?: string[];
+  objectives?: ("weight_loss" | "muscle_gain" | "maintenance" | "endurance")[];
   sets?: {
     beginner: number;
     intermediate: number;
@@ -37,7 +37,7 @@ export function validateExercise(exercise: Partial<Exercise>): exercise is Exerc
   
   for (const field of requiredFields) {
     if (!(field in exercise)) {
-      console.error(`Missing required field in exercise ${exercise.name}: ${field}`);
+      console.error(`Missing required field in exercise ${exercise.name || 'unknown'}: ${field}`);
       return false;
     }
   }

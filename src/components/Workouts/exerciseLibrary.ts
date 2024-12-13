@@ -13,7 +13,7 @@ const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
   const seen = new Set();
   return exercises.filter(exercise => {
     if (!validateExercise(exercise)) {
-      console.warn(`Invalid exercise found: ${exercise.name}`);
+      console.warn(`Invalid exercise found: ${exercise.name || 'unknown'}`);
       return false;
     }
     const duplicate = seen.has(exercise.id);
