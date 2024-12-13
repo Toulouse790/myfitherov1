@@ -15,6 +15,13 @@ interface FilterDialogProps {
 }
 
 export const FilterDialog = ({ open, onOpenChange, onFilterApply }: FilterDialogProps) => {
+  const handleFilterApply = (groupName: string) => {
+    const englishGroup = reverseTranslateMuscleGroup(groupName);
+    console.log('Applying filter with group:', groupName);
+    console.log('Translated to English:', englishGroup);
+    onFilterApply(englishGroup.toLowerCase());
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -26,7 +33,7 @@ export const FilterDialog = ({ open, onOpenChange, onFilterApply }: FilterDialog
             <Button
               key={group.id}
               variant="outline"
-              onClick={() => onFilterApply(reverseTranslateMuscleGroup(group.name).toLowerCase())}
+              onClick={() => handleFilterApply(group.name)}
               className="w-full justify-start"
             >
               {group.name}
