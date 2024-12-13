@@ -11,8 +11,8 @@ import { cardioExercises } from './exercises/cardioExercises';
 // Fonction pour dédupliquer les exercices basée sur leur ID
 const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
   const seen = new Set();
-  return exercises.filter(exercise => {
-    if (!validateExercise(exercise)) {
+  return exercises.filter((exercise: Exercise | undefined) => {
+    if (!exercise || !validateExercise(exercise)) {
       console.warn(`Invalid exercise found: ${exercise?.name || 'unknown'}`);
       return false;
     }
