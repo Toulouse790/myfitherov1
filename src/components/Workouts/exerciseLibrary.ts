@@ -10,9 +10,8 @@ import { armsExercises } from './exercises/armsExercises';
 import { absExercises } from './exercises/absExercises';
 import { cardioExercises } from './exercises/cardioExercises';
 
-// Fonction pour dédupliquer les exercices basée sur leur ID
 const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
-  const seen = new Set();
+  const seen = new Set<string>();
   return exercises.filter((exercise: Exercise | undefined) => {
     if (!exercise || !validateExercise(exercise)) {
       console.warn(`Invalid exercise found: ${exercise?.name || 'unknown'}`);
@@ -24,7 +23,6 @@ const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
   });
 };
 
-// Combine tous les exercices et retire les doublons
 export const exercises: Exercise[] = removeDuplicates([
   ...basicChestExercises,
   ...advancedChestExercises,

@@ -32,7 +32,10 @@ export interface Exercise {
 }
 
 export const validateExercise = (exercise: Exercise | undefined): exercise is Exercise => {
-  if (!exercise) return false;
+  if (!exercise) {
+    console.warn('Exercise is undefined');
+    return false;
+  }
   
   const requiredFields: (keyof Exercise)[] = [
     'id',
@@ -54,20 +57,46 @@ export const validateExercise = (exercise: Exercise | undefined): exercise is Ex
 
   const validObjectives = ["muscle_gain", "maintenance", "weight_loss", "endurance"] as const;
 
-  return requiredFields.every(field => {
+  const missingFields = requiredFields.filter(field => {
     const value = exercise[field];
     if (value === undefined || value === null) {
       console.warn(`Missing required field: ${field}`);
-      return false;
+      return true;
     }
-    
-    // Vérification spécifique pour les objectifs
-    if (field === 'objectives') {
-      return Array.isArray(value) && value.every(obj => 
-        validObjectives.includes(obj as typeof validObjectives[number])
-      );
-    }
-    
-    return true;
+    return false;
   });
+
+  if (missingFields.length > 0) {
+    console.warn('Missing fields:', missingFields);
+    return false;
+  }
+
+  // Vérification que difficulty est un tableau
+  if (!Array.isArray(exercise.difficulty)) {
+    console.warn('difficulty must be an array');
+    return false;
+  }
+
+  // Vérification que location est un tableau
+  if (!Array.isArray(exercise.location)) {
+    console.warn('location must be an array');
+    return false;
+  }
+
+  // Vérification des objectifs
+  if (!Array.isArray(exercise.objectives)) {
+    console.warn('objectives must be an array');
+    return false;
+  }
+
+  const hasInvalidObjective = exercise.objectives.some(
+    obj => !validObjectives.includes(obj as typeof validObjectives[number])
+  );
+
+  if (hasInvalidObjective) {
+    console.warn('Invalid objective found. Valid objectives are:', validObjectives);
+    return false;
+  }
+
+  return true;
 };

@@ -51,7 +51,7 @@ export const basicChestExercises: Exercise[] = [
       "Press the bar back up to starting position"
     ],
     targetMuscles: ["chest", "shoulders", "triceps"],
-    objectives: ["muscle_gain", "maintenance"], // Changed from "strength" to valid objectives
+    objectives: ["muscle_gain", "maintenance"],
     sets: {
       beginner: 3,
       intermediate: 4,
