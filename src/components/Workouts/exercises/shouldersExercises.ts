@@ -4,7 +4,7 @@ export const shouldersExercises: Exercise[] = [
   {
     id: "shoulders-1",
     name: "Développé militaire",
-    muscle_group: "épaules",
+    muscle_group: "shoulders",
     muscleGroup: "épaules",
     description: "Exercice fondamental pour les épaules",
     difficulty: ["intermediate"],
