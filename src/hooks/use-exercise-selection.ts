@@ -8,16 +8,18 @@ export const useExerciseSelection = (muscleGroup?: string) => {
     queryKey: ['exercises', muscleGroup],
     queryFn: async () => {
       console.log('Fetching exercises for muscle group:', muscleGroup);
-      const englishGroup = muscleGroup ? reverseTranslateMuscleGroup(muscleGroup) : undefined;
-      console.log('English muscle group:', englishGroup);
-
+      
       let query = supabase
         .from('unified_exercises')
         .select('*')
         .eq('is_published', true);
 
-      if (englishGroup) {
-        query = query.eq('muscle_group', englishGroup.toLowerCase());
+      if (muscleGroup) {
+        // Convertir le nom du groupe musculaire en anglais pour la base de données
+        const englishGroup = reverseTranslateMuscleGroup(muscleGroup);
+        console.log('English muscle group:', englishGroup);
+        
+        query = query.ilike('muscle_group', `%${englishGroup.toLowerCase()}%`);
       }
 
       const { data, error } = await query;
@@ -33,7 +35,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         id: dbExercise.id,
         name: dbExercise.name,
         muscle_group: dbExercise.muscle_group,
-        muscleGroup: muscleGroup || '',
+        muscleGroup: dbExercise.muscle_group,
         difficulty: dbExercise.difficulty || ['beginner'],
         equipment: "",
         location: dbExercise.location || [],
