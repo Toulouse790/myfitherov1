@@ -4,7 +4,7 @@ export const absExercises: Exercise[] = [
   {
     id: "abs-1",
     name: "Crunch",
-    muscle_group: "abdominaux",
+    muscle_group: "abs",
     muscleGroup: "abdominaux",
     description: "Exercice de base pour les abdominaux",
     difficulty: ["beginner"],
