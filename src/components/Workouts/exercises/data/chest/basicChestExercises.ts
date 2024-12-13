@@ -2,23 +2,56 @@ import { Exercise } from '../../types/exercise';
 
 export const basicChestExercises: Exercise[] = [
   {
-    id: "chest-1",
-    name: "Développé couché",
+    id: "chest_1",
+    name: "Push-ups",
     muscle_group: "chest",
-    muscleGroup: "pectoraux",
-    description: "Un exercice fondamental pour le développement des pectoraux",
-    difficulty: ["intermediate"],
-    equipment: "Banc, Barre, Poids",
-    location: ["gym"],
-    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
+    muscleGroup: "chest",
+    description: "Classic bodyweight chest exercise",
+    difficulty: ["beginner", "intermediate"],
+    equipment: "bodyweight",
+    location: ["home", "gym", "outdoor"],
     instructions: [
-      "Allongez-vous sur le banc",
-      "Saisissez la barre avec une prise légèrement plus large que les épaules",
-      "Descendez la barre jusqu'à la poitrine",
-      "Poussez la barre vers le haut"
+      "Start in a plank position",
+      "Lower your body until your chest nearly touches the ground",
+      "Push back up to the starting position"
     ],
-    targetMuscles: ["pectoraux majeurs", "deltoïdes antérieurs", "triceps"],
-    objectives: ["muscle_gain", "maintenance"],
+    targetMuscles: ["chest", "shoulders", "triceps"],
+    objectives: ["muscle_gain", "endurance"],
+    sets: {
+      beginner: 3,
+      intermediate: 4,
+      advanced: 5
+    },
+    reps: {
+      beginner: 10,
+      intermediate: 15,
+      advanced: 20
+    },
+    restTime: {
+      beginner: 90,
+      intermediate: 60,
+      advanced: 45
+    },
+    calories: 100,
+    is_published: true
+  },
+  {
+    id: "chest_2",
+    name: "Bench Press",
+    muscle_group: "chest",
+    muscleGroup: "chest",
+    description: "Fundamental chest exercise with barbell",
+    difficulty: ["intermediate", "advanced"],
+    equipment: "barbell",
+    location: ["gym"],
+    instructions: [
+      "Lie on a flat bench",
+      "Grip the barbell slightly wider than shoulder width",
+      "Lower the bar to your chest",
+      "Press the bar back up to starting position"
+    ],
+    targetMuscles: ["chest", "shoulders", "triceps"],
+    objectives: ["muscle_gain", "strength"],
     sets: {
       beginner: 3,
       intermediate: 4,
@@ -34,41 +67,7 @@ export const basicChestExercises: Exercise[] = [
       intermediate: 90,
       advanced: 60
     },
-    calories: 150
-  },
-  {
-    id: "chest-2",
-    name: "Développé incliné",
-    muscle_group: "chest",
-    muscleGroup: "pectoraux",
-    description: "Cible la partie supérieure des pectoraux",
-    difficulty: ["intermediate"],
-    equipment: "Banc incliné, Barre, Poids",
-    location: ["gym"],
-    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
-    instructions: [
-      "Réglez le banc à 30-45 degrés",
-      "Saisissez la barre avec une prise légèrement plus large que les épaules",
-      "Descendez la barre vers le haut de la poitrine",
-      "Poussez la barre vers le haut"
-    ],
-    targetMuscles: ["pectoraux supérieurs", "deltoïdes antérieurs", "triceps"],
-    objectives: ["muscle_gain", "maintenance"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 4
-    },
-    reps: {
-      beginner: 8,
-      intermediate: 10,
-      advanced: 12
-    },
-    restTime: {
-      beginner: 120,
-      intermediate: 90,
-      advanced: 60
-    },
-    calories: 140
+    calories: 150,
+    is_published: true
   }
 ];
