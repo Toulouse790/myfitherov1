@@ -24,8 +24,9 @@ export const SignInForm = () => {
         email,
         password,
         options: {
-          // Définir la persistance de la session en fonction de l'option "Se souvenir de moi"
-          persistSession: rememberMe
+          data: {
+            persistSession: rememberMe
+          }
         }
       });
 
