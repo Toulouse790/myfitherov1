@@ -13,14 +13,13 @@ export const useExerciseSelection = (muscleGroup?: string) => {
       let query = supabase
         .from('unified_exercises')
         .select('*')
-        .eq('is_published', true);
+        .eq('is_published', true); // S'assurer que seuls les exercices publiés sont retournés
 
       if (muscleGroup) {
-        // Convertir le nom du groupe musculaire en anglais pour la base de données
         const englishGroup = reverseTranslateMuscleGroup(muscleGroup);
         console.log('Translated muscle group:', englishGroup);
         
-        // Utiliser ilike avec des jokers pour une recherche plus flexible
+        // Utiliser une recherche plus flexible avec ilike
         const searchPattern = `%${englishGroup.toLowerCase()}%`;
         console.log('Search pattern:', searchPattern);
         
@@ -36,7 +35,11 @@ export const useExerciseSelection = (muscleGroup?: string) => {
 
       console.log('Raw database response:', data);
 
-      return data?.map(dbExercise => {
+      // Filtrer les exercices non publiés au cas où
+      const publishedExercises = data?.filter(ex => ex.is_published) || [];
+      console.log('Published exercises:', publishedExercises.length);
+
+      return publishedExercises.map(dbExercise => {
         const exercise: Exercise = {
           id: dbExercise.id,
           name: dbExercise.name,
@@ -56,7 +59,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           is_published: dbExercise.is_published
         };
         return exercise;
-      }) || [];
+      });
     }
   });
 
