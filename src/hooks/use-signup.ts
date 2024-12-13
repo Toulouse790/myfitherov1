@@ -14,6 +14,7 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
 
   const signup = async (email: string, password: string, username: string) => {
     setIsLoading(true);
+    console.log("Début de l'inscription...");
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -26,8 +27,11 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
         },
       });
 
+      console.log("Réponse de Supabase:", { data, error });
+
       if (error) {
         if (error.message.includes("User already registered")) {
+          console.log("Utilisateur déjà inscrit, redirection vers la connexion");
           toast({
             title: "Compte existant",
             description: "Un compte existe déjà avec cet email",
@@ -36,10 +40,12 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
           navigate("/signin");
           return { error: null };
         }
+        console.error("Erreur lors de l'inscription:", error);
         return { error };
       }
 
       if (data) {
+        console.log("Inscription réussie !");
         toast({
           title: "Bienvenue !",
           description: `${username}, bienvenue dans cette belle aventure ! Configurons ensemble vos préférences.`,
@@ -52,6 +58,7 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
 
       return { data };
     } catch (error: any) {
+      console.error("Erreur inattendue:", error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue est survenue",
