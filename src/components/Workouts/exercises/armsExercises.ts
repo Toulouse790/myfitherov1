@@ -4,8 +4,8 @@ export const armsExercises: Exercise[] = [
   {
     id: "arms-1",
     name: "Curl biceps",
-    muscle_group: "biceps",
-    muscleGroup: "biceps",
+    muscle_group: "arms",
+    muscleGroup: "arms",
     description: "L'exercice fondamental pour les biceps",
     difficulty: ["beginner"],
     equipment: "Haltères ou Barre",
@@ -39,8 +39,8 @@ export const armsExercises: Exercise[] = [
   {
     id: "arms-2",
     name: "Extension triceps à la poulie",
-    muscle_group: "triceps",
-    muscleGroup: "triceps",
+    muscle_group: "arms",
+    muscleGroup: "arms",
     description: "Excellent exercice d'isolation pour les triceps",
     difficulty: ["beginner"],
     equipment: "Poulie haute",

@@ -39,7 +39,7 @@ export const shouldersExercises: Exercise[] = [
   {
     id: "shoulders-2",
     name: "Élévations latérales",
-    muscle_group: "épaules",
+    muscle_group: "shoulders",
     muscleGroup: "épaules",
     description: "Isolation des deltoïdes moyens",
     difficulty: ["beginner"],
@@ -74,7 +74,7 @@ export const shouldersExercises: Exercise[] = [
   {
     id: "shoulders-3",
     name: "Élévations frontales",
-    muscle_group: "épaules",
+    muscle_group: "shoulders",
     muscleGroup: "épaules",
     description: "Cible les deltoïdes antérieurs",
     difficulty: ["beginner"],
@@ -109,7 +109,7 @@ export const shouldersExercises: Exercise[] = [
   {
     id: "shoulders-4",
     name: "Pompes en pique",
-    muscle_group: "épaules",
+    muscle_group: "shoulders",
     muscleGroup: "épaules",
     description: "Excellent exercice pour les épaules sans matériel",
     difficulty: ["intermediate"],
@@ -144,7 +144,7 @@ export const shouldersExercises: Exercise[] = [
   {
     id: "shoulders-5",
     name: "Shrugs avec haltères",
-    muscle_group: "épaules",
+    muscle_group: "shoulders",
     muscleGroup: "épaules",
     description: "Isolation des trapèzes",
     difficulty: ["beginner"],

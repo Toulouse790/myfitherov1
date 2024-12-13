@@ -4,8 +4,8 @@ export const cardioExercises: Exercise[] = [
   {
     id: "cardio-1",
     name: "Burpees",
-    muscle_group: "full_body",
-    muscleGroup: "full_body",
+    muscle_group: "cardio",
+    muscleGroup: "cardio",
     description: "Exercice explosif complet pour le cardio",
     difficulty: ["intermediate"],
     equipment: "Aucun",

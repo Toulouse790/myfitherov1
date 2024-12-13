@@ -4,7 +4,7 @@ export const legsExercises: Exercise[] = [
   {
     id: "legs-1",
     name: "Squat avec barre",
-    muscle_group: "jambes",
+    muscle_group: "legs",
     muscleGroup: "jambes",
     description: "L'exercice roi pour la prise de masse des jambes",
     difficulty: ["intermediate"],
@@ -39,7 +39,7 @@ export const legsExercises: Exercise[] = [
   {
     id: "legs-2",
     name: "Fentes avant",
-    muscle_group: "jambes",
+    muscle_group: "legs",
     muscleGroup: "jambes",
     description: "Excellent pour le développement unilatéral des jambes",
     difficulty: ["beginner"],
@@ -74,7 +74,7 @@ export const legsExercises: Exercise[] = [
   {
     id: "legs-3",
     name: "Extension de jambes",
-    muscle_group: "jambes",
+    muscle_group: "legs",
     muscleGroup: "jambes",
     description: "Isolation des quadriceps",
     difficulty: ["beginner"],
@@ -109,7 +109,7 @@ export const legsExercises: Exercise[] = [
   {
     id: "legs-4",
     name: "Squat sauté",
-    muscle_group: "jambes",
+    muscle_group: "legs",
     muscleGroup: "jambes",
     description: "Excellent pour la puissance explosive",
     difficulty: ["intermediate"],
@@ -144,7 +144,7 @@ export const legsExercises: Exercise[] = [
   {
     id: "legs-5",
     name: "Soulevé de terre",
-    muscle_group: "jambes",
+    muscle_group: "legs",
     muscleGroup: "jambes",
     description: "Exercice complet pour le bas du corps",
     difficulty: ["advanced"],
