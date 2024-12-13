@@ -1,8 +1,8 @@
 export interface Exercise {
   id: string;
   name: string;
-  muscleGroup: string;
   muscle_group: string;
+  muscleGroup?: string; // Pour la rétrocompatibilité
   description: string;
   difficulty: string[];
   equipment: string;
@@ -29,4 +29,18 @@ export interface Exercise {
   };
   calories?: number;
   is_published?: boolean;
+}
+
+// Fonction utilitaire pour valider un exercice
+export function validateExercise(exercise: Partial<Exercise>): exercise is Exercise {
+  const requiredFields = ['id', 'name', 'muscle_group', 'difficulty', 'equipment', 'location', 'description'];
+  
+  for (const field of requiredFields) {
+    if (!(field in exercise)) {
+      console.error(`Missing required field in exercise ${exercise.name}: ${field}`);
+      return false;
+    }
+  }
+
+  return true;
 }

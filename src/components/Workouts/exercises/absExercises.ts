@@ -4,7 +4,8 @@ export const absExercises: Exercise[] = [
   {
     id: "abs-1",
     name: "Crunch",
-    muscleGroup: "abdominaux",
+    muscle_group: "abdominaux",
+    muscleGroup: "abdominaux", // Pour la rétrocompatibilité
     description: "Exercice de base pour les abdominaux",
     difficulty: ["beginner"],
     equipment: "Tapis",
@@ -33,7 +34,8 @@ export const absExercises: Exercise[] = [
       intermediate: 45,
       advanced: 30
     },
-    calories: 80
+    calories: 80,
+    is_published: true
   },
   {
     id: "abs-2",

@@ -1,4 +1,5 @@
 import { Exercise } from './exercises/types/exercise';
+import { validateExercise } from './exercises/types/exercise';
 import { chestExercises } from './exercises/chestExercises';
 import { backExercises } from './exercises/backExercises';
 import { legsExercises } from './exercises/legsExercises';
@@ -11,6 +12,10 @@ import { cardioExercises } from './exercises/cardioExercises';
 const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
   const seen = new Set();
   return exercises.filter(exercise => {
+    if (!validateExercise(exercise)) {
+      console.warn(`Invalid exercise found: ${exercise.name}`);
+      return false;
+    }
     const duplicate = seen.has(exercise.id);
     seen.add(exercise.id);
     return !duplicate;
@@ -35,9 +40,11 @@ export const filterExercises = (
   equipment?: string[]
 ): Exercise[] => {
   return exercises.filter(exercise => {
+    if (!validateExercise(exercise)) return false;
+    
     const locationMatch = location.some(loc => exercise.location.includes(loc));
     const difficultyMatch = exercise.difficulty.some(diff => difficulty.includes(diff));
-    const objectiveMatch = objectives.some(obj => exercise.objectives?.includes(obj));
+    const objectiveMatch = exercise.objectives?.some(obj => objectives.includes(obj));
     const equipmentMatch = !equipment || equipment.includes(exercise.equipment);
     
     return locationMatch && difficultyMatch && objectiveMatch && equipmentMatch;
