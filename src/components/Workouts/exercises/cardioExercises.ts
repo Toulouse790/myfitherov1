@@ -39,9 +39,10 @@ export const cardioExercises: Exercise[] = [
   {
     id: "cardio-2",
     name: "Mountain Climbers",
+    muscle_group: "full_body",
     muscleGroup: "full_body",
     description: "Excellent exercice cardio qui cible aussi les abdominaux",
-    difficulty: "beginner",
+    difficulty: ["beginner"],
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
     image_url: "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",
