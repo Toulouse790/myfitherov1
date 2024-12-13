@@ -42,10 +42,19 @@ export default function Cardio() {
   });
 
   const handleStartExercise = async () => {
-    if (!selectedExercise || !user) {
+    if (!selectedExercise) {
       toast({
-        title: "Erreur",
-        description: "Veuillez sélectionner un exercice",
+        title: "Sélection requise",
+        description: "Veuillez sélectionner un exercice avant de commencer",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour créer une séance",
         variant: "destructive",
       });
       return;
@@ -102,12 +111,16 @@ export default function Cardio() {
       <div className="container mx-auto px-4 py-8 space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Exercices Cardio</h1>
-          {selectedExercise && (
-            <Button onClick={handleStartExercise} className="bg-primary">
-              <Timer className="mr-2 h-4 w-4" />
-              C'est parti !
-            </Button>
-          )}
+          <Button 
+            onClick={handleStartExercise} 
+            className={`bg-primary transition-all duration-300 ${
+              !selectedExercise ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'
+            }`}
+            disabled={!selectedExercise}
+          >
+            <Timer className="mr-2 h-4 w-4" />
+            {selectedExercise ? "C'est parti !" : "Sélectionnez un exercice"}
+          </Button>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
