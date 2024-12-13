@@ -15,26 +15,107 @@ import { BottomNav } from "@/components/Layout/BottomNav";
 import { SignIn } from "@/components/Auth/SignIn";
 import { SignUp } from "@/components/Auth/SignUp";
 import { useAuth } from "@/hooks/use-auth";
+import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
+import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 function App() {
   const location = useLocation();
   const { user } = useAuth();
-  const showBottomNav = !location.pathname.startsWith('/admin');
+  const showBottomNav = !location.pathname.startsWith('/admin') && 
+                       !location.pathname.startsWith('/initial-questionnaire');
 
   return (
     <>
       <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route 
+          path="/" 
+          element={
+            <ProtectedRoute>
+              <Index />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/admin/*" element={<Admin />} />
-        <Route path="/workouts" element={<Workouts />} />
-        <Route path="/workout/generate" element={<WorkoutGenerate />} />
-        <Route path="/workout/:sessionId" element={<UnifiedWorkoutDetail />} />
-        <Route path="/cardio" element={<Cardio />} />
-        <Route path="/nutrition" element={<Nutrition />} />
-        <Route path="/stats" element={<Stats />} />
-        <Route path="/sleep" element={<Sleep />} />
-        <Route path="/training-preferences" element={<TrainingPreferences />} />
+        <Route 
+          path="/workouts" 
+          element={
+            <ProtectedRoute>
+              <Workouts />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/workout/generate" 
+          element={
+            <ProtectedRoute>
+              <WorkoutGenerate />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/workout/:sessionId" 
+          element={
+            <ProtectedRoute>
+              <UnifiedWorkoutDetail />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/cardio" 
+          element={
+            <ProtectedRoute>
+              <Cardio />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/nutrition" 
+          element={
+            <ProtectedRoute>
+              <Nutrition />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/stats" 
+          element={
+            <ProtectedRoute>
+              <Stats />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/sleep" 
+          element={
+            <ProtectedRoute>
+              <Sleep />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/training-preferences" 
+          element={
+            <ProtectedRoute>
+              <TrainingPreferences />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/initial-questionnaire" 
+          element={
+            <ProtectedRoute>
+              <InitialQuestionnaire />
+            </ProtectedRoute>
+          } 
+        />
         <Route 
           path="/signin" 
           element={
