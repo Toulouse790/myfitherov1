@@ -17,9 +17,11 @@ export const MediaManager = () => {
   const { data: exercises, isLoading } = useQuery({
     queryKey: ['exercises', selectedGroup],
     queryFn: async () => {
-      console.log('Fetching exercises for MediaManager, selected group:', selectedGroup);
+      console.log('=== MediaManager Debug ===');
+      console.log('Selected muscle group:', selectedGroup);
+      
       const englishGroup = reverseTranslateMuscleGroup(selectedGroup);
-      console.log('English muscle group:', englishGroup);
+      console.log('Translated to English:', englishGroup);
 
       const { data, error } = await supabase
         .from('exercises')
@@ -40,7 +42,7 @@ export const MediaManager = () => {
 
       console.log('Raw exercises data:', data);
 
-      return data?.map(dbExercise => {
+      const mappedExercises = data?.map(dbExercise => {
         const exercise: Exercise = {
           id: dbExercise.id,
           name: dbExercise.name,
@@ -60,6 +62,9 @@ export const MediaManager = () => {
         };
         return exercise;
       }) || [];
+
+      console.log('Mapped exercises:', mappedExercises);
+      return mappedExercises;
     }
   });
 
@@ -84,7 +89,7 @@ export const MediaManager = () => {
   };
 
   const filteredExercises = exercises || [];
-  console.log('Filtered exercises:', filteredExercises);
+  console.log('Final filtered exercises:', filteredExercises);
 
   return (
     <div className="container mx-auto p-4 space-y-6">

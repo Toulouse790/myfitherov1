@@ -7,7 +7,8 @@ export const useExerciseSelection = (muscleGroup?: string) => {
   const { data: exercises, isLoading } = useQuery({
     queryKey: ['exercises', muscleGroup],
     queryFn: async () => {
-      console.log('Fetching exercises for muscle group:', muscleGroup);
+      console.log('=== Exercise Selection Debug ===');
+      console.log('Input muscle group:', muscleGroup);
       
       let query = supabase
         .from('unified_exercises')
@@ -17,10 +18,13 @@ export const useExerciseSelection = (muscleGroup?: string) => {
       if (muscleGroup) {
         // Convertir le nom du groupe musculaire en anglais pour la base de données
         const englishGroup = reverseTranslateMuscleGroup(muscleGroup);
-        console.log('English muscle group:', englishGroup);
+        console.log('Translated muscle group:', englishGroup);
         
         // Utiliser ilike avec des jokers pour une recherche plus flexible
-        query = query.ilike('muscle_group', `%${englishGroup.toLowerCase()}%`);
+        const searchPattern = `%${englishGroup.toLowerCase()}%`;
+        console.log('Search pattern:', searchPattern);
+        
+        query = query.ilike('muscle_group', searchPattern);
       }
 
       const { data, error } = await query;
@@ -30,26 +34,29 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         throw error;
       }
 
-      console.log('Raw exercises data:', data);
+      console.log('Raw database response:', data);
 
-      return data?.map(dbExercise => ({
-        id: dbExercise.id,
-        name: dbExercise.name,
-        muscle_group: dbExercise.muscle_group,
-        muscleGroup: dbExercise.muscle_group,
-        difficulty: dbExercise.difficulty || ['beginner'],
-        equipment: "",
-        location: dbExercise.location || [],
-        instructions: [],
-        targetMuscles: [],
-        objectives: [],
-        description: "",
-        sets: { beginner: 0, intermediate: 0, advanced: 0 },
-        reps: { beginner: 0, intermediate: 0, advanced: 0 },
-        restTime: { beginner: 0, intermediate: 0, advanced: 0 },
-        calories: 0,
-        is_published: dbExercise.is_published
-      })) || [];
+      return data?.map(dbExercise => {
+        const exercise: Exercise = {
+          id: dbExercise.id,
+          name: dbExercise.name,
+          muscle_group: dbExercise.muscle_group,
+          muscleGroup: dbExercise.muscle_group,
+          difficulty: dbExercise.difficulty || ['beginner'],
+          equipment: "",
+          location: dbExercise.location || [],
+          instructions: [],
+          targetMuscles: [],
+          objectives: [],
+          description: "",
+          sets: { beginner: 0, intermediate: 0, advanced: 0 },
+          reps: { beginner: 0, intermediate: 0, advanced: 0 },
+          restTime: { beginner: 0, intermediate: 0, advanced: 0 },
+          calories: 0,
+          is_published: dbExercise.is_published
+        };
+        return exercise;
+      }) || [];
     }
   });
 

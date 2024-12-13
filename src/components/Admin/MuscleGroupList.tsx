@@ -8,14 +8,16 @@ interface MuscleGroupListProps {
 
 export const MuscleGroupList = ({ selectedGroup, onGroupSelect }: MuscleGroupListProps) => {
   const handleGroupSelect = (groupId: string) => {
-    console.log("Selecting muscle group:", groupId);
+    console.log('=== MuscleGroupList Debug ===');
+    console.log('Selecting muscle group:', groupId);
+    console.log('Current selected group:', selectedGroup);
     onGroupSelect(groupId);
   };
 
   return (
     <TabsList className="flex flex-nowrap overflow-x-auto mb-6 p-1 space-x-2">
       {muscleGroups.map((group) => {
-        console.log("Rendering muscle group:", { id: group.id, name: group.name });
+        console.log('Rendering muscle group:', { id: group.id, name: group.name });
         return (
           <TabsTrigger
             key={group.id}
