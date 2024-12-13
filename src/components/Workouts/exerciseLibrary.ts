@@ -12,7 +12,7 @@ import { cardioExercises } from './exercises/cardioExercises';
 
 const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
   const seen = new Set<string>();
-  return exercises.filter((exercise: Exercise | undefined) => {
+  return exercises.filter((exercise) => {
     if (!exercise || !validateExercise(exercise)) {
       console.warn(`Invalid exercise found: ${exercise?.name || 'unknown'}`);
       return false;
