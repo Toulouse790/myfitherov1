@@ -52,7 +52,7 @@ export const validateExercise = (exercise: Exercise | undefined): exercise is Ex
     'calories'
   ];
 
-  const validObjectives = ["muscle_gain", "maintenance", "weight_loss", "endurance"];
+  const validObjectives = ["muscle_gain", "maintenance", "weight_loss", "endurance"] as const;
 
   return requiredFields.every(field => {
     const value = exercise[field];
@@ -63,7 +63,9 @@ export const validateExercise = (exercise: Exercise | undefined): exercise is Ex
     
     // Vérification spécifique pour les objectifs
     if (field === 'objectives') {
-      return Array.isArray(value) && value.every(obj => validObjectives.includes(obj));
+      return Array.isArray(value) && value.every(obj => 
+        validObjectives.includes(obj as typeof validObjectives[number])
+      );
     }
     
     return true;
