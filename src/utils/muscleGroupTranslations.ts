@@ -1,12 +1,12 @@
 export const translateMuscleGroup = (englishGroup: string): string => {
   const translations: { [key: string]: string } = {
-    'chest': 'Pectoraux',
-    'back': 'Dos',
-    'legs': 'Jambes',
-    'shoulders': 'Épaules',
-    'biceps': 'Biceps',
-    'triceps': 'Triceps',
-    'abs': 'Abdominaux',
+    'chest': 'pectoraux',
+    'back': 'dos',
+    'legs': 'jambes',
+    'shoulders': 'épaules',
+    'biceps': 'biceps',
+    'triceps': 'triceps',
+    'abs': 'abdominaux',
   };
   
   return translations[englishGroup.toLowerCase()] || englishGroup;
@@ -14,14 +14,14 @@ export const translateMuscleGroup = (englishGroup: string): string => {
 
 export const reverseTranslateMuscleGroup = (frenchGroup: string): string => {
   const reverseTranslations: { [key: string]: string } = {
-    'Pectoraux': 'chest',
-    'Dos': 'back',
-    'Jambes': 'legs',
-    'Épaules': 'shoulders',
-    'Biceps': 'biceps',
-    'Triceps': 'triceps',
-    'Abdominaux': 'abs',
+    'pectoraux': 'chest',
+    'dos': 'back',
+    'jambes': 'legs',
+    'épaules': 'shoulders',
+    'biceps': 'biceps',
+    'triceps': 'triceps',
+    'abdominaux': 'abs',
   };
   
-  return reverseTranslations[frenchGroup] || frenchGroup;
+  return reverseTranslations[frenchGroup.toLowerCase()] || frenchGroup;
 };

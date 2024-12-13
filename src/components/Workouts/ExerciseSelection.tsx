@@ -26,9 +26,8 @@ export const ExerciseSelection = ({
   const filteredExercises = exercises?.filter(exercise => {
     const nameMatch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
     const muscleGroupMatch = !muscleGroup || 
-      exercise.muscleGroup.toLowerCase() === muscleGroup.toLowerCase() || 
       exercise.muscle_group.toLowerCase() === muscleGroup.toLowerCase();
-    return nameMatch && muscleGroupMatch;
+    return nameMatch && muscleGroupMatch && exercise.is_published;
   });
 
   const handleExerciseToggle = (exerciseName: string) => {

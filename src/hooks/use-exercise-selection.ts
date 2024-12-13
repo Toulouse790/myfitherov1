@@ -30,25 +30,24 @@ export const useExerciseSelection = (muscleGroup?: string) => {
 
       console.log('Raw exercises data:', data);
 
-      return data?.map(dbExercise => {
-        const exercise: Exercise = {
-          id: dbExercise.id,
-          name: dbExercise.name,
-          muscleGroup: muscleGroup || '',
-          difficulty: Array.isArray(dbExercise.difficulty) ? dbExercise.difficulty[0] : "beginner",
-          equipment: "",
-          location: dbExercise.location || [],
-          instructions: [],
-          targetMuscles: [],
-          objectives: [],
-          description: "",
-          sets: { beginner: 0, intermediate: 0, advanced: 0 },
-          reps: { beginner: 0, intermediate: 0, advanced: 0 },
-          restTime: { beginner: 0, intermediate: 0, advanced: 0 },
-          calories: 0
-        };
-        return exercise;
-      }) || [];
+      return data?.map(dbExercise => ({
+        id: dbExercise.id,
+        name: dbExercise.name,
+        muscleGroup: muscleGroup || '',
+        muscle_group: dbExercise.muscle_group,
+        difficulty: dbExercise.difficulty || ['beginner'],
+        equipment: "",
+        location: dbExercise.location || [],
+        instructions: [],
+        targetMuscles: [],
+        objectives: [],
+        description: "",
+        sets: { beginner: 0, intermediate: 0, advanced: 0 },
+        reps: { beginner: 0, intermediate: 0, advanced: 0 },
+        restTime: { beginner: 0, intermediate: 0, advanced: 0 },
+        calories: 0,
+        is_published: dbExercise.is_published
+      })) || [];
     }
   });
 
