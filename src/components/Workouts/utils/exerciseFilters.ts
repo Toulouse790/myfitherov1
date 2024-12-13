@@ -9,7 +9,7 @@ export const filterExercisesByMuscleGroup = (exercises: any[], muscleId: string)
       épaules: ["épaules"],
       biceps: ["biceps"],
       triceps: ["triceps"],
-      abdominaux: ["abdominaux"]
+      abdominaux: ["abdominaux"]  // Standardisé sur "abdominaux"
     };
 
     const muscleGroup = ex.muscle_group.toLowerCase();
@@ -26,7 +26,7 @@ export const checkExerciseMatch = (exercise: any, muscleId: string): boolean => 
     épaules: ["épaules"],
     biceps: ["biceps"],
     triceps: ["triceps"],
-    abdominaux: ["abdominaux"]
+    abdominaux: ["abdominaux"]  // Standardisé sur "abdominaux"
   };
 
   const muscleGroup = exercise.muscle_group.toLowerCase();
