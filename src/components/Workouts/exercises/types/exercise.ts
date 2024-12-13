@@ -71,19 +71,16 @@ export const validateExercise = (exercise: Exercise | undefined): exercise is Ex
     return false;
   }
 
-  // Vérification que difficulty est un tableau
   if (!Array.isArray(exercise.difficulty)) {
     console.warn('difficulty must be an array');
     return false;
   }
 
-  // Vérification que location est un tableau
   if (!Array.isArray(exercise.location)) {
     console.warn('location must be an array');
     return false;
   }
 
-  // Vérification des objectifs
   if (!Array.isArray(exercise.objectives)) {
     console.warn('objectives must be an array');
     return false;
