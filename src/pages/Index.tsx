@@ -2,64 +2,101 @@ import { Header } from "@/components/Layout/Header";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Brain, Activity, BarChart } from "lucide-react";
+import { Brain, Activity, BarChart, Dumbbell, motion } from "framer-motion";
 
 export default function Index() {
+  const MotionCard = motion(Card);
+  
   return (
     <Header>
       <div className="container mx-auto px-4 py-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Créer ma séance */}
-          <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+          <MotionCard 
+            className="p-6 hover:shadow-lg transition-all cursor-pointer bg-gradient-to-br from-primary/5 to-background"
+            whileHover={{ 
+              scale: 1.02,
+              transition: { duration: 0.2 }
+            }}
+          >
             <Link to="/workout/generate" className="block">
-              <div className="flex flex-col items-center gap-3">
-                <Brain className="w-8 h-8 text-primary" />
-                <h2 className="text-lg font-semibold">Créer ma séance</h2>
-                <p className="text-sm text-muted-foreground text-center">
-                  Générez une séance adaptée à vos objectifs
-                </p>
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-primary/20 rounded-full blur-sm" />
+                  <Brain className="w-10 h-10 text-primary relative" />
+                </div>
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold mb-2">Créer ma séance</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Générez une séance personnalisée adaptée à vos objectifs et votre niveau
+                  </p>
+                </div>
               </div>
             </Link>
-          </Card>
+          </MotionCard>
 
           {/* Laisse-moi faire */}
-          <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+          <MotionCard 
+            className="p-6 hover:shadow-lg transition-all cursor-pointer"
+            whileHover={{ 
+              scale: 1.02,
+              transition: { duration: 0.2 }
+            }}
+          >
             <Link to="/workouts" className="block">
-              <div className="flex flex-col items-center gap-3">
-                <Brain className="w-8 h-8 text-primary" />
-                <h2 className="text-lg font-semibold">Laisse-moi faire</h2>
-                <p className="text-sm text-muted-foreground text-center">
-                  Créez votre séance manuellement
-                </p>
+              <div className="flex flex-col items-center gap-4">
+                <Dumbbell className="w-10 h-10 text-primary" />
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold mb-2">Laisse-moi faire</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Créez votre séance manuellement en sélectionnant vos exercices préférés
+                  </p>
+                </div>
               </div>
             </Link>
-          </Card>
+          </MotionCard>
 
           {/* Cardio */}
-          <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+          <MotionCard 
+            className="p-6 hover:shadow-lg transition-all cursor-pointer"
+            whileHover={{ 
+              scale: 1.02,
+              transition: { duration: 0.2 }
+            }}
+          >
             <Link to="/cardio" className="block">
-              <div className="flex flex-col items-center gap-3">
-                <Activity className="w-8 h-8 text-primary" />
-                <h2 className="text-lg font-semibold">Cardio</h2>
-                <p className="text-sm text-muted-foreground text-center">
-                  Gérez vos séances de cardio et votre endurance
-                </p>
+              <div className="flex flex-col items-center gap-4">
+                <Activity className="w-10 h-10 text-primary" />
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold mb-2">Cardio</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Gérez vos séances de cardio et suivez votre progression
+                  </p>
+                </div>
               </div>
             </Link>
-          </Card>
+          </MotionCard>
 
           {/* Statistiques */}
-          <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+          <MotionCard 
+            className="p-6 hover:shadow-lg transition-all cursor-pointer"
+            whileHover={{ 
+              scale: 1.02,
+              transition: { duration: 0.2 }
+            }}
+          >
             <Link to="/stats" className="block">
-              <div className="flex flex-col items-center gap-3">
-                <BarChart className="w-8 h-8 text-primary" />
-                <h2 className="text-lg font-semibold">Statistiques</h2>
-                <p className="text-sm text-muted-foreground text-center">
-                  Visualisez vos progrès et performances
-                </p>
+              <div className="flex flex-col items-center gap-4">
+                <BarChart className="w-10 h-10 text-primary" />
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold mb-2">Statistiques</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Visualisez vos progrès et analysez vos performances
+                  </p>
+                </div>
               </div>
             </Link>
-          </Card>
+          </MotionCard>
         </div>
 
         <div className="mt-6">
