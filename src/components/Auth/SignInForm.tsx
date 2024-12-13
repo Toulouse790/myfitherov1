@@ -30,7 +30,7 @@ export const SignInForm = () => {
 
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue sur HealthSync !",
+        description: "Bienvenue sur MyFitHero !",
       });
 
       navigate("/");

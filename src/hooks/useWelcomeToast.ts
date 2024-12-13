@@ -9,7 +9,7 @@ export const useWelcomeToast = () => {
     
     if (!hasSeenWelcome) {
       toast({
-        title: "Bienvenue sur HealthSync",
+        title: "Bienvenue sur MyFitHero",
         description: "Suivez vos progrès et atteignez vos objectifs fitness.",
         className: "bg-gradient-to-r from-primary to-secondary text-white",
         duration: 2000,
