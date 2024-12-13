@@ -12,9 +12,25 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Vérification initiale de la session
     const checkInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-      console.log("Initial auth check:", { hasSession: !!session });
+      try {
+        // Try to recover session from storage first
+        const savedSession = localStorage.getItem('myfithero-auth');
+        if (savedSession) {
+          const session = JSON.parse(savedSession);
+          if (session?.user) {
+            setIsAuthenticated(true);
+            return;
+          }
+        }
+
+        // If no saved session, check with Supabase
+        const { data: { session } } = await supabase.auth.getSession();
+        setIsAuthenticated(!!session);
+        console.log("Initial auth check:", { hasSession: !!session });
+      } catch (error) {
+        console.error("Session check error:", error);
+        setIsAuthenticated(false);
+      }
     };
 
     checkInitialSession();
@@ -22,14 +38,18 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth state changed:", { event, hasSession: !!session });
-      setIsAuthenticated(!!session);
-
-      // Afficher une notification lors de la déconnexion
+      
       if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        localStorage.removeItem('myfithero-auth');
         toast({
           title: "Déconnexion",
           description: "Vous avez été déconnecté avec succès",
         });
+      } else if (session) {
+        setIsAuthenticated(true);
+        // Save session to localStorage
+        localStorage.setItem('myfithero-auth', JSON.stringify(session));
       }
     });
 

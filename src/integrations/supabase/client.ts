@@ -17,7 +17,9 @@ export const supabase = createClient(
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: true,
-      storage: window.localStorage
+      storage: localStorage,
+      storageKey: 'myfithero-auth',
+      flowType: 'pkce'
     },
     global: {
       headers: {
@@ -29,6 +31,11 @@ export const supabase = createClient(
     }
   }
 );
+
+// Test the connection and log session status
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log('Auth state changed:', { event, hasSession: !!session });
+});
 
 // Test the connection
 Promise.resolve(

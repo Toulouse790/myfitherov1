@@ -25,11 +25,31 @@ export const useAuth = () => {
     // Listen for changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Auth state changed:", { event: _event, hasSession: !!session });
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", { event, hasSession: !!session });
+      
+      if (event === 'SIGNED_OUT') {
+        // Only update user state if it's an explicit sign out
+        setUser(null);
+      } else if (session?.user) {
+        setUser(session.user);
+      }
+      
       setLoading(false);
     });
+
+    // Attempt to recover session from storage on mount
+    const savedSession = localStorage.getItem('myfithero-auth');
+    if (savedSession) {
+      try {
+        const session = JSON.parse(savedSession);
+        if (session?.user) {
+          setUser(session.user);
+        }
+      } catch (error) {
+        console.error("Error recovering session:", error);
+      }
+    }
 
     return () => {
       subscription.unsubscribe();
