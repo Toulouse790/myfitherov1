@@ -5,6 +5,7 @@ import Cardio from "@/pages/Cardio";
 import { Workouts } from "@/pages/Workouts";
 import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
 import { CardioSession } from "@/components/Workouts/CardioSession";
+import Admin from "@/pages/Admin";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: "/cardio-session/:sessionId",
         element: <CardioSession />
+      },
+      {
+        path: "/admin/*",
+        element: <Admin />
       }
     ]
   }
