@@ -7,7 +7,7 @@ import { backExercises } from './exercises/backExercises';
 import { legsExercises } from './exercises/legsExercises';
 import { shouldersExercises } from './exercises/shouldersExercises';
 import { armsExercises } from './exercises/armsExercises';
-import { absExercises } from './exercises/absExercises';
+import { absExercises } from './exercises/data/abs';
 import { cardioExercises } from './exercises/cardioExercises';
 
 const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
