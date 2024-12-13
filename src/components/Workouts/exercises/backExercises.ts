@@ -39,6 +39,7 @@ export const backExercises: Exercise[] = [
   {
     id: "back-2",
     name: "Rowing barre",
+    muscle_group: "dos",
     muscleGroup: "dos",
     description: "Exercice complet pour le dos",
     difficulty: ["intermediate"],
@@ -73,6 +74,7 @@ export const backExercises: Exercise[] = [
   {
     id: "back-3",
     name: "Rowing haltère un bras",
+    muscle_group: "dos",
     muscleGroup: "dos",
     description: "Excellent pour travailler chaque côté indépendamment",
     difficulty: ["beginner"],
@@ -107,6 +109,7 @@ export const backExercises: Exercise[] = [
   {
     id: "back-4",
     name: "Tirage vertical",
+    muscle_group: "dos",
     muscleGroup: "dos",
     description: "Excellent pour la largeur du dos",
     difficulty: ["beginner"],
@@ -141,6 +144,7 @@ export const backExercises: Exercise[] = [
   {
     id: "back-5",
     name: "Extensions au sol",
+    muscle_group: "dos",
     muscleGroup: "dos",
     description: "Excellent pour le bas du dos",
     difficulty: ["beginner"],

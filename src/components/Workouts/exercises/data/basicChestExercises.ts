@@ -39,6 +39,7 @@ export const basicChestExercises: Exercise[] = [
   {
     id: "chest-2",
     name: "Développé incliné",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Cible la partie supérieure des pectoraux",
     difficulty: ["intermediate"],
@@ -73,6 +74,7 @@ export const basicChestExercises: Exercise[] = [
   {
     id: "chest-3",
     name: "Développé décliné",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Cible la partie inférieure des pectoraux",
     difficulty: ["intermediate"],
@@ -107,6 +109,7 @@ export const basicChestExercises: Exercise[] = [
   {
     id: "chest-4",
     name: "Écarté avec haltères",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Excellent exercice d'isolation pour les pectoraux",
     difficulty: ["intermediate"],
@@ -141,6 +144,7 @@ export const basicChestExercises: Exercise[] = [
   {
     id: "chest-5",
     name: "Pompes",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Exercice de base pour les pectoraux sans matériel",
     difficulty: ["beginner"],
@@ -175,6 +179,7 @@ export const basicChestExercises: Exercise[] = [
   {
     id: "chest-6",
     name: "Dips",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Excellent exercice composé pour les pectoraux et triceps",
     difficulty: ["intermediate"],

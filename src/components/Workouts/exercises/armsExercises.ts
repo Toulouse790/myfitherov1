@@ -39,6 +39,7 @@ export const armsExercises: Exercise[] = [
   {
     id: "arms-2",
     name: "Extension triceps à la poulie",
+    muscle_group: "triceps",
     muscleGroup: "arms",
     description: "Excellent exercice d'isolation pour les triceps",
     difficulty: ["beginner"],
@@ -73,6 +74,7 @@ export const armsExercises: Exercise[] = [
   {
     id: "arms-3",
     name: "Curl marteau",
+    muscle_group: "biceps",
     muscleGroup: "arms",
     description: "Variante du curl ciblant le brachial",
     difficulty: ["beginner"],
@@ -107,6 +109,7 @@ export const armsExercises: Exercise[] = [
   {
     id: "arms-4",
     name: "Dips",
+    muscle_group: "triceps",
     muscleGroup: "arms",
     description: "Excellent exercice composé pour les triceps",
     difficulty: ["intermediate"],
@@ -141,6 +144,7 @@ export const armsExercises: Exercise[] = [
   {
     id: "arms-5",
     name: "Pompes diamant",
+    muscle_group: "triceps",
     muscleGroup: "arms",
     description: "Excellent exercice pour les triceps sans matériel",
     difficulty: ["intermediate"],
