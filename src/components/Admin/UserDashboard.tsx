@@ -16,7 +16,7 @@ export const UserDashboard = () => {
         .select(`
           *,
           workout_sessions (
-            session_duration_minutes,
+            total_duration_minutes,
             perceived_difficulty
           )
         `)
