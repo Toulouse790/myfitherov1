@@ -6,7 +6,7 @@ export const cardioExercises: Exercise[] = [
     name: "Burpees",
     muscleGroup: "full_body",
     description: "Exercice explosif complet pour le cardio",
-    difficulty: "intermediate",
+    difficulty: ["intermediate"],
     equipment: "Aucun",
     location: ["home", "outdoor", "gym"],
     image_url: "/lovable-uploads/e0d82da6-8cbf-4e9c-94f4-edc2eb4e4c1d.png",

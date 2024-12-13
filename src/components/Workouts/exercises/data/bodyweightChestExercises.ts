@@ -6,7 +6,7 @@ export const bodyweightChestExercises: Exercise[] = [
     name: "Pompes",
     muscleGroup: "pectoraux",
     description: "Exercice de base pour les pectoraux sans matériel",
-    difficulty: "beginner",
+    difficulty: ["beginner"],
     equipment: "Aucun",
     location: ["home", "gym", "outdoor"],
     image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",

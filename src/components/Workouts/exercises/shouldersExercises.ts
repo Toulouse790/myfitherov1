@@ -6,7 +6,7 @@ export const shouldersExercises: Exercise[] = [
     name: "Développé militaire",
     muscleGroup: "épaules",
     description: "Exercice fondamental pour les épaules",
-    difficulty: "intermediate",
+    difficulty: ["intermediate"],
     equipment: "Barre ou Haltères",
     location: ["gym"],
     image_url: "/lovable-uploads/d11ce5d6-3770-4313-bef4-0c19f1a205f7.png",
