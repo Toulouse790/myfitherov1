@@ -17,28 +17,40 @@ export const ProfileHeader = ({ profile, onProfileUpdate }: ProfileHeaderProps) 
   const { toast } = useToast();
 
   const handleProfileUpdate = async (updates: Partial<UserProfile>) => {
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        username: updates.username,
-        avatar_url: updates.avatar,
-      })
-      .eq('id', profile.id);
+    try {
+      console.log("Updating profile with:", updates);
 
-    if (error) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          username: updates.username,
+          avatar_url: updates.avatar,
+        })
+        .eq('id', profile.id);
+
+      if (error) {
+        console.error("Profile update error:", error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour le profil. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      onProfileUpdate(updates);
+      toast({
+        title: "Succès",
+        description: "Profil mis à jour avec succès",
+      });
+    } catch (error) {
+      console.error("Profile update error:", error);
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour le profil",
+        description: "Une erreur inattendue s'est produite. Veuillez réessayer.",
         variant: "destructive",
       });
-      return;
     }
-
-    onProfileUpdate(updates);
-    toast({
-      title: "Succès",
-      description: "Profil mis à jour avec succès",
-    });
   };
 
   return (
