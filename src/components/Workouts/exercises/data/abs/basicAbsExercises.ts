@@ -4,8 +4,8 @@ export const basicAbsExercises: Exercise[] = [
   {
     id: "abs-1",
     name: "Crunch",
-    muscle_group: "abs",
-    muscleGroup: "abs",
+    muscle_group: "abdominaux",
+    muscleGroup: "abdominaux",
     description: "Basic abdominal exercise",
     difficulty: ["beginner"],
     equipment: "None",
@@ -40,8 +40,8 @@ export const basicAbsExercises: Exercise[] = [
   {
     id: "abs-2",
     name: "Plank",
-    muscle_group: "abs",
-    muscleGroup: "abs",
+    muscle_group: "abdominaux",
+    muscleGroup: "abdominaux",
     description: "Excellent for core stability",
     difficulty: ["intermediate"],
     equipment: "None",

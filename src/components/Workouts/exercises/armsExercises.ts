@@ -40,7 +40,7 @@ export const armsExercises: Exercise[] = [
     id: "arms-2",
     name: "Extension triceps à la poulie",
     muscle_group: "triceps",
-    muscleGroup: "arms",
+    muscleGroup: "triceps",
     description: "Excellent exercice d'isolation pour les triceps",
     difficulty: ["beginner"],
     equipment: "Poulie haute",

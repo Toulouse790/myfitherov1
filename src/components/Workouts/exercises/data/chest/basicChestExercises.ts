@@ -4,8 +4,8 @@ export const basicChestExercises: Exercise[] = [
   {
     id: "chest_1",
     name: "Push-ups",
-    muscle_group: "chest",
-    muscleGroup: "chest",
+    muscle_group: "pectoraux",
+    muscleGroup: "pectoraux",
     description: "Classic bodyweight chest exercise",
     difficulty: ["beginner", "intermediate"],
     equipment: "bodyweight",
@@ -38,8 +38,8 @@ export const basicChestExercises: Exercise[] = [
   {
     id: "chest_2",
     name: "Bench Press",
-    muscle_group: "chest",
-    muscleGroup: "chest",
+    muscle_group: "pectoraux",
+    muscleGroup: "pectoraux",
     description: "Fundamental chest exercise with barbell",
     difficulty: ["intermediate", "advanced"],
     equipment: "barbell",
