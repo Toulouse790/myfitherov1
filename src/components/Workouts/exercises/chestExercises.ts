@@ -1,7 +1,7 @@
 import { Exercise } from './types/exercise';
-import { basicChestExercises } from './data/basicChestExercises';
-import { advancedChestExercises } from './data/advancedChestExercises';
-import { bodyweightChestExercises } from './data/bodyweightChestExercises';
+import { basicChestExercises } from './data/chest/basicChestExercises';
+import { advancedChestExercises } from './data/chest/advancedChestExercises';
+import { bodyweightChestExercises } from './data/chest/bodyweightChestExercises';
 
 export const chestExercises: Exercise[] = [
   ...basicChestExercises,

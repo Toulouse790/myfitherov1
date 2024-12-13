@@ -1,8 +1,8 @@
 import { Exercise } from './exercises/types/exercise';
 import { validateExercise } from './exercises/types/exercise';
-import { basicChestExercises } from './exercises/data/basicChestExercises';
-import { advancedChestExercises } from './exercises/data/advancedChestExercises';
-import { bodyweightChestExercises } from './exercises/data/bodyweightChestExercises';
+import { basicChestExercises } from './exercises/data/chest/basicChestExercises';
+import { advancedChestExercises } from './exercises/data/chest/advancedChestExercises';
+import { bodyweightChestExercises } from './exercises/data/chest/bodyweightChestExercises';
 import { backExercises } from './exercises/backExercises';
 import { legsExercises } from './exercises/legsExercises';
 import { shouldersExercises } from './exercises/shouldersExercises';
