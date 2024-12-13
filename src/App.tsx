@@ -1,7 +1,8 @@
 import { useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { BottomNav } from "@/components/Layout/BottomNav";
-import { AppRoutes } from "@/routes";
+import { router } from "@/routes";
+import { RouterProvider } from "react-router-dom";
 
 function App() {
   const location = useLocation();
@@ -10,7 +11,7 @@ function App() {
 
   return (
     <>
-      <AppRoutes />
+      <RouterProvider router={router} />
       {showBottomNav && <BottomNav />}
       <Toaster />
     </>

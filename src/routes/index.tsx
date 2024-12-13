@@ -1,9 +1,19 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Home } from "@/pages/Home";
-import { Cardio } from "@/pages/Cardio";
+import Home from "@/pages/Home";
+import Cardio from "@/pages/Cardio";
 import { Workouts } from "@/pages/Workouts";
 import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
 import { CardioSession } from "@/components/Workouts/CardioSession";
+
+export const AppRoutes = () => {
+  return (
+    <>
+      <router.Provider>
+        <router.RouterProvider router={router} />
+      </router.Provider>
+    </>
+  );
+};
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +33,7 @@ export const router = createBrowserRouter([
     element: <NextWorkoutDetail />
   },
   {
-    path: "/workout/:sessionId",
+    path: "/cardio-session/:sessionId",
     element: <CardioSession />
   },
 ]);

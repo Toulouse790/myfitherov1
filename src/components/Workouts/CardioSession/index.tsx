@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CardioTimer } from "./CardioTimer";
 import { useToast } from "@/hooks/use-toast";
@@ -12,8 +12,7 @@ export const CardioSession = () => {
   const { user } = useAuth();
   const [exerciseName, setExerciseName] = useState<string>("");
 
-  // Charger les détails de la session au montage
-  useState(() => {
+  useEffect(() => {
     const loadSession = async () => {
       if (!sessionId) return;
 
