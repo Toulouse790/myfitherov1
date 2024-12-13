@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Users, DollarSign, TrendingUp } from "lucide-react";
+import { Users, DollarSign, TrendingUp, Percent } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -14,27 +14,14 @@ export const AdminStats = () => {
     }
   });
 
-  const { data: retentionRate } = useQuery({
-    queryKey: ['admin-retention-rate'],
-    queryFn: async () => {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
-      const { count: activeUsers } = await supabase
-        .from('workout_sessions')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', thirtyDaysAgo.toISOString());
-
-      const { count: totalUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
-
-      return totalUsers ? Math.round((activeUsers || 0) / totalUsers * 100) : 0;
-    }
-  });
+  // Pour l'exemple, nous utilisons des données statiques pour les revenus
+  // Ces métriques devront être connectées à une vraie source de données plus tard
+  const monthlyRevenue = 1500;
+  const yearlyRevenue = 18000;
+  const conversionRate = 2.5;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card className="p-6">
         <div className="flex items-center space-x-4">
           <Users className="h-8 w-8 text-blue-500" />
@@ -54,19 +41,31 @@ export const AdminStats = () => {
             <p className="text-sm font-medium text-muted-foreground">
               Revenu mensuel
             </p>
-            <h3 className="text-2xl font-bold">-</h3>
+            <h3 className="text-2xl font-bold">{monthlyRevenue}€</h3>
           </div>
         </div>
       </Card>
 
       <Card className="p-6">
         <div className="flex items-center space-x-4">
-          <TrendingUp className="h-8 w-8 text-orange-500" />
+          <TrendingUp className="h-8 w-8 text-purple-500" />
           <div>
             <p className="text-sm font-medium text-muted-foreground">
-              Taux de rétention
+              Revenu annuel
             </p>
-            <h3 className="text-2xl font-bold">{retentionRate || 0}%</h3>
+            <h3 className="text-2xl font-bold">{yearlyRevenue}€</h3>
+          </div>
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <div className="flex items-center space-x-4">
+          <Percent className="h-8 w-8 text-orange-500" />
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              Taux de conversion
+            </p>
+            <h3 className="text-2xl font-bold">{conversionRate}%</h3>
           </div>
         </div>
       </Card>
