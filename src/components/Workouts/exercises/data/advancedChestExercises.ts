@@ -39,6 +39,7 @@ export const advancedChestExercises: Exercise[] = [
   {
     id: "chest-4",
     name: "Écarté avec haltères",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Excellent exercice d'isolation pour les pectoraux",
     difficulty: ["intermediate"],

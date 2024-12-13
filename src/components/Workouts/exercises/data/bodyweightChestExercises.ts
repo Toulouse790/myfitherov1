@@ -34,14 +34,16 @@ export const bodyweightChestExercises: Exercise[] = [
       intermediate: 60,
       advanced: 45
     },
-    calories: 80
+    calories: 80,
+    is_published: true
   },
   {
     id: "chest-6",
     name: "Dips",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Excellent exercice composé pour les pectoraux et triceps",
-    difficulty: "intermediate",
+    difficulty: ["intermediate"],
     equipment: "Barres parallèles",
     location: ["gym"],
     image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
