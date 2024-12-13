@@ -1,26 +1,37 @@
-const muscleGroupTranslations: { [key: string]: string } = {
-  'pectoraux': 'chest',
-  'dos': 'back',
-  'jambes': 'legs',
-  'épaules': 'shoulders',
-  'biceps': 'biceps',
-  'triceps': 'triceps',
-  'abdominaux': 'abs',
-  'chest': 'pectoraux',
-  'back': 'dos',
-  'legs': 'jambes',
-  'shoulders': 'épaules',
-  'abs': 'abdominaux'
+export const translateMuscleGroup = (muscleGroup: string): string => {
+  const translations: { [key: string]: string } = {
+    'chest': 'pectoraux',
+    'back': 'dos',
+    'legs': 'jambes',
+    'shoulders': 'épaules',
+    'biceps': 'biceps',
+    'triceps': 'triceps',
+    'abs': 'abdominaux',
+    'pectoraux': 'chest',
+    'dos': 'back',
+    'jambes': 'legs',
+    'épaules': 'shoulders',
+    'abdominaux': 'abs'
+  };
+
+  return translations[muscleGroup.toLowerCase()] || muscleGroup;
 };
 
-export const translateMuscleGroup = (group: string): string => {
-  const normalizedGroup = group.toLowerCase();
-  return muscleGroupTranslations[normalizedGroup] || normalizedGroup;
-};
+export const reverseTranslateMuscleGroup = (muscleGroup: string): string => {
+  const translations: { [key: string]: string } = {
+    'pectoraux': 'chest',
+    'dos': 'back',
+    'jambes': 'legs',
+    'épaules': 'shoulders',
+    'biceps': 'biceps',
+    'triceps': 'triceps',
+    'abdominaux': 'abs',
+    'chest': 'pectoraux',
+    'back': 'dos',
+    'legs': 'jambes',
+    'shoulders': 'épaules',
+    'abs': 'abdominaux'
+  };
 
-export const reverseTranslateMuscleGroup = (group: string): string => {
-  const normalizedGroup = group.toLowerCase();
-  const entries = Object.entries(muscleGroupTranslations);
-  const translation = entries.find(([key, value]) => value.toLowerCase() === normalizedGroup);
-  return translation ? translation[0] : normalizedGroup;
+  return translations[muscleGroup.toLowerCase()] || muscleGroup;
 };

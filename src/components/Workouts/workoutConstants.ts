@@ -1,3 +1,19 @@
+export const muscleGroups = [
+  { id: "chest", name: "Pectoraux", color: "bg-red-500" },
+  { id: "back", name: "Dos", color: "bg-blue-500" },
+  { id: "legs", name: "Jambes", color: "bg-green-500" },
+  { id: "shoulders", name: "Épaules", color: "bg-purple-500" },
+  { id: "biceps", name: "Biceps", color: "bg-yellow-500" },
+  { id: "triceps", name: "Triceps", color: "bg-pink-500" },
+  { id: "abs", name: "Abdominaux", color: "bg-orange-500" }
+];
+
+export const difficultyLevels = [
+  { id: "beginner", name: "Débutant" },
+  { id: "intermediate", name: "Intermédiaire" },
+  { id: "advanced", name: "Avancé" }
+];
+
 export interface WorkoutFormData {
   title: string;
   muscleGroups: string[];
@@ -5,19 +21,3 @@ export interface WorkoutFormData {
   duration: string;
   exercises: string;
 }
-
-export const muscleGroups = [
-  { id: 'pectoraux', name: 'Pectoraux', color: 'bg-red-500' },
-  { id: 'dos', name: 'Dos', color: 'bg-blue-500' },
-  { id: 'jambes', name: 'Jambes', color: 'bg-green-500' },
-  { id: 'épaules', name: 'Épaules', color: 'bg-yellow-500' },
-  { id: 'biceps', name: 'Biceps', color: 'bg-purple-500' },
-  { id: 'triceps', name: 'Triceps', color: 'bg-pink-500' },
-  { id: 'abdominaux', name: 'Abdominaux', color: 'bg-orange-500' }
-];
-
-export const difficultyLevels = [
-  { id: 'beginner', name: 'Débutant' },
-  { id: 'intermediate', name: 'Intermédiaire' },
-  { id: 'advanced', name: 'Avancé' }
-];
