@@ -10,15 +10,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Initial session check
-    const checkInitialSession = async () => {
+    const checkSession = async () => {
       try {
-        // Try to recover session from storage first
+        // Check saved session first
         const savedSession = localStorage.getItem('myfithero-auth');
         if (savedSession) {
           const session = JSON.parse(savedSession);
           if (session?.access_token) {
-            // Set the session in Supabase
             await supabase.auth.setSession(session);
             setIsAuthenticated(true);
             return;
@@ -28,22 +26,16 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         // If no saved session, check with Supabase
         const { data: { session } } = await supabase.auth.getSession();
         setIsAuthenticated(!!session);
-        console.log("Initial auth check:", { hasSession: !!session });
       } catch (error) {
         console.error("Session check error:", error);
         setIsAuthenticated(false);
       }
     };
 
-    checkInitialSession();
+    checkSession();
 
-    // Listen for auth state changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", { event, hasSession: !!session });
-      
-      if (event === 'SIGNED_OUT' && isAuthenticated) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
         localStorage.removeItem('myfithero-auth');
         toast({
@@ -52,13 +44,12 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         });
       } else if (session) {
         setIsAuthenticated(true);
-        // Save session to localStorage if it exists
         localStorage.setItem('myfithero-auth', JSON.stringify(session));
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [toast, isAuthenticated]);
+  }, [toast]);
 
   // During initial check
   if (isAuthenticated === null) {
@@ -69,19 +60,16 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Public routes (signin/signup)
+  // Define public routes
   const publicRoutes = ["/signin", "/signup"];
   const isPublicRoute = publicRoutes.includes(location.pathname);
 
-  // If not authenticated and trying to access a protected route
+  // Handle routing logic
   if (!isAuthenticated && !isPublicRoute) {
-    console.log("Redirecting to signin:", { from: location.pathname });
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  // If authenticated and trying to access a public route
   if (isAuthenticated && isPublicRoute) {
-    console.log("Redirecting to home: user is authenticated");
     return <Navigate to="/" replace />;
   }
 
