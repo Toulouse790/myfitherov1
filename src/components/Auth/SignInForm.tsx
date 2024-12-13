@@ -4,11 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -20,9 +23,14 @@ export const SignInForm = () => {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          // Définir la persistance de la session en fonction de l'option "Se souvenir de moi"
+          persistSession: rememberMe
+        }
       });
 
       if (error) {
+        console.error("Erreur de connexion:", error);
         toast({
           variant: "destructive",
           title: "Erreur de connexion",
@@ -32,10 +40,14 @@ export const SignInForm = () => {
       }
 
       if (data.session) {
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue sur MyFitHero !",
+        });
         navigate('/');
       }
     } catch (error) {
-      console.error('Unexpected error during login:', error);
+      console.error('Erreur inattendue lors de la connexion:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -65,6 +77,16 @@ export const SignInForm = () => {
           required
           disabled={loading}
         />
+      </div>
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="rememberMe"
+          checked={rememberMe}
+          onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+        />
+        <Label htmlFor="rememberMe" className="text-sm text-muted-foreground">
+          Se souvenir de moi
+        </Label>
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Connexion..." : "Se connecter"}

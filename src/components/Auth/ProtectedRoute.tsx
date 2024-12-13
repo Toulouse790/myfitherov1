@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const location = useLocation();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Vérification initiale de la session
@@ -21,10 +23,18 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth state changed:", { event, hasSession: !!session });
       setIsAuthenticated(!!session);
+
+      // Afficher une notification lors de la déconnexion
+      if (event === 'SIGNED_OUT') {
+        toast({
+          title: "Déconnexion",
+          description: "Vous avez été déconnecté avec succès",
+        });
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [toast]);
 
   // Pendant la vérification initiale
   if (isAuthenticated === null) {
