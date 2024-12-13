@@ -30,14 +30,14 @@ export const exercises: Exercise[] = removeDuplicates([
 
 export const filterExercises = (
   location: ("home" | "gym" | "outdoor")[],
-  difficulty: string,
+  difficulty: string[],
   objectives: ("weight_loss" | "muscle_gain" | "maintenance" | "endurance")[],
   equipment?: string[]
 ): Exercise[] => {
   return exercises.filter(exercise => {
     const locationMatch = location.some(loc => exercise.location.includes(loc));
-    const difficultyMatch = exercise.difficulty === difficulty;
-    const objectiveMatch = objectives.some(obj => exercise.objectives.includes(obj));
+    const difficultyMatch = exercise.difficulty.some(diff => difficulty.includes(diff));
+    const objectiveMatch = objectives.some(obj => exercise.objectives?.includes(obj));
     const equipmentMatch = !equipment || equipment.includes(exercise.equipment);
     
     return locationMatch && difficultyMatch && objectiveMatch && equipmentMatch;
