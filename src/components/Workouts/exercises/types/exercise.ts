@@ -2,6 +2,7 @@ export interface Exercise {
   id: string;
   name: string;
   muscleGroup: string;
+  muscle_group: string;  // Added this field to match database schema
   description: string;
   difficulty: string;
   equipment: string;

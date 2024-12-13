@@ -23,9 +23,13 @@ export const ExerciseSelection = ({
   console.log("Current muscle group:", muscleGroup);
   console.log("Available exercises:", exercises);
 
-  const filteredExercises = exercises?.filter(exercise => 
-    exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredExercises = exercises?.filter(exercise => {
+    const nameMatch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const muscleGroupMatch = !muscleGroup || 
+      exercise.muscleGroup.toLowerCase() === muscleGroup.toLowerCase() || 
+      exercise.muscle_group.toLowerCase() === muscleGroup.toLowerCase();
+    return nameMatch && muscleGroupMatch;
+  });
 
   const handleExerciseToggle = (exerciseName: string) => {
     console.log("Toggling exercise:", exerciseName);
