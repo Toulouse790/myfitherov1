@@ -1,6 +1,8 @@
 import { Exercise } from './exercises/types/exercise';
 import { validateExercise } from './exercises/types/exercise';
-import { chestExercises } from './exercises/chestExercises';
+import { basicChestExercises } from './exercises/data/basicChestExercises';
+import { advancedChestExercises } from './exercises/data/advancedChestExercises';
+import { bodyweightChestExercises } from './exercises/data/bodyweightChestExercises';
 import { backExercises } from './exercises/backExercises';
 import { legsExercises } from './exercises/legsExercises';
 import { shouldersExercises } from './exercises/shouldersExercises';
@@ -24,7 +26,9 @@ const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
 
 // Combine tous les exercices et retire les doublons
 export const exercises: Exercise[] = removeDuplicates([
-  ...chestExercises,
+  ...basicChestExercises,
+  ...advancedChestExercises,
+  ...bodyweightChestExercises,
   ...backExercises,
   ...legsExercises,
   ...shouldersExercises,
@@ -39,13 +43,13 @@ export const filterExercises = (
   objectives: ("weight_loss" | "muscle_gain" | "maintenance" | "endurance")[],
   equipment?: string[]
 ): Exercise[] => {
-  return exercises.filter(exercise => {
-    if (!validateExercise(exercise)) return false;
+  return exercises.filter(ex => {
+    if (!validateExercise(ex)) return false;
     
-    const locationMatch = location.some(loc => exercise.location.includes(loc));
-    const difficultyMatch = exercise.difficulty.some(diff => difficulty.includes(diff));
-    const objectiveMatch = exercise.objectives?.some(obj => objectives.includes(obj));
-    const equipmentMatch = !equipment || equipment.includes(exercise.equipment);
+    const locationMatch = location.some(loc => ex.location.includes(loc));
+    const difficultyMatch = ex.difficulty.some(diff => difficulty.includes(diff));
+    const objectiveMatch = ex.objectives?.some(obj => objectives.includes(obj));
+    const equipmentMatch = !equipment || equipment.includes(ex.equipment);
     
     return locationMatch && difficultyMatch && objectiveMatch && equipmentMatch;
   });

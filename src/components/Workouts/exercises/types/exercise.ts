@@ -2,7 +2,7 @@ export interface Exercise {
   id: string;
   name: string;
   muscle_group: string;
-  muscleGroup?: string; // Pour la rétrocompatibilité
+  muscleGroup: string;
   description: string;
   difficulty: string[];
   equipment: string;
@@ -10,37 +10,54 @@ export interface Exercise {
   image_url?: string;
   video_url?: string;
   instructions: string[];
-  targetMuscles?: string[];
-  objectives?: ("weight_loss" | "muscle_gain" | "maintenance" | "endurance")[];
-  sets?: {
+  targetMuscles: string[];
+  objectives: string[];
+  sets: {
     beginner: number;
     intermediate: number;
     advanced: number;
   };
-  reps?: {
+  reps: {
     beginner: number;
     intermediate: number;
     advanced: number;
   };
-  restTime?: {
+  restTime: {
     beginner: number;
     intermediate: number;
     advanced: number;
   };
-  calories?: number;
+  calories: number;
   is_published?: boolean;
 }
 
-// Fonction utilitaire pour valider un exercice
-export function validateExercise(exercise: Partial<Exercise>): exercise is Exercise {
-  const requiredFields = ['id', 'name', 'muscle_group', 'difficulty', 'equipment', 'location', 'description'];
+export const validateExercise = (exercise: Exercise | undefined): exercise is Exercise => {
+  if (!exercise) return false;
   
-  for (const field of requiredFields) {
-    if (!(field in exercise)) {
-      console.error(`Missing required field in exercise ${exercise.name || 'unknown'}: ${field}`);
+  const requiredFields: (keyof Exercise)[] = [
+    'id',
+    'name',
+    'muscle_group',
+    'muscleGroup',
+    'description',
+    'difficulty',
+    'equipment',
+    'location',
+    'instructions',
+    'targetMuscles',
+    'objectives',
+    'sets',
+    'reps',
+    'restTime',
+    'calories'
+  ];
+
+  return requiredFields.every(field => {
+    const value = exercise[field];
+    if (value === undefined || value === null) {
+      console.warn(`Missing required field: ${field}`);
       return false;
     }
-  }
-
-  return true;
-}
+    return true;
+  });
+};
