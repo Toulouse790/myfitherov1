@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignUpForm } from "./SignUpForm";
 import { useSignup } from "@/hooks/use-signup";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -33,14 +34,32 @@ export const SignUp = () => {
       return;
     }
 
-    const { error } = await signup(email, password, username);
+    const { error: signupError, data } = await signup(email, password, username);
     
-    if (error) {
+    if (signupError) {
       toast({
         title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'inscription",
+        description: signupError.message || "Une erreur est survenue lors de l'inscription",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Mise à jour du profil avec le nom d'utilisateur
+    if (data?.user) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ username })
+        .eq('id', data.user.id);
+
+      if (updateError) {
+        console.error('Error updating profile:', updateError);
+        toast({
+          title: "Attention",
+          description: "Votre compte a été créé mais une erreur est survenue lors de la mise à jour du profil",
+          variant: "destructive",
+        });
+      }
     }
   };
 

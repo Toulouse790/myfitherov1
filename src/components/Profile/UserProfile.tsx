@@ -9,67 +9,68 @@ import { ChevronRight, Crown } from "lucide-react";
 import { Button } from "../ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { ProfileForm } from "./Sections/ProfileForm";
 
 export const UserProfile = () => {
   const [profile, setProfile] = useState<UserProfileType | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
+  const fetchProfile = async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger le profil",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (data) {
+      setProfile({
+        id: data.id,
+        username: data.username || '',
+        email: user.email || '',
+        avatar: data.avatar_url,
+        birthDate: data.birth_date,
+        gender: data.gender,
+        height: data.height_cm,
+        weight: data.weight_kg,
+        goals: {
+          primary: "general_fitness",
+          weeklyWorkouts: 4,
+          dailyCalories: 2500,
+          sleepHours: 8
+        },
+        preferences: {
+          theme: "system",
+          language: "fr",
+          notifications: true,
+          useTutorial: true,
+          equipment: []
+        },
+        stats: {
+          workoutsCompleted: 0,
+          totalWorkoutMinutes: 0,
+          streakDays: 0,
+          points: data.points || 0,
+          level: data.level || 1
+        },
+        achievements: [],
+        isPremium: false
+      });
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) return;
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (error) {
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger le profil",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (data) {
-        setProfile({
-          id: data.id,
-          username: data.username || '',
-          email: user.email || '',
-          avatar: data.avatar_url,
-          birthDate: data.birth_date,
-          gender: data.gender,
-          height: data.height_cm,
-          weight: data.weight_kg,
-          goals: {
-            primary: "general_fitness",
-            weeklyWorkouts: 4,
-            dailyCalories: 2500,
-            sleepHours: 8
-          },
-          preferences: {
-            theme: "system",
-            language: "fr",
-            notifications: true,
-            useTutorial: true,
-            equipment: []
-          },
-          stats: {
-            workoutsCompleted: 0,
-            totalWorkoutMinutes: 0,
-            streakDays: 0,
-            points: data.points || 0,
-            level: data.level || 1
-          },
-          achievements: [],
-          isPremium: false
-        });
-      }
-    };
-
     fetchProfile();
   }, [user, toast]);
 
@@ -87,6 +88,20 @@ export const UserProfile = () => {
       />
 
       <div className="space-y-6">
+        {/* Informations personnelles */}
+        <div className="p-6 bg-card rounded-lg border">
+          <h2 className="text-xl font-semibold mb-4">Informations personnelles</h2>
+          <ProfileForm
+            initialData={{
+              birth_date: profile.birthDate,
+              gender: profile.gender,
+              height_cm: profile.height,
+              weight_kg: profile.weight,
+            }}
+            onUpdate={fetchProfile}
+          />
+        </div>
+
         {/* Subscription Status */}
         <div className="p-6 hover:bg-accent/10 rounded-lg transition-colors">
           <div className="flex items-center justify-between">
