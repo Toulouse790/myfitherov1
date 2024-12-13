@@ -13,6 +13,7 @@ import Cardio from "@/pages/Cardio";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { SignIn } from "@/components/Auth/SignIn";
+import { SignUp } from "@/components/Auth/SignUp";
 import { useAuth } from "@/hooks/use-auth";
 
 function App() {
@@ -40,7 +41,12 @@ function App() {
             user ? <Navigate to="/" replace /> : <SignIn />
           } 
         />
-        <Route path="/signup" element={<Navigate to="/signin" replace />} />
+        <Route 
+          path="/signup" 
+          element={
+            user ? <Navigate to="/" replace /> : <SignUp />
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {showBottomNav && <BottomNav />}
