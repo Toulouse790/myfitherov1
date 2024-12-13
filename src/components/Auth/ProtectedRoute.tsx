@@ -12,7 +12,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Check saved session first
+        // Vérifier d'abord la session sauvegardée
         const savedSession = localStorage.getItem('myfithero-auth');
         if (savedSession) {
           const session = JSON.parse(savedSession);
@@ -23,7 +23,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           }
         }
 
-        // If no saved session, check with Supabase
+        // Si pas de session sauvegardée, vérifier avec Supabase
         const { data: { session } } = await supabase.auth.getSession();
         setIsAuthenticated(!!session);
       } catch (error) {
@@ -51,7 +51,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [toast]);
 
-  // During initial check
+  // Pendant la vérification initiale
   if (isAuthenticated === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -60,11 +60,11 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Define public routes
+  // Définir les routes publiques
   const publicRoutes = ["/signin", "/signup"];
   const isPublicRoute = publicRoutes.includes(location.pathname);
 
-  // Handle routing logic
+  // Gérer la logique de redirection
   if (!isAuthenticated && !isPublicRoute) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }

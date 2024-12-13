@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { EmailInput } from "./SignInForm/EmailInput";
@@ -14,6 +14,7 @@ export const SignInForm = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +29,7 @@ export const SignInForm = () => {
 
       if (error) throw error;
 
-      // If remember me is checked, save the session to localStorage
+      // Si remember me est coché, sauvegarder la session
       if (rememberMe && data.session) {
         localStorage.setItem('myfithero-auth', JSON.stringify(data.session));
       }
@@ -38,7 +39,9 @@ export const SignInForm = () => {
         description: "Bienvenue sur MyFitHero !",
       });
 
-      navigate("/");
+      // Récupérer la page précédente depuis l'état de location
+      const from = (location.state as any)?.from?.pathname || "/";
+      navigate(from, { replace: true });
     } catch (error: any) {
       let errorMessage = "Une erreur est survenue lors de la connexion";
       
