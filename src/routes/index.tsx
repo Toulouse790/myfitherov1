@@ -6,7 +6,6 @@ import Cardio from "@/pages/Cardio";
 import { Workouts } from "@/pages/Workouts";
 import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
 import { CardioSession } from "@/components/Workouts/CardioSession";
-import Admin from "@/pages/Admin";
 import { SignIn } from "@/components/Auth/SignIn";
 import { SignUp } from "@/components/Auth/SignUp";
 import Profile from "@/pages/Profile";
@@ -84,11 +83,6 @@ export const router = createBrowserRouter([
       {
         path: "/training-preferences",
         element: <TrainingPreferences />,
-        errorElement: <ErrorBoundary />
-      },
-      {
-        path: "/admin/*",
-        element: <Admin />,
         errorElement: <ErrorBoundary />
       }
     ]
