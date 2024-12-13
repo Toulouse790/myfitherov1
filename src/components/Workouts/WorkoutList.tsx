@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { WorkoutCard } from "./WorkoutCard";
-import { WorkoutData } from "./workoutConstants";
+import { WorkoutData } from "./types/workout";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -91,11 +91,11 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
               : "",
             exercises: workout.exercises.map(ex => ({
               name: ex.name,
-              sets: ex.sets || 3,
-              reps: ex.reps || 12,
-              calories: ex.calories || 0
+              sets: ex.sets,
+              reps: ex.reps,
+              calories: ex.calories
             })),
-            totalCalories: workout.exercises.reduce((acc, ex) => acc + (ex.calories || 0), 0)
+            totalCalories: workout.exercises.reduce((acc, ex) => acc + ex.calories, 0)
           }} />
         </div>
       ))}
