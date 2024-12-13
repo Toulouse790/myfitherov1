@@ -19,6 +19,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         const englishGroup = reverseTranslateMuscleGroup(muscleGroup);
         console.log('English muscle group:', englishGroup);
         
+        // Utiliser ilike avec des jokers pour une recherche plus flexible
         query = query.ilike('muscle_group', `%${englishGroup.toLowerCase()}%`);
       }
 
