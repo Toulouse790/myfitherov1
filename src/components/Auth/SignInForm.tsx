@@ -24,9 +24,6 @@ export const SignInForm = () => {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          persistSession: rememberMe // This controls whether the session persists after browser close
-        }
       });
 
       if (error) throw error;
