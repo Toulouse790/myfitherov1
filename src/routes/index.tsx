@@ -9,6 +9,12 @@ import { CardioSession } from "@/components/Workouts/CardioSession";
 import Admin from "@/pages/Admin";
 import { SignIn } from "@/components/Auth/SignIn";
 import { SignUp } from "@/components/Auth/SignUp";
+import Profile from "@/pages/Profile";
+import Stats from "@/pages/Stats";
+import Sleep from "@/pages/Sleep";
+import Nutrition from "@/pages/Nutrition";
+import TrainingPreferences from "@/pages/TrainingPreferences";
+import WorkoutGenerate from "@/pages/WorkoutGenerate";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +37,11 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />
       },
       {
+        path: "/profile",
+        element: <Profile />,
+        errorElement: <ErrorBoundary />
+      },
+      {
         path: "/cardio",
         element: <Cardio />,
         errorElement: <ErrorBoundary />
@@ -41,6 +52,11 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />
       },
       {
+        path: "/workout/generate",
+        element: <WorkoutGenerate />,
+        errorElement: <ErrorBoundary />
+      },
+      {
         path: "/workout/:sessionId",
         element: <NextWorkoutDetail />,
         errorElement: <ErrorBoundary />
@@ -48,6 +64,26 @@ export const router = createBrowserRouter([
       {
         path: "/cardio-session/:sessionId",
         element: <CardioSession />,
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/nutrition",
+        element: <Nutrition />,
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/stats",
+        element: <Stats />,
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/sleep",
+        element: <Sleep />,
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/training-preferences",
+        element: <TrainingPreferences />,
         errorElement: <ErrorBoundary />
       },
       {
