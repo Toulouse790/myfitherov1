@@ -5,16 +5,6 @@ import { Workouts } from "@/pages/Workouts";
 import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
 import { CardioSession } from "@/components/Workouts/CardioSession";
 
-export const AppRoutes = () => {
-  return (
-    <>
-      <router.Provider>
-        <router.RouterProvider router={router} />
-      </router.Provider>
-    </>
-  );
-};
-
 export const router = createBrowserRouter([
   {
     path: "/",
