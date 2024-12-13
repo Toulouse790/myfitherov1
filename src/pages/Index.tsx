@@ -29,7 +29,7 @@ export default function Index() {
                 <div className="text-center">
                   <h2 className="text-lg md:text-xl font-semibold mb-2">Créer ma séance</h2>
                   <p className="text-sm md:text-base text-muted-foreground">
-                    Générez une séance personnalisée adaptée à vos objectifs et votre niveau
+                    Construisez votre séance personnalisée en choisissant parmi notre bibliothèque d'exercices
                   </p>
                 </div>
               </div>
@@ -50,7 +50,7 @@ export default function Index() {
                 <div className="text-center">
                   <h2 className="text-lg md:text-xl font-semibold mb-2">Laisse-moi faire</h2>
                   <p className="text-sm md:text-base text-muted-foreground">
-                    Créez votre séance automatiquement en fonction de votre historique d'entraînement
+                    Générez automatiquement une séance adaptée à votre historique d'entraînement
                   </p>
                 </div>
               </div>
@@ -71,7 +71,7 @@ export default function Index() {
                 <div className="text-center">
                   <h2 className="text-lg md:text-xl font-semibold mb-2">Cardio</h2>
                   <p className="text-sm md:text-base text-muted-foreground">
-                    Gérez vos séances de cardio et suivez votre progression
+                    Choisissez parmi différents types d'exercices cardio pour votre entraînement
                   </p>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export default function Index() {
                 <div className="text-center">
                   <h2 className="text-lg md:text-xl font-semibold mb-2">Statistiques</h2>
                   <p className="text-sm md:text-base text-muted-foreground">
-                    Visualisez vos progrès et analysez vos performances
+                    Suivez vos progrès et analysez vos performances d'entraînement
                   </p>
                 </div>
               </div>
