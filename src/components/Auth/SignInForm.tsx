@@ -24,6 +24,9 @@ export const SignInForm = () => {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          persistSession: rememberMe // This controls whether the session persists after browser close
+        }
       });
 
       if (error) throw error;
@@ -35,9 +38,18 @@ export const SignInForm = () => {
 
       navigate("/");
     } catch (error: any) {
+      let errorMessage = "Une erreur est survenue lors de la connexion";
+      
+      // Gestion des erreurs spécifiques
+      if (error.message.includes("Invalid login credentials")) {
+        errorMessage = "Email ou mot de passe incorrect";
+      } else if (error.message.includes("Email not confirmed")) {
+        errorMessage = "Veuillez confirmer votre email avant de vous connecter";
+      }
+
       toast({
         title: "Erreur de connexion",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -88,6 +100,7 @@ export const SignInForm = () => {
           id="remember"
           checked={rememberMe}
           onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+          className="data-[state=checked]:bg-primary"
         />
         <Label
           htmlFor="remember"
