@@ -12,9 +12,12 @@ import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail
 import Cardio from "@/pages/Cardio";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { BottomNav } from "@/components/Layout/BottomNav";
+import { SignIn } from "@/components/Auth/SignIn";
+import { useAuth } from "@/hooks/use-auth";
 
 function App() {
   const location = useLocation();
+  const { user } = useAuth();
   const showBottomNav = !location.pathname.startsWith('/admin');
 
   return (
@@ -31,8 +34,13 @@ function App() {
         <Route path="/stats" element={<Stats />} />
         <Route path="/sleep" element={<Sleep />} />
         <Route path="/training-preferences" element={<TrainingPreferences />} />
-        <Route path="/signin" element={<Navigate to="/" replace />} />
-        <Route path="/signup" element={<Navigate to="/" replace />} />
+        <Route 
+          path="/signin" 
+          element={
+            user ? <Navigate to="/" replace /> : <SignIn />
+          } 
+        />
+        <Route path="/signup" element={<Navigate to="/signin" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {showBottomNav && <BottomNav />}
