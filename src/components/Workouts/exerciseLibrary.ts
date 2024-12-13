@@ -40,7 +40,7 @@ export const exercises: Exercise[] = removeDuplicates([
 export const filterExercises = (
   location: ("home" | "gym" | "outdoor")[],
   difficulty: string[],
-  objectives: ("weight_loss" | "muscle_gain" | "maintenance" | "endurance")[],
+  objectives: ("muscle_gain" | "maintenance" | "weight_loss" | "endurance")[],
   equipment?: string[]
 ): Exercise[] => {
   return exercises.filter(ex => {

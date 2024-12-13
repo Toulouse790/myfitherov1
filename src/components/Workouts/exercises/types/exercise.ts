@@ -11,7 +11,7 @@ export interface Exercise {
   video_url?: string;
   instructions: string[];
   targetMuscles: string[];
-  objectives: string[];
+  objectives: ("muscle_gain" | "maintenance" | "weight_loss" | "endurance")[];
   sets: {
     beginner: number;
     intermediate: number;
@@ -52,12 +52,20 @@ export const validateExercise = (exercise: Exercise | undefined): exercise is Ex
     'calories'
   ];
 
+  const validObjectives = ["muscle_gain", "maintenance", "weight_loss", "endurance"];
+
   return requiredFields.every(field => {
     const value = exercise[field];
     if (value === undefined || value === null) {
       console.warn(`Missing required field: ${field}`);
       return false;
     }
+    
+    // Vérification spécifique pour les objectifs
+    if (field === 'objectives') {
+      return Array.isArray(value) && value.every(obj => validObjectives.includes(obj));
+    }
+    
     return true;
   });
 };
