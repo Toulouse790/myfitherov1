@@ -3,13 +3,13 @@ export const filterExercisesByMuscleGroup = (exercises: any[], muscleId: string)
     if (muscleId === "fullBody") return true;
     
     const muscleGroupMap: { [key: string]: string[] } = {
-      chest: ["pectoraux"],
-      back: ["dos"],
-      legs: ["jambes"],
-      shoulders: ["épaules"],
+      pectoraux: ["pectoraux"],
+      dos: ["dos"],
+      jambes: ["jambes"],
+      épaules: ["épaules"],
       biceps: ["biceps"],
       triceps: ["triceps"],
-      abs: ["abdominaux"]
+      abdominaux: ["abdominaux"]
     };
 
     const muscleGroup = ex.muscle_group.toLowerCase();
@@ -20,13 +20,13 @@ export const filterExercisesByMuscleGroup = (exercises: any[], muscleId: string)
 
 export const checkExerciseMatch = (exercise: any, muscleId: string): boolean => {
   const muscleGroupMap: { [key: string]: string[] } = {
-    chest: ["pectoraux"],
-    back: ["dos"],
-    legs: ["jambes"],
-    shoulders: ["épaules"],
+    pectoraux: ["pectoraux"],
+    dos: ["dos"],
+    jambes: ["jambes"],
+    épaules: ["épaules"],
     biceps: ["biceps"],
     triceps: ["triceps"],
-    abs: ["abdominaux"]
+    abdominaux: ["abdominaux"]
   };
 
   const muscleGroup = exercise.muscle_group.toLowerCase();

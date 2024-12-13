@@ -20,6 +20,8 @@ export const ExerciseSelection = ({
 }: ExerciseSelectionProps) => {
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
   console.log("Current selected exercises:", selectedExercises);
+  console.log("Current muscle group:", muscleGroup);
+  console.log("Available exercises:", exercises);
 
   const filteredExercises = exercises?.filter(exercise => 
     exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
