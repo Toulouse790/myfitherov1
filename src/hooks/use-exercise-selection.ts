@@ -46,6 +46,17 @@ export const useExerciseSelection = (muscleGroup?: string) => {
       // 5. Temporairement retourner tous les exercices sans filtrage is_published
       const allExercises = data || [];
       
+      // Ajout de logs détaillés pour chaque exercice
+      allExercises.forEach(ex => {
+        console.log(`Exercise details:`, {
+          name: ex.name,
+          muscleGroup: ex.muscle_group,
+          isPublished: ex.is_published,
+          difficulty: ex.difficulty,
+          location: ex.location
+        });
+      });
+
       console.log('All exercises summary:', {
         total: allExercises.length,
         muscleGroups: [...new Set(allExercises.map(ex => ex.muscle_group))]
