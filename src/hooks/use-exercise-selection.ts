@@ -15,7 +15,6 @@ export const useExerciseSelection = (muscleGroup?: string) => {
       let query = supabase
         .from('unified_exercises')
         .select('*');
-        // Temporairement retiré: .eq('is_published', true)
 
       // 2. Ajout du filtre par groupe musculaire si spécifié
       if (muscleGroup) {
@@ -46,14 +45,24 @@ export const useExerciseSelection = (muscleGroup?: string) => {
       // 5. Temporairement retourner tous les exercices sans filtrage is_published
       const allExercises = data || [];
       
-      // Ajout de logs détaillés pour chaque exercice
+      // Ajout de logs détaillés pour chaque exercice avec validation des données
       allExercises.forEach(ex => {
-        console.log(`Exercise details:`, {
+        const validationIssues = [];
+        
+        // Vérification des champs requis
+        if (!ex.name) validationIssues.push('missing name');
+        if (!ex.muscle_group) validationIssues.push('missing muscle_group');
+        if (!ex.difficulty || !Array.isArray(ex.difficulty)) validationIssues.push('invalid difficulty');
+        if (!ex.location || !Array.isArray(ex.location)) validationIssues.push('invalid location');
+        
+        console.log(`Exercise validation:`, {
+          id: ex.id,
           name: ex.name,
           muscleGroup: ex.muscle_group,
           isPublished: ex.is_published,
           difficulty: ex.difficulty,
-          location: ex.location
+          location: ex.location,
+          validationIssues: validationIssues.length > 0 ? validationIssues : 'no issues'
         });
       });
 
