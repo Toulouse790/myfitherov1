@@ -40,6 +40,7 @@ export const absExercises: Exercise[] = [
   {
     id: "abs-2",
     name: "Planche",
+    muscle_group: "abdominaux",
     muscleGroup: "abdominaux",
     description: "Excellent pour la sangle abdominale",
     difficulty: ["intermediate"],
@@ -74,6 +75,7 @@ export const absExercises: Exercise[] = [
   {
     id: "abs-3",
     name: "Relevé de jambes",
+    muscle_group: "abdominaux",
     muscleGroup: "abdominaux",
     description: "Cible les abdominaux inférieurs",
     difficulty: ["intermediate"],
@@ -108,6 +110,7 @@ export const absExercises: Exercise[] = [
   {
     id: "abs-4",
     name: "Russian Twist",
+    muscle_group: "abdominaux",
     muscleGroup: "abdominaux",
     description: "Excellent pour les obliques",
     difficulty: ["intermediate"],
@@ -142,6 +145,7 @@ export const absExercises: Exercise[] = [
   {
     id: "abs-5",
     name: "Mountain Climber",
+    muscle_group: "abdominaux",
     muscleGroup: "abdominaux",
     description: "Excellent exercice cardio-abdominal",
     difficulty: ["intermediate"],

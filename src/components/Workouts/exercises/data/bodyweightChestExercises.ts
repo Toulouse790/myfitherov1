@@ -4,6 +4,7 @@ export const bodyweightChestExercises: Exercise[] = [
   {
     id: "chest-5",
     name: "Pompes",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Exercice de base pour les pectoraux sans matériel",
     difficulty: ["beginner"],

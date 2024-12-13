@@ -4,6 +4,7 @@ export const backExercises: Exercise[] = [
   {
     id: "back-1",
     name: "Tractions",
+    muscle_group: "dos",
     muscleGroup: "dos",
     description: "Excellent exercice pour le développement du dos",
     difficulty: ["intermediate"],

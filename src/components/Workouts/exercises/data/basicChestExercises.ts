@@ -4,6 +4,7 @@ export const basicChestExercises: Exercise[] = [
   {
     id: "chest-1",
     name: "Développé couché",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Un exercice fondamental pour le développement des pectoraux",
     difficulty: ["intermediate"],

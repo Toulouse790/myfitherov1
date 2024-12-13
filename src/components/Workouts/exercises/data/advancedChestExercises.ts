@@ -4,6 +4,7 @@ export const advancedChestExercises: Exercise[] = [
   {
     id: "chest-3",
     name: "Développé décliné",
+    muscle_group: "pectoraux",
     muscleGroup: "pectoraux",
     description: "Cible la partie inférieure des pectoraux",
     difficulty: ["intermediate"],

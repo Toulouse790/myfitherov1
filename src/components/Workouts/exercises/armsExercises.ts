@@ -4,6 +4,7 @@ export const armsExercises: Exercise[] = [
   {
     id: "arms-1",
     name: "Curl biceps",
+    muscle_group: "arms",
     muscleGroup: "arms",
     description: "L'exercice fondamental pour les biceps",
     difficulty: ["beginner"],
