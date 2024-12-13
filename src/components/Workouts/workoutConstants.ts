@@ -21,3 +21,20 @@ export interface WorkoutFormData {
   duration: string;
   exercises: string;
 }
+
+export interface WorkoutData {
+  id: string;
+  title: string;
+  muscleGroups: string[];
+  difficulty: string;
+  duration: string;
+  exercises: string[];
+}
+
+export const initialFormData: WorkoutFormData = {
+  title: "",
+  muscleGroups: [],
+  difficulty: "beginner",
+  duration: "45",
+  exercises: ""
+};
