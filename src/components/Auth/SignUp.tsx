@@ -15,6 +15,7 @@ export const SignUp = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Starting signup process...");
     
     if (password !== confirmPassword) {
       toast({
@@ -37,6 +38,7 @@ export const SignUp = () => {
     const { error: signupError, data } = await signup(email, password, username);
     
     if (signupError) {
+      console.error("Signup error:", signupError);
       toast({
         title: "Erreur",
         description: signupError.message || "Une erreur est survenue lors de l'inscription",
@@ -47,10 +49,14 @@ export const SignUp = () => {
 
     // Mise à jour du profil avec le nom d'utilisateur
     if (data?.user) {
+      console.log("Updating profile for user:", data.user.id);
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ username })
-        .eq('id', data.user.id);
+        .upsert({ 
+          id: data.user.id,
+          username: username,
+          updated_at: new Date().toISOString()
+        });
 
       if (updateError) {
         console.error('Error updating profile:', updateError);
@@ -59,6 +65,8 @@ export const SignUp = () => {
           description: "Votre compte a été créé mais une erreur est survenue lors de la mise à jour du profil",
           variant: "destructive",
         });
+      } else {
+        console.log("Profile updated successfully");
       }
     }
   };
