@@ -3,6 +3,10 @@ export interface UserProfile {
   username: string;
   email: string;
   avatar?: string;
+  birthDate?: string;
+  gender?: 'male' | 'female' | 'other';
+  height?: number;
+  weight?: number;
   goals: UserGoals;
   preferences: UserPreferences;
   stats: UserStats;

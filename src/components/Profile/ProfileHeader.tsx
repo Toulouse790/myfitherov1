@@ -3,14 +3,43 @@ import { AvatarSection } from "./Sections/AvatarSection";
 import { UsernameSection } from "./Sections/UsernameSection";
 import { PreferencesSheet } from "./Sections/PreferencesSheet";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProfileHeaderProps {
   profile: UserProfile;
+  onProfileUpdate: (updatedProfile: Partial<UserProfile>) => void;
 }
 
-export const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
+export const ProfileHeader = ({ profile, onProfileUpdate }: ProfileHeaderProps) => {
   const [selectedAvatar, setSelectedAvatar] = useState(profile.avatar || "/placeholder.svg");
   const [username, setUsername] = useState(profile.username);
+  const { toast } = useToast();
+
+  const handleProfileUpdate = async (updates: Partial<UserProfile>) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        username: updates.username,
+        avatar_url: updates.avatar,
+      })
+      .eq('id', profile.id);
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le profil",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    onProfileUpdate(updates);
+    toast({
+      title: "Succès",
+      description: "Profil mis à jour avec succès",
+    });
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -18,13 +47,19 @@ export const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
         <AvatarSection
           username={username}
           selectedAvatar={selectedAvatar}
-          onAvatarSelect={setSelectedAvatar}
+          onAvatarSelect={(avatar) => {
+            setSelectedAvatar(avatar);
+            handleProfileUpdate({ avatar });
+          }}
         />
         <UsernameSection
           username={username}
           stats={profile.stats}
           isPremium={profile.isPremium}
-          onUsernameChange={setUsername}
+          onUsernameChange={(newUsername) => {
+            setUsername(newUsername);
+            handleProfileUpdate({ username: newUsername });
+          }}
         />
       </div>
 

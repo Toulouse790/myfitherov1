@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserProfile as UserProfileType } from "@/types/user";
 import { ProfileHeader } from "./ProfileHeader";
 import { AppSettings } from "./Sections/AppSettings";
@@ -7,43 +7,84 @@ import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { ChevronRight, Crown } from "lucide-react";
 import { Button } from "../ui/button";
-
-const mockUserProfile: UserProfileType = {
-  id: "1",
-  username: "John Doe",
-  email: "john@example.com",
-  avatar: "/placeholder.svg",
-  goals: {
-    primary: "muscle_gain",
-    weeklyWorkouts: 4,
-    dailyCalories: 2500,
-    sleepHours: 8
-  },
-  preferences: {
-    theme: "system",
-    language: "fr",
-    notifications: true,
-    useTutorial: true,
-    equipment: ["haltères", "tapis"]
-  },
-  stats: {
-    workoutsCompleted: 48,
-    totalWorkoutMinutes: 1440,
-    streakDays: 7,
-    points: 1250,
-    level: 5
-  },
-  achievements: [],
-  isPremium: false
-};
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const UserProfile = () => {
-  const [profile] = useState<UserProfileType>(mockUserProfile);
+  const [profile, setProfile] = useState<UserProfileType | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger le profil",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data) {
+        setProfile({
+          id: data.id,
+          username: data.username || '',
+          email: user.email || '',
+          avatar: data.avatar_url,
+          birthDate: data.birth_date,
+          gender: data.gender,
+          height: data.height_cm,
+          weight: data.weight_kg,
+          goals: {
+            primary: "general_fitness",
+            weeklyWorkouts: 4,
+            dailyCalories: 2500,
+            sleepHours: 8
+          },
+          preferences: {
+            theme: "system",
+            language: "fr",
+            notifications: true,
+            useTutorial: true,
+            equipment: []
+          },
+          stats: {
+            workoutsCompleted: 0,
+            totalWorkoutMinutes: 0,
+            streakDays: 0,
+            points: data.points || 0,
+            level: data.level || 1
+          },
+          achievements: [],
+          isPremium: false
+        });
+      }
+    };
+
+    fetchProfile();
+  }, [user, toast]);
+
+  if (!profile) {
+    return <div className="p-4">Chargement...</div>;
+  }
 
   return (
     <div className="container mx-auto p-4 space-y-6 pb-24">
-      <ProfileHeader profile={profile} />
+      <ProfileHeader 
+        profile={profile} 
+        onProfileUpdate={(updatedProfile) => {
+          setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
+        }}
+      />
 
       <div className="space-y-6">
         {/* Subscription Status */}

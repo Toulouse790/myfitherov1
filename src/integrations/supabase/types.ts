@@ -907,7 +907,11 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          birth_date: string | null
           created_at: string
+          gender: string | null
+          height_cm: number | null
           id: string
           level: number | null
           meal_notifications: boolean | null
@@ -915,9 +919,14 @@ export type Database = {
           reminder_time: number | null
           updated_at: string
           username: string | null
+          weight_kg: number | null
         }
         Insert: {
+          avatar_url?: string | null
+          birth_date?: string | null
           created_at?: string
+          gender?: string | null
+          height_cm?: number | null
           id: string
           level?: number | null
           meal_notifications?: boolean | null
@@ -925,9 +934,14 @@ export type Database = {
           reminder_time?: number | null
           updated_at?: string
           username?: string | null
+          weight_kg?: number | null
         }
         Update: {
+          avatar_url?: string | null
+          birth_date?: string | null
           created_at?: string
+          gender?: string | null
+          height_cm?: number | null
           id?: string
           level?: number | null
           meal_notifications?: boolean | null
@@ -935,6 +949,7 @@ export type Database = {
           reminder_time?: number | null
           updated_at?: string
           username?: string | null
+          weight_kg?: number | null
         }
         Relationships: []
       }
