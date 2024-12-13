@@ -58,8 +58,8 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
               <ExerciseBadges 
                 selectedDifficulties={selectedDifficulties}
                 selectedLocations={selectedLocations}
-                onDifficultyChange={(difficulty: string, checked: boolean) => handleDifficultyChange(difficulty, checked)}
-                onLocationChange={(location: string, checked: boolean) => handleLocationChange(location, checked)}
+                onDifficultyChange={handleDifficultyChange}
+                onLocationChange={handleLocationChange}
               />
             </div>
           </div>

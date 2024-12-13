@@ -4,8 +4,8 @@ import { LocationBadges } from "../LocationBadges";
 interface ExerciseBadgesProps {
   selectedDifficulties: string[];
   selectedLocations: string[];
-  onDifficultyChange: (difficulty: string) => void;
-  onLocationChange: (location: string) => void;
+  onDifficultyChange: (difficulty: string, checked: boolean) => void;
+  onLocationChange: (location: string, checked: boolean) => void;
 }
 
 export const ExerciseBadges = ({

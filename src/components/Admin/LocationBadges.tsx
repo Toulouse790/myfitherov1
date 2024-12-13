@@ -1,10 +1,9 @@
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Home, Building2, TreePine } from "lucide-react";
 
 interface LocationBadgesProps {
   locations: string[];
-  selectedLocations: string[];
   onLocationChange?: (location: string, checked: boolean) => void;
+  selectedLocations: string[];
 }
 
 const locationTranslations: { [key: string]: string } = {
@@ -13,24 +12,13 @@ const locationTranslations: { [key: string]: string } = {
   "outdoor": "extérieur"
 };
 
-const locationIcons: { [key: string]: React.ReactNode } = {
-  "home": <Home className="w-3 h-3 mr-1" />,
-  "gym": <Building2 className="w-3 h-3 mr-1" />,
-  "outdoor": <TreePine className="w-3 h-3 mr-1" />
-};
-
 export const LocationBadges = ({
   locations,
-  selectedLocations,
   onLocationChange,
+  selectedLocations,
 }: LocationBadgesProps) => {
   const handleClick = (location: string) => {
     const isSelected = selectedLocations.includes(location);
-    console.log('Location badge clicked:', {
-      location,
-      isSelected,
-      currentSelection: selectedLocations
-    });
     onLocationChange?.(location, !isSelected);
   };
 
@@ -40,14 +28,13 @@ export const LocationBadges = ({
         <Badge
           key={location}
           variant={selectedLocations.includes(location) ? "default" : "outline"}
-          className={`cursor-pointer flex items-center ${
+          className={`cursor-pointer ${
             selectedLocations.includes(location)
-              ? "bg-[#0EA5E9] hover:bg-[#0284C7]"
-              : "border-[#0EA5E9] text-[#0EA5E9] hover:bg-[#0EA5E9] hover:text-white"
+              ? "bg-[#9b87f5] hover:bg-[#7E69AB]"
+              : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white"
           }`}
           onClick={() => handleClick(location)}
         >
-          {locationIcons[location]}
           {locationTranslations[location] || location}
         </Badge>
       ))}
