@@ -50,7 +50,7 @@ export default function Index() {
                 <div className="text-center">
                   <h2 className="text-xl font-semibold mb-2">Laisse-moi faire</h2>
                   <p className="text-sm text-muted-foreground">
-                    Créez votre séance manuellement en sélectionnant vos exercices préférés
+                    Créez votre séance automatiquement en fonction de votre historique d'entraînement
                   </p>
                 </div>
               </div>
