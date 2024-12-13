@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useExerciseFetching } from "@/hooks/use-exercise-fetching";
-import { Button } from "@/components/ui/button";
 import { generateWorkoutPlan } from "./workoutPlanGenerator";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
 import { WorkoutPlan } from "./workoutPlanGenerator";
-import { Loader2 } from "lucide-react";
+import { LoadingButton } from "./GenerateWorkout/LoadingButton";
+import { WorkoutActions } from "./GenerateWorkout/WorkoutActions";
 
 interface GenerateWorkoutDialogProps {
   open: boolean;
@@ -100,31 +100,18 @@ export const GenerateWorkoutDialog = ({
 
         <div className="space-y-6">
           {!generatedWorkout ? (
-            <Button 
-              onClick={handleGenerateWorkout}
-              className="w-full"
+            <LoadingButton 
+              isLoading={isGenerating}
               disabled={availableExercises.length === 0 || isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Génération en cours...
-                </>
-              ) : (
-                "Générer un programme"
-              )}
-            </Button>
+              onClick={handleGenerateWorkout}
+            />
           ) : (
             <div className="space-y-4">
               <GeneratedWorkoutPreview plan={generatedWorkout} />
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setGeneratedWorkout(null)}>
-                  Regénérer
-                </Button>
-                <Button onClick={handleConfirm}>
-                  Confirmer
-                </Button>
-              </div>
+              <WorkoutActions 
+                onRegenerate={() => setGeneratedWorkout(null)}
+                onConfirm={handleConfirm}
+              />
             </div>
           )}
         </div>

@@ -1,9 +1,8 @@
-import { Card } from "@/components/ui/card";
-import { Bookmark, Dumbbell, Target, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { SuggestionsList } from "./SuggestionsList";
 
 export const WorkoutSuggestions = () => {
   const navigate = useNavigate();
@@ -96,13 +95,6 @@ export const WorkoutSuggestions = () => {
     }
   };
 
-  const iconMap = {
-    'Bookmark': Bookmark,
-    'Target': Target,
-    'Zap': Zap,
-    'Dumbbell': Dumbbell
-  };
-
   const allSuggestions = [...defaultSuggestions, ...suggestions];
 
   return (
@@ -111,30 +103,10 @@ export const WorkoutSuggestions = () => {
         <h2 className="text-lg font-semibold">Suggestions</h2>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {allSuggestions.map((suggestion) => {
-          const IconComponent = iconMap[suggestion.icon_name as keyof typeof iconMap];
-          return (
-            <Card
-              key={suggestion.id}
-              className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => handleSuggestionClick(suggestion.type)}
-            >
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-primary">
-                  {IconComponent && <IconComponent className="w-5 h-5 text-white" />}
-                </div>
-                <div>
-                  <h3 className="font-medium">{suggestion.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {suggestion.description}
-                  </p>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+      <SuggestionsList 
+        suggestions={allSuggestions} 
+        onSuggestionClick={handleSuggestionClick} 
+      />
     </div>
   );
 };
