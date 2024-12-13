@@ -1,8 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { BottomNav } from "@/components/Layout/BottomNav";
-import { router } from "@/routes";
-import { RouterProvider } from "react-router-dom";
 
 function App() {
   const location = useLocation();
@@ -11,7 +9,9 @@ function App() {
 
   return (
     <>
-      <RouterProvider router={router} />
+      <div>
+        {/* Le contenu sera injecté ici par le router */}
+      </div>
       {showBottomNav && <BottomNav />}
       <Toaster />
     </>
