@@ -73,13 +73,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const publicRoutes = ["/signin", "/signup"];
   const isPublicRoute = publicRoutes.includes(location.pathname);
 
-  // If not authenticated and on a protected route
+  // If not authenticated and trying to access a protected route
   if (!isAuthenticated && !isPublicRoute) {
     console.log("Redirecting to signin:", { from: location.pathname });
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  // If authenticated and on a public route
+  // If authenticated and trying to access a public route
   if (isAuthenticated && isPublicRoute) {
     console.log("Redirecting to home: user is authenticated");
     return <Navigate to="/" replace />;
