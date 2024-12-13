@@ -14,8 +14,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
       let query = supabase
         .from('unified_exercises')
         .select('*')
-        .eq('is_published', true)
-        .order('name', { ascending: true });
+        .eq('is_published', true);
 
       if (englishGroup) {
         query = query.eq('muscle_group', englishGroup.toLowerCase());
@@ -33,8 +32,8 @@ export const useExerciseSelection = (muscleGroup?: string) => {
       return data?.map(dbExercise => ({
         id: dbExercise.id,
         name: dbExercise.name,
-        muscleGroup: muscleGroup || '',
         muscle_group: dbExercise.muscle_group,
+        muscleGroup: muscleGroup || '',
         difficulty: dbExercise.difficulty || ['beginner'],
         equipment: "",
         location: dbExercise.location || [],
