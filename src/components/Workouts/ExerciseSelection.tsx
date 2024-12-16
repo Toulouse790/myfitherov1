@@ -2,6 +2,8 @@ import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { ExerciseCard } from "./components/ExerciseCard";
 import { useNavigate } from "react-router-dom";
 import { muscleGroups } from "./workoutConstants";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 export interface ExerciseSelectionProps {
   selectedExercises: string[];
