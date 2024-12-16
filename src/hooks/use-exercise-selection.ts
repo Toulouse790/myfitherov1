@@ -34,13 +34,28 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         const { data, error } = await query;
 
         if (error) {
+          console.error('Erreur lors de la requête Supabase:', error);
           throw error;
         }
 
-        console.log("Exercices chargés:", data);
+        console.log("Données brutes reçues de Supabase:", data);
+        console.log("Nombre d'exercices trouvés:", data?.length || 0);
+        
+        if (data) {
+          data.forEach(exercise => {
+            console.log("Exercice trouvé:", {
+              nom: exercise.name,
+              groupe: exercise.muscle_group,
+              difficulté: exercise.difficulty,
+              location: exercise.location,
+              est_publié: exercise.est_publié
+            });
+          });
+        }
+
         setExercises(data || []);
       } catch (error) {
-        console.error('Erreur lors du chargement des exercices:', error);
+        console.error('Erreur détaillée lors du chargement des exercices:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les exercices",
