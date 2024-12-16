@@ -22,7 +22,13 @@ export const SignInForm = () => {
     setIsLoading(true);
 
     try {
-      console.log("Tentative de connexion pour:", email);
+      console.log("=== DÉBUT DU PROCESSUS DE CONNEXION ===");
+      console.log("Email utilisé:", email);
+      console.log("État de la location:", {
+        pathname: location.pathname,
+        state: location.state
+      });
+
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -30,14 +36,17 @@ export const SignInForm = () => {
 
       if (error) throw error;
 
-      console.log("Connexion réussie pour l'utilisateur:", {
+      console.log("=== CONNEXION RÉUSSIE ===");
+      console.log("Détails de l'utilisateur:", {
         id: data.session?.user.id,
-        email: data.session?.user.email
+        email: data.session?.user.email,
+        aud: data.session?.user.aud,
+        role: data.session?.user.role
       });
 
       // Si remember me est coché, sauvegarder la session
       if (rememberMe && data.session) {
-        console.log("Sauvegarde de la session pour:", data.session.user.id);
+        console.log("Sauvegarde de la session dans localStorage pour:", data.session.user.id);
         localStorage.setItem('myfithero-auth', JSON.stringify(data.session));
       }
 
@@ -51,9 +60,11 @@ export const SignInForm = () => {
       const workoutPlan = state?.workoutPlan;
       
       if (workoutPlan) {
-        console.log("Plan d'entraînement trouvé, création de la session...", {
+        console.log("=== CRÉATION DE LA SESSION D'ENTRAÎNEMENT ===");
+        console.log("Plan d'entraînement trouvé:", {
           userId: data.session?.user.id,
-          exercises: workoutPlan.exercises
+          exercises: workoutPlan.exercises,
+          planDetails: workoutPlan
         });
 
         const { data: session, error: sessionError } = await supabase
@@ -76,7 +87,11 @@ export const SignInForm = () => {
         }
 
         if (session) {
-          console.log("Session créée avec succès:", session);
+          console.log("Session créée avec succès:", {
+            sessionId: session.id,
+            userId: session.user_id,
+            exercises: session.exercises
+          });
           navigate(`/workout/${session.id}`);
           return;
         }
@@ -84,10 +99,17 @@ export const SignInForm = () => {
 
       // Si pas de plan d'entraînement, redirection normale
       const from = state?.from?.pathname || "/";
-      console.log("Redirection vers:", from);
+      console.log("=== REDIRECTION ===");
+      console.log("Destination:", from);
       navigate(from, { replace: true });
     } catch (error: any) {
-      console.error("Erreur de connexion:", error);
+      console.error("=== ERREUR DE CONNEXION ===");
+      console.error("Détails de l'erreur:", {
+        message: error.message,
+        code: error.code,
+        details: error.details
+      });
+      
       let errorMessage = "Une erreur est survenue lors de la connexion";
       
       if (error.message.includes("Invalid login credentials")) {
