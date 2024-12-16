@@ -1,32 +1,25 @@
 export const translateMuscleGroup = (muscleGroup: string): string => {
-  const translations: { [key: string]: string } = {
-    'chest': 'pectoraux',
-    'back': 'dos',
-    'legs': 'jambes',
-    'shoulders': 'épaules',
-    'biceps': 'biceps',
-    'triceps': 'triceps',
-    'abs': 'abdominaux',
-    'pectoraux': 'pectoraux',
-    'dos': 'dos',
-    'jambes': 'jambes',
-    'épaules': 'épaules',
-    'abdominaux': 'abdominaux'
-  };
-
-  return translations[muscleGroup.toLowerCase()] || muscleGroup;
+  if (!muscleGroup) return '';
+  
+  // Convertir en minuscules et supprimer les accents
+  return muscleGroup
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '_');
 };
 
 export const reverseTranslateMuscleGroup = (muscleGroup: string): string => {
   const translations: { [key: string]: string } = {
-    'pectoraux': 'pectoraux',
-    'dos': 'dos',
-    'jambes': 'jambes',
-    'épaules': 'épaules',
-    'biceps': 'biceps',
-    'triceps': 'triceps',
-    'abdominaux': 'abdominaux'
+    'pectoraux': 'Pectoraux',
+    'dos': 'Dos',
+    'jambes': 'Jambes',
+    'epaules': 'Épaules',
+    'biceps': 'Biceps',
+    'triceps': 'Triceps',
+    'abdominaux': 'Abdominaux'
   };
 
-  return translations[muscleGroup.toLowerCase()] || muscleGroup;
+  const key = muscleGroup.toLowerCase();
+  return translations[key] || muscleGroup;
 };

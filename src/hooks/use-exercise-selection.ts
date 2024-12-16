@@ -2,16 +2,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-const muscleGroupMapping: { [key: string]: string } = {
-  "Pectoraux": "pectoraux",
-  "Dos": "dos",
-  "Jambes": "jambes",
-  "Épaules": "épaules",
-  "Biceps": "biceps",
-  "Triceps": "triceps",
-  "Abdominaux": "abdominaux"
-};
-
 export const useExerciseSelection = (muscleGroup?: string) => {
   const [exercises, setExercises] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,8 +19,11 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           .eq('est_publié', true);
 
         if (muscleGroup) {
-          const normalizedGroup = muscleGroupMapping[muscleGroup] || muscleGroup.toLowerCase();
+          // Convertir le nom du groupe musculaire en minuscules pour la comparaison
+          const normalizedGroup = muscleGroup.toLowerCase();
           console.log("Groupe musculaire normalisé:", normalizedGroup);
+          
+          // Utiliser directement le nom du groupe musculaire normalisé
           query = query.eq('muscle_group', normalizedGroup);
         }
 
