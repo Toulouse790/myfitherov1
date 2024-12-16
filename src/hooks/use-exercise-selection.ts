@@ -15,13 +15,10 @@ export const useExerciseSelection = (muscleGroup?: string) => {
 
         let query = supabase
           .from('unified_exercises')
-          .select('name')
-          .eq('est_publié', true);
+          .select('name');
 
         if (muscleGroup) {
-          const normalizedGroup = muscleGroup.toLowerCase().replace('pectoraux', 'chest');
-          console.log("Groupe musculaire normalisé:", normalizedGroup);
-          query = query.eq('muscle_group', normalizedGroup);
+          query = query.eq('muscle_group', muscleGroup.toLowerCase());
         }
 
         const { data, error } = await query;
