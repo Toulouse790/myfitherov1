@@ -25,16 +25,24 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         const savedSession = localStorage.getItem('myfithero-auth');
         if (savedSession) {
           console.log("Session sauvegardée trouvée, tentative de restauration");
-          const parsedSession = JSON.parse(savedSession);
-          if (parsedSession?.access_token) {
-            const { data: { session: restoredSession }, error } = 
-              await supabase.auth.setSession(parsedSession);
-            
-            if (!error && restoredSession) {
-              console.log("Session restaurée avec succès");
-              setIsAuthenticated(true);
-              return;
+          try {
+            const parsedSession = JSON.parse(savedSession);
+            if (parsedSession?.access_token) {
+              const { data: { session: restoredSession }, error } = 
+                await supabase.auth.setSession(parsedSession);
+              
+              if (!error && restoredSession) {
+                console.log("Session restaurée avec succès");
+                setIsAuthenticated(true);
+                return;
+              } else {
+                console.error("Erreur lors de la restauration de la session:", error);
+                localStorage.removeItem('myfithero-auth');
+              }
             }
+          } catch (parseError) {
+            console.error("Erreur lors du parsing de la session:", parseError);
+            localStorage.removeItem('myfithero-auth');
           }
         }
 
@@ -49,7 +57,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Changement d'état d'authentification:", event);
+      console.log("Changement d'état d'authentification:", event, session?.user?.id);
       
       if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
@@ -60,12 +68,15 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         });
       } else if (session) {
         setIsAuthenticated(true);
+        if (location.pathname === '/signin') {
+          console.log("Redirection depuis signin car déjà authentifié");
+        }
         localStorage.setItem('myfithero-auth', JSON.stringify(session));
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [toast]);
+  }, [toast, location.pathname]);
 
   // Pendant la vérification initiale
   if (isAuthenticated === null) {
@@ -82,8 +93,11 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   // Gérer la logique de redirection
   if (!isAuthenticated && !isPublicRoute) {
-    console.log("Redirection vers signin - Non authentifié sur route protégée");
-    return <Navigate to="/signin" state={{ from: location }} replace />;
+    console.log("Redirection vers signin - Non authentifié sur route protégée", {
+      from: location.pathname,
+      state: location.state
+    });
+    return <Navigate to="/signin" state={{ from: location, workoutPlan: location.state?.workoutPlan }} replace />;
   }
 
   if (isAuthenticated && isPublicRoute) {
