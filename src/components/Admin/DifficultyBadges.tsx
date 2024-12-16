@@ -17,7 +17,11 @@ export const DifficultyBadges = ({
         <Badge
           key={difficulty}
           variant={selectedDifficulties.includes(difficulty) ? "default" : "outline"}
-          className="cursor-pointer"
+          className={`cursor-pointer transition-colors ${
+            selectedDifficulties.includes(difficulty)
+              ? 'bg-[#9b87f5] hover:bg-[#7E69AB]'
+              : 'border-[#6E59A5] text-[#6E59A5] hover:bg-[#6E59A5] hover:text-white'
+          }`}
           onClick={() => onDifficultyChange?.(difficulty, !selectedDifficulties.includes(difficulty))}
         >
           {difficulty}

@@ -40,20 +40,20 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
   );
 
   return (
-    <Card className="p-4">
+    <Card className="p-6 bg-white shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-100">
       <div className="space-y-4">
         <div className="flex items-start justify-between">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-6">
             <ExerciseMedia 
               exercise={exercise}
               isPublishing={isPublishing}
               onPublishToggle={handlePublishToggle}
               onUpdate={onUpdate}
             />
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div>
-                <h3 className="text-lg font-semibold">{exercise.name}</h3>
-                <p className="text-sm text-gray-600">{exercise.muscle_group}</p>
+                <h3 className="text-xl font-semibold text-gray-900">{exercise.name}</h3>
+                <p className="text-sm text-gray-600 mt-1">{exercise.muscle_group}</p>
               </div>
               <ExerciseBadges 
                 selectedDifficulties={selectedDifficulties}

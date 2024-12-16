@@ -21,13 +21,7 @@ export const MediaManager = () => {
 
       const { data, error } = await supabase
         .from('unified_exercises')
-        .select(`
-          *,
-          exercise_media (
-            media_url,
-            media_type
-          )
-        `)
+        .select('*')
         .eq('muscle_group', selectedGroup)
         .eq('est_publié', true)
         .order('name', { ascending: true });
@@ -87,24 +81,28 @@ export const MediaManager = () => {
   };
 
   const filteredExercises = exercises || [];
-  console.log('Final filtered exercises:', filteredExercises);
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <Tabs defaultValue={selectedGroup} value={selectedGroup} className="w-full">
-        <MuscleGroupList
-          selectedGroup={selectedGroup}
-          onGroupSelect={setSelectedGroup}
-        />
-        <MediaList
-          exercises={filteredExercises}
-          onFileChange={handleFileChange}
-          onUpload={handleUpload}
-          selectedFile={selectedFile}
-          onDifficultyChange={handleDifficultyChange}
-          selectedDifficulties={selectedDifficulties}
-        />
-      </Tabs>
+    <div className="min-h-screen bg-[#1A1F2C]">
+      <div className="container mx-auto p-8">
+        <h1 className="text-3xl font-bold text-white mb-8">Exercise Management</h1>
+        <Tabs defaultValue={selectedGroup} value={selectedGroup} className="w-full">
+          <div className="bg-[#2A2F3C] p-6 rounded-lg mb-8">
+            <MuscleGroupList
+              selectedGroup={selectedGroup}
+              onGroupSelect={setSelectedGroup}
+            />
+          </div>
+          <MediaList
+            exercises={filteredExercises}
+            onFileChange={handleFileChange}
+            onUpload={handleUpload}
+            selectedFile={selectedFile}
+            onDifficultyChange={handleDifficultyChange}
+            selectedDifficulties={selectedDifficulties}
+          />
+        </Tabs>
+      </div>
     </div>
   );
 };

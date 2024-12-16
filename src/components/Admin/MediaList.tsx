@@ -21,34 +21,17 @@ export const MediaList = ({
   onDifficultyChange,
 }: MediaListProps) => {
   const filteredExercises = exercises.filter(exercise => {
-    // Vérification de la difficulté
     const difficultyMatch = selectedDifficulties.length === 0 || 
            (Array.isArray(exercise.difficulty) && 
            exercise.difficulty.some(diff => selectedDifficulties.includes(diff)));
 
-    // Vérification de la location
     const hasLocation = !exercise.location || (Array.isArray(exercise.location) && exercise.location.length > 0);
-
-    console.log('Filtering exercise:', {
-      name: exercise.name,
-      difficulty: exercise.difficulty,
-      location: exercise.location,
-      difficultyMatch,
-      hasLocation,
-      est_publié: exercise.est_publié
-    });
 
     return difficultyMatch && hasLocation;
   });
 
-  console.log('Filtered exercises:', {
-    total: exercises.length,
-    filtered: filteredExercises.length,
-    selectedDifficulties,
-  });
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-6 bg-gray-50 rounded-lg">
       {filteredExercises.map((exercise) => (
         <TabsContent key={exercise.id} value={exercise.muscleGroup}>
           <ExerciseRow

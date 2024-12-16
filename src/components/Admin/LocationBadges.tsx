@@ -17,7 +17,11 @@ export const LocationBadges = ({
         <Badge
           key={location}
           variant={selectedLocations.includes(location) ? "default" : "outline"}
-          className="cursor-pointer"
+          className={`cursor-pointer transition-colors ${
+            selectedLocations.includes(location)
+              ? 'bg-[#D6BCFA] hover:bg-[#B794F4] text-[#1A1F2C]'
+              : 'border-[#D6BCFA] text-[#D6BCFA] hover:bg-[#D6BCFA] hover:text-[#1A1F2C]'
+          }`}
           onClick={() => onLocationChange?.(location, !selectedLocations.includes(location))}
         >
           {location}

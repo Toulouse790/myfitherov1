@@ -15,7 +15,7 @@ export const ExerciseBadges = ({
   onLocationChange
 }: ExerciseBadgesProps) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <DifficultyBadges 
         difficulties={["beginner", "intermediate", "advanced"]}
         selectedDifficulties={selectedDifficulties}
