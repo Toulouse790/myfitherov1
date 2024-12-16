@@ -1,14 +1,5 @@
 import { Card } from "@/components/ui/card";
-
-interface Exercise {
-  id: string;
-  name: string;
-  muscle_group: string;
-  difficulty: string[];
-  location?: string[];
-  image_url?: string;
-  video_url?: string;
-}
+import { Exercise } from "@/hooks/use-exercise-selection";
 
 interface ExerciseGridProps {
   exercises: Exercise[];

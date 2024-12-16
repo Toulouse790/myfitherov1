@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useExerciseSelection } from "@/hooks/use-exercise-selection";
+import { MuscleGroupFilter } from "./components/MuscleGroupFilter";
+import { ExerciseGrid } from "./components/ExerciseGrid";
 import { motion } from "framer-motion";
 
 interface ExerciseSelectionProps {
@@ -18,47 +18,7 @@ export const ExerciseSelection = ({
   onClose,
   muscleGroup
 }: ExerciseSelectionProps) => {
-  const [exercises, setExercises] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        setIsLoading(true);
-        console.log("Chargement des exercices pour le groupe musculaire:", muscleGroup);
-
-        let query = supabase
-          .from('unified_exercises')
-          .select('*')
-          .eq('est_publié', true);
-
-        if (muscleGroup) {
-          query = query.eq('muscle_group', muscleGroup.toLowerCase());
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-          throw error;
-        }
-
-        console.log("Exercices chargés:", data);
-        setExercises(data || []);
-      } catch (error) {
-        console.error('Erreur lors du chargement des exercices:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les exercices",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchExercises();
-  }, [muscleGroup, toast]);
+  const { exercises, isLoading } = useExerciseSelection(muscleGroup);
 
   const handleExerciseToggle = (exerciseName: string) => {
     const newSelection = selectedExercises.includes(exerciseName)
@@ -85,35 +45,11 @@ export const ExerciseSelection = ({
         <Button onClick={onClose}>Fermer</Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {exercises.map((exercise) => (
-          <motion.div
-            key={exercise.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card
-              className={`p-4 cursor-pointer transition-all hover:shadow-md ${
-                selectedExercises.includes(exercise.name) ? 'ring-2 ring-primary' : ''
-              }`}
-              onClick={() => handleExerciseToggle(exercise.name)}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-medium">{exercise.name}</h3>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    {exercise.muscle_group}
-                  </p>
-                </div>
-                {selectedExercises.includes(exercise.name) && (
-                  <div className="text-primary">✓</div>
-                )}
-              </div>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+      <ExerciseGrid
+        exercises={exercises}
+        selectedExercises={selectedExercises}
+        onExerciseToggle={handleExerciseToggle}
+      />
     </div>
   );
 };
