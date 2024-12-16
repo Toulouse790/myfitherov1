@@ -3,8 +3,36 @@ import { DashboardCard } from "@/components/Dashboard/DashboardCard";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { PersonalizedRecommendations } from "@/components/Recommendations/PersonalizedRecommendations";
 import { Target, Dumbbell, Trophy, Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Index() {
+  const { data: stats } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data: trainingStats } = await supabase
+        .from('training_stats')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('points, level')
+        .eq('id', user.id)
+        .single();
+
+      return {
+        trainingStats: trainingStats?.[0],
+        profile
+      };
+    }
+  });
+
   return (
     <Header>
       <div className="container mx-auto px-4 py-8 pb-20">
@@ -18,8 +46,8 @@ export default function Index() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <DashboardCard
             title="Objectif du jour"
-            value="2000"
-            target="2500"
+            value={`${stats?.trainingStats?.session_duration_minutes || 0} min`}
+            target="45 min"
             icon={<Target className="w-4 h-4" />}
           />
           <DashboardCard
@@ -30,14 +58,14 @@ export default function Index() {
           />
           <DashboardCard
             title="Niveau actuel"
-            value="5"
-            target="6"
+            value={stats?.profile?.level?.toString() || "1"}
+            target={(stats?.profile?.level ? stats.profile.level + 1 : 2).toString()}
             icon={<Trophy className="w-4 h-4" />}
           />
           <DashboardCard
             title="Points gagnés"
-            value="1250"
-            target="2000"
+            value={stats?.profile?.points?.toString() || "0"}
+            target="1000"
             icon={<Star className="w-4 h-4" />}
           />
         </div>

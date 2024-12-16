@@ -11,6 +11,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MediaManager } from "@/components/Admin/MediaManager";
 import { RootLayout } from "@/components/Layout/RootLayout";
 import AdminDashboard from "@/pages/Admin/Dashboard";
+import Nutrition from "@/pages/Nutrition";
 
 export const router = createBrowserRouter([
   {
@@ -82,6 +83,15 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <MediaManager />
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/nutrition",
+        element: (
+          <ProtectedRoute>
+            <Nutrition />
           </ProtectedRoute>
         ),
         errorElement: <ErrorBoundary />
