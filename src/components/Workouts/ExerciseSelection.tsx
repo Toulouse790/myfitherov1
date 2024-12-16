@@ -54,7 +54,7 @@ export const ExerciseSelection = ({
           </div>
         ) : exercises.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            Aucun exercice trouvé pour ce groupe musculaire.
+            Aucun exercice n'est disponible pour le groupe musculaire {muscleGroup}. Veuillez sélectionner un autre groupe musculaire.
           </div>
         ) : (
           <ExerciseGrid
