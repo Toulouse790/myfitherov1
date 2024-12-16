@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Header } from "@/components/Layout/Header";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -8,19 +7,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { muscleGroups } from "@/components/Workouts/workoutConstants";
 import { MuscleGroupCard } from "@/components/Workouts/components/MuscleGroupCard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function WorkoutGenerate() {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
-  const [showSelection, setShowSelection] = useState(false);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<string>("muscle-groups");
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleExerciseSelection = (exerciseIds: string[]) => {
     setSelectedExercises((prev) => [...prev, ...exerciseIds]);
-    setShowSelection(false);
     
     toast({
       title: "Groupe musculaire ajouté",
@@ -30,7 +25,7 @@ export default function WorkoutGenerate() {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => setShowSelection(false)}
+            onClick={() => setSelectedMuscleGroup("")}
           >
             Non
           </Button>
@@ -38,7 +33,6 @@ export default function WorkoutGenerate() {
             size="sm"
             onClick={() => {
               setSelectedMuscleGroup("");
-              setShowSelection(true);
             }}
           >
             Oui
@@ -86,12 +80,6 @@ export default function WorkoutGenerate() {
     }
   };
 
-  const handleMuscleGroupSelect = (muscleGroup: string) => {
-    setSelectedMuscleGroup(muscleGroup);
-    setShowSelection(true);
-    setActiveTab("exercises");
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -111,36 +99,36 @@ export default function WorkoutGenerate() {
           </div>
         )}
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="muscle-groups">Groupes musculaires</TabsTrigger>
-            <TabsTrigger value="exercises">Exercices</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="muscle-groups">
-            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
-              {muscleGroups.map((muscle) => (
-                <MuscleGroupCard
-                  key={muscle.id}
-                  id={muscle.id}
-                  name={muscle.name}
-                  isSelected={selectedMuscleGroup === muscle.id}
-                  exerciseCount={0}
-                  onClick={() => handleMuscleGroupSelect(muscle.id)}
-                />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="exercises">
+        {!selectedMuscleGroup ? (
+          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+            {muscleGroups.map((muscle) => (
+              <MuscleGroupCard
+                key={muscle.id}
+                id={muscle.id}
+                name={muscle.name}
+                isSelected={selectedMuscleGroup === muscle.id}
+                exerciseCount={0}
+                onClick={() => setSelectedMuscleGroup(muscle.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => setSelectedMuscleGroup("")}
+              className="mb-4"
+            >
+              ← Retour aux groupes musculaires
+            </Button>
             <ExerciseSelection
               selectedExercises={selectedExercises}
               onSelectionChange={handleExerciseSelection}
-              onClose={() => setShowSelection(false)}
+              onClose={() => setSelectedMuscleGroup("")}
               muscleGroup={selectedMuscleGroup}
             />
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
       </div>
     </div>
   );
