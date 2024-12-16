@@ -5,7 +5,7 @@ import { SignUp } from "@/components/Auth/SignUp";
 import Home from "@/pages/Home";
 import Profile from "@/pages/Profile";
 import { Workouts } from "@/pages/Workouts";
-import { WorkoutDetail } from "@/components/Workouts/WorkoutDetail";
+import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
     path: "/workout/:sessionId",
     element: (
       <ProtectedRoute>
-        <WorkoutDetail />
+        <UnifiedWorkoutDetail />
       </ProtectedRoute>
     ),
     errorElement: <ErrorBoundary />
