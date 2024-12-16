@@ -28,8 +28,9 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           .select('*');
 
         if (muscleGroup) {
-          console.log("Filtrage par groupe musculaire:", muscleGroup.toLowerCase());
-          query = query.eq('muscle_group', muscleGroup.toLowerCase());
+          const normalizedGroup = muscleGroup.toLowerCase().replace('pectoraux', 'chest');
+          console.log("Groupe musculaire normalisé:", normalizedGroup);
+          query = query.eq('muscle_group', normalizedGroup);
         }
 
         console.log("Requête Supabase:", query);
