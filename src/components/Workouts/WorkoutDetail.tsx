@@ -6,12 +6,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ExerciseSets } from "./ExerciseSets";
-import { Plus } from "lucide-react";
+import { Plus, Play } from "lucide-react";
 
 export const WorkoutDetail = () => {
   const { sessionId } = useParams();
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isStarted, setIsStarted] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -43,6 +44,14 @@ export const WorkoutDetail = () => {
       fetchSession();
     }
   }, [sessionId, toast]);
+
+  const handleStartSession = () => {
+    setIsStarted(true);
+    toast({
+      title: "Séance démarrée",
+      description: "C'est parti ! Bon entraînement !",
+    });
+  };
 
   const handleAddSet = async (exerciseName: string) => {
     try {
@@ -119,36 +128,49 @@ export const WorkoutDetail = () => {
       <div className="container max-w-4xl mx-auto p-4 space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Séance d'entraînement</h1>
-          <Button variant="outline" onClick={() => window.history.back()}>
-            Retour
-          </Button>
+          {!isStarted ? (
+            <Button 
+              onClick={handleStartSession}
+              className="flex items-center gap-2"
+              size="lg"
+            >
+              <Play className="h-4 w-4" />
+              Commencer la séance
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => window.history.back()}>
+              Retour
+            </Button>
+          )}
         </div>
 
-        <Card>
-          <div className="p-6 space-y-6">
-            {session.exercises?.map((exercise: string, index: number) => (
-              <div key={index} className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">{exercise}</h3>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleAddSet(exercise)}
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Ajouter une série
-                  </Button>
+        {isStarted && (
+          <Card>
+            <div className="p-6 space-y-6">
+              {session.exercises?.map((exercise: string, index: number) => (
+                <div key={index} className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">{exercise}</h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleAddSet(exercise)}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Ajouter une série
+                    </Button>
+                  </div>
+                  <ExerciseSets
+                    exercises={[exercise]}
+                    sessionId={sessionId || null}
+                    currentExerciseIndex={0}
+                  />
                 </div>
-                <ExerciseSets
-                  exercises={[exercise]}
-                  sessionId={sessionId || null}
-                  currentExerciseIndex={0}
-                />
-              </div>
-            ))}
-          </div>
-        </Card>
+              ))}
+            </div>
+          </Card>
+        )}
       </div>
     </div>
   );
