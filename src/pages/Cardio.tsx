@@ -82,7 +82,7 @@ export default function Cardio() {
 
       console.log('Created workout session:', session);
       if (session) {
-        navigate(`/workout/${session.id}`);
+        navigate(`/cardio-session/${session.id}`);
       }
     } catch (error) {
       console.error('Error creating cardio session:', error);
