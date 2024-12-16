@@ -2,11 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Image, Video } from "lucide-react";
 
 interface MediaButtonsProps {
+  isPublished: boolean;
+  isPublishing: boolean;
+  onPublishToggle: () => void;
   onImageClick: () => void;
   onVideoClick: () => void;
 }
 
 export const MediaButtons = ({
+  isPublished,
+  isPublishing,
+  onPublishToggle,
   onImageClick,
   onVideoClick,
 }: MediaButtonsProps) => {
