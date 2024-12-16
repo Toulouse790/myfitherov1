@@ -73,20 +73,7 @@ export const WorkoutSuggestions = () => {
         return;
       }
 
-      const { data: session, error } = await supabase
-        .from('workout_sessions')
-        .insert({
-          type: 'strength',
-          status: 'in_progress'
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      if (session) {
-        navigate(`/workout/${session.id}`);
-      }
+      navigate('/workouts');
     } catch (error) {
       console.error('Error creating workout:', error);
       toast({
@@ -98,7 +85,7 @@ export const WorkoutSuggestions = () => {
   };
 
   const handleCreateSession = () => {
-    navigate('/workouts');  // Redirige vers la bibliothèque d'exercices
+    navigate('/workouts');
   };
 
   const handleLetMeDoIt = () => {
