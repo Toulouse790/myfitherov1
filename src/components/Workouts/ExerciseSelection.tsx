@@ -29,7 +29,7 @@ export const ExerciseSelection = ({
     const nameMatch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
     const muscleGroupMatch = !muscleGroup || 
       exercise.muscle_group.toLowerCase() === muscleGroup.toLowerCase();
-    return nameMatch && muscleGroupMatch && exercise.is_published;
+    return nameMatch && muscleGroupMatch;
   });
 
   const handleExerciseToggle = (exerciseName: string) => {
