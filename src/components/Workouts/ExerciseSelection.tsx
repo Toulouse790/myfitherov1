@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { MuscleGroupFilter } from "./components/MuscleGroupFilter";
 import { ExerciseGrid } from "./components/ExerciseGrid";
@@ -38,18 +39,23 @@ export const ExerciseSelection = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">
-          Exercices disponibles ({exercises.length})
-        </h2>
-        <Button onClick={onClose}>Fermer</Button>
-      </div>
+      <DialogContent className="sm:max-w-[600px]" aria-describedby="exercise-selection-description">
+        <div id="exercise-selection-description" className="sr-only">
+          Sélectionnez les exercices pour votre entraînement
+        </div>
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">
+            Exercices disponibles ({exercises.length})
+          </h2>
+          <Button onClick={onClose}>Fermer</Button>
+        </div>
 
-      <ExerciseGrid
-        exercises={exercises}
-        selectedExercises={selectedExercises}
-        onExerciseToggle={handleExerciseToggle}
-      />
+        <ExerciseGrid
+          exercises={exercises}
+          selectedExercises={selectedExercises}
+          onExerciseToggle={handleExerciseToggle}
+        />
+      </DialogContent>
     </div>
   );
 };
