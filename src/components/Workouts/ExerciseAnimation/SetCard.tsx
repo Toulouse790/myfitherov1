@@ -39,6 +39,7 @@ export const SetCard = ({
     if (!user) return;
 
     try {
+      // Vérifier si c'est un record personnel
       const { data: existingData, error: fetchError } = await supabase
         .from('user_exercise_weights')
         .select('weight, personal_record')
@@ -53,6 +54,7 @@ export const SetCard = ({
       const isNewRecord = existingData?.personal_record ? weight > existingData.personal_record : true;
       const personalRecord = isNewRecord ? weight : existingData?.personal_record;
 
+      // Mettre à jour le poids et le record personnel
       const { error: upsertError } = await supabase
         .from('user_exercise_weights')
         .upsert({
@@ -73,7 +75,7 @@ export const SetCard = ({
         title: "Série complétée !",
         description: isNewRecord 
           ? `Nouveau record personnel : ${weight}kg ! 🎉` 
-          : `Série validée avec ${weight}kg`,
+          : `Série validée avec ${weight}kg. Repos de 90 secondes.`,
       });
 
     } catch (error) {
@@ -113,7 +115,7 @@ export const SetCard = ({
             onClick={handleComplete}
             className="w-full mt-4"
           >
-            Valider
+            Valider la série
           </Button>
         )}
       </div>
