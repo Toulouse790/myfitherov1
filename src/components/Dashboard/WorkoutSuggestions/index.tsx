@@ -85,7 +85,7 @@ export const WorkoutSuggestions = () => {
   };
 
   const handleCreateSession = () => {
-    navigate('/workouts');
+    navigate('/workouts/exercise/library');
   };
 
   const handleLetMeDoIt = () => {
