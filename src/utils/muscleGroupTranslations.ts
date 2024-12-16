@@ -1,7 +1,6 @@
 export const translateMuscleGroup = (muscleGroup: string): string => {
   if (!muscleGroup) return '';
   
-  // Convertir en minuscules et supprimer les accents
   return muscleGroup
     .toLowerCase()
     .normalize('NFD')
