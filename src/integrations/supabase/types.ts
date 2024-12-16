@@ -1099,9 +1099,9 @@ export type Database = {
         Row: {
           created_at: string
           difficulty: string[]
+          est_publié: boolean | null
           id: string
           image_url: string | null
-          is_published: boolean | null
           location: string[] | null
           muscle_group: string
           name: string
@@ -1111,9 +1111,9 @@ export type Database = {
         Insert: {
           created_at?: string
           difficulty?: string[]
+          est_publié?: boolean | null
           id?: string
           image_url?: string | null
-          is_published?: boolean | null
           location?: string[] | null
           muscle_group: string
           name: string
@@ -1123,9 +1123,9 @@ export type Database = {
         Update: {
           created_at?: string
           difficulty?: string[]
+          est_publié?: boolean | null
           id?: string
           image_url?: string | null
-          is_published?: boolean | null
           location?: string[] | null
           muscle_group?: string
           name?: string

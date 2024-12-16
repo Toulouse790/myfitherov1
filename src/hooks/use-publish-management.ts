@@ -19,7 +19,7 @@ export const usePublishManagement = (
       
       const { error } = await supabase
         .from('unified_exercises')
-        .update({ is_published: !initialIsPublished })
+        .update({ est_publié: !initialIsPublished })
         .eq('id', exerciseId);
 
       if (error) throw error;

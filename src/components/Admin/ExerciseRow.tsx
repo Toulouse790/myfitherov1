@@ -12,7 +12,7 @@ interface ExerciseRowProps {
     muscle_group: string;
     difficulty: string[];
     location?: string[];
-    is_published?: boolean;
+    est_publié?: boolean;
     image_url?: string;
     video_url?: string;
   };
@@ -32,7 +32,7 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
   
   const { isPublishing, handlePublishToggle } = usePublishManagement(
     exercise.id,
-    exercise.is_published || false,
+    exercise.est_publié || false,
     () => {
       console.log("Publication status changed, calling onUpdate");
       onUpdate();

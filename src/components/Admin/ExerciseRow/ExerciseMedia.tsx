@@ -7,7 +7,7 @@ interface ExerciseMediaProps {
   exercise: {
     id: string;
     name: string;
-    is_published?: boolean;
+    est_publié?: boolean;
     image_url?: string;
     video_url?: string;
   };
@@ -49,7 +49,7 @@ export const ExerciseMedia = ({
   return (
     <>
       <MediaButtons 
-        isPublished={exercise.is_published}
+        isPublished={exercise.est_publié}
         isPublishing={isPublishing}
         onPublishToggle={onPublishToggle}
         onImageClick={handleImageClick}
