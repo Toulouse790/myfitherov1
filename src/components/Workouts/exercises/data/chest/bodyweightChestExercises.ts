@@ -35,7 +35,7 @@ export const bodyweightChestExercises: Exercise[] = [
       advanced: 45
     },
     calories: 80,
-    is_published: true
+    est_publié: true
   },
   {
     id: "chest-6",
@@ -70,6 +70,7 @@ export const bodyweightChestExercises: Exercise[] = [
       intermediate: 90,
       advanced: 60
     },
-    calories: 100
+    calories: 100,
+    est_publié: true
   }
 ];
