@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
@@ -13,7 +13,7 @@ export const useExerciseFetching = () => {
       const { data: exercises, error } = await supabase
         .from('unified_exercises')
         .select('id, name, muscle_group')
-        .eq('is_published', true);
+        .eq('est_publié', true);  // Changed from is_published to est_publié
 
       if (error) {
         console.error('Error fetching exercises:', error);
