@@ -22,6 +22,7 @@ export const SignInForm = () => {
     setIsLoading(true);
 
     try {
+      console.log("Tentative de connexion pour:", email);
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -29,8 +30,14 @@ export const SignInForm = () => {
 
       if (error) throw error;
 
+      console.log("Connexion réussie pour l'utilisateur:", {
+        id: data.session?.user.id,
+        email: data.session?.user.email
+      });
+
       // Si remember me est coché, sauvegarder la session
       if (rememberMe && data.session) {
+        console.log("Sauvegarde de la session pour:", data.session.user.id);
         localStorage.setItem('myfithero-auth', JSON.stringify(data.session));
       }
 
@@ -44,7 +51,11 @@ export const SignInForm = () => {
       const workoutPlan = state?.workoutPlan;
       
       if (workoutPlan) {
-        console.log("Plan d'entraînement trouvé, création de la session...");
+        console.log("Plan d'entraînement trouvé, création de la session...", {
+          userId: data.session?.user.id,
+          exercises: workoutPlan.exercises
+        });
+
         const { data: session, error: sessionError } = await supabase
           .from('workout_sessions')
           .insert([
@@ -65,7 +76,7 @@ export const SignInForm = () => {
         }
 
         if (session) {
-          console.log("Session créée avec succès, redirection...");
+          console.log("Session créée avec succès:", session);
           navigate(`/workout/${session.id}`);
           return;
         }
@@ -73,8 +84,10 @@ export const SignInForm = () => {
 
       // Si pas de plan d'entraînement, redirection normale
       const from = state?.from?.pathname || "/";
+      console.log("Redirection vers:", from);
       navigate(from, { replace: true });
     } catch (error: any) {
+      console.error("Erreur de connexion:", error);
       let errorMessage = "Une erreur est survenue lors de la connexion";
       
       if (error.message.includes("Invalid login credentials")) {
