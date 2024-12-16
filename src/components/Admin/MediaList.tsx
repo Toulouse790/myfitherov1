@@ -21,18 +21,21 @@ export const MediaList = ({
   onDifficultyChange,
 }: MediaListProps) => {
   const filteredExercises = exercises.filter(exercise => {
+    // Vérification de la difficulté
     const difficultyMatch = selectedDifficulties.length === 0 || 
            (Array.isArray(exercise.difficulty) && 
            exercise.difficulty.some(diff => selectedDifficulties.includes(diff)));
 
-    const hasLocation = Array.isArray(exercise.location) && exercise.location.length > 0;
+    // Vérification de la location
+    const hasLocation = !exercise.location || (Array.isArray(exercise.location) && exercise.location.length > 0);
 
     console.log('Filtering exercise:', {
       name: exercise.name,
       difficulty: exercise.difficulty,
       location: exercise.location,
       difficultyMatch,
-      hasLocation
+      hasLocation,
+      est_publié: exercise.est_publié
     });
 
     return difficultyMatch && hasLocation;

@@ -25,8 +25,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         
         let query = supabase
           .from('unified_exercises')
-          .select('*')
-          .eq('est_publié', true);
+          .select('*');
 
         if (muscleGroup) {
           query = query.eq('muscle_group', muscleGroup.toLowerCase());
