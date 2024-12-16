@@ -98,7 +98,7 @@ export const WorkoutSuggestions = () => {
   };
 
   const handleCreateSession = () => {
-    navigate('/workouts/type');
+    navigate('/workouts');  // Redirige vers la bibliothèque d'exercices
   };
 
   const handleLetMeDoIt = () => {
