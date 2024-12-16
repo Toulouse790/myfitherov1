@@ -99,7 +99,7 @@ export default function WorkoutGenerate() {
       if (error) throw error;
 
       if (session) {
-        navigate(`/workouts/${session.id}`);
+        navigate(`/workout/${session.id}`);
       }
     } catch (error) {
       console.error('Error creating workout:', error);
