@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface SuggestionCardProps {
   to: string;
@@ -11,39 +10,38 @@ interface SuggestionCardProps {
   isPrimary?: boolean;
 }
 
-const MotionCard = motion(Card);
-
-export const SuggestionCard = ({ 
-  to, 
-  icon: Icon, 
-  title, 
-  description, 
-  isPrimary 
+export const SuggestionCard = ({
+  to,
+  icon: Icon,
+  title,
+  description,
+  isPrimary = false
 }: SuggestionCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    console.log("Navigating to:", to);
+    navigate(to);
+  };
+
   return (
-    <MotionCard 
-      className={`p-3 sm:p-4 hover:shadow-lg transition-all cursor-pointer ${
-        isPrimary ? 'bg-gradient-to-br from-primary/5 to-background' : ''
+    <Card
+      className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
+        isPrimary ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'hover:bg-accent'
       }`}
-      whileHover={{ 
-        scale: 1.02,
-        transition: { duration: 0.2 }
-      }}
+      onClick={handleClick}
     >
-      <Link to={to} className="block">
-        <div className="flex flex-col items-center gap-3">
-          <div className={isPrimary ? "relative" : ""}>
-            {isPrimary && <div className="absolute -inset-1 bg-primary/20 rounded-full blur-sm" />}
-            <Icon className={`w-6 h-6 sm:w-8 sm:h-8 text-primary ${isPrimary ? "relative" : ""}`} />
-          </div>
-          <div className="text-center">
-            <h2 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">{title}</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              {description}
-            </p>
-          </div>
+      <div className="space-y-4">
+        <div className={`w-12 h-12 rounded-full ${isPrimary ? 'bg-primary-foreground/10' : 'bg-primary/10'} flex items-center justify-center`}>
+          <Icon className={`w-6 h-6 ${isPrimary ? 'text-primary-foreground' : 'text-primary'}`} />
         </div>
-      </Link>
-    </MotionCard>
+        <div>
+          <h3 className="font-semibold">{title}</h3>
+          <p className={`text-sm ${isPrimary ? 'text-primary-foreground/90' : 'text-muted-foreground'}`}>
+            {description}
+          </p>
+        </div>
+      </div>
+    </Card>
   );
 };
