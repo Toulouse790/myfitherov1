@@ -33,7 +33,8 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
             user_id: user.id,
             type: 'strength', 
             status: 'in_progress',
-            exercises: workout.exercises.map(ex => ex.name)
+            exercises: workout.exercises.map(ex => ex.name),
+            workout_type: 'strength'
           }
         ])
         .select()
