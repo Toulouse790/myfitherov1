@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Layout/Header";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { MuscleGroupFilter } from "@/components/Workouts/components/MuscleGroupFilter";
+import { FilterDialog } from "@/components/Admin/FilterDialog";
 import { ExerciseGrid } from "@/components/Workouts/components/ExerciseGrid";
 
 interface Exercise {
@@ -22,6 +22,7 @@ export default function WorkoutGenerate() {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -29,6 +30,8 @@ export default function WorkoutGenerate() {
     const fetchExercises = async () => {
       try {
         setIsLoading(true);
+        console.log("Fetching exercises with muscle group:", selectedMuscleGroup);
+        
         let query = supabase
           .from('unified_exercises')
           .select('*')
@@ -44,6 +47,7 @@ export default function WorkoutGenerate() {
           throw error;
         }
 
+        console.log("Fetched exercises:", data);
         setExercises(data || []);
       } catch (error) {
         console.error('Erreur lors du chargement des exercices:', error);
@@ -107,6 +111,12 @@ export default function WorkoutGenerate() {
     }
   };
 
+  const handleFilterApply = (muscleGroup: string) => {
+    console.log("Applying filter with muscle group:", muscleGroup);
+    setSelectedMuscleGroup(muscleGroup);
+    setShowFilter(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -130,19 +140,27 @@ export default function WorkoutGenerate() {
             Sélectionnez les exercices que vous souhaitez inclure dans votre séance
           </p>
         </div>
-        
-        <MuscleGroupFilter
-          selectedGroup={selectedMuscleGroup}
-          onGroupSelect={setSelectedMuscleGroup}
-        />
 
-        {selectedExercises.length > 0 && (
-          <div className="flex justify-end">
-            <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
+        <div className="flex justify-between items-center">
+          <Button 
+            variant="outline"
+            onClick={() => setShowFilter(true)}
+          >
+            {selectedMuscleGroup ? `Filtre: ${selectedMuscleGroup}` : "Filtrer par groupe"}
+          </Button>
+
+          {selectedExercises.length > 0 && (
+            <Button onClick={handleStartWorkout}>
               Commencer la séance ({selectedExercises.length})
             </Button>
-          </div>
-        )}
+          )}
+        </div>
+
+        <FilterDialog
+          open={showFilter}
+          onOpenChange={setShowFilter}
+          onFilterApply={handleFilterApply}
+        />
 
         <ExerciseGrid
           exercises={exercises}
