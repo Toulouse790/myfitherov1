@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Image, Video, Check, Upload } from "lucide-react";
+import { Image, Video } from "lucide-react";
 
 interface MediaButtonsProps {
   isPublished: boolean;
