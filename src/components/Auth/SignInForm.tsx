@@ -22,11 +22,11 @@ export const SignInForm = () => {
     setIsLoading(true);
 
     try {
-      console.log("=== DÉBUT DU PROCESSUS DE CONNEXION ===");
-      console.log("Email utilisé:", email);
-      console.log("État de la location:", {
-        pathname: location.pathname,
-        state: location.state
+      console.log("=== DÉBUT DE LA TENTATIVE DE CONNEXION ===");
+      console.log({
+        email: email,
+        timestamp: new Date().toISOString(),
+        location: window.location.href
       });
 
       const { error, data } = await supabase.auth.signInWithPassword({
@@ -34,19 +34,34 @@ export const SignInForm = () => {
         password
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("=== ERREUR DE CONNEXION ===");
+        console.error({
+          message: error.message,
+          code: error.status,
+          details: error.details,
+          name: error.name,
+          timestamp: new Date().toISOString()
+        });
+        throw error;
+      }
 
       console.log("=== CONNEXION RÉUSSIE ===");
-      console.log("Détails de l'utilisateur:", {
-        id: data.session?.user.id,
+      console.log({
+        userId: data.session?.user.id,
         email: data.session?.user.email,
         aud: data.session?.user.aud,
-        role: data.session?.user.role
+        role: data.session?.user.role,
+        timestamp: new Date().toISOString()
       });
 
-      // Si remember me est coché, sauvegarder la session
       if (rememberMe && data.session) {
-        console.log("Sauvegarde de la session dans localStorage pour:", data.session.user.id);
+        console.log("=== SAUVEGARDE DE LA SESSION ===");
+        console.log({
+          userId: data.session.user.id,
+          expiresAt: data.session.expires_at,
+          timestamp: new Date().toISOString()
+        });
         localStorage.setItem('myfithero-auth', JSON.stringify(data.session));
       }
 
@@ -55,16 +70,16 @@ export const SignInForm = () => {
         description: "Bienvenue sur MyFitHero !",
       });
 
-      // Récupérer le plan d'entraînement sauvegardé
       const state = location.state as any;
       const workoutPlan = state?.workoutPlan;
       
       if (workoutPlan) {
         console.log("=== CRÉATION DE LA SESSION D'ENTRAÎNEMENT ===");
-        console.log("Plan d'entraînement trouvé:", {
+        console.log({
           userId: data.session?.user.id,
           exercises: workoutPlan.exercises,
-          planDetails: workoutPlan
+          planDetails: workoutPlan,
+          timestamp: new Date().toISOString()
         });
 
         const { data: session, error: sessionError } = await supabase
@@ -82,32 +97,42 @@ export const SignInForm = () => {
           .single();
 
         if (sessionError) {
-          console.error('Erreur lors de la création de la session:', sessionError);
+          console.error("=== ERREUR CRÉATION SESSION ===");
+          console.error({
+            error: sessionError,
+            timestamp: new Date().toISOString()
+          });
           throw sessionError;
         }
 
         if (session) {
-          console.log("Session créée avec succès:", {
+          console.log("=== SESSION CRÉÉE AVEC SUCCÈS ===");
+          console.log({
             sessionId: session.id,
             userId: session.user_id,
-            exercises: session.exercises
+            exercises: session.exercises,
+            timestamp: new Date().toISOString()
           });
           navigate(`/workout/${session.id}`);
           return;
         }
       }
 
-      // Si pas de plan d'entraînement, redirection normale
       const from = state?.from?.pathname || "/";
       console.log("=== REDIRECTION ===");
-      console.log("Destination:", from);
+      console.log({
+        from: from,
+        timestamp: new Date().toISOString()
+      });
       navigate(from, { replace: true });
     } catch (error: any) {
-      console.error("=== ERREUR DE CONNEXION ===");
-      console.error("Détails de l'erreur:", {
+      console.error("=== DÉTAILS DE L'ERREUR ===");
+      console.error({
         message: error.message,
         code: error.code,
-        details: error.details
+        details: error.details,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
       });
       
       let errorMessage = "Une erreur est survenue lors de la connexion";
