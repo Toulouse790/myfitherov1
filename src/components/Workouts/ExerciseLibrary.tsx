@@ -14,7 +14,8 @@ export const ExerciseLibrary = () => {
   const { toast } = useToast();
 
   const handleExerciseSelection = async (exerciseIds: string[]) => {
-    setSelectedExercises((prev) => [...prev, ...exerciseIds]);
+    // Remplacer directement par les nouveaux exercices sélectionnés
+    setSelectedExercises(exerciseIds);
   };
 
   const handleStartWorkout = async () => {
