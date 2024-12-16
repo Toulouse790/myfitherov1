@@ -1,14 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "@/components/Layout/RootLayout";
-import { Home } from "@/pages/Home";
-import { Profile } from "@/pages/Profile";
+import Home from "@/pages/Home";
+import Profile from "@/pages/Profile";
 import { Workouts } from "@/pages/Workouts";
-import { Stats } from "@/pages/Stats";
-import { Sleep } from "@/pages/Sleep";
-import { Nutrition } from "@/pages/Nutrition";
-import { Cardio } from "@/pages/Cardio";
-import { TrainingPreferences } from "@/pages/TrainingPreferences";
-import { WorkoutGenerate } from "@/pages/WorkoutGenerate";
+import Stats from "@/pages/Stats";
+import Sleep from "@/pages/Sleep";
+import Nutrition from "@/pages/Nutrition";
+import Cardio from "@/pages/Cardio";
+import TrainingPreferences from "@/pages/TrainingPreferences";
+import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
 
 export const router = createBrowserRouter([
