@@ -17,12 +17,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         if (session) {
           console.log("Session active trouvée");
           setIsAuthenticated(true);
+          localStorage.setItem('myfithero-auth', JSON.stringify(session));
           return;
         }
 
+        console.log("Aucune session active trouvée, vérification du stockage local");
         const savedSession = localStorage.getItem('myfithero-auth');
         if (savedSession) {
-          console.log("Session sauvegardée trouvée, tentative de restauration");
           try {
             const parsedSession = JSON.parse(savedSession);
             if (parsedSession?.access_token) {
@@ -36,15 +37,16 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
               } else {
                 console.error("Erreur lors de la restauration de la session:", error);
                 localStorage.removeItem('myfithero-auth');
+                setIsAuthenticated(false);
               }
             }
           } catch (parseError) {
             console.error("Erreur lors du parsing de la session:", parseError);
             localStorage.removeItem('myfithero-auth');
+            setIsAuthenticated(false);
           }
         }
 
-        console.log("Aucune session valide trouvée");
         setIsAuthenticated(false);
       } catch (error) {
         console.error("Erreur lors de la vérification de session:", error);
@@ -64,17 +66,14 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           title: "Déconnexion",
           description: "Vous avez été déconnecté avec succès",
         });
-      } else if (session) {
+      } else if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
-        if (location.pathname === '/signin') {
-          console.log("Redirection depuis signin car déjà authentifié");
-        }
         localStorage.setItem('myfithero-auth', JSON.stringify(session));
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [toast, location.pathname]);
+  }, [toast]);
 
   if (isAuthenticated === null) {
     return (
@@ -88,11 +87,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isPublicRoute = publicRoutes.includes(location.pathname);
 
   if (!isAuthenticated && !isPublicRoute) {
-    console.log("Redirection vers signin - Non authentifié sur route protégée", {
-      from: location.pathname,
-      state: location.state
-    });
-    return <Navigate to="/signin" state={{ from: location, workoutPlan: location.state?.workoutPlan }} replace />;
+    console.log("Redirection vers signin - Non authentifié sur route protégée");
+    return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
   if (isAuthenticated && isPublicRoute) {
