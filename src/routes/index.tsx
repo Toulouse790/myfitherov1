@@ -6,19 +6,24 @@ import Home from "@/pages/Home";
 import Profile from "@/pages/Profile";
 import { Workouts } from "@/pages/Workouts";
 import { WorkoutDetail } from "@/components/Workouts/WorkoutDetail";
+import WorkoutGenerate from "@/pages/WorkoutGenerate";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/signin",
     element: <SignIn />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/signup",
     element: <SignUp />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/profile",
@@ -27,6 +32,7 @@ export const router = createBrowserRouter([
         <Profile />
       </ProtectedRoute>
     ),
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/workouts",
@@ -35,6 +41,16 @@ export const router = createBrowserRouter([
         <Workouts />
       </ProtectedRoute>
     ),
+    errorElement: <ErrorBoundary />
+  },
+  {
+    path: "/workouts/generate",
+    element: (
+      <ProtectedRoute>
+        <WorkoutGenerate />
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/workout/:sessionId",
@@ -43,5 +59,6 @@ export const router = createBrowserRouter([
         <WorkoutDetail />
       </ProtectedRoute>
     ),
+    errorElement: <ErrorBoundary />
   },
 ]);
