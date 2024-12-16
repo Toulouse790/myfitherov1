@@ -8,11 +8,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { muscleGroups } from "@/components/Workouts/workoutConstants";
 import { MuscleGroupCard } from "@/components/Workouts/components/MuscleGroupCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function WorkoutGenerate() {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showSelection, setShowSelection] = useState(false);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string>("muscle-groups");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -87,43 +89,58 @@ export default function WorkoutGenerate() {
   const handleMuscleGroupSelect = (muscleGroup: string) => {
     setSelectedMuscleGroup(muscleGroup);
     setShowSelection(true);
+    setActiveTab("exercises");
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container max-w-4xl mx-auto p-4 space-y-6">
-        <h1 className="text-2xl font-bold">Création de séance</h1>
+        <div className="flex flex-col items-center space-y-4">
+          <h1 className="text-2xl font-bold">Création de séance</h1>
+          <p className="text-muted-foreground">
+            Sélectionnez les groupes musculaires que vous souhaitez travailler
+          </p>
+        </div>
         
         {selectedExercises.length > 0 && (
           <div className="flex justify-end">
             <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
-              C'est parti ! ({selectedExercises.length})
+              Commencer la séance ({selectedExercises.length})
             </Button>
           </div>
         )}
 
-        {showSelection ? (
-          <ExerciseSelection
-            selectedExercises={selectedExercises}
-            onSelectionChange={handleExerciseSelection}
-            onClose={() => setShowSelection(false)}
-            muscleGroup={selectedMuscleGroup}
-          />
-        ) : (
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
-            {muscleGroups.map((muscle) => (
-              <MuscleGroupCard
-                key={muscle.id}
-                id={muscle.id}
-                name={muscle.name}
-                isSelected={false}
-                exerciseCount={0}
-                onClick={() => handleMuscleGroupSelect(muscle.id)}
-              />
-            ))}
-          </div>
-        )}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="muscle-groups">Groupes musculaires</TabsTrigger>
+            <TabsTrigger value="exercises">Exercices</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="muscle-groups">
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+              {muscleGroups.map((muscle) => (
+                <MuscleGroupCard
+                  key={muscle.id}
+                  id={muscle.id}
+                  name={muscle.name}
+                  isSelected={selectedMuscleGroup === muscle.id}
+                  exerciseCount={0}
+                  onClick={() => handleMuscleGroupSelect(muscle.id)}
+                />
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="exercises">
+            <ExerciseSelection
+              selectedExercises={selectedExercises}
+              onSelectionChange={handleExerciseSelection}
+              onClose={() => setShowSelection(false)}
+              muscleGroup={selectedMuscleGroup}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
