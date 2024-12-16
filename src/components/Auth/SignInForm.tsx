@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSignIn } from "@/hooks/use-signin";
-import { SignInHeader } from "./SignInForm/SignInHeader";
+import { SignInHeader } from "./SignInHeader";
 import { EmailInput } from "./SignInForm/EmailInput";
 import { PasswordInput } from "./SignInForm/PasswordInput";
 import { RememberMeCheckbox } from "./SignInForm/RememberMeCheckbox";
