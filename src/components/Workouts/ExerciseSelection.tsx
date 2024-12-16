@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { ExerciseCard } from "./components/ExerciseCard";
+import { useNavigate } from "react-router-dom";
 
 export interface ExerciseSelectionProps {
   selectedExercises: string[];
@@ -19,6 +20,7 @@ export const ExerciseSelection = ({
   searchQuery = ""
 }: ExerciseSelectionProps) => {
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
+  const navigate = useNavigate();
   console.log("Current selected exercises:", selectedExercises);
   console.log("Current muscle group:", muscleGroup);
   console.log("Available exercises:", exercises);
@@ -40,6 +42,14 @@ export const ExerciseSelection = ({
     onSelectionChange(newSelection);
   };
 
+  const handleBackToLibrary = () => {
+    if (muscleGroup) {
+      navigate(`/workouts/library?group=${muscleGroup}`);
+    } else {
+      navigate('/workouts/library');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -54,7 +64,7 @@ export const ExerciseSelection = ({
         <p className="text-center text-muted-foreground">
           Aucun exercice ne correspond à votre recherche.
         </p>
-        <Button onClick={onClose}>
+        <Button onClick={handleBackToLibrary}>
           Retour aux groupes musculaires
         </Button>
       </div>
@@ -75,7 +85,7 @@ export const ExerciseSelection = ({
           )}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={handleBackToLibrary}>
             Retour aux groupes musculaires
           </Button>
           {selectedExercises.length > 0 && (
