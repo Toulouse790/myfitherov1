@@ -154,6 +154,13 @@ export type Database = {
             foreignKeyName: "athlete_assessments_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
+            referencedRelation: "positions_sportives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "athlete_assessments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
             referencedRelation: "sport_positions"
             referencedColumns: ["id"]
           },
@@ -973,6 +980,13 @@ export type Database = {
             foreignKeyName: "questionnaire_responses_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
+            referencedRelation: "positions_sportives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questionnaire_responses_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
             referencedRelation: "sport_positions"
             referencedColumns: ["id"]
           },
@@ -1071,6 +1085,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sport_specific_workouts_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions_sportives"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sport_specific_workouts_position_id_fkey"
             columns: ["position_id"]
@@ -1632,6 +1653,19 @@ export type Database = {
           negative_feedback: number | null
           positive_feedback: number | null
           total_requests: number | null
+        }
+        Relationships: []
+      }
+      positions_sportives: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          initial_tests: Json | null
+          performance_metrics: Json | null
+          position_name: string | null
+          recommended_exercises: Json | null
+          sport_name: string | null
+          updated_at: string | null
         }
         Relationships: []
       }
