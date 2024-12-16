@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { WorkoutPlan } from "./workoutPlanGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -12,16 +12,17 @@ interface GeneratedWorkoutPreviewProps {
 
 export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const { user } = useAuth();
 
   const handleStartWorkout = async () => {
     if (!user) {
-      console.log("Utilisateur non authentifié, redirection vers signin");
+      console.log("Utilisateur non authentifié, redirection vers signin avec le plan");
       navigate("/signin", { 
         state: { 
           from: location.pathname,
-          workoutPlan: plan // Sauvegarder le plan d'entraînement
+          workoutPlan: plan
         } 
       });
       return;

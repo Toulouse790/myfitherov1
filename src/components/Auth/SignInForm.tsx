@@ -39,8 +39,40 @@ export const SignInForm = () => {
         description: "Bienvenue sur MyFitHero !",
       });
 
-      // Récupérer la page précédente depuis l'état de location
-      const from = (location.state as any)?.from?.pathname || "/";
+      // Récupérer le plan d'entraînement sauvegardé
+      const state = location.state as any;
+      const workoutPlan = state?.workoutPlan;
+      
+      if (workoutPlan) {
+        console.log("Plan d'entraînement trouvé, création de la session...");
+        const { data: session, error: sessionError } = await supabase
+          .from('workout_sessions')
+          .insert([
+            { 
+              user_id: data.session?.user.id,
+              type: 'strength',
+              status: 'in_progress',
+              exercises: workoutPlan.exercises.map((ex: any) => ex.name),
+              target_duration_minutes: 45
+            }
+          ])
+          .select()
+          .single();
+
+        if (sessionError) {
+          console.error('Erreur lors de la création de la session:', sessionError);
+          throw sessionError;
+        }
+
+        if (session) {
+          console.log("Session créée avec succès, redirection...");
+          navigate(`/workout/${session.id}`);
+          return;
+        }
+      }
+
+      // Si pas de plan d'entraînement, redirection normale
+      const from = state?.from?.pathname || "/";
       navigate(from, { replace: true });
     } catch (error: any) {
       let errorMessage = "Une erreur est survenue lors de la connexion";
