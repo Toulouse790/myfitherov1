@@ -5,11 +5,14 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
 import { ExerciseSelection } from "./ExerciseSelection";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Card } from "@/components/ui/card";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showSelection, setShowSelection] = useState(false);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
+  const [showSummary, setShowSummary] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -28,6 +31,10 @@ export const ExerciseLibrary = () => {
       return;
     }
 
+    setShowSummary(true);
+  };
+
+  const handleConfirmWorkout = async () => {
     try {
       const { data: session, error } = await supabase
         .from('workout_sessions')
@@ -124,6 +131,36 @@ export const ExerciseLibrary = () => {
             <MuscleGroupGrid onSelect={handleMuscleGroupSelect} />
           </div>
         )}
+
+        <Dialog open={showSummary} onOpenChange={setShowSummary}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Récapitulatif de la séance</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4 my-4">
+              {selectedExercises.map((exercise, index) => (
+                <Card key={index} className="p-4">
+                  <div className="space-y-2">
+                    <h3 className="font-medium">{exercise}</h3>
+                    <div className="text-sm text-muted-foreground">
+                      3 séries • 12 répétitions
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowSummary(false)}>
+                Retour
+              </Button>
+              <Button onClick={handleConfirmWorkout}>
+                Commencer la séance
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
