@@ -290,38 +290,6 @@ export type Database = {
         }
         Relationships: []
       }
-      exercise_media: {
-        Row: {
-          created_at: string
-          exercise_id: string | null
-          id: string
-          media_type: string
-          media_url: string
-        }
-        Insert: {
-          created_at?: string
-          exercise_id?: string | null
-          id?: string
-          media_type: string
-          media_url: string
-        }
-        Update: {
-          created_at?: string
-          exercise_id?: string | null
-          id?: string
-          media_type?: string
-          media_url?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exercise_media_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "unified_exercises"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       exercise_sets: {
         Row: {
           calories_burned: number | null

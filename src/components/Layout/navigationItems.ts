@@ -1,9 +1,50 @@
-import { LayoutDashboard } from "lucide-react";
+import { Home, Dumbbell, User, Pizza, Moon, ChartBar, FolderOpen } from "lucide-react";
 
 export const navigationItems = [
   {
-    title: "Tableau de bord",
-    icon: LayoutDashboard,
-    path: "/",
+    title: "Accueil",
+    href: "/",
+    icon: Home,
+  },
+  {
+    title: "Entraînements",
+    href: "/workouts",
+    icon: Dumbbell,
+  },
+  {
+    title: "Nutrition",
+    href: "/nutrition",
+    icon: Pizza,
+  },
+  {
+    title: "Sommeil",
+    href: "/sleep",
+    icon: Moon,
+  },
+  {
+    title: "Statistiques",
+    href: "/stats",
+    icon: ChartBar,
+  },
+  {
+    title: "Admin",
+    href: "/admin",
+    icon: FolderOpen,
+    admin: true,
+    children: [
+      {
+        title: "Tableau de bord",
+        href: "/admin",
+      },
+      {
+        title: "Gestion des médias",
+        href: "/admin/media",
+      }
+    ]
+  },
+  {
+    title: "Profil",
+    href: "/profile",
+    icon: User,
   },
 ];
