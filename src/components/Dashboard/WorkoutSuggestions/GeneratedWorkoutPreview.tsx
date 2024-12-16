@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { WorkoutPlan } from "./workoutPlanGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface GeneratedWorkoutPreviewProps {
   plan: WorkoutPlan;
@@ -12,23 +13,36 @@ interface GeneratedWorkoutPreviewProps {
 export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleStartWorkout = async () => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour créer une séance",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      const { data: session, error: sessionError } = await supabase
+      console.log("Création de la session avec les exercices:", plan.exercises);
+      const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
           { 
-            status: 'in_progress',
+            user_id: user.id,
             type: 'strength',
+            status: 'in_progress',
             exercises: plan.exercises.map(ex => ex.name),
+            target_duration_minutes: 45
           }
         ])
         .select()
         .single();
 
-      if (sessionError) {
-        console.error('Error creating session:', sessionError);
+      if (error) {
+        console.error('Erreur lors de la création de la session:', error);
         toast({
           title: "Erreur",
           description: "Impossible de créer la session d'entraînement",
@@ -37,14 +51,20 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
         return;
       }
 
+      console.log("Session créée avec succès:", session);
+      toast({
+        title: "Séance créée",
+        description: "Votre séance a été créée avec succès",
+      });
+
       if (session) {
         navigate(`/workout/${session.id}`);
       }
     } catch (error) {
-      console.error('Error starting workout:', error);
+      console.error('Error creating workout:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors du démarrage de la séance",
+        description: "Une erreur est survenue lors de la création de la séance",
         variant: "destructive",
       });
     }
