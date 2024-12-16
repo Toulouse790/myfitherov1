@@ -37,12 +37,14 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         const { data, error } = await query;
 
         if (error) {
+          console.error("Erreur lors de la requête Supabase:", error);
           throw error;
         }
 
         console.log("Données reçues de Supabase:", data);
         
         if (!data) {
+          console.log("Aucune donnée reçue de Supabase");
           setExercises([]);
           return;
         }
