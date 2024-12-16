@@ -1,23 +1,23 @@
 export const muscleGroups = [
-  { id: 'pectoraux', name: 'Pectoraux', color: 'bg-red-500' },
-  { id: 'dos', name: 'Dos', color: 'bg-blue-500' },
-  { id: 'jambes', name: 'Jambes', color: 'bg-green-500' },
-  { id: 'epaules', name: 'Épaules', color: 'bg-yellow-500' },
+  { id: 'chest', name: 'Pectoraux', color: 'bg-red-500' },
+  { id: 'back', name: 'Dos', color: 'bg-blue-500' },
+  { id: 'legs', name: 'Jambes', color: 'bg-green-500' },
+  { id: 'shoulders', name: 'Épaules', color: 'bg-yellow-500' },
   { id: 'biceps', name: 'Biceps', color: 'bg-purple-500' },
   { id: 'triceps', name: 'Triceps', color: 'bg-pink-500' },
-  { id: 'abdominaux', name: 'Abdominaux', color: 'bg-orange-500' }
+  { id: 'abs', name: 'Abdominaux', color: 'bg-orange-500' }
 ];
 
 export const difficultyLevels = [
-  { id: 'débutant', name: 'Débutant' },
-  { id: 'intermédiaire', name: 'Intermédiaire' },
-  { id: 'avancé', name: 'Avancé' }
+  { id: 'beginner', name: 'Débutant' },
+  { id: 'intermediate', name: 'Intermédiaire' },
+  { id: 'advanced', name: 'Avancé' }
 ];
 
 export const locations = [
-  { id: 'maison', name: 'Maison' },
-  { id: 'salle', name: 'Salle' },
-  { id: 'extérieur', name: 'Extérieur' }
+  { id: 'home', name: 'Maison' },
+  { id: 'gym', name: 'Salle' },
+  { id: 'outdoor', name: 'Extérieur' }
 ];
 
 export interface WorkoutFormData {
