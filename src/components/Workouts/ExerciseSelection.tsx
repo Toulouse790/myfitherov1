@@ -30,36 +30,36 @@ export const ExerciseSelection = ({
 
   return (
     <div className="space-y-6">
-      <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
+      <Card className="p-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-4">
             {muscleGroup ? `Exercices - ${muscleGroup}` : 'Sélectionner des exercices'}
-          </DialogTitle>
-        </DialogHeader>
-
-        <DialogDescription className="sr-only">
-          Sélectionnez les exercices pour votre entraînement. Vous pouvez choisir plusieurs exercices à ajouter à votre programme.
-        </DialogDescription>
-        
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">
-            Exercices disponibles ({exercises.length})
           </h2>
-          <Button onClick={onClose}>Fermer</Button>
-        </div>
 
-        {isLoading ? (
-          <div className="flex items-center justify-center h-40">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="sr-only">
+            Sélectionnez les exercices pour votre entraînement. Vous pouvez choisir plusieurs exercices à ajouter à votre programme.
           </div>
-        ) : (
-          <ExerciseGrid
-            exercises={exercises}
-            selectedExercises={selectedExercises}
-            onExerciseToggle={handleExerciseToggle}
-          />
-        )}
-      </DialogContent>
+          
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">
+              Exercices disponibles ({exercises.length})
+            </h3>
+            <Button onClick={onClose}>Fermer</Button>
+          </div>
+
+          {isLoading ? (
+            <div className="flex items-center justify-center h-40">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <ExerciseGrid
+              exercises={exercises}
+              selectedExercises={selectedExercises}
+              onExerciseToggle={handleExerciseToggle}
+            />
+          )}
+        </div>
+      </Card>
     </div>
   );
 };
