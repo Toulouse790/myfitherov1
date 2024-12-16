@@ -128,20 +128,9 @@ export const WorkoutDetail = () => {
       <div className="container max-w-4xl mx-auto p-4 space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Séance d'entraînement</h1>
-          {!isStarted ? (
-            <Button 
-              onClick={handleStartSession}
-              className="flex items-center gap-2"
-              size="lg"
-            >
-              <Play className="h-4 w-4" />
-              Commencer la séance
-            </Button>
-          ) : (
-            <Button variant="outline" onClick={() => window.history.back()}>
-              Retour
-            </Button>
-          )}
+          <Button variant="outline" onClick={() => window.history.back()}>
+            Retour
+          </Button>
         </div>
 
         {isStarted && (
