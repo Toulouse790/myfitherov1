@@ -34,7 +34,10 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         query = query.ilike('muscle_group', searchPattern);
       }
 
-      // 3. Exécution de la requête
+      // 3. Ajout du filtre pour les exercices publiés
+      query = query.eq('est_publié', true);
+
+      // 4. Exécution de la requête
       console.log('Executing Supabase query...');
       const { data, error } = await query;
 
@@ -43,13 +46,13 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         throw error;
       }
 
-      // 4. Logs des données brutes
+      // 5. Logs des données brutes
       console.log('Raw database response:', {
         total: data?.length || 0,
         exercises: data
       });
 
-      // 5. Validation détaillée des exercices
+      // 6. Validation détaillée des exercices
       const allExercises = data || [];
       
       allExercises.forEach(ex => {
@@ -98,7 +101,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           image: ex.image_url ? 'present' : 'missing',
           video: ex.video_url ? 'present' : 'missing',
           validationIssues: validationIssues.length > 0 ? validationIssues : 'no issues',
-          rawData: ex // Log des données brutes pour inspection
+          rawData: ex
         });
       });
 
@@ -107,7 +110,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
         muscleGroups: [...new Set(allExercises.map(ex => ex.muscle_group))]
       });
 
-      // 6. Mapping vers le format Exercise
+      // 7. Mapping vers le format Exercise
       return allExercises.map(dbExercise => {
         const exercise: Exercise = {
           id: dbExercise.id,
@@ -125,7 +128,7 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           reps: { beginner: 0, intermediate: 0, advanced: 0 },
           restTime: { beginner: 0, intermediate: 0, advanced: 0 },
           calories: 0,
-          is_published: dbExercise.is_published
+          est_publié: dbExercise.est_publié
         };
         return exercise;
       });

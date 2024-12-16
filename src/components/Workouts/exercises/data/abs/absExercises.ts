@@ -35,6 +35,6 @@ export const absExercises: Exercise[] = [
       advanced: 30
     },
     calories: 80,
-    is_published: true
+    est_publié: true
   }
 ];

@@ -33,7 +33,7 @@ export const basicChestExercises: Exercise[] = [
       advanced: 45
     },
     calories: 100,
-    is_published: true
+    est_publié: true
   },
   {
     id: "chest_2",
@@ -68,6 +68,6 @@ export const basicChestExercises: Exercise[] = [
       advanced: 60
     },
     calories: 150,
-    is_published: true
+    est_publié: true
   }
 ];
