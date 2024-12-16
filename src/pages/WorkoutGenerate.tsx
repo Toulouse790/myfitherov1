@@ -4,10 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Layout/Header";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
-import { muscleGroups } from "@/components/Workouts/workoutConstants";
-import { MuscleGroupCard } from "@/components/Workouts/components/MuscleGroupCard";
-import { Card } from "@/components/ui/card";
+import { MuscleGroupFilter } from "@/components/Workouts/components/MuscleGroupFilter";
+import { ExerciseGrid } from "@/components/Workouts/components/ExerciseGrid";
 
 interface Exercise {
   id: string;
@@ -21,7 +19,7 @@ interface Exercise {
 
 export default function WorkoutGenerate() {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
-  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -31,16 +29,21 @@ export default function WorkoutGenerate() {
     const fetchExercises = async () => {
       try {
         setIsLoading(true);
-        const { data, error } = await supabase
+        let query = supabase
           .from('unified_exercises')
           .select('*')
           .eq('est_publié', true);
+
+        if (selectedMuscleGroup) {
+          query = query.eq('muscle_group', selectedMuscleGroup.toLowerCase());
+        }
+
+        const { data, error } = await query;
 
         if (error) {
           throw error;
         }
 
-        console.log("Exercices chargés:", data);
         setExercises(data || []);
       } catch (error) {
         console.error('Erreur lors du chargement des exercices:', error);
@@ -55,33 +58,14 @@ export default function WorkoutGenerate() {
     };
 
     fetchExercises();
-  }, [toast]);
+  }, [toast, selectedMuscleGroup]);
 
-  const handleExerciseSelection = (exerciseIds: string[]) => {
-    setSelectedExercises((prev) => [...prev, ...exerciseIds]);
-    
-    toast({
-      title: "Groupe musculaire ajouté",
-      description: "Veux-tu entraîner un autre groupe musculaire ?",
-      action: (
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setSelectedMuscleGroup("")}
-          >
-            Non
-          </Button>
-          <Button 
-            size="sm"
-            onClick={() => {
-              setSelectedMuscleGroup("");
-            }}
-          >
-            Oui
-          </Button>
-        </div>
-      ),
+  const handleExerciseToggle = (exerciseName: string) => {
+    setSelectedExercises(prev => {
+      if (prev.includes(exerciseName)) {
+        return prev.filter(name => name !== exerciseName);
+      }
+      return [...prev, exerciseName];
     });
   };
 
@@ -123,10 +107,6 @@ export default function WorkoutGenerate() {
     }
   };
 
-  const filteredExercises = selectedMuscleGroup
-    ? exercises.filter(ex => ex.muscle_group.toLowerCase() === selectedMuscleGroup.toLowerCase())
-    : exercises;
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -151,6 +131,11 @@ export default function WorkoutGenerate() {
           </p>
         </div>
         
+        <MuscleGroupFilter
+          selectedGroup={selectedMuscleGroup}
+          onGroupSelect={setSelectedMuscleGroup}
+        />
+
         {selectedExercises.length > 0 && (
           <div className="flex justify-end">
             <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
@@ -159,42 +144,11 @@ export default function WorkoutGenerate() {
           </div>
         )}
 
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {filteredExercises.map((exercise) => (
-            <Card
-              key={exercise.id}
-              className={`p-4 cursor-pointer transition-all hover:shadow-md ${
-                selectedExercises.includes(exercise.name) ? 'ring-2 ring-primary' : ''
-              }`}
-              onClick={() => {
-                if (selectedExercises.includes(exercise.name)) {
-                  setSelectedExercises(prev => prev.filter(name => name !== exercise.name));
-                } else {
-                  setSelectedExercises(prev => [...prev, exercise.name]);
-                }
-              }}
-            >
-              <div className="space-y-2">
-                <h3 className="font-medium">{exercise.name}</h3>
-                <p className="text-sm text-muted-foreground capitalize">
-                  {exercise.muscle_group}
-                </p>
-                {exercise.difficulty && (
-                  <div className="flex gap-2">
-                    {exercise.difficulty.map((diff) => (
-                      <span
-                        key={diff}
-                        className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary"
-                      >
-                        {diff}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
+        <ExerciseGrid
+          exercises={exercises}
+          selectedExercises={selectedExercises}
+          onExerciseToggle={handleExerciseToggle}
+        />
       </div>
     </div>
   );
