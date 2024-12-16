@@ -28,6 +28,7 @@ export interface Exercise {
     advanced: number;
   };
   calories: number;
+  est_publié?: boolean;
   is_published?: boolean;
 }
 
