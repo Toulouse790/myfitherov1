@@ -12,22 +12,36 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Vérifier d'abord la session sauvegardée
+        // Vérifier d'abord la session en cours
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          console.log("Session active trouvée");
+          setIsAuthenticated(true);
+          return;
+        }
+
+        // Si pas de session active, vérifier le stockage local
         const savedSession = localStorage.getItem('myfithero-auth');
         if (savedSession) {
-          const session = JSON.parse(savedSession);
-          if (session?.access_token) {
-            await supabase.auth.setSession(session);
-            setIsAuthenticated(true);
-            return;
+          console.log("Session sauvegardée trouvée, tentative de restauration");
+          const parsedSession = JSON.parse(savedSession);
+          if (parsedSession?.access_token) {
+            const { data: { session: restoredSession }, error } = 
+              await supabase.auth.setSession(parsedSession);
+            
+            if (!error && restoredSession) {
+              console.log("Session restaurée avec succès");
+              setIsAuthenticated(true);
+              return;
+            }
           }
         }
 
-        // Si pas de session sauvegardée, vérifier avec Supabase
-        const { data: { session } } = await supabase.auth.getSession();
-        setIsAuthenticated(!!session);
+        console.log("Aucune session valide trouvée");
+        setIsAuthenticated(false);
       } catch (error) {
-        console.error("Session check error:", error);
+        console.error("Erreur lors de la vérification de session:", error);
         setIsAuthenticated(false);
       }
     };
@@ -35,6 +49,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Changement d'état d'authentification:", event);
+      
       if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
         localStorage.removeItem('myfithero-auth');
@@ -66,10 +82,12 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   // Gérer la logique de redirection
   if (!isAuthenticated && !isPublicRoute) {
+    console.log("Redirection vers signin - Non authentifié sur route protégée");
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
   if (isAuthenticated && isPublicRoute) {
+    console.log("Redirection vers home - Authentifié sur route publique");
     return <Navigate to="/" replace />;
   }
 
