@@ -150,8 +150,6 @@ export const MediaManager = () => {
     });
   };
 
-  const filteredExercises = exercises || [];
-
   return (
     <div className="min-h-screen bg-[#1A1F2C]">
       <div className="container mx-auto p-8">
@@ -176,13 +174,13 @@ export const MediaManager = () => {
         </div>
 
         <div className="flex gap-4 mb-8">
-          <div className="flex-1">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               placeholder="Rechercher un exercice..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full"
-              prefix={<Search className="w-4 h-4 text-gray-400" />}
+              className="w-full pl-10"
             />
           </div>
           <Button onClick={() => setShowFilters(true)} variant="outline">
@@ -199,7 +197,7 @@ export const MediaManager = () => {
             />
           </div>
           <MediaList
-            exercises={filteredExercises}
+            exercises={exercises || []}
             onFileChange={handleFileChange}
             onUpload={refetch}
             selectedFile={selectedFile}
