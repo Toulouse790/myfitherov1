@@ -2,15 +2,9 @@ import { Header } from "@/components/Layout/Header";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { Brain, Activity, BarChart3, Dumbbell } from "lucide-react";
 import { SuggestionCard } from "@/components/Dashboard/DashboardCard/SuggestionCard";
+import { CreateWorkoutDialog } from "@/components/Dashboard/WorkoutSuggestions/GenerateWorkout/CreateWorkoutDialog";
 
 const suggestions = [
-  {
-    to: "/workout/generate",
-    icon: Brain,
-    title: "Créer ma séance",
-    description: "Construisez votre séance personnalisée en choisissant parmi notre bibliothèque d'exercices",
-    isPrimary: true
-  },
   {
     to: "/workouts",
     icon: Dumbbell,
@@ -35,6 +29,10 @@ export default function Index() {
   return (
     <Header>
       <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 max-w-7xl">
+        <div className="flex justify-end mb-4">
+          <CreateWorkoutDialog />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           {suggestions.map((suggestion, index) => (
             <SuggestionCard
