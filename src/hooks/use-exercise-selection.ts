@@ -3,14 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const muscleGroupMapping: { [key: string]: string } = {
-  "Pectoraux": "chest",
-  "Dos": "back",
-  "Jambes": "legs",
-  "Épaules": "shoulders",
+  "Pectoraux": "pectoraux",
+  "Dos": "dos",
+  "Jambes": "jambes",
+  "Épaules": "épaules",
   "Biceps": "biceps",
   "Triceps": "triceps",
-  "Abdominaux": "abs",
-  "Cardio": "cardio"
+  "Abdominaux": "abdominaux"
 };
 
 export const useExerciseSelection = (muscleGroup?: string) => {
