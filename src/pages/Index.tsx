@@ -5,14 +5,14 @@ import { SuggestionCard } from "@/components/Dashboard/DashboardCard/SuggestionC
 
 const suggestions = [
   {
-    to: "/workouts/generate",
+    to: "/workouts",
     icon: Brain,
     title: "Créer ma séance",
     description: "Construisez votre séance personnalisée en choisissant parmi notre bibliothèque d'exercices",
     isPrimary: true
   },
   {
-    to: "/workouts",
+    to: "/workouts/generate",
     icon: Dumbbell,
     title: "Laisse-moi faire",
     description: "Générez automatiquement une séance adaptée à votre historique d'entraînement"
