@@ -27,6 +27,7 @@ export default function Cardio() {
   const { data: exercises, isLoading } = useQuery({
     queryKey: ['cardio-exercises'],
     queryFn: async () => {
+      console.log('Fetching cardio exercises...');
       const { data, error } = await supabase
         .from('cardio_exercises')
         .select('*')
@@ -37,6 +38,7 @@ export default function Cardio() {
         throw error;
       }
 
+      console.log('Fetched cardio exercises:', data);
       return data;
     }
   });
@@ -61,6 +63,7 @@ export default function Cardio() {
     }
 
     try {
+      console.log('Creating workout session for exercise:', selectedExercise);
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
@@ -68,7 +71,8 @@ export default function Cardio() {
             user_id: user.id,
             type: 'cardio',
             status: 'in_progress',
-            exercises: [selectedExercise.name]
+            exercises: [selectedExercise.name],
+            workout_type: 'cardio'
           }
         ])
         .select()
@@ -76,6 +80,7 @@ export default function Cardio() {
 
       if (error) throw error;
 
+      console.log('Created workout session:', session);
       if (session) {
         navigate(`/workout/${session.id}`);
       }
