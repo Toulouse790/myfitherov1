@@ -4,8 +4,8 @@ export const bodyweightChestExercises: Exercise[] = [
   {
     id: "chest-5",
     name: "Pompes",
-    muscle_group: "pectoraux",
-    muscleGroup: "pectoraux",
+    muscle_group: "chest",
+    muscleGroup: "chest",
     description: "Exercice de base pour les pectoraux sans matériel",
     difficulty: ["beginner"],
     equipment: "Aucun",
@@ -35,13 +35,13 @@ export const bodyweightChestExercises: Exercise[] = [
       advanced: 45
     },
     calories: 80,
-    is_published: true
+    est_publié: true
   },
   {
     id: "chest-6",
     name: "Dips",
-    muscle_group: "pectoraux",
-    muscleGroup: "pectoraux",
+    muscle_group: "chest",
+    muscleGroup: "chest",
     description: "Excellent exercice composé pour les pectoraux et triceps",
     difficulty: ["intermediate"],
     equipment: "Barres parallèles",
@@ -70,6 +70,7 @@ export const bodyweightChestExercises: Exercise[] = [
       intermediate: 90,
       advanced: 60
     },
-    calories: 100
+    calories: 100,
+    est_publié: true
   }
 ];
