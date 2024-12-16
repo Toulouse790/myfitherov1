@@ -7,6 +7,7 @@ export interface UserProfile {
   gender?: 'male' | 'female' | 'other';
   height?: number;
   weight?: number;
+  mainObjective?: 'perte_de_poids' | 'prise_de_masse' | 'maintenance' | 'performance' | 'seche_extreme';
   goals: UserGoals;
   preferences: UserPreferences;
   stats: UserStats;

@@ -5,6 +5,7 @@ export interface Profile {
   updated_at: string;
   meal_notifications: boolean | null;
   reminder_time: number | null;
+  main_objective: string | null;
 }
 
 export interface ProfileInsert {
@@ -12,10 +13,12 @@ export interface ProfileInsert {
   username?: string | null;
   meal_notifications?: boolean | null;
   reminder_time?: number | null;
+  main_objective?: string | null;
 }
 
 export interface ProfileUpdate {
   username?: string | null;
   meal_notifications?: boolean | null;
   reminder_time?: number | null;
+  main_objective?: string | null;
 }

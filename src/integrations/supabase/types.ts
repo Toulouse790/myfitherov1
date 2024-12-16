@@ -792,6 +792,7 @@ export type Database = {
           height_cm: number | null
           id: string
           level: number | null
+          main_objective: string | null
           meal_notifications: boolean | null
           points: number | null
           reminder_time: number | null
@@ -807,6 +808,7 @@ export type Database = {
           height_cm?: number | null
           id: string
           level?: number | null
+          main_objective?: string | null
           meal_notifications?: boolean | null
           points?: number | null
           reminder_time?: number | null
@@ -822,6 +824,7 @@ export type Database = {
           height_cm?: number | null
           id?: string
           level?: number | null
+          main_objective?: string | null
           meal_notifications?: boolean | null
           points?: number | null
           reminder_time?: number | null
