@@ -10,6 +10,8 @@ interface MediaListProps {
   selectedFile: File | null;
   onDifficultyChange: (difficulty: string) => void;
   selectedDifficulties: string[];
+  selectedExercises: string[];
+  onExerciseSelect: (id: string) => void;
 }
 
 export const MediaList = ({
@@ -19,6 +21,8 @@ export const MediaList = ({
   selectedFile,
   selectedDifficulties,
   onDifficultyChange,
+  selectedExercises,
+  onExerciseSelect,
 }: MediaListProps) => {
   const filteredExercises = exercises.filter(exercise => {
     const difficultyMatch = selectedDifficulties.length === 0 || 
@@ -48,6 +52,8 @@ export const MediaList = ({
               est_publié: exercise.est_publié
             }}
             onUpdate={onUpload}
+            isSelected={selectedExercises.includes(exercise.id)}
+            onSelect={() => onExerciseSelect(exercise.id)}
           />
         </TabsContent>
       ))}

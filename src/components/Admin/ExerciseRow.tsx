@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useDifficultyManagement } from "@/hooks/use-difficulty-management";
 import { useLocationManagement } from "@/hooks/use-location-management";
 import { usePublishManagement } from "@/hooks/use-publish-management";
@@ -17,9 +18,16 @@ interface ExerciseRowProps {
     video_url?: string;
   };
   onUpdate: () => void;
+  isSelected: boolean;
+  onSelect: () => void;
 }
 
-export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
+export const ExerciseRow = ({ 
+  exercise, 
+  onUpdate,
+  isSelected,
+  onSelect
+}: ExerciseRowProps) => {
   const { selectedDifficulties, handleDifficultyChange } = useDifficultyManagement(
     exercise.id,
     exercise.difficulty || []
@@ -44,6 +52,11 @@ export const ExerciseRow = ({ exercise, onUpdate }: ExerciseRowProps) => {
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-6">
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={() => onSelect()}
+              className="mt-1"
+            />
             <ExerciseMedia 
               exercise={exercise}
               isPublishing={isPublishing}
