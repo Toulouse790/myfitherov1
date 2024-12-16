@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -12,7 +12,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Vérifier d'abord la session en cours
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
@@ -21,7 +20,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
-        // Si pas de session active, vérifier le stockage local
         const savedSession = localStorage.getItem('myfithero-auth');
         if (savedSession) {
           console.log("Session sauvegardée trouvée, tentative de restauration");
@@ -78,7 +76,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [toast, location.pathname]);
 
-  // Pendant la vérification initiale
   if (isAuthenticated === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -87,11 +84,9 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Définir les routes publiques
   const publicRoutes = ["/signin", "/signup"];
   const isPublicRoute = publicRoutes.includes(location.pathname);
 
-  // Gérer la logique de redirection
   if (!isAuthenticated && !isPublicRoute) {
     console.log("Redirection vers signin - Non authentifié sur route protégée", {
       from: location.pathname,
