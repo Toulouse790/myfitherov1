@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ExerciseSets } from "./ExerciseSets";
+import { Plus } from "lucide-react";
 
 export const WorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -42,6 +43,45 @@ export const WorkoutDetail = () => {
       fetchSession();
     }
   }, [sessionId, toast]);
+
+  const handleAddSet = async (exerciseName: string) => {
+    try {
+      const { error } = await supabase
+        .from('exercise_sets')
+        .insert({
+          session_id: sessionId,
+          exercise_name: exerciseName,
+          set_number: 1,
+          reps: 12,
+          weight: 20,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Série ajoutée",
+        description: "Une nouvelle série a été ajoutée à l'exercice.",
+      });
+
+      // Refresh session data
+      const { data, error: refreshError } = await supabase
+        .from('workout_sessions')
+        .select('*, exercise_sets(*)')
+        .eq('id', sessionId)
+        .single();
+
+      if (refreshError) throw refreshError;
+      setSession(data);
+
+    } catch (error) {
+      console.error('Error adding set:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la série",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -84,11 +124,22 @@ export const WorkoutDetail = () => {
           </Button>
         </div>
 
-        <Card className="p-6">
-          <div className="space-y-6">
+        <Card>
+          <div className="p-6 space-y-6">
             {session.exercises?.map((exercise: string, index: number) => (
               <div key={index} className="space-y-4">
-                <h3 className="text-lg font-semibold">{exercise}</h3>
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">{exercise}</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleAddSet(exercise)}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Ajouter une série
+                  </Button>
+                </div>
                 <ExerciseSets
                   exercises={[exercise]}
                   sessionId={sessionId || null}
