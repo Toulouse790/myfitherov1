@@ -10,6 +10,7 @@ import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MediaManager } from "@/components/Admin/MediaManager";
 import { RootLayout } from "@/components/Layout/RootLayout";
+import AdminDashboard from "@/pages/Admin/Dashboard";
 
 export const router = createBrowserRouter([
   {
@@ -68,7 +69,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />
       },
       {
-        path: "/admin/*",
+        path: "/admin",
+        element: (
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/admin/media",
         element: (
           <ProtectedRoute>
             <MediaManager />
