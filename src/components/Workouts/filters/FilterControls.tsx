@@ -53,9 +53,9 @@ export const FilterControls = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Tous</SelectItem>
-          <SelectItem value="home">Maison</SelectItem>
-          <SelectItem value="gym">Salle de sport</SelectItem>
-          <SelectItem value="outdoor">Extérieur</SelectItem>
+          <SelectItem value="maison">Maison</SelectItem>
+          <SelectItem value="salle">Salle de sport</SelectItem>
+          <SelectItem value="extérieur">Extérieur</SelectItem>
         </SelectContent>
       </Select>
 
