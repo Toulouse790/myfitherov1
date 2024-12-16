@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { RestTimer } from './RestTimer';
 
 interface SetCardProps {
   setId: number;
@@ -18,6 +19,7 @@ interface SetCardProps {
   onComplete: (setId: number) => void;
   onWeightChange: (setId: number, increment: boolean) => void;
   onRepsChange: (setId: number, increment: boolean) => void;
+  onRestTimeChange: (adjustment: number) => void;
   exerciseName: string;
 }
 
@@ -32,6 +34,7 @@ export const SetCard = ({
   onComplete,
   onWeightChange,
   onRepsChange,
+  onRestTimeChange,
   exerciseName
 }: SetCardProps) => {
   const [personalRecord, setPersonalRecord] = useState<number | null>(null);
@@ -175,6 +178,11 @@ export const SetCard = ({
             </div>
           </div>
         </div>
+
+        <RestTimer 
+          restTimer={restTimer} 
+          onRestTimeChange={onRestTimeChange}
+        />
 
         <Button
           className="w-full"
