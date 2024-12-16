@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Check, ChevronUp, ChevronDown, Flame, Trophy } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Flame, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { RestTimer } from './RestTimer';
+import { useToast } from "@/hooks/use-toast";
+import { RestTimer } from "./RestTimer";
+import { SetHeader } from "./SetCard/SetHeader";
+import { SetControls } from "./SetCard/SetControls";
 
 interface SetCardProps {
   setId: number;
   reps: number;
   weight: number;
   completed: boolean;
-  calories?: number;
   isCurrentSet: boolean;
   restTimer: number | null;
-  onComplete: (setId: number) => void;
-  onWeightChange: (setId: number, increment: boolean) => void;
-  onRepsChange: (setId: number, increment: boolean) => void;
-  onRestTimeChange: (adjustment: number) => void;
   exerciseName: string;
+  onRepsChange: (setId: number, increment: boolean) => void;
+  onWeightChange: (setId: number, increment: boolean) => void;
+  onSetComplete: () => void;
 }
 
 export const SetCard = ({
@@ -28,82 +27,64 @@ export const SetCard = ({
   reps,
   weight,
   completed,
-  calories,
   isCurrentSet,
   restTimer,
-  onComplete,
-  onWeightChange,
+  exerciseName,
   onRepsChange,
-  onRestTimeChange,
-  exerciseName
+  onWeightChange,
+  onSetComplete,
 }: SetCardProps) => {
   const [personalRecord, setPersonalRecord] = useState<number | null>(null);
   const [lastUsedWeight, setLastUsedWeight] = useState<number | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  React.useEffect(() => {
-    const fetchWeightData = async () => {
-      if (!user) return;
+  const handleComplete = async () => {
+    if (!user) return;
 
-      const { data, error } = await supabase
+    try {
+      const { data: existingData, error: fetchError } = await supabase
         .from('user_exercise_weights')
-        .select('personal_record, last_used_weight')
+        .select('weight, personal_record')
         .eq('user_id', user.id)
         .eq('exercise_name', exerciseName)
         .single();
 
-      if (error) {
-        console.error('Error fetching weight data:', error);
-        return;
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw fetchError;
       }
 
-      if (data) {
-        setPersonalRecord(data.personal_record);
-        setLastUsedWeight(data.last_used_weight);
-      }
-    };
+      const isNewRecord = existingData?.personal_record ? weight > existingData.personal_record : true;
+      const personalRecord = isNewRecord ? weight : existingData?.personal_record;
 
-    fetchWeightData();
-  }, [user, exerciseName]);
-
-  const isNewRecord = weight > (personalRecord || 0);
-
-  const handleSetCompleted = async () => {
-    if (!user) return;
-
-    try {
-      if (isNewRecord) {
-        const { error } = await supabase
-          .from('user_exercise_weights')
-          .upsert({
-            user_id: user.id,
-            exercise_name: exerciseName,
-            personal_record: weight,
-            last_used_weight: weight,
-            last_used_at: new Date().toISOString()
-          })
-          .eq('user_id', user.id)
-          .eq('exercise_name', exerciseName);
-
-        if (error) {
-          console.error('Error updating records:', error);
-          return;
-        }
-
-        toast({
-          title: "Nouveau record personnel !",
-          description: `Félicitations ! Vous avez établi un nouveau record à ${weight}kg.`,
+      const { error: upsertError } = await supabase
+        .from('user_exercise_weights')
+        .upsert({
+          user_id: user.id,
+          exercise_name: exerciseName,
+          weight: weight,
+          last_used_weight: weight,
+          last_used_at: new Date().toISOString(),
+          personal_record: personalRecord
         });
-      }
 
-      onComplete(setId);
+      if (upsertError) throw upsertError;
+
+      onSetComplete();
+
+      toast({
+        title: "Série complétée !",
+        description: isNewRecord 
+          ? `Nouveau record personnel : ${weight}kg ! 🎉` 
+          : `Série validée avec ${weight}kg`,
+      });
+
     } catch (error) {
-      console.error('Error completing set:', error);
+      console.error('Error saving weight:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder la série",
-        variant: "destructive"
+        description: "Impossible de sauvegarder le poids",
+        variant: "destructive",
       });
     }
   };
@@ -113,101 +94,33 @@ export const SetCard = ({
       isCurrentSet ? 'ring-2 ring-primary' : ''
     }`}>
       <div className="space-y-4">
-        <div className="flex flex-wrap justify-between items-center gap-2">
-          <span className="font-medium">Série {setId}</span>
-          <div className="flex flex-wrap gap-2">
-            {personalRecord && (
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <Trophy className="w-3 h-3" />
-                {personalRecord}kg
-              </Badge>
-            )}
-            {lastUsedWeight && (
-              <Badge variant="outline" className="flex items-center gap-1">
-                <ChevronUp className="w-3 h-3" />
-                {lastUsedWeight}kg
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Poids (kg)</label>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => onWeightChange(setId, false)}
-                disabled={completed}
-                className="h-8 w-8"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              <span className="w-12 text-center">{weight}</span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => onWeightChange(setId, true)}
-                disabled={completed}
-                className="h-8 w-8"
-              >
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Répétitions</label>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => onRepsChange(setId, false)}
-                disabled={completed}
-                className="h-8 w-8"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              <span className="w-12 text-center">{reps}</span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => onRepsChange(setId, true)}
-                disabled={completed}
-                className="h-8 w-8"
-              >
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <RestTimer 
-          restTimer={restTimer} 
-          onRestTimeChange={onRestTimeChange}
+        <SetHeader
+          setId={setId}
+          personalRecord={personalRecord}
+          lastUsedWeight={lastUsedWeight}
         />
+
+        <SetControls
+          weight={weight}
+          reps={reps}
+          onWeightChange={onWeightChange}
+          onRepsChange={onRepsChange}
+          setId={setId}
+          completed={completed}
+        />
+
+        <RestTimer restTimer={restTimer} onRestTimeChange={() => {}} />
 
         <Button
           className="w-full"
-          variant={completed ? "secondary" : isNewRecord ? "default" : "secondary"}
-          onClick={handleSetCompleted}
+          variant={completed ? "secondary" : isCurrentSet ? "default" : "secondary"}
+          onClick={handleComplete}
           disabled={completed || !isCurrentSet || (restTimer !== null)}
         >
           {completed ? (
             <span className="flex items-center gap-2">
               Série complétée
-              {calories && (
-                <>
-                  <Flame className="h-4 w-4" />
-                  <span>{calories} kcal</span>
-                </>
-              )}
-            </span>
-          ) : isNewRecord ? (
-            <span className="flex items-center gap-2">
-              <Trophy className="h-4 w-4" />
-              Nouveau Record !
+              <Flame className="h-4 w-4" />
             </span>
           ) : (
             "Valider la série"
