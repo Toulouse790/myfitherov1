@@ -28,8 +28,11 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           .select('*');
 
         if (muscleGroup) {
+          console.log("Filtrage par groupe musculaire:", muscleGroup.toLowerCase());
           query = query.eq('muscle_group', muscleGroup.toLowerCase());
         }
+
+        console.log("Requête Supabase:", query);
 
         const { data, error } = await query;
 
