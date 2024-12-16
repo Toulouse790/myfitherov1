@@ -52,10 +52,6 @@ export const ExerciseSelection = ({
           <div className="flex items-center justify-center h-40">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        ) : exercises.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            Aucun exercice n'est disponible pour le groupe musculaire {muscleGroup}. Veuillez sélectionner un autre groupe musculaire.
-          </div>
         ) : (
           <ExerciseGrid
             exercises={exercises}

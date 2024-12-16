@@ -30,13 +30,9 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           throw error;
         }
 
-        console.log("Données brutes reçues de Supabase:", data);
+        console.log("Données reçues de Supabase:", data);
         
-        if (!data || data.length === 0) {
-          toast({
-            title: "Aucun exercice trouvé",
-            description: "Aucun exercice n'est disponible pour ce groupe musculaire.",
-          });
+        if (!data) {
           setExercises([]);
           return;
         }
