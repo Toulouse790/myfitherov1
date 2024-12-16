@@ -1,21 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { ExerciseCard } from "./components/ExerciseCard";
 import { useNavigate } from "react-router-dom";
-
-const translateMuscleGroup = (group: string): string => {
-  const translations: { [key: string]: string } = {
-    "pectoraux": "chest",
-    "dos": "back",
-    "jambes": "legs",
-    "épaules": "shoulders",
-    "biceps": "biceps",
-    "triceps": "triceps",
-    "abdominaux": "abs"
-  };
-  return translations[group.toLowerCase()] || group.toLowerCase();
-};
+import { muscleGroups } from "./workoutConstants";
 
 export interface ExerciseSelectionProps {
   selectedExercises: string[];
@@ -34,22 +20,30 @@ export const ExerciseSelection = ({
 }: ExerciseSelectionProps) => {
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
   const navigate = useNavigate();
+  
   console.log("Current selected exercises:", selectedExercises);
   console.log("Current muscle group:", muscleGroup);
   console.log("Available exercises:", exercises);
 
-  const translatedMuscleGroup = muscleGroup ? translateMuscleGroup(muscleGroup) : "";
-  console.log("Translated muscle group:", translatedMuscleGroup);
+  // Trouver l'ID du groupe musculaire à partir du nom français
+  const getMuscleGroupId = (frenchName: string): string => {
+    const group = muscleGroups.find(g => g.name.toLowerCase() === frenchName.toLowerCase());
+    console.log("Looking for muscle group:", frenchName, "Found:", group);
+    return group?.id || "";
+  };
+
+  const muscleGroupId = muscleGroup ? getMuscleGroupId(muscleGroup) : "";
+  console.log("Muscle group ID:", muscleGroupId);
 
   const filteredExercises = exercises?.filter(exercise => {
     const nameMatch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
     const muscleGroupMatch = !muscleGroup || 
-      exercise.muscle_group.toLowerCase() === translatedMuscleGroup;
+      exercise.muscle_group.toLowerCase() === muscleGroupId.toLowerCase();
     
     console.log(`Exercise ${exercise.name} muscle group match:`, {
       exerciseGroup: exercise.muscle_group.toLowerCase(),
-      translatedGroup: translatedMuscleGroup,
-      matches: exercise.muscle_group.toLowerCase() === translatedMuscleGroup
+      searchedGroup: muscleGroupId.toLowerCase(),
+      matches: exercise.muscle_group.toLowerCase() === muscleGroupId.toLowerCase()
     });
     
     return nameMatch && muscleGroupMatch;
