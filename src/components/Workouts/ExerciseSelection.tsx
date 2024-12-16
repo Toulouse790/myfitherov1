@@ -12,6 +12,19 @@ interface ExerciseSelectionProps {
   muscleGroup?: string;
 }
 
+const translateMuscleGroup = (group: string): string => {
+  const translations: { [key: string]: string } = {
+    'pectoraux': 'chest',
+    'dos': 'back',
+    'jambes': 'legs',
+    'épaules': 'shoulders',
+    'biceps': 'biceps',
+    'triceps': 'triceps',
+    'abdominaux': 'abs'
+  };
+  return translations[group.toLowerCase()] || group.toLowerCase();
+};
+
 export const ExerciseSelection = ({
   selectedExercises,
   onSelectionChange,
@@ -34,7 +47,9 @@ export const ExerciseSelection = ({
           .eq('is_published', true);
 
         if (muscleGroup) {
-          query = query.eq('muscle_group', muscleGroup.toLowerCase());
+          const translatedGroup = translateMuscleGroup(muscleGroup);
+          console.log("Translated muscle group:", translatedGroup);
+          query = query.eq('muscle_group', translatedGroup);
         }
 
         const { data, error } = await query;
