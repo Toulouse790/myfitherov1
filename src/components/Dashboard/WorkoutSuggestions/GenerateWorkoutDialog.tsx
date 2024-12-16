@@ -95,7 +95,7 @@ export const GenerateWorkoutDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Programme d'entraînement</DialogTitle>
+          <DialogTitle>Programme d'entraînement personnalisé</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
