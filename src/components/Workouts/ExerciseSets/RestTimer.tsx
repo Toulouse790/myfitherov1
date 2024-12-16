@@ -7,6 +7,7 @@ interface RestTimerProps {
 }
 
 export const RestTimer = ({ restTimer, onRestTimeChange }: RestTimerProps) => {
+  // Si restTimer est null, on n'affiche pas le composant
   if (restTimer === null) return null;
 
   return (
@@ -16,6 +17,7 @@ export const RestTimer = ({ restTimer, onRestTimeChange }: RestTimerProps) => {
         size="sm"
         className="h-8 w-8 p-0"
         onClick={() => onRestTimeChange(-15)}
+        disabled={restTimer <= 15} // Empêche de descendre en dessous de 15 secondes
       >
         -
       </Button>
@@ -28,6 +30,7 @@ export const RestTimer = ({ restTimer, onRestTimeChange }: RestTimerProps) => {
         size="sm"
         className="h-8 w-8 p-0"
         onClick={() => onRestTimeChange(15)}
+        disabled={restTimer >= 180} // Limite à 3 minutes maximum
       >
         +
       </Button>

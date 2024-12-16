@@ -31,6 +31,7 @@ export const useSetManagement = ({
 
       if (sessionError) throw sessionError;
       
+      // Utilise la valeur par défaut de la base de données pour rest_time_seconds
       const { error } = await supabase
         .from('exercise_sets')
         .insert({
@@ -38,7 +39,6 @@ export const useSetManagement = ({
           exercise_name: exerciseName,
           set_number: newSetsCount,
           reps: initialReps,
-          rest_time_seconds: 90,
           completed_at: null
         });
 
