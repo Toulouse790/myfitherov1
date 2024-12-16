@@ -5,7 +5,7 @@ import { SuggestionCard } from "@/components/Dashboard/DashboardCard/SuggestionC
 
 const suggestions = [
   {
-    to: "/workout/generate",
+    to: "/workouts/generate",
     icon: Brain,
     title: "Créer ma séance",
     description: "Construisez votre séance personnalisée en choisissant parmi notre bibliothèque d'exercices",
