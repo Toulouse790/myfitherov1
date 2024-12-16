@@ -6,7 +6,6 @@ import { SetButton } from "./SetButton";
 import { WeightInput } from "./ExerciseCard/WeightInput";
 import { RepsInput } from "./ExerciseCard/RepsInput";
 import { DifficultySelect } from "./ExerciseCard/DifficultySelect";
-import { NotesInput } from "./ExerciseCard/NotesInput";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -32,18 +31,16 @@ export const ExerciseCard = ({
   isTransitioning = false
 }: ExerciseCardProps) => {
   const [difficulty, setDifficulty] = useState("moderate");
-  const [notes, setNotes] = useState("");
 
   const handleRestTimeChange = (adjustment: number) => {
     if (adjustment !== 0) {
-      onSetComplete(difficulty, notes);
+      onSetComplete(difficulty, "");
     }
   };
 
   const handleSetComplete = () => {
-    onSetComplete(difficulty, notes);
+    onSetComplete(difficulty, "");
     setDifficulty("moderate");
-    setNotes("");
   };
 
   return (
@@ -65,11 +62,6 @@ export const ExerciseCard = ({
             <DifficultySelect 
               difficulty={difficulty} 
               onDifficultyChange={setDifficulty} 
-            />
-
-            <NotesInput 
-              notes={notes} 
-              onNotesChange={setNotes} 
             />
 
             <RestTimer 
