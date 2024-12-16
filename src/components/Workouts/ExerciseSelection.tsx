@@ -1,72 +1,77 @@
-import { useExerciseSelection } from "@/hooks/use-exercise-selection";
-import { ExerciseCard } from "./components/ExerciseCard";
-import { useNavigate } from "react-router-dom";
-import { muscleGroups } from "./workoutConstants";
+import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
-export interface ExerciseSelectionProps {
+interface Exercise {
+  id: string;
+  name: string;
+  muscle_group: string;
+}
+
+interface ExerciseSelectionProps {
   selectedExercises: string[];
   onSelectionChange: (selectedIds: string[]) => void;
   onClose: () => void;
   muscleGroup?: string;
-  searchQuery?: string;
 }
 
 export const ExerciseSelection = ({
   selectedExercises,
   onSelectionChange,
   onClose,
-  muscleGroup,
-  searchQuery = ""
+  muscleGroup
 }: ExerciseSelectionProps) => {
-  const { exercises, isLoading } = useExerciseSelection(muscleGroup);
-  const navigate = useNavigate();
-  
-  console.log("Current selected exercises:", selectedExercises);
-  console.log("Current muscle group:", muscleGroup);
-  console.log("Available exercises:", exercises);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Trouver l'ID du groupe musculaire à partir du nom français
-  const getMuscleGroupId = (frenchName: string): string => {
-    const group = muscleGroups.find(g => g.name.toLowerCase() === frenchName.toLowerCase());
-    console.log("Looking for muscle group:", frenchName, "Found:", group);
-    return group?.id || "";
-  };
+  useEffect(() => {
+    const fetchExercises = async () => {
+      try {
+        setIsLoading(true);
+        console.log("Fetching exercises for muscle group:", muscleGroup);
 
-  const muscleGroupId = muscleGroup ? getMuscleGroupId(muscleGroup) : "";
-  console.log("Muscle group ID:", muscleGroupId);
+        let query = supabase
+          .from('unified_exercises')
+          .select('*')
+          .eq('is_published', true);
 
-  const filteredExercises = exercises?.filter(exercise => {
-    const nameMatch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const muscleGroupMatch = !muscleGroup || 
-      exercise.muscle_group.toLowerCase() === muscleGroupId.toLowerCase();
-    
-    console.log(`Exercise ${exercise.name} muscle group match:`, {
-      exerciseGroup: exercise.muscle_group.toLowerCase(),
-      searchedGroup: muscleGroupId.toLowerCase(),
-      matches: exercise.muscle_group.toLowerCase() === muscleGroupId.toLowerCase()
-    });
-    
-    return nameMatch && muscleGroupMatch;
-  });
+        if (muscleGroup) {
+          query = query.eq('muscle_group', muscleGroup.toLowerCase());
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+          throw error;
+        }
+
+        console.log("Fetched exercises:", data);
+        setExercises(data || []);
+      } catch (error) {
+        console.error('Error fetching exercises:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les exercices",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExercises();
+  }, [muscleGroup, toast]);
 
   const handleExerciseToggle = (exerciseName: string) => {
-    console.log("Toggling exercise:", exerciseName);
     const newSelection = selectedExercises.includes(exerciseName)
       ? selectedExercises.filter(name => name !== exerciseName)
       : [...selectedExercises, exerciseName];
     
-    console.log("New selection:", newSelection);
     onSelectionChange(newSelection);
-  };
-
-  const handleBackToLibrary = () => {
-    if (muscleGroup) {
-      navigate(`/workouts/library?group=${muscleGroup}`);
-    } else {
-      navigate('/workouts/library');
-    }
   };
 
   if (isLoading) {
@@ -77,57 +82,41 @@ export const ExerciseSelection = ({
     );
   }
 
-  if (!filteredExercises || filteredExercises.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center p-8 space-y-4">
-        <p className="text-center text-muted-foreground">
-          Aucun exercice ne correspond à votre recherche.
-        </p>
-        <Button onClick={handleBackToLibrary}>
-          Retour aux groupes musculaires
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-lg font-semibold">
-            Sélectionnez vos exercices ({filteredExercises.length})
-          </h2>
-          {selectedExercises.length > 0 && (
-            <p className="text-sm text-muted-foreground">
-              {selectedExercises.length} exercice(s) sélectionné(s)
-            </p>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleBackToLibrary}>
-            Retour aux groupes musculaires
-          </Button>
-          {selectedExercises.length > 0 && (
-            <Button onClick={onClose}>
-              Valider la sélection
-            </Button>
-          )}
-        </div>
+        <h2 className="text-lg font-semibold">
+          Exercices disponibles ({exercises.length})
+        </h2>
+        <Button onClick={onClose}>Fermer</Button>
       </div>
-      
+
       <div className="grid gap-4 sm:grid-cols-2">
-        {filteredExercises.map((exercise) => (
+        {exercises.map((exercise) => (
           <motion.div
             key={exercise.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <ExerciseCard
-              exercise={exercise}
-              isSelected={selectedExercises.includes(exercise.name)}
-              onToggle={() => handleExerciseToggle(exercise.name)}
-            />
+            <Card
+              className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+                selectedExercises.includes(exercise.name) ? 'ring-2 ring-primary' : ''
+              }`}
+              onClick={() => handleExerciseToggle(exercise.name)}
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-medium">{exercise.name}</h3>
+                  <p className="text-sm text-muted-foreground capitalize">
+                    {exercise.muscle_group}
+                  </p>
+                </div>
+                {selectedExercises.includes(exercise.name) && (
+                  <div className="text-primary">✓</div>
+                )}
+              </div>
+            </Card>
           </motion.div>
         ))}
       </div>
