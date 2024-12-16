@@ -5,7 +5,6 @@ interface MuscleGroupCardProps {
   id: string;
   name: string;
   isSelected: boolean;
-  exerciseCount: number;
   onClick: () => void;
 }
 
@@ -17,19 +16,22 @@ export const MuscleGroupCard = ({
 }: MuscleGroupCardProps) => {
   return (
     <Card 
-      className={`cursor-pointer transition-colors hover:bg-accent ${
+      className={`cursor-pointer transition-all hover:bg-accent ${
         isSelected ? "ring-2 ring-primary" : ""
       }`}
       onClick={onClick}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-6">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Dumbbell className="h-5 w-5 text-primary" />
+          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Dumbbell className="h-6 w-6 text-primary" />
           </div>
-          <p className="font-medium">
-            {name}
-          </p>
+          <div>
+            <h3 className="font-semibold text-lg">{name}</h3>
+            <p className="text-sm text-muted-foreground">
+              Sélectionner pour voir les exercices
+            </p>
+          </div>
         </div>
       </CardContent>
     </Card>

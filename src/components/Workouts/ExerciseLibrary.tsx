@@ -6,6 +6,7 @@ import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
+import { SelectedExercisesManager } from "./components/SelectedExercisesManager";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
@@ -20,15 +21,18 @@ export const ExerciseLibrary = () => {
     
     toast({
       title: "Groupe musculaire ajouté",
-      description: "Veux-tu entraîner un autre groupe musculaire ?",
+      description: "Voulez-vous entraîner un autre groupe musculaire ?",
       action: (
         <div className="flex gap-2">
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => setShowSelection(false)}
+            onClick={() => {
+              setShowSelection(false);
+              handleStartWorkout();
+            }}
           >
-            Non
+            Non, commencer
           </Button>
           <Button 
             size="sm"
@@ -61,7 +65,8 @@ export const ExerciseLibrary = () => {
           { 
             exercises: selectedExercises,
             type: 'strength',
-            status: 'in_progress'
+            status: 'in_progress',
+            target_duration_minutes: 45
           }
         ])
         .select()
@@ -97,20 +102,27 @@ export const ExerciseLibrary = () => {
         {selectedExercises.length > 0 && (
           <div className="flex justify-end mb-6">
             <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
-              C'est parti ! ({selectedExercises.length})
+              C'est parti ! ({selectedExercises.length} exercices)
             </Button>
           </div>
         )}
 
         {showSelection ? (
-          <ExerciseSelection
+          <SelectedExercisesManager
+            showSelection={showSelection}
+            setShowSelection={setShowSelection}
             selectedExercises={selectedExercises}
-            onSelectionChange={handleExerciseSelection}
+            selectedMuscleGroup={selectedMuscleGroup}
+            onExerciseSelectionChange={handleExerciseSelection}
             onClose={() => setShowSelection(false)}
-            muscleGroup={selectedMuscleGroup}
           />
         ) : (
-          <MuscleGroupGrid onSelect={handleMuscleGroupSelect} />
+          <div className="space-y-6">
+            <h1 className="text-2xl font-bold text-center">
+              Sélectionnez les groupes musculaires à travailler
+            </h1>
+            <MuscleGroupGrid onSelect={handleMuscleGroupSelect} />
+          </div>
         )}
       </div>
     </div>
