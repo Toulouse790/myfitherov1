@@ -15,10 +15,6 @@ import Nutrition from "@/pages/Nutrition";
 import TrainingPreferences from "@/pages/TrainingPreferences";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
-import { WorkoutTypeSelection } from "@/components/Workouts/WorkoutTypeSelection";
-import { WorkoutSetup } from "@/components/Workouts/WorkoutSetup";
-import { WorkoutCustomization } from "@/components/Workouts/WorkoutCustomization";
-import { WorkoutSummary } from "@/components/Workouts/WorkoutSummary";
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +46,7 @@ export const router = createBrowserRouter([
         element: <Cardio />,
         errorElement: <ErrorBoundary />
       },
+      // Standardisation des chemins workout
       {
         path: "/workouts",
         element: <Workouts />,
@@ -61,32 +58,12 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />
       },
       {
-        path: "/workouts/create",
-        element: <WorkoutTypeSelection />,
-        errorElement: <ErrorBoundary />
-      },
-      {
-        path: "/workouts/setup",
-        element: <WorkoutSetup />,
-        errorElement: <ErrorBoundary />
-      },
-      {
-        path: "/workouts/customize",
-        element: <WorkoutCustomization />,
-        errorElement: <ErrorBoundary />
-      },
-      {
-        path: "/workouts/summary",
-        element: <WorkoutSummary />,
-        errorElement: <ErrorBoundary />
-      },
-      {
-        path: "/workout/generate",
+        path: "/workouts/generate",
         element: <WorkoutGenerate />,
         errorElement: <ErrorBoundary />
       },
       {
-        path: "/workout/:sessionId",
+        path: "/workouts/:sessionId",
         element: <NextWorkoutDetail />,
         errorElement: <ErrorBoundary />
       },

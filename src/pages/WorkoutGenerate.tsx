@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Header } from "@/components/Layout/Header";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Header } from "@/components/Layout/Header";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
@@ -68,7 +68,7 @@ export default function WorkoutGenerate() {
       if (error) throw error;
 
       if (session) {
-        navigate(`/workout/${session.id}`);
+        navigate(`/workouts/${session.id}`);
       }
     } catch (error) {
       console.error('Error creating workout:', error);
