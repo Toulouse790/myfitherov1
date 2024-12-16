@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { MuscleGroupFilter } from "./components/MuscleGroupFilter";
 import { ExerciseGrid } from "./components/ExerciseGrid";
@@ -29,20 +29,13 @@ export const ExerciseSelection = ({
     onSelectionChange(newSelection);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
-      <DialogContent className="sm:max-w-[600px]" aria-describedby="exercise-selection-description">
-        <div id="exercise-selection-description" className="sr-only">
-          Sélectionnez les exercices pour votre entraînement
-        </div>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogDescription className="sr-only">
+          Sélectionnez les exercices pour votre entraînement. Vous pouvez choisir plusieurs exercices à ajouter à votre programme.
+        </DialogDescription>
+        
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">
             Exercices disponibles ({exercises.length})
