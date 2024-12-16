@@ -24,7 +24,7 @@ export const MediaManager = () => {
       console.log('Translated to English:', englishGroup);
 
       const { data, error } = await supabase
-        .from('exercises')
+        .from('unified_exercises')
         .select(`
           *,
           exercise_media (
@@ -33,6 +33,7 @@ export const MediaManager = () => {
           )
         `)
         .eq('muscle_group', englishGroup.toLowerCase())
+        .eq('est_publié', true)  // Changed from is_published to est_publié
         .order('name', { ascending: true });
 
       if (error) {
@@ -58,7 +59,8 @@ export const MediaManager = () => {
           sets: { beginner: 0, intermediate: 0, advanced: 0 },
           reps: { beginner: 0, intermediate: 0, advanced: 0 },
           restTime: { beginner: 0, intermediate: 0, advanced: 0 },
-          calories: 0
+          calories: 0,
+          est_publié: dbExercise.est_publié
         };
         return exercise;
       }) || [];
