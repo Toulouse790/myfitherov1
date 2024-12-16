@@ -38,7 +38,8 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
             type: 'strength',
             status: 'in_progress',
             exercises: plan.exercises.map(ex => ex.name),
-            target_duration_minutes: 45
+            target_duration_minutes: 45,
+            workout_type: 'strength'
           }
         ])
         .select()
