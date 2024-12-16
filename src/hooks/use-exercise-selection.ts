@@ -19,8 +19,10 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           .eq('est_publié', true);
 
         if (muscleGroup) {
-          console.log("Recherche des exercices pour le groupe:", muscleGroup);
-          query = query.eq('muscle_group', muscleGroup.toLowerCase());
+          // Convertir le nom du groupe musculaire en minuscules pour la comparaison
+          const normalizedMuscleGroup = muscleGroup.toLowerCase();
+          console.log("Recherche des exercices pour le groupe normalisé:", normalizedMuscleGroup);
+          query = query.ilike('muscle_group', normalizedMuscleGroup);
         }
 
         const { data, error } = await query;
