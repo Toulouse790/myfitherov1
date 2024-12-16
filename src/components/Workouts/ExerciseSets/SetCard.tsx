@@ -113,9 +113,9 @@ export const SetCard = ({
       isCurrentSet ? 'ring-2 ring-primary' : ''
     }`}>
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-wrap justify-between items-center gap-2">
           <span className="font-medium">Série {setId}</span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {personalRecord && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <Trophy className="w-3 h-3" />
@@ -131,7 +131,7 @@ export const SetCard = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-sm text-muted-foreground">Poids (kg)</label>
             <div className="flex items-center gap-2">
@@ -140,6 +140,7 @@ export const SetCard = ({
                 size="icon"
                 onClick={() => onWeightChange(setId, false)}
                 disabled={completed}
+                className="h-8 w-8"
               >
                 <ChevronDown className="h-4 w-4" />
               </Button>
@@ -149,6 +150,7 @@ export const SetCard = ({
                 size="icon"
                 onClick={() => onWeightChange(setId, true)}
                 disabled={completed}
+                className="h-8 w-8"
               >
                 <ChevronUp className="h-4 w-4" />
               </Button>
@@ -163,6 +165,7 @@ export const SetCard = ({
                 size="icon"
                 onClick={() => onRepsChange(setId, false)}
                 disabled={completed}
+                className="h-8 w-8"
               >
                 <ChevronDown className="h-4 w-4" />
               </Button>
@@ -172,6 +175,7 @@ export const SetCard = ({
                 size="icon"
                 onClick={() => onRepsChange(setId, true)}
                 disabled={completed}
+                className="h-8 w-8"
               >
                 <ChevronUp className="h-4 w-4" />
               </Button>
