@@ -78,47 +78,18 @@ export const ExerciseAnimation = ({
     }
   };
 
-  const handleAddNewSet = async () => {
-    console.log("Tentative d'ajout d'une nouvelle série", {
-      currentSets: sets,
-      exerciseName,
-      sessionId
-    });
-
-    try {
-      await handleAddSet();
-      setSets(prev => {
-        const newSets = prev + 1;
-        console.log("Nouveau nombre de séries:", newSets);
-        onSetsChange(newSets);
-        return newSets;
-      });
-      
-      toast({
-        title: "Série ajoutée",
-        description: `Une nouvelle série a été ajoutée à ${exerciseName}`,
-      });
-    } catch (error) {
-      console.error("Erreur lors de l'ajout d'une série:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter une nouvelle série",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
+      className="w-full"
     >
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <div className="space-y-6">
           <ExerciseHeader 
             exerciseName={exerciseName}
-            onAddSet={handleAddNewSet}
+            onAddSet={handleAddSet}
           />
           
           <div className="text-center mb-4">
@@ -127,7 +98,7 @@ export const ExerciseAnimation = ({
             </span>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid gap-4 sm:gap-6">
             {Array.from({ length: sets }).map((_, index) => (
               <SetCard
                 key={index}
