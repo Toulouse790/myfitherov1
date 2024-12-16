@@ -15,35 +15,6 @@ export const ExerciseLibrary = () => {
 
   const handleExerciseSelection = async (exerciseIds: string[]) => {
     setSelectedExercises((prev) => [...prev, ...exerciseIds]);
-    setShowSelection(false);
-    
-    toast({
-      title: "Groupe musculaire ajouté",
-      description: "Voulez-vous entraîner un autre groupe musculaire ?",
-      action: (
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => {
-              setShowSelection(false);
-              handleStartWorkout();
-            }}
-          >
-            Non, commencer
-          </Button>
-          <Button 
-            size="sm"
-            onClick={() => {
-              setSelectedMuscleGroup("");
-              setShowSelection(true);
-            }}
-          >
-            Oui
-          </Button>
-        </div>
-      ),
-    });
   };
 
   const handleStartWorkout = async () => {
@@ -93,6 +64,39 @@ export const ExerciseLibrary = () => {
     setShowSelection(true);
   };
 
+  const handleCloseSelection = () => {
+    setShowSelection(false);
+    if (selectedExercises.length > 0) {
+      toast({
+        title: "Exercices ajoutés",
+        description: "Voulez-vous entraîner un autre groupe musculaire ?",
+        action: (
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                setShowSelection(false);
+                handleStartWorkout();
+              }}
+            >
+              Non, commencer
+            </Button>
+            <Button 
+              size="sm"
+              onClick={() => {
+                setSelectedMuscleGroup("");
+                setShowSelection(true);
+              }}
+            >
+              Oui
+            </Button>
+          </div>
+        ),
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -108,7 +112,7 @@ export const ExerciseLibrary = () => {
           <ExerciseSelection
             selectedExercises={selectedExercises}
             onSelectionChange={handleExerciseSelection}
-            onClose={() => setShowSelection(false)}
+            onClose={handleCloseSelection}
             muscleGroup={selectedMuscleGroup}
           />
         ) : (
