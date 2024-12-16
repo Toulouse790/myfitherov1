@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ExerciseSelection } from "@/components/Workouts/ExerciseSelection";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
-import { SelectedExercisesManager } from "./components/SelectedExercisesManager";
+import { ExerciseSelection } from "./ExerciseSelection";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
@@ -106,13 +105,11 @@ export const ExerciseLibrary = () => {
         )}
 
         {showSelection ? (
-          <SelectedExercisesManager
-            showSelection={showSelection}
-            setShowSelection={setShowSelection}
+          <ExerciseSelection
             selectedExercises={selectedExercises}
-            selectedMuscleGroup={selectedMuscleGroup}
-            onExerciseSelectionChange={handleExerciseSelection}
+            onSelectionChange={handleExerciseSelection}
             onClose={() => setShowSelection(false)}
+            muscleGroup={selectedMuscleGroup}
           />
         ) : (
           <div className="space-y-6">
