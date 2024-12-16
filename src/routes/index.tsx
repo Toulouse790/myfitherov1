@@ -8,6 +8,7 @@ import { Workouts } from "@/pages/Workouts";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { MediaManager } from "@/components/Admin/MediaManager";
 
 export const router = createBrowserRouter([
   {
@@ -61,4 +62,13 @@ export const router = createBrowserRouter([
     ),
     errorElement: <ErrorBoundary />
   },
+  {
+    path: "/admin",
+    element: (
+      <ProtectedRoute>
+        <MediaManager />
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorBoundary />
+  }
 ]);
