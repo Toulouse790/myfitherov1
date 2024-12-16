@@ -24,7 +24,7 @@ export default function Cardio() {
   const { toast } = useToast();
   const [selectedExercise, setSelectedExercise] = useState<CardioExercise | null>(null);
 
-  const { data: exercises, isLoading } = useQuery({
+  const { data: exercises, isLoading, error } = useQuery({
     queryKey: ['cardio-exercises'],
     queryFn: async () => {
       console.log('Fetching cardio exercises...');
@@ -44,7 +44,10 @@ export default function Cardio() {
   });
 
   const handleStartExercise = async () => {
+    console.log('Starting exercise with:', { selectedExercise, user });
+    
     if (!selectedExercise) {
+      console.log('No exercise selected');
       toast({
         title: "Sélection requise",
         description: "Veuillez sélectionner un exercice avant de commencer",
@@ -54,6 +57,7 @@ export default function Cardio() {
     }
 
     if (!user) {
+      console.log('No user logged in');
       toast({
         title: "Connexion requise",
         description: "Veuillez vous connecter pour créer une séance",
@@ -78,7 +82,10 @@ export default function Cardio() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating workout session:', error);
+        throw error;
+      }
 
       console.log('Created workout session:', session);
       if (session) {
@@ -111,6 +118,10 @@ export default function Cardio() {
     );
   }
 
+  if (error) {
+    console.error('Error in Cardio component:', error);
+  }
+
   return (
     <Header>
       <div className="container mx-auto px-4 py-8 space-y-6">
@@ -140,7 +151,10 @@ export default function Cardio() {
                 className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
                   selectedExercise?.id === exercise.id ? 'ring-2 ring-primary' : ''
                 }`}
-                onClick={() => setSelectedExercise(exercise)}
+                onClick={() => {
+                  console.log('Selected exercise:', exercise);
+                  setSelectedExercise(exercise);
+                }}
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
