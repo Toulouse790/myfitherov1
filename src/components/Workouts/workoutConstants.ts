@@ -1,11 +1,11 @@
 export const muscleGroups = [
-  { id: 'pectoraux', name: 'Pectoraux' },
-  { id: 'dos', name: 'Dos' },
-  { id: 'jambes', name: 'Jambes' },
-  { id: 'épaules', name: 'Épaules' },
-  { id: 'biceps', name: 'Biceps' },
-  { id: 'triceps', name: 'Triceps' },
-  { id: 'abdominaux', name: 'Abdominaux' }
+  { id: 'pectoraux', name: 'Pectoraux', color: 'bg-red-500' },
+  { id: 'dos', name: 'Dos', color: 'bg-blue-500' },
+  { id: 'jambes', name: 'Jambes', color: 'bg-green-500' },
+  { id: 'épaules', name: 'Épaules', color: 'bg-yellow-500' },
+  { id: 'biceps', name: 'Biceps', color: 'bg-purple-500' },
+  { id: 'triceps', name: 'Triceps', color: 'bg-pink-500' },
+  { id: 'abdominaux', name: 'Abdominaux', color: 'bg-orange-500' }
 ];
 
 export const difficultyLevels = [
@@ -27,3 +27,11 @@ export interface WorkoutFormData {
   duration: string;
   exercises: string;
 }
+
+export const initialFormData: WorkoutFormData = {
+  title: "",
+  muscleGroups: [],
+  difficulty: "",
+  duration: "",
+  exercises: ""
+};

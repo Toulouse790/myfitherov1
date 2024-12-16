@@ -1,5 +1,5 @@
-import { DifficultyBadges } from "../DifficultyBadges";
-import { LocationBadges } from "../LocationBadges";
+import { DifficultyBadges } from "./DifficultyBadges";
+import { LocationBadges } from "./LocationBadges";
 
 interface ExerciseBadgesProps {
   selectedDifficulties: string[];
@@ -17,12 +17,12 @@ export const ExerciseBadges = ({
   return (
     <div className="space-y-2">
       <DifficultyBadges 
-        difficulties={["débutant", "intermédiaire", "avancé"]}
+        difficulties={["beginner", "intermediate", "advanced"]}
         selectedDifficulties={selectedDifficulties}
         onDifficultyChange={onDifficultyChange}
       />
       <LocationBadges 
-        locations={["maison", "salle", "extérieur"]}
+        locations={["home", "gym", "outdoor"]}
         selectedLocations={selectedLocations}
         onLocationChange={onLocationChange}
       />
