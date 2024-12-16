@@ -1316,48 +1316,146 @@ export type Database = {
           },
         ]
       }
-      workout_sessions: {
+      workout_feedback: {
+        Row: {
+          comments: string | null
+          created_at: string | null
+          difficulty_rating: number | null
+          fatigue_level: number | null
+          id: string
+          satisfaction_rating: number | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string | null
+          difficulty_rating?: number | null
+          fatigue_level?: number | null
+          id?: string
+          satisfaction_rating?: number | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string | null
+          difficulty_rating?: number | null
+          fatigue_level?: number | null
+          id?: string
+          satisfaction_rating?: number | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_feedback_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_preferences: {
         Row: {
           created_at: string | null
-          exercises: string[] | null
           id: string
-          initial_energy_level: string | null
-          is_adapted: boolean | null
-          started_at: string | null
-          status: string | null
-          total_duration_minutes: number | null
-          total_rest_time_seconds: number | null
-          type: string | null
+          preferred_duration: number | null
+          preferred_equipment: string[] | null
+          preferred_workout_type: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
-          exercises?: string[] | null
           id?: string
-          initial_energy_level?: string | null
-          is_adapted?: boolean | null
-          started_at?: string | null
-          status?: string | null
-          total_duration_minutes?: number | null
-          total_rest_time_seconds?: number | null
-          type?: string | null
+          preferred_duration?: number | null
+          preferred_equipment?: string[] | null
+          preferred_workout_type?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
+          id?: string
+          preferred_duration?: number | null
+          preferred_equipment?: string[] | null
+          preferred_workout_type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_sessions: {
+        Row: {
+          created_at: string | null
+          equipment_used: string[] | null
+          exercises: string[] | null
+          id: string
+          initial_energy_level: string | null
+          is_adapted: boolean | null
+          planned_start_time: string | null
+          started_at: string | null
+          status: string | null
+          target_duration_minutes: number | null
+          total_duration_minutes: number | null
+          total_rest_time_seconds: number | null
+          type: string | null
+          updated_at: string | null
+          user_id: string | null
+          workout_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          equipment_used?: string[] | null
           exercises?: string[] | null
           id?: string
           initial_energy_level?: string | null
           is_adapted?: boolean | null
+          planned_start_time?: string | null
           started_at?: string | null
           status?: string | null
+          target_duration_minutes?: number | null
           total_duration_minutes?: number | null
           total_rest_time_seconds?: number | null
           type?: string | null
           updated_at?: string | null
           user_id?: string | null
+          workout_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          equipment_used?: string[] | null
+          exercises?: string[] | null
+          id?: string
+          initial_energy_level?: string | null
+          is_adapted?: boolean | null
+          planned_start_time?: string | null
+          started_at?: string | null
+          status?: string | null
+          target_duration_minutes?: number | null
+          total_duration_minutes?: number | null
+          total_rest_time_seconds?: number | null
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          workout_type?: string | null
         }
         Relationships: [
           {

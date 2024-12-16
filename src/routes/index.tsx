@@ -15,6 +15,10 @@ import Nutrition from "@/pages/Nutrition";
 import TrainingPreferences from "@/pages/TrainingPreferences";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
+import { WorkoutTypeSelection } from "@/components/Workouts/WorkoutTypeSelection";
+import { WorkoutSetup } from "@/components/Workouts/WorkoutSetup";
+import { WorkoutCustomization } from "@/components/Workouts/WorkoutCustomization";
+import { WorkoutSummary } from "@/components/Workouts/WorkoutSummary";
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +58,26 @@ export const router = createBrowserRouter([
       {
         path: "/workouts/library",
         element: <ExerciseLibrary />,
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/workouts/create",
+        element: <WorkoutTypeSelection />,
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/workouts/setup",
+        element: <WorkoutSetup />,
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/workouts/customize",
+        element: <WorkoutCustomization />,
+        errorElement: <ErrorBoundary />
+      },
+      {
+        path: "/workouts/summary",
+        element: <WorkoutSummary />,
         errorElement: <ErrorBoundary />
       },
       {
