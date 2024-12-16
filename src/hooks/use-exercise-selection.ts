@@ -19,9 +19,8 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           .eq('est_publié', true);
 
         if (muscleGroup) {
-          // Utiliser directement l'ID du groupe musculaire
           console.log("Recherche des exercices pour le groupe:", muscleGroup);
-          query = query.eq('muscle_group', muscleGroup);
+          query = query.eq('muscle_group', muscleGroup.toLowerCase());
         }
 
         const { data, error } = await query;
