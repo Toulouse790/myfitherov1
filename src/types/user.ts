@@ -15,7 +15,7 @@ export interface UserProfile {
 }
 
 export interface UserGoals {
-  primary: "weight_loss" | "muscle_gain" | "maintenance" | "general_fitness";
+  primary: "perte_de_poids" | "prise_de_masse" | "maintenance" | "performance" | "seche_extreme";
   targetWeight?: number;
   weeklyWorkouts: number;
   dailyCalories: number;
