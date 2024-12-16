@@ -4,6 +4,19 @@ import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { ExerciseCard } from "./components/ExerciseCard";
 import { useNavigate } from "react-router-dom";
 
+const translateMuscleGroup = (group: string): string => {
+  const translations: { [key: string]: string } = {
+    "pectoraux": "chest",
+    "dos": "back",
+    "jambes": "legs",
+    "épaules": "shoulders",
+    "biceps": "biceps",
+    "triceps": "triceps",
+    "abdominaux": "abs"
+  };
+  return translations[group.toLowerCase()] || group.toLowerCase();
+};
+
 export interface ExerciseSelectionProps {
   selectedExercises: string[];
   onSelectionChange: (selectedIds: string[]) => void;
@@ -25,10 +38,20 @@ export const ExerciseSelection = ({
   console.log("Current muscle group:", muscleGroup);
   console.log("Available exercises:", exercises);
 
+  const translatedMuscleGroup = muscleGroup ? translateMuscleGroup(muscleGroup) : "";
+  console.log("Translated muscle group:", translatedMuscleGroup);
+
   const filteredExercises = exercises?.filter(exercise => {
     const nameMatch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
     const muscleGroupMatch = !muscleGroup || 
-      exercise.muscle_group.toLowerCase() === muscleGroup.toLowerCase();
+      exercise.muscle_group.toLowerCase() === translatedMuscleGroup;
+    
+    console.log(`Exercise ${exercise.name} muscle group match:`, {
+      exerciseGroup: exercise.muscle_group.toLowerCase(),
+      translatedGroup: translatedMuscleGroup,
+      matches: exercise.muscle_group.toLowerCase() === translatedMuscleGroup
+    });
+    
     return nameMatch && muscleGroupMatch;
   });
 
