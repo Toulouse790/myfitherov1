@@ -39,7 +39,6 @@ export const SignInForm = () => {
         console.error({
           message: error.message,
           code: error.status,
-          details: error.details,
           name: error.name,
           timestamp: new Date().toISOString()
         });
@@ -130,7 +129,6 @@ export const SignInForm = () => {
       console.error({
         message: error.message,
         code: error.code,
-        details: error.details,
         stack: error.stack,
         timestamp: new Date().toISOString()
       });
