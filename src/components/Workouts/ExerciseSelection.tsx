@@ -12,19 +12,6 @@ interface ExerciseSelectionProps {
   muscleGroup?: string;
 }
 
-const translateMuscleGroup = (group: string): string => {
-  const translations: { [key: string]: string } = {
-    'pectoraux': 'chest',
-    'dos': 'back',
-    'jambes': 'legs',
-    'épaules': 'shoulders',
-    'biceps': 'biceps',
-    'triceps': 'triceps',
-    'abdominaux': 'abs'
-  };
-  return translations[group.toLowerCase()] || group.toLowerCase();
-};
-
 export const ExerciseSelection = ({
   selectedExercises,
   onSelectionChange,
@@ -39,7 +26,7 @@ export const ExerciseSelection = ({
     const fetchExercises = async () => {
       try {
         setIsLoading(true);
-        console.log("Fetching exercises for muscle group:", muscleGroup);
+        console.log("Chargement des exercices pour le groupe musculaire:", muscleGroup);
 
         let query = supabase
           .from('unified_exercises')
@@ -47,9 +34,7 @@ export const ExerciseSelection = ({
           .eq('is_published', true);
 
         if (muscleGroup) {
-          const translatedGroup = translateMuscleGroup(muscleGroup);
-          console.log("Translated muscle group:", translatedGroup);
-          query = query.eq('muscle_group', translatedGroup);
+          query = query.eq('muscle_group', muscleGroup.toLowerCase());
         }
 
         const { data, error } = await query;
@@ -58,10 +43,10 @@ export const ExerciseSelection = ({
           throw error;
         }
 
-        console.log("Fetched exercises:", data);
+        console.log("Exercices chargés:", data);
         setExercises(data || []);
       } catch (error) {
-        console.error('Error fetching exercises:', error);
+        console.error('Erreur lors du chargement des exercices:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les exercices",
