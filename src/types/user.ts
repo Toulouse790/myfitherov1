@@ -1,3 +1,5 @@
+import { MainObjective } from './objectives';
+
 export interface UserProfile {
   id: string;
   username: string;
@@ -7,7 +9,7 @@ export interface UserProfile {
   gender?: 'male' | 'female' | 'other';
   height?: number;
   weight?: number;
-  mainObjective?: 'perte_de_poids' | 'prise_de_masse' | 'maintenance' | 'performance' | 'seche_extreme';
+  mainObjective?: MainObjective;
   goals: UserGoals;
   preferences: UserPreferences;
   stats: UserStats;
@@ -16,7 +18,7 @@ export interface UserProfile {
 }
 
 export interface UserGoals {
-  primary: "perte_de_poids" | "prise_de_masse" | "maintenance" | "performance" | "seche_extreme";
+  primary: MainObjective;
   targetWeight?: number;
   weeklyWorkouts: number;
   dailyCalories: number;

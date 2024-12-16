@@ -46,7 +46,7 @@ export const UserProfile = () => {
         height: data.height_cm,
         weight: data.weight_kg,
         goals: {
-          primary: "general_fitness",
+          primary: "maintenance", // Changed from "general_fitness" to "maintenance"
           weeklyWorkouts: 4,
           dailyCalories: 2500,
           sleepHours: 8
