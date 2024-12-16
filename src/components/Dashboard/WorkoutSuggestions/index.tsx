@@ -109,10 +109,6 @@ export const WorkoutSuggestions = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Suggestions</h2>
-      </div>
-
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <Button 
           onClick={handleCreateSession}
@@ -132,11 +128,14 @@ export const WorkoutSuggestions = () => {
           Laisse-moi faire
         </Button>
       </div>
-      
-      <SuggestionsList 
-        suggestions={allSuggestions} 
-        onSuggestionClick={handleSuggestionClick} 
-      />
+
+      <div>
+        <h2 className="text-lg font-semibold mb-4">Suggestions</h2>
+        <SuggestionsList 
+          suggestions={allSuggestions} 
+          onSuggestionClick={handleSuggestionClick} 
+        />
+      </div>
     </div>
   );
 };
