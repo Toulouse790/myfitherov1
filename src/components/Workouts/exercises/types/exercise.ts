@@ -29,7 +29,6 @@ export interface Exercise {
   };
   calories: number;
   est_publié?: boolean;
-  is_published?: boolean;
 }
 
 export const validateExercise = (exercise: Exercise | undefined): exercise is Exercise => {
