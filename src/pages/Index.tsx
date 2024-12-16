@@ -1,51 +1,51 @@
 import { Header } from "@/components/Layout/Header";
-import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
-import { Brain, Activity, BarChart3, Dumbbell } from "lucide-react";
-import { SuggestionCard } from "@/components/Dashboard/DashboardCard/SuggestionCard";
-
-const suggestions = [
-  {
-    to: "/workouts",
-    icon: Brain,
-    title: "Créer ma séance",
-    description: "Construisez votre séance personnalisée en choisissant parmi notre bibliothèque d'exercices",
-    isPrimary: true
-  },
-  {
-    to: "/workouts/generate",
-    icon: Dumbbell,
-    title: "Laisse-moi faire",
-    description: "Générez automatiquement une séance adaptée à votre historique d'entraînement"
-  },
-  {
-    to: "/cardio",
-    icon: Activity,
-    title: "Cardio",
-    description: "Choisissez parmi différents types d'exercices cardio pour votre entraînement"
-  },
-  {
-    to: "/stats",
-    icon: BarChart3,
-    title: "Statistiques",
-    description: "Suivez vos progrès et analysez vos performances d'entraînement"
-  }
-];
+import { Card } from "@/components/ui/card";
+import { Users, DollarSign } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Index() {
+  const { data: userStats } = useQuery({
+    queryKey: ['admin-user-stats'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+      
+      return { totalUsers: count || 0 };
+    }
+  });
+
   return (
     <Header>
-      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-          {suggestions.map((suggestion, index) => (
-            <SuggestionCard
-              key={suggestion.to}
-              {...suggestion}
-            />
-          ))}
-        </div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-6">Tableau de bord administrateur</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-4 bg-blue-100 rounded-full">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Utilisateurs totaux</p>
+                <p className="text-2xl font-bold">{userStats?.totalUsers || 0}</p>
+              </div>
+            </div>
+          </Card>
 
-        <div className="mt-4 sm:mt-6">
-          <WorkoutSuggestions />
+          <Card className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-4 bg-green-100 rounded-full">
+                <DollarSign className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Chiffre d'affaires</p>
+                <p className="text-2xl font-bold">0 €</p>
+                <p className="text-xs text-gray-500">Fonctionnalité à venir</p>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </Header>
