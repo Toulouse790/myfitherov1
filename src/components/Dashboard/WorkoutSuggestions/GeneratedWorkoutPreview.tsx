@@ -17,10 +17,12 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
 
   const handleStartWorkout = async () => {
     if (!user) {
-      toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour créer une séance",
-        variant: "destructive",
+      console.log("Utilisateur non authentifié, redirection vers signin");
+      navigate("/signin", { 
+        state: { 
+          from: location.pathname,
+          workoutPlan: plan // Sauvegarder le plan d'entraînement
+        } 
       });
       return;
     }
