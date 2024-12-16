@@ -5,12 +5,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
-interface Exercise {
-  id: string;
-  name: string;
-  muscle_group: string;
-}
-
 interface ExerciseSelectionProps {
   selectedExercises: string[];
   onSelectionChange: (selectedIds: string[]) => void;
@@ -24,7 +18,7 @@ export const ExerciseSelection = ({
   onClose,
   muscleGroup
 }: ExerciseSelectionProps) => {
-  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [exercises, setExercises] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 

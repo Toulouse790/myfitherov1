@@ -6,7 +6,6 @@ interface SelectedExercisesManagerProps {
   setShowSelection: (show: boolean) => void;
   selectedExercises: string[];
   selectedMuscleGroup: string;
-  searchQuery: string;
   onExerciseSelectionChange: (selectedIds: string[]) => void;
   onClose: () => void;
 }
@@ -16,7 +15,6 @@ export const SelectedExercisesManager = ({
   setShowSelection,
   selectedExercises,
   selectedMuscleGroup,
-  searchQuery,
   onExerciseSelectionChange,
   onClose,
 }: SelectedExercisesManagerProps) => {
@@ -39,7 +37,6 @@ export const SelectedExercisesManager = ({
           onSelectionChange={onExerciseSelectionChange}
           onClose={onClose}
           muscleGroup={selectedMuscleGroup}
-          searchQuery={searchQuery}
         />
       </DialogContent>
     </Dialog>
