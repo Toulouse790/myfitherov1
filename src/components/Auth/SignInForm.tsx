@@ -44,7 +44,6 @@ export const SignInForm = () => {
 
       <CardFooter className="flex flex-col space-y-4">
         <SubmitButton isLoading={isLoading} />
-        <NavigationLinks />
       </CardFooter>
     </form>
   );
