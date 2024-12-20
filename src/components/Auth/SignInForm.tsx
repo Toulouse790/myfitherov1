@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useSignIn } from "@/hooks/use-signin";
-import { SignInHeader } from "./SignInHeader";
 import { EmailInput } from "./SignInForm/EmailInput";
 import { PasswordInput } from "./SignInForm/PasswordInput";
 import { RememberMeCheckbox } from "./SignInForm/RememberMeCheckbox";
 import { SubmitButton } from "./SignInForm/SubmitButton";
-import { NavigationLinks } from "./SignInForm/NavigationLinks";
 import { CardContent, CardFooter } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -22,7 +21,20 @@ export const SignInForm = () => {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <CardContent className="space-y-4">
-        <SignInHeader />
+        <div className="space-y-2 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Connexion
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Entrez vos identifiants pour accéder à votre compte
+          </p>
+          <p className="text-sm">
+            Pas encore de compte ?{" "}
+            <Link to="/signup" className="text-primary hover:underline">
+              Créer un compte
+            </Link>
+          </p>
+        </div>
         
         <div className="space-y-4">
           <EmailInput
