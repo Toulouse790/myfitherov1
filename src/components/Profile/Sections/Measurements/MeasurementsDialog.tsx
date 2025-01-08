@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MeasurementForm } from "./MeasurementForm";
 import { MeasurementFormData } from "./types";
 
-export const MeasurementsDialog = () => {
-  const [open, setOpen] = useState(false);
+interface MeasurementsDialogProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export const MeasurementsDialog = ({ isOpen, onOpenChange }: MeasurementsDialogProps) => {
   const [measurements, setMeasurements] = useState<MeasurementFormData>({
     chest_cm: "",
     biceps_left_cm: "",
@@ -55,19 +59,11 @@ export const MeasurementsDialog = () => {
       description: "Vos mesures ont été enregistrées",
     });
 
-    setOpen(false);
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button 
-          variant="outline" 
-          className="w-full mt-4"
-        >
-          Ajouter mes mensurations
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Mes mensurations</DialogTitle>
@@ -79,7 +75,7 @@ export const MeasurementsDialog = () => {
         />
 
         <div className="flex justify-end gap-4 mt-4">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Annuler
           </Button>
           <Button onClick={handleSubmit}>
