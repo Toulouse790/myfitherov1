@@ -1,27 +1,4 @@
-export interface MealQuantity {
-  item: string;
-  amount: string;
-}
-
-export interface GeneratedMeal {
-  name: string;
-  calories: number;
-  proteins: number;
-  carbs?: number;
-  fats?: number;
-  quantities?: MealQuantity[];
-  notes?: string;
-}
-
-export interface MealEntry {
-  id: string;
-  name: string;
-  calories: number;
-  proteins: number;
-  carbs?: number;
-  fats?: number;
-  notes?: string;
-}
+import { MealEntry, GeneratedMeal } from "./types";
 
 export interface MealSectionProps {
   type: string;

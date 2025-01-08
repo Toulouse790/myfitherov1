@@ -18,7 +18,7 @@ export const useDailyTargets = () => {
         .from('user_nutrition_preferences')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       const { data: questionnaire } = await supabase
         .from('questionnaire_responses')
@@ -26,7 +26,7 @@ export const useDailyTargets = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       const { data: measurements } = await supabase
         .from('muscle_measurements')
@@ -34,7 +34,7 @@ export const useDailyTargets = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       // Récupérer le plan du jour
       const today = new Date();
@@ -46,7 +46,7 @@ export const useDailyTargets = () => {
         .gte('end_date', today.toISOString())
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       console.log("Fetched data:", { preferences, questionnaire, measurements, todayPlan });
       return {

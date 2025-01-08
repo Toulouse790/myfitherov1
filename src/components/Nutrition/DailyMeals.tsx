@@ -26,7 +26,7 @@ export const DailyMeals = () => {
         .from('user_nutrition_preferences')
         .select('meal_validation_times, meal_validation_notifications')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (!preferences?.meal_validation_notifications) return;
 
@@ -52,8 +52,8 @@ export const DailyMeals = () => {
       });
     };
 
-    const interval = setInterval(checkMealValidations, 60000); // Check every minute
-    checkMealValidations(); // Initial check
+    const interval = setInterval(checkMealValidations, 60000);
+    checkMealValidations();
 
     return () => clearInterval(interval);
   }, [mealPlan, entriesByMealType, toast]);
