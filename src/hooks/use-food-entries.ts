@@ -18,14 +18,21 @@ export const useFoodEntries = () => {
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
 
-      console.log("Fetching entries for date:", today.toISOString());
+      // Format dates as ISO strings for PostgreSQL
+      const startDate = today.toISOString();
+      const endDate = tomorrow.toISOString();
+
+      console.log("Fetching entries between:", startDate, "and", endDate);
 
       const { data, error } = await supabase
         .from('food_journal_entries')
         .select('*')
         .eq('user_id', user.id)
-        .gte('created_at', today.toISOString())
+        .gte('created_at', startDate)
+        .lt('created_at', endDate)
         .order('created_at', { ascending: true });
 
       if (error) {
