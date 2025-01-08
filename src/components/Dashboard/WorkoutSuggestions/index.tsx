@@ -74,8 +74,20 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
         return;
       }
 
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour créer une séance",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Create a workout session based on the type
       const workoutData = {
+        user_id: user.id,
         type: 'strength',
         status: 'in_progress',
         target_duration_minutes: type === 'quick' ? 30 : 45,
@@ -83,15 +95,21 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
         workout_type: type
       };
 
+      console.log("Creating workout session with data:", workoutData);
+
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([workoutData])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       if (session) {
+        console.log("Workout session created:", session);
         navigate(`/workout/${session.id}`);
       }
     } catch (error) {
