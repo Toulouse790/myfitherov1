@@ -127,11 +127,10 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Suggestions</h2>
         {!showAllSuggestions && (
           <Button 
             variant="ghost" 
-            className="gap-2"
+            className="gap-2 ml-auto"
             onClick={() => navigate('/suggestions')}
           >
             Voir tout
