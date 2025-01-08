@@ -14,6 +14,7 @@ import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import TrainingPreferences from "@/pages/TrainingPreferences";
 import Cardio from "@/pages/Cardio";
+import Suggestions from "@/pages/Suggestions";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,14 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       { index: true, element: <Home /> },
+      {
+        path: "suggestions",
+        element: (
+          <ProtectedRoute>
+            <Suggestions />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "profile",
         element: (

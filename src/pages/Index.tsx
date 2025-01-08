@@ -48,7 +48,7 @@ export default function Index() {
               </Button>
             </div>
 
-            <WorkoutSuggestions />
+            <WorkoutSuggestions showAllSuggestions={false} />
           </div>
           
           <PersonalizedRecommendations />

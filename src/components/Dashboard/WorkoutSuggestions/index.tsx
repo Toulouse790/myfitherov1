@@ -3,8 +3,14 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { SuggestionsList } from "./SuggestionsList";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
-export const WorkoutSuggestions = () => {
+interface WorkoutSuggestionsProps {
+  showAllSuggestions?: boolean;
+}
+
+export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSuggestionsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -83,16 +89,27 @@ export const WorkoutSuggestions = () => {
   };
 
   const allSuggestions = [...defaultSuggestions, ...suggestions];
+  const displayedSuggestions = showAllSuggestions ? allSuggestions : allSuggestions.slice(0, 4);
 
   return (
     <div className="space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold mb-4">Suggestions</h2>
-        <SuggestionsList 
-          suggestions={allSuggestions} 
-          onSuggestionClick={handleSuggestionClick} 
-        />
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Suggestions</h2>
+        {!showAllSuggestions && (
+          <Button 
+            variant="ghost" 
+            className="gap-2"
+            onClick={() => navigate('/suggestions')}
+          >
+            Voir tout
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        )}
       </div>
+      <SuggestionsList 
+        suggestions={displayedSuggestions} 
+        onSuggestionClick={handleSuggestionClick} 
+      />
     </div>
   );
 };
