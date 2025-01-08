@@ -6,12 +6,13 @@ import { RememberMeCheckbox } from "./SignInForm/RememberMeCheckbox";
 import { SubmitButton } from "./SignInForm/SubmitButton";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const { handleSignIn, isLoading } = useSignIn();
+  const { handleSignIn, isLoading, error } = useSignIn();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +37,12 @@ export const SignInForm = () => {
           </p>
         </div>
         
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
         <div className="space-y-4">
           <EmailInput
             email={email}

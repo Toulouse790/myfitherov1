@@ -2,27 +2,32 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { AuthError } from "@supabase/supabase-js";
+import { AuthError, AuthApiError } from "@supabase/supabase-js";
 
 export const useSignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
 
   const getErrorMessage = (error: AuthError) => {
-    switch (error.message) {
-      case "Invalid login credentials":
-        return "Email ou mot de passe incorrect";
-      case "Email not confirmed":
-        return "Veuillez confirmer votre email avant de vous connecter";
-      default:
-        return "Une erreur est survenue lors de la connexion";
+    if (error instanceof AuthApiError) {
+      switch (error.message) {
+        case "Invalid login credentials":
+          return "Email ou mot de passe incorrect";
+        case "Email not confirmed":
+          return "Veuillez confirmer votre email avant de vous connecter";
+        default:
+          return "Une erreur est survenue lors de la connexion";
+      }
     }
+    return error.message;
   };
 
   const handleSignIn = async (email: string, password: string, rememberMe: boolean) => {
     setIsLoading(true);
+    setError(null);
 
     try {
       console.log("=== DÉBUT DE LA TENTATIVE DE CONNEXION ===");
@@ -32,27 +37,22 @@ export const useSignIn = () => {
         location: window.location.href
       });
 
-      const { error, data } = await supabase.auth.signInWithPassword({
+      const { error: signInError, data } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
-      if (error) {
+      if (signInError) {
         console.error("=== ERREUR DE CONNEXION ===");
         console.error({
-          message: error.message,
-          code: error.status,
-          name: error.name,
+          message: signInError.message,
+          code: signInError.status,
+          name: signInError.name,
           timestamp: new Date().toISOString()
         });
         
-        const errorMessage = getErrorMessage(error);
-        toast({
-          title: "Erreur de connexion",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        
+        const errorMessage = getErrorMessage(signInError);
+        setError(errorMessage);
         return;
       }
 
@@ -104,11 +104,7 @@ export const useSignIn = () => {
         timestamp: new Date().toISOString()
       });
       
-      toast({
-        title: "Erreur de connexion",
-        description: "Une erreur inattendue est survenue",
-        variant: "destructive",
-      });
+      setError("Une erreur inattendue est survenue");
     } finally {
       setIsLoading(false);
     }
@@ -158,6 +154,7 @@ export const useSignIn = () => {
 
   return {
     isLoading,
+    error,
     handleSignIn
   };
 };
