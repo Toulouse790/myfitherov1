@@ -5,14 +5,14 @@ import { useQuery } from "@tanstack/react-query";
 import { SuggestionsList } from "./SuggestionsList";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-
-interface WorkoutSuggestionsProps {
-  showAllSuggestions?: boolean;
-}
+import { defaultSuggestions } from "./defaultSuggestions";
+import { useWorkoutSession } from "./useWorkoutSession";
+import type { WorkoutSuggestionsProps } from "./types";
 
 export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSuggestionsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { createWorkoutSession } = useWorkoutSession();
 
   const { data: dbSuggestions = [] } = useQuery({
     queryKey: ['workout-suggestions'],
@@ -38,87 +38,6 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
     }
   });
 
-  const defaultSuggestions = [
-    {
-      id: 1,
-      title: "Séance favorite",
-      description: "Reprendre une séance sauvegardée",
-      icon_name: "Bookmark",
-      type: "favorites"
-    },
-    {
-      id: 2,
-      title: "Séance du jour",
-      description: "Séance adaptée à vos objectifs",
-      icon_name: "Target",
-      type: "daily"
-    },
-    {
-      id: 3,
-      title: "Séance rapide",
-      description: "20-30 minutes d'entraînement",
-      icon_name: "Zap",
-      type: "quick"
-    },
-    {
-      id: 4,
-      title: "Full body",
-      description: "Entraînement complet du corps",
-      icon_name: "Dumbbell",
-      type: "full_body"
-    }
-  ];
-
-  const handleSuggestionClick = async (type: string) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate('/signin');
-        return;
-      }
-
-      if (type === 'favorites') {
-        navigate('/workouts');
-        return;
-      }
-
-      const workoutData = {
-        user_id: session.user.id,
-        type: 'strength',
-        status: 'in_progress',
-        target_duration_minutes: type === 'quick' ? 30 : 45,
-        exercises: [],
-        workout_type: type
-      };
-
-      console.log("Creating workout session with data:", workoutData);
-
-      const { data: workoutSession, error } = await supabase
-        .from('workout_sessions')
-        .insert([workoutData])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-
-      if (workoutSession) {
-        console.log("Workout session created:", workoutSession);
-        navigate(`/workout/${workoutSession.id}`);
-      }
-    } catch (error) {
-      console.error('Error creating workout:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de créer la séance",
-        variant: "destructive",
-      });
-    }
-  };
-
   // Filter out any database suggestions that have the same type as default suggestions
   const filteredDbSuggestions = dbSuggestions.filter(
     dbSuggestion => !defaultSuggestions.some(
@@ -128,12 +47,16 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
 
   // Combine filtered suggestions
   const allSuggestions = [...defaultSuggestions, ...filteredDbSuggestions];
-  const displayedSuggestions = showAllSuggestions ? allSuggestions : allSuggestions.slice(0, 4);
+  
+  // Only show first 4 suggestions on dashboard, show all on suggestions page
+  const displayedSuggestions = showAllSuggestions 
+    ? allSuggestions 
+    : allSuggestions.slice(0, 4);
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center mb-4">
-        {!showAllSuggestions && (
+      {!showAllSuggestions && (
+        <div className="flex justify-between items-center mb-4">
           <Button 
             variant="ghost" 
             className="gap-2 ml-auto"
@@ -142,11 +65,11 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
             Voir tout
             <ArrowRight className="w-4 h-4" />
           </Button>
-        )}
-      </div>
+        </div>
+      )}
       <SuggestionsList 
         suggestions={displayedSuggestions} 
-        onSuggestionClick={handleSuggestionClick} 
+        onSuggestionClick={createWorkoutSession} 
       />
     </div>
   );
