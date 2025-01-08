@@ -70,14 +70,30 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
   const handleSuggestionClick = async (type: string) => {
     try {
       if (type === 'favorites') {
-        toast({
-          title: "Bientôt disponible",
-          description: "Cette fonctionnalité sera disponible prochainement",
-        });
+        navigate('/workouts');
         return;
       }
 
-      navigate('/workouts');
+      // Create a workout session based on the type
+      const workoutData = {
+        type: 'strength',
+        status: 'in_progress',
+        target_duration_minutes: type === 'quick' ? 30 : 45,
+        exercises: [],
+        workout_type: type
+      };
+
+      const { data: session, error } = await supabase
+        .from('workout_sessions')
+        .insert([workoutData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (session) {
+        navigate(`/workout/${session.id}`);
+      }
     } catch (error) {
       console.error('Error creating workout:', error);
       toast({
