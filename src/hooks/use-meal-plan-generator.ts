@@ -12,29 +12,26 @@ export const useMealPlanGenerator = () => {
   const [userPreferences, setUserPreferences] = useState<any>(null);
   const [questionnaire, setQuestionnaire] = useState<any>(null);
 
-  // Fetch user preferences and questionnaire responses on mount
   useEffect(() => {
     const fetchUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Fetch user preferences
       const { data: preferences } = await supabase
         .from('user_nutrition_preferences')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       setUserPreferences(preferences);
 
-      // Fetch questionnaire responses
       const { data: questionnaireData } = await supabase
         .from('questionnaire_responses')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       setQuestionnaire(questionnaireData);
     };
