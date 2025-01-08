@@ -47,28 +47,9 @@ export const SignUp = () => {
       return;
     }
 
-    // Mise à jour du profil avec le nom d'utilisateur
-    if (data?.user) {
-      console.log("Updating profile for user:", data.user.id);
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .upsert({ 
-          id: data.user.id,
-          username: username,
-          updated_at: new Date().toISOString()
-        });
-
-      if (updateError) {
-        console.error('Error updating profile:', updateError);
-        toast({
-          title: "Attention",
-          description: "Votre compte a été créé mais une erreur est survenue lors de la mise à jour du profil",
-          variant: "destructive",
-        });
-      } else {
-        console.log("Profile updated successfully");
-      }
-    }
+    // Profile will be created automatically by the database trigger
+    // No need to manually create it here anymore
+    console.log("Signup successful, profile will be created by trigger");
   };
 
   return (
