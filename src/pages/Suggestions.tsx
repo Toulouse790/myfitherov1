@@ -18,13 +18,6 @@ export default function Suggestions() {
   return (
     <Header>
       <div className="container mx-auto px-4 py-8 pb-20">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Suggestions d'entraînement</h1>
-          <p className="text-sm text-muted-foreground">
-            Découvrez des séances adaptées à vos objectifs
-          </p>
-        </div>
-
         <div className="space-y-8">
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
