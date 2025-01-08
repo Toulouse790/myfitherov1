@@ -29,14 +29,15 @@ export const GeneratedPlanDisplay = ({
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
-          .limit(1);
+          .limit(1)
+          .maybeSingle();
 
         if (error) {
           console.error('Error loading meal plan:', error);
           return null;
         }
 
-        return data && data.length > 0 ? data[0] : null;
+        return data;
       } catch (error) {
         console.error('Error in meal plan query:', error);
         return null;
