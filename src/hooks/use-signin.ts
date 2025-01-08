@@ -2,12 +2,24 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { AuthError } from "@supabase/supabase-js";
 
 export const useSignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+
+  const getErrorMessage = (error: AuthError) => {
+    switch (error.message) {
+      case "Invalid login credentials":
+        return "Email ou mot de passe incorrect";
+      case "Email not confirmed":
+        return "Veuillez confirmer votre email avant de vous connecter";
+      default:
+        return "Une erreur est survenue lors de la connexion";
+    }
+  };
 
   const handleSignIn = async (email: string, password: string, rememberMe: boolean) => {
     setIsLoading(true);
@@ -33,7 +45,15 @@ export const useSignIn = () => {
           name: error.name,
           timestamp: new Date().toISOString()
         });
-        throw error;
+        
+        const errorMessage = getErrorMessage(error);
+        toast({
+          title: "Erreur de connexion",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        
+        return;
       }
 
       console.log("=== CONNEXION RÉUSSIE ===");
@@ -84,17 +104,9 @@ export const useSignIn = () => {
         timestamp: new Date().toISOString()
       });
       
-      let errorMessage = "Une erreur est survenue lors de la connexion";
-      
-      if (error.message.includes("Invalid login credentials")) {
-        errorMessage = "Email ou mot de passe incorrect";
-      } else if (error.message.includes("Email not confirmed")) {
-        errorMessage = "Veuillez confirmer votre email avant de vous connecter";
-      }
-
       toast({
         title: "Erreur de connexion",
-        description: errorMessage,
+        description: "Une erreur inattendue est survenue",
         variant: "destructive",
       });
     } finally {
