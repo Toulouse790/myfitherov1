@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { SuggestionsList } from "./SuggestionsList";
 import { Button } from "@/components/ui/button";
-import { Plus, Play } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export const WorkoutSuggestions = () => {
   const navigate = useNavigate();
@@ -88,10 +88,6 @@ export const WorkoutSuggestions = () => {
     navigate('/workouts/exercise/library');
   };
 
-  const handleLetMeDoIt = () => {
-    navigate('/workouts');
-  };
-
   const allSuggestions = [...defaultSuggestions, ...suggestions];
 
   return (
@@ -104,15 +100,6 @@ export const WorkoutSuggestions = () => {
         >
           <Plus className="w-5 h-5" />
           Créer ma séance
-        </Button>
-        <Button 
-          onClick={handleLetMeDoIt}
-          variant="outline"
-          className="flex-1 gap-2"
-          size="lg"
-        >
-          <Play className="w-5 h-5" />
-          Laisse-moi faire
         </Button>
       </div>
 
