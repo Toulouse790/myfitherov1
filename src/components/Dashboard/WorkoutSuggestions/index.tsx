@@ -14,7 +14,7 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const { data: suggestions = [] } = useQuery({
+  const { data: dbSuggestions = [] } = useQuery({
     queryKey: ['workout-suggestions'],
     queryFn: async () => {
       console.log("Fetching workout suggestions from database");
@@ -83,7 +83,6 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
         return;
       }
 
-      // Create a workout session based on the type
       const workoutData = {
         user_id: session.user.id,
         type: 'strength',
@@ -120,8 +119,15 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
     }
   };
 
-  // Combine default suggestions with database suggestions
-  const allSuggestions = [...defaultSuggestions, ...suggestions];
+  // Filter out any database suggestions that have the same type as default suggestions
+  const filteredDbSuggestions = dbSuggestions.filter(
+    dbSuggestion => !defaultSuggestions.some(
+      defaultSuggestion => defaultSuggestion.type === dbSuggestion.type
+    )
+  );
+
+  // Combine filtered suggestions
+  const allSuggestions = [...defaultSuggestions, ...filteredDbSuggestions];
   const displayedSuggestions = showAllSuggestions ? allSuggestions : allSuggestions.slice(0, 4);
 
   return (
