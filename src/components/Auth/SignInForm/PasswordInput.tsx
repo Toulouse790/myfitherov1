@@ -21,9 +21,13 @@ export const PasswordInput = ({ password, onChange }: PasswordInputProps) => {
           className="pl-10"
           placeholder="••••••••"
           required
+          minLength={6}
           autoComplete="current-password"
         />
       </div>
+      <p className="text-xs text-muted-foreground">
+        Le mot de passe doit contenir au moins 6 caractères
+      </p>
     </div>
   );
 };
