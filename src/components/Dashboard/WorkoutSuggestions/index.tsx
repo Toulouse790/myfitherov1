@@ -17,6 +17,7 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
   const { data: suggestions = [] } = useQuery({
     queryKey: ['workout-suggestions'],
     queryFn: async () => {
+      console.log("Fetching workout suggestions from database");
       const { data, error } = await supabase
         .from('workout_suggestions')
         .select('*')
@@ -32,6 +33,7 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
         return [];
       }
 
+      console.log("Fetched suggestions:", data);
       return data || [];
     }
   });
@@ -122,6 +124,7 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
     }
   };
 
+  // Combine default suggestions with database suggestions
   const allSuggestions = [...defaultSuggestions, ...suggestions];
   const displayedSuggestions = showAllSuggestions ? allSuggestions : allSuggestions.slice(0, 4);
 
