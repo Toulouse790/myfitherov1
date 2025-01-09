@@ -7,6 +7,9 @@ import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
 import { WorkoutPlan } from "./workoutPlanGenerator";
 import { LoadingButton } from "./GenerateWorkout/LoadingButton";
 import { WorkoutActions } from "./GenerateWorkout/WorkoutActions";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface GenerateWorkoutDialogProps {
   open: boolean;
@@ -24,6 +27,8 @@ export const GenerateWorkoutDialog = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
   const { fetchExercises } = useExerciseFetching();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (open) {
@@ -83,11 +88,44 @@ export const GenerateWorkoutDialog = ({
     }
   };
 
-  const handleConfirm = () => {
-    if (generatedWorkout && onWorkoutGenerated) {
-      console.log("Confirmation du programme généré");
-      onWorkoutGenerated(generatedWorkout);
-      onOpenChange(false);
+  const handleConfirm = async () => {
+    if (generatedWorkout && user) {
+      try {
+        console.log("Création de la session d'entraînement...");
+        const { data: session, error } = await supabase
+          .from('workout_sessions')
+          .insert([{
+            user_id: user.id,
+            exercises: generatedWorkout.exercises.map(ex => ex.name),
+            type: 'strength',
+            target_duration_minutes: 45
+          }])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        console.log("Session créée avec succès:", session);
+        
+        if (onWorkoutGenerated) {
+          onWorkoutGenerated(generatedWorkout);
+        }
+        
+        onOpenChange(false);
+        navigate(`/workouts/${session.id}`);
+        
+        toast({
+          title: "Session créée",
+          description: "Votre session d'entraînement est prête",
+        });
+      } catch (error) {
+        console.error("Erreur lors de la création de la session:", error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de créer la session d'entraînement",
+          variant: "destructive",
+        });
+      }
     }
   };
 
