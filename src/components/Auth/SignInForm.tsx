@@ -23,34 +23,20 @@ export const SignInForm = () => {
     setIsLoading(true);
     setError(null);
 
-    try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      if (signInError) {
-        setError("Email ou mot de passe incorrect");
-        toast({
-          variant: "destructive",
-          title: "Erreur de connexion",
-          description: "Email ou mot de passe incorrect",
-        });
-        return;
-      }
-
-      if (data.user) {
-        toast({
-          title: "Connexion réussie",
-          description: "Bienvenue sur MyFitHero !",
-        });
-        navigate("/");
-      }
-    } catch (err) {
-      console.error("Erreur de connexion:", err);
-      setError("Une erreur est survenue lors de la connexion");
-    } finally {
+    if (signInError) {
+      console.error("Erreur de connexion:", signInError);
+      setError("Email ou mot de passe incorrect");
       setIsLoading(false);
+      return;
+    }
+
+    if (data?.user) {
+      navigate("/");
     }
   };
 

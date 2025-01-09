@@ -13,12 +13,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   if (isAuthenticated === null) {
@@ -27,10 +21,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (!isAuthenticated && location.pathname !== "/signin") {
     return <Navigate to="/signin" replace />;
-  }
-
-  if (isAuthenticated && location.pathname === "/signin") {
-    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
