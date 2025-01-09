@@ -6,6 +6,7 @@ import { SuggestionsList } from "./SuggestionsList";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { defaultSuggestions } from "./defaultSuggestions";
+import { databaseSuggestions } from "./databaseSuggestions";
 import { useWorkoutSession } from "./useWorkoutSession";
 import type { WorkoutSuggestionsProps } from "./types";
 
@@ -38,15 +39,8 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
     }
   });
 
-  // Filter out any database suggestions that have the same type as default suggestions
-  const filteredDbSuggestions = dbSuggestions.filter(
-    dbSuggestion => !defaultSuggestions.some(
-      defaultSuggestion => defaultSuggestion.type === dbSuggestion.type
-    )
-  );
-
-  // Combine filtered suggestions
-  const allSuggestions = [...defaultSuggestions, ...filteredDbSuggestions];
+  // Combine all suggestions
+  const allSuggestions = [...defaultSuggestions, ...databaseSuggestions];
   
   // Only show first 4 suggestions on dashboard, show all on suggestions page
   const displayedSuggestions = showAllSuggestions 
