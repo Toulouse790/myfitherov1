@@ -3,7 +3,7 @@ import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { PersonalizedRecommendations } from "@/components/Recommendations/PersonalizedRecommendations";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus, Play } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -12,8 +12,8 @@ export default function Index() {
     navigate('/workouts/exercise/library');
   };
 
-  const handleLetMeDoIt = () => {
-    navigate('/workouts');
+  const handleAIGeneration = () => {
+    navigate('/workout-generate');
   };
 
   return (
@@ -38,13 +38,13 @@ export default function Index() {
                 Créer ma séance
               </Button>
               <Button 
-                onClick={handleLetMeDoIt}
+                onClick={handleAIGeneration}
                 variant="outline"
                 className="flex-1 gap-2"
                 size="lg"
               >
-                <Play className="w-5 h-5" />
-                Laisse-moi faire
+                <Sparkles className="w-5 h-5" />
+                Générer avec l'IA
               </Button>
             </div>
 
