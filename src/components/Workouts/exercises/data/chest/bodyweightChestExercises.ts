@@ -36,41 +36,5 @@ export const bodyweightChestExercises: Exercise[] = [
     },
     calories: 80,
     est_publié: true
-  },
-  {
-    id: "chest-6",
-    name: "Dips",
-    muscle_group: "chest",
-    muscleGroup: "chest",
-    description: "Excellent exercice composé pour les pectoraux et triceps",
-    difficulty: ["intermediate"],
-    equipment: "Barres parallèles",
-    location: ["gym"],
-    image_url: "/lovable-uploads/43b8ea2e-ad76-45ae-8160-9a685ec8385d.png",
-    instructions: [
-      "Saisissez les barres parallèles",
-      "Penchez-vous légèrement vers l'avant",
-      "Descendez en fléchissant les coudes",
-      "Poussez pour revenir en position initiale"
-    ],
-    targetMuscles: ["pectoraux inférieurs", "triceps", "deltoïdes antérieurs"],
-    objectives: ["muscle_gain", "maintenance"],
-    sets: {
-      beginner: 3,
-      intermediate: 4,
-      advanced: 4
-    },
-    reps: {
-      beginner: 6,
-      intermediate: 10,
-      advanced: 15
-    },
-    restTime: {
-      beginner: 120,
-      intermediate: 90,
-      advanced: 60
-    },
-    calories: 100,
-    est_publié: true
   }
 ];
