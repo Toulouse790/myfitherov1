@@ -11,7 +11,7 @@ export const useWorkoutSession = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        // Store the current path before redirecting
+        // Stocker le chemin actuel avant la redirection
         sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
         
         toast({

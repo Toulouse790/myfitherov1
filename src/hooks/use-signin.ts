@@ -23,40 +23,23 @@ export const useSignIn = () => {
         throw signInError;
       }
 
-      // Check if user needs to complete questionnaire
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", data.user?.id)
-        .maybeSingle();
+      // Récupérer l'URL de redirection stockée
+      const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+      sessionStorage.removeItem('redirectAfterLogin'); // Nettoyer après utilisation
 
-      if (profileError) {
-        console.error("Error checking profile:", profileError);
-      }
+      // Afficher un toast de succès
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue sur MyFitHero !",
+      });
 
-      const { data: questionnaireResponse } = await supabase
-        .from("questionnaire_responses")
-        .select("id")
-        .eq("user_id", data.user?.id)
-        .maybeSingle();
-
-      if (!questionnaireResponse) {
-        navigate("/initial-questionnaire");
+      // Rediriger vers la page précédente ou la page d'accueil
+      if (redirectPath) {
+        navigate(redirectPath);
       } else {
-        // Check if there was a previous location stored
-        const previousLocation = sessionStorage.getItem('redirectAfterLogin');
-        if (previousLocation) {
-          sessionStorage.removeItem('redirectAfterLogin');
-          navigate(previousLocation);
-        } else {
-          navigate("/");
-        }
-        
-        toast({
-          title: "Connexion réussie",
-          description: "Bienvenue sur MyFitHero !",
-        });
+        navigate("/");
       }
+
     } catch (err) {
       console.error("Sign in error:", err);
       setError(err instanceof Error ? err.message : "Une erreur est survenue lors de la connexion");
