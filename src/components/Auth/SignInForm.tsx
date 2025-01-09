@@ -29,17 +29,24 @@ export const SignInForm = () => {
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {
+        console.error("Erreur de connexion:", signInError);
+        throw signInError;
+      }
 
-      if (data.session) {
+      if (data?.session) {
+        console.log("Session créée avec succès:", data.session);
         toast({
           title: "Connexion réussie",
           description: "Vous êtes maintenant connecté",
         });
         navigate("/");
+      } else {
+        console.error("Pas de session créée");
+        throw new Error("Impossible de créer une session");
       }
     } catch (err) {
-      console.error("Erreur de connexion:", err);
+      console.error("Erreur détaillée:", err);
       setError("Email ou mot de passe incorrect");
       toast({
         variant: "destructive",
