@@ -89,7 +89,17 @@ export const GenerateWorkoutDialog = ({
   };
 
   const handleConfirm = async () => {
-    if (generatedWorkout && user) {
+    if (!user) {
+      navigate("/signin", { 
+        state: { 
+          from: location.pathname,
+          workoutPlan: generatedWorkout
+        } 
+      });
+      return;
+    }
+
+    if (generatedWorkout) {
       try {
         console.log("Création de la session d'entraînement...");
         const { data: session, error } = await supabase

@@ -62,7 +62,7 @@ export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) 
       });
 
       if (session) {
-        navigate(`/workout/${session.id}`);
+        navigate(`/workouts/${session.id}`);
       }
     } catch (error) {
       console.error('Error creating workout:', error);
