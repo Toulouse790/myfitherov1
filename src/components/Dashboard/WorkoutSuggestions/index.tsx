@@ -8,11 +8,13 @@ import { ArrowRight } from "lucide-react";
 import { defaultSuggestions } from "./defaultSuggestions";
 import { databaseSuggestions } from "./databaseSuggestions";
 import { useWorkoutSession } from "./useWorkoutSession";
+import { useAuth } from "@/hooks/use-auth";
 import type { WorkoutSuggestionsProps } from "./types";
 
 export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSuggestionsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const { createWorkoutSession } = useWorkoutSession();
 
   const { data: dbSuggestions = [] } = useQuery({
@@ -39,6 +41,20 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
     }
   });
 
+  const handleSuggestionClick = async (type: string) => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour accéder à cette fonctionnalité",
+        variant: "destructive",
+      });
+      navigate('/signin');
+      return;
+    }
+    
+    await createWorkoutSession(type);
+  };
+
   // Combine all suggestions
   const allSuggestions = [...defaultSuggestions, ...databaseSuggestions];
   
@@ -63,7 +79,7 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
       )}
       <SuggestionsList 
         suggestions={displayedSuggestions} 
-        onSuggestionClick={createWorkoutSession} 
+        onSuggestionClick={handleSuggestionClick} 
       />
     </div>
   );
