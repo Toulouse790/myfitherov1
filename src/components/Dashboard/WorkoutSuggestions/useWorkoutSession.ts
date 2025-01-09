@@ -31,6 +31,7 @@ export const useWorkoutSession = () => {
 
       const { data: workoutSession, error } = await supabase
         .from('workout_sessions')
+        .insert(workoutData)
         .select()
         .single();
 
@@ -41,7 +42,7 @@ export const useWorkoutSession = () => {
 
       if (workoutSession) {
         console.log("Workout session created:", workoutSession);
-        navigate(`/workouts/exercise/library`);
+        navigate(`/workouts/${workoutSession.id}`);
       }
     } catch (error) {
       console.error('Error creating workout:', error);
