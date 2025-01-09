@@ -19,11 +19,21 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
 
     try {
       // First, check if user already exists
-      const { data: existingUser } = await supabase
+      const { data: existingUser, error: checkError } = await supabase
         .from('profiles')
         .select('id')
         .eq('username', username)
-        .single();
+        .maybeSingle();
+
+      if (checkError) {
+        console.error("Error checking username:", checkError);
+        toast({
+          title: "Erreur",
+          description: "Impossible de vérifier la disponibilité du nom d'utilisateur",
+          variant: "destructive",
+        });
+        return { error: checkError };
+      }
 
       if (existingUser) {
         console.log("Username already taken");
@@ -71,6 +81,7 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
 
       if (data?.user) {
         console.log("Inscription réussie !");
+        console.log("Signup successful, profile will be created by trigger");
         toast({
           title: "Bienvenue !",
           description: `${username}, bienvenue dans cette belle aventure ! Configurons ensemble vos préférences.`,
