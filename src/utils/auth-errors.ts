@@ -11,16 +11,20 @@ export const handleSignupError = (error: AuthError): string => {
     return "Le mot de passe doit contenir au moins 6 caractères.";
   }
 
+  if (error.message.includes("User already registered")) {
+    return "Un compte existe déjà avec cet email. Veuillez vous connecter.";
+  }
+
   // Handle specific error codes
   switch (error.status) {
     case 500:
       return "Erreur serveur. Veuillez réessayer dans quelques instants.";
     case 422:
-      return "Email invalide ou mot de passe trop court.";
-    case 400:
       if (error.message.includes("already registered")) {
         return "Un compte existe déjà avec cet email.";
       }
+      return "Email invalide ou mot de passe trop court.";
+    case 400:
       return "Données d'inscription invalides.";
     default:
       return error.message || "Une erreur est survenue lors de l'inscription.";

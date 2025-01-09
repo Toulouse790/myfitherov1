@@ -18,7 +18,24 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
     console.log("Début de l'inscription...");
 
     try {
-      // First, check if user already exists
+      // First, check if user already exists in auth
+      const { data: existingAuthUser } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (existingAuthUser?.user) {
+        console.log("User already exists in auth system");
+        toast({
+          title: "Compte existant",
+          description: "Un compte existe déjà avec cet email. Veuillez vous connecter.",
+          variant: "destructive",
+        });
+        navigate("/signin");
+        return { error: null };
+      }
+
+      // Check if username is taken
       const { data: existingUser, error: checkError } = await supabase
         .from('profiles')
         .select('id')
@@ -58,19 +75,19 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
       console.log("Réponse de Supabase:", { data, error: signupError });
 
       if (signupError) {
+        const errorMessage = handleSignupError(signupError);
+        console.error("Erreur lors de l'inscription:", signupError);
+        
         if (signupError.message.includes("User already registered")) {
-          console.log("Utilisateur déjà inscrit, redirection vers la connexion");
           toast({
             title: "Compte existant",
-            description: "Un compte existe déjà avec cet email",
+            description: "Un compte existe déjà avec cet email. Veuillez vous connecter.",
             variant: "destructive",
           });
           navigate("/signin");
           return { error: null };
         }
 
-        const errorMessage = handleSignupError(signupError);
-        console.error("Erreur lors de l'inscription:", signupError);
         toast({
           title: "Erreur",
           description: errorMessage,
