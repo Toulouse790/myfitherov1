@@ -17,7 +17,6 @@ export const ExerciseLibrary = () => {
   const { toast } = useToast();
 
   const handleExerciseSelection = async (exerciseIds: string[]) => {
-    // Remplacer directement par les nouveaux exercices sélectionnés
     setSelectedExercises(exerciseIds);
   };
 
@@ -41,7 +40,7 @@ export const ExerciseLibrary = () => {
         .insert([
           { 
             exercises: selectedExercises,
-            type: 'strength',
+            workout_type: 'strength',
             status: 'in_progress',
             target_duration_minutes: 45
           }
@@ -55,7 +54,7 @@ export const ExerciseLibrary = () => {
       }
 
       if (session) {
-        navigate(`/workout/${session.id}`);
+        navigate(`/workouts/${session.id}`);
       }
     } catch (error) {
       console.error('Error creating workout:', error);
