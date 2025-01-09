@@ -13,6 +13,7 @@ import Cardio from "@/pages/Cardio";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
+import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,14 @@ export const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignUp />,
+      },
+      {
+        path: "initial-questionnaire",
+        element: (
+          <ProtectedRoute>
+            <InitialQuestionnaire />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/",
