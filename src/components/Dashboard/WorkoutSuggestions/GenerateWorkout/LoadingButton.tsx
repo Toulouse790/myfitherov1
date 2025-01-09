@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
-interface LoadingButtonProps {
+export interface LoadingButtonProps {
   isLoading: boolean;
   disabled: boolean;
-  onClick: () => void;
+  onClick: () => Promise<void>;
 }
 
 export const LoadingButton = ({ isLoading, disabled, onClick }: LoadingButtonProps) => {
@@ -20,7 +20,7 @@ export const LoadingButton = ({ isLoading, disabled, onClick }: LoadingButtonPro
           Génération en cours...
         </>
       ) : (
-        "Générer un programme"
+        "Générer une séance"
       )}
     </Button>
   );
