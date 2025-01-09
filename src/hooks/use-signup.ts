@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { handleSignupError } from "@/utils/auth-errors";
 
 interface UseSignupProps {
   onSuccess?: () => void;
@@ -17,7 +18,24 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
     console.log("Début de l'inscription...");
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // First, check if user already exists
+      const { data: existingUser } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', username)
+        .single();
+
+      if (existingUser) {
+        console.log("Username already taken");
+        toast({
+          title: "Erreur",
+          description: "Ce nom d'utilisateur est déjà pris",
+          variant: "destructive",
+        });
+        return { error: new Error("Username already taken") };
+      }
+
+      const { data, error: signupError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -27,10 +45,10 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
         },
       });
 
-      console.log("Réponse de Supabase:", { data, error });
+      console.log("Réponse de Supabase:", { data, error: signupError });
 
-      if (error) {
-        if (error.message.includes("User already registered")) {
+      if (signupError) {
+        if (signupError.message.includes("User already registered")) {
           console.log("Utilisateur déjà inscrit, redirection vers la connexion");
           toast({
             title: "Compte existant",
@@ -40,11 +58,18 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
           navigate("/signin");
           return { error: null };
         }
-        console.error("Erreur lors de l'inscription:", error);
-        return { error };
+
+        const errorMessage = handleSignupError(signupError);
+        console.error("Erreur lors de l'inscription:", signupError);
+        toast({
+          title: "Erreur",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        return { error: signupError };
       }
 
-      if (data) {
+      if (data?.user) {
         console.log("Inscription réussie !");
         toast({
           title: "Bienvenue !",
@@ -61,7 +86,7 @@ export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
       console.error("Erreur inattendue:", error);
       toast({
         title: "Erreur",
-        description: "Une erreur inattendue est survenue",
+        description: "Une erreur inattendue est survenue lors de l'inscription",
         variant: "destructive",
       });
       return { error };
