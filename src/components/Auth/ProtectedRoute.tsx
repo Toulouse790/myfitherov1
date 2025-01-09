@@ -9,16 +9,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <div>Loading...</div>;
   }
 
-  if (!user) {
-    // Stocker le chemin actuel uniquement s'il ne s'agit pas déjà de /signin
-    if (location.pathname !== "/signin") {
-      sessionStorage.setItem("redirectAfterLogin", location.pathname);
-    }
+  // Si l'utilisateur n'est pas connecté et n'est pas déjà sur /signin
+  if (!user && location.pathname !== "/signin") {
     return <Navigate to="/signin" replace />;
   }
 
-  // Si l'utilisateur est connecté et essaie d'accéder à /signin, le rediriger vers /
-  if (location.pathname === "/signin") {
+  // Si l'utilisateur est connecté et essaie d'accéder à /signin
+  if (user && location.pathname === "/signin") {
     return <Navigate to="/" replace />;
   }
 

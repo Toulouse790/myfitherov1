@@ -26,7 +26,6 @@ export const useSignIn = () => {
         description: "Bienvenue sur MyFitHero !",
       });
 
-      // Redirection simple vers la page d'accueil
       navigate("/");
 
     } catch (err) {
