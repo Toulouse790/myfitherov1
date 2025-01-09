@@ -24,19 +24,20 @@ export const SignInForm = () => {
     setError(null);
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (signInError) throw signInError;
 
-      toast({
-        title: "Connexion réussie",
-        description: "Vous êtes maintenant connecté",
-      });
-
-      navigate("/");
+      if (data.session) {
+        toast({
+          title: "Connexion réussie",
+          description: "Vous êtes maintenant connecté",
+        });
+        navigate("/");
+      }
     } catch (err) {
       console.error("Erreur de connexion:", err);
       setError("Email ou mot de passe incorrect");

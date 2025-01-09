@@ -4,25 +4,31 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Vérifier la session au chargement
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setIsAuthenticated(!!session);
+      } catch (error) {
+        console.error("Erreur de vérification de session:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    // Écouter les changements d'authentification
+    checkAuth();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      setIsAuthenticated(!!session);
       setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Afficher un loader pendant la vérification
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -31,11 +37,9 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Rediriger vers la connexion si non authentifié
-  if (!user) {
+  if (!isAuthenticated) {
     return <Navigate to="/signin" replace />;
   }
 
-  // Afficher le contenu protégé si authentifié
   return <>{children}</>;
 };
