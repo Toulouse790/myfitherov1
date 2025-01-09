@@ -20,16 +20,16 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        index: true,
-        element: <Home />,
-      },
-      {
         path: "signin",
         element: <SignIn />,
       },
       {
         path: "signup",
         element: <SignUp />,
+      },
+      {
+        index: true,
+        element: <Home />,
       },
       {
         path: "initial-questionnaire",
