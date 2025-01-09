@@ -14,31 +14,20 @@ export const useSignIn = () => {
       setIsLoading(true);
       setError(null);
 
-      const { error: signInError, data } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (signInError) {
-        throw signInError;
-      }
+      if (signInError) throw signInError;
 
-      // Récupérer l'URL de redirection stockée
-      const redirectPath = sessionStorage.getItem('redirectAfterLogin');
-      sessionStorage.removeItem('redirectAfterLogin'); // Nettoyer après utilisation
-
-      // Afficher un toast de succès
       toast({
         title: "Connexion réussie",
         description: "Bienvenue sur MyFitHero !",
       });
 
-      // Rediriger vers la page précédente ou la page d'accueil
-      if (redirectPath) {
-        navigate(redirectPath);
-      } else {
-        navigate("/");
-      }
+      // Redirection simple vers la page d'accueil
+      navigate("/");
 
     } catch (err) {
       console.error("Sign in error:", err);
