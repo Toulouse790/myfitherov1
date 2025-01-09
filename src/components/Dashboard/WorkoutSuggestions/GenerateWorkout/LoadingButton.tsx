@@ -12,7 +12,7 @@ export const LoadingButton = ({ isLoading, disabled, onClick }: LoadingButtonPro
     <Button 
       onClick={onClick}
       className="w-full"
-      disabled={disabled}
+      disabled={disabled || isLoading}
     >
       {isLoading ? (
         <>

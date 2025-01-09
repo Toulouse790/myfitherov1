@@ -81,13 +81,14 @@ export const GenerateWorkoutDialog = ({
           {!generatedWorkout ? (
             <LoadingButton
               isLoading={isGenerating}
+              disabled={false}
               onClick={handleGenerate}
             />
           ) : (
             <>
               <GeneratedWorkoutPreview exercises={generatedWorkout} />
               <WorkoutActions
-                onStartWorkout={handleStartWorkout}
+                onConfirm={handleStartWorkout}
                 onRegenerate={handleGenerate}
               />
             </>
