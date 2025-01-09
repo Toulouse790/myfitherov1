@@ -23,20 +23,29 @@ export const SignInForm = () => {
     setIsLoading(true);
     setError(null);
 
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (signInError) {
-      console.error("Erreur de connexion:", signInError);
+      if (signInError) throw signInError;
+
+      if (data?.user) {
+        const redirectPath = sessionStorage.getItem("redirectAfterLogin") || "/";
+        sessionStorage.removeItem("redirectAfterLogin"); // Clean up
+        navigate(redirectPath);
+      }
+    } catch (err) {
+      console.error("Erreur de connexion:", err);
       setError("Email ou mot de passe incorrect");
+      toast({
+        variant: "destructive",
+        title: "Erreur de connexion",
+        description: "Email ou mot de passe incorrect",
+      });
+    } finally {
       setIsLoading(false);
-      return;
-    }
-
-    if (data?.user) {
-      navigate("/");
     }
   };
 
