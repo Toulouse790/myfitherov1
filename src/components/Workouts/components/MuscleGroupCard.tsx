@@ -16,22 +16,19 @@ export const MuscleGroupCard = ({
 }: MuscleGroupCardProps) => {
   return (
     <Card 
-      className={`cursor-pointer transition-all hover:bg-accent ${
+      className={`cursor-pointer transition-colors hover:bg-accent ${
         isSelected ? "ring-2 ring-primary" : ""
       }`}
       onClick={onClick}
     >
-      <CardContent className="p-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Dumbbell className="h-6 w-6 text-primary" />
+      <CardContent className="p-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Dumbbell className="h-4 w-4 text-primary" />
           </div>
-          <div>
-            <h3 className="font-semibold text-lg">{name}</h3>
-            <p className="text-sm text-muted-foreground">
-              Sélectionner pour voir les exercices
-            </p>
-          </div>
+          <p className="font-medium text-sm">
+            {name}
+          </p>
         </div>
       </CardContent>
     </Card>
