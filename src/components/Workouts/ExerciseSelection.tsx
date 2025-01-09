@@ -20,6 +20,9 @@ export const ExerciseSelection = ({
 }: ExerciseSelectionProps) => {
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
 
+  // Ensure we only count unique exercises
+  const uniqueExercises = Array.from(new Set(exercises));
+
   const handleExerciseToggle = (exerciseName: string) => {
     const newSelection = selectedExercises.includes(exerciseName)
       ? selectedExercises.filter(name => name !== exerciseName)
@@ -42,7 +45,7 @@ export const ExerciseSelection = ({
           
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">
-              Exercices disponibles ({exercises.length})
+              Exercices disponibles ({uniqueExercises.length})
             </h3>
             <Button onClick={onClose}>Fermer</Button>
           </div>
@@ -53,7 +56,7 @@ export const ExerciseSelection = ({
             </div>
           ) : (
             <ExerciseGrid
-              exercises={exercises}
+              exercises={uniqueExercises}
               selectedExercises={selectedExercises}
               onExerciseToggle={handleExerciseToggle}
             />
