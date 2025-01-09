@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { Bookmark, Dumbbell, Target, Zap } from "lucide-react";
+import { Bookmark, Dumbbell, Target, Zap, User, Heart, Scale, Beef } from "lucide-react";
 
 interface SuggestionProps {
   suggestion: {
-    id: number;
+    id: number | string;
     title: string;
     description: string;
     icon_name: string;
@@ -16,7 +16,11 @@ const iconMap = {
   'Bookmark': Bookmark,
   'Target': Target,
   'Zap': Zap,
-  'Dumbbell': Dumbbell
+  'Dumbbell': Dumbbell,
+  'User': User,
+  'Heart': Heart,
+  'Scale': Scale,
+  'Beef': Beef
 };
 
 export const SuggestionsList = ({ suggestions, onSuggestionClick }: { 

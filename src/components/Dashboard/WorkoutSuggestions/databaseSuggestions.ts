@@ -26,5 +26,33 @@ export const databaseSuggestions = [
     description: "High Intensity Interval Training",
     icon_name: "Zap",
     type: "hiit"
+  },
+  {
+    id: "db-5",
+    title: "Séance perte de poids",
+    description: "Programme spécial perte de poids",
+    icon_name: "Scale",
+    type: "weight_loss"
+  },
+  {
+    id: "db-6",
+    title: "Séance prise de masse",
+    description: "Programme de musculation intense",
+    icon_name: "Beef",
+    type: "muscle_gain"
+  },
+  {
+    id: "db-8",
+    title: "Séance récupération",
+    description: "Exercices légers de récupération",
+    icon_name: "Heart",
+    type: "recovery"
+  },
+  {
+    id: "db-10",
+    title: "Séance explosivité",
+    description: "Exercices de puissance",
+    icon_name: "Zap",
+    type: "power"
   }
 ];
