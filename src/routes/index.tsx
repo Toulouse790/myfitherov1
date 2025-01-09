@@ -76,6 +76,15 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      // Ajout de l'alias en français
+      {
+        path: "entrainement/:sessionId",
+        element: (
+          <ProtectedRoute>
+            <UnifiedWorkoutDetail />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "workout-generate",
         element: (
