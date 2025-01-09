@@ -1,18 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "@/components/Layout/RootLayout";
-import Home from "@/pages/Home";
-import { SignIn } from "@/components/Auth/SignIn";
-import { SignUp } from "@/components/Auth/SignUp";
-import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
-import { CardioSession } from "@/components/Workouts/CardioSession";
-import Cardio from "@/pages/Cardio";
-import { WorkoutTypeSelection } from "@/components/Workouts/WorkoutTypeSelection";
-import Workouts from "@/pages/Workouts";
+import SignIn from "@/pages/SignIn";
+import SignUp from "@/pages/SignUp";
+import Home from "@/pages/Home";
 import Profile from "@/pages/Profile";
+import Workouts from "@/pages/Workouts";
 import Nutrition from "@/pages/Nutrition";
 import Sleep from "@/pages/Sleep";
 import Stats from "@/pages/Stats";
+import Cardio from "@/pages/Cardio";
 
 export const router = createBrowserRouter([
   {
@@ -28,46 +25,10 @@ export const router = createBrowserRouter([
         element: <SignUp />,
       },
       {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "initial-questionnaire",
+        path: "/",
         element: (
           <ProtectedRoute>
-            <InitialQuestionnaire />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "cardio",
-        element: (
-          <ProtectedRoute>
-            <Cardio />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "cardio-session/:sessionId",
-        element: (
-          <ProtectedRoute>
-            <CardioSession />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workouts",
-        element: (
-          <ProtectedRoute>
-            <Workouts />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workouts/type",
-        element: (
-          <ProtectedRoute>
-            <WorkoutTypeSelection />
+            <Home />
           </ProtectedRoute>
         ),
       },
@@ -76,6 +37,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workouts",
+        element: (
+          <ProtectedRoute>
+            <Workouts />
           </ProtectedRoute>
         ),
       },
@@ -103,6 +72,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "cardio",
+        element: (
+          <ProtectedRoute>
+            <Cardio />
+          </ProtectedRoute>
+        ),
+      }
     ],
   },
 ]);
