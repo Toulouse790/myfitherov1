@@ -42,6 +42,7 @@ export const useWorkoutSession = () => {
 
       if (workoutSession) {
         console.log("Workout session created:", workoutSession);
+        // Update to use correct route format
         navigate(`/workouts/${workoutSession.id}`);
       }
     } catch (error) {
