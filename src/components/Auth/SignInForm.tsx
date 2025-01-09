@@ -7,7 +7,6 @@ import { SubmitButton } from "./SignInForm/SubmitButton";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useToast } from "@/components/ui/use-toast";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +15,6 @@ export const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,26 +22,17 @@ export const SignInForm = () => {
     setError(null);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (signInError) throw signInError;
 
-      if (data?.user) {
-        const redirectPath = sessionStorage.getItem("redirectAfterLogin") || "/";
-        sessionStorage.removeItem("redirectAfterLogin"); // Clean up
-        navigate(redirectPath);
-      }
+      navigate("/");
     } catch (err) {
       console.error("Erreur de connexion:", err);
       setError("Email ou mot de passe incorrect");
-      toast({
-        variant: "destructive",
-        title: "Erreur de connexion",
-        description: "Email ou mot de passe incorrect",
-      });
     } finally {
       setIsLoading(false);
     }
