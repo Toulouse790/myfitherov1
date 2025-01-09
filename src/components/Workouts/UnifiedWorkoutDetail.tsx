@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { WorkoutHeader } from "./WorkoutDetail/WorkoutHeader";
-import { ExerciseSection } from "./WorkoutDetail/ExerciseSection";
+import { ExerciseSets } from "./ExerciseSets";
 import { WorkoutNotes } from "./WorkoutDetail/WorkoutNotes";
 import { Loader2 } from "lucide-react";
 
@@ -121,43 +121,6 @@ export const UnifiedWorkoutDetail = () => {
     }
   };
 
-  const handleAddSet = async () => {
-    if (!exercises[currentExerciseIndex]) {
-      toast({
-        title: "Erreur",
-        description: "Aucun exercice sélectionné",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('exercise_sets')
-        .insert({
-          session_id: sessionId,
-          exercise_name: exercises[currentExerciseIndex],
-          set_number: 1,
-          reps: 12,
-          weight: 20,
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Série ajoutée",
-        description: "Une nouvelle série a été ajoutée à l'exercice.",
-      });
-    } catch (error) {
-      console.error('Error adding set:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter la série",
-        variant: "destructive",
-      });
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="container max-w-4xl mx-auto px-4 py-8 flex items-center justify-center">
@@ -177,10 +140,10 @@ export const UnifiedWorkoutDetail = () => {
       >
         <Card>
           <CardContent className="p-6 space-y-6">
-            <ExerciseSection
-              exerciseName={exercises[currentExerciseIndex]}
-              onAddSet={handleAddSet}
-              onExerciseComplete={() => handleExerciseComplete(currentExerciseIndex)}
+            <ExerciseSets
+              exercises={exercises}
+              onExerciseComplete={handleExerciseComplete}
+              currentExerciseIndex={currentExerciseIndex}
               sessionId={sessionId}
             />
           </CardContent>
