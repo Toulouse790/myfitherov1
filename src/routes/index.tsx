@@ -12,6 +12,7 @@ import Stats from "@/pages/Stats";
 import Cardio from "@/pages/Cardio";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
+import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 
 export const router = createBrowserRouter([
   {
@@ -59,10 +60,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "workout/:sessionId",
+        path: "workouts/:sessionId",
         element: (
           <ProtectedRoute>
-            <Workouts />
+            <UnifiedWorkoutDetail />
           </ProtectedRoute>
         ),
       },
