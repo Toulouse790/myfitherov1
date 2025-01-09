@@ -2,10 +2,10 @@ import { Exercise } from '../../types/exercise';
 
 export const advancedChestExercises: Exercise[] = [
   {
-    id: "chest-3",
+    id: "chest_3",
     name: "Développé décliné",
-    muscle_group: "pectoraux",
-    muscleGroup: "pectoraux",
+    muscle_group: "chest",
+    muscleGroup: "chest",
     description: "Cible la partie inférieure des pectoraux",
     difficulty: ["intermediate"],
     equipment: "Banc décliné, Barre, Poids",
@@ -37,10 +37,10 @@ export const advancedChestExercises: Exercise[] = [
     calories: 140
   },
   {
-    id: "chest-4",
+    id: "chest_4",
     name: "Écarté avec haltères",
-    muscle_group: "pectoraux",
-    muscleGroup: "pectoraux",
+    muscle_group: "chest",
+    muscleGroup: "chest",
     description: "Excellent exercice d'isolation pour les pectoraux",
     difficulty: ["intermediate"],
     equipment: "Banc, Haltères",
