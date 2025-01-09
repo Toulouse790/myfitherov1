@@ -478,45 +478,6 @@ export type Database = {
           },
         ]
       }
-      food_journal_entries_backup: {
-        Row: {
-          calories: number | null
-          carbs: number | null
-          created_at: string | null
-          fats: number | null
-          id: string | null
-          meal_type: string | null
-          name: string | null
-          proteins: number | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          calories?: number | null
-          carbs?: number | null
-          created_at?: string | null
-          fats?: number | null
-          id?: string | null
-          meal_type?: string | null
-          name?: string | null
-          proteins?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          calories?: number | null
-          carbs?: number | null
-          created_at?: string | null
-          fats?: number | null
-          id?: string | null
-          meal_type?: string | null
-          name?: string | null
-          proteins?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       meal_plans: {
         Row: {
           created_at: string
@@ -554,36 +515,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      meal_plans_backup: {
-        Row: {
-          created_at: string | null
-          end_date: string | null
-          id: string | null
-          plan_data: Json | null
-          start_date: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          end_date?: string | null
-          id?: string | null
-          plan_data?: Json | null
-          start_date?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          end_date?: string | null
-          id?: string | null
-          plan_data?: Json | null
-          start_date?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
       }
       muscle_measurements: {
         Row: {
@@ -643,69 +574,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      muscle_measurements_backup: {
-        Row: {
-          biceps_left_cm: number | null
-          biceps_right_cm: number | null
-          calf_left_cm: number | null
-          calf_right_cm: number | null
-          chest_cm: number | null
-          created_at: string | null
-          forearm_left_cm: number | null
-          forearm_right_cm: number | null
-          height_cm: number | null
-          hips_cm: number | null
-          id: string | null
-          measurement_date: string | null
-          thigh_left_cm: number | null
-          thigh_right_cm: number | null
-          updated_at: string | null
-          user_id: string | null
-          waist_cm: number | null
-          weight_kg: number | null
-        }
-        Insert: {
-          biceps_left_cm?: number | null
-          biceps_right_cm?: number | null
-          calf_left_cm?: number | null
-          calf_right_cm?: number | null
-          chest_cm?: number | null
-          created_at?: string | null
-          forearm_left_cm?: number | null
-          forearm_right_cm?: number | null
-          height_cm?: number | null
-          hips_cm?: number | null
-          id?: string | null
-          measurement_date?: string | null
-          thigh_left_cm?: number | null
-          thigh_right_cm?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-          waist_cm?: number | null
-          weight_kg?: number | null
-        }
-        Update: {
-          biceps_left_cm?: number | null
-          biceps_right_cm?: number | null
-          calf_left_cm?: number | null
-          calf_right_cm?: number | null
-          chest_cm?: number | null
-          created_at?: string | null
-          forearm_left_cm?: number | null
-          forearm_right_cm?: number | null
-          height_cm?: number | null
-          hips_cm?: number | null
-          id?: string | null
-          measurement_date?: string | null
-          thigh_left_cm?: number | null
-          thigh_right_cm?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-          waist_cm?: number | null
-          weight_kg?: number | null
-        }
-        Relationships: []
       }
       muscle_recovery: {
         Row: {
@@ -1536,14 +1404,13 @@ export type Database = {
           is_adapted: boolean | null
           planned_start_time: string | null
           started_at: string | null
-          status: string | null
+          status: string
           target_duration_minutes: number | null
           total_duration_minutes: number | null
           total_rest_time_seconds: number | null
-          type: string | null
           updated_at: string | null
           user_id: string | null
-          workout_type: string | null
+          workout_type: string
         }
         Insert: {
           created_at?: string | null
@@ -1554,14 +1421,13 @@ export type Database = {
           is_adapted?: boolean | null
           planned_start_time?: string | null
           started_at?: string | null
-          status?: string | null
+          status?: string
           target_duration_minutes?: number | null
           total_duration_minutes?: number | null
           total_rest_time_seconds?: number | null
-          type?: string | null
           updated_at?: string | null
           user_id?: string | null
-          workout_type?: string | null
+          workout_type?: string
         }
         Update: {
           created_at?: string | null
@@ -1572,14 +1438,13 @@ export type Database = {
           is_adapted?: boolean | null
           planned_start_time?: string | null
           started_at?: string | null
-          status?: string | null
+          status?: string
           target_duration_minutes?: number | null
           total_duration_minutes?: number | null
           total_rest_time_seconds?: number | null
-          type?: string | null
           updated_at?: string | null
           user_id?: string | null
-          workout_type?: string | null
+          workout_type?: string
         }
         Relationships: [
           {

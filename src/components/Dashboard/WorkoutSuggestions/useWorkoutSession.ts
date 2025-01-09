@@ -30,11 +30,10 @@ export const useWorkoutSession = () => {
 
       const workoutData = {
         user_id: session.user.id,
-        type: 'strength',
+        workout_type: 'strength',
         status: 'in_progress',
         target_duration_minutes: type === 'quick' ? 30 : 45,
         exercises: [],
-        workout_type: type
       };
 
       const { data: workoutSession, error } = await supabase
