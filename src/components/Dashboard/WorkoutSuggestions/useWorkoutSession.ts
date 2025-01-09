@@ -11,6 +11,9 @@ export const useWorkoutSession = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
+        // Store the current path before redirecting
+        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+        
         toast({
           title: "Connexion requise",
           description: "Veuillez vous connecter pour créer une séance d'entraînement",

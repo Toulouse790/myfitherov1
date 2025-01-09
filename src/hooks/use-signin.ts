@@ -43,7 +43,15 @@ export const useSignIn = () => {
       if (!questionnaireResponse) {
         navigate("/initial-questionnaire");
       } else {
-        navigate("/");
+        // Check if there was a previous location stored
+        const previousLocation = sessionStorage.getItem('redirectAfterLogin');
+        if (previousLocation) {
+          sessionStorage.removeItem('redirectAfterLogin');
+          navigate(previousLocation);
+        } else {
+          navigate("/");
+        }
+        
         toast({
           title: "Connexion réussie",
           description: "Bienvenue sur MyFitHero !",
