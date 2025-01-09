@@ -42,7 +42,7 @@ export const UnifiedWorkoutDetail = () => {
         setIsLoading(true);
         const { data: session, error } = await supabase
           .from('workout_sessions')
-          .select('exercises, user_id')
+          .select('exercises, workout_type, status, target_duration_minutes, user_id')
           .eq('id', sessionId)
           .single();
 
