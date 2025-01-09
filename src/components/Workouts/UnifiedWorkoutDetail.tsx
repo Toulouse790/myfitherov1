@@ -17,7 +17,6 @@ export const UnifiedWorkoutDetail = () => {
   const { user } = useAuth();
   const [exercises, setExercises] = useState<string[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
-  const [restTimer, setRestTimer] = useState<number | null>(null);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -62,7 +61,7 @@ export const UnifiedWorkoutDetail = () => {
 
         if (session?.exercises) {
           const validExercises = session.exercises.filter(Boolean);
-          console.log("Exercices valides:", validExercises);
+          console.log("Exercices chargés:", validExercises);
           setExercises(validExercises);
         }
       } catch (error) {
@@ -90,10 +89,9 @@ export const UnifiedWorkoutDetail = () => {
   const handleExerciseComplete = async (index: number) => {
     if (index < exercises.length - 1) {
       setCurrentExerciseIndex(index + 1);
-      setRestTimer(90);
       toast({
         title: "Exercice terminé !",
-        description: "Passez à l'exercice suivant après la période de repos.",
+        description: "Passez à l'exercice suivant.",
       });
     } else {
       try {
@@ -139,13 +137,20 @@ export const UnifiedWorkoutDetail = () => {
         transition={{ duration: 0.3 }}
       >
         <Card>
-          <CardContent className="p-6 space-y-6">
-            <ExerciseSets
-              exercises={exercises}
-              onExerciseComplete={handleExerciseComplete}
-              currentExerciseIndex={currentExerciseIndex}
-              sessionId={sessionId}
-            />
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold mb-4">Exercices de la séance</h2>
+              {exercises.map((exercise, index) => (
+                <div 
+                  key={index}
+                  className={`p-4 rounded-lg border ${
+                    index === currentExerciseIndex ? 'border-primary bg-primary/5' : ''
+                  }`}
+                >
+                  <h3 className="text-lg font-semibold">{exercise}</h3>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </motion.div>
