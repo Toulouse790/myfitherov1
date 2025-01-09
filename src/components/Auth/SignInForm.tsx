@@ -7,6 +7,7 @@ import { SubmitButton } from "./SignInForm/SubmitButton";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ export const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,10 +31,20 @@ export const SignInForm = () => {
 
       if (signInError) throw signInError;
 
+      toast({
+        title: "Connexion réussie",
+        description: "Vous êtes maintenant connecté",
+      });
+
       navigate("/");
     } catch (err) {
       console.error("Erreur de connexion:", err);
       setError("Email ou mot de passe incorrect");
+      toast({
+        variant: "destructive",
+        title: "Erreur de connexion",
+        description: "Email ou mot de passe incorrect",
+      });
     } finally {
       setIsLoading(false);
     }
