@@ -10,6 +10,7 @@ import Nutrition from "@/pages/Nutrition";
 import Sleep from "@/pages/Sleep";
 import Stats from "@/pages/Stats";
 import Cardio from "@/pages/Cardio";
+import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,22 @@ export const router = createBrowserRouter([
       },
       {
         path: "workouts",
+        element: (
+          <ProtectedRoute>
+            <Workouts />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workouts/exercise/library",
+        element: (
+          <ProtectedRoute>
+            <ExerciseLibrary />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workout/:sessionId",
         element: (
           <ProtectedRoute>
             <Workouts />
