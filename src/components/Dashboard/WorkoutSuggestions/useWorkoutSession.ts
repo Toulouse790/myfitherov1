@@ -42,7 +42,7 @@ export const useWorkoutSession = () => {
 
       if (workoutSession) {
         console.log("Workout session created:", workoutSession);
-        navigate(`/workout/${workoutSession.id}`);
+        navigate(`/workouts/exercise/next-workout`);
       }
     } catch (error) {
       console.error('Error creating workout:', error);
