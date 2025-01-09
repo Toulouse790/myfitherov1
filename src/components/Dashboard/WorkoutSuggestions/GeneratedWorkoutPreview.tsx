@@ -1,106 +1,31 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useNavigate, useLocation } from "react-router-dom";
-import { WorkoutPlan } from "./workoutPlanGenerator";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
+import { Dumbbell } from "lucide-react";
 
 interface GeneratedWorkoutPreviewProps {
-  plan: WorkoutPlan;
+  exercises: string[];
 }
 
-export const GeneratedWorkoutPreview = ({ plan }: GeneratedWorkoutPreviewProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { toast } = useToast();
-  const { user } = useAuth();
-
-  const handleStartWorkout = async () => {
-    if (!user) {
-      console.log("Utilisateur non authentifié, redirection vers signin avec le plan");
-      navigate("/signin", { 
-        state: { 
-          from: location.pathname,
-          workoutPlan: plan
-        } 
-      });
-      return;
-    }
-
-    try {
-      console.log("Création de la session avec les exercices:", plan.exercises);
-      const { data: session, error } = await supabase
-        .from('workout_sessions')
-        .insert([
-          { 
-            user_id: user.id,
-            type: 'strength',
-            status: 'in_progress',
-            exercises: plan.exercises.map(ex => ex.name),
-            target_duration_minutes: 45,
-            workout_type: 'strength'
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Erreur lors de la création de la session:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de créer la session d'entraînement",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log("Session créée avec succès:", session);
-      toast({
-        title: "Séance créée",
-        description: "Votre séance a été créée avec succès",
-      });
-
-      if (session) {
-        navigate(`/workouts/${session.id}`);
-      }
-    } catch (error) {
-      console.error('Error creating workout:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la création de la séance",
-        variant: "destructive",
-      });
-    }
-  };
-
+export const GeneratedWorkoutPreview = ({ exercises }: GeneratedWorkoutPreviewProps) => {
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Séance générée</h3>
-          <p className="text-sm text-muted-foreground">
-            Voici une séance adaptée à vos objectifs
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {plan.exercises.map((exercise, index) => (
-            <div key={index} className="flex items-center justify-between">
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold text-center">Votre séance personnalisée</h2>
+      <div className="grid gap-4">
+        {exercises.map((exercise, index) => (
+          <Card key={index} className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Dumbbell className="w-5 h-5 text-primary" />
+              </div>
               <div>
-                <p className="font-medium">{exercise.name}</p>
+                <h3 className="font-medium">{exercise}</h3>
                 <p className="text-sm text-muted-foreground">
-                  {exercise.sets} séries • {exercise.reps} répétitions
+                  3 séries • 12 répétitions
                 </p>
               </div>
             </div>
-          ))}
-        </div>
-
-        <Button onClick={handleStartWorkout} className="w-full">
-          Commencer la séance
-        </Button>
+          </Card>
+        ))}
       </div>
-    </Card>
+    </div>
   );
 };

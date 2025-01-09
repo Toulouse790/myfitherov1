@@ -1,166 +1,96 @@
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { useExerciseFetching } from "@/hooks/use-exercise-fetching";
-import { generateWorkoutPlan } from "./workoutPlanGenerator";
-import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
-import { WorkoutPlan } from "./workoutPlanGenerator";
-import { LoadingButton } from "./GenerateWorkout/LoadingButton";
-import { WorkoutActions } from "./GenerateWorkout/WorkoutActions";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
+import { LoadingButton } from "./GenerateWorkout/LoadingButton";
+import { WorkoutActions } from "./GenerateWorkout/WorkoutActions";
 
 interface GenerateWorkoutDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onWorkoutGenerated?: (workout: WorkoutPlan) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export const GenerateWorkoutDialog = ({
-  open,
-  onOpenChange,
-  onWorkoutGenerated
+  isOpen,
+  onClose,
 }: GenerateWorkoutDialogProps) => {
-  const [availableExercises, setAvailableExercises] = useState<string[]>([]);
-  const [generatedWorkout, setGeneratedWorkout] = useState<WorkoutPlan | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedWorkout, setGeneratedWorkout] = useState<string[] | null>(null);
   const { toast } = useToast();
-  const { fetchExercises } = useExerciseFetching();
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (open) {
-      const loadExercises = async () => {
-        try {
-          console.log("Chargement des exercices disponibles...");
-          const exercises = await fetchExercises();
-          console.log(`${exercises.length} exercices chargés avec succès`);
-          setAvailableExercises(exercises);
-        } catch (error) {
-          console.error('Erreur lors du chargement des exercices:', error);
-          toast({
-            title: "Erreur de chargement",
-            description: "Impossible de charger les exercices",
-            variant: "destructive",
-            duration: 2000,
-          });
-          onOpenChange(false);
-        }
-      };
-      loadExercises();
-    } else {
-      setGeneratedWorkout(null);
-    }
-  }, [open, fetchExercises, toast, onOpenChange]);
-
-  const handleGenerateWorkout = async () => {
-    if (availableExercises.length === 0) {
+  const handleStartWorkout = async () => {
+    if (!user) {
       toast({
-        title: "Information",
-        description: "Aucun exercice disponible",
-        duration: 2000,
+        title: "Erreur",
+        description: "Vous devez être connecté pour commencer une séance",
+        variant: "destructive",
       });
       return;
     }
 
-    setIsGenerating(true);
-    console.log("Génération du programme d'entraînement...");
-    
     try {
-      const workout = generateWorkoutPlan(availableExercises);
-      console.log("Programme généré avec succès:", workout);
-      setGeneratedWorkout(workout);
-      toast({
-        title: "Succès",
-        description: "Programme d'entraînement généré avec succès",
-      });
+      const { data: session, error } = await supabase
+        .from('workout_sessions')
+        .insert({
+          user_id: user.id,
+          exercises: generatedWorkout,
+          status: 'in_progress'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (session) {
+        navigate(`/workouts/${session.id}`);
+        onClose();
+      }
     } catch (error) {
-      console.error("Erreur lors de la génération:", error);
+      console.error('Error creating workout session:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de générer le programme",
+        description: "Impossible de créer la séance d'entraînement",
         variant: "destructive",
       });
-    } finally {
-      setIsGenerating(false);
     }
   };
 
-  const handleConfirm = async () => {
-    if (!user) {
-      navigate("/signin", { 
-        state: { 
-          from: location.pathname,
-          workoutPlan: generatedWorkout
-        } 
-      });
-      return;
-    }
-
-    if (generatedWorkout) {
-      try {
-        console.log("Création de la session d'entraînement...");
-        const { data: session, error } = await supabase
-          .from('workout_sessions')
-          .insert([{
-            user_id: user.id,
-            exercises: generatedWorkout.exercises.map(ex => ex.name),
-            type: 'strength',
-            target_duration_minutes: 45
-          }])
-          .select()
-          .single();
-
-        if (error) throw error;
-
-        console.log("Session créée avec succès:", session);
-        
-        if (onWorkoutGenerated) {
-          onWorkoutGenerated(generatedWorkout);
-        }
-        
-        onOpenChange(false);
-        navigate(`/workouts/${session.id}`);
-        
-        toast({
-          title: "Session créée",
-          description: "Votre session d'entraînement est prête",
-        });
-      } catch (error) {
-        console.error("Erreur lors de la création de la session:", error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de créer la session d'entraînement",
-          variant: "destructive",
-        });
-      }
-    }
+  const handleGenerate = async () => {
+    setIsGenerating(true);
+    // Simulation d'une génération d'entraînement
+    setTimeout(() => {
+      setGeneratedWorkout([
+        "Développé couché",
+        "Rowing barre",
+        "Squat",
+        "Développé épaules"
+      ]);
+      setIsGenerating(false);
+    }, 2000);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Programme d'entraînement personnalisé</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-6">
+        <div className="space-y-6 py-4">
           {!generatedWorkout ? (
-            <LoadingButton 
+            <LoadingButton
               isLoading={isGenerating}
-              disabled={availableExercises.length === 0 || isGenerating}
-              onClick={handleGenerateWorkout}
+              onClick={handleGenerate}
             />
           ) : (
-            <div className="space-y-4">
-              <GeneratedWorkoutPreview plan={generatedWorkout} />
-              <WorkoutActions 
-                onRegenerate={() => setGeneratedWorkout(null)}
-                onConfirm={handleConfirm}
+            <>
+              <GeneratedWorkoutPreview exercises={generatedWorkout} />
+              <WorkoutActions
+                onStartWorkout={handleStartWorkout}
+                onRegenerate={handleGenerate}
               />
-            </div>
+            </>
           )}
         </div>
       </DialogContent>
