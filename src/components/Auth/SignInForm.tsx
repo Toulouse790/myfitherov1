@@ -29,7 +29,15 @@ export const SignInForm = () => {
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {
+        setError("Email ou mot de passe incorrect");
+        toast({
+          variant: "destructive",
+          title: "Erreur de connexion",
+          description: "Email ou mot de passe incorrect",
+        });
+        return;
+      }
 
       if (data.user) {
         toast({
@@ -40,12 +48,7 @@ export const SignInForm = () => {
       }
     } catch (err) {
       console.error("Erreur de connexion:", err);
-      setError("Email ou mot de passe incorrect");
-      toast({
-        variant: "destructive",
-        title: "Erreur de connexion",
-        description: "Email ou mot de passe incorrect",
-      });
+      setError("Une erreur est survenue lors de la connexion");
     } finally {
       setIsLoading(false);
     }
