@@ -8,7 +8,7 @@ export const navigationItems = [
   },
   {
     title: "Entraînements",
-    href: "/workouts",
+    href: "/entrainements",
     icon: Dumbbell,
   },
   {

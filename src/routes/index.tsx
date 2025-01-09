@@ -52,6 +52,7 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      // Routes d'entraînement en anglais
       {
         path: "workouts",
         element: (
@@ -76,7 +77,7 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      // Ajout de l'alias en français
+      // Alias en français pour les routes d'entraînement
       {
         path: "entrainement/:sessionId",
         element: (
@@ -86,7 +87,32 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "entrainements",
+        element: (
+          <ProtectedRoute>
+            <Workouts />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "entrainements/exercices/bibliotheque",
+        element: (
+          <ProtectedRoute>
+            <ExerciseLibrary />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "workout-generate",
+        element: (
+          <ProtectedRoute>
+            <WorkoutGenerate />
+          </ProtectedRoute>
+        ),
+      },
+      // Alias en français pour la génération d'entraînement
+      {
+        path: "generer-entrainement",
         element: (
           <ProtectedRoute>
             <WorkoutGenerate />
