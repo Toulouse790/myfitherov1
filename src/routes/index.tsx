@@ -11,6 +11,7 @@ import Sleep from "@/pages/Sleep";
 import Stats from "@/pages/Stats";
 import Cardio from "@/pages/Cardio";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
+import WorkoutGenerate from "@/pages/WorkoutGenerate";
 
 export const router = createBrowserRouter([
   {
@@ -62,6 +63,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Workouts />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workout-generate",
+        element: (
+          <ProtectedRoute>
+            <WorkoutGenerate />
           </ProtectedRoute>
         ),
       },
