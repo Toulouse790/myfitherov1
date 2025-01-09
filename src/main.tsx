@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes";
-import { ThemeProvider } from "./components/Theme/ThemeProvider";
+import { ThemeProvider } from "@/components/Theme/ThemeProvider";
 import { Toaster } from "./components/ui/toaster";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
