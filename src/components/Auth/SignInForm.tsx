@@ -1,26 +1,58 @@
 import { useState } from "react";
-import { useSignIn } from "@/hooks/use-signin";
+import { supabase } from "@/integrations/supabase/client";
 import { EmailInput } from "./SignInForm/EmailInput";
 import { PasswordInput } from "./SignInForm/PasswordInput";
 import { RememberMeCheckbox } from "./SignInForm/RememberMeCheckbox";
 import { SubmitButton } from "./SignInForm/SubmitButton";
 import { CardContent, CardFooter } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/components/ui/use-toast";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const { handleSignIn, isLoading, error } = useSignIn();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleSignIn(email, password, rememberMe);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) throw signInError;
+
+      if (data.user) {
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue sur MyFitHero !",
+        });
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Erreur de connexion:", err);
+      setError("Email ou mot de passe incorrect");
+      toast({
+        variant: "destructive",
+        title: "Erreur de connexion",
+        description: "Email ou mot de passe incorrect",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={handleSignIn} className="space-y-6">
       <CardContent className="space-y-4">
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
@@ -38,7 +70,7 @@ export const SignInForm = () => {
         </div>
         
         {error && (
-          <Alert variant="destructive" className="mb-4">
+          <Alert variant="destructive">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}

@@ -1,21 +1,35 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const location = useLocation();
 
-  if (loading) {
-    return <div>Loading...</div>;
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Chargement...</div>;
   }
 
-  // Si l'utilisateur n'est pas connecté et n'est pas déjà sur /signin
-  if (!user && location.pathname !== "/signin") {
+  if (!isAuthenticated && location.pathname !== "/signin") {
     return <Navigate to="/signin" replace />;
   }
 
-  // Si l'utilisateur est connecté et essaie d'accéder à /signin
-  if (user && location.pathname === "/signin") {
+  if (isAuthenticated && location.pathname === "/signin") {
     return <Navigate to="/" replace />;
   }
 
