@@ -68,7 +68,7 @@ export const ExerciseSets = ({
 
         exercises.forEach(exercise => {
           if (!setsCount[exercise]) {
-            setsCount[exercise] = 3;
+            setsCount[exercise] = 3; // Par défaut 3 séries
           }
         });
 
