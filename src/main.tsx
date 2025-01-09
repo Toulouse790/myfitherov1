@@ -1,28 +1,19 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RouterProvider } from 'react-router-dom'
-import { router } from './routes'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
+import { ThemeProvider } from "./components/Theme/ThemeProvider";
+import { Toaster } from "./components/ui/toaster";
+import { AuthProvider } from "./contexts/AuthContext";
+import "./index.css";
 
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
-    },
-  },
-})
-
-// Ensure the root element exists
-const rootElement = document.getElementById('root')
-if (!rootElement) throw new Error('Failed to find the root element')
-
-ReactDOM.createRoot(rootElement).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  </React.StrictMode>,
-)
+    <ThemeProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+      </AuthProvider>
+    </ThemeProvider>
+  </React.StrictMode>
+);
