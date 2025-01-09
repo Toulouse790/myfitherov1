@@ -42,13 +42,17 @@ export const useSignIn = () => {
       console.log({
         email: email,
         passwordLength: password.length,
+        rememberMe: rememberMe,
         timestamp: new Date().toISOString(),
         location: window.location.href
       });
 
       const { error: signInError, data } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password,
+        options: {
+          persistSession: rememberMe // Ceci contrôle si la session doit être persistée
+        }
       });
 
       if (signInError) {
@@ -69,6 +73,7 @@ export const useSignIn = () => {
       console.log({
         userId: data.session?.user.id,
         email: data.session?.user.email,
+        rememberMe: rememberMe,
         timestamp: new Date().toISOString()
       });
 
