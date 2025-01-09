@@ -50,9 +50,6 @@ export const useSignIn = () => {
       const { error: signInError, data } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          persistSession: rememberMe // Ceci contrôle si la session doit être persistée
-        }
       });
 
       if (signInError) {
