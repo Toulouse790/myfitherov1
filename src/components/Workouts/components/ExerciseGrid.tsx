@@ -1,6 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
-import { exercises } from "../exerciseLibrary";
 
 interface ExerciseGridProps {
   exercises: string[];
