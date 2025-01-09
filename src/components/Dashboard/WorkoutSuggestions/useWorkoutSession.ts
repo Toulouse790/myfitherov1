@@ -42,7 +42,8 @@ export const useWorkoutSession = () => {
 
       if (workoutSession) {
         console.log("Workout session created:", workoutSession);
-        navigate(`/workouts/exercise/next-workout`);
+        // Correction de la route de redirection
+        navigate(`/workout/${workoutSession.id}`);
       }
     } catch (error) {
       console.error('Error creating workout:', error);

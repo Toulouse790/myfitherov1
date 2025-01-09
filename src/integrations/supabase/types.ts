@@ -112,6 +112,33 @@ export type Database = {
           },
         ]
       }
+      application_routes: {
+        Row: {
+          component: string
+          created_at: string
+          description: string | null
+          id: string
+          path: string
+          updated_at: string
+        }
+        Insert: {
+          component: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          path: string
+          updated_at?: string
+        }
+        Update: {
+          component?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          path?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       athlete_assessments: {
         Row: {
           assessment_date: string | null
