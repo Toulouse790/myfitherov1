@@ -4,7 +4,6 @@ import {
   ArrowBigUp,
   ArrowBigDown,
   Shirt,
-  Arm,
   Hammer,
   Activity
 } from "lucide-react";
@@ -34,7 +33,7 @@ export const MuscleGroupCard = ({
         return <Activity className="h-4 w-4 text-primary" />;
       case 'biceps':
       case 'triceps':
-        return <Arm className="h-4 w-4 text-primary" />;
+        return <Dumbbell className="h-4 w-4 text-primary" />;
       case 'abs':
         return <Hammer className="h-4 w-4 text-primary" />;
       default:
