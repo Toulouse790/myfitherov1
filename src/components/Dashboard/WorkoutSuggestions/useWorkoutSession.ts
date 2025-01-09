@@ -11,6 +11,11 @@ export const useWorkoutSession = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
+        toast({
+          title: "Connexion requise",
+          description: "Veuillez vous connecter pour créer une séance d'entraînement",
+          variant: "destructive",
+        });
         navigate('/signin');
         return;
       }
@@ -42,7 +47,6 @@ export const useWorkoutSession = () => {
 
       if (workoutSession) {
         console.log("Workout session created:", workoutSession);
-        // Update to use correct route format
         navigate(`/workouts/${workoutSession.id}`);
       }
     } catch (error) {
