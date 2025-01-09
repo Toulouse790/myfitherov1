@@ -24,34 +24,46 @@ export const SignInForm = () => {
     setError(null);
 
     try {
+      console.log("Tentative de connexion avec:", { email });
+      
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (signInError) {
-        console.error("Erreur de connexion:", signInError);
+        console.error("Erreur Supabase:", signInError);
         throw signInError;
       }
 
-      if (data?.session) {
-        console.log("Session créée avec succès:", data.session);
-        toast({
-          title: "Connexion réussie",
-          description: "Vous êtes maintenant connecté",
-        });
-        navigate("/");
-      } else {
+      if (!data?.session) {
         console.error("Pas de session créée");
-        throw new Error("Impossible de créer une session");
+        throw new Error("Aucune session n'a été créée");
       }
+
+      console.log("Connexion réussie, session:", data.session);
+      console.log("Redirection vers /");
+      
+      toast({
+        title: "Connexion réussie",
+        description: "Vous êtes maintenant connecté",
+      });
+
+      // Attendre un court instant pour s'assurer que la session est bien enregistrée
+      setTimeout(() => {
+        navigate("/");
+      }, 100);
+
     } catch (err) {
-      console.error("Erreur détaillée:", err);
-      setError("Email ou mot de passe incorrect");
+      console.error("Erreur complète:", err);
+      
+      const errorMessage = err instanceof Error ? err.message : "Erreur de connexion";
+      setError(errorMessage);
+      
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
-        description: "Email ou mot de passe incorrect",
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);

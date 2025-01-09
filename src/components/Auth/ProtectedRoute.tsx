@@ -9,10 +9,12 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log("Vérification de l'authentification...");
         const { data: { session } } = await supabase.auth.getSession();
+        console.log("Session trouvée:", !!session);
         setIsAuthenticated(!!session);
       } catch (error) {
-        console.error("Erreur de vérification de session:", error);
+        console.error("Erreur lors de la vérification de la session:", error);
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
@@ -21,7 +23,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
     checkAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Changement d'état d'authentification:", { event, hasSession: !!session });
       setIsAuthenticated(!!session);
       setIsLoading(false);
     });
@@ -38,6 +41,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
+    console.log("Utilisateur non authentifié, redirection vers /signin");
     return <Navigate to="/signin" replace />;
   }
 
