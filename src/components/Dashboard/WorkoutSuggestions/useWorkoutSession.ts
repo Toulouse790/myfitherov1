@@ -8,20 +8,8 @@ export const useWorkoutSession = () => {
 
   const createWorkoutSession = async (type: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        // Stocker le chemin actuel avant la redirection
-        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
-        
-        toast({
-          title: "Connexion requise",
-          description: "Veuillez vous connecter pour créer une séance d'entraînement",
-          variant: "destructive",
-        });
-        navigate('/signin');
-        return;
-      }
+      // Temporairement, on utilise un ID utilisateur factice pour le développement
+      const mockUserId = "00000000-0000-0000-0000-000000000000";
 
       if (type === 'favorites') {
         navigate('/workouts');
@@ -29,7 +17,7 @@ export const useWorkoutSession = () => {
       }
 
       const workoutData = {
-        user_id: session.user.id,
+        user_id: mockUserId,
         workout_type: 'strength',
         status: 'in_progress',
         target_duration_minutes: type === 'quick' ? 30 : 45,
