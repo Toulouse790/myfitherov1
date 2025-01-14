@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  // Temporairement, on retourne directement les enfants sans vérification
+  return <>{children}</>;
+
+  // Code original commenté pour référence future
+  /*
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -46,4 +51,5 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   return <>{children}</>;
+  */
 };
