@@ -11,7 +11,7 @@ export default function Index() {
   const navigate = useNavigate();
 
   const handleCreateSession = () => {
-    navigate('/workout-session');
+    navigate('/workouts'); // Redirection vers la page de sélection des groupes musculaires
   };
 
   const handleAIGeneration = () => {
