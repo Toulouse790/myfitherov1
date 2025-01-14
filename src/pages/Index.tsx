@@ -11,7 +11,7 @@ export default function Index() {
   const navigate = useNavigate();
 
   const handleCreateSession = () => {
-    navigate('/workouts/exercise/library');
+    navigate('/workout-session');
   };
 
   const handleAIGeneration = () => {
