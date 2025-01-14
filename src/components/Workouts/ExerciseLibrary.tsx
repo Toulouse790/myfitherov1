@@ -7,6 +7,7 @@ import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
 import { ExerciseSelection } from "./ExerciseSelection";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
@@ -30,10 +31,6 @@ export const ExerciseLibrary = () => {
       return;
     }
 
-    setShowSummary(true);
-  };
-
-  const handleConfirmWorkout = async () => {
     try {
       const { data: session, error } = await supabase
         .from('workout_sessions')
@@ -48,10 +45,7 @@ export const ExerciseLibrary = () => {
         .select()
         .single();
 
-      if (error) {
-        console.error('Error creating workout:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       if (session) {
         navigate(`/workouts/${session.id}`);
@@ -108,11 +102,15 @@ export const ExerciseLibrary = () => {
     <div className="min-h-screen bg-background">
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         {selectedExercises.length > 0 && (
-          <div className="flex justify-end mb-6">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-end mb-6"
+          >
             <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
               C'est parti ! ({selectedExercises.length} exercices)
             </Button>
-          </div>
+          </motion.div>
         )}
 
         {showSelection ? (
@@ -123,12 +121,16 @@ export const ExerciseLibrary = () => {
             muscleGroup={selectedMuscleGroup}
           />
         ) : (
-          <div className="space-y-6">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
+          >
             <h1 className="text-2xl font-bold text-center">
               Sélectionnez les groupes musculaires à travailler
             </h1>
             <MuscleGroupGrid onSelect={handleMuscleGroupSelect} />
-          </div>
+          </motion.div>
         )}
 
         <Dialog open={showSummary} onOpenChange={setShowSummary}>
@@ -154,7 +156,7 @@ export const ExerciseLibrary = () => {
               <Button variant="outline" onClick={() => setShowSummary(false)}>
                 Retour
               </Button>
-              <Button onClick={handleConfirmWorkout}>
+              <Button onClick={handleStartWorkout}>
                 Commencer la séance
               </Button>
             </DialogFooter>
