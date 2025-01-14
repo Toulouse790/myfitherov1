@@ -4,6 +4,7 @@ import Index from "@/pages/Index";
 import WorkoutSession from "@/pages/WorkoutSession";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
+import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
         path: "/workouts",
         element: <ExerciseLibrary />,
       },
+      {
+        path: "/workouts/:sessionId",
+        element: <NextWorkoutDetail />,
+      }
     ],
   },
 ]);
