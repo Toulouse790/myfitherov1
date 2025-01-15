@@ -22,29 +22,11 @@ interface ExerciseCardProps {
 const getRepsLabel = (exerciseName: string): string => {
   const lowerName = exerciseName.toLowerCase();
   
-  // Exercices pour les bras
-  if (
-    lowerName.includes("biceps") || 
-    lowerName.includes("triceps") ||
-    lowerName.includes("curl") ||
-    lowerName.includes("extension bras") ||
-    lowerName.includes("hammer") ||
-    lowerName.includes("concentration") ||
-    lowerName.includes("kickback")
-  ) {
+  if (lowerName.includes("biceps") || lowerName.includes("triceps") || lowerName.includes("curl")) {
     return "RÉPÉTITIONS PAR BRAS";
   }
   
-  // Exercices pour les jambes
-  if (
-    lowerName.includes("jambe") || 
-    lowerName.includes("mollet") || 
-    lowerName.includes("cuisse") ||
-    lowerName.includes("fente") ||
-    lowerName.includes("squat unilateral") ||
-    lowerName.includes("extension jambe") ||
-    lowerName.includes("flexion jambe")
-  ) {
+  if (lowerName.includes("jambe") || lowerName.includes("fente") || lowerName.includes("mollet")) {
     return "RÉPÉTITIONS PAR JAMBE";
   }
   
