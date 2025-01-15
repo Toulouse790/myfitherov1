@@ -28,41 +28,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
       ) : (
         <div className="text-center text-gray-500">
           <p>Aucun aliment ajouté</p>
-          {generatedMeal && (
-            <div className="mt-4 p-4 bg-muted rounded-lg">
-              <h4 className="font-medium mb-2">{generatedMeal.name}</h4>
-              <p className="text-sm">
-                {generatedMeal.calories}cal | {generatedMeal.proteins}g protéines
-              </p>
-              {generatedMeal.quantities && (
-                <div className="mt-2 text-sm">
-                  {generatedMeal.quantities.map((q, idx) => (
-                    <p key={idx}>{q.item}: {q.amount}</p>
-                  ))}
-                </div>
-              )}
-              <div className="flex gap-2 mt-4 justify-center">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="gap-2"
-                  onClick={() => onMealStatus('taken')}
-                >
-                  <Check className="w-4 h-4" />
-                  Valider
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="gap-2"
-                  onClick={() => onMealStatus('skipped')}
-                >
-                  <X className="w-4 h-4" />
-                  Non pris
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>
