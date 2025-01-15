@@ -74,7 +74,7 @@ export const ExerciseCard = ({
           >
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-muted-foreground min-w-[60px]">Série {setNumber}</span>
+                <span className="text-[11px] text-muted-foreground min-w-[40px]">S{setNumber}</span>
                 <div className="flex flex-1 items-center gap-2">
                   <WeightInput 
                     weight={weight} 
