@@ -126,9 +126,7 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
       ) : generatedMeal ? (
         <Card className="p-4">
           <div className="flex justify-between items-start">
-            <div className="space-y-2">
-              <h3 className="font-semibold text-lg">{generatedMeal.name}</h3>
-              <div className="space-y-1">
+            <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">
                   {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
                 </p>
