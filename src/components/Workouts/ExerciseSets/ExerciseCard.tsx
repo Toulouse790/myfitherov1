@@ -94,11 +94,19 @@ export const ExerciseCard = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-[11px] text-muted-foreground min-w-[40px] text-center hover:bg-primary/10"
+                className={`text-[11px] min-w-[40px] text-center ${
+                  completedSets >= setNumber 
+                    ? 'bg-green-500/20 hover:bg-green-500/30 text-green-700' 
+                    : 'text-muted-foreground hover:bg-primary/10'
+                }`}
                 onClick={handleSetComplete}
                 disabled={completedSets + 1 !== setNumber || isResting}
               >
-                S{setNumber}
+                {completedSets >= setNumber ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  `S${setNumber}`
+                )}
               </Button>
               <div className="flex flex-1 items-center justify-center gap-2">
                 <WeightInput 
