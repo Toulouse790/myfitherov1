@@ -82,15 +82,6 @@ export const NutritionGoals = () => {
                 <span>{goal.target} {goal.unit}</span>
               </div>
             </div>
-            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full transition-all duration-500"
-                style={{
-                  width: `${Math.min((goal.actual / goal.target) * 100, 100)}%`,
-                  backgroundColor: goal.actual >= goal.target ? '#22c55e' : '#0EA5E9'
-                }}
-              />
-            </div>
           </div>
         ))}
       </CardContent>
