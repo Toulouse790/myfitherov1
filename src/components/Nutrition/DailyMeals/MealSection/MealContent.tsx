@@ -52,85 +52,59 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
         mealEntries.map((entry) => (
           <Card key={entry.id} className="p-4">
             <div className="flex justify-between items-start">
-              <div className="space-y-2">
+              <div>
                 <h3 className="font-semibold text-lg">{entry.name}</h3>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">
-                    {entry.calories}cal | {entry.proteins}g
-                  </p>
-                  {entry.carbs !== undefined && entry.fats !== undefined && (
-                    <p className="text-sm text-muted-foreground">
-                      {entry.carbs}g gluc. | {entry.fats}g lip.
-                    </p>
-                  )}
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  {entry.calories}cal | {entry.proteins}g protéines
+                </p>
               </div>
             </div>
           </Card>
         ))
       ) : generatedMeal ? (
         <Card className="p-4">
-          <div className="flex flex-col space-y-4">
-            <div className="flex justify-between items-start">
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">
-                  {generatedMeal.calories}cal | {generatedMeal.proteins}g
-                </p>
-                {generatedMeal.carbs !== undefined && generatedMeal.fats !== undefined && (
-                  <p className="text-sm text-muted-foreground">
-                    {generatedMeal.carbs}g gluc. | {generatedMeal.fats}g lip.
-                  </p>
-                )}
-                {generatedMeal.quantities && generatedMeal.quantities.length > 0 && (
-                  <div className="mt-3">
-                    <h4 className="text-sm font-medium mb-1">Ingrédients :</h4>
-                    <ul className="list-disc list-inside text-sm text-muted-foreground">
-                      {generatedMeal.quantities.map((item, index) => (
-                        <li key={index}>
-                          {item.item}: {item.amount}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-              <Dialog open={isEditing} onOpenChange={setIsEditing}>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => setIsEditing(true)}
-                  className="text-gray-500"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Modifier le repas</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label>Calories (kcal)</Label>
-                      <Input 
-                        type="number"
-                        value={editedMeal?.calories || 0}
-                        onChange={(e) => setEditedMeal(prev => ({...prev!, calories: parseInt(e.target.value)}))}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Protéines (g)</Label>
-                      <Input 
-                        type="number"
-                        value={editedMeal?.proteins || 0}
-                        onChange={(e) => setEditedMeal(prev => ({...prev!, proteins: parseInt(e.target.value)}))}
-                      />
-                    </div>
-                    <Button onClick={handleSaveMeal} className="w-full">
-                      Sauvegarder
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm text-muted-foreground">
+                {generatedMeal.calories}cal | {generatedMeal.proteins}g protéines
+              </p>
             </div>
+            <Dialog open={isEditing} onOpenChange={setIsEditing}>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setIsEditing(true)}
+                className="text-gray-500"
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Modifier le repas</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Calories (kcal)</Label>
+                    <Input 
+                      type="number"
+                      value={editedMeal?.calories || 0}
+                      onChange={(e) => setEditedMeal(prev => ({...prev!, calories: parseInt(e.target.value)}))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Protéines (g)</Label>
+                    <Input 
+                      type="number"
+                      value={editedMeal?.proteins || 0}
+                      onChange={(e) => setEditedMeal(prev => ({...prev!, proteins: parseInt(e.target.value)}))}
+                    />
+                  </div>
+                  <Button onClick={handleSaveMeal} className="w-full">
+                    Sauvegarder
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </Card>
       ) : (
