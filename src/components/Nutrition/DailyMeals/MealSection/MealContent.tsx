@@ -16,24 +16,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
     setIsEditing(false);
   };
 
-  const getNutritionalValues = () => {
-    if (generatedMeal?.type && mealPlan[generatedMeal.type]) {
-      const planMeal = mealPlan[generatedMeal.type];
-      return {
-        calories: planMeal.calories,
-        proteins: planMeal.proteins,
-        carbs: planMeal.carbs,
-        fats: planMeal.fats
-      };
-    }
-    return {
-      calories: generatedMeal?.calories,
-      proteins: generatedMeal?.proteins,
-      carbs: generatedMeal?.carbs,
-      fats: generatedMeal?.fats
-    };
-  };
-
   return (
     <div className="pl-4 pr-2 py-2 space-y-2">
       {mealEntries.length > 0 ? (
@@ -43,11 +25,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
             className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100/50 transition-colors"
           >
             <div className="font-medium text-gray-800">{entry.name}</div>
-            <div className="text-sm text-muted-foreground">
-              {entry.calories} kcal | {entry.proteins}g protéines
-              {entry.carbs !== undefined && ` | ${entry.carbs}g glucides`}
-              {entry.fats !== undefined && ` | ${entry.fats}g lipides`}
-            </div>
             <div className="flex justify-end gap-2">
               <Button
                 variant="ghost"
@@ -79,14 +56,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <div className="font-medium text-gray-800">{generatedMeal.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {(() => {
-                    const values = getNutritionalValues();
-                    return `${values.calories} kcal | ${values.proteins}g protéines${
-                      values.carbs !== undefined ? ` | ${values.carbs}g glucides` : ''
-                    }${values.fats !== undefined ? ` | ${values.fats}g lipides` : ''}`;
-                  })()}
-                </div>
               </div>
               <Dialog>
                 <DialogTrigger asChild>
