@@ -9,7 +9,8 @@ interface WeightInputProps {
 
 export const WeightInput = ({ weight, onWeightChange, disabled = false }: WeightInputProps) => {
   return (
-    <div className="flex items-center gap-1 flex-1">
+    <div className="flex flex-col flex-1">
+      <span className="text-xs text-muted-foreground mb-1">kg</span>
       <Input
         type="number"
         value={weight}
@@ -17,7 +18,6 @@ export const WeightInput = ({ weight, onWeightChange, disabled = false }: Weight
         className="h-8 text-center text-sm px-2"
         disabled={disabled}
       />
-      <span className="text-xs text-muted-foreground">kg</span>
     </div>
   );
 };
