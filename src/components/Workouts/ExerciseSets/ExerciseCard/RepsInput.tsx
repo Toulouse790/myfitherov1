@@ -8,7 +8,8 @@ interface RepsInputProps {
 
 export const RepsInput = ({ reps, onRepsChange, disabled = false }: RepsInputProps) => {
   return (
-    <div className="flex items-center gap-1 flex-1">
+    <div className="flex flex-col flex-1">
+      <span className="text-xs text-muted-foreground mb-1">reps</span>
       <Input
         type="number"
         value={reps}
@@ -16,7 +17,6 @@ export const RepsInput = ({ reps, onRepsChange, disabled = false }: RepsInputPro
         className="h-8 text-center text-sm px-2"
         disabled={disabled}
       />
-      <span className="text-xs text-muted-foreground">reps</span>
     </div>
   );
 };
