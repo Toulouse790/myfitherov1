@@ -20,6 +20,7 @@ export const FilterDialog = ({ open, onOpenChange, onFilterApply }: FilterDialog
     console.log('Applying filter with group:', groupName);
     console.log('Translated to English:', englishGroup);
     onFilterApply(englishGroup.toLowerCase());
+    onOpenChange(false); // Ferme la boîte de dialogue après la sélection
   };
 
   return (
@@ -32,7 +33,6 @@ export const FilterDialog = ({ open, onOpenChange, onFilterApply }: FilterDialog
           {muscleGroups.map((group) => (
             <Button
               key={group.id}
-              variant="outline"
               onClick={() => handleFilterApply(group.name)}
               className="w-full justify-start"
             >
