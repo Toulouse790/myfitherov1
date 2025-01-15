@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { WeightInput } from "./ExerciseCard/WeightInput";
 import { RepsInput } from "./ExerciseCard/RepsInput";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
-import { Progress } from "@/components/ui/progress";
+import { exerciseImages } from "../data/exerciseImages";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -41,18 +41,18 @@ export const ExerciseCard = ({
     setIsResting(false);
   };
 
-  const progress = (completedSets / totalSets) * 100;
-
   return (
     <Card className="p-6">
       <div className="space-y-6">
-        <div className="space-y-2">
+        <div className="space-y-4">
           <h3 className="text-xl font-semibold">{exerciseName}</h3>
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>Série {completedSets + 1} sur {totalSets}</span>
-            <span>{completedSets} séries complétées</span>
+          <div className="aspect-video w-full overflow-hidden rounded-lg">
+            <img 
+              src={exerciseImages[exerciseName] || "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop"} 
+              alt={exerciseName}
+              className="w-full h-full object-cover"
+            />
           </div>
-          <Progress value={progress} className="h-2" />
         </div>
 
         {isResting && restTimer ? (
