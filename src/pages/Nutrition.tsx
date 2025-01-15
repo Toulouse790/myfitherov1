@@ -36,7 +36,7 @@ const Nutrition = () => {
               value="journal" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              Journal alimentaire
+              Alimentaire
             </TabsTrigger>
             <TabsTrigger 
               value="meal-plan" 
