@@ -19,4 +19,5 @@ export interface FoodEntry {
   mealType?: string;
   notes?: string;
   description?: string;
+  status?: 'taken' | 'skipped' | null;
 }
