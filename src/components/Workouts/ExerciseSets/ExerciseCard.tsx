@@ -93,13 +93,13 @@ export const ExerciseCard = ({
               {completedSets + 1 === setNumber && !restTimer && (
                 <Button
                   onClick={handleSetComplete}
-                  className="w-full"
+                  className="w-auto px-4 mx-auto text-xs"
                   variant="default"
                   size="sm"
                 >
                   {isResting ? (
                     <div className="flex items-center gap-2">
-                      <Timer className="h-4 w-4" />
+                      <Timer className="h-3 w-3" />
                       <span>Repos en cours...</span>
                     </div>
                   ) : (
