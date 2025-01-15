@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Moon, Star } from "lucide-react";
+import { Moon, Star, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SleepEntry {
   id: string;
@@ -14,7 +15,48 @@ interface SleepEntry {
 
 export const SleepTracker = () => {
   const [entries, setEntries] = useState<SleepEntry[]>([]);
+  const [recommendedSleep, setRecommendedSleep] = useState<string>("");
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchUserActivityLevel();
+  }, []);
+
+  const fetchUserActivityLevel = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('questionnaire_responses')
+      .select('experience_level')
+      .eq('user_id', user.id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching activity level:', error);
+      return;
+    }
+
+    // Définir le temps de sommeil recommandé en fonction du niveau d'activité
+    const recommendedHours = getRecommendedSleep(data?.experience_level);
+    setRecommendedSleep(recommendedHours);
+  };
+
+  const getRecommendedSleep = (activityLevel: string | null): string => {
+    switch (activityLevel) {
+      case 'very_active':
+      case 'extra_active':
+        return "8-10 heures";
+      case 'moderately_active':
+        return "7-9 heures";
+      case 'lightly_active':
+        return "7-8 heures";
+      case 'sedentary':
+        return "7 heures";
+      default:
+        return "7-8 heures";
+    }
+  };
 
   const addSleepEntry = (hours: number, minutes: number, quality: number) => {
     const newEntry: SleepEntry = {
@@ -72,6 +114,13 @@ export const SleepTracker = () => {
                 />
               ))}
             </div>
+          </div>
+
+          <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+            <Info className="w-5 h-5 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
+              Temps de sommeil recommandé : <span className="font-medium">{recommendedSleep}</span>
+            </p>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
