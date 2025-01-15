@@ -8,17 +8,15 @@ interface RepsInputProps {
 
 export const RepsInput = ({ reps, onRepsChange, disabled = false }: RepsInputProps) => {
   return (
-    <div className="flex items-center gap-2">
-      <label className="text-xs font-medium min-w-16">Répétitions</label>
-      <div className="flex items-center gap-2 flex-1">
-        <Input
-          type="number"
-          value={reps}
-          onChange={(e) => onRepsChange(Number(e.target.value))}
-          className="text-center max-w-16 h-8 text-sm"
-          disabled={disabled}
-        />
-      </div>
+    <div className="flex items-center gap-1 flex-1">
+      <Input
+        type="number"
+        value={reps}
+        onChange={(e) => onRepsChange(Number(e.target.value))}
+        className="h-8 text-center text-sm px-2"
+        disabled={disabled}
+      />
+      <span className="text-xs text-muted-foreground">reps</span>
     </div>
   );
 };

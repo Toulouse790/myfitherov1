@@ -41,38 +41,38 @@ export const ExerciseCard = ({
   };
 
   return (
-    <Card className="p-4">
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold">{exerciseName}</h3>
-          <div className="aspect-video w-full overflow-hidden rounded-lg">
-            <img 
-              src={exerciseImages[exerciseName] || "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop"} 
-              alt={exerciseName}
-              className="w-full h-full object-cover"
-            />
-          </div>
+    <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-2">
+        <h3 className="text-sm font-medium text-muted-foreground">{exerciseName}</h3>
+        <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
+          <img 
+            src={exerciseImages[exerciseName] || "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop"} 
+            alt={exerciseName}
+            className="w-full h-full object-cover"
+          />
         </div>
+      </div>
 
-        {restTimer !== null && (
-          <div className="py-2">
-            <RestTimer 
-              restTime={restTimer} 
-              onRestTimeChange={() => {}} 
-            />
-          </div>
-        )}
+      {restTimer !== null && (
+        <div className="py-2">
+          <RestTimer 
+            restTime={restTimer} 
+            onRestTimeChange={() => {}} 
+          />
+        </div>
+      )}
 
-        <div className="space-y-2">
-          {[1, 2, 3].map((setNumber) => (
-            <div 
-              key={setNumber} 
-              className={`p-2 rounded-lg border ${
-                completedSets >= setNumber ? 'bg-muted' : 'bg-card'
-              }`}
-            >
-              <div className="text-xs font-medium mb-1">Série {setNumber}</div>
-              <div className="flex gap-2">
+      <div className="space-y-2">
+        {[1, 2, 3].map((setNumber) => (
+          <div 
+            key={setNumber} 
+            className={`p-3 rounded-lg ${
+              completedSets >= setNumber ? 'bg-muted/50' : 'bg-card'
+            }`}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-medium text-muted-foreground min-w-[60px]">Série {setNumber}</span>
+              <div className="flex flex-1 items-center gap-2">
                 <WeightInput 
                   weight={weight} 
                   onWeightChange={onWeightChange}
@@ -86,9 +86,9 @@ export const ExerciseCard = ({
                 />
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    </Card>
+    </div>
   );
 };
