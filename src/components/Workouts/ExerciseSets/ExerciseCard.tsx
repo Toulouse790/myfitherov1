@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { WeightInput } from "./ExerciseCard/WeightInput";
-import { RepsInput } from "./ExerciseCard/RepsInput";
-import { RestTimer } from "../ExerciseAnimation/RestTimer";
-import { exerciseImages } from "../data/exerciseImages";
-import { Check, Heart, Plus } from "lucide-react";
+import { Heart, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useFavorites } from "@/hooks/use-favorites";
+import { WeightInput } from "./ExerciseCard/WeightInput";
+import { RepsInput } from "./ExerciseCard/RepsInput";
+import { RestTimer } from "../ExerciseAnimation/RestTimer";
+import { exerciseImages } from "../data/exerciseImages";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -203,12 +203,12 @@ export const ExerciseCard = ({
                 <WeightInput 
                   weight={setWeights[setNumber] || weight} 
                   onWeightChange={(value) => handleWeightChange(value, setNumber)}
-                  disabled={completedSets >= setNumber + 1}
+                  disabled={completedSets >= setNumber + 1 || isResting}
                 />
                 <RepsInput 
                   reps={reps} 
                   onRepsChange={onRepsChange}
-                  disabled={completedSets >= setNumber + 1}
+                  disabled={completedSets >= setNumber + 1 || isResting}
                 />
               </div>
             </div>
