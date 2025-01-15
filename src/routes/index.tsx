@@ -1,76 +1,49 @@
 import { createBrowserRouter } from "react-router-dom";
-import { RootLayout } from "@/components/Layout/RootLayout";
-import SignInPage from "@/pages/SignIn";
-import SignUpPage from "@/pages/SignUp";
-import HomePage from "@/pages/Home";
-import WorkoutsPage from "@/pages/Workouts";
-import WorkoutSessionPage from "@/pages/WorkoutSession";
-import AdminDashboard from "@/pages/Admin/Dashboard";
-import NutritionPage from "@/pages/Nutrition";
-import SleepPage from "@/pages/Sleep";
-import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+import Index from "@/pages/Index";
+import SignIn from "@/pages/SignIn";
+import SignUp from "@/pages/SignUp";
+import Profile from "@/pages/Profile";
+import TrainingPreferences from "@/pages/TrainingPreferences";
+import Workouts from "@/pages/Workouts";
+import WorkoutSession from "@/pages/WorkoutSession";
+import WorkoutGenerate from "@/pages/WorkoutGenerate";
+import Suggestions from "@/pages/Suggestions";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
-    children: [
-      {
-        index: true,
-        element: (
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workouts",
-        element: (
-          <ProtectedRoute>
-            <WorkoutsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workouts/:sessionId",
-        element: (
-          <ProtectedRoute>
-            <WorkoutSessionPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "nutrition",
-        element: (
-          <ProtectedRoute>
-            <NutritionPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "sleep",
-        element: (
-          <ProtectedRoute>
-            <SleepPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "admin",
-        element: (
-          <ProtectedRoute>
-            <AdminDashboard />
-          </ProtectedRoute>
-        ),
-      },
-    ],
+    element: <Index />,
   },
   {
-    path: "signin",
-    element: <SignInPage />,
+    path: "/signin",
+    element: <SignIn />,
   },
   {
-    path: "signup",
-    element: <SignUpPage />,
+    path: "/signup",
+    element: <SignUp />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+  },
+  {
+    path: "/training-preferences",
+    element: <TrainingPreferences />,
+  },
+  {
+    path: "/workouts",
+    element: <Workouts />,
+  },
+  {
+    path: "/workout-session",
+    element: <WorkoutSession />,
+  },
+  {
+    path: "/workout-generate",
+    element: <WorkoutGenerate />,
+  },
+  {
+    path: "/suggestions",
+    element: <Suggestions />,
   },
 ]);
