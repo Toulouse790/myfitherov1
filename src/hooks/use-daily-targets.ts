@@ -36,8 +36,32 @@ export const useDailyTargets = () => {
         .limit(1)
         .maybeSingle();
 
-      // Récupérer le plan du jour
+      // Get today's food journal entries
       const today = new Date();
+      const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
+      const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+      
+      const { data: foodEntries } = await supabase
+        .from('food_journal_entries')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('created_at', startOfDay)
+        .lte('created_at', endOfDay);
+
+      // Calculate consumed nutrients
+      const consumedNutrients = (foodEntries || []).reduce((acc, entry) => ({
+        calories: acc.calories + (entry.calories || 0),
+        proteins: acc.proteins + (entry.proteins || 0),
+        carbs: acc.carbs + (entry.carbs || 0),
+        fats: acc.fats + (entry.fats || 0)
+      }), {
+        calories: 0,
+        proteins: 0,
+        carbs: 0,
+        fats: 0
+      });
+
+      // Récupérer le plan du jour
       const { data: todayPlan } = await supabase
         .from('meal_plans')
         .select('*')
@@ -48,12 +72,13 @@ export const useDailyTargets = () => {
         .limit(1)
         .maybeSingle();
 
-      console.log("Fetched data:", { preferences, questionnaire, measurements, todayPlan });
+      console.log("Fetched data:", { preferences, questionnaire, measurements, todayPlan, consumedNutrients });
       return {
         preferences,
         questionnaire,
         measurements,
-        todayPlan
+        todayPlan,
+        consumedNutrients
       };
     }
   });
@@ -63,7 +88,9 @@ export const useDailyTargets = () => {
     if (!data?.questionnaire || !data?.measurements) {
       return {
         calories: 2000,
-        proteins: 80
+        proteins: 80,
+        carbs: 250,
+        fats: 65
       };
     }
 
@@ -85,10 +112,14 @@ export const useDailyTargets = () => {
     }
     
     const dailyProteins = Math.round(weight * proteinMultiplier);
+    const dailyCarbs = Math.round((dailyCalories * 0.45) / 4); // 45% of calories from carbs
+    const dailyFats = Math.round((dailyCalories * 0.25) / 9); // 25% of calories from fats
 
     return {
       calories: dailyCalories,
-      proteins: dailyProteins
+      proteins: dailyProteins,
+      carbs: dailyCarbs,
+      fats: dailyFats
     };
   };
 
@@ -105,6 +136,12 @@ export const useDailyTargets = () => {
   return {
     dailyTargets,
     mealPlan,
-    userPreferences
+    userPreferences,
+    consumedNutrients: userPreferences?.consumedNutrients || {
+      calories: 0,
+      proteins: 0,
+      carbs: 0,
+      fats: 0
+    }
   };
 };
