@@ -8,10 +8,6 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
-import { breakfastMeals } from "@/data/meals/breakfast";
-import { lunchMeals } from "@/data/meals/lunch";
-import { dinnerMeals } from "@/data/meals/dinner";
-import { snackMeals } from "@/data/meals/snacks";
 
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -38,7 +34,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
         description: "Le repas a été mis à jour avec succès",
       });
 
-      // Instead of using refetchMealPlan, we'll reload the page
       window.location.reload();
       setIsEditing(false);
     } catch (error) {
@@ -71,7 +66,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
         description: "Le repas a été supprimé avec succès",
       });
 
-      // Instead of using refetchMealPlan, we'll reload the page
       window.location.reload();
     } catch (error) {
       console.error('Error deleting meal:', error);
@@ -127,27 +121,26 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
         <Card className="p-4">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">
+                {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
+              </p>
+              {generatedMeal.carbs !== undefined && generatedMeal.fats !== undefined && (
                 <p className="text-sm text-muted-foreground">
-                  {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
+                  {generatedMeal.carbs}g glucides | {generatedMeal.fats}g lipides
                 </p>
-                {generatedMeal.carbs !== undefined && generatedMeal.fats !== undefined && (
-                  <p className="text-sm text-muted-foreground">
-                    {generatedMeal.carbs}g glucides | {generatedMeal.fats}g lipides
-                  </p>
-                )}
-                {generatedMeal.quantities && generatedMeal.quantities.length > 0 && (
-                  <div className="mt-3">
-                    <h4 className="text-sm font-medium mb-1">Ingrédients :</h4>
-                    <ul className="list-disc list-inside text-sm text-muted-foreground">
-                      {generatedMeal.quantities.map((item, index) => (
-                        <li key={index}>
-                          {item.item}: {item.amount}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
+              )}
+              {generatedMeal.quantities && generatedMeal.quantities.length > 0 && (
+                <div className="mt-3">
+                  <h4 className="text-sm font-medium mb-1">Ingrédients :</h4>
+                  <ul className="list-disc list-inside text-sm text-muted-foreground">
+                    {generatedMeal.quantities.map((item, index) => (
+                      <li key={index}>
+                        {item.item}: {item.amount}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
             <div className="flex gap-2">
               <Dialog open={isEditing} onOpenChange={setIsEditing}>
