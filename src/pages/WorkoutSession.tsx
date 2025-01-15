@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Timer, Dumbbell, ChevronRight } from "lucide-react";
+import { Dumbbell, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -110,12 +110,6 @@ export default function WorkoutSession() {
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-6 border-b">
-        <span className="font-mono text-xl">
-          {Math.floor(sessionDuration / 60)}:{String(sessionDuration % 60).padStart(2, '0')}
-        </span>
-      </div>
-
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
