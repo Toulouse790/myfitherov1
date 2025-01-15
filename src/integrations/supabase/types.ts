@@ -331,6 +331,7 @@ export type Database = {
           created_at: string | null
           exercise_name: string
           id: string
+          notes: string | null
           one_rep_max: number | null
           perceived_difficulty: string | null
           reps: number
@@ -346,6 +347,7 @@ export type Database = {
           created_at?: string | null
           exercise_name: string
           id?: string
+          notes?: string | null
           one_rep_max?: number | null
           perceived_difficulty?: string | null
           reps: number
@@ -361,6 +363,7 @@ export type Database = {
           created_at?: string | null
           exercise_name?: string
           id?: string
+          notes?: string | null
           one_rep_max?: number | null
           perceived_difficulty?: string | null
           reps?: number
