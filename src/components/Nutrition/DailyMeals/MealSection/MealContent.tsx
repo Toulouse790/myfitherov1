@@ -1,7 +1,6 @@
 import { Check, X, Plus, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MealContentProps } from "./types";
-import { useDailyTargets } from "@/hooks/use-daily-targets";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
-  const { dailyTargets, mealPlan, refetchMealPlan } = useDailyTargets();
   const [isEditing, setIsEditing] = useState(false);
   const [editedMeal, setEditedMeal] = useState(generatedMeal);
   const { toast } = useToast();
@@ -35,7 +33,8 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
         description: "Le repas a été mis à jour avec succès",
       });
 
-      refetchMealPlan();
+      // Instead of using refetchMealPlan, we'll reload the page
+      window.location.reload();
       setIsEditing(false);
     } catch (error) {
       console.error('Error saving meal:', error);
@@ -67,7 +66,8 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
         description: "Le repas a été supprimé avec succès",
       });
 
-      refetchMealPlan();
+      // Instead of using refetchMealPlan, we'll reload the page
+      window.location.reload();
     } catch (error) {
       console.error('Error deleting meal:', error);
       toast({

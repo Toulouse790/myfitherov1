@@ -44,4 +44,5 @@ export interface MealContentProps {
   mealEntries: MealEntry[];
   generatedMeal?: GeneratedMeal;
   onMealStatus: (status: 'taken' | 'skipped') => void;
+  type: string;
 }
