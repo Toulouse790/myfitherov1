@@ -12,7 +12,7 @@ export const RepsInput = ({ reps, onRepsChange, disabled = false }: RepsInputPro
       <Input
         type="number"
         value={reps}
-        onChange={(e) => onRepsChange(Number(e.target.value))}
+        onChange={(e) => disabled ? null : onRepsChange(Number(e.target.value))}
         className={`h-8 text-center text-sm px-2 ${disabled ? 'bg-muted cursor-not-allowed' : ''}`}
         disabled={disabled}
         min={0}

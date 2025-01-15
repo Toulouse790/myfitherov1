@@ -67,7 +67,10 @@ export const ExerciseCard = ({
   };
 
   const handleWeightChange = (value: number, setNumber: number) => {
-    // Mettre à jour le poids pour la série actuelle et les séries suivantes non complétées
+    if (setNumber < completedSets) {
+      return; // Ne pas permettre la modification des séries complétées
+    }
+    
     const newSetWeights = { ...setWeights };
     for (let i = setNumber; i < totalSets; i++) {
       if (i >= completedSets) {

@@ -3,15 +3,13 @@ import { Input } from "@/components/ui/input";
 interface WeightInputProps {
   weight: number;
   onWeightChange: (value: number) => void;
-  onComplete?: () => void;
   disabled?: boolean;
 }
 
 export const WeightInput = ({ weight, onWeightChange, disabled = false }: WeightInputProps) => {
   const handleWeightChange = (value: number) => {
-    // Ensure the weight is not negative
-    const newWeight = Math.max(0, value);
-    onWeightChange(newWeight);
+    if (disabled) return;
+    onWeightChange(Math.max(0, value));
   };
 
   return (
