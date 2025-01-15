@@ -7,40 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
 import { breakfastMeals } from "@/data/meals/breakfast";
 import { lunchMeals } from "@/data/meals/lunch";
 import { dinnerMeals } from "@/data/meals/dinner";
 import { snackMeals } from "@/data/meals/snacks";
-import { Card } from "@/components/ui/card";
 
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedMeal, setEditedMeal] = useState(generatedMeal);
   const { toast } = useToast();
-
-  const getSuggestedMeals = (type: string, targetCalories: number) => {
-    const tolerance = 100; // Allow meals within ±100 calories of target
-    let meals;
-    
-    switch(type) {
-      case 'breakfast':
-        meals = breakfastMeals;
-        break;
-      case 'lunch':
-        meals = lunchMeals;
-        break;
-      case 'dinner':
-        meals = dinnerMeals;
-        break;
-      default:
-        meals = snackMeals;
-    }
-
-    return meals.filter(meal => 
-      meal.calories >= targetCalories - tolerance && 
-      meal.calories <= targetCalories + tolerance
-    );
-  };
 
   const handleSaveMeal = async () => {
     try {
@@ -108,10 +84,10 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
   };
 
   return (
-    <div className="pl-4 pr-2 py-2">
+    <div className="space-y-4 p-4">
       {mealEntries.length > 0 ? (
         mealEntries.map((entry) => (
-          <Card key={entry.id} className="p-4 mb-3">
+          <Card key={entry.id} className="p-4">
             <div className="flex justify-between items-start">
               <div className="space-y-2">
                 <h3 className="font-semibold text-lg">{entry.name}</h3>
@@ -145,11 +121,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
                 </Button>
               </div>
             </div>
-            {entry.notes && (
-              <p className="mt-2 text-sm text-muted-foreground italic">
-                {entry.notes}
-              </p>
-            )}
           </Card>
         ))
       ) : generatedMeal ? (
@@ -254,7 +225,7 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
           </div>
         </Card>
       ) : (
-        <div className="text-center text-gray-500 py-2">
+        <div className="text-center text-gray-500">
           Aucun repas suggéré
         </div>
       )}
