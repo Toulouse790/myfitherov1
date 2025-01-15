@@ -31,7 +31,6 @@ export const ExerciseCard = ({
   isTransitioning
 }: ExerciseCardProps) => {
   const [isResting, setIsResting] = useState(false);
-  const totalSets = 3;
 
   const handleSetComplete = () => {
     setIsResting(true);
@@ -72,41 +71,29 @@ export const ExerciseCard = ({
               completedSets >= setNumber ? 'bg-muted/50' : 'bg-card'
             }`}
           >
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-muted-foreground min-w-[40px]">S{setNumber}</span>
-                <div className="flex flex-1 items-center gap-2">
-                  <WeightInput 
-                    weight={weight} 
-                    onWeightChange={onWeightChange}
-                    onComplete={handleSetComplete}
-                    disabled={completedSets >= setNumber}
-                  />
-                  <RepsInput 
-                    reps={reps} 
-                    onRepsChange={onRepsChange}
-                    disabled={completedSets >= setNumber}
-                  />
-                </div>
+            <div className="flex items-center justify-between gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-[11px] text-muted-foreground min-w-[40px] h-6 px-2"
+                onClick={handleSetComplete}
+                disabled={completedSets >= setNumber || completedSets + 1 !== setNumber || restTimer !== null}
+              >
+                S{setNumber}
+              </Button>
+              <div className="flex flex-1 items-center gap-2">
+                <WeightInput 
+                  weight={weight} 
+                  onWeightChange={onWeightChange}
+                  onComplete={handleSetComplete}
+                  disabled={completedSets >= setNumber}
+                />
+                <RepsInput 
+                  reps={reps} 
+                  onRepsChange={onRepsChange}
+                  disabled={completedSets >= setNumber}
+                />
               </div>
-              
-              {completedSets + 1 === setNumber && !restTimer && (
-                <Button
-                  onClick={handleSetComplete}
-                  className="w-auto px-4 mx-auto text-xs"
-                  variant="default"
-                  size="sm"
-                >
-                  {isResting ? (
-                    <div className="flex items-center gap-2">
-                      <Timer className="h-3 w-3" />
-                      <span>Repos en cours...</span>
-                    </div>
-                  ) : (
-                    "Valider la série"
-                  )}
-                </Button>
-              )}
             </div>
           </div>
         ))}
