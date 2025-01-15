@@ -1,23 +1,14 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
 
 interface WeightInputProps {
   weight: number;
   onWeightChange: (value: number) => void;
+  onComplete?: () => void;
 }
 
-export const WeightInput = ({ weight, onWeightChange }: WeightInputProps) => {
-  const handleIncrement = () => {
-    const newWeight = Math.round((weight + 2.5) * 10) / 10;
-    onWeightChange(newWeight);
-  };
-
-  const handleDecrement = () => {
-    const newWeight = Math.max(0, Math.round((weight - 2.5) * 10) / 10);
-    onWeightChange(newWeight);
-  };
-
+export const WeightInput = ({ weight, onWeightChange, onComplete }: WeightInputProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     if (!isNaN(value) && value >= 0) {
@@ -26,34 +17,32 @@ export const WeightInput = ({ weight, onWeightChange }: WeightInputProps) => {
   };
 
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">Poids (kg)</label>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handleDecrement}
-          type="button"
-        >
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-        <Input
-          type="number"
-          value={weight}
-          onChange={handleInputChange}
-          className="text-center"
-          min={0}
-          step={2.5}
-        />
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handleIncrement}
-          type="button"
-        >
-          <ChevronUp className="h-4 w-4" />
-        </Button>
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Poids (kg)</label>
+        <div className="flex items-center gap-2">
+          <Input
+            type="number"
+            value={weight}
+            onChange={handleInputChange}
+            className="text-center"
+            min={0}
+            step={2.5}
+          />
+          <span className="text-sm text-muted-foreground">kg</span>
+        </div>
       </div>
+      
+      {onComplete && (
+        <Button 
+          onClick={onComplete}
+          className="w-full"
+          type="button"
+        >
+          <Check className="w-4 h-4 mr-2" />
+          Valider la série
+        </Button>
+      )}
     </div>
   );
 };
