@@ -1,69 +1,66 @@
-import { Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MealContentProps } from "./types";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
+import { Check, X } from "lucide-react";
+import { MealContentProps } from "./types";
 
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedMeal, setEditedMeal] = useState(generatedMeal);
-  const { toast } = useToast();
-
-  const handleSaveMeal = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('meal_plans')
-        .update({
-          [`plan_data:${type}`]: editedMeal
-        })
-        .eq('user_id', user.id)
-        .single();
-
-      if (error) throw error;
-
-      toast({
-        title: "Repas modifié",
-        description: "Le repas a été mis à jour avec succès",
-      });
-
-      window.location.reload();
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error saving meal:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de modifier le repas",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="space-y-4 p-4">
-      {mealEntries.length > 0 ? (
-        mealEntries.map((entry) => (
-          <Card key={entry.id} className="p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold text-lg">{entry.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {entry.calories}cal | {entry.proteins}g protéines
-                </p>
+      {mealEntries && mealEntries.length > 0 ? (
+        <div className="space-y-2">
+          {mealEntries.map((entry) => (
+            <Card key={entry.id} className="p-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-lg">{entry.name}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {entry.calories}cal | {entry.proteins}g protéines
+                    {entry.carbs !== undefined && ` | ${entry.carbs}g glucides`}
+                    {entry.fats !== undefined && ` | ${entry.fats}g lipides`}
+                  </p>
+                </div>
               </div>
-            </div>
-          </Card>
-        ))
+            </Card>
+          ))}
+        </div>
       ) : (
         <div className="text-center text-gray-500">
-          Aucun aliment ajouté
+          <p>Aucun aliment ajouté</p>
+          {generatedMeal && (
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <h4 className="font-medium mb-2">{generatedMeal.name}</h4>
+              <p className="text-sm">
+                {generatedMeal.calories}cal | {generatedMeal.proteins}g protéines
+              </p>
+              {generatedMeal.quantities && (
+                <div className="mt-2 text-sm">
+                  {generatedMeal.quantities.map((q, idx) => (
+                    <p key={idx}>{q.item}: {q.amount}</p>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-2 mt-4 justify-center">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2"
+                  onClick={() => onMealStatus('taken')}
+                >
+                  <Check className="w-4 h-4" />
+                  Valider
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2"
+                  onClick={() => onMealStatus('skipped')}
+                >
+                  <X className="w-4 h-4" />
+                  Non pris
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
