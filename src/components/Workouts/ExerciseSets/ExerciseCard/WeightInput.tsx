@@ -8,6 +8,23 @@ interface WeightInputProps {
 }
 
 export const WeightInput = ({ weight, onWeightChange }: WeightInputProps) => {
+  const handleIncrement = () => {
+    const newWeight = Math.round((weight + 2.5) * 10) / 10;
+    onWeightChange(newWeight);
+  };
+
+  const handleDecrement = () => {
+    const newWeight = Math.max(0, Math.round((weight - 2.5) * 10) / 10);
+    onWeightChange(newWeight);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if (!isNaN(value) && value >= 0) {
+      onWeightChange(value);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium">Poids (kg)</label>
@@ -15,20 +32,24 @@ export const WeightInput = ({ weight, onWeightChange }: WeightInputProps) => {
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onWeightChange(weight - 2.5)}
+          onClick={handleDecrement}
+          type="button"
         >
           <ChevronDown className="h-4 w-4" />
         </Button>
         <Input
           type="number"
           value={weight}
-          onChange={(e) => onWeightChange(Number(e.target.value))}
+          onChange={handleInputChange}
           className="text-center"
+          min={0}
+          step={2.5}
         />
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onWeightChange(weight + 2.5)}
+          onClick={handleIncrement}
+          type="button"
         >
           <ChevronUp className="h-4 w-4" />
         </Button>
