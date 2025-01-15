@@ -54,7 +54,8 @@ export const ExerciseSets = ({
         const { data, error } = await supabase
           .from('exercise_sets')
           .select('exercise_name, set_number')
-          .eq('session_id', sessionId);
+          .eq('session_id', sessionId)
+          .throwOnError();
 
         if (error) throw error;
 
@@ -68,7 +69,7 @@ export const ExerciseSets = ({
 
         exercises.forEach(exercise => {
           if (!setsCount[exercise]) {
-            setsCount[exercise] = 3; // Par défaut 3 séries
+            setsCount[exercise] = 3;
           }
         });
 
@@ -102,7 +103,8 @@ export const ExerciseSets = ({
           total_rest_time_seconds: totalRestTime
         })
         .eq('id', sessionId)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .throwOnError();
     } catch (error) {
       console.error('Error updating session stats:', error);
       toast({
@@ -170,6 +172,7 @@ export const ExerciseSets = ({
             onRepsChange={(value) => setReps(prev => ({ ...prev, [exerciseName]: value }))}
             onSetComplete={(difficulty, notes) => handleExerciseSetComplete(exerciseName, difficulty, notes)}
             isTransitioning={isExerciseTransition}
+            sessionId={sessionId}
           />
         </div>
       ))}

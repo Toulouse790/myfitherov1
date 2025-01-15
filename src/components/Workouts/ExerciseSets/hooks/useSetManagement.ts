@@ -68,23 +68,21 @@ export const useSetManagement = ({
               perceived_difficulty: difficulty,
               notes: notes,
               calories_burned: calories
-            });
+            })
+            .single();
 
           if (error) throw error;
+
+          toast({
+            title: "Série complétée !",
+            description: `${calories} calories brûlées. Repos de 90 secondes.`,
+          });
+
         } catch (error) {
           console.error('Error saving set data:', error);
-          toast({
-            title: "Erreur",
-            description: "Impossible de sauvegarder les données de la série",
-            variant: "destructive",
-          });
+          throw error;
         }
       }
-
-      toast({
-        title: "Série complétée !",
-        description: `${calories} calories brûlées. Repos de 90 secondes.`,
-      });
 
       if (newSetsCount === 3) {
         setIsExerciseTransition(true);

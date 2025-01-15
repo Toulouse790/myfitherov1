@@ -1,15 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { WeightInput } from "./ExerciseCard/WeightInput";
-import { RepsInput } from "./ExerciseCard/RepsInput";
-import { RestTimer } from "../ExerciseAnimation/RestTimer";
-import { exerciseImages } from "../data/exerciseImages";
 import { Button } from "@/components/ui/button";
-import { Timer, Check, Heart } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Heart, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { useFavorites } from "@/hooks/use-favorites";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -21,23 +17,10 @@ interface ExerciseCardProps {
   onRepsChange: (value: number) => void;
   onSetComplete: (difficulty: string, notes: string) => void;
   isTransitioning: boolean;
+  sessionId: string | null;
 }
 
-const getRepsLabel = (exerciseName: string): string => {
-  const lowerName = exerciseName.toLowerCase();
-  
-  if (lowerName.includes("biceps") || lowerName.includes("triceps") || lowerName.includes("curl")) {
-    return "RÉPÉTITIONS PAR BRAS";
-  }
-  
-  if (lowerName.includes("jambe") || lowerName.includes("fente") || lowerName.includes("mollet")) {
-    return "RÉPÉTITIONS PAR JAMBE";
-  }
-  
-  return "RÉPÉTITIONS";
-};
-
-export const ExerciseCard = ({ 
+export const ExerciseCard = ({
   exerciseName,
   weight,
   reps,
@@ -46,23 +29,38 @@ export const ExerciseCard = ({
   onWeightChange,
   onRepsChange,
   onSetComplete,
-  isTransitioning
+  isTransitioning,
+  sessionId
 }: ExerciseCardProps) => {
-  const [isResting, setIsResting] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  const sessionId = window.location.pathname.split('/').pop();
-  const { isFavorite } = useFavorites(sessionId);
-  const [isLocalFavorite, setIsLocalFavorite] = useState(false);
 
-  const handleSetComplete = () => {
-    setIsResting(true);
-    onSetComplete("moderate", "");
-  };
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (!user || !sessionId) return;
 
-  const handleRestComplete = () => {
-    setIsResting(false);
-  };
+      try {
+        const { data, error } = await supabase
+          .from('favorite_workouts')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('session_id', sessionId)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error checking favorite status:', error);
+          return;
+        }
+
+        setIsFavorite(!!data);
+      } catch (error) {
+        console.error('Error checking favorite status:', error);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [sessionId, user]);
 
   const toggleFavorite = async () => {
     if (!user || !sessionId) {
@@ -75,116 +73,98 @@ export const ExerciseCard = ({
     }
 
     try {
-      if (!isLocalFavorite) {
-        await supabase
-          .from('favorite_workouts')
-          .insert([{ user_id: user.id, session_id: sessionId }]);
-        toast({
-          title: "Ajouté aux favoris",
-          description: "L'exercice a été ajouté à vos favoris",
-        });
-      } else {
-        await supabase
+      if (isFavorite) {
+        const { error } = await supabase
           .from('favorite_workouts')
           .delete()
           .eq('user_id', user.id)
           .eq('session_id', sessionId);
+
+        if (error) throw error;
+
         toast({
           title: "Retiré des favoris",
-          description: "L'exercice a été retiré de vos favoris",
+          description: "La séance a été retirée de vos favoris"
+        });
+      } else {
+        const { error } = await supabase
+          .from('favorite_workouts')
+          .insert({
+            user_id: user.id,
+            session_id: sessionId
+          });
+
+        if (error) throw error;
+
+        toast({
+          title: "Ajouté aux favoris",
+          description: "La séance a été ajoutée à vos favoris"
         });
       }
-      setIsLocalFavorite(!isLocalFavorite);
+
+      setIsFavorite(!isFavorite);
     } catch (error) {
       console.error('Error toggling favorite:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de modifier les favoris",
+        description: "Une erreur est survenue",
         variant: "destructive"
       });
     }
   };
 
   return (
-    <div className="space-y-3 sm:space-y-4">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between px-2">
-          <h3 className="text-sm font-medium text-muted-foreground text-center flex-1">{exerciseName}</h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`${isLocalFavorite ? 'text-red-500' : 'text-muted-foreground'}`}
-            onClick={toggleFavorite}
-          >
-            <Heart className={`h-5 w-5 ${isLocalFavorite ? 'fill-current' : ''}`} />
-          </Button>
+    <Card className="p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">{exerciseName}</h3>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleFavorite}
+          className={isFavorite ? "text-red-500" : "text-gray-400"}
+        >
+          <Heart className={isFavorite ? "fill-current" : ""} />
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="text-sm font-medium">Poids (kg)</label>
+          <Input
+            type="number"
+            value={weight}
+            onChange={(e) => onWeightChange(Number(e.target.value))}
+            className="mt-1"
+          />
         </div>
-        <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
-          <img 
-            src={exerciseImages[exerciseName] || "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop"} 
-            alt={exerciseName}
-            className="w-full h-full object-cover"
+        <div>
+          <label className="text-sm font-medium">Répétitions</label>
+          <Input
+            type="number"
+            value={reps}
+            onChange={(e) => onRepsChange(Number(e.target.value))}
+            className="mt-1"
           />
         </div>
       </div>
 
-      {restTimer !== null && completedSets > 0 && (
-        <div className="py-2">
-          <RestTimer 
-            restTime={restTimer} 
-            onRestTimeChange={() => {}} 
-          />
-        </div>
-      )}
-
-      <div className="space-y-2">
-        <div className="flex items-center justify-center gap-4 px-3">
-          <div className="flex-1 text-xs text-muted-foreground text-center">KG</div>
-          <div className="flex-1 text-xs text-muted-foreground text-center">{getRepsLabel(exerciseName)}</div>
-          <div className="w-[72px]"></div>
-        </div>
-        {[1, 2, 3].map((setNumber) => (
-          <div 
-            key={setNumber} 
-            className={`p-3 rounded-lg ${
-              completedSets >= setNumber ? 'bg-muted/50' : 'bg-card'
-            }`}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`text-[11px] min-w-[40px] text-center ${
-                  completedSets >= setNumber 
-                    ? 'bg-green-500/20 hover:bg-green-500/30 text-green-700' 
-                    : 'text-muted-foreground hover:bg-primary/10'
-                }`}
-                onClick={handleSetComplete}
-                disabled={completedSets + 1 !== setNumber || isResting}
-              >
-                {completedSets >= setNumber ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  `S${setNumber}`
-                )}
-              </Button>
-              <div className="flex flex-1 items-center justify-center gap-2">
-                <WeightInput 
-                  weight={weight} 
-                  onWeightChange={onWeightChange}
-                  onComplete={handleSetComplete}
-                  disabled={completedSets >= setNumber}
-                />
-                <RepsInput 
-                  reps={reps} 
-                  onRepsChange={onRepsChange}
-                  disabled={completedSets >= setNumber}
-                />
-              </div>
+      <div className="flex justify-center">
+        <Button
+          onClick={() => onSetComplete('moderate', '')}
+          disabled={restTimer !== null || isTransitioning}
+          variant={completedSets > 0 ? "default" : "outline"}
+          className="w-full"
+        >
+          {completedSets > 0 ? (
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4" />
+              <span>Série {completedSets} complétée</span>
             </div>
-          </div>
-        ))}
+          ) : (
+            "Valider la série"
+          )}
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 };
