@@ -10,7 +10,6 @@ export const ExerciseProgress = ({ completedSets, totalSets }: ExerciseProgressP
 
   return (
     <div className="space-y-2">
-      <Progress value={progress} className="h-2" />
     </div>
   );
 };
