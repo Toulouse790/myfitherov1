@@ -1,4 +1,4 @@
-import { Check, X, Edit, Trash2 } from "lucide-react";
+import { Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MealContentProps } from "./types";
 import { useState } from "react";
@@ -46,37 +46,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
     }
   };
 
-  const handleDeleteMeal = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('meal_plans')
-        .update({
-          [`plan_data:${type}`]: null
-        })
-        .eq('user_id', user.id)
-        .single();
-
-      if (error) throw error;
-
-      toast({
-        title: "Repas supprimé",
-        description: "Le repas a été supprimé avec succès",
-      });
-
-      window.location.reload();
-    } catch (error) {
-      console.error('Error deleting meal:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le repas",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="space-y-4 p-4">
       {mealEntries.length > 0 ? (
@@ -95,24 +64,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
                     </p>
                   )}
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onMealStatus('skipped')}
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onMealStatus('taken')}
-                  className="text-green-500 hover:text-green-600 hover:bg-green-50"
-                >
-                  <Check className="h-4 w-4" />
-                </Button>
               </div>
             </div>
           </Card>
@@ -143,77 +94,42 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
                   </div>
                 )}
               </div>
-              <div className="flex gap-2">
-                <Dialog open={isEditing} onOpenChange={setIsEditing}>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={() => setIsEditing(true)}
-                    className="text-gray-500"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Modifier le repas</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label>Nom du repas</Label>
-                        <Input 
-                          value={editedMeal?.name || ''} 
-                          onChange={(e) => setEditedMeal(prev => ({...prev!, name: e.target.value}))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Calories (kcal)</Label>
-                        <Input 
-                          type="number"
-                          value={editedMeal?.calories || 0}
-                          onChange={(e) => setEditedMeal(prev => ({...prev!, calories: parseInt(e.target.value)}))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Protéines (g)</Label>
-                        <Input 
-                          type="number"
-                          value={editedMeal?.proteins || 0}
-                          onChange={(e) => setEditedMeal(prev => ({...prev!, proteins: parseInt(e.target.value)}))}
-                        />
-                      </div>
-                      <Button onClick={handleSaveMeal} className="w-full">
-                        Sauvegarder
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <Button
-                  variant="ghost"
+              <Dialog open={isEditing} onOpenChange={setIsEditing}>
+                <Button 
+                  variant="ghost" 
                   size="icon"
-                  onClick={handleDeleteMeal}
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                  onClick={() => setIsEditing(true)}
+                  className="text-gray-500"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
-              </div>
-            </div>
-            <div className="flex gap-2 justify-end">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onMealStatus('skipped')}
-                className="text-red-500 hover:text-red-600 hover:bg-red-50"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onMealStatus('taken')}
-                className="text-green-500 hover:text-green-600 hover:bg-green-50"
-              >
-                <Check className="h-4 w-4" />
-              </Button>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Modifier le repas</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label>Calories (kcal)</Label>
+                      <Input 
+                        type="number"
+                        value={editedMeal?.calories || 0}
+                        onChange={(e) => setEditedMeal(prev => ({...prev!, calories: parseInt(e.target.value)}))}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Protéines (g)</Label>
+                      <Input 
+                        type="number"
+                        value={editedMeal?.proteins || 0}
+                        onChange={(e) => setEditedMeal(prev => ({...prev!, proteins: parseInt(e.target.value)}))}
+                      />
+                    </div>
+                    <Button onClick={handleSaveMeal} className="w-full">
+                      Sauvegarder
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </Card>
