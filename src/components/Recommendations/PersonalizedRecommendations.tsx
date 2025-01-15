@@ -36,7 +36,7 @@ export const PersonalizedRecommendations = () => {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <Target className="w-5 h-5 text-primary" />
-          <CardTitle>Recommandations personnalisées</CardTitle>
+          <CardTitle>Recommandation</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
