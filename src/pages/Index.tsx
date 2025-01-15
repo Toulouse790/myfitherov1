@@ -11,7 +11,7 @@ export default function Index() {
   const navigate = useNavigate();
 
   const handleCreateSession = () => {
-    navigate('/workouts'); // Redirection vers la page de sélection des groupes musculaires
+    navigate('/workouts');
   };
 
   const handleAIGeneration = () => {
@@ -30,7 +30,7 @@ export default function Index() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Bienvenue sur votre espace d'entraînement
           </h1>
-          <p className="text-lg text-muted-foreground mt-2">
+          <p className="text-sm text-muted-foreground mt-1">
             Commencez une séance ou consultez vos statistiques
           </p>
         </motion.div>
