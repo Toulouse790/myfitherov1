@@ -3,16 +3,16 @@ import { BarChart } from "@/components/ui/charts/BarChart";
 import { useDailyTargets } from "@/hooks/use-daily-targets";
 
 export const NutritionChart = () => {
-  const { dailyTargets } = useDailyTargets();
+  const { dailyTargets, consumedNutrients } = useDailyTargets();
   
   const data = [
-    { name: "Lun", calories: 1800, proteins: 140 },
-    { name: "Mar", calories: 2100, proteins: 160 },
-    { name: "Mer", calories: 1950, proteins: 145 },
-    { name: "Jeu", calories: 2000, proteins: 150 },
-    { name: "Ven", calories: 2200, proteins: 170 },
-    { name: "Sam", calories: 1900, proteins: 145 },
-    { name: "Dim", calories: 1850, proteins: 140 },
+    { name: "Lun", target_calories: 2100, actual_calories: 1800, target_proteins: 160, actual_proteins: 140 },
+    { name: "Mar", target_calories: 2100, actual_calories: 2100, target_proteins: 160, actual_proteins: 160 },
+    { name: "Mer", target_calories: 2100, actual_calories: 1950, target_proteins: 160, actual_proteins: 145 },
+    { name: "Jeu", target_calories: 2100, actual_calories: 2000, target_proteins: 160, actual_proteins: 150 },
+    { name: "Ven", target_calories: 2100, actual_calories: 2200, target_proteins: 160, actual_proteins: 170 },
+    { name: "Sam", target_calories: 2100, actual_calories: 1900, target_proteins: 160, actual_proteins: 145 },
+    { name: "Dim", target_calories: 2100, actual_calories: 1850, target_proteins: 160, actual_proteins: 140 },
   ];
 
   return (
@@ -23,14 +23,19 @@ export const NutritionChart = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-2 sm:p-4">
-        <div className="h-[200px] w-full">
+        <div className="h-[300px] w-full">
           <BarChart
             data={data}
             index="name"
-            categories={["calories", "proteins"]}
-            colors={["#8B5CF6", "#10B981"]}
+            categories={[
+              "target_calories",
+              "actual_calories",
+              "target_proteins",
+              "actual_proteins"
+            ]}
+            colors={["#8B5CF6", "#A78BFA", "#10B981", "#34D399"]}
             valueFormatter={(value: number, category?: string) => {
-              if (category === "proteins") return `${value}g`;
+              if (category?.includes("proteins")) return `${value}g`;
               return `${value} kcal`;
             }}
             yAxisWidth={48}
@@ -41,17 +46,14 @@ export const NutritionChart = () => {
             customTooltip={(props: any) => (
               <div className="bg-white p-2 rounded-lg border shadow-sm">
                 <p className="text-sm font-medium">{props.payload[0]?.payload.name}</p>
-                {props.payload.map((entry: any, index: number) => (
-                  <p 
-                    key={index} 
-                    className={entry.dataKey === "calories" ? "text-purple-500" : "text-emerald-500"}
-                  >
-                    {entry.dataKey === "calories" 
-                      ? `${entry.value} kcal` 
-                      : `${entry.value}g protéines`
-                    }
+                <div className="space-y-1">
+                  <p className="text-purple-500">
+                    Calories: {props.payload[1]?.value} / {props.payload[0]?.value} kcal
                   </p>
-                ))}
+                  <p className="text-emerald-500">
+                    Protéines: {props.payload[3]?.value} / {props.payload[2]?.value}g
+                  </p>
+                </div>
               </div>
             )}
           />
