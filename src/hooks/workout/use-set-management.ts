@@ -4,21 +4,41 @@ import { useToast } from "@/hooks/use-toast";
 
 interface UseSetManagementProps {
   sessionId: string | null;
-  exercises: string[];
-  onExerciseComplete?: (index: number) => void;
-  currentExerciseIndex?: number;
+  exerciseName?: string;
+  initialReps?: number;
+  onSetsChange?: (newSets: number) => void;
 }
 
 export const useSetManagement = ({
   sessionId,
-  exercises,
-  onExerciseComplete,
-  currentExerciseIndex
+  exerciseName,
+  initialReps = 12,
+  onSetsChange
 }: UseSetManagementProps) => {
   const [completedSets, setCompletedSets] = useState<{ [key: string]: number }>({});
   const [weights, setWeights] = useState<{ [key: string]: number }>({});
   const [reps, setReps] = useState<{ [key: string]: number }>({});
+  const [repsPerSet, setRepsPerSet] = useState<{ [key: number]: number }>({});
   const { toast } = useToast();
+
+  const handleAddSet = async () => {
+    if (exerciseName && onSetsChange) {
+      const currentSets = completedSets[exerciseName] || 0;
+      const newSetsCount = currentSets + 1;
+      setCompletedSets(prev => ({
+        ...prev,
+        [exerciseName]: newSetsCount
+      }));
+      onSetsChange(newSetsCount);
+    }
+  };
+
+  const handleRepsChange = (setIndex: number, value: number) => {
+    setRepsPerSet(prev => ({
+      ...prev,
+      [setIndex]: value
+    }));
+  };
 
   const handleSetComplete = async (
     exerciseName: string,
@@ -69,10 +89,6 @@ export const useSetManagement = ({
           title: "Exercice terminé !",
           description: "Repos de 90 secondes avant le prochain exercice.",
         });
-        
-        if (typeof currentExerciseIndex === 'number' && onExerciseComplete) {
-          onExerciseComplete(currentExerciseIndex);
-        }
       } else {
         toast({
           title: "Série complétée !",
@@ -89,8 +105,11 @@ export const useSetManagement = ({
     completedSets,
     weights,
     reps,
+    repsPerSet,
     setWeights,
     setReps,
-    handleSetComplete
+    handleSetComplete,
+    handleAddSet,
+    handleRepsChange
   };
 };

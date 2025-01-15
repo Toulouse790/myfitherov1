@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface RestTimerProps {
+export interface RestTimerProps {
   restTime: number;
   onRestTimeChange: (adjustment: number) => void;
 }

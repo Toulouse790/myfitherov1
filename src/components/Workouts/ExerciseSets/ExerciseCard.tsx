@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { WeightInput } from "./ExerciseCard/WeightInput";
 import { RepsInput } from "./ExerciseCard/RepsInput";
-import { RestTimer } from "../ActiveWorkout/RestTimer";
+import { RestTimer } from "../ExerciseAnimation/RestTimer";
 import { Progress } from "@/components/ui/progress";
 
 interface ExerciseCardProps {
@@ -55,11 +55,10 @@ export const ExerciseCard = ({
           <Progress value={progress} className="h-2" />
         </div>
 
-        {isResting ? (
+        {isResting && restTimer ? (
           <RestTimer 
-            restTimer={restTimer} 
+            restTime={restTimer} 
             onRestTimeChange={() => {}} 
-            onComplete={handleRestComplete}
           />
         ) : (
           <div className="space-y-6">
