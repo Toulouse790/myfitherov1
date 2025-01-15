@@ -13,7 +13,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
   const [editedMeal, setEditedMeal] = useState(generatedMeal);
 
   const handleSaveMeal = () => {
-    // Here you would typically save the edited meal
     setIsEditing(false);
   };
 
@@ -60,10 +59,23 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
         <div className="space-y-4">
           <div className="p-3 rounded-lg bg-gray-50">
             <div className="flex justify-between items-start">
-              <div className="text-sm text-muted-foreground">
-                {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
-                {generatedMeal.carbs !== undefined && ` | ${generatedMeal.carbs}g glucides`}
-                {generatedMeal.fats !== undefined && ` | ${generatedMeal.fats}g lipides`}
+              <div className="space-y-1">
+                <div className="font-medium text-gray-800">{generatedMeal.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {mealPlan && mealPlan[generatedMeal.type] ? (
+                    <>
+                      {mealPlan[generatedMeal.type].calories} kcal | {mealPlan[generatedMeal.type].proteins}g protéines
+                      {mealPlan[generatedMeal.type].carbs && ` | ${mealPlan[generatedMeal.type].carbs}g glucides`}
+                      {mealPlan[generatedMeal.type].fats && ` | ${mealPlan[generatedMeal.type].fats}g lipides`}
+                    </>
+                  ) : (
+                    <>
+                      {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
+                      {generatedMeal.carbs !== undefined && ` | ${generatedMeal.carbs}g glucides`}
+                      {generatedMeal.fats !== undefined && ` | ${generatedMeal.fats}g lipides`}
+                    </>
+                  )}
+                </div>
               </div>
               <Dialog>
                 <DialogTrigger asChild>
