@@ -87,11 +87,11 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
                 <h3 className="font-semibold text-lg">{entry.name}</h3>
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">
-                    {entry.calories} kcal | {entry.proteins}g protéines
+                    {entry.calories}cal | {entry.proteins}g
                   </p>
                   {entry.carbs !== undefined && entry.fats !== undefined && (
                     <p className="text-sm text-muted-foreground">
-                      {entry.carbs}g glucides | {entry.fats}g lipides
+                      {entry.carbs}g gluc. | {entry.fats}g lip.
                     </p>
                   )}
                 </div>
@@ -123,11 +123,11 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">
-                  {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
+                  {generatedMeal.calories}cal | {generatedMeal.proteins}g
                 </p>
                 {generatedMeal.carbs !== undefined && generatedMeal.fats !== undefined && (
                   <p className="text-sm text-muted-foreground">
-                    {generatedMeal.carbs}g glucides | {generatedMeal.fats}g lipides
+                    {generatedMeal.carbs}g gluc. | {generatedMeal.fats}g lip.
                   </p>
                 )}
                 {generatedMeal.quantities && generatedMeal.quantities.length > 0 && (
