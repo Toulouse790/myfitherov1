@@ -68,7 +68,7 @@ export const ExerciseSets = ({
 
         exercises.forEach(exercise => {
           if (!setsCount[exercise]) {
-            setsCount[exercise] = 3; // Par défaut 3 séries
+            setsCount[exercise] = 3;
           }
         });
 
@@ -105,11 +105,6 @@ export const ExerciseSets = ({
         .eq('user_id', user.id);
     } catch (error) {
       console.error('Error updating session stats:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour les statistiques de la séance",
-        variant: "destructive"
-      });
     }
   };
 
