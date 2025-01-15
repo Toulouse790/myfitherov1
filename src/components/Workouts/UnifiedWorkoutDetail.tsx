@@ -8,7 +8,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { WorkoutHeader } from "./WorkoutDetail/WorkoutHeader";
 import { ExerciseSets } from "./ExerciseSets";
 import { WorkoutNotes } from "./WorkoutDetail/WorkoutNotes";
-import { Loader2 } from "lucide-react";
+import { Loader2, Timer } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -19,6 +21,7 @@ export const UnifiedWorkoutDetail = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSummary, setShowSummary] = useState(false);
 
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -48,7 +51,6 @@ export const UnifiedWorkoutDetail = () => {
 
         if (error) throw error;
 
-        // Vérifier que la session appartient à l'utilisateur
         if (session.user_id !== user.id) {
           toast({
             title: "Erreur",
@@ -94,28 +96,32 @@ export const UnifiedWorkoutDetail = () => {
         description: "Passez à l'exercice suivant.",
       });
     } else {
-      try {
-        await supabase
-          .from('workout_sessions')
-          .update({
-            status: 'completed',
-            total_duration_minutes: Math.floor(sessionDuration / 60)
-          })
-          .eq('id', sessionId);
+      setShowSummary(true);
+    }
+  };
 
-        toast({
-          title: "Séance terminée !",
-          description: "Bravo ! Vous avez terminé tous les exercices.",
-        });
-        navigate('/workouts');
-      } catch (error) {
-        console.error('Error completing workout:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de terminer la séance",
-          variant: "destructive",
-        });
-      }
+  const handleFinishWorkout = async () => {
+    try {
+      await supabase
+        .from('workout_sessions')
+        .update({
+          status: 'completed',
+          total_duration_minutes: Math.floor(sessionDuration / 60)
+        })
+        .eq('id', sessionId);
+
+      toast({
+        title: "Séance terminée !",
+        description: "Bravo ! Vous avez terminé tous les exercices.",
+      });
+      navigate('/workouts');
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de terminer la séance",
+        variant: "destructive",
+      });
     }
   };
 
@@ -139,7 +145,17 @@ export const UnifiedWorkoutDetail = () => {
         <Card>
           <CardContent className="p-6">
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold mb-4">Exercices de la séance</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Exercices de la séance</h2>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowSummary(true)}
+                  className="gap-2"
+                >
+                  <Timer className="w-4 h-4" />
+                  Terminer la séance
+                </Button>
+              </div>
               {exercises.map((exercise, index) => (
                 <div 
                   key={index}
@@ -154,6 +170,33 @@ export const UnifiedWorkoutDetail = () => {
           </CardContent>
         </Card>
       </motion.div>
+
+      <Dialog open={showSummary} onOpenChange={setShowSummary}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Récapitulatif de la séance</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold">Durée totale</h3>
+              <p>{Math.floor(sessionDuration / 60)} minutes</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Exercices complétés</h3>
+              <ul className="list-disc pl-4">
+                {exercises.map((exercise, index) => (
+                  <li key={index}>{exercise}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleFinishWorkout}>
+              Terminer la séance
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
