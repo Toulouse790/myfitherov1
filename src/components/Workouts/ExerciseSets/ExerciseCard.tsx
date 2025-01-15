@@ -76,7 +76,7 @@ export const ExerciseCard = ({
 
       <div className="space-y-2">
         <div className="flex items-center justify-center gap-4 px-3">
-          <div className="flex-1 text-xs text-muted-foreground text-center">kg</div>
+          <div className="flex-1 text-xs text-muted-foreground text-center">KG</div>
           <div className="flex-1 text-xs text-muted-foreground text-center">{getRepsLabel(exerciseName)}</div>
           <div className="w-[72px]"></div>
         </div>
