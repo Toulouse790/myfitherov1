@@ -1,90 +1,98 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { useDailyTargets } from "@/hooks/use-daily-targets";
-import { useFoodEntries } from "@/hooks/use-food-entries";
+import { Check, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export const NutritionGoals = () => {
-  const { dailyTargets } = useDailyTargets();
-  const { entriesByMealType } = useFoodEntries();
+  const { dailyTargets, consumedNutrients } = useDailyTargets();
+  const { toast } = useToast();
 
-  // Calculate totals from today's entries only, excluding skipped meals
-  const actualTotals = Object.values(entriesByMealType).flat().reduce(
-    (acc, entry) => {
-      // Skip entries marked as "skipped"
-      if (entry.status === 'skipped') {
-        return acc;
-      }
+  const handleMealStatus = async (status: 'taken' | 'skipped') => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-      // Ensure we're working with numbers and not strings
-      const calories = Number(entry.calories) || 0;
-      const proteins = Number(entry.proteins) || 0;
-      const carbs = Number(entry.carbs) || 0;
-      const fats = Number(entry.fats) || 0;
+      toast({
+        title: status === 'taken' ? "Repas validé" : "Repas non pris",
+        description: status === 'taken' 
+          ? "Le repas a été ajouté à votre journal" 
+          : "Le repas a été marqué comme non pris",
+      });
 
-      return {
-        calories: acc.calories + calories,
-        proteins: acc.proteins + proteins,
-        carbs: acc.carbs + carbs,
-        fats: acc.fats + fats,
-      };
-    },
-    { calories: 0, proteins: 0, carbs: 0, fats: 0 }
-  );
-
-  const calculatePercentage = (actual: number, target: number) => {
-    if (!target) return 0;
-    return Math.round((actual / target) * 100);
+      // Reload to refresh the data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error updating meal status:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut du repas",
+        variant: "destructive",
+      });
+    }
   };
 
-  const goals = [
-    { 
-      name: "Calories", 
-      actual: actualTotals.calories,
-      target: dailyTargets.calories || 2000, 
-      unit: "kcal" 
-    },
-    { 
-      name: "Protéines", 
-      actual: actualTotals.proteins,
-      target: dailyTargets.proteins || 150, 
-      unit: "g" 
-    },
-    { 
-      name: "Glucides", 
-      actual: actualTotals.carbs,
-      target: Math.round((dailyTargets.calories || 2000) * 0.5 / 4), 
-      unit: "g" 
-    },
-    { 
-      name: "Lipides", 
-      actual: actualTotals.fats,
-      target: Math.round((dailyTargets.calories || 2000) * 0.3 / 9), 
-      unit: "g" 
-    },
-  ];
+  const calculateProgress = (consumed: number, target: number) => {
+    return Math.min(Math.round((consumed / target) * 100), 100);
+  };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="p-3 sm:p-4">
-        <CardTitle className="text-sm sm:text-base text-primary">Objectifs journaliers</CardTitle>
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-medium">Objectifs journaliers</CardTitle>
       </CardHeader>
-      <CardContent className="p-3 sm:p-4 space-y-3">
-        {goals.map((goal) => (
-          <div key={goal.name} className="space-y-2">
-            <div className="flex justify-between text-xs sm:text-sm">
-              <span>{goal.name}</span>
-              <div className="text-muted-foreground space-x-2">
-                <span className={goal.actual > goal.target ? "text-red-500" : "text-green-500"}>
-                  {goal.actual}
-                </span>
-                <span>/</span>
-                <span>{goal.target} {goal.unit}</span>
-                <span className="text-xs">
-                  ({calculatePercentage(goal.actual, goal.target)}%)
-                </span>
-              </div>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs sm:text-sm">
+            <span>Calories</span>
+            <div className="flex items-center gap-2">
+              <span>{consumedNutrients.calories} / {dailyTargets.calories} kcal</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleMealStatus('skipped')}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50 h-6 w-6"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleMealStatus('taken')}
+                className="text-green-500 hover:text-green-600 hover:bg-green-50 h-6 w-6"
+              >
+                <Check className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-        ))}
+          <Progress value={calculateProgress(consumedNutrients.calories, dailyTargets.calories)} />
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs sm:text-sm">
+            <span>Protéines</span>
+            <span>{consumedNutrients.proteins} / {dailyTargets.proteins}g</span>
+          </div>
+          <Progress value={calculateProgress(consumedNutrients.proteins, dailyTargets.proteins)} />
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs sm:text-sm">
+            <span>Glucides</span>
+            <span>{consumedNutrients.carbs} / {dailyTargets.carbs}g</span>
+          </div>
+          <Progress value={calculateProgress(consumedNutrients.carbs, dailyTargets.carbs)} />
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs sm:text-sm">
+            <span>Lipides</span>
+            <span>{consumedNutrients.fats} / {dailyTargets.fats}g</span>
+          </div>
+          <Progress value={calculateProgress(consumedNutrients.fats, dailyTargets.fats)} />
+        </div>
       </CardContent>
     </Card>
   );
