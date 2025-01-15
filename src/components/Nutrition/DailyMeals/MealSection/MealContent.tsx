@@ -61,55 +61,9 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
             </div>
           </Card>
         ))
-      ) : generatedMeal ? (
-        <Card className="p-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm text-muted-foreground">
-                {generatedMeal.calories}cal | {generatedMeal.proteins}g protéines
-              </p>
-            </div>
-            <Dialog open={isEditing} onOpenChange={setIsEditing}>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => setIsEditing(true)}
-                className="text-gray-500"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Modifier le repas</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label>Calories (kcal)</Label>
-                    <Input 
-                      type="number"
-                      value={editedMeal?.calories || 0}
-                      onChange={(e) => setEditedMeal(prev => ({...prev!, calories: parseInt(e.target.value)}))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Protéines (g)</Label>
-                    <Input 
-                      type="number"
-                      value={editedMeal?.proteins || 0}
-                      onChange={(e) => setEditedMeal(prev => ({...prev!, proteins: parseInt(e.target.value)}))}
-                    />
-                  </div>
-                  <Button onClick={handleSaveMeal} className="w-full">
-                    Sauvegarder
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </Card>
       ) : (
         <div className="text-center text-gray-500">
-          Aucun repas suggéré
+          Aucun aliment ajouté
         </div>
       )}
     </div>
