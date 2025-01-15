@@ -5,7 +5,11 @@ import { RepsInput } from "./ExerciseCard/RepsInput";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
 import { exerciseImages } from "../data/exerciseImages";
 import { Button } from "@/components/ui/button";
-import { Timer, Check } from "lucide-react";
+import { Timer, Check, Heart } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { useFavorites } from "@/hooks/use-favorites";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -45,6 +49,11 @@ export const ExerciseCard = ({
   isTransitioning
 }: ExerciseCardProps) => {
   const [isResting, setIsResting] = useState(false);
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const sessionId = window.location.pathname.split('/').pop();
+  const { isFavorite } = useFavorites(sessionId);
+  const [isLocalFavorite, setIsLocalFavorite] = useState(false);
 
   const handleSetComplete = () => {
     setIsResting(true);
@@ -55,10 +64,61 @@ export const ExerciseCard = ({
     setIsResting(false);
   };
 
+  const toggleFavorite = async () => {
+    if (!user || !sessionId) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour ajouter aux favoris",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      if (!isLocalFavorite) {
+        await supabase
+          .from('favorite_workouts')
+          .insert([{ user_id: user.id, session_id: sessionId }]);
+        toast({
+          title: "Ajouté aux favoris",
+          description: "L'exercice a été ajouté à vos favoris",
+        });
+      } else {
+        await supabase
+          .from('favorite_workouts')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('session_id', sessionId);
+        toast({
+          title: "Retiré des favoris",
+          description: "L'exercice a été retiré de vos favoris",
+        });
+      }
+      setIsLocalFavorite(!isLocalFavorite);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier les favoris",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground text-center">{exerciseName}</h3>
+        <div className="flex items-center justify-between px-2">
+          <h3 className="text-sm font-medium text-muted-foreground text-center flex-1">{exerciseName}</h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`${isLocalFavorite ? 'text-red-500' : 'text-muted-foreground'}`}
+            onClick={toggleFavorite}
+          >
+            <Heart className={`h-5 w-5 ${isLocalFavorite ? 'fill-current' : ''}`} />
+          </Button>
+        </div>
         <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
           <img 
             src={exerciseImages[exerciseName] || "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop"} 
