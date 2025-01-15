@@ -51,7 +51,7 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
           </div>
         ))
       ) : generatedMeal ? (
-        <div className="space-y-4">
+        <div>
           <div className="p-3 rounded-lg bg-gray-50">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
