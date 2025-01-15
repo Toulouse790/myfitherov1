@@ -13,6 +13,13 @@ interface NutrientTargets {
   fats: number;
 }
 
+const defaultNutrients: NutrientTargets = {
+  calories: 0,
+  proteins: 0,
+  carbs: 0,
+  fats: 0
+};
+
 export const NutritionGoals = () => {
   const { dailyTargets, consumedNutrients } = useDailyTargets();
   const { toast } = useToast();
@@ -41,15 +48,15 @@ export const NutritionGoals = () => {
     }
   };
 
-  const calculateProgress = (consumed: number, target: number) => {
-    if (!target || !consumed) return 0;
+  const calculateProgress = (consumed: number = 0, target: number = 0) => {
+    if (!target) return 0;
     return Math.min(Math.round((consumed / target) * 100), 100);
   };
 
-  const targets = dailyTargets as NutrientTargets;
-  const consumed = consumedNutrients as NutrientTargets;
+  const targets = dailyTargets || defaultNutrients;
+  const consumed = consumedNutrients || defaultNutrients;
 
-  if (!targets || !consumed) {
+  if (!targets) {
     return (
       <Card>
         <CardHeader className="pb-2">
