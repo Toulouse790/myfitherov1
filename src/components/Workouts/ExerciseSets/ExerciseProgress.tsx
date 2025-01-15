@@ -14,7 +14,6 @@ export const ExerciseProgress = ({ completedSets, totalSets }: ExerciseProgressP
         <span>Progression</span>
         <span>{completedSets}/{totalSets} séries</span>
       </div>
-      <Progress value={progress} className="h-2" />
     </div>
   );
 };
