@@ -19,6 +19,17 @@ interface ExerciseCardProps {
   isTransitioning: boolean;
 }
 
+const getRepsLabel = (exerciseName: string): string => {
+  const lowerName = exerciseName.toLowerCase();
+  if (lowerName.includes("bras") || lowerName.includes("biceps") || lowerName.includes("triceps")) {
+    return "RÉPÉTITIONS PAR BRAS";
+  }
+  if (lowerName.includes("jambe") || lowerName.includes("mollet") || lowerName.includes("cuisse")) {
+    return "RÉPÉTITIONS PAR JAMBE";
+  }
+  return "RÉPÉTITIONS";
+};
+
 export const ExerciseCard = ({ 
   exerciseName,
   weight,
@@ -66,7 +77,7 @@ export const ExerciseCard = ({
       <div className="space-y-2">
         <div className="flex items-center justify-center gap-4 px-3">
           <div className="flex-1 text-xs text-muted-foreground text-center">kg</div>
-          <div className="flex-1 text-xs text-muted-foreground text-center">reps</div>
+          <div className="flex-1 text-xs text-muted-foreground text-center">{getRepsLabel(exerciseName)}</div>
           <div className="w-[72px]"></div>
         </div>
         {[1, 2, 3].map((setNumber) => (
