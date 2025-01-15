@@ -2,16 +2,44 @@ import { Check, X, Plus, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MealContentProps } from "./types";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { breakfastMeals } from "@/data/meals/breakfast";
+import { lunchMeals } from "@/data/meals/lunch";
+import { dinnerMeals } from "@/data/meals/dinner";
+import { snackMeals } from "@/data/meals/snacks";
 
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedMeal, setEditedMeal] = useState(generatedMeal);
   const { toast } = useToast();
+
+  const getSuggestedMeals = (type: string, targetCalories: number) => {
+    const tolerance = 100; // Allow meals within ±100 calories of target
+    let meals;
+    
+    switch(type) {
+      case 'breakfast':
+        meals = breakfastMeals;
+        break;
+      case 'lunch':
+        meals = lunchMeals;
+        break;
+      case 'dinner':
+        meals = dinnerMeals;
+        break;
+      default:
+        meals = snackMeals;
+    }
+
+    return meals.filter(meal => 
+      meal.calories >= targetCalories - tolerance && 
+      meal.calories <= targetCalories + tolerance
+    );
+  };
 
   const handleSaveMeal = async () => {
     try {
@@ -121,14 +149,14 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
                 <p className="text-sm text-muted-foreground">
                   {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
                 </p>
+                {generatedMeal.carbs && generatedMeal.fats && (
+                  <p className="text-xs text-muted-foreground">
+                    {generatedMeal.carbs}g glucides | {generatedMeal.fats}g lipides
+                  </p>
+                )}
               </div>
               <div className="flex gap-2">
                 <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-gray-500">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Modifier le repas</DialogTitle>
