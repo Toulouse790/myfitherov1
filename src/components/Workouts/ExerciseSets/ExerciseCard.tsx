@@ -54,38 +54,40 @@ export const ExerciseCard = ({
           </div>
         </div>
 
-        {isResting && restTimer ? (
-          <RestTimer 
-            restTime={restTimer} 
-            onRestTimeChange={() => {}} 
-          />
-        ) : (
-          <div className="space-y-4">
-            {[1, 2, 3].map((setNumber) => (
-              <div 
-                key={setNumber} 
-                className={`p-3 rounded-lg border ${
-                  completedSets >= setNumber ? 'bg-muted' : 'bg-card'
-                }`}
-              >
-                <div className="text-xs font-medium mb-2">Série {setNumber}</div>
-                <div className="space-y-2">
-                  <WeightInput 
-                    weight={weight} 
-                    onWeightChange={onWeightChange}
-                    onComplete={handleSetComplete}
-                    disabled={completedSets >= setNumber}
-                  />
-                  <RepsInput 
-                    reps={reps} 
-                    onRepsChange={onRepsChange}
-                    disabled={completedSets >= setNumber}
-                  />
-                </div>
-              </div>
-            ))}
+        {restTimer !== null && (
+          <div className="py-2">
+            <RestTimer 
+              restTime={restTimer} 
+              onRestTimeChange={() => {}} 
+            />
           </div>
         )}
+
+        <div className="space-y-4">
+          {[1, 2, 3].map((setNumber) => (
+            <div 
+              key={setNumber} 
+              className={`p-3 rounded-lg border ${
+                completedSets >= setNumber ? 'bg-muted' : 'bg-card'
+              }`}
+            >
+              <div className="text-xs font-medium mb-2">Série {setNumber}</div>
+              <div className="space-y-2">
+                <WeightInput 
+                  weight={weight} 
+                  onWeightChange={onWeightChange}
+                  onComplete={handleSetComplete}
+                  disabled={completedSets >= setNumber}
+                />
+                <RepsInput 
+                  reps={reps} 
+                  onRepsChange={onRepsChange}
+                  disabled={completedSets >= setNumber}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </Card>
   );
