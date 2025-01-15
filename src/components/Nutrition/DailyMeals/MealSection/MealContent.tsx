@@ -60,13 +60,10 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
         <div className="space-y-4">
           <div className="p-3 rounded-lg bg-gray-50">
             <div className="flex justify-between items-start">
-              <div>
-                <div className="font-medium text-gray-800">{generatedMeal.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
-                  {generatedMeal.carbs !== undefined && ` | ${generatedMeal.carbs}g glucides`}
-                  {generatedMeal.fats !== undefined && ` | ${generatedMeal.fats}g lipides`}
-                </div>
+              <div className="text-sm text-muted-foreground">
+                {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
+                {generatedMeal.carbs !== undefined && ` | ${generatedMeal.carbs}g glucides`}
+                {generatedMeal.fats !== undefined && ` | ${generatedMeal.fats}g lipides`}
               </div>
               <Dialog>
                 <DialogTrigger asChild>
