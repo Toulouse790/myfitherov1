@@ -27,6 +27,12 @@ export const SetRow = ({
   const isCompleted = completedSets >= setNumber + 1;
   const isCurrentSet = completedSets + 1 === setNumber + 1;
 
+  const handleSetComplete = () => {
+    if (!isCompleted && isCurrentSet && !isResting) {
+      onSetComplete();
+    }
+  };
+
   return (
     <div 
       className={`p-3 rounded-lg ${
@@ -42,7 +48,7 @@ export const SetRow = ({
               ? 'bg-green-500/20 hover:bg-green-500/30 text-green-700' 
               : 'text-muted-foreground hover:bg-primary/10'
           }`}
-          onClick={onSetComplete}
+          onClick={handleSetComplete}
           disabled={!isCurrentSet || isResting}
         >
           {isCompleted ? (
@@ -55,12 +61,12 @@ export const SetRow = ({
           <WeightInput 
             weight={weight} 
             onWeightChange={onWeightChange}
-            disabled={isCompleted || isResting}
+            disabled={isCompleted || isResting || !isCurrentSet}
           />
           <RepsInput 
             reps={reps} 
             onRepsChange={onRepsChange}
-            disabled={isCompleted || isResting}
+            disabled={isCompleted || isResting || !isCurrentSet}
           />
         </div>
       </div>
