@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { WeightInput } from "./ExerciseCard/WeightInput";
 import { RepsInput } from "./ExerciseCard/RepsInput";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
 import { exerciseImages } from "../data/exerciseImages";
-import { Button } from "@/components/ui/button";
-import { Timer, Check, Heart } from "lucide-react";
+import { Check, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -76,19 +76,25 @@ export const ExerciseCard = ({
 
     try {
       if (!isLocalFavorite) {
-        await supabase
+        const { error } = await supabase
           .from('favorite_workouts')
           .insert([{ user_id: user.id, session_id: sessionId }]);
+          
+        if (error) throw error;
+        
         toast({
           title: "Ajouté aux favoris",
           description: "L'exercice a été ajouté à vos favoris",
         });
       } else {
-        await supabase
+        const { error } = await supabase
           .from('favorite_workouts')
           .delete()
           .eq('user_id', user.id)
           .eq('session_id', sessionId);
+          
+        if (error) throw error;
+        
         toast({
           title: "Retiré des favoris",
           description: "L'exercice a été retiré de vos favoris",
