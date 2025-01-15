@@ -54,7 +54,7 @@ export const ExerciseCard = ({
         </div>
       </div>
 
-      {restTimer !== null && (
+      {restTimer !== null && completedSets > 0 && (
         <div className="py-2">
           <RestTimer 
             restTime={restTimer} 
