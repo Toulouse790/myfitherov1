@@ -77,7 +77,15 @@ export const ExerciseCard = ({
             }`}
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] text-muted-foreground min-w-[40px] text-center">S{setNumber}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-[11px] text-muted-foreground min-w-[40px] text-center hover:bg-primary/10"
+                onClick={handleSetComplete}
+                disabled={completedSets + 1 !== setNumber || isResting}
+              >
+                S{setNumber}
+              </Button>
               <div className="flex flex-1 items-center justify-center gap-2">
                 <WeightInput 
                   weight={weight} 
@@ -90,21 +98,6 @@ export const ExerciseCard = ({
                   onRepsChange={onRepsChange}
                   disabled={completedSets >= setNumber}
                 />
-                {completedSets + 1 === setNumber && !restTimer && (
-                  <Button
-                    onClick={handleSetComplete}
-                    variant="outline"
-                    size="sm"
-                    className="h-8 px-2"
-                    disabled={isResting}
-                  >
-                    {completedSets >= setNumber ? (
-                      <Check className="h-4 w-4" />
-                    ) : (
-                      "Valider"
-                    )}
-                  </Button>
-                )}
               </div>
             </div>
           </div>
