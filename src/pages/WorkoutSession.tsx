@@ -6,7 +6,6 @@ import { Timer, Dumbbell, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Progress } from "@/components/ui/progress";
 import { ExerciseSets } from "@/components/Workouts/ExerciseSets";
 
 export default function WorkoutSession() {
@@ -112,17 +111,11 @@ export default function WorkoutSession() {
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
       <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-6 border-b">
-        <div className="flex items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <Timer className="w-6 h-6 text-primary" />
-            <span className="font-mono text-xl">
-              {Math.floor(sessionDuration / 60)}:{String(sessionDuration % 60).padStart(2, '0')}
-            </span>
-          </div>
-          <Progress 
-            value={(currentExerciseIndex / exercises.length) * 100} 
-            className="w-full max-w-[200px]"
-          />
+        <div className="flex items-center gap-6">
+          <Timer className="w-6 h-6 text-primary" />
+          <span className="font-mono text-xl">
+            {Math.floor(sessionDuration / 60)}:{String(sessionDuration % 60).padStart(2, '0')}
+          </span>
         </div>
       </div>
 
