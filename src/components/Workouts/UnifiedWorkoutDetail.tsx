@@ -88,18 +88,6 @@ export const UnifiedWorkoutDetail = () => {
     return () => clearInterval(interval);
   }, [sessionId, toast, navigate, user]);
 
-  const handleExerciseComplete = async (index: number) => {
-    if (index < exercises.length - 1) {
-      setCurrentExerciseIndex(index + 1);
-      toast({
-        title: "Exercice terminé !",
-        description: "Passez à l'exercice suivant.",
-      });
-    } else {
-      setShowSummary(true);
-    }
-  };
-
   const handleFinishWorkout = async () => {
     try {
       await supabase
@@ -171,32 +159,34 @@ export const UnifiedWorkoutDetail = () => {
         </Card>
       </motion.div>
 
-      <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Récapitulatif de la séance</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold">Durée totale</h3>
-              <p>{Math.floor(sessionDuration / 60)} minutes</p>
+      {showSummary && (
+        <Dialog open={showSummary} onOpenChange={setShowSummary}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Récapitulatif de la séance</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold">Durée totale</h3>
+                <p>{Math.floor(sessionDuration / 60)} minutes</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Exercices complétés</h3>
+                <ul className="list-disc pl-4">
+                  {exercises.map((exercise, index) => (
+                    <li key={index}>{exercise}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold">Exercices complétés</h3>
-              <ul className="list-disc pl-4">
-                {exercises.map((exercise, index) => (
-                  <li key={index}>{exercise}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleFinishWorkout}>
-              Terminer la séance
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <Button onClick={handleFinishWorkout}>
+                Terminer la séance
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
