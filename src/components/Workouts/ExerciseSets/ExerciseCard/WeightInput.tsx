@@ -20,7 +20,7 @@ export const WeightInput = ({ weight, onWeightChange, disabled = false }: Weight
         type="number"
         value={weight}
         onChange={(e) => handleWeightChange(Number(e.target.value))}
-        className="h-8 text-center text-sm px-2"
+        className={`h-8 text-center text-sm px-2 ${disabled ? 'bg-muted cursor-not-allowed' : ''}`}
         disabled={disabled}
         min={0}
       />
