@@ -9,6 +9,15 @@ interface RestTimerProps {
 export const RestTimer = ({ restTimer, onRestTimeChange }: RestTimerProps) => {
   if (restTimer === null) return null;
 
+  // Convert seconds to minutes and remaining seconds
+  const minutes = Math.floor(restTimer / 60);
+  const seconds = restTimer % 60;
+  
+  // Format the time string
+  const timeDisplay = minutes > 0 
+    ? `${minutes}m${seconds.toString().padStart(2, '0')}`
+    : `${seconds}s`;
+
   return (
     <div className="flex items-center justify-center gap-4">
       <Button
@@ -22,7 +31,7 @@ export const RestTimer = ({ restTimer, onRestTimeChange }: RestTimerProps) => {
       </Button>
       <div className="flex items-center gap-2 text-lg font-semibold">
         <Timer className="h-5 w-5 text-primary" />
-        <span>{restTimer}s</span>
+        <span>{timeDisplay}</span>
       </div>
       <Button
         variant="outline"
