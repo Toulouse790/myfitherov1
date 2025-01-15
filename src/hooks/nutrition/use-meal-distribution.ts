@@ -74,20 +74,23 @@ export const generateMealDistribution = (
   const dinnerProteinRatio = 0.30;
   const snackProteinRatio = 0.10;
 
+  const totalCalories = dailyTargets.calories || 2000;
+  const totalProteins = dailyTargets.proteins || 150;
+
   let mealDistribution: Record<string, MealDistribution> = {
     breakfast: {
-      calories: Math.round(dailyTargets.calories * breakfastRatio),
-      proteins: Math.round(dailyTargets.proteins * breakfastProteinRatio),
+      calories: Math.round(totalCalories * breakfastRatio),
+      proteins: Math.round(totalProteins * breakfastProteinRatio),
       name: "Petit-déjeuner équilibré"
     },
     lunch: {
-      calories: Math.round(dailyTargets.calories * lunchRatio),
-      proteins: Math.round(dailyTargets.proteins * lunchProteinRatio),
+      calories: Math.round(totalCalories * lunchRatio),
+      proteins: Math.round(totalProteins * lunchProteinRatio),
       name: "Déjeuner nutritif"
     },
     dinner: {
-      calories: Math.round(dailyTargets.calories * dinnerRatio),
-      proteins: Math.round(dailyTargets.proteins * dinnerProteinRatio),
+      calories: Math.round(totalCalories * dinnerRatio),
+      proteins: Math.round(totalProteins * dinnerProteinRatio),
       name: "Dîner léger"
     }
   };
@@ -98,18 +101,26 @@ export const generateMealDistribution = (
 
   if (hasMorningSnack) {
     mealDistribution.morning_snack = {
-      calories: Math.round(dailyTargets.calories * individualSnackRatio),
-      proteins: Math.round(dailyTargets.proteins * individualSnackProteinRatio),
+      calories: Math.round(totalCalories * individualSnackRatio),
+      proteins: Math.round(totalProteins * individualSnackProteinRatio),
       name: "Collation matinale"
     };
   }
 
   if (hasAfternoonSnack) {
     mealDistribution.afternoon_snack = {
-      calories: Math.round(dailyTargets.calories * individualSnackRatio),
-      proteins: Math.round(dailyTargets.proteins * individualSnackProteinRatio),
+      calories: Math.round(totalCalories * individualSnackRatio),
+      proteins: Math.round(totalProteins * individualSnackProteinRatio),
       name: "Collation"
     };
+  }
+
+  // Vérification que la somme des calories correspond bien au total
+  const totalDistributedCalories = Object.values(mealDistribution).reduce((sum, meal) => sum + meal.calories, 0);
+  if (totalDistributedCalories !== totalCalories) {
+    const diff = totalCalories - totalDistributedCalories;
+    // Ajuster le repas principal pour compenser la différence
+    mealDistribution.lunch.calories += diff;
   }
 
   console.log("Generated meal distribution:", mealDistribution);
