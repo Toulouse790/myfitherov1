@@ -14,20 +14,40 @@ const Nutrition = () => {
   };
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 pb-24 animate-fade-up">
-      <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-3">Nutrition</h1>
+    <div className="container mx-auto px-2 sm:px-4 pb-24 animate-fade-up max-w-full sm:max-w-[95%] lg:max-w-[1280px]">
+      <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 px-1">Nutrition</h1>
 
       <Tabs defaultValue="overview" className="space-y-3">
-        <div className="w-full overflow-x-auto pb-1">
+        <div className="w-full overflow-x-auto pb-1 -mx-2 px-2">
           <TabsList className="w-full justify-start min-w-max">
-            <TabsTrigger value="overview" className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3">Vue d'ensemble</TabsTrigger>
-            <TabsTrigger value="tracking" className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3">Suivi hebdomadaire</TabsTrigger>
-            <TabsTrigger value="journal" className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3">Journal alimentaire</TabsTrigger>
-            <TabsTrigger value="meal-plan" className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3">Plan repas</TabsTrigger>
+            <TabsTrigger 
+              value="overview" 
+              className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5 sm:py-2"
+            >
+              Vue d'ensemble
+            </TabsTrigger>
+            <TabsTrigger 
+              value="tracking" 
+              className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5 sm:py-2"
+            >
+              Suivi hebdomadaire
+            </TabsTrigger>
+            <TabsTrigger 
+              value="journal" 
+              className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5 sm:py-2"
+            >
+              Journal alimentaire
+            </TabsTrigger>
+            <TabsTrigger 
+              value="meal-plan" 
+              className="text-[11px] sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5 sm:py-2"
+            >
+              Plan repas
+            </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="overview" className="space-y-4">
+        <TabsContent value="overview" className="space-y-4 mt-2">
           <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
             <div className="space-y-4">
               <NutritionGoals />
@@ -38,19 +58,19 @@ const Nutrition = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="tracking" className="space-y-4">
+        <TabsContent value="tracking" className="space-y-4 mt-2">
           <div className="w-full">
             <NutritionChart />
           </div>
         </TabsContent>
 
-        <TabsContent value="journal" className="space-y-4">
+        <TabsContent value="journal" className="space-y-4 mt-2">
           <div className="w-full">
             <FoodJournal />
           </div>
         </TabsContent>
 
-        <TabsContent value="meal-plan" className="space-y-4">
+        <TabsContent value="meal-plan" className="space-y-4 mt-2">
           <div className="w-full">
             <MealPlanGenerator />
           </div>
