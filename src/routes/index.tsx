@@ -1,32 +1,49 @@
 import { createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "@/components/Layout/RootLayout";
-import Index from "@/pages/Index";
-import WorkoutSession from "@/pages/WorkoutSession";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
-import { NextWorkoutDetail } from "@/components/Workouts/NextWorkoutDetail";
+import SignInPage from "@/pages/SignIn";
+import SignUpPage from "@/pages/SignUp";
+import HomePage from "@/pages/Home";
+import WorkoutsPage from "@/pages/Workouts";
+import WorkoutSessionPage from "@/pages/WorkoutSession";
+import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
+    path: "/",
     element: <RootLayout />,
-    errorElement: <ErrorBoundary />,
     children: [
       {
-        path: "/",
-        element: <Index />,
+        index: true,
+        element: (
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/workout-session",
-        element: <WorkoutSession />,
+        path: "workouts",
+        element: (
+          <ProtectedRoute>
+            <WorkoutsPage />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/workouts",
-        element: <ExerciseLibrary />,
+        path: "workouts/:sessionId",
+        element: (
+          <ProtectedRoute>
+            <WorkoutSessionPage />
+          </ProtectedRoute>
+        ),
       },
-      {
-        path: "/workouts/:sessionId",
-        element: <NextWorkoutDetail />,
-      }
     ],
+  },
+  {
+    path: "signin",
+    element: <SignInPage />,
+  },
+  {
+    path: "signup",
+    element: <SignUpPage />,
   },
 ]);
