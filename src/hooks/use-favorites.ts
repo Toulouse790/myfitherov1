@@ -17,7 +17,7 @@ export const useFavorites = (sessionId: string | undefined) => {
           .from('favorite_workouts')
           .select('id')
           .eq('session_id', sessionId)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         
