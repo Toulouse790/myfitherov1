@@ -55,7 +55,6 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
           <div className="p-3 rounded-lg bg-gray-50">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <div className="font-medium text-gray-800">{generatedMeal.name}</div>
               </div>
               <Dialog>
                 <DialogTrigger asChild>
