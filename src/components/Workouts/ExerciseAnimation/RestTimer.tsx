@@ -9,10 +9,11 @@ export interface RestTimerProps {
 
 export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
   const handleTimeAdjustment = (adjustment: number) => {
-    // Calculate the new time by adding or subtracting 15 seconds
+    // Ensure the new time stays within bounds (15-180 seconds)
     const newTime = restTime + adjustment;
-    // Pass the exact difference to maintain the precise adjustment
-    onRestTimeChange(adjustment);
+    if (newTime >= 15 && newTime <= 180) {
+      onRestTimeChange(adjustment);
+    }
   };
 
   return (
