@@ -5,6 +5,9 @@ import SignUpPage from "@/pages/SignUp";
 import HomePage from "@/pages/Home";
 import WorkoutsPage from "@/pages/Workouts";
 import WorkoutSessionPage from "@/pages/WorkoutSession";
+import AdminDashboard from "@/pages/Admin/Dashboard";
+import NutritionPage from "@/pages/Nutrition";
+import SleepPage from "@/pages/Sleep";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -33,6 +36,30 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <WorkoutSessionPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "nutrition",
+        element: (
+          <ProtectedRoute>
+            <NutritionPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "sleep",
+        element: (
+          <ProtectedRoute>
+            <SleepPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin",
+        element: (
+          <ProtectedRoute>
+            <AdminDashboard />
           </ProtectedRoute>
         ),
       },
