@@ -15,8 +15,8 @@ export const RestTimer = ({ restTimer, onRestTimeChange }: RestTimerProps) => {
   
   // Format the time string
   const timeDisplay = minutes > 0 
-    ? `${minutes}m${seconds.toString().padStart(2, '0')}`
-    : `${seconds}s`;
+    ? `${minutes} min ${seconds.toString().padStart(2, '0')} sec`
+    : `${seconds} sec`;
 
   return (
     <div className="flex items-center justify-center gap-4">
