@@ -50,6 +50,45 @@ export type Database = {
           },
         ]
       }
+      admin_widget_configs: {
+        Row: {
+          config: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          position: number
+          title: string
+          updated_at: string
+          user_id: string | null
+          widget_id: string
+        }
+        Insert: {
+          config?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          position: number
+          title: string
+          updated_at?: string
+          user_id?: string | null
+          widget_id: string
+        }
+        Update: {
+          config?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          position?: number
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+          widget_id?: string
+        }
+        Relationships: []
+      }
       ai_training_data: {
         Row: {
           action_type: string

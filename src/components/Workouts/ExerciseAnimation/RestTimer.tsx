@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
 import { motion } from "framer-motion";
-import { useToast } from "@/hooks/use-toast";
 
 export interface RestTimerProps {
   restTime: number;
@@ -9,16 +8,10 @@ export interface RestTimerProps {
 }
 
 export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
-  const { toast } = useToast();
-  
   const handleTimeAdjustment = (adjustment: number) => {
     const newTime = restTime + adjustment;
     if (newTime >= 15 && newTime <= 180) {
       onRestTimeChange(adjustment);
-      toast({
-        title: "Temps de repos ajusté",
-        description: `${newTime} secondes`,
-      });
     }
   };
 
