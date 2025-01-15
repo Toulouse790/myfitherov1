@@ -9,7 +9,6 @@ interface RepsInputProps {
 export const RepsInput = ({ reps, onRepsChange, disabled = false }: RepsInputProps) => {
   return (
     <div className="flex flex-col flex-1">
-      <span className="text-xs text-muted-foreground mb-1">reps</span>
       <Input
         type="number"
         value={reps}

@@ -64,6 +64,11 @@ export const ExerciseCard = ({
       )}
 
       <div className="space-y-2">
+        <div className="flex items-center gap-4 px-3">
+          <div className="flex-1 text-xs text-muted-foreground">kg</div>
+          <div className="flex-1 text-xs text-muted-foreground">reps</div>
+          <div className="w-[72px]"></div>
+        </div>
         {[1, 2, 3].map((setNumber) => (
           <div 
             key={setNumber} 
