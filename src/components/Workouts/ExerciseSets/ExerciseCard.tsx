@@ -4,6 +4,8 @@ import { WeightInput } from "./ExerciseCard/WeightInput";
 import { RepsInput } from "./ExerciseCard/RepsInput";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
 import { exerciseImages } from "../data/exerciseImages";
+import { Button } from "@/components/ui/button";
+import { Timer } from "lucide-react";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -70,21 +72,41 @@ export const ExerciseCard = ({
               completedSets >= setNumber ? 'bg-muted/50' : 'bg-card'
             }`}
           >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-medium text-muted-foreground min-w-[60px]">Série {setNumber}</span>
-              <div className="flex flex-1 items-center gap-2">
-                <WeightInput 
-                  weight={weight} 
-                  onWeightChange={onWeightChange}
-                  onComplete={handleSetComplete}
-                  disabled={completedSets >= setNumber}
-                />
-                <RepsInput 
-                  reps={reps} 
-                  onRepsChange={onRepsChange}
-                  disabled={completedSets >= setNumber}
-                />
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-medium text-muted-foreground min-w-[60px]">Série {setNumber}</span>
+                <div className="flex flex-1 items-center gap-2">
+                  <WeightInput 
+                    weight={weight} 
+                    onWeightChange={onWeightChange}
+                    onComplete={handleSetComplete}
+                    disabled={completedSets >= setNumber}
+                  />
+                  <RepsInput 
+                    reps={reps} 
+                    onRepsChange={onRepsChange}
+                    disabled={completedSets >= setNumber}
+                  />
+                </div>
               </div>
+              
+              {completedSets + 1 === setNumber && !restTimer && (
+                <Button
+                  onClick={handleSetComplete}
+                  className="w-full"
+                  variant="default"
+                  size="sm"
+                >
+                  {isResting ? (
+                    <div className="flex items-center gap-2">
+                      <Timer className="h-4 w-4" />
+                      <span>Repos en cours...</span>
+                    </div>
+                  ) : (
+                    "Valider la série"
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         ))}
