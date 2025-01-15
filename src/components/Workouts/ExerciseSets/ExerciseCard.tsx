@@ -55,6 +55,7 @@ export const ExerciseCard = ({
   const { isFavorite } = useFavorites(sessionId);
   const [isLocalFavorite, setIsLocalFavorite] = useState(false);
   const [totalSets, setTotalSets] = useState(3);
+  const [setWeights, setSetWeights] = useState<{ [key: number]: number }>({});
 
   const handleSetComplete = () => {
     setIsResting(true);
@@ -63,6 +64,18 @@ export const ExerciseCard = ({
 
   const handleRestComplete = () => {
     setIsResting(false);
+  };
+
+  const handleWeightChange = (value: number, setNumber: number) => {
+    // Mettre à jour le poids pour la série actuelle et les séries suivantes non complétées
+    const newSetWeights = { ...setWeights };
+    for (let i = setNumber; i < totalSets; i++) {
+      if (i >= completedSets) {
+        newSetWeights[i] = value;
+      }
+    }
+    setSetWeights(newSetWeights);
+    onWeightChange(value);
   };
 
   const toggleFavorite = async () => {
@@ -185,9 +198,8 @@ export const ExerciseCard = ({
               </Button>
               <div className="flex flex-1 items-center justify-center gap-2">
                 <WeightInput 
-                  weight={weight} 
-                  onWeightChange={onWeightChange}
-                  onComplete={handleSetComplete}
+                  weight={setWeights[setNumber] || weight} 
+                  onWeightChange={(value) => handleWeightChange(value, setNumber)}
                   disabled={completedSets >= setNumber + 1}
                 />
                 <RepsInput 
