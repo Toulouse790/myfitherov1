@@ -7,6 +7,7 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
   const { dailyTargets } = useDailyTargets();
 
   const calculatePercentage = (value: number, target: number) => {
+    if (!target) return 0;
     return Math.round((value / target) * 100);
   };
 

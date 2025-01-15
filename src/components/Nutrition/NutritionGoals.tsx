@@ -9,26 +9,11 @@ export const NutritionGoals = () => {
   // Calculate totals from today's entries only, excluding skipped meals
   const actualTotals = Object.values(entriesByMealType).flat().reduce(
     (acc, entry) => {
-      // Skip entries marked as "skipped"
-      if (entry.status === 'skipped') {
-        return acc;
-      }
-
       // Ensure we're working with numbers and not strings
       const calories = Number(entry.calories) || 0;
       const proteins = Number(entry.proteins) || 0;
       const carbs = Number(entry.carbs) || 0;
       const fats = Number(entry.fats) || 0;
-
-      console.log("Adding entry to totals:", {
-        name: entry.name,
-        status: entry.status,
-        calories,
-        proteins,
-        carbs,
-        fats,
-        currentTotal: acc
-      });
 
       return {
         calories: acc.calories + calories,
@@ -39,11 +24,6 @@ export const NutritionGoals = () => {
     },
     { calories: 0, proteins: 0, carbs: 0, fats: 0 }
   );
-
-  console.log("Final totals:", {
-    actual: actualTotals,
-    targets: dailyTargets
-  });
 
   const goals = [
     { 
