@@ -32,6 +32,8 @@ export const ExerciseLibrary = () => {
     }
 
     try {
+      console.log("Création d'une nouvelle session avec les exercices:", selectedExercises);
+      
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
@@ -45,13 +47,17 @@ export const ExerciseLibrary = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur lors de la création de la session:', error);
+        throw error;
+      }
 
       if (session) {
+        console.log("Session créée avec succès:", session);
         navigate(`/workouts/${session.id}`);
       }
     } catch (error) {
-      console.error('Error creating workout:', error);
+      console.error('Erreur lors de la création de la séance:', error);
       toast({
         title: "Erreur",
         description: "Impossible de créer la séance",
