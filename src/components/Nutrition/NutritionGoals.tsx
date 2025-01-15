@@ -69,7 +69,7 @@ export const NutritionGoals = () => {
   return (
     <Card className="w-full">
       <CardHeader className="p-3 sm:p-4">
-        <CardTitle className="text-sm sm:text-base">Objectifs journaliers</CardTitle>
+        <CardTitle className="text-sm sm:text-base text-primary">Objectifs journaliers</CardTitle>
       </CardHeader>
       <CardContent className="p-3 sm:p-4 space-y-3">
         {goals.map((goal) => (
