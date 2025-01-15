@@ -10,7 +10,6 @@ import { ExerciseSets } from "./ExerciseSets";
 import { WorkoutNotes } from "./WorkoutDetail/WorkoutNotes";
 import { Loader2, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -21,7 +20,6 @@ export const UnifiedWorkoutDetail = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [showSummary, setShowSummary] = useState(false);
 
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -95,8 +93,6 @@ export const UnifiedWorkoutDetail = () => {
         title: "Exercice terminé !",
         description: "Passez à l'exercice suivant.",
       });
-    } else {
-      setShowSummary(true);
     }
   };
 
@@ -149,7 +145,7 @@ export const UnifiedWorkoutDetail = () => {
                 <h2 className="text-2xl font-bold">Exercices de la séance</h2>
                 <Button 
                   variant="outline" 
-                  onClick={() => setShowSummary(true)}
+                  onClick={handleFinishWorkout}
                   className="gap-2"
                 >
                   <Timer className="w-4 h-4" />
@@ -170,33 +166,6 @@ export const UnifiedWorkoutDetail = () => {
           </CardContent>
         </Card>
       </motion.div>
-
-      <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Récapitulatif de la séance</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold">Durée totale</h3>
-              <p>{Math.floor(sessionDuration / 60)} minutes</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Exercices complétés</h3>
-              <ul className="list-disc pl-4">
-                {exercises.map((exercise, index) => (
-                  <li key={index}>{exercise}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleFinishWorkout}>
-              Terminer la séance
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
