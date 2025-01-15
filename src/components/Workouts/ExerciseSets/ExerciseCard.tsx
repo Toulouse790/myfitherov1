@@ -44,7 +44,7 @@ export const ExerciseCard = ({
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground">{exerciseName}</h3>
+        <h3 className="text-sm font-medium text-muted-foreground text-center">{exerciseName}</h3>
         <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
           <img 
             src={exerciseImages[exerciseName] || "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop"} 
@@ -64,9 +64,9 @@ export const ExerciseCard = ({
       )}
 
       <div className="space-y-2">
-        <div className="flex items-center gap-4 px-3">
-          <div className="flex-1 text-xs text-muted-foreground">kg</div>
-          <div className="flex-1 text-xs text-muted-foreground">reps</div>
+        <div className="flex items-center justify-center gap-4 px-3">
+          <div className="flex-1 text-xs text-muted-foreground text-center">kg</div>
+          <div className="flex-1 text-xs text-muted-foreground text-center">reps</div>
           <div className="w-[72px]"></div>
         </div>
         {[1, 2, 3].map((setNumber) => (
@@ -77,8 +77,8 @@ export const ExerciseCard = ({
             }`}
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] text-muted-foreground min-w-[40px]">S{setNumber}</span>
-              <div className="flex flex-1 items-center gap-2">
+              <span className="text-[11px] text-muted-foreground min-w-[40px] text-center">S{setNumber}</span>
+              <div className="flex flex-1 items-center justify-center gap-2">
                 <WeightInput 
                   weight={weight} 
                   onWeightChange={onWeightChange}
