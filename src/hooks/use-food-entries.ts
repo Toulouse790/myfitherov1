@@ -16,8 +16,11 @@ export const useFoodEntries = () => {
         return;
       }
 
+      // Get today's date at midnight (start of day)
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+      
+      // Get tomorrow's date at midnight
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -57,8 +60,8 @@ export const useFoodEntries = () => {
       return mappedEntries;
     },
     refetchOnWindowFocus: true,
-    staleTime: 0,
-    gcTime: 0
+    staleTime: 0, // Toujours revalider les données
+    gcTime: 0 // Ne pas mettre en cache les données
   });
 
   const entriesByMealType = entries.reduce((acc, entry) => {
