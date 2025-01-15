@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Heart, Check } from "lucide-react";
+import { Heart } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -46,9 +44,9 @@ export const ExerciseCard = ({
           .select('id')
           .eq('user_id', user.id)
           .eq('session_id', sessionId)
-          .single();
+          .maybeSingle();
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
           console.error('Error checking favorite status:', error);
           return;
         }
