@@ -11,6 +11,7 @@ export interface GeneratedMeal {
   fats?: number;
   quantities?: MealQuantity[];
   notes?: string;
+  type?: string;
 }
 
 export interface MealEntry {
