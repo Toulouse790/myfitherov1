@@ -6,7 +6,7 @@ import { MealContentProps } from "./types";
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
   return (
     <div className="space-y-4 p-4">
-      {mealEntries && mealEntries.length > 0 ? (
+      {Array.isArray(mealEntries) && mealEntries.length > 0 ? (
         <div className="space-y-2">
           {mealEntries.map((entry) => (
             <Card key={entry.id} className="p-4">
@@ -15,8 +15,8 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
                   <h3 className="font-semibold text-lg">{entry.name}</h3>
                   <p className="text-sm text-muted-foreground">
                     {entry.calories}cal | {entry.proteins}g protéines
-                    {entry.carbs !== undefined && ` | ${entry.carbs}g glucides`}
-                    {entry.fats !== undefined && ` | ${entry.fats}g lipides`}
+                    {typeof entry.carbs === 'number' && ` | ${entry.carbs}g glucides`}
+                    {typeof entry.fats === 'number' && ` | ${entry.fats}g lipides`}
                   </p>
                 </div>
               </div>
