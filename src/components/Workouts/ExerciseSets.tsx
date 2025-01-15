@@ -90,28 +90,31 @@ export const ExerciseSets = ({
   };
 
   const updateSessionStats = async () => {
-    if (sessionId && user) {
-      try {
-        await supabase
-          .from('workout_sessions')
-          .update({ 
-            total_rest_time_seconds: totalRestTime
-          })
-          .eq('id', sessionId)
-          .eq('user_id', user.id);
-      } catch (error) {
-        console.error('Error updating session stats:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour les statistiques de la séance",
-          variant: "destructive"
-        });
-      }
+    if (!sessionId || !user) {
+      console.error("Missing sessionId or user");
+      return;
+    }
+
+    try {
+      await supabase
+        .from('workout_sessions')
+        .update({ 
+          total_rest_time_seconds: totalRestTime
+        })
+        .eq('id', sessionId)
+        .eq('user_id', user.id);
+    } catch (error) {
+      console.error('Error updating session stats:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les statistiques de la séance",
+        variant: "destructive"
+      });
     }
   };
 
   const handleExerciseSetComplete = async (exerciseName: string, difficulty: string, notes: string) => {
-    if (!user) {
+    if (!user || !sessionId) {
       toast({
         title: "Erreur",
         description: "Vous devez être connecté pour enregistrer une série",
@@ -124,19 +127,28 @@ export const ExerciseSets = ({
     const currentReps = reps[exerciseName] || 0;
     const calories = calculateCalories(weight, currentReps);
 
-    await handleSetComplete(
-      exerciseName,
-      exerciseNames[exerciseName] || exerciseName,
-      setRestTimers,
-      setIsExerciseTransition,
-      difficulty,
-      notes,
-      calories
-    );
-    await updateSessionStats();
+    try {
+      await handleSetComplete(
+        exerciseName,
+        exerciseNames[exerciseName] || exerciseName,
+        setRestTimers,
+        setIsExerciseTransition,
+        difficulty,
+        notes,
+        calories
+      );
+      await updateSessionStats();
+    } catch (error) {
+      console.error('Error saving set:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder la série",
+        variant: "destructive"
+      });
+    }
   };
 
-  if (!user) {
+  if (!user || !sessionId) {
     return null;
   }
 
