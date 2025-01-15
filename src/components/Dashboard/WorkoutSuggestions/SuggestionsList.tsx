@@ -52,7 +52,6 @@ export const SuggestionsList = ({ suggestions, onSuggestionClick }: {
         .insert([
           { 
             user_id: user.id,
-            type: type, 
             status: 'in_progress',
             workout_type: type
           }
