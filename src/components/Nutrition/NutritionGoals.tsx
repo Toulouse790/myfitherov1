@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+interface NutrientTargets {
+  calories: number;
+  proteins: number;
+  carbs: number;
+  fats: number;
+}
+
 export const NutritionGoals = () => {
   const { dailyTargets, consumedNutrients } = useDailyTargets();
   const { toast } = useToast();
@@ -35,8 +42,25 @@ export const NutritionGoals = () => {
   };
 
   const calculateProgress = (consumed: number, target: number) => {
+    if (!target || !consumed) return 0;
     return Math.min(Math.round((consumed / target) * 100), 100);
   };
+
+  const targets = dailyTargets as NutrientTargets;
+  const consumed = consumedNutrients as NutrientTargets;
+
+  if (!targets || !consumed) {
+    return (
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-medium">Objectifs journaliers</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-sm text-muted-foreground">Chargement...</div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -48,7 +72,7 @@ export const NutritionGoals = () => {
           <div className="flex justify-between text-xs sm:text-sm">
             <span>Calories</span>
             <div className="flex items-center gap-2">
-              <span>{consumedNutrients.calories} / {dailyTargets.calories} kcal</span>
+              <span>{consumed.calories} / {targets.calories} kcal</span>
               <Button
                 variant="ghost"
                 size="icon"
@@ -67,31 +91,31 @@ export const NutritionGoals = () => {
               </Button>
             </div>
           </div>
-          <Progress value={calculateProgress(consumedNutrients.calories, dailyTargets.calories)} />
+          <Progress value={calculateProgress(consumed.calories, targets.calories)} />
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between text-xs sm:text-sm">
             <span>Protéines</span>
-            <span>{consumedNutrients.proteins} / {dailyTargets.proteins}g</span>
+            <span>{consumed.proteins} / {targets.proteins}g</span>
           </div>
-          <Progress value={calculateProgress(consumedNutrients.proteins, dailyTargets.proteins)} />
+          <Progress value={calculateProgress(consumed.proteins, targets.proteins)} />
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between text-xs sm:text-sm">
             <span>Glucides</span>
-            <span>{consumedNutrients.carbs} / {dailyTargets.carbs}g</span>
+            <span>{consumed.carbs} / {targets.carbs}g</span>
           </div>
-          <Progress value={calculateProgress(consumedNutrients.carbs, dailyTargets.carbs)} />
+          <Progress value={calculateProgress(consumed.carbs, targets.carbs)} />
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between text-xs sm:text-sm">
             <span>Lipides</span>
-            <span>{consumedNutrients.fats} / {dailyTargets.fats}g</span>
+            <span>{consumed.fats} / {targets.fats}g</span>
           </div>
-          <Progress value={calculateProgress(consumedNutrients.fats, dailyTargets.fats)} />
+          <Progress value={calculateProgress(consumed.fats, targets.fats)} />
         </div>
       </CardContent>
     </Card>
