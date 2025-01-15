@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
-import { useFavorites } from "@/hooks/use-favorites";
-import { WeightInput } from "./ExerciseCard/WeightInput";
-import { RepsInput } from "./ExerciseCard/RepsInput";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
-import { exerciseImages } from "../data/exerciseImages";
+import { ExerciseHeader } from "./ExerciseCard/ExerciseHeader";
+import { SetRow } from "./ExerciseCard/SetRow";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -22,20 +18,6 @@ interface ExerciseCardProps {
   onSetComplete: (difficulty: string, notes: string) => void;
   isTransitioning: boolean;
 }
-
-const getRepsLabel = (exerciseName: string): string => {
-  const lowerName = exerciseName.toLowerCase();
-  
-  if (lowerName.includes("biceps") || lowerName.includes("triceps") || lowerName.includes("curl")) {
-    return "RÉPÉTITIONS PAR BRAS";
-  }
-  
-  if (lowerName.includes("jambe") || lowerName.includes("fente") || lowerName.includes("mollet")) {
-    return "RÉPÉTITIONS PAR JAMBE";
-  }
-  
-  return "RÉPÉTITIONS";
-};
 
 export const ExerciseCard = ({ 
   exerciseName,
@@ -50,12 +32,9 @@ export const ExerciseCard = ({
 }: ExerciseCardProps) => {
   const [isResting, setIsResting] = useState(false);
   const { toast } = useToast();
-  const { user } = useAuth();
-  const sessionId = window.location.pathname.split('/').pop();
-  const { isFavorite } = useFavorites(sessionId);
-  const [isLocalFavorite, setIsLocalFavorite] = useState(false);
   const [totalSets, setTotalSets] = useState(3);
   const [setWeights, setSetWeights] = useState<{ [key: number]: number }>({});
+  const sessionId = window.location.pathname.split('/').pop();
 
   const handleSetComplete = () => {
     setIsResting(true);
@@ -68,7 +47,7 @@ export const ExerciseCard = ({
 
   const handleWeightChange = (value: number, setNumber: number) => {
     if (setNumber < completedSets) {
-      return; // Ne pas permettre la modification des séries complétées
+      return;
     }
     
     const newSetWeights = { ...setWeights };
@@ -81,53 +60,6 @@ export const ExerciseCard = ({
     onWeightChange(value);
   };
 
-  const toggleFavorite = async () => {
-    if (!user || !sessionId) {
-      toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour ajouter aux favoris",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      if (!isLocalFavorite) {
-        const { error } = await supabase
-          .from('favorite_workouts')
-          .insert([{ user_id: user.id, session_id: sessionId }]);
-          
-        if (error) throw error;
-        
-        toast({
-          title: "Ajouté aux favoris",
-          description: "L'exercice a été ajouté à vos favoris",
-        });
-      } else {
-        const { error } = await supabase
-          .from('favorite_workouts')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('session_id', sessionId);
-          
-        if (error) throw error;
-        
-        toast({
-          title: "Retiré des favoris",
-          description: "L'exercice a été retiré de vos favoris",
-        });
-      }
-      setIsLocalFavorite(!isLocalFavorite);
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de modifier les favoris",
-        variant: "destructive"
-      });
-    }
-  };
-
   const handleAddSet = () => {
     setTotalSets(prev => prev + 1);
     toast({
@@ -138,32 +70,13 @@ export const ExerciseCard = ({
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between px-2">
-          <h3 className="text-sm font-medium text-muted-foreground text-center flex-1">{exerciseName}</h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`${isLocalFavorite ? 'text-red-500' : 'text-muted-foreground'}`}
-            onClick={toggleFavorite}
-          >
-            <Heart className={`h-5 w-5 ${isLocalFavorite ? 'fill-current' : ''}`} />
-          </Button>
-        </div>
-        <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
-          <img 
-            src={exerciseImages[exerciseName] || "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop"} 
-            alt={exerciseName}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </div>
+      <ExerciseHeader exerciseName={exerciseName} sessionId={sessionId} />
 
       {restTimer !== null && completedSets > 0 && (
         <div className="py-2">
           <RestTimer 
             restTime={restTimer} 
-            onRestTimeChange={() => {}} 
+            onRestTimeChange={handleRestComplete} 
           />
         </div>
       )}
@@ -171,49 +84,34 @@ export const ExerciseCard = ({
       <div className="space-y-2">
         <div className="flex items-center justify-center gap-4 px-3">
           <div className="flex-1 text-xs text-muted-foreground text-center">KG</div>
-          <div className="flex-1 text-xs text-muted-foreground text-center">{getRepsLabel(exerciseName)}</div>
+          <div className="flex-1 text-xs text-muted-foreground text-center">
+            {exerciseName.toLowerCase().includes("biceps") || 
+             exerciseName.toLowerCase().includes("triceps") || 
+             exerciseName.toLowerCase().includes("curl")
+              ? "RÉPÉTITIONS PAR BRAS"
+              : exerciseName.toLowerCase().includes("jambe") || 
+                exerciseName.toLowerCase().includes("fente") || 
+                exerciseName.toLowerCase().includes("mollet")
+                ? "RÉPÉTITIONS PAR JAMBE"
+                : "RÉPÉTITIONS"}
+          </div>
           <div className="w-[72px]"></div>
         </div>
+
         {Array.from({ length: totalSets }).map((_, setNumber) => (
-          <div 
-            key={setNumber} 
-            className={`p-3 rounded-lg ${
-              completedSets >= setNumber + 1 ? 'bg-muted/50' : 'bg-card'
-            }`}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`text-[11px] min-w-[40px] text-center ${
-                  completedSets >= setNumber + 1 
-                    ? 'bg-green-500/20 hover:bg-green-500/30 text-green-700' 
-                    : 'text-muted-foreground hover:bg-primary/10'
-                }`}
-                onClick={handleSetComplete}
-                disabled={completedSets + 1 !== setNumber + 1 || isResting}
-              >
-                {completedSets >= setNumber + 1 ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  `S${setNumber + 1}`
-                )}
-              </Button>
-              <div className="flex flex-1 items-center justify-center gap-2">
-                <WeightInput 
-                  weight={setWeights[setNumber] || weight} 
-                  onWeightChange={(value) => handleWeightChange(value, setNumber)}
-                  disabled={completedSets >= setNumber + 1 || isResting}
-                />
-                <RepsInput 
-                  reps={reps} 
-                  onRepsChange={onRepsChange}
-                  disabled={completedSets >= setNumber + 1 || isResting}
-                />
-              </div>
-            </div>
-          </div>
+          <SetRow
+            key={setNumber}
+            setNumber={setNumber}
+            weight={setWeights[setNumber] || weight}
+            reps={reps}
+            completedSets={completedSets}
+            isResting={isResting}
+            onWeightChange={(value) => handleWeightChange(value, setNumber)}
+            onRepsChange={onRepsChange}
+            onSetComplete={handleSetComplete}
+          />
         ))}
+
         {totalSets === 3 && (
           <Button
             variant="outline"
