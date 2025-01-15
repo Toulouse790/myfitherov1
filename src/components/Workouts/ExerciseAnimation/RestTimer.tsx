@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 export interface RestTimerProps {
   restTime: number;
@@ -8,11 +9,16 @@ export interface RestTimerProps {
 }
 
 export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
+  const { toast } = useToast();
+  
   const handleTimeAdjustment = (adjustment: number) => {
-    // Ensure the new time stays within bounds (15-180 seconds)
     const newTime = restTime + adjustment;
     if (newTime >= 15 && newTime <= 180) {
       onRestTimeChange(adjustment);
+      toast({
+        title: "Temps de repos ajusté",
+        description: `${newTime} secondes`,
+      });
     }
   };
 
@@ -33,6 +39,7 @@ export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
           size="sm"
           onClick={() => handleTimeAdjustment(-15)}
           disabled={restTime <= 15}
+          className="w-20 transition-all duration-200 hover:bg-destructive/10"
         >
           -15s
         </Button>
@@ -41,6 +48,7 @@ export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
           size="sm"
           onClick={() => handleTimeAdjustment(15)}
           disabled={restTime >= 180}
+          className="w-20 transition-all duration-200 hover:bg-primary/10"
         >
           +15s
         </Button>
