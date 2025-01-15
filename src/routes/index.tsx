@@ -8,6 +8,7 @@ import WorkoutSessionPage from "@/pages/WorkoutSession";
 import AdminDashboard from "@/pages/Admin/Dashboard";
 import NutritionPage from "@/pages/Nutrition";
 import SleepPage from "@/pages/Sleep";
+import SuggestionsPage from "@/pages/Suggestions";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -20,6 +21,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <HomePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "suggestions",
+        element: (
+          <ProtectedRoute>
+            <SuggestionsPage />
           </ProtectedRoute>
         ),
       },
