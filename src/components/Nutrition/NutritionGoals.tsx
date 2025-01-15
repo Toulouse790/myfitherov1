@@ -9,6 +9,11 @@ export const NutritionGoals = () => {
   // Calculate totals from today's entries only, excluding skipped meals
   const actualTotals = Object.values(entriesByMealType).flat().reduce(
     (acc, entry) => {
+      // Skip entries marked as "skipped"
+      if (entry.status === 'skipped') {
+        return acc;
+      }
+
       // Ensure we're working with numbers and not strings
       const calories = Number(entry.calories) || 0;
       const proteins = Number(entry.proteins) || 0;
@@ -24,6 +29,11 @@ export const NutritionGoals = () => {
     },
     { calories: 0, proteins: 0, carbs: 0, fats: 0 }
   );
+
+  const calculatePercentage = (actual: number, target: number) => {
+    if (!target) return 0;
+    return Math.round((actual / target) * 100);
+  };
 
   const goals = [
     { 
@@ -63,9 +73,14 @@ export const NutritionGoals = () => {
             <div className="flex justify-between text-xs sm:text-sm">
               <span>{goal.name}</span>
               <div className="text-muted-foreground space-x-2">
-                <span className="text-green-500">{goal.actual}</span>
+                <span className={goal.actual > goal.target ? "text-red-500" : "text-green-500"}>
+                  {goal.actual}
+                </span>
                 <span>/</span>
                 <span>{goal.target} {goal.unit}</span>
+                <span className="text-xs">
+                  ({calculatePercentage(goal.actual, goal.target)}%)
+                </span>
               </div>
             </div>
           </div>
