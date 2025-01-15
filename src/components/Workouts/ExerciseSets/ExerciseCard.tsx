@@ -5,7 +5,7 @@ import { WeightInput } from "./ExerciseCard/WeightInput";
 import { RepsInput } from "./ExerciseCard/RepsInput";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
 import { exerciseImages } from "../data/exerciseImages";
-import { Check, Heart } from "lucide-react";
+import { Check, Heart, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -54,6 +54,7 @@ export const ExerciseCard = ({
   const sessionId = window.location.pathname.split('/').pop();
   const { isFavorite } = useFavorites(sessionId);
   const [isLocalFavorite, setIsLocalFavorite] = useState(false);
+  const [totalSets, setTotalSets] = useState(3);
 
   const handleSetComplete = () => {
     setIsResting(true);
@@ -111,6 +112,14 @@ export const ExerciseCard = ({
     }
   };
 
+  const handleAddSet = () => {
+    setTotalSets(prev => prev + 1);
+    toast({
+      title: "Série ajoutée",
+      description: `Une nouvelle série a été ajoutée à ${exerciseName}`,
+    });
+  };
+
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="space-y-2">
@@ -149,11 +158,11 @@ export const ExerciseCard = ({
           <div className="flex-1 text-xs text-muted-foreground text-center">{getRepsLabel(exerciseName)}</div>
           <div className="w-[72px]"></div>
         </div>
-        {[1, 2, 3].map((setNumber) => (
+        {Array.from({ length: totalSets }).map((_, setNumber) => (
           <div 
             key={setNumber} 
             className={`p-3 rounded-lg ${
-              completedSets >= setNumber ? 'bg-muted/50' : 'bg-card'
+              completedSets >= setNumber + 1 ? 'bg-muted/50' : 'bg-card'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
@@ -161,17 +170,17 @@ export const ExerciseCard = ({
                 variant="ghost"
                 size="sm"
                 className={`text-[11px] min-w-[40px] text-center ${
-                  completedSets >= setNumber 
+                  completedSets >= setNumber + 1 
                     ? 'bg-green-500/20 hover:bg-green-500/30 text-green-700' 
                     : 'text-muted-foreground hover:bg-primary/10'
                 }`}
                 onClick={handleSetComplete}
-                disabled={completedSets + 1 !== setNumber || isResting}
+                disabled={completedSets + 1 !== setNumber + 1 || isResting}
               >
-                {completedSets >= setNumber ? (
+                {completedSets >= setNumber + 1 ? (
                   <Check className="h-4 w-4" />
                 ) : (
-                  `S${setNumber}`
+                  `S${setNumber + 1}`
                 )}
               </Button>
               <div className="flex flex-1 items-center justify-center gap-2">
@@ -179,17 +188,28 @@ export const ExerciseCard = ({
                   weight={weight} 
                   onWeightChange={onWeightChange}
                   onComplete={handleSetComplete}
-                  disabled={completedSets >= setNumber}
+                  disabled={completedSets >= setNumber + 1}
                 />
                 <RepsInput 
                   reps={reps} 
                   onRepsChange={onRepsChange}
-                  disabled={completedSets >= setNumber}
+                  disabled={completedSets >= setNumber + 1}
                 />
               </div>
             </div>
           </div>
         ))}
+        {totalSets === 3 && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full mt-2 gap-2"
+            onClick={handleAddSet}
+          >
+            <Plus className="h-4 w-4" />
+            Ajouter une série
+          </Button>
+        )}
       </div>
     </div>
   );
