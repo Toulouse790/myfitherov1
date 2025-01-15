@@ -1,6 +1,5 @@
 import { NutritionGoals } from "@/components/Nutrition/NutritionGoals";
 import { NutritionChart } from "@/components/Nutrition/NutritionChart";
-import { FoodJournal } from "@/components/Nutrition/FoodJournal";
 import { MealPlanGenerator } from "@/components/Nutrition/MealPlanGenerator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DailyMeals } from "@/components/Nutrition/DailyMeals";
@@ -33,12 +32,6 @@ const Nutrition = () => {
               Suivi hebdomadaire
             </TabsTrigger>
             <TabsTrigger 
-              value="journal" 
-              className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
-            >
-              Alimentaire
-            </TabsTrigger>
-            <TabsTrigger 
               value="meal-plan" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
@@ -61,12 +54,6 @@ const Nutrition = () => {
         <TabsContent value="tracking" className="space-y-4 mt-2">
           <div className="w-full">
             <NutritionChart />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="journal" className="space-y-4 mt-2">
-          <div className="w-full">
-            <FoodJournal />
           </div>
         </TabsContent>
 
