@@ -36,17 +36,23 @@ export const useDailyTargets = () => {
         .limit(1)
         .maybeSingle();
 
-      // Get today's food journal entries
+      // Get today's food journal entries using local date
       const today = new Date();
-      const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
-      const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      const startOfDay = today.toISOString();
+      const endOfDay = tomorrow.toISOString();
+      
+      console.log("Fetching entries between:", startOfDay, "and", endOfDay);
       
       const { data: foodEntries } = await supabase
         .from('food_journal_entries')
         .select('*')
         .eq('user_id', user.id)
         .gte('created_at', startOfDay)
-        .lte('created_at', endOfDay);
+        .lt('created_at', endOfDay);
 
       // Calculate consumed nutrients
       const consumedNutrients = (foodEntries || []).reduce((acc, entry) => ({
@@ -80,7 +86,9 @@ export const useDailyTargets = () => {
         todayPlan,
         consumedNutrients
       };
-    }
+    },
+    // Refetch every minute to ensure data is up to date
+    refetchInterval: 60000,
   });
 
   const calculateDailyTargets = (data: any) => {
