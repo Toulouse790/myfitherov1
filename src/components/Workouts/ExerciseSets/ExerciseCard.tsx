@@ -63,16 +63,16 @@ export const ExerciseCard = ({
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-3 gap-2">
           {[1, 2, 3].map((setNumber) => (
             <div 
               key={setNumber} 
-              className={`p-3 rounded-lg border ${
+              className={`p-2 rounded-lg border ${
                 completedSets >= setNumber ? 'bg-muted' : 'bg-card'
               }`}
             >
-              <div className="text-xs font-medium mb-2">Série {setNumber}</div>
-              <div className="space-y-2">
+              <div className="text-xs font-medium mb-1">Série {setNumber}</div>
+              <div className="space-y-1">
                 <WeightInput 
                   weight={weight} 
                   onWeightChange={onWeightChange}
