@@ -132,7 +132,7 @@ export const ExerciseLibrary = () => {
             animate={{ opacity: 1 }}
             className="space-y-6"
           >
-            <h1 className="text-2xl font-bold text-center">
+            <h1 className="text-xl font-bold text-center mb-2">
               Sélectionnez les groupes musculaires à travailler
             </h1>
             <MuscleGroupGrid onSelect={handleMuscleGroupSelect} />
