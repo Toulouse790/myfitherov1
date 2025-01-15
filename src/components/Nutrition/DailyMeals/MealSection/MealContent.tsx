@@ -16,6 +16,24 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
     setIsEditing(false);
   };
 
+  const getNutritionalValues = () => {
+    if (generatedMeal?.type && mealPlan[generatedMeal.type]) {
+      const planMeal = mealPlan[generatedMeal.type];
+      return {
+        calories: planMeal.calories,
+        proteins: planMeal.proteins,
+        carbs: planMeal.carbs,
+        fats: planMeal.fats
+      };
+    }
+    return {
+      calories: generatedMeal?.calories,
+      proteins: generatedMeal?.proteins,
+      carbs: generatedMeal?.carbs,
+      fats: generatedMeal?.fats
+    };
+  };
+
   return (
     <div className="pl-4 pr-2 py-2 space-y-2">
       {mealEntries.length > 0 ? (
@@ -62,19 +80,12 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus }: MealCo
               <div className="space-y-1">
                 <div className="font-medium text-gray-800">{generatedMeal.name}</div>
                 <div className="text-sm text-muted-foreground">
-                  {mealPlan && mealPlan[generatedMeal.type] ? (
-                    <>
-                      {mealPlan[generatedMeal.type].calories} kcal | {mealPlan[generatedMeal.type].proteins}g protéines
-                      {mealPlan[generatedMeal.type].carbs && ` | ${mealPlan[generatedMeal.type].carbs}g glucides`}
-                      {mealPlan[generatedMeal.type].fats && ` | ${mealPlan[generatedMeal.type].fats}g lipides`}
-                    </>
-                  ) : (
-                    <>
-                      {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
-                      {generatedMeal.carbs !== undefined && ` | ${generatedMeal.carbs}g glucides`}
-                      {generatedMeal.fats !== undefined && ` | ${generatedMeal.fats}g lipides`}
-                    </>
-                  )}
+                  {(() => {
+                    const values = getNutritionalValues();
+                    return `${values.calories} kcal | ${values.proteins}g protéines${
+                      values.carbs !== undefined ? ` | ${values.carbs}g glucides` : ''
+                    }${values.fats !== undefined ? ` | ${values.fats}g lipides` : ''}`;
+                  })()}
                 </div>
               </div>
               <Dialog>
