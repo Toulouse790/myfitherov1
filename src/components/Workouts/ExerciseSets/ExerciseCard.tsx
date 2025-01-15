@@ -6,23 +6,37 @@ import { RestTimer } from "../ActiveWorkout/RestTimer";
 
 interface ExerciseCardProps {
   exerciseName: string;
-  onComplete?: () => void;
+  weight: number;
+  reps: number;
+  completedSets: number;
+  restTimer: number | null;
+  onWeightChange: (value: number) => void;
+  onRepsChange: (value: number) => void;
+  onSetComplete: (difficulty: string, notes: string) => void;
+  isTransitioning: boolean;
 }
 
-export const ExerciseCard = ({ exerciseName, onComplete }: ExerciseCardProps) => {
-  const [weight, setWeight] = useState(20);
-  const [reps, setReps] = useState(12);
+export const ExerciseCard = ({ 
+  exerciseName,
+  weight,
+  reps,
+  completedSets,
+  restTimer,
+  onWeightChange,
+  onRepsChange,
+  onSetComplete,
+  isTransitioning
+}: ExerciseCardProps) => {
   const [isResting, setIsResting] = useState(false);
 
   const handleSetComplete = () => {
     setIsResting(true);
+    // Default values for difficulty and notes
+    onSetComplete("moderate", "");
   };
 
   const handleRestComplete = () => {
     setIsResting(false);
-    if (onComplete) {
-      onComplete();
-    }
   };
 
   return (
@@ -31,15 +45,21 @@ export const ExerciseCard = ({ exerciseName, onComplete }: ExerciseCardProps) =>
         <h3 className="text-xl font-semibold">{exerciseName}</h3>
 
         {isResting ? (
-          <RestTimer onComplete={handleRestComplete} />
+          <RestTimer 
+            restTimer={restTimer} 
+            onRestTimeChange={() => {}} 
+          />
         ) : (
           <div className="space-y-6">
             <WeightInput 
               weight={weight} 
-              onWeightChange={setWeight}
+              onWeightChange={onWeightChange}
               onComplete={handleSetComplete}
             />
-            <RepsInput reps={reps} onRepsChange={setReps} />
+            <RepsInput 
+              reps={reps} 
+              onRepsChange={onRepsChange} 
+            />
           </div>
         )}
       </div>
