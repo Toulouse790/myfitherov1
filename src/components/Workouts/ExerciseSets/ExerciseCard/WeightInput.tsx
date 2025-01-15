@@ -18,14 +18,14 @@ export const WeightInput = ({ weight, onWeightChange, onComplete }: WeightInputP
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Poids (kg)</label>
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2">
+        <label className="text-sm font-medium min-w-20">Poids (kg)</label>
+        <div className="flex items-center gap-2 flex-1">
           <Input
             type="number"
             value={weight}
             onChange={handleInputChange}
-            className="text-center"
+            className="text-center max-w-24"
             min={0}
             step={2.5}
           />

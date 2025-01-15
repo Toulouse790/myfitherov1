@@ -9,13 +9,14 @@ interface RepsInputProps {
 
 export const RepsInput = ({ reps, onRepsChange }: RepsInputProps) => {
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">Répétitions</label>
-      <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2">
+      <label className="text-sm font-medium min-w-20">Répétitions</label>
+      <div className="flex items-center gap-2 flex-1">
         <Button
           variant="outline"
           size="icon"
           onClick={() => onRepsChange(reps - 1)}
+          className="h-8 w-8"
         >
           <ChevronDown className="h-4 w-4" />
         </Button>
@@ -23,12 +24,13 @@ export const RepsInput = ({ reps, onRepsChange }: RepsInputProps) => {
           type="number"
           value={reps}
           onChange={(e) => onRepsChange(Number(e.target.value))}
-          className="text-center"
+          className="text-center max-w-24"
         />
         <Button
           variant="outline"
           size="icon"
           onClick={() => onRepsChange(reps + 1)}
+          className="h-8 w-8"
         >
           <ChevronUp className="h-4 w-4" />
         </Button>
