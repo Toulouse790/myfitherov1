@@ -5,6 +5,7 @@ import { MealContentProps } from "./types";
 
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
   const hasEntries = mealEntries && mealEntries.length > 0;
+  console.log("MealContent - entries for type", type, ":", mealEntries);
 
   return (
     <div className="space-y-4 p-4">
