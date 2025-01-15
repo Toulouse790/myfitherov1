@@ -6,13 +6,13 @@ export const NutritionChart = () => {
   const { dailyTargets, consumedNutrients } = useDailyTargets();
   
   const data = [
-    { name: "Lun", target_calories: 2100, actual_calories: 1800, target_proteins: 160, actual_proteins: 140 },
-    { name: "Mar", target_calories: 2100, actual_calories: 2100, target_proteins: 160, actual_proteins: 160 },
-    { name: "Mer", target_calories: 2100, actual_calories: 1950, target_proteins: 160, actual_proteins: 145 },
-    { name: "Jeu", target_calories: 2100, actual_calories: 2000, target_proteins: 160, actual_proteins: 150 },
-    { name: "Ven", target_calories: 2100, actual_calories: 2200, target_proteins: 160, actual_proteins: 170 },
-    { name: "Sam", target_calories: 2100, actual_calories: 1900, target_proteins: 160, actual_proteins: 145 },
-    { name: "Dim", target_calories: 2100, actual_calories: 1850, target_proteins: 160, actual_proteins: 140 },
+    { name: "Lun", target: dailyTargets.calories, actual: consumedNutrients.calories },
+    { name: "Mar", target: dailyTargets.calories, actual: consumedNutrients.calories },
+    { name: "Mer", target: dailyTargets.calories, actual: consumedNutrients.calories },
+    { name: "Jeu", target: dailyTargets.calories, actual: consumedNutrients.calories },
+    { name: "Ven", target: dailyTargets.calories, actual: consumedNutrients.calories },
+    { name: "Sam", target: dailyTargets.calories, actual: consumedNutrients.calories },
+    { name: "Dim", target: dailyTargets.calories, actual: consumedNutrients.calories },
   ];
 
   return (
@@ -28,16 +28,11 @@ export const NutritionChart = () => {
             data={data}
             index="name"
             categories={[
-              "target_calories",
-              "actual_calories",
-              "target_proteins",
-              "actual_proteins"
+              "target",
+              "actual"
             ]}
-            colors={["#8B5CF6", "#A78BFA", "#10B981", "#34D399"]}
-            valueFormatter={(value: number, category?: string) => {
-              if (category?.includes("proteins")) return `${value}g`;
-              return `${value} kcal`;
-            }}
+            colors={["#8B5CF6", "#A78BFA"]}
+            valueFormatter={(value: number) => `${value} kcal`}
             yAxisWidth={48}
             showLegend={true}
             showGridLines={false}
@@ -49,9 +44,6 @@ export const NutritionChart = () => {
                 <div className="space-y-1">
                   <p className="text-purple-500">
                     Calories: {props.payload[1]?.value} / {props.payload[0]?.value} kcal
-                  </p>
-                  <p className="text-emerald-500">
-                    Protéines: {props.payload[3]?.value} / {props.payload[2]?.value}g
                   </p>
                 </div>
               </div>
