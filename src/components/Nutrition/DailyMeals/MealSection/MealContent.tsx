@@ -4,9 +4,11 @@ import { Check, X } from "lucide-react";
 import { MealContentProps } from "./types";
 
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
+  const hasEntries = Array.isArray(mealEntries) && mealEntries.length > 0;
+
   return (
     <div className="space-y-4 p-4">
-      {Array.isArray(mealEntries) && mealEntries.length > 0 ? (
+      {hasEntries ? (
         <div className="space-y-2">
           {mealEntries.map((entry) => (
             <Card key={entry.id} className="p-4">
@@ -15,8 +17,8 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
                   <h3 className="font-semibold text-lg">{entry.name}</h3>
                   <p className="text-sm text-muted-foreground">
                     {entry.calories}cal | {entry.proteins}g protéines
-                    {typeof entry.carbs === 'number' && ` | ${entry.carbs}g glucides`}
-                    {typeof entry.fats === 'number' && ` | ${entry.fats}g lipides`}
+                    {entry.carbs > 0 && ` | ${entry.carbs}g glucides`}
+                    {entry.fats > 0 && ` | ${entry.fats}g lipides`}
                   </p>
                 </div>
               </div>
