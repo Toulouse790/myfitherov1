@@ -125,19 +125,18 @@ export default function WorkoutSession() {
         </Card>
       </motion.div>
 
-      <div className="fixed bottom-4 right-4">
-        <Button
-          size="lg"
-          className="shadow-lg"
-          onClick={() => setCurrentExerciseIndex(prev => 
-            prev < exercises.length - 1 ? prev + 1 : prev
-          )}
-          disabled={currentExerciseIndex === exercises.length - 1}
-        >
-          <ChevronRight className="h-4 w-4" />
-          Exercice suivant
-        </Button>
-      </div>
+      {currentExerciseIndex < exercises.length - 1 && (
+        <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
+          <Button
+            size="lg"
+            className="shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground"
+            onClick={() => setCurrentExerciseIndex(prev => prev + 1)}
+          >
+            Exercice suivant
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
