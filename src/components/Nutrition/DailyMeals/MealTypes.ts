@@ -1,7 +1,7 @@
 export const mealTypes = {
   breakfast: "Petit déjeuner",
-  morning_snack: "Collation",
+  morning_snack: "Collation (matin)",
   lunch: "Déjeuner",
-  afternoon_snack: "Collation",
+  afternoon_snack: "Collation (après-midi)",
   dinner: "Dîner"
 } as const;

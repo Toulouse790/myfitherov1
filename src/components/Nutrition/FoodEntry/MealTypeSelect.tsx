@@ -14,9 +14,10 @@ interface MealTypeSelectProps {
 export const MealTypeSelect = ({ value, onChange }: MealTypeSelectProps) => {
   const mealTypes = [
     { value: "breakfast", label: "Petit déjeuner" },
+    { value: "morning_snack", label: "Collation (matin)" },
     { value: "lunch", label: "Déjeuner" },
-    { value: "dinner", label: "Dîner" },
-    { value: "snack", label: "Collation" }
+    { value: "afternoon_snack", label: "Collation (après-midi)" },
+    { value: "dinner", label: "Dîner" }
   ];
 
   return (

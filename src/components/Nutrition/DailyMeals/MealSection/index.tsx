@@ -1,9 +1,6 @@
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useFoodEntries } from "@/hooks/use-food-entries";
-import { MealHeader } from "./MealHeader";
+import { Card } from "@/components/ui/card";
 import { MealContent } from "./MealContent";
+import { MealHeader } from "./MealHeader";
 import { MealSectionProps } from "./types";
 
 export const MealSection = ({
@@ -12,87 +9,25 @@ export const MealSection = ({
   mealEntries,
   generatedMeal,
   isExpanded,
-  onToggle,
+  onToggle
 }: MealSectionProps) => {
-  const [mealStatus, setMealStatus] = useState<'taken' | 'skipped' | null>(null);
-  const { toast } = useToast();
-  const { refetchEntries } = useFoodEntries();
-
-  const handleMealStatus = async (status: 'taken' | 'skipped') => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      if (status === 'taken' && generatedMeal) {
-        console.log("Saving meal to journal:", generatedMeal);
-        
-        const mealEntry = {
-          user_id: user.id,
-          name: generatedMeal.name,
-          calories: generatedMeal.calories,
-          proteins: generatedMeal.proteins,
-          meal_type: type,
-          notes: generatedMeal.notes || ''
-        };
-
-        if (generatedMeal.quantities && generatedMeal.quantities.length > 0) {
-          const ingredientsList = generatedMeal.quantities
-            .map(q => `${q.item}: ${q.amount}`)
-            .join('\n');
-          mealEntry.notes = `${mealEntry.notes}\n\nIngrédients:\n${ingredientsList}`;
-        }
-
-        console.log("Inserting meal entry:", mealEntry);
-        const { error } = await supabase
-          .from('food_journal_entries')
-          .insert(mealEntry);
-
-        if (error) {
-          console.error('Error inserting meal entry:', error);
-          throw error;
-        }
-
-        await refetchEntries();
-
-        toast({
-          title: "Repas validé",
-          description: "Le repas a été ajouté à votre journal et vos objectifs ont été mis à jour",
-        });
-      } else if (status === 'skipped') {
-        toast({
-          title: "Repas non pris",
-          description: "Le repas a été marqué comme non pris",
-        });
-      }
-
-      setMealStatus(status);
-    } catch (error) {
-      console.error('Error updating meal status:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le statut du repas",
-        variant: "destructive",
-      });
-    }
-  };
-
+  const isSnack = type === 'morning_snack' || type === 'afternoon_snack';
+  
   return (
-    <div className="mb-2">
+    <Card className="overflow-hidden">
       <MealHeader
         label={label}
-        mealStatus={mealStatus}
+        mealStatus={mealEntries.length > 0 ? 'taken' : undefined}
         isExpanded={isExpanded}
         onToggle={onToggle}
       />
-
       {isExpanded && (
         <MealContent
           mealEntries={mealEntries}
           generatedMeal={generatedMeal}
-          onMealStatus={handleMealStatus}
           type={type}
         />
       )}
-    </div>
+    </Card>
   );
 };
