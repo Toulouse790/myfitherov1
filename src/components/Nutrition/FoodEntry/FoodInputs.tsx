@@ -123,38 +123,49 @@ export const FoodInputs = ({
           </div>
 
           <div className="space-y-2">
-            <Input
-              type="number"
-              placeholder="Calories"
-              value={calories}
-              onChange={(e) => onCaloriesChange(e.target.value)}
-              className={isCustomFood ? "bg-white" : "bg-gray-50"}
-              readOnly={!isCustomFood}
-            />
-            <Input
-              type="number"
-              placeholder="Protéines (g)"
-              value={proteins}
-              onChange={(e) => onProteinsChange(e.target.value)}
-              className={isCustomFood ? "bg-white" : "bg-gray-50"}
-              readOnly={!isCustomFood}
-            />
-            <Input
-              type="number"
-              placeholder="Glucides (g)"
-              value={carbs}
-              onChange={(e) => onCarbsChange(e.target.value)}
-              className={isCustomFood ? "bg-white" : "bg-gray-50"}
-              readOnly={!isCustomFood}
-            />
-            <Input
-              type="number"
-              placeholder="Lipides (g)"
-              value={fats}
-              onChange={(e) => onFatsChange(e.target.value)}
-              className={isCustomFood ? "bg-white" : "bg-gray-50"}
-              readOnly={!isCustomFood}
-            />
+            <div className="flex items-center">
+              <span className="w-24 text-sm text-gray-600">Calories:</span>
+              <Input
+                type="number"
+                value={calories}
+                onChange={(e) => onCaloriesChange(e.target.value)}
+                className={`${isCustomFood ? "bg-white" : "bg-gray-50"} flex-1`}
+                readOnly={!isCustomFood}
+              />
+            </div>
+            <div className="flex items-center">
+              <span className="w-24 text-sm text-gray-600">Protéines:</span>
+              <Input
+                type="number"
+                value={proteins}
+                onChange={(e) => onProteinsChange(e.target.value)}
+                className={`${isCustomFood ? "bg-white" : "bg-gray-50"} flex-1`}
+                readOnly={!isCustomFood}
+              />
+              <span className="ml-1 text-sm text-gray-600">g</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-24 text-sm text-gray-600">Glucides:</span>
+              <Input
+                type="number"
+                value={carbs}
+                onChange={(e) => onCarbsChange(e.target.value)}
+                className={`${isCustomFood ? "bg-white" : "bg-gray-50"} flex-1`}
+                readOnly={!isCustomFood}
+              />
+              <span className="ml-1 text-sm text-gray-600">g</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-24 text-sm text-gray-600">Lipides:</span>
+              <Input
+                type="number"
+                value={fats}
+                onChange={(e) => onFatsChange(e.target.value)}
+                className={`${isCustomFood ? "bg-white" : "bg-gray-50"} flex-1`}
+                readOnly={!isCustomFood}
+              />
+              <span className="ml-1 text-sm text-gray-600">g</span>
+            </div>
           </div>
         </div>
       )}
