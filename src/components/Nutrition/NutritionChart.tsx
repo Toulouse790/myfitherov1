@@ -52,7 +52,7 @@ export const NutritionChart = () => {
     <Card className="w-full">
       <CardHeader className="p-4">
         <CardTitle className="text-base font-medium">
-          Suivi hebdomadaire
+          Suivi des 7 derniers jours
         </CardTitle>
       </CardHeader>
       <CardContent className="p-2 sm:p-4">
