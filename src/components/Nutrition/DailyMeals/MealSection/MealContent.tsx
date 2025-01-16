@@ -29,7 +29,7 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
       ) : (
         <div className="text-center text-gray-500">
           <p>Aucun aliment ajouté</p>
-          {generatedMeal && (
+          {generatedMeal && onMealStatus && (
             <div className="mt-4 flex justify-center gap-2">
               <Button
                 variant="outline"

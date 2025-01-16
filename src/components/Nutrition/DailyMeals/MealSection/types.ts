@@ -35,7 +35,7 @@ export interface MealSectionProps {
 
 export interface MealHeaderProps {
   label: string;
-  mealStatus: 'taken' | 'skipped' | null;
+  mealStatus: 'taken' | 'skipped' | null | undefined;
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -43,6 +43,6 @@ export interface MealHeaderProps {
 export interface MealContentProps {
   mealEntries: MealEntry[];
   generatedMeal?: GeneratedMeal;
-  onMealStatus: (status: 'taken' | 'skipped') => void;
+  onMealStatus?: (status: 'taken' | 'skipped') => void;
   type: string;
 }
