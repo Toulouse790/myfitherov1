@@ -2,7 +2,8 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/Theme/ThemeProvider";
 import { NotificationProvider } from "@/providers/NotificationProvider";
-import { Routes } from "@/routes";
+import { router } from "@/routes";
+import { RouterProvider } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
@@ -11,9 +12,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <NotificationProvider>
-          <BrowserRouter>
-            <Routes />
-          </BrowserRouter>
+          <RouterProvider router={router} />
         </NotificationProvider>
       </ThemeProvider>
     </QueryClientProvider>
