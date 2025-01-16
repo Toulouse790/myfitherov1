@@ -80,7 +80,7 @@ export const ExerciseHeader = ({ exerciseName, sessionId }: ExerciseHeaderProps)
           <Heart className={`h-5 w-5 ${isLocalFavorite ? 'fill-current' : ''}`} />
         </Button>
       </div>
-      <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
+      <div className="aspect-video w-full max-w-[300px] mx-auto overflow-hidden rounded-lg bg-muted">
         <img 
           src={exerciseImages[exerciseName] || "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=600&fit=crop"} 
           alt={exerciseName}
