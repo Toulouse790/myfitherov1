@@ -1,9 +1,10 @@
 import { ExerciseAnimation } from "../ExerciseAnimation";
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { WorkoutHeader } from "./components/WorkoutHeader";
+import { ExerciseButtons } from "./components/ExerciseButtons";
 
 interface WorkoutExerciseViewProps {
   currentExercise: string | null;
@@ -53,8 +54,6 @@ export const WorkoutExerciseView = ({
 
           if (!error && data) {
             setPreviousWeight(data.weight);
-          } else {
-            console.log('No previous weight found for exercise:', currentExercise);
           }
         } catch (error) {
           console.error('Error fetching weight:', error);
@@ -66,7 +65,6 @@ export const WorkoutExerciseView = ({
   }, [currentExercise, user]);
 
   const handleSetComplete = async () => {
-    console.log("Handling set completion");
     if (currentExercise && sessionId) {
       try {
         const { error } = await supabase
@@ -82,7 +80,6 @@ export const WorkoutExerciseView = ({
           });
 
         if (error) {
-          console.error('Database error:', error);
           toast({
             title: "Erreur",
             description: "Impossible de sauvegarder la série",
@@ -91,8 +88,6 @@ export const WorkoutExerciseView = ({
           throw error;
         }
         
-        console.log("Set saved, starting rest timer");
-        // Démarrer le timer de repos après la sauvegarde réussie
         onSetComplete();
         
         toast({
@@ -107,31 +102,14 @@ export const WorkoutExerciseView = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        {workoutStarted && onEndWorkout && (
-          <Button 
-            variant="destructive"
-            onClick={onEndWorkout}
-            size="sm"
-            className="whitespace-nowrap"
-          >
-            Terminer la séance
-          </Button>
-        )}
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold">
-            {currentExercise || "Sélectionnez un exercice"}
-          </h2>
-          {currentExercise && (
-            <p className="text-sm text-muted-foreground">
-              Charge recommandée : {previousWeight}kg
-            </p>
-          )}
-        </div>
-        <span className="text-muted-foreground">
-          {currentExerciseIndex !== null ? `${currentExerciseIndex + 1}/${exercises.length}` : ""}
-        </span>
-      </div>
+      <WorkoutHeader
+        currentExercise={currentExercise}
+        currentExerciseIndex={currentExerciseIndex}
+        exercisesCount={exercises.length}
+        workoutStarted={workoutStarted}
+        onEndWorkout={onEndWorkout}
+        previousWeight={previousWeight}
+      />
 
       {currentExercise && (
         <ExerciseAnimation
@@ -149,22 +127,11 @@ export const WorkoutExerciseView = ({
         />
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {exercises.map((exercise, index) => (
-          <Button
-            key={index}
-            variant={currentExerciseIndex === index ? "default" : "ghost"}
-            onClick={() => onExerciseSelect(index)}
-            className={`p-4 transition-all ${
-              currentExerciseIndex === index 
-                ? "bg-primary text-primary-foreground" 
-                : "hover:bg-muted"
-            }`}
-          >
-            {exercise}
-          </Button>
-        ))}
-      </div>
+      <ExerciseButtons
+        exercises={exercises}
+        currentExerciseIndex={currentExerciseIndex}
+        onExerciseSelect={onExerciseSelect}
+      />
     </div>
   );
 };

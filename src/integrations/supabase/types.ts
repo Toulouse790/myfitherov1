@@ -1509,6 +1509,7 @@ export type Database = {
           title: string
           type: string
           updated_at: string
+          workout_id: string | null
         }
         Insert: {
           created_at?: string
@@ -1520,6 +1521,7 @@ export type Database = {
           title: string
           type: string
           updated_at?: string
+          workout_id?: string | null
         }
         Update: {
           created_at?: string
@@ -1531,8 +1533,17 @@ export type Database = {
           title?: string
           type?: string
           updated_at?: string
+          workout_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "workout_suggestions_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "sport_specific_workouts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       workout_templates: {
         Row: {
