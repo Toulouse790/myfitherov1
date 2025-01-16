@@ -110,6 +110,19 @@ export default function WorkoutSession() {
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
+      {currentExerciseIndex < exercises.length - 1 && (
+        <div className="fixed top-4 right-4 z-50">
+          <Button
+            size="lg"
+            className="shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground"
+            onClick={() => setCurrentExerciseIndex(prev => prev + 1)}
+          >
+            Exercice suivant
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </Button>
+        </div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -124,19 +137,6 @@ export default function WorkoutSession() {
           />
         </Card>
       </motion.div>
-
-      {currentExerciseIndex < exercises.length - 1 && (
-        <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
-          <Button
-            size="lg"
-            className="shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground"
-            onClick={() => setCurrentExerciseIndex(prev => prev + 1)}
-          >
-            Exercice suivant
-            <ChevronRight className="h-4 w-4 ml-2" />
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
