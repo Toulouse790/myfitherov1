@@ -1,21 +1,15 @@
 import { useState, useEffect } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Moon, Star, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
-interface SleepEntry {
-  id: string;
-  date: string;
-  hours: number;
-  minutes: number;
-  quality: number;
-}
+import { ConnectedDevices } from "./ConnectedDevices";
 
 export const SleepTracker = () => {
-  const [entries, setEntries] = useState<SleepEntry[]>([]);
-  const [recommendedSleep, setRecommendedSleep] = useState<string>("");
+  const [recommendedSleep, setRecommendedSleep] = useState<string>("7-8 heures");
+  const [sleepHours, setSleepHours] = useState<number>(7);
+  const [sleepMinutes, setSleepMinutes] = useState<number>(0);
+  const [sleepQuality, setSleepQuality] = useState<number>(5);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -104,106 +98,75 @@ export const SleepTracker = () => {
   };
 
   const addSleepEntry = (hours: number, minutes: number, quality: number) => {
-    const newEntry: SleepEntry = {
-      id: Date.now().toString(),
-      date: new Date().toISOString().split('T')[0],
-      hours,
-      minutes,
-      quality,
-    };
-
-    setEntries([...entries, newEntry]);
-    toast({
-      title: "Sommeil enregistré",
-      description: `${formatTime(hours, minutes)} de sommeil ajoutées`,
-    });
+    // Add your logic to save the sleep entry
+    console.log(`Sleep Entry: ${hours}h ${minutes}m, Quality: ${quality}`);
   };
-
-  const getAverageHours = () => {
-    if (entries.length === 0) return { hours: 0, minutes: 0 };
-    const totalMinutes = entries.reduce((acc, entry) => acc + (entry.hours * 60 + entry.minutes), 0);
-    const averageMinutes = totalMinutes / entries.length;
-    return {
-      hours: Math.floor(averageMinutes / 60),
-      minutes: Math.round(averageMinutes % 60)
-    };
-  };
-
-  const formatTime = (hours: number, minutes: number) => {
-    return `${hours}:${minutes.toString().padStart(2, '0')}`;
-  };
-
-  const average = getAverageHours();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Moon className="w-5 h-5" />
-          Suivi du sommeil
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Moyenne de sommeil</p>
-              <p className="text-2xl font-bold">{formatTime(average.hours, average.minutes)}</p>
-            </div>
-            <div className="flex gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className="w-5 h-5 text-yellow-400"
-                  fill={star <= Math.round((average.hours * 60 + average.minutes) / 120) ? "currentColor" : "none"}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-            <Info className="w-5 h-5 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              Temps de sommeil recommandé : <span className="font-medium">{recommendedSleep}</span>
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardContent className="p-6">
+        <div className="space-y-6">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl font-bold">Suivi du sommeil</h2>
+            <p className="text-muted-foreground">
+              Temps de sommeil recommandé : {recommendedSleep}
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { h: 6, m: 0 },
-              { h: 7, m: 0 },
-              { h: 7, m: 30 },
-              { h: 8, m: 0 },
-              { h: 8, m: 30 },
-              { h: 9, m: 0 }
-            ].map(({ h, m }) => (
-              <Button
-                key={`${h}${m}`}
-                variant="outline"
-                className="w-full"
-                onClick={() => addSleepEntry(h, m, 3)}
-              >
-                {formatTime(h, m)}
-              </Button>
-            ))}
+          <div className="grid gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Durée de sommeil
+              </label>
+              <div className="flex gap-4">
+                <div>
+                  <input
+                    type="number"
+                    value={sleepHours}
+                    onChange={(e) => setSleepHours(Number(e.target.value))}
+                    min={0}
+                    max={24}
+                    className="w-20 px-3 py-2 border rounded-md"
+                  />
+                  <span className="ml-2">heures</span>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    value={sleepMinutes}
+                    onChange={(e) => setSleepMinutes(Number(e.target.value))}
+                    min={0}
+                    max={59}
+                    className="w-20 px-3 py-2 border rounded-md"
+                  />
+                  <span className="ml-2">minutes</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Qualité du sommeil (1-10)
+              </label>
+              <input
+                type="number"
+                value={sleepQuality}
+                onChange={(e) => setSleepQuality(Number(e.target.value))}
+                min={1}
+                max={10}
+                className="w-20 px-3 py-2 border rounded-md"
+              />
+            </div>
+
+            <Button
+              onClick={() => addSleepEntry(sleepHours, sleepMinutes, sleepQuality)}
+              className="w-full"
+            >
+              Enregistrer
+            </Button>
           </div>
 
-          <div className="space-y-2">
-            {entries.slice().reverse().map((entry) => (
-              <div
-                key={entry.id}
-                className="flex items-center justify-between p-2 rounded bg-muted/50"
-              >
-                <span className="text-sm">{entry.date}</span>
-                <span className="font-medium">{formatTime(entry.hours, entry.minutes)}</span>
-              </div>
-            ))}
-            {entries.length === 0 && (
-              <p className="text-center text-muted-foreground py-4">
-                Aucune donnée de sommeil
-              </p>
-            )}
-          </div>
+          <ConnectedDevices />
         </div>
       </CardContent>
     </Card>
