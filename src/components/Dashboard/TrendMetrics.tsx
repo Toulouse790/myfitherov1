@@ -1,9 +1,10 @@
-import { Card } from "@/components/ui/card";
-import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { MetricHistoryDialog } from "./MetricHistoryDialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { MetricHistoryDialog } from "./MetricHistoryDialog";
+import { MetricHeader } from "./TrendMetrics/MetricHeader";
+import { MetricGrid } from "./TrendMetrics/MetricGrid";
+import type { MetricData } from "./TrendMetrics/types";
 
 const getMetricHistory = async (days: number) => {
   const { data, error } = await supabase
@@ -37,14 +38,14 @@ const getMetricHistory = async (days: number) => {
 };
 
 export const TrendMetrics = () => {
-  const [selectedMetric, setSelectedMetric] = useState<typeof metrics[0] | null>(null);
+  const [selectedMetric, setSelectedMetric] = useState<MetricData | null>(null);
 
   const { data: stats } = useQuery({
     queryKey: ['trend-metrics'],
     queryFn: () => getMetricHistory(7)
   });
 
-  const metrics = [
+  const metrics: MetricData[] = [
     { 
       label: "Entraînements", 
       value: stats?.daily.length.toString() || "0", 
@@ -77,33 +78,8 @@ export const TrendMetrics = () => {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white">Tendances</h2>
-        <button className="text-gray-400 flex items-center gap-1 text-xs">
-          7 derniers jours
-          <ChevronDown className="w-3 h-3" />
-        </button>
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        {metrics.map((metric, index) => (
-          <Card 
-            key={index} 
-            className="bg-[#1E2330] p-3 cursor-pointer hover:bg-[#252B3B] transition-all duration-300"
-            onClick={() => setSelectedMetric(metric)}
-          >
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <span className={`text-lg font-bold ${metric.color}`}>
-                  {metric.value}
-                </span>
-                <p className="text-xs text-gray-400">{metric.label}</p>
-              </div>
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            </div>
-          </Card>
-        ))}
-      </div>
-
+      <MetricHeader />
+      <MetricGrid metrics={metrics} onMetricClick={setSelectedMetric} />
       <MetricHistoryDialog
         open={selectedMetric !== null}
         onOpenChange={(open) => !open && setSelectedMetric(null)}
