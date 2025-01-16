@@ -1,19 +1,52 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BarChart } from "@/components/ui/charts/BarChart";
 import { useDailyTargets } from "@/hooks/use-daily-targets";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { startOfDay, subDays, format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export const NutritionChart = () => {
-  const { dailyTargets, consumedNutrients } = useDailyTargets();
+  const { dailyTargets } = useDailyTargets();
   
-  const data = [
-    { name: "Lun", target: dailyTargets.calories, actual: consumedNutrients.calories },
-    { name: "Mar", target: dailyTargets.calories, actual: consumedNutrients.calories },
-    { name: "Mer", target: dailyTargets.calories, actual: consumedNutrients.calories },
-    { name: "Jeu", target: dailyTargets.calories, actual: consumedNutrients.calories },
-    { name: "Ven", target: dailyTargets.calories, actual: consumedNutrients.calories },
-    { name: "Sam", target: dailyTargets.calories, actual: consumedNutrients.calories },
-    { name: "Dim", target: dailyTargets.calories, actual: consumedNutrients.calories },
-  ];
+  const { data: weeklyData } = useQuery({
+    queryKey: ['food-journal-weekly'],
+    queryFn: async () => {
+      const today = startOfDay(new Date());
+      const sevenDaysAgo = subDays(today, 6);
+
+      const { data: entries, error } = await supabase
+        .from('food_journal_entries')
+        .select('calories, created_at')
+        .gte('created_at', sevenDaysAgo.toISOString())
+        .lte('created_at', today.toISOString());
+
+      if (error) {
+        console.error('Error fetching food journal entries:', error);
+        return [];
+      }
+
+      // Group entries by day
+      const dailyCalories = entries.reduce((acc, entry) => {
+        const day = startOfDay(new Date(entry.created_at)).toISOString();
+        acc[day] = (acc[day] || 0) + entry.calories;
+        return acc;
+      }, {});
+
+      // Create array for last 7 days
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = subDays(today, 6 - i);
+        const dayStr = date.toISOString();
+        return {
+          name: format(date, 'EEE', { locale: fr }),
+          target: dailyTargets.calories,
+          actual: dailyCalories[dayStr] || 0
+        };
+      });
+    }
+  });
+
+  const data = weeklyData || Array(7).fill({ target: dailyTargets.calories, actual: 0 });
 
   return (
     <Card className="w-full">
