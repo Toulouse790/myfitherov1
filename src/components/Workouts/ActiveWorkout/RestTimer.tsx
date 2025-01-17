@@ -7,9 +7,10 @@ import { Progress } from "@/components/ui/progress";
 interface RestTimerProps {
   onComplete: () => void;
   initialTime?: number;
+  onRestTimeChange?: (adjustment: number) => void;
 }
 
-export const RestTimer = ({ onComplete, initialTime = 90 }: RestTimerProps) => {
+export const RestTimer = ({ onComplete, initialTime = 90, onRestTimeChange }: RestTimerProps) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -29,11 +30,14 @@ export const RestTimer = ({ onComplete, initialTime = 90 }: RestTimerProps) => {
   }, [timeLeft, isPaused, onComplete]);
 
   const adjustTime = (seconds: number) => {
-    setTimeLeft(prev => {
-      const newTime = Math.max(15, Math.min(180, prev + seconds));
-      console.log(`Adjusting rest time by ${seconds}s. New time: ${newTime}s`);
-      return newTime;
-    });
+    const newTime = Math.max(15, Math.min(180, timeLeft + seconds));
+    console.log(`Adjusting rest time by ${seconds}s. New time: ${newTime}s`);
+    setTimeLeft(newTime);
+    
+    // Notify parent component of the time change
+    if (onRestTimeChange) {
+      onRestTimeChange(seconds);
+    }
   };
 
   const progress = ((initialTime - timeLeft) / initialTime) * 100;
