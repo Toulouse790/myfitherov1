@@ -6,11 +6,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { startOfDay, subDays, format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export const NutritionChart = () => {
   const { dailyTargets, consumedNutrients } = useDailyTargets();
   const { toast } = useToast();
+  const hasShownToastRef = useRef(false);
   
   const { data: weeklyData } = useQuery({
     queryKey: ['food-journal-weekly'],
@@ -70,30 +71,43 @@ export const NutritionChart = () => {
 
   // Effect to check nutrition goals and show toast
   useEffect(() => {
-    if (consumedNutrients) {
+    if (consumedNutrients && !hasShownToastRef.current) {
       const isCaloriesExceeded = consumedNutrients.calories > dailyTargets.calories;
       const isCaloriesTooLow = consumedNutrients.calories < dailyTargets.calories * 0.9;
       const isCarbsExceeded = consumedNutrients.carbs > dailyTargets.carbs;
       const isFatsExceeded = consumedNutrients.fats > dailyTargets.fats;
 
+      // Prioritize notifications and add delays
       if (isCaloriesExceeded || isCarbsExceeded || isFatsExceeded) {
-        toast({
-          title: "Attention",
-          description: "Vous avez dépassé vos objectifs nutritionnels journaliers",
-          variant: "destructive",
-        });
+        hasShownToastRef.current = true;
+        setTimeout(() => {
+          toast({
+            title: "Attention",
+            description: "Vous avez dépassé vos objectifs nutritionnels journaliers",
+            variant: "destructive",
+            duration: 5000,
+          });
+        }, 500);
       } else if (isCaloriesTooLow) {
-        toast({
-          title: "Attention",
-          description: "Vous n'avez pas atteint vos objectifs caloriques journaliers",
-          variant: "destructive",
-        });
+        hasShownToastRef.current = true;
+        setTimeout(() => {
+          toast({
+            title: "Attention",
+            description: "Vous n'avez pas atteint vos objectifs caloriques journaliers",
+            variant: "destructive",
+            duration: 5000,
+          });
+        }, 500);
       } else if (consumedNutrients.calories >= dailyTargets.calories * 0.9 && 
                  consumedNutrients.calories <= dailyTargets.calories) {
-        toast({
-          title: "Félicitations !",
-          description: "Vous avez atteint vos objectifs nutritionnels de manière équilibrée",
-        });
+        hasShownToastRef.current = true;
+        setTimeout(() => {
+          toast({
+            title: "Félicitations !",
+            description: "Vous avez atteint vos objectifs nutritionnels de manière équilibrée",
+            duration: 5000,
+          });
+        }, 500);
       }
     }
   }, [consumedNutrients, dailyTargets, toast]);
