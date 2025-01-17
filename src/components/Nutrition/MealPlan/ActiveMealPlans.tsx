@@ -1,128 +1,77 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { format, addDays } from "date-fns";
-import { fr } from "date-fns/locale";
-import { CalendarRange } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { DayMeals } from "./DayMeals";
+import { ShoppingList } from "./ShoppingList";
 
-interface ShoppingListItem {
-  name: string;
-  amount: string;
-  category: string;
+interface ActiveMealPlansProps {
+  shoppingList?: string[];
 }
 
-export const ActiveMealPlans = () => {
-  const { data: activePlans, isLoading } = useQuery({
-    queryKey: ['active-meal-plans'],
-    queryFn: async () => {
-      const today = new Date();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
+export const ActiveMealPlans = ({ shoppingList = [] }: ActiveMealPlansProps) => {
+  const { user } = useAuth();
 
-      const { data: plans, error } = await supabase
+  const { data: activePlans } = useQuery({
+    queryKey: ['active-meal-plans', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+
+      const { data, error } = await supabase
         .from('meal_plans')
         .select('*')
         .eq('user_id', user.id)
-        .gte('end_date', today.toISOString())
+        .gte('end_date', new Date().toISOString())
         .order('start_date', { ascending: false })
         .limit(1);
 
-      if (error) {
-        console.error('Error fetching meal plans:', error);
-        return [];
-      }
-
-      return plans;
-    }
+      if (error) throw error;
+      return data?.[0] || null;
+    },
+    enabled: !!user?.id
   });
 
-  const generateShoppingList = (planData: any[]): ShoppingListItem[] => {
-    const ingredients: { [key: string]: { amount: number; unit: string; category: string } } = {};
-    
-    planData.forEach(day => {
-      Object.values(day).forEach((meal: any) => {
-        if (meal.quantities) {
-          meal.quantities.forEach((item: any) => {
-            const [amount, unit] = item.amount.split(' ');
-            const numAmount = parseFloat(amount);
-            
-            if (ingredients[item.item]) {
-              ingredients[item.item].amount += numAmount;
-            } else {
-              ingredients[item.item] = {
-                amount: numAmount,
-                unit: unit || 'g',
-                category: getCategoryForIngredient(item.item)
-              };
-            }
-          });
-        }
-      });
-    });
+  if (!activePlans) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Plan en cours</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            Aucun plan actif. Générez un nouveau plan pour commencer.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
-    return Object.entries(ingredients).map(([name, details]) => ({
-      name,
-      amount: `${details.amount} ${details.unit}`,
-      category: details.category
-    }));
-  };
-
-  const getCategoryForIngredient = (ingredient: string): string => {
-    const categories = {
-      fruits: ['pomme', 'banane', 'orange', 'fraise', 'myrtille'],
-      légumes: ['carotte', 'brocoli', 'épinard', 'salade', 'tomate'],
-      protéines: ['poulet', 'boeuf', 'poisson', 'oeuf', 'tofu'],
-      féculents: ['riz', 'pâtes', 'quinoa', 'pomme de terre'],
-      produits_laitiers: ['fromage', 'yaourt', 'lait', 'skyr'],
-      épicerie: ['huile', 'sel', 'poivre', 'épices']
-    };
-
-    for (const [category, items] of Object.entries(categories)) {
-      if (items.some(item => ingredient.toLowerCase().includes(item))) {
-        return category;
-      }
-    }
-    
-    return 'autres';
-  };
-
-  if (isLoading || !activePlans?.length) return null;
-
-  const shoppingList = generateShoppingList(activePlans[0].plan_data);
-  const groupedItems = shoppingList.reduce((acc: { [key: string]: ShoppingListItem[] }, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
-    }
-    acc[item.category].push(item);
-    return acc;
-  }, {});
+  const planData = activePlans.plan_data;
+  const startDate = new Date(activePlans.start_date);
+  const endDate = new Date(activePlans.end_date);
 
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <CalendarRange className="h-5 w-5" />
-            Liste de courses
-          </CardTitle>
+          <CardTitle>Plan en cours</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Du {startDate.toLocaleDateString()} au {endDate.toLocaleDateString()}
+          </p>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {Object.entries(groupedItems).map(([category, items]) => (
-              <div key={category} className="space-y-2">
-                <h3 className="font-semibold capitalize text-primary">{category}</h3>
-                <ul className="list-disc list-inside space-y-1">
-                  {items.map((item, index) => (
-                    <li key={index} className="text-sm">
-                      {item.name} - {item.amount}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+        <CardContent className="space-y-6">
+          {Object.entries(planData).map(([day, meals], index) => (
+            <DayMeals 
+              key={day} 
+              day={day} 
+              meals={meals as any} 
+              isFirst={index === 0}
+            />
+          ))}
         </CardContent>
       </Card>
+
+      {shoppingList.length > 0 && <ShoppingList items={shoppingList} />}
     </div>
   );
 };

@@ -23,7 +23,6 @@ export const MealPlanGenerator = () => {
   const { saveMealPlanToJournal } = useMealPlanSave();
   const [selectedDuration, setSelectedDuration] = useState(7);
   const [shoppingList, setShoppingList] = useState<string[]>([]);
-  const [showShoppingList, setShowShoppingList] = useState(false);
   const { toast } = useToast();
 
   const handleGenerateMealPlan = async (preferences: MealPlanPreferences) => {
@@ -102,7 +101,6 @@ export const MealPlanGenerator = () => {
         .map(([item, details]) => `${item}: ${details.amount}${details.unit}`);
 
       setShoppingList(formattedList);
-      setShowShoppingList(true);
 
       toast({
         title: "Liste de courses générée",
@@ -154,10 +152,8 @@ export const MealPlanGenerator = () => {
       </Card>
 
       <GenerateShoppingListButton onClick={handleGenerateShoppingList} />
-      
-      <ShoppingList items={shoppingList} />
 
-      <ActiveMealPlans />
+      <ActiveMealPlans shoppingList={shoppingList} />
 
       {generatedPlan && (
         <GeneratedPlanDisplay 
