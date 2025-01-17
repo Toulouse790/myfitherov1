@@ -18,9 +18,8 @@ export default function WorkoutSession() {
   const { toast } = useToast();
   const [exercises, setExercises] = useState<string[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
-  const [sessionDuration, setSessionDuration] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [estimatedCalories, setEstimatedCalories] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -62,16 +61,6 @@ export default function WorkoutSession() {
     };
 
     fetchSessionData();
-
-    const interval = setInterval(() => {
-      setSessionDuration(prev => {
-        const newDuration = prev + 1;
-        setEstimatedCalories(Math.floor(newDuration * 0.15));
-        return newDuration;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
   }, [sessionId, toast, navigate]);
 
   const handleExerciseComplete = async (index: number) => {
@@ -86,8 +75,7 @@ export default function WorkoutSession() {
         await supabase
           .from('workout_sessions')
           .update({
-            status: 'completed',
-            total_duration_minutes: Math.floor(sessionDuration / 60)
+            status: 'completed'
           })
           .eq('id', sessionId);
 
@@ -152,7 +140,7 @@ export default function WorkoutSession() {
     <div className="min-h-screen bg-background">
       <div className="container max-w-4xl mx-auto px-4 pt-40 pb-8 space-y-6">
         <WorkoutHeader 
-          sessionDuration={sessionDuration}
+          sessionId={sessionId || ''}
           estimatedCalories={estimatedCalories}
           progress={progress}
         />
