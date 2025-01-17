@@ -8,7 +8,6 @@ const Sleep = () => {
       <h1 className="text-2xl font-bold mb-6">Sommeil</h1>
       <div className="space-y-6">
         <SleepTracker />
-        <ConnectedDevices />
       </div>
       <BottomNav />
     </div>
