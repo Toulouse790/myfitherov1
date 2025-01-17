@@ -35,6 +35,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose }: GenerateWorkoutDialog
       toast({
         title: "Séance générée !",
         description: "Votre séance a été générée avec succès.",
+        duration: 1000,
       });
     } catch (error) {
       console.error('Error generating workout:', error);
@@ -42,6 +43,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose }: GenerateWorkoutDialog
         title: "Erreur",
         description: "Impossible de générer la séance",
         variant: "destructive",
+        duration: 1000,
       });
     } finally {
       setIsGenerating(false);
@@ -58,6 +60,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose }: GenerateWorkoutDialog
         title: "Erreur",
         description: "Impossible de démarrer la séance",
         variant: "destructive",
+        duration: 1000,
       });
     }
   };

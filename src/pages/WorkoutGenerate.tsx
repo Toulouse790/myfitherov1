@@ -1,5 +1,5 @@
 import { Header } from "@/components/Layout/Header";
-import { GenerateWorkoutDialog } from "@/components/Dashboard/WorkoutSuggestions/GenerateWorkout/GenerateWorkoutDialog";
+import { GenerateWorkoutDialog } from "@/components/Dashboard/WorkoutSuggestions/GenerateWorkoutDialog";
 import { useNavigate } from "react-router-dom";
 
 export default function WorkoutGenerate() {
