@@ -104,7 +104,7 @@ export const MealSection = ({
           mealEntries={mealEntries}
           generatedMeal={generatedMeal}
           onMealStatus={handleMealStatus}
-          type={type}
+          mealType={type}
         />
       )}
     </div>
