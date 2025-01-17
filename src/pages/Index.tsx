@@ -6,15 +6,37 @@ import { Button } from "@/components/ui/button";
 import { Plus, Dumbbell, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Index() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const handleCreateSession = () => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour créer une séance",
+        variant: "destructive",
+      });
+      navigate('/signin');
+      return;
+    }
     navigate('/workouts');
   };
 
   const handleAIGeneration = () => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour utiliser la génération IA",
+        variant: "destructive",
+      });
+      navigate('/signin');
+      return;
+    }
     navigate('/workout-generate');
   };
 
