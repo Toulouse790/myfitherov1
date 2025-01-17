@@ -8,7 +8,7 @@ export interface MealContentProps {
     quantities?: Array<{ item: string; amount: string; }>;
   };
   onMealStatus?: (status: 'taken' | 'skipped') => void;
-  type: string;
+  mealType: string;
 }
 
 export interface MealSectionProps {
@@ -22,13 +22,6 @@ export interface MealSectionProps {
     preparation?: string;
     quantities?: Array<{ item: string; amount: string; }>;
   };
-  isExpanded: boolean;
-  onToggle: () => void;
-}
-
-export interface MealHeaderProps {
-  label: string;
-  mealStatus?: 'taken' | 'skipped';
   isExpanded: boolean;
   onToggle: () => void;
 }

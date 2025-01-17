@@ -25,7 +25,7 @@ export const MealSection = ({
         <MealContent
           mealEntries={mealEntries}
           generatedMeal={generatedMeal}
-          type={type}
+          mealType={type}
         />
       )}
     </Card>

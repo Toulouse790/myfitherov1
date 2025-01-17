@@ -1,40 +1,35 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Check, Heart, Plus, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Check, Heart, Plus, ShoppingBag, X } from "lucide-react";
 import { FoodEntryForm } from "../../FoodEntryForm";
+import type { MealContentProps } from "./types";
 
-interface MealContentProps {
-  mealEntries: any[];
-  generatedMeal?: {
-    name: string;
-    calories: number;
-    proteins: number;
-    preparation?: string;
-    quantities?: Array<{ item: string; amount: string; }>;
-  };
-  onMealStatus?: (status: 'taken' | 'skipped') => void;
-  mealType: string;
-}
-
-export const MealContent = ({ mealType, mealEntries, generatedMeal, onMealStatus }: MealContentProps) => {
+export const MealContent = ({ 
+  mealEntries, 
+  generatedMeal, 
+  onMealStatus,
+  mealType 
+}: MealContentProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAddMealOpen, setIsAddMealOpen] = useState(false);
-  const [isPremium] = useState(false); // À connecter avec votre logique premium
+  const [isPremium] = useState(false);
 
   const handleFavoriteClick = async () => {
-    // ... keep existing code (favorite handling logic)
+    setIsFavorite(!isFavorite);
   };
 
   const hasEntries = Array.isArray(mealEntries) && mealEntries.length > 0;
+  const hasShoppingList = generatedMeal?.quantities && generatedMeal.quantities.length > 0;
 
   return (
-    <div className="space-y-2 p-2 sm:p-3">
+    <div className="space-y-2 p-2 sm:p-4">
       {hasEntries ? (
         <div className="space-y-2">
           {mealEntries.map((entry) => (
-            <Card key={entry.id} className="p-2 sm:p-3">
+            <Card key={entry.id} className="p-2 sm:p-4">
               <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
                 <div className="w-full sm:w-auto">
                   <h3 className="font-semibold text-base sm:text-lg">{entry.name}</h3>
@@ -48,45 +43,37 @@ export const MealContent = ({ mealType, mealEntries, generatedMeal, onMealStatus
             </Card>
           ))}
         </div>
+      ) : hasShoppingList ? (
+        <Card className="p-3 sm:p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <h3 className="font-semibold text-base sm:text-lg">Liste de courses</h3>
+          </div>
+          <ScrollArea className="h-[200px] sm:h-[300px] w-full pr-4">
+            <ul className="space-y-2">
+              {generatedMeal.quantities.map((item, index) => (
+                <li 
+                  key={index}
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                >
+                  <span className="text-sm sm:text-base">{item.item}</span>
+                  <span className="text-sm sm:text-base text-muted-foreground">{item.amount}</span>
+                </li>
+              ))}
+            </ul>
+          </ScrollArea>
+        </Card>
       ) : (
         <div className="text-center">
-          {isPremium && generatedMeal ? (
-            <Card className="p-2 sm:p-3 mb-3">
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-                <div className="w-full sm:w-auto">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-semibold text-base sm:text-lg">{generatedMeal.name}</h3>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={`h-8 w-8 ${isFavorite ? 'text-red-500' : 'text-gray-400'}`}
-                      onClick={handleFavoriteClick}
-                    >
-                      <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </Button>
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                    {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
-                  </p>
-                  {generatedMeal.preparation && (
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-2 text-left">
-                      {generatedMeal.preparation}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </Card>
-          ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsAddMealOpen(true)}
-              className="mb-3 w-full sm:w-auto"
-            >
-              <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-              Ajouter un repas manuellement
-            </Button>
-          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsAddMealOpen(true)}
+            className="w-full sm:w-auto mb-3"
+          >
+            <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            Ajouter un repas manuellement
+          </Button>
           {onMealStatus && (
             <div className="flex justify-center gap-2 flex-wrap">
               <Button
@@ -134,7 +121,7 @@ export const MealContent = ({ mealType, mealEntries, generatedMeal, onMealStatus
             onFatsChange={() => {}}
             onWeightChange={() => {}}
             onNotesChange={() => {}}
-            onAddEntry={(mealType) => {
+            onAddEntry={() => {
               setIsAddMealOpen(false);
             }}
             preselectedMealType={mealType}
