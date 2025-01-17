@@ -126,7 +126,7 @@ export default function WorkoutSession() {
   const progress = ((currentExerciseIndex + 1) / exercises.length) * 100;
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
+    <div className="container max-w-4xl mx-auto px-4 pt-32 pb-8 space-y-6">
       {/* Header avec progression et timer */}
       <div className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 p-4 border-b">
         <div className="container max-w-4xl mx-auto space-y-4">
@@ -174,7 +174,7 @@ export default function WorkoutSession() {
       </div>
 
       {/* Timeline des exercices */}
-      <div className="mt-32 mb-4 flex gap-2 overflow-x-auto pb-2">
+      <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
         {exercises.map((exercise, index) => (
           <div
             key={index}
