@@ -9,12 +9,18 @@ export const NutritionChart = () => {
   const { data: metricData } = useMetricData(7);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
-  // Format data for the chart
-  const chartData = metricData?.daily.map(day => ({
-    name: day.date,
-    prévu: dailyTargets.calories,
-    réalisé: day.value
-  })) || Array(7).fill({ prévu: dailyTargets.calories, réalisé: 0 });
+  // Format data for the chart - using consumed nutrients for actual values
+  const chartData = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const formattedDate = date.toLocaleDateString();
+    
+    return {
+      name: formattedDate,
+      prévu: dailyTargets.calories,
+      réalisé: i === 0 ? consumedNutrients.calories : 0 // Only today has real data
+    };
+  }).reverse();
 
   const InfoCard = ({ targetValue, actualValue, date }: { targetValue: number, actualValue: number, date: string }) => {
     const percentage = (actualValue / targetValue) * 100;
