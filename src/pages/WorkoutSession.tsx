@@ -116,7 +116,7 @@ export default function WorkoutSession() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-32">
+      <div className="min-h-screen flex items-center justify-center pt-40">
         <div className="animate-spin">
           <Dumbbell className="h-8 w-8" />
         </div>
@@ -128,7 +128,7 @@ export default function WorkoutSession() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container max-w-4xl mx-auto px-4 pt-32 pb-8 space-y-6">
+      <div className="container max-w-4xl mx-auto px-4 pt-40 pb-8 space-y-6">
         <WorkoutHeader 
           sessionDuration={sessionDuration}
           estimatedCalories={estimatedCalories}
