@@ -35,11 +35,11 @@ export const MealPlanForm = ({ onGenerate }: MealPlanFormProps) => {
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="highProtein" id="highProtein" />
-                <Label htmlFor="highProtein">Riche en protéines</Label>
+                <Label htmlFor="highProtein">Prise de masse</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="lowCarb" id="lowCarb" />
-                <Label htmlFor="lowCarb">Faible en glucides</Label>
+                <Label htmlFor="lowCarb">Sèche extrême</Label>
               </div>
             </RadioGroup>
           </div>
