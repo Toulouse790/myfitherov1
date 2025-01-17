@@ -26,16 +26,16 @@ const Nutrition = () => {
               Vue d'ensemble
             </TabsTrigger>
             <TabsTrigger 
-              value="tracking" 
-              className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
-            >
-              Suivi hebdomadaire
-            </TabsTrigger>
-            <TabsTrigger 
               value="meal-plan" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
               Plan repas
+            </TabsTrigger>
+            <TabsTrigger 
+              value="tracking" 
+              className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
+            >
+              Suivi hebdomadaire
             </TabsTrigger>
           </TabsList>
         </div>
