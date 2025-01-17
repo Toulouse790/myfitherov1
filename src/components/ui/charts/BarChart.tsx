@@ -1,4 +1,4 @@
-import { Bar, BarChart as RechartsBarChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Bar, BarChart as RechartsBarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { ChartContainer } from "./ChartContainer";
 
 export interface BarChartProps {
@@ -40,7 +40,7 @@ export const BarChart = ({
       <ResponsiveContainer width="100%" height={300}>
         <RechartsBarChart 
           data={data} 
-          margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+          margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
           onClick={(data) => onValueClick?.(data)}
         >
           <XAxis
@@ -62,7 +62,21 @@ export const BarChart = ({
           <Tooltip 
             cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
             formatter={valueFormatter}
+            labelStyle={{ color: "#000" }}
+            contentStyle={{ 
+              backgroundColor: "white",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              padding: "8px"
+            }}
           />
+          {showLegend && (
+            <Legend 
+              verticalAlign="top"
+              height={36}
+              iconType="circle"
+            />
+          )}
           {categories.map((category, i) => (
             <Bar
               key={category}
