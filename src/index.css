@@ -87,7 +87,7 @@
   small { @apply text-caption font-light; }
 
   button {
-    @apply rounded-button transition-all duration-300 active:scale-98 hover:opacity-90;
+    @apply rounded-button transition-all duration-300 hover:scale-98 hover:opacity-90;
   }
 
   input, textarea {
