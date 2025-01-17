@@ -60,7 +60,11 @@ export const NextWorkoutDetail = () => {
   };
 
   const handleRestTimeChange = (newTime: number) => {
-    setRestTime(prev => Math.max(15, prev + newTime));
+    setRestTime(prev => {
+      const updatedTime = Math.max(15, Math.min(180, prev + newTime));
+      console.log("Updating rest time to:", updatedTime);
+      return updatedTime;
+    });
   };
 
   const handleSetsChange = (newSets: number) => {

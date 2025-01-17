@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export interface RestTimerProps {
   restTime: number;
@@ -18,6 +19,10 @@ export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
       console.log("Invalid rest time adjustment. Current:", restTime, "Adjustment:", adjustment);
     }
   };
+
+  useEffect(() => {
+    console.log("Rest time updated:", restTime);
+  }, [restTime]);
 
   return (
     <motion.div
