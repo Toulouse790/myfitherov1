@@ -43,6 +43,7 @@ export default function WorkoutSession() {
         if (error) throw error;
 
         if (session?.exercises) {
+          console.log("Exercices chargés:", session.exercises);
           setExercises(session.exercises);
         }
       } catch (error) {
@@ -63,7 +64,6 @@ export default function WorkoutSession() {
     const interval = setInterval(() => {
       setSessionDuration(prev => {
         const newDuration = prev + 1;
-        // Estimation très basique des calories (à améliorer)
         setEstimatedCalories(Math.floor(newDuration * 0.15));
         return newDuration;
       });
