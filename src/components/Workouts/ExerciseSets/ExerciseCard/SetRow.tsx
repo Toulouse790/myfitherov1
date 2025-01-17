@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { WeightInput } from "./WeightInput";
 import { RepsInput } from "./RepsInput";
@@ -35,11 +34,17 @@ export const SetRow = ({
         'bg-background'
       }`}
     >
-      <span className={`text-sm min-w-[30px] ${
-        isCompleted ? 'text-primary' : 'text-muted-foreground'
-      }`}>
+      <button
+        onClick={isCurrentSet && !isCompleted && !isResting ? onSetComplete : undefined}
+        disabled={!isCurrentSet || isCompleted || isResting}
+        className={`text-sm min-w-[30px] ${
+          isCompleted ? 'text-primary' : 
+          isCurrentSet ? 'text-primary hover:bg-primary/10 rounded-md p-1 transition-colors' : 
+          'text-muted-foreground'
+        }`}
+      >
         {isCompleted ? <Check className="h-4 w-4" /> : `S${setNumber + 1}`}
-      </span>
+      </button>
 
       <div className="flex-1 flex items-center gap-2">
         <WeightInput 
@@ -53,17 +58,6 @@ export const SetRow = ({
           disabled={isCompleted || isResting || !isCurrentSet}
         />
       </div>
-
-      {isCurrentSet && !isCompleted && !isResting && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onSetComplete}
-          className="ml-2 hover:bg-primary/10"
-        >
-          Valider
-        </Button>
-      )}
     </div>
   );
 };
