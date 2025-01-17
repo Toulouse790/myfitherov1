@@ -24,11 +24,6 @@ export const UnifiedWorkoutDetail = () => {
   useEffect(() => {
     const fetchSessionData = async () => {
       if (!sessionId) {
-        toast({
-          title: "Erreur",
-          description: "ID de séance manquant",
-          variant: "destructive",
-        });
         navigate('/workouts');
         return;
       }
@@ -50,11 +45,6 @@ export const UnifiedWorkoutDetail = () => {
         if (error) throw error;
 
         if (session.user_id !== user.id) {
-          toast({
-            title: "Erreur",
-            description: "Vous n'avez pas accès à cette séance",
-            variant: "destructive",
-          });
           navigate('/workouts');
           return;
         }
@@ -66,11 +56,6 @@ export const UnifiedWorkoutDetail = () => {
         }
       } catch (error) {
         console.error('Error fetching session:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger la séance",
-          variant: "destructive",
-        });
         navigate('/workouts');
       } finally {
         setIsLoading(false);
@@ -84,15 +69,11 @@ export const UnifiedWorkoutDetail = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [sessionId, toast, navigate, user]);
+  }, [sessionId, navigate, user]);
 
   const handleExerciseComplete = async (index: number) => {
     if (index < exercises.length - 1) {
       setCurrentExerciseIndex(index + 1);
-      toast({
-        title: "Exercice terminé !",
-        description: "Passez à l'exercice suivant.",
-      });
     }
   };
 
@@ -106,18 +87,9 @@ export const UnifiedWorkoutDetail = () => {
         })
         .eq('id', sessionId);
 
-      toast({
-        title: "Séance terminée !",
-        description: "Bravo ! Vous avez terminé tous les exercices.",
-      });
       navigate('/workouts');
     } catch (error) {
       console.error('Error completing workout:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de terminer la séance",
-        variant: "destructive",
-      });
     }
   };
 

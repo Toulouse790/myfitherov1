@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface WorkoutCardProps {
@@ -14,47 +13,29 @@ interface WorkoutCardProps {
 
 export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: WorkoutCardProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
-  const { toast } = useToast();
 
   const toggleFavorite = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Empêche le déclenchement du onClick du Card
+    e.stopPropagation();
 
     try {
       if (isFavorite) {
-        // Supprimer des favoris
         const { error } = await supabase
           .from('favorite_workouts')
           .delete()
           .eq('session_id', sessionId);
 
         if (error) throw error;
-
         setIsFavorite(false);
-        toast({
-          title: "Retiré des favoris",
-          description: "L'entraînement a été retiré de vos favoris",
-        });
       } else {
-        // Ajouter aux favoris
         const { error } = await supabase
           .from('favorite_workouts')
           .insert([{ session_id: sessionId }]);
 
         if (error) throw error;
-
         setIsFavorite(true);
-        toast({
-          title: "Ajouté aux favoris",
-          description: "L'entraînement a été ajouté à vos favoris",
-        });
       }
     } catch (error) {
       console.error('Erreur lors de la gestion des favoris:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue",
-        variant: "destructive",
-      });
     }
   };
 

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Timer } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 
 interface Exercise {
   id: string;
@@ -20,7 +19,6 @@ interface ExerciseDetailProps {
 export const ExerciseDetail = ({ exercise, onComplete, onBack }: ExerciseDetailProps) => {
   const [currentSet, setCurrentSet] = useState(1);
   const [restTimer, setRestTimer] = useState<number | null>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -29,10 +27,6 @@ export const ExerciseDetail = ({ exercise, onComplete, onBack }: ExerciseDetailP
         setRestTimer((prev) => {
           if (prev === null || prev <= 1) {
             clearInterval(interval);
-            toast({
-              title: "Repos terminé !",
-              description: "C'est reparti ! Commencez la série suivante.",
-            });
             return null;
           }
           return prev - 1;
@@ -40,17 +34,13 @@ export const ExerciseDetail = ({ exercise, onComplete, onBack }: ExerciseDetailP
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [restTimer, toast]);
+  }, [restTimer]);
 
   const handleSetComplete = () => {
     if (currentSet < exercise.sets) {
       setRestTimer(90); // 90 secondes de repos
       setCurrentSet((prev) => prev + 1);
     } else {
-      toast({
-        title: "Exercice terminé !",
-        description: "Bravo ! Passez à l'exercice suivant.",
-      });
       onComplete(exercise.id);
     }
   };
