@@ -8,12 +8,17 @@ import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
 import { useMealPlanSave } from "@/hooks/use-meal-plan-save";
 import { useState } from "react";
 
+interface MealPlanPreferences {
+  duration: string;
+  dietType: string;
+}
+
 export const MealPlanGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const { generatedPlan, generateMealPlan } = useMealPlanGenerator();
   const { saveMealPlanToJournal } = useMealPlanSave();
 
-  const handleGenerateMealPlan = async (preferences: { duration: string, dietType: string }) => {
+  const handleGenerateMealPlan = async (preferences: MealPlanPreferences) => {
     setIsGenerating(true);
     try {
       const plan = await generateMealPlan();
@@ -64,7 +69,7 @@ export const MealPlanGenerator = () => {
       {generatedPlan && (
         <GeneratedPlanDisplay 
           generatedPlan={generatedPlan}
-          durationDays={preferences?.duration || "7"}
+          durationDays={generatedPlan[0]?.duration || "7"}
         />
       )}
     </div>
