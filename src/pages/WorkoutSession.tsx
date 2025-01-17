@@ -172,7 +172,9 @@ export default function WorkoutSession() {
           </Card>
         </motion.div>
 
-        {currentExerciseIndex < exercises.length - 1 && (
+        {/* On n'affiche le prochain exercice que si ce n'est pas une séance cardio */}
+        {currentExerciseIndex < exercises.length - 1 && exercises[0] !== "Course à pied" && 
+         exercises[0] !== "Vélo stationnaire" && exercises[0] !== "Rameur" && exercises[0] !== "Corde à sauter" && (
           <NextExercisePreview nextExercise={exercises[currentExerciseIndex + 1]} />
         )}
       </div>

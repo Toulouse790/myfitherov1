@@ -83,7 +83,7 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
                 className="w-full h-14 text-lg"
                 onClick={() => onComplete(exerciseName, exerciseName, intensity, "", Math.round(duration / 60 * 10))}
               >
-                Terminer l'exercice
+                Terminer la séance cardio
               </Button>
             )}
           </div>
