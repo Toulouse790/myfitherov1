@@ -73,7 +73,7 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
       if (prev.includes(exercise)) {
         return prev.filter(ex => ex !== exercise);
       }
-      return [...prev, exercise];
+      return [exercise]; // Now we only keep the latest selected exercise
     });
   };
 
@@ -86,7 +86,10 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
   if (isCardioSession) {
     return (
       <div className="space-y-4">
-        <h3 className="text-lg font-medium mb-4">Sélectionnez vos exercices cardio</h3>
+        {selectedCardioExercises.length > 0 && (
+          <h2 className="text-2xl font-semibold mb-6">{selectedCardioExercises[0]}</h2>
+        )}
+        <h3 className="text-lg font-medium mb-4">Sélectionnez votre exercice cardio</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {exercises.map((exercise, index) => (
             <Card 
@@ -110,23 +113,15 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
         
         {selectedCardioExercises.length > 0 && (
           <div className="mt-6">
-            <h4 className="font-medium mb-3">Exercices sélectionnés:</h4>
+            <h4 className="font-medium mb-3">Conseils pour {selectedCardioExercises[0]} :</h4>
             <div className="space-y-3">
-              {selectedCardioExercises.map((exercise, index) => (
-                <div
-                  key={index}
-                  className="bg-primary/10 p-4 rounded-lg"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h5 className="font-medium">{exercise}</h5>
-                  </div>
-                  <ul className="list-disc list-inside text-sm space-y-1">
-                    {getCardioTips(exercise).map((tip, tipIndex) => (
-                      <li key={tipIndex} className="text-primary/80">{tip}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              <div className="bg-primary/10 p-4 rounded-lg">
+                <ul className="list-disc list-inside text-sm space-y-1">
+                  {getCardioTips(selectedCardioExercises[0]).map((tip, tipIndex) => (
+                    <li key={tipIndex} className="text-primary/80">{tip}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         )}
