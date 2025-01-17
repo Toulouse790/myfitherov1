@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check, ShoppingBag, X } from "lucide-react";
 import { MealContentProps } from "./types";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export const MealContent = ({ 
   mealEntries, 
-  generatedMeal, 
+  generatedMeal,
   onMealStatus,
   mealType 
 }: MealContentProps) => {
@@ -24,7 +24,7 @@ export const MealContent = ({
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error loading meal plan:', error);
@@ -42,6 +42,7 @@ export const MealContent = ({
     const startDate = new Date(mealPlan.start_date);
     const dayDiff = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
     
+    // Handle all plan durations (7, 14, 30 days)
     if (dayDiff < 0 || dayDiff >= mealPlan.plan_data.length) return generatedMeal;
 
     const dayMeals = mealPlan.plan_data[dayDiff];
@@ -49,6 +50,7 @@ export const MealContent = ({
   };
 
   const currentMeal = getCurrentDayMeal();
+  const currentDay = mealPlan ? Math.floor((new Date().getTime() - new Date(mealPlan.start_date).getTime()) / (1000 * 60 * 60 * 24)) + 1 : 1;
 
   return (
     <div className="p-4 bg-background/50 rounded-lg space-y-4">
@@ -111,10 +113,10 @@ export const MealContent = ({
                 </p>
               )}
 
-              {/* Plan duration info */}
+              {/* Plan duration info with support for all durations */}
               {mealPlan && (
                 <p className="text-xs text-muted-foreground mt-2">
-                  Jour {Math.floor((new Date().getTime() - new Date(mealPlan.start_date).getTime()) / (1000 * 60 * 60 * 24)) + 1} sur {mealPlan.plan_data.length}
+                  Jour {currentDay} sur {mealPlan.plan_data.length}
                 </p>
               )}
             </div>
