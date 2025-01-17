@@ -17,7 +17,7 @@ export const FoodEntryList = ({ entries, onDelete }: FoodEntryListProps) => {
           {entries.map((entry) => (
             <div
               key={entry.id}
-              className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+              className="flex items-start justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
             >
               <div className="space-y-1">
                 <p className="font-medium text-gray-800">{entry.name}</p>
@@ -26,6 +26,11 @@ export const FoodEntryList = ({ entries, onDelete }: FoodEntryListProps) => {
                   <span>•</span>
                   <span>{entry.proteins}g protéines</span>
                 </div>
+                {entry.notes && (
+                  <p className="text-sm text-gray-500 mt-1 italic">
+                    {entry.notes}
+                  </p>
+                )}
               </div>
               <Button
                 variant="ghost"

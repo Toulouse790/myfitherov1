@@ -13,6 +13,7 @@ interface FoodEntryFormProps {
   carbs: string;
   fats: string;
   weight: string;
+  notes: string;
   baseCalories: number;
   selectedCategory: string;
   onFoodChange: (value: string) => void;
@@ -21,6 +22,7 @@ interface FoodEntryFormProps {
   onCarbsChange: (value: string) => void;
   onFatsChange: (value: string) => void;
   onWeightChange: (value: string) => void;
+  onNotesChange: (value: string) => void;
   onAddEntry: (mealType: string, isComposite?: boolean, ingredients?: Array<{ name: string; portion: string }>) => void;
 }
 
@@ -31,6 +33,7 @@ export const FoodEntryForm = ({
   carbs,
   fats,
   weight,
+  notes,
   baseCalories,
   selectedCategory,
   onFoodChange,
@@ -39,6 +42,7 @@ export const FoodEntryForm = ({
   onCarbsChange,
   onFatsChange,
   onWeightChange,
+  onNotesChange,
   onAddEntry,
 }: FoodEntryFormProps) => {
   const { toast } = useToast();
@@ -71,7 +75,7 @@ export const FoodEntryForm = ({
       if (!newFood || !calories || !proteins) {
         toast({
           title: "Erreur",
-          description: "Veuillez remplir tous les champs",
+          description: "Veuillez remplir tous les champs obligatoires",
           variant: "destructive",
         });
         return;
@@ -100,6 +104,7 @@ export const FoodEntryForm = ({
             proteins={proteins}
             carbs={carbs}
             fats={fats}
+            notes={notes}
             isCustomFood={isCustomFood}
             isCompositeMeal={isCompositeMeal}
             ingredients={ingredients}
@@ -109,6 +114,7 @@ export const FoodEntryForm = ({
             onProteinsChange={onProteinsChange}
             onCarbsChange={onCarbsChange}
             onFatsChange={onFatsChange}
+            onNotesChange={onNotesChange}
             onIsCompositeMealChange={setIsCompositeMeal}
             onIngredientsChange={setIngredients}
             setIsCustomFood={setIsCustomFood}

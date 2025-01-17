@@ -1,8 +1,7 @@
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { commonFoods } from "@/data/commonFoods";
-import { MultipleIngredients } from "./MultipleIngredients";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface FoodInputsProps {
   newFood: string;
@@ -11,17 +10,19 @@ interface FoodInputsProps {
   proteins: string;
   carbs: string;
   fats: string;
+  notes: string;
   isCustomFood: boolean;
   isCompositeMeal: boolean;
-  ingredients: Array<{ name: string; portion: string; }>;
+  ingredients: Array<{ name: string; portion: string }>;
   onFoodChange: (value: string) => void;
   onWeightChange: (value: string) => void;
   onCaloriesChange: (value: string) => void;
   onProteinsChange: (value: string) => void;
   onCarbsChange: (value: string) => void;
   onFatsChange: (value: string) => void;
+  onNotesChange: (value: string) => void;
   onIsCompositeMealChange: (value: boolean) => void;
-  onIngredientsChange: (ingredients: Array<{ name: string; portion: string; }>) => void;
+  onIngredientsChange: (value: Array<{ name: string; portion: string }>) => void;
   setIsCustomFood: (value: boolean) => void;
 }
 
@@ -32,6 +33,7 @@ export const FoodInputs = ({
   proteins,
   carbs,
   fats,
+  notes,
   isCustomFood,
   isCompositeMeal,
   ingredients,
@@ -41,134 +43,72 @@ export const FoodInputs = ({
   onProteinsChange,
   onCarbsChange,
   onFatsChange,
+  onNotesChange,
   onIsCompositeMealChange,
   onIngredientsChange,
   setIsCustomFood,
 }: FoodInputsProps) => {
-  const handleFoodChange = (value: string) => {
-    onFoodChange(value);
-    setIsCustomFood(true);
-    
-    const selectedFood = commonFoods.find(food => food.name === value);
-    if (selectedFood && weight) {
-      updateNutrients(selectedFood.calories, selectedFood.proteins, selectedFood.carbs || 0, selectedFood.fats || 0, weight);
-    }
-  };
-
-  const handleWeightChange = (newWeight: string) => {
-    onWeightChange(newWeight);
-    
-    const selectedFood = commonFoods.find(food => food.name === newFood);
-    if (selectedFood && newWeight) {
-      updateNutrients(selectedFood.calories, selectedFood.proteins, selectedFood.carbs || 0, selectedFood.fats || 0, newWeight);
-    }
-  };
-
-  const updateNutrients = (baseCalories: number, baseProteins: number, baseCarbs: number, baseFats: number, currentWeight: string) => {
-    const weightNum = parseFloat(currentWeight);
-    if (!isNaN(weightNum)) {
-      const newCalories = Math.round((baseCalories * weightNum) / 100);
-      const newProteins = Math.round((baseProteins * weightNum) / 100);
-      const newCarbs = Math.round((baseCarbs * weightNum) / 100);
-      const newFats = Math.round((baseFats * weightNum) / 100);
-      onCaloriesChange(newCalories.toString());
-      onProteinsChange(newProteins.toString());
-      onCarbsChange(newCarbs.toString());
-      onFatsChange(newFats.toString());
-    }
-  };
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="composite-meal"
-          checked={isCompositeMeal}
-          onCheckedChange={onIsCompositeMealChange}
-        />
-        <Label htmlFor="composite-meal">Repas composé de plusieurs aliments</Label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Aliment</label>
+          <Input
+            placeholder="Nom de l'aliment"
+            value={newFood}
+            onChange={(e) => onFoodChange(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Poids (g)</label>
+          <Input
+            type="number"
+            placeholder="Poids en grammes"
+            value={weight}
+            onChange={(e) => onWeightChange(e.target.value)}
+          />
+        </div>
       </div>
 
-      {isCompositeMeal ? (
-        <MultipleIngredients
-          ingredients={ingredients}
-          onIngredientsChange={onIngredientsChange}
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Nom de l'aliment"
-                value={newFood}
-                onChange={(e) => handleFoodChange(e.target.value)}
-                className="bg-white"
-                list="food-suggestions"
-              />
-              <datalist id="food-suggestions">
-                {commonFoods.map((food) => (
-                  <option key={food.id} value={food.name} />
-                ))}
-              </datalist>
-            </div>
-
-            <Input
-              type="number"
-              placeholder="Quantité (g)"
-              value={weight}
-              onChange={(e) => handleWeightChange(e.target.value)}
-              className="bg-white"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <span className="w-24 text-sm text-gray-600">Calories:</span>
-              <Input
-                type="number"
-                value={calories}
-                onChange={(e) => onCaloriesChange(e.target.value)}
-                className={`${isCustomFood ? "bg-white" : "bg-gray-50"} flex-1`}
-                readOnly={!isCustomFood}
-              />
-            </div>
-            <div className="flex items-center">
-              <span className="w-24 text-sm text-gray-600">Protéines:</span>
-              <Input
-                type="number"
-                value={proteins}
-                onChange={(e) => onProteinsChange(e.target.value)}
-                className={`${isCustomFood ? "bg-white" : "bg-gray-50"} flex-1`}
-                readOnly={!isCustomFood}
-              />
-              <span className="ml-1 text-sm text-gray-600">g</span>
-            </div>
-            <div className="flex items-center">
-              <span className="w-24 text-sm text-gray-600">Glucides:</span>
-              <Input
-                type="number"
-                value={carbs}
-                onChange={(e) => onCarbsChange(e.target.value)}
-                className={`${isCustomFood ? "bg-white" : "bg-gray-50"} flex-1`}
-                readOnly={!isCustomFood}
-              />
-              <span className="ml-1 text-sm text-gray-600">g</span>
-            </div>
-            <div className="flex items-center">
-              <span className="w-24 text-sm text-gray-600">Lipides:</span>
-              <Input
-                type="number"
-                value={fats}
-                onChange={(e) => onFatsChange(e.target.value)}
-                className={`${isCustomFood ? "bg-white" : "bg-gray-50"} flex-1`}
-                readOnly={!isCustomFood}
-              />
-              <span className="ml-1 text-sm text-gray-600">g</span>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Calories</label>
+          <Input
+            type="number"
+            placeholder="Calories"
+            value={calories}
+            onChange={(e) => onCaloriesChange(e.target.value)}
+          />
         </div>
-      )}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Protéines (g)</label>
+          <Input
+            type="number"
+            placeholder="Protéines"
+            value={proteins}
+            onChange={(e) => onProteinsChange(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Glucides (g)</label>
+          <Input
+            type="number"
+            placeholder="Glucides"
+            value={carbs}
+            onChange={(e) => onCarbsChange(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Notes (optionnel)</label>
+        <Textarea
+          placeholder="Ajoutez des notes sur votre repas..."
+          value={notes}
+          onChange={(e) => onNotesChange(e.target.value)}
+          className="min-h-[100px]"
+        />
+      </div>
     </div>
   );
 };
