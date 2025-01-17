@@ -29,7 +29,11 @@ export const RestTimer = ({ onComplete, initialTime = 90 }: RestTimerProps) => {
   }, [timeLeft, isPaused, onComplete]);
 
   const adjustTime = (seconds: number) => {
-    setTimeLeft(prev => Math.max(0, prev + seconds));
+    setTimeLeft(prev => {
+      const newTime = Math.max(15, Math.min(180, prev + seconds));
+      console.log(`Adjusting rest time by ${seconds}s. New time: ${newTime}s`);
+      return newTime;
+    });
   };
 
   const progress = ((initialTime - timeLeft) / initialTime) * 100;
@@ -51,6 +55,7 @@ export const RestTimer = ({ onComplete, initialTime = 90 }: RestTimerProps) => {
             variant="outline"
             size="icon"
             onClick={() => adjustTime(-15)}
+            disabled={timeLeft <= 15}
           >
             <Minus className="h-4 w-4" />
           </Button>
@@ -67,6 +72,7 @@ export const RestTimer = ({ onComplete, initialTime = 90 }: RestTimerProps) => {
             variant="outline"
             size="icon"
             onClick={() => adjustTime(15)}
+            disabled={timeLeft >= 180}
           >
             <Plus className="h-4 w-4" />
           </Button>
