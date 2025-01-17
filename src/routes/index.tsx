@@ -9,6 +9,7 @@ import AdminDashboard from "@/pages/Admin/Dashboard";
 import NutritionPage from "@/pages/Nutrition";
 import SleepPage from "@/pages/Sleep";
 import SuggestionsPage from "@/pages/Suggestions";
+import WorkoutGeneratePage from "@/pages/WorkoutGenerate";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -37,6 +38,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <WorkoutsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workout-generate",
+        element: (
+          <ProtectedRoute>
+            <WorkoutGeneratePage />
           </ProtectedRoute>
         ),
       },
