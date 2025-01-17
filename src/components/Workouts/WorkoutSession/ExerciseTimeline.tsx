@@ -1,78 +1,55 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, Check } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Check } from "lucide-react";
 
 interface ExerciseTimelineProps {
   exercises: string[];
   currentExerciseIndex: number;
 }
 
-const getCardioTips = (exerciseName: string): string[] => {
-  const tips: Record<string, string[]> = {
-    "Course à pied": [
-      "Posture droite",
-      "Respiration régulière",
-      "Foulée naturelle"
-    ],
-    "Vélo stationnaire": [
-      "Régler la selle",
-      "Garder le dos droit",
-      "Pédaler fluide"
-    ],
-    "Rameur": [
-      "Pousser avec les jambes",
-      "Tirer avec le dos",
-      "Rythme constant"
-    ],
-    "Corde à sauter": [
-      "Sauts légers",
-      "Poignets souples",
-      "Regard horizontal"
-    ],
-    "Burpees": [
-      "Explosif à la montée",
-      "Gainage au sol",
-      "Respirer régulièrement"
-    ],
-    "Mountain climbers": [
-      "Gainage stable",
-      "Genoux vers poitrine",
-      "Rythme soutenu"
-    ],
-    "Jumping jacks": [
-      "Coordination bras-jambes",
-      "Atterrissage souple",
-      "Amplitude complète"
-    ],
-    "High knees": [
-      "Genoux hauts",
-      "Bras dynamiques",
-      "Rester sur l'avant du pied"
-    ]
-  };
-
-  return tips[exerciseName] || [
-    "Respiration régulière",
-    "Maintenir l'effort",
-    "Garder le rythme"
-  ];
+const getCardioTips = (exercise: string): string[] => {
+  switch (exercise) {
+    case "Course à pied":
+      return [
+        "Commencez doucement pour vous échauffer",
+        "Gardez une respiration régulière",
+        "Maintenez une posture droite",
+        "Regardez devant vous, pas vos pieds"
+      ];
+    case "Vélo stationnaire":
+      return [
+        "Ajustez la hauteur de la selle",
+        "Gardez un rythme constant",
+        "Alternez entre position assise et debout",
+        "Surveillez votre fréquence cardiaque"
+      ];
+    case "Rameur":
+      return [
+        "Commencez par les jambes, puis le dos, enfin les bras",
+        "Gardez le dos droit",
+        "Tirez jusqu'à la poitrine",
+        "Contrôlez le retour"
+      ];
+    case "Corde à sauter":
+      return [
+        "Sautez sur la plante des pieds",
+        "Gardez les coudes près du corps",
+        "Faites de petits sauts",
+        "Regardez droit devant vous"
+      ];
+    default:
+      return ["Chargement des conseils..."];
+  }
 };
 
 export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTimelineProps) => {
-  const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
-  const [selectedCardioExercise, setSelectedCardioExercise] = useState<string>("");
-
-  const handleExerciseClick = (index: number) => {
-    setSelectedExercise(selectedExercise === index ? null : index);
-  };
+  const [selectedExercise, setSelectedExercise] = useState<string>(exercises[0] || "");
 
   const handleCardioSelection = (exercise: string) => {
-    setSelectedCardioExercise(exercise);
+    setSelectedExercise(exercise);
   };
 
-  // Si c'est une séance cardio (vérifié par le premier exercice)
+  // Vérifier si c'est une séance cardio
   const isCardioSession = exercises[0] === "Course à pied" || 
                          exercises[0] === "Vélo stationnaire" || 
                          exercises[0] === "Rameur" || 
@@ -81,16 +58,18 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
   if (isCardioSession) {
     return (
       <div className="space-y-4">
-        {selectedCardioExercise && (
-          <h2 className="text-2xl font-semibold mb-6">{selectedCardioExercise}</h2>
+        {selectedExercise && (
+          <h2 className="text-2xl font-semibold mb-6">{selectedExercise}</h2>
         )}
+        
         <h3 className="text-lg font-medium mb-4">Sélectionnez votre exercice cardio</h3>
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {exercises.map((exercise, index) => (
             <Card 
               key={index}
               className={`p-4 cursor-pointer transition-all ${
-                selectedCardioExercise === exercise 
+                selectedExercise === exercise 
                   ? 'bg-primary text-primary-foreground' 
                   : 'hover:bg-primary/10'
               }`}
@@ -98,7 +77,7 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
             >
               <div className="flex items-center justify-between">
                 <span>{exercise}</span>
-                {selectedCardioExercise === exercise && (
+                {selectedExercise === exercise && (
                   <Check className="h-4 w-4" />
                 )}
               </div>
@@ -106,13 +85,13 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
           ))}
         </div>
         
-        {selectedCardioExercise && (
+        {selectedExercise && (
           <div className="mt-6">
-            <h4 className="font-medium mb-3">Conseils pour {selectedCardioExercise} :</h4>
+            <h4 className="font-medium mb-3">Conseils pour {selectedExercise} :</h4>
             <div className="space-y-3">
               <div className="bg-primary/10 p-4 rounded-lg">
                 <ul className="list-disc list-inside text-sm space-y-1">
-                  {getCardioTips(selectedCardioExercise).map((tip, tipIndex) => (
+                  {getCardioTips(selectedExercise).map((tip, tipIndex) => (
                     <li key={tipIndex} className="text-primary/80">{tip}</li>
                   ))}
                 </ul>
@@ -124,16 +103,23 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
     );
   }
 
-  // Pour les autres types de séances, garder le comportement existant
+  // Pour les séances non-cardio
   return (
-    <div className="space-y-2">
-      {exercises.map((exercise, index) => (
-        <div key={index} className="flex items-center justify-between">
-          <span>{exercise}</span>
-          {currentExerciseIndex === index && <ChevronUp className="h-4 w-4" />}
-          {currentExerciseIndex !== index && <ChevronDown className="h-4 w-4" />}
-        </div>
-      ))}
+    <div className="space-y-4">
+      <div className="flex flex-col space-y-2">
+        {exercises.map((exercise, index) => (
+          <div
+            key={index}
+            className={`p-4 rounded-lg border transition-colors ${
+              index === currentExerciseIndex
+                ? "border-primary bg-primary/5"
+                : "border-border"
+            }`}
+          >
+            <h3 className="font-medium">{exercise}</h3>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
