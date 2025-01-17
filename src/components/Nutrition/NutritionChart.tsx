@@ -137,16 +137,25 @@ export const NutritionChart = () => {
             showGridLines={false}
             startEndOnly={false}
             showAnimation={true}
-            customTooltip={(props: any) => (
-              <div className="bg-white p-2 rounded-lg border shadow-sm">
-                <p className="text-sm font-medium">{props.payload[0]?.payload.name}</p>
-                <div className="space-y-1">
-                  <p className={`${props.payload[1]?.value > props.payload[0]?.value ? "text-red-500" : "text-blue-500"}`}>
-                    Calories: {props.payload[1]?.value} / {props.payload[0]?.value} kcal
-                  </p>
+            customTooltip={(props: any) => {
+              const targetValue = props.payload[0]?.value || 0;
+              const actualValue = props.payload[1]?.value || 0;
+              const isGood = actualValue >= targetValue * 0.9 && actualValue <= targetValue;
+              const textColor = isGood ? "text-green-500" : 
+                              actualValue < targetValue * 0.9 ? "text-red-500" : 
+                              actualValue > targetValue ? "text-red-500" : "text-blue-500";
+
+              return (
+                <div className="bg-white p-2 rounded-lg border shadow-sm">
+                  <p className="text-sm font-medium">{props.payload[0]?.payload.name}</p>
+                  <div className="space-y-1">
+                    <p className={textColor}>
+                      Calories: {actualValue} / {targetValue} kcal
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            }}
           />
         </div>
       </CardContent>
