@@ -69,12 +69,7 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
   };
 
   const handleCardioSelection = (exercise: string) => {
-    setSelectedCardioExercises(prev => {
-      if (prev.includes(exercise)) {
-        return prev.filter(ex => ex !== exercise);
-      }
-      return [exercise]; // Now we only keep the latest selected exercise
-    });
+    setSelectedCardioExercises([exercise]); // Directement remplacer par le nouvel exercice
   };
 
   // Si c'est une séance cardio (vérifié par le premier exercice)
@@ -95,7 +90,7 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
             <Card 
               key={index}
               className={`p-4 cursor-pointer transition-all ${
-                selectedCardioExercises.includes(exercise) 
+                selectedCardioExercises[0] === exercise 
                   ? 'bg-primary text-primary-foreground' 
                   : 'hover:bg-primary/10'
               }`}
@@ -103,7 +98,7 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
             >
               <div className="flex items-center justify-between">
                 <span>{exercise}</span>
-                {selectedCardioExercises.includes(exercise) && (
+                {selectedCardioExercises[0] === exercise && (
                   <Check className="h-4 w-4" />
                 )}
               </div>
