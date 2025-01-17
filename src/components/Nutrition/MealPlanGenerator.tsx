@@ -7,10 +7,10 @@ import { ActiveMealPlans } from "./MealPlan/ActiveMealPlans";
 import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
 import { useMealPlanSave } from "@/hooks/use-meal-plan-save";
 import { useState } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ShoppingList } from "./MealPlan/ShoppingList";
+import { GenerateShoppingListButton } from "./MealPlan/GenerateShoppingListButton";
 
 interface MealPlanPreferences {
   duration: string;
@@ -24,6 +24,7 @@ export const MealPlanGenerator = () => {
   const [selectedDuration, setSelectedDuration] = useState(7);
   const [shoppingList, setShoppingList] = useState<string[]>([]);
   const [showShoppingList, setShowShoppingList] = useState(false);
+  const { toast } = useToast();
 
   const handleGenerateMealPlan = async (preferences: MealPlanPreferences) => {
     setIsGenerating(true);
@@ -52,18 +53,15 @@ export const MealPlanGenerator = () => {
         return;
       }
 
-      const today = new Date();
       const { data: plans, error } = await supabase
         .from('meal_plans')
         .select('*')
         .eq('user_id', user.id)
-        .gte('end_date', today.toISOString())
+        .gte('end_date', new Date().toISOString())
         .order('start_date', { ascending: false })
         .limit(1);
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (!plans || plans.length === 0) {
         toast({
@@ -155,32 +153,9 @@ export const MealPlanGenerator = () => {
         </CardContent>
       </Card>
 
-      <Button 
-        className="w-full"
-        variant="outline"
-        onClick={handleGenerateShoppingList}
-      >
-        Générer ta liste de courses
-      </Button>
-
-      {showShoppingList && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Liste de courses</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[300px]">
-              <ul className="space-y-2">
-                {shoppingList.map((item, index) => (
-                  <li key={index} className="flex items-center gap-2 p-2 hover:bg-muted rounded-md">
-                    <span className="text-sm">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      )}
+      <GenerateShoppingListButton onClick={handleGenerateShoppingList} />
+      
+      <ShoppingList items={shoppingList} />
 
       <ActiveMealPlans />
 
