@@ -64,7 +64,7 @@ export const MealPlanGenerator = () => {
       {generatedPlan && (
         <GeneratedPlanDisplay 
           generatedPlan={generatedPlan}
-          durationDays={parseInt(generatedPlan[0]?.duration || "7")}
+          durationDays={preferences?.duration || "7"}
         />
       )}
     </div>
