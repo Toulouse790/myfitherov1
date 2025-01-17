@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
-import { ExerciseHeader } from "./ExerciseCard/ExerciseHeader";
-import { SetRow } from "./ExerciseCard/SetRow";
+import { SetRow } from "./SetRow";
 
 interface ExerciseCardProps {
   exerciseName: string;
@@ -38,6 +37,7 @@ export const ExerciseCard = ({
 
   const handleSetComplete = () => {
     if (completedSets >= totalSets) {
+      console.log("All sets completed");
       return;
     }
     
@@ -97,7 +97,6 @@ export const ExerciseCard = ({
             {completedSets}/{totalSets} séries
           </span>
         </div>
-        {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
       </div>
 
       {isExpanded && (
