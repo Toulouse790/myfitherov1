@@ -2,17 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from "react";
 
 interface MealPlanFormProps {
-  onSubmit: (dietType: string) => void;
+  onGenerate: (preferences: {
+    duration: string;
+    dietType: string;
+  }) => void;
 }
 
-export const MealPlanForm = ({ onSubmit }: MealPlanFormProps) => {
+export const MealPlanForm = ({ onGenerate }: MealPlanFormProps) => {
   const [dietType, setDietType] = useState("balanced");
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    onSubmit(dietType);
+    onGenerate({
+      duration: "7", // Default duration, will be overridden by parent component
+      dietType,
+    });
   };
 
   return (
