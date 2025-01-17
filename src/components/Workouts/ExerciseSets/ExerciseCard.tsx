@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
-import { SetRow } from "./SetRow";
+import { SetRow } from "./ExerciseCard/SetRow";
 
 interface ExerciseCardProps {
   exerciseName: string;
