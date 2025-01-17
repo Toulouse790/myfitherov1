@@ -116,7 +116,7 @@ export default function WorkoutSession() {
 
   if (isLoading) {
     return (
-      <div className="container max-w-4xl mx-auto px-4 py-8 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center pt-32">
         <div className="animate-spin">
           <Dumbbell className="h-8 w-8" />
         </div>
@@ -127,42 +127,44 @@ export default function WorkoutSession() {
   const progress = ((currentExerciseIndex + 1) / exercises.length) * 100;
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 pt-32 pb-8 space-y-6">
-      <WorkoutHeader 
-        sessionDuration={sessionDuration}
-        estimatedCalories={estimatedCalories}
-        progress={progress}
-      />
+    <div className="min-h-screen bg-background">
+      <div className="container max-w-4xl mx-auto px-4 pt-32 pb-8 space-y-6">
+        <WorkoutHeader 
+          sessionDuration={sessionDuration}
+          estimatedCalories={estimatedCalories}
+          progress={progress}
+        />
 
-      <ExerciseNavigation
-        currentExerciseIndex={currentExerciseIndex}
-        totalExercises={exercises.length}
-        onNavigate={handleNavigateExercise}
-      />
+        <ExerciseNavigation
+          currentExerciseIndex={currentExerciseIndex}
+          totalExercises={exercises.length}
+          onNavigate={handleNavigateExercise}
+        />
 
-      <ExerciseTimeline 
-        exercises={exercises}
-        currentExerciseIndex={currentExerciseIndex}
-      />
+        <ExerciseTimeline 
+          exercises={exercises}
+          currentExerciseIndex={currentExerciseIndex}
+        />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <Card className="p-6">
-          <ExerciseSets
-            exercises={exercises}
-            currentExerciseIndex={currentExerciseIndex}
-            onExerciseComplete={handleExerciseComplete}
-            sessionId={sessionId}
-          />
-        </Card>
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Card className="p-6">
+            <ExerciseSets
+              exercises={exercises}
+              currentExerciseIndex={currentExerciseIndex}
+              onExerciseComplete={handleExerciseComplete}
+              sessionId={sessionId}
+            />
+          </Card>
+        </motion.div>
 
-      {currentExerciseIndex < exercises.length - 1 && (
-        <NextExercisePreview nextExercise={exercises[currentExerciseIndex + 1]} />
-      )}
+        {currentExerciseIndex < exercises.length - 1 && (
+          <NextExercisePreview nextExercise={exercises[currentExerciseIndex + 1]} />
+        )}
+      </div>
     </div>
   );
 }
