@@ -1637,9 +1637,14 @@ export type Database = {
           created_at: string
           criteria: Json | null
           description: string
+          difficulty_levels: string[] | null
+          equipment_required: string[] | null
+          estimated_duration: number | null
           icon_name: string
           id: string
           is_active: boolean | null
+          muscle_groups: string[] | null
+          suggested_order: number | null
           title: string
           type: string
           updated_at: string
@@ -1649,9 +1654,14 @@ export type Database = {
           created_at?: string
           criteria?: Json | null
           description: string
+          difficulty_levels?: string[] | null
+          equipment_required?: string[] | null
+          estimated_duration?: number | null
           icon_name: string
           id?: string
           is_active?: boolean | null
+          muscle_groups?: string[] | null
+          suggested_order?: number | null
           title: string
           type: string
           updated_at?: string
@@ -1661,9 +1671,14 @@ export type Database = {
           created_at?: string
           criteria?: Json | null
           description?: string
+          difficulty_levels?: string[] | null
+          equipment_required?: string[] | null
+          estimated_duration?: number | null
           icon_name?: string
           id?: string
           is_active?: boolean | null
+          muscle_groups?: string[] | null
+          suggested_order?: number | null
           title?: string
           type?: string
           updated_at?: string
