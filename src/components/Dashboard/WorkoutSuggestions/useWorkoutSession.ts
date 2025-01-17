@@ -1,15 +1,41 @@
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const useWorkoutSession = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const createWorkoutSession = async (type: string) => {
     try {
-      // Temporairement, on utilise un ID utilisateur factice pour le développement
-      const mockUserId = "00000000-0000-0000-0000-000000000000";
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour créer une séance",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // First check if profile exists
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profile) {
+        // Create profile if it doesn't exist
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert([{ id: user.id }]);
+
+        if (insertError) {
+          throw insertError;
+        }
+      }
 
       if (type === 'favorites') {
         navigate('/workouts');
@@ -17,7 +43,7 @@ export const useWorkoutSession = () => {
       }
 
       const workoutData = {
-        user_id: mockUserId,
+        user_id: user.id,
         workout_type: 'strength',
         status: 'in_progress',
         target_duration_minutes: type === 'quick' ? 30 : 45,
