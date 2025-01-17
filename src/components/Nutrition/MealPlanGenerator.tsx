@@ -31,16 +31,53 @@ export const MealPlanGenerator = () => {
       if (plan?.[0]) {
         console.log("Generated plan to save:", plan[0]);
         await saveMealPlanToJournal(plan[0], preferences.duration);
-        await handleGenerateShoppingList();
+        await handleGenerateShoppingList(preferences.dietType);
       }
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleGenerateShoppingList = async () => {
+  const adjustQuantitiesForDietType = (items: Map<string, { amount: number; unit: string }>, dietType: string) => {
+    const adjustedItems = new Map(items);
+    
+    switch (dietType) {
+      case "highProtein":
+        // Augmenter les protéines pour la prise de masse
+        adjustedItems.forEach((details, item) => {
+          if (item.toLowerCase().includes("poulet") || 
+              item.toLowerCase().includes("boeuf") || 
+              item.toLowerCase().includes("poisson") ||
+              item.toLowerCase().includes("oeuf") ||
+              item.toLowerCase().includes("protéine")) {
+            details.amount = Math.round(details.amount * 1.5); // +50% de protéines
+          }
+        });
+        break;
+      case "lowCarb":
+        // Réduire les glucides pour la sèche extrême
+        adjustedItems.forEach((details, item) => {
+          if (item.toLowerCase().includes("riz") || 
+              item.toLowerCase().includes("pâtes") || 
+              item.toLowerCase().includes("pain") ||
+              item.toLowerCase().includes("pomme de terre")) {
+            details.amount = Math.round(details.amount * 0.5); // -50% de glucides
+          }
+          if (item.toLowerCase().includes("poulet") || 
+              item.toLowerCase().includes("poisson")) {
+            details.amount = Math.round(details.amount * 1.2); // +20% de protéines maigres
+          }
+        });
+        break;
+      // Le cas "balanced" reste inchangé
+    }
+    
+    return adjustedItems;
+  };
+
+  const handleGenerateShoppingList = async (dietType: string = 'balanced') => {
     try {
-      console.log("Generating shopping list for", selectedDuration, "days");
+      console.log("Generating shopping list for", selectedDuration, "days with diet type:", dietType);
       
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -100,14 +137,17 @@ export const MealPlanGenerator = () => {
         });
       }
 
-      const formattedList = Array.from(shoppingList.entries())
+      // Ajuster les quantités en fonction du type de régime
+      const adjustedShoppingList = adjustQuantitiesForDietType(shoppingList, dietType);
+
+      const formattedList = Array.from(adjustedShoppingList.entries())
         .map(([item, details]) => `${item}: ${details.amount}${details.unit}`);
 
       setShoppingList(formattedList);
 
       toast({
         title: "Liste de courses générée",
-        description: `Liste générée pour ${selectedDuration} jours`,
+        description: `Liste générée pour ${selectedDuration} jours (${dietType})`,
       });
 
     } catch (error) {
