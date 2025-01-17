@@ -163,22 +163,24 @@ export const MealPlanGenerator = () => {
         Générer ta liste de courses
       </Button>
 
-      <Dialog open={showShoppingList} onOpenChange={setShowShoppingList}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Liste de courses</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="h-[400px] p-4">
-            <ul className="space-y-2">
-              {shoppingList.map((item, index) => (
-                <li key={index} className="flex items-center gap-2">
-                  <span className="text-sm">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+      {showShoppingList && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Liste de courses</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[300px]">
+              <ul className="space-y-2">
+                {shoppingList.map((item, index) => (
+                  <li key={index} className="flex items-center gap-2 p-2 hover:bg-muted rounded-md">
+                    <span className="text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      )}
 
       <ActiveMealPlans />
 
