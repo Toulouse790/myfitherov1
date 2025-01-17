@@ -14,6 +14,7 @@ import StatsPage from "@/pages/Stats";
 import ProfilePage from "@/pages/Profile";
 import TrainingPreferencesPage from "@/pages/TrainingPreferences";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <WorkoutsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workouts/:sessionId",
+        element: (
+          <ProtectedRoute>
+            <UnifiedWorkoutDetail />
           </ProtectedRoute>
         ),
       },
