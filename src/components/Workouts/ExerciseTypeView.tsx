@@ -37,11 +37,6 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
   const handleSetComplete = (index: number) => {
     setSets(prev => prev.map((set, i) => i === index ? { ...set, completed: true } : set));
     setRestTimer(90);
-    
-    toast({
-      title: "Série complétée !",
-      description: "Repos de 90 secondes.",
-    });
   };
 
   const formatTime = (seconds: number) => {
@@ -54,8 +49,6 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
     return (
       <Card className="mx-auto max-w-md p-4">
         <div className="flex flex-col items-center space-y-6">
-          <h2 className="text-xl font-bold text-center">{exerciseName}</h2>
-          
           <div className="text-4xl font-mono font-bold">{formatTime(duration)}</div>
 
           <div className="w-full space-y-4">
@@ -95,8 +88,6 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
   return (
     <Card className="mx-auto max-w-md p-4">
       <div className="space-y-6">
-        <h2 className="text-xl font-bold text-center">{exerciseName}</h2>
-
         <div className="space-y-4">
           {sets.map((set, index) => (
             <div key={index} className="flex flex-col p-4 border rounded-lg space-y-4">
