@@ -3,7 +3,7 @@ import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { PersonalizedRecommendations } from "@/components/Recommendations/PersonalizedRecommendations";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus, Dumbbell, Sparkles } from "lucide-react";
+import { Plus, Dumbbell, Sparkles, ChartBar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
@@ -38,6 +38,19 @@ export default function Index() {
       return;
     }
     navigate('/workout-generate');
+  };
+
+  const handleStats = () => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour voir vos statistiques",
+        variant: "destructive",
+      });
+      navigate('/signin');
+      return;
+    }
+    navigate('/stats');
   };
 
   return (
@@ -77,6 +90,15 @@ export default function Index() {
               >
                 <Sparkles className="w-6 h-6 animate-pulse" />
                 Générer avec l'IA
+              </Button>
+              <Button
+                onClick={handleStats}
+                variant="secondary"
+                className="flex-1 gap-2 h-16 text-lg hover:bg-secondary/90 transition-all duration-300"
+                size="lg"
+              >
+                <ChartBar className="w-6 h-6" />
+                Mes statistiques
               </Button>
             </div>
           </Card>
