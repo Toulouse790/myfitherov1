@@ -13,7 +13,7 @@ export const BottomNav = () => {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-6 py-2 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-4 py-3 z-50">
       <div className="max-w-screen-xl mx-auto">
         <div className="flex justify-between items-center">
           {navItems.map((item, index) => {
@@ -23,12 +23,12 @@ export const BottomNav = () => {
               <Link
                 key={index}
                 to={item.path}
-                className={`flex flex-col items-center gap-1 w-16 py-1 transition-colors ${
-                  isActive ? 'text-primary' : 'text-muted-foreground'
+                className={`flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors ${
+                  isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
                 }`}
               >
-                <Icon className="w-5 h-5" />
-                <span className="text-xs text-center">
+                <Icon className="w-6 h-6" />
+                <span className="text-xs font-medium">
                   {item.label}
                 </span>
               </Link>

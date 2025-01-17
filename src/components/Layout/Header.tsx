@@ -12,17 +12,17 @@ export const Header = ({ children }: HeaderProps) => {
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-10 items-center">
+        <div className="container flex h-14 items-center">
           <div className="flex items-center">
             <Link to="/" className="mr-6 flex items-center space-x-2">
-              <span className="hidden font-bold sm:inline-block">
+              <span className="hidden font-bold text-xl sm:inline-block">
                 MyFitHero
               </span>
             </Link>
           </div>
         </div>
       </header>
-      {children && <main>{children}</main>}
+      {children && <main className="min-h-[calc(100vh-3.5rem)]">{children}</main>}
     </>
   );
 };

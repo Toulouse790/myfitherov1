@@ -81,13 +81,28 @@
     @apply font-heading font-bold tracking-tight;
   }
 
-  h1 { @apply text-title; }
-  h2 { @apply text-subtitle; }
-  p { @apply text-body; }
-  small { @apply text-caption font-light; }
+  h1 { 
+    @apply text-4xl md:text-5xl lg:text-6xl mb-6; 
+  }
+  
+  h2 { 
+    @apply text-2xl md:text-3xl lg:text-4xl mb-4; 
+  }
+  
+  h3 { 
+    @apply text-xl md:text-2xl lg:text-3xl mb-3; 
+  }
+  
+  p { 
+    @apply text-base md:text-lg leading-relaxed mb-4; 
+  }
+  
+  small { 
+    @apply text-sm md:text-base font-light; 
+  }
 
   button {
-    @apply rounded-button transition-all duration-300 hover:scale-98 hover:opacity-90;
+    @apply rounded-button transition-all duration-300 hover:scale-[0.98] hover:opacity-90;
   }
 
   input, textarea {
@@ -95,7 +110,7 @@
   }
 
   .card {
-    @apply rounded-card shadow-card bg-pure-white p-6;
+    @apply rounded-xl shadow-lg bg-card p-6 transition-all duration-300 hover:shadow-xl;
   }
 
   .progress-bar {
