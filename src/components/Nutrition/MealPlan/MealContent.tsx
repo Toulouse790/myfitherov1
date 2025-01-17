@@ -1,4 +1,7 @@
 interface MealContentProps {
+  title: string;
+  defaultTime?: string;
+  isTrainingTime?: boolean;
   meal: {
     name: string;
     calories: number;
@@ -9,7 +12,7 @@ interface MealContentProps {
   };
 }
 
-export const MealContent = ({ meal }: MealContentProps) => {
+export const MealContent = ({ meal, title, defaultTime, isTrainingTime }: MealContentProps) => {
   return (
     <div className="p-4 pt-0 space-y-2 text-sm">
       <div>
