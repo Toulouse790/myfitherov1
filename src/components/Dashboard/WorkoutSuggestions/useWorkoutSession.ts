@@ -42,12 +42,25 @@ export const useWorkoutSession = () => {
         return;
       }
 
+      // Définir les exercices de base selon le type
+      const defaultExercises = type === 'quick' ? [
+        "Extensions triceps",
+        "Développé couché",
+        "Squat"
+      ] : [
+        "Extensions triceps",
+        "Développé couché", 
+        "Squat",
+        "Soulevé de terre",
+        "Développé militaire"
+      ];
+
       const workoutData = {
         user_id: user.id,
         workout_type: 'strength',
         status: 'in_progress',
         target_duration_minutes: type === 'quick' ? 30 : 45,
-        exercises: [],
+        exercises: defaultExercises,
       };
 
       const { data: workoutSession, error } = await supabase
