@@ -13,6 +13,7 @@ interface RestTimerProps {
 export const RestTimer = ({ onComplete, initialTime = 90, onRestTimeChange }: RestTimerProps) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(false);
+  const [currentInitialTime, setCurrentInitialTime] = useState(initialTime);
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -33,14 +34,14 @@ export const RestTimer = ({ onComplete, initialTime = 90, onRestTimeChange }: Re
     const newTime = Math.max(15, Math.min(180, timeLeft + seconds));
     console.log(`Adjusting rest time by ${seconds}s. New time: ${newTime}s`);
     setTimeLeft(newTime);
+    setCurrentInitialTime(newTime); // Update the reference time for progress calculation
     
-    // Notify parent component of the time change
     if (onRestTimeChange) {
       onRestTimeChange(seconds);
     }
   };
 
-  const progress = ((initialTime - timeLeft) / initialTime) * 100;
+  const progress = ((currentInitialTime - timeLeft) / currentInitialTime) * 100;
 
   return (
     <Card className="p-6 bg-muted">
