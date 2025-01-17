@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Lock, CalendarCheck } from "lucide-react";
+import { Lock } from "lucide-react";
 import { MealPlanForm } from "./MealPlan/MealPlanForm";
 import { GeneratedPlanDisplay } from "./MealPlan/GeneratedPlanDisplay";
 import { ActiveMealPlans } from "./MealPlan/ActiveMealPlans";
@@ -36,11 +36,77 @@ export const MealPlanGenerator = () => {
   const handleGenerateShoppingList = async () => {
     try {
       console.log("Generating shopping list for", selectedDuration, "days");
-      // Pour l'instant on affiche juste un toast, on implémentera la génération plus tard
-      toast({
-        title: "Liste de courses",
-        description: `Génération de la liste pour ${selectedDuration} jours en cours de développement`,
+      
+      // Récupérer le plan de repas actif
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour générer une liste de courses",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const today = new Date();
+      const { data: plans, error } = await supabase
+        .from('meal_plans')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('end_date', today.toISOString())
+        .order('start_date', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        throw error;
+      }
+
+      if (!plans || plans.length === 0) {
+        toast({
+          title: "Aucun plan actif",
+          description: "Générez d'abord un plan de repas pour obtenir une liste de courses",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const planData = plans[0].plan_data;
+      
+      // Générer la liste de courses à partir du plan
+      const shoppingList = new Map();
+
+      planData.forEach(day => {
+        Object.values(day).forEach((meal: any) => {
+          if (meal.quantities) {
+            meal.quantities.forEach((item: any) => {
+              const [amount, unit] = item.amount.split(' ');
+              const numAmount = parseFloat(amount);
+              
+              if (shoppingList.has(item.item)) {
+                shoppingList.set(item.item, {
+                  amount: shoppingList.get(item.item).amount + numAmount,
+                  unit: unit || 'g'
+                });
+              } else {
+                shoppingList.set(item.item, {
+                  amount: numAmount,
+                  unit: unit || 'g'
+                });
+              }
+            });
+          }
+        });
       });
+
+      // Formater la liste pour l'affichage
+      const formattedList = Array.from(shoppingList.entries())
+        .map(([item, details]) => `${item}: ${details.amount}${details.unit}`);
+
+      toast({
+        title: "Liste de courses générée",
+        description: formattedList.join('\n'),
+      });
+
     } catch (error) {
       console.error("Error generating shopping list:", error);
       toast({
