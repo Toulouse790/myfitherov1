@@ -24,7 +24,7 @@ export const useNotificationManager = () => {
       title,
       description: message,
       variant: type === 'error' ? 'destructive' : 'default',
-      duration: options.duration || 5000,
+      duration: options.duration || 1000, // Changed from 5000 to 1000 (1 second)
     });
 
     // If it's an important notification and user is authenticated, store it
