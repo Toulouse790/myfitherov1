@@ -1,17 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
-import { RootLayout } from "@/components/Layout/RootLayout";
+import RootLayout from "@/components/Layout/RootLayout";
+import HomePage from "@/pages/Home";
 import SignInPage from "@/pages/SignIn";
 import SignUpPage from "@/pages/SignUp";
-import HomePage from "@/pages/Home";
 import WorkoutsPage from "@/pages/Workouts";
 import WorkoutSessionPage from "@/pages/WorkoutSession";
-import AdminDashboard from "@/pages/Admin/Dashboard";
 import NutritionPage from "@/pages/Nutrition";
+import CardioPage from "@/pages/Cardio";
 import SleepPage from "@/pages/Sleep";
 import SuggestionsPage from "@/pages/Suggestions";
 import WorkoutGeneratePage from "@/pages/WorkoutGenerate";
 import StatsPage from "@/pages/Stats";
 import ProfilePage from "@/pages/Profile";
+import TrainingPreferencesPage from "@/pages/TrainingPreferences";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -28,12 +29,12 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "suggestions",
-        element: (
-          <ProtectedRoute>
-            <SuggestionsPage />
-          </ProtectedRoute>
-        ),
+        path: "signin",
+        element: <SignInPage />,
+      },
+      {
+        path: "signup",
+        element: <SignUpPage />,
       },
       {
         path: "workouts",
@@ -44,15 +45,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "workout-generate",
-        element: (
-          <ProtectedRoute>
-            <WorkoutGeneratePage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workouts/:sessionId",
+        path: "workout-session",
         element: (
           <ProtectedRoute>
             <WorkoutSessionPage />
@@ -68,10 +61,34 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "cardio",
+        element: (
+          <ProtectedRoute>
+            <CardioPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "sleep",
         element: (
           <ProtectedRoute>
             <SleepPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "suggestions",
+        element: (
+          <ProtectedRoute>
+            <SuggestionsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workout-generate",
+        element: (
+          <ProtectedRoute>
+            <WorkoutGeneratePage />
           </ProtectedRoute>
         ),
       },
@@ -92,21 +109,21 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "training-preferences",
+        element: (
+          <ProtectedRoute>
+            <TrainingPreferencesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "admin",
         element: (
           <ProtectedRoute>
-            <AdminDashboard />
+            <div>Admin Dashboard</div>
           </ProtectedRoute>
         ),
       },
     ],
-  },
-  {
-    path: "signin",
-    element: <SignInPage />,
-  },
-  {
-    path: "signup",
-    element: <SignUpPage />,
   },
 ]);
