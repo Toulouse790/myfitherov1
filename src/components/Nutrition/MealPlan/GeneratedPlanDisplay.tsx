@@ -4,19 +4,12 @@ import { DayMeals } from "./DayMeals";
 import { defaultMeals } from "@/data/meals/mealPlanGenerator";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
-interface GeneratedPlanDisplayProps {
-  generatedPlan: any[];
-  durationDays: string;
-}
+import type { GeneratedPlanDisplayProps } from "./types";
 
 export const GeneratedPlanDisplay = ({ 
   generatedPlan,
   durationDays,
 }: GeneratedPlanDisplayProps) => {
-  console.log("GeneratedPlanDisplay - generatedPlan:", generatedPlan);
-
-  // Charger les plans sauvegardés
   const { data: savedPlan } = useQuery({
     queryKey: ['meal-plan'],
     queryFn: async () => {
@@ -64,7 +57,6 @@ export const GeneratedPlanDisplay = ({
     }
   });
 
-  // Utiliser le plan sauvegardé s'il existe, sinon utiliser le plan généré
   const planToDisplay = savedPlan?.plan_data || generatedPlan;
 
   if (!planToDisplay) return null;
@@ -88,9 +80,7 @@ export const GeneratedPlanDisplay = ({
     "Vendredi", "Samedi", "Dimanche"
   ];
 
-  // Convert single day plan to array if necessary
   const planArray = Array.isArray(planToDisplay) ? planToDisplay : [planToDisplay];
-  console.log("Plan array:", planArray);
 
   return (
     <Card>
@@ -112,21 +102,11 @@ export const GeneratedPlanDisplay = ({
             const isTrainingDay = Boolean(workoutTime);
 
             const formattedMeals = {
-              breakfast: {
-                ...day.breakfast,
-              },
-              morning_snack: {
-                ...day.snack,
-              },
-              lunch: {
-                ...day.lunch,
-              },
-              afternoon_snack: {
-                ...day.snack,
-              },
-              dinner: {
-                ...day.dinner,
-              }
+              breakfast: { ...day.breakfast },
+              morning_snack: { ...day.snack },
+              lunch: { ...day.lunch },
+              afternoon_snack: { ...day.snack },
+              dinner: { ...day.dinner }
             };
 
             return (

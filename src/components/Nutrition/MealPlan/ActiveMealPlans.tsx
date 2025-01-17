@@ -1,14 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { DayMeals } from "./DayMeals";
 import { ShoppingList } from "./ShoppingList";
 import { defaultMeals } from "@/data/meals/mealPlanGenerator";
-
-interface ActiveMealPlansProps {
-  shoppingList?: string[];
-}
+import { supabase } from "@/integrations/supabase/client";
+import type { ActiveMealPlansProps, MealPlanData } from "./types";
 
 export const ActiveMealPlans = ({ shoppingList = [] }: ActiveMealPlansProps) => {
   const { user } = useAuth();
@@ -47,7 +44,7 @@ export const ActiveMealPlans = ({ shoppingList = [] }: ActiveMealPlansProps) => 
     );
   }
 
-  const planData = activePlans.plan_data;
+  const planData = activePlans.plan_data as Record<string, MealPlanData>;
   const startDate = new Date(activePlans.start_date);
   const endDate = new Date(activePlans.end_date);
 
@@ -63,9 +60,9 @@ export const ActiveMealPlans = ({ shoppingList = [] }: ActiveMealPlansProps) => 
         <CardContent className="space-y-6">
           {Object.entries(planData).map(([day, meals], index) => (
             <DayMeals 
-              key={day} 
+              key={day}
               day={day} 
-              meals={meals as any} 
+              meals={meals} 
               isFirst={index === 0}
               mealTitles={defaultMeals}
             />
