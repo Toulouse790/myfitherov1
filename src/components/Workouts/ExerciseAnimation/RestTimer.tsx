@@ -10,8 +10,12 @@ export interface RestTimerProps {
 export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
   const handleTimeAdjustment = (adjustment: number) => {
     const newTime = restTime + adjustment;
+    // Ensure rest time stays between 15 and 180 seconds
     if (newTime >= 15 && newTime <= 180) {
+      console.log("Adjusting rest time by:", adjustment, "New time:", newTime);
       onRestTimeChange(adjustment);
+    } else {
+      console.log("Invalid rest time adjustment. Current:", restTime, "Adjustment:", adjustment);
     }
   };
 
