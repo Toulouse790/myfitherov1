@@ -1,5 +1,5 @@
-import { Card } from "@/components/ui/card";
-import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { Bar, BarChart as RechartsBarChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { ChartContainer } from "./ChartContainer";
 
 export interface BarChartProps {
   data: any[];
@@ -19,8 +19,8 @@ export const BarChart = ({
   data,
   index,
   categories,
-  colors = ["#0ea5e9"],
-  valueFormatter = (value: number) => value.toString(),
+  colors = ["#0EA5E9"],
+  valueFormatter = (value: number) => `${value}`,
   yAxisWidth = 40,
   showLegend = false,
   showGridLines = true,
@@ -28,33 +28,53 @@ export const BarChart = ({
   showAnimation = true,
   onValueClick
 }: BarChartProps) => {
+  const chartConfig = Object.fromEntries(
+    categories.map((category, i) => [
+      category,
+      { color: colors[i % colors.length] },
+    ])
+  );
+
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <RechartsBarChart data={data} onClick={(props) => onValueClick?.(props)}>
-        <XAxis
-          dataKey={index}
-          tickLine={false}
-          axisLine={false}
-          interval="preserveStartEnd"
-          minTickGap={10}
-          height={20}
-        />
-        <YAxis
-          width={yAxisWidth}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={valueFormatter}
-        />
-        {categories.map((category, i) => (
-          <Bar
-            key={category}
-            dataKey={category}
-            fill={colors[i % colors.length]}
-            radius={[4, 4, 0, 0]}
-            onClick={(props) => onValueClick?.(props)}
+    <ChartContainer config={chartConfig}>
+      <ResponsiveContainer width="100%" height={300}>
+        <RechartsBarChart 
+          data={data} 
+          margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+          onClick={(data) => onValueClick?.(data)}
+        >
+          <XAxis
+            dataKey={index}
+            axisLine={false}
+            tickLine={false}
+            fontSize={12}
+            tickMargin={8}
+            interval={startEndOnly ? "preserveStartEnd" : 0}
           />
-        ))}
-      </RechartsBarChart>
-    </ResponsiveContainer>
+          <YAxis
+            width={yAxisWidth}
+            axisLine={false}
+            tickLine={false}
+            fontSize={12}
+            tickMargin={8}
+            tickFormatter={valueFormatter}
+          />
+          <Tooltip 
+            cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
+            formatter={valueFormatter}
+          />
+          {categories.map((category, i) => (
+            <Bar
+              key={category}
+              dataKey={category}
+              fill={colors[i % colors.length]}
+              radius={[4, 4, 0, 0]}
+              isAnimationActive={showAnimation}
+              onClick={(props) => onValueClick?.(props)}
+            />
+          ))}
+        </RechartsBarChart>
+      </ResponsiveContainer>
+    </ChartContainer>
   );
 };
