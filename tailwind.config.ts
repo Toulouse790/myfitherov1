@@ -82,6 +82,9 @@ export default {
         'body': '16px',
         'caption': '14px',
       },
+      scale: {
+        '98': '0.98',
+      },
       keyframes: {
         "fade-up": {
           "0%": { opacity: "0", transform: "translateY(10px)" },
