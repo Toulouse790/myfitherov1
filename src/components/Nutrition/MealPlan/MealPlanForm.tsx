@@ -12,13 +12,12 @@ interface MealPlanFormProps {
 }
 
 export const MealPlanForm = ({ onGenerate }: MealPlanFormProps) => {
-  const [duration, setDuration] = useState("7");
   const [dietType, setDietType] = useState("balanced");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onGenerate({
-      duration,
+      duration: "7", // Default duration, will be overridden by parent component
       dietType,
     });
   };
@@ -27,24 +26,6 @@ export const MealPlanForm = ({ onGenerate }: MealPlanFormProps) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <Card className="p-4">
         <div className="space-y-4">
-          <div>
-            <Label>Durée du plan</Label>
-            <RadioGroup value={duration} onValueChange={setDuration} className="mt-2">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="7" id="7days" />
-                <Label htmlFor="7days">7 jours</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="14" id="14days" />
-                <Label htmlFor="14days">14 jours</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="30" id="30days" />
-                <Label htmlFor="30days">30 jours</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
           <div>
             <Label>Type de régime</Label>
             <RadioGroup value={dietType} onValueChange={setDietType} className="mt-2">
