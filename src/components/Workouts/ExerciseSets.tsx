@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { ExerciseTypeView } from './ExerciseTypeView';
 
 export interface ExerciseSetsProps {
   exerciseId: string;
@@ -7,25 +8,17 @@ export interface ExerciseSetsProps {
 }
 
 export const ExerciseSets = ({ exerciseId, exerciseName, onComplete }: ExerciseSetsProps) => {
-  const [difficulty, setDifficulty] = useState('moderate');
-  const [notes, setNotes] = useState('');
-  const [calories, setCalories] = useState(0);
-
-  const handleComplete = async () => {
-    await onComplete(exerciseId, exerciseName, difficulty, notes, calories);
-  };
+  // Détermine si l'exercice est cardio basé sur son nom
+  const isCardio = exerciseName.toLowerCase().includes('cardio') || 
+                  exerciseName.toLowerCase().includes('course') ||
+                  exerciseName.toLowerCase().includes('vélo') ||
+                  exerciseName.toLowerCase().includes('natation');
 
   return (
-    <div>
-      <h2>{exerciseName}</h2>
-      <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-        <option value="easy">Easy</option>
-        <option value="moderate">Moderate</option>
-        <option value="hard">Hard</option>
-      </select>
-      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Notes" />
-      <input type="number" value={calories} onChange={(e) => setCalories(Number(e.target.value))} placeholder="Calories burned" />
-      <button onClick={handleComplete}>Complete</button>
-    </div>
+    <ExerciseTypeView
+      exerciseType={isCardio ? 'cardio' : 'strength'}
+      exerciseName={exerciseName}
+      onComplete={onComplete}
+    />
   );
 };
