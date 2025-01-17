@@ -1,70 +1,73 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from "react";
 
 interface MealPlanFormProps {
-  durationDays: string;
-  maxBudget: string;
-  isGenerating: boolean;
-  onDurationChange: (value: string) => void;
-  onBudgetChange: (value: string) => void;
-  onGenerate: () => void;
+  onGenerate: (preferences: {
+    duration: string;
+    dietType: string;
+  }) => void;
 }
 
-export const MealPlanForm = ({
-  durationDays,
-  maxBudget,
-  isGenerating,
-  onDurationChange,
-  onBudgetChange,
-  onGenerate,
-}: MealPlanFormProps) => {
+export const MealPlanForm = ({ onGenerate }: MealPlanFormProps) => {
+  const [duration, setDuration] = useState("7");
+  const [dietType, setDietType] = useState("balanced");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onGenerate({
+      duration,
+      dietType,
+    });
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="duration">Durée du plan</Label>
-          <Select value={durationDays} onValueChange={onDurationChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Sélectionner la durée" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7">7 jours</SelectItem>
-              <SelectItem value="14">14 jours</SelectItem>
-              <SelectItem value="30">30 jours</SelectItem>
-              <SelectItem value="60">60 jours</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <Card className="p-4">
+        <div className="space-y-4">
+          <div>
+            <Label>Durée du plan</Label>
+            <RadioGroup value={duration} onValueChange={setDuration} className="mt-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="7" id="7days" />
+                <Label htmlFor="7days">7 jours</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="14" id="14days" />
+                <Label htmlFor="14days">14 jours</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="30" id="30days" />
+                <Label htmlFor="30days">30 jours</Label>
+              </div>
+            </RadioGroup>
+          </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="budget">Budget maximum (€)</Label>
-          <Input
-            id="budget"
-            type="number"
-            value={maxBudget}
-            onChange={(e) => onBudgetChange(e.target.value)}
-            placeholder="Budget en euros"
-          />
+          <div>
+            <Label>Type de régime</Label>
+            <RadioGroup value={dietType} onValueChange={setDietType} className="mt-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="balanced" id="balanced" />
+                <Label htmlFor="balanced">Équilibré</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="highProtein" id="highProtein" />
+                <Label htmlFor="highProtein">Riche en protéines</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="lowCarb" id="lowCarb" />
+                <Label htmlFor="lowCarb">Faible en glucides</Label>
+              </div>
+            </RadioGroup>
+          </div>
         </div>
-      </div>
+      </Card>
 
-      <Button
-        onClick={onGenerate}
-        className="w-full"
-        disabled={isGenerating}
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Génération en cours...
-          </>
-        ) : (
-          "Générer un nouveau plan"
-        )}
+      <Button type="submit" className="w-full">
+        Générer mon plan
       </Button>
-    </div>
+    </form>
   );
 };
