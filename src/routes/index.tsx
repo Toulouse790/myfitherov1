@@ -10,6 +10,8 @@ import NutritionPage from "@/pages/Nutrition";
 import SleepPage from "@/pages/Sleep";
 import SuggestionsPage from "@/pages/Suggestions";
 import WorkoutGeneratePage from "@/pages/WorkoutGenerate";
+import StatsPage from "@/pages/Stats";
+import ProfilePage from "@/pages/Profile";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -70,6 +72,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <SleepPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "stats",
+        element: (
+          <ProtectedRoute>
+            <StatsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         ),
       },
