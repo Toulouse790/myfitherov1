@@ -561,6 +561,48 @@ export type Database = {
           },
         ]
       }
+      meal_suggestions: {
+        Row: {
+          calories: number
+          carbs: number
+          created_at: string
+          diet_types: string[] | null
+          fats: number
+          id: string
+          ingredients: Json
+          meal_type: string
+          name: string
+          preparation: string | null
+          proteins: number
+        }
+        Insert: {
+          calories: number
+          carbs: number
+          created_at?: string
+          diet_types?: string[] | null
+          fats: number
+          id?: string
+          ingredients?: Json
+          meal_type: string
+          name: string
+          preparation?: string | null
+          proteins: number
+        }
+        Update: {
+          calories?: number
+          carbs?: number
+          created_at?: string
+          diet_types?: string[] | null
+          fats?: number
+          id?: string
+          ingredients?: Json
+          meal_type?: string
+          name?: string
+          preparation?: string | null
+          proteins?: number
+        }
+        Relationships: []
+      }
       muscle_measurements: {
         Row: {
           biceps_left_cm: number | null
