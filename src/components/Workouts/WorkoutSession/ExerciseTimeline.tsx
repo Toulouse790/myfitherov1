@@ -7,6 +7,38 @@ interface ExerciseTimelineProps {
   currentExerciseIndex: number;
 }
 
+const getExerciseTips = (exerciseName: string): string[] => {
+  const tips: Record<string, string[]> = {
+    "Développé couché": [
+      "Gardez vos omoplates serrées contre le banc",
+      "Les pieds doivent rester bien ancrés au sol",
+      "Descendez la barre jusqu'à ce qu'elle touche légèrement votre poitrine"
+    ],
+    "Squat": [
+      "Gardez le dos droit et la poitrine haute",
+      "Les genoux doivent suivre la direction des orteils",
+      "Descendez jusqu'à ce que vos cuisses soient parallèles au sol"
+    ],
+    "Tractions": [
+      "Commencez avec une prise légèrement plus large que les épaules",
+      "Engagez vos muscles dorsaux avant de tirer",
+      "Montez jusqu'à ce que votre menton dépasse la barre"
+    ],
+    "Curl biceps": [
+      "Gardez vos coudes près du corps",
+      "Évitez de balancer le corps",
+      "Contractez bien les biceps en haut du mouvement"
+    ]
+  };
+
+  // Si l'exercice n'est pas dans la liste, retourner des conseils généraux
+  return tips[exerciseName] || [
+    "Maintenez une respiration régulière",
+    "Gardez une bonne posture",
+    "Contrôlez le mouvement pendant toute l'exécution"
+  ];
+};
+
 export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTimelineProps) => {
   const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
 
@@ -53,9 +85,9 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
                 <div className="space-y-2">
                   <h4 className="font-medium">Conseils pour {exercise}</h4>
                   <ul className="list-disc list-inside text-sm text-muted-foreground">
-                    <li>Gardez une bonne posture</li>
-                    <li>Respirez régulièrement</li>
-                    <li>Contrôlez le mouvement</li>
+                    {getExerciseTips(exercise).map((tip, tipIndex) => (
+                      <li key={tipIndex}>{tip}</li>
+                    ))}
                   </ul>
                 </div>
               </motion.div>
