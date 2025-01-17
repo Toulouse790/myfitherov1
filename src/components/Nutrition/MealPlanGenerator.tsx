@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Lock, CalendarCheck, Dumbbell, Apple } from "lucide-react";
+import { Lock, CalendarCheck } from "lucide-react";
 import { MealPlanForm } from "./MealPlan/MealPlanForm";
 import { GeneratedPlanDisplay } from "./MealPlan/GeneratedPlanDisplay";
 import { ActiveMealPlans } from "./MealPlan/ActiveMealPlans";
@@ -49,17 +49,6 @@ export const MealPlanGenerator = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Dumbbell className="h-4 w-4" />
-                <span>Adapté à vos objectifs</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Apple className="h-4 w-4" />
-                <span>Basé sur vos préférences</span>
-              </div>
-            </div>
-
             <div className="flex justify-center gap-2 mb-4">
               {[7, 14, 30].map((days) => (
                 <Button
