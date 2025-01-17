@@ -1,76 +1,40 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/use-auth";
-import { DayMeals } from "./DayMeals";
-import { ShoppingList } from "./ShoppingList";
-import { defaultMeals } from "@/data/meals/mealPlanGenerator";
-import { supabase } from "@/integrations/supabase/client";
-import type { ActiveMealPlansProps, MealPlanData } from "./types";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ShoppingBag } from "lucide-react";
 
-export const ActiveMealPlans = ({ shoppingList = [] }: ActiveMealPlansProps) => {
-  const { user } = useAuth();
+interface ActiveMealPlansProps {
+  shoppingList: string[];
+}
 
-  const { data: activePlans } = useQuery({
-    queryKey: ['active-meal-plans', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-
-      const { data, error } = await supabase
-        .from('meal_plans')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('end_date', new Date().toISOString())
-        .order('start_date', { ascending: false })
-        .limit(1);
-
-      if (error) throw error;
-      return data?.[0] || null;
-    },
-    enabled: !!user?.id
-  });
-
-  if (!activePlans) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Plan en cours</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Aucun plan actif. Générez un nouveau plan pour commencer.
-          </p>
-        </CardContent>
-      </Card>
-    );
+export const ActiveMealPlans = ({ shoppingList }: ActiveMealPlansProps) => {
+  if (!shoppingList || shoppingList.length === 0) {
+    return null;
   }
 
-  const planData = activePlans.plan_data as Record<string, MealPlanData>;
-  const startDate = new Date(activePlans.start_date);
-  const endDate = new Date(activePlans.end_date);
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Plan en cours</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Du {startDate.toLocaleDateString()} au {endDate.toLocaleDateString()}
-          </p>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-lg font-medium">
+            Liste de courses
+          </CardTitle>
+          <ShoppingBag className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
-        <CardContent className="space-y-6">
-          {Object.entries(planData).map(([day, meals], index) => (
-            <DayMeals 
-              key={day}
-              day={day} 
-              meals={meals} 
-              isFirst={index === 0}
-              mealTitles={defaultMeals}
-            />
-          ))}
+        <CardContent>
+          <ScrollArea className="h-[300px] pr-4">
+            <ul className="space-y-2">
+              {shoppingList.map((item, index) => (
+                <li 
+                  key={index} 
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent"
+                >
+                  <span className="text-sm">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </ScrollArea>
         </CardContent>
       </Card>
-
-      {shoppingList.length > 0 && <ShoppingList items={shoppingList} />}
     </div>
   );
 };
