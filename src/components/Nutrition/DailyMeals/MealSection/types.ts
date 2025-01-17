@@ -4,6 +4,10 @@ export interface MealContentProps {
     name: string;
     calories: number;
     proteins: number;
+    components?: Array<{
+      name: string;
+      portion: string;
+    }>;
   }>;
   generatedMeal?: {
     name: string;
