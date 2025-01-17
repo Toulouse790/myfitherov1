@@ -12,15 +12,16 @@ export const NutritionChart = () => {
   // Format data for the chart - using consumed nutrients for actual values
   const chartData = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
-    date.setDate(date.getDate() - i);
-    const formattedDate = date.toLocaleDateString();
+    date.setDate(date.getDate() - (6 - i)); // Start from 6 days ago to today
+    const dayName = new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(date);
+    const capitalizedDay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
     
     return {
-      name: formattedDate,
+      name: capitalizedDay,
       prévu: dailyTargets.calories,
-      réalisé: i === 0 ? consumedNutrients.calories : 0 // Only today has real data
+      réalisé: i === 6 ? consumedNutrients.calories : 0 // Only today (last day) has real data
     };
-  }).reverse();
+  });
 
   const InfoCard = ({ targetValue, actualValue, date }: { targetValue: number, actualValue: number, date: string }) => {
     const percentage = (actualValue / targetValue) * 100;
