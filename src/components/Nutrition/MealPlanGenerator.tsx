@@ -9,6 +9,8 @@ import { useMealPlanSave } from "@/hooks/use-meal-plan-save";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface MealPlanPreferences {
   duration: string;
@@ -20,6 +22,8 @@ export const MealPlanGenerator = () => {
   const { generatedPlan, generateMealPlan } = useMealPlanGenerator();
   const { saveMealPlanToJournal } = useMealPlanSave();
   const [selectedDuration, setSelectedDuration] = useState(7);
+  const [shoppingList, setShoppingList] = useState<string[]>([]);
+  const [showShoppingList, setShowShoppingList] = useState(false);
 
   const handleGenerateMealPlan = async (preferences: MealPlanPreferences) => {
     setIsGenerating(true);
@@ -38,7 +42,6 @@ export const MealPlanGenerator = () => {
     try {
       console.log("Generating shopping list for", selectedDuration, "days");
       
-      // Récupérer le plan de repas actif
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast({
@@ -72,8 +75,6 @@ export const MealPlanGenerator = () => {
       }
 
       const planData = plans[0].plan_data;
-      
-      // Générer la liste de courses à partir du plan
       const shoppingList = new Map();
 
       planData.forEach(day => {
@@ -99,13 +100,15 @@ export const MealPlanGenerator = () => {
         });
       });
 
-      // Formater la liste pour l'affichage
       const formattedList = Array.from(shoppingList.entries())
         .map(([item, details]) => `${item}: ${details.amount}${details.unit}`);
 
+      setShoppingList(formattedList);
+      setShowShoppingList(true);
+
       toast({
         title: "Liste de courses générée",
-        description: formattedList.join('\n'),
+        description: "Votre liste de courses est prête !",
       });
 
     } catch (error) {
@@ -159,6 +162,23 @@ export const MealPlanGenerator = () => {
       >
         Générer ta liste de courses
       </Button>
+
+      <Dialog open={showShoppingList} onOpenChange={setShowShoppingList}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Liste de courses</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[400px] p-4">
+            <ul className="space-y-2">
+              {shoppingList.map((item, index) => (
+                <li key={index} className="flex items-center gap-2">
+                  <span className="text-sm">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
       <ActiveMealPlans />
 
