@@ -30,10 +30,11 @@ export const ExerciseSection = ({
       </div>
 
       <ExerciseSets
-        exercises={[exerciseName]}
-        onExerciseComplete={onExerciseComplete}
-        currentExerciseIndex={0}
-        sessionId={sessionId}
+        exerciseId={sessionId || ''}
+        exerciseName={exerciseName}
+        onComplete={async (exerciseId, exerciseName, difficulty, notes, calories) => {
+          onExerciseComplete();
+        }}
       />
     </div>
   );

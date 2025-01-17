@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-interface ExerciseSetsProps {
+export interface ExerciseSetsProps {
   exerciseId: string;
   exerciseName: string;
   onComplete: (exerciseId: string, exerciseName: string, difficulty: string, notes: string, calories: number) => Promise<void>;

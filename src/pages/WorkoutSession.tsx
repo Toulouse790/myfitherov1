@@ -163,10 +163,11 @@ export default function WorkoutSession() {
         >
           <Card className="p-6">
             <ExerciseSets
-              exercises={exercises}
-              currentExerciseIndex={currentExerciseIndex}
-              onExerciseComplete={handleExerciseComplete}
-              sessionId={sessionId}
+              exerciseId={sessionId || ''}
+              exerciseName={exercises[currentExerciseIndex]}
+              onComplete={async (exerciseId, exerciseName, difficulty, notes, calories) => {
+                await handleExerciseComplete(currentExerciseIndex);
+              }}
             />
           </Card>
         </motion.div>
