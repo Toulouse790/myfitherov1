@@ -10,70 +10,51 @@ interface ExerciseTimelineProps {
 const getExerciseTips = (exerciseName: string): string[] => {
   const tips: Record<string, string[]> = {
     "Développé couché": [
-      "Gardez vos coudes à 45 degrés par rapport à votre corps",
-      "Expirez en poussant, inspirez en descendant",
-      "Maintenez vos pieds bien ancrés et les fessiers contractés",
-      "Descendez la barre jusqu'à ce qu'elle effleure votre poitrine",
-      "Concentrez-vous sur la contraction des pectoraux"
+      "Coudes à 45°, serrez les omoplates",
+      "Touchez la poitrine, poussez explosif",
+      "Expirez en poussant"
     ],
     "Squat": [
-      "Gardez le regard droit devant vous",
-      "Descendez comme si vous alliez vous asseoir sur une chaise",
-      "Les genoux ne doivent pas dépasser la pointe des pieds",
-      "Engagez vos abdominaux pendant tout le mouvement",
-      "Poussez à travers vos talons pour remonter"
+      "Regard horizontal, dos droit",
+      "Genoux alignés avec orteils",
+      "Poussez dans les talons"
     ],
     "Tractions": [
-      "Commencez avec une prise légèrement plus large que les épaules",
-      "Rétractez vos omoplates avant de tirer",
-      "Gardez vos coudes près du corps pendant le mouvement",
-      "Concentrez-vous sur l'engagement du dos plutôt que des bras",
-      "Contrôlez la descente pour maximiser le travail musculaire"
+      "Rétractez les omoplates avant de tirer",
+      "Tirez avec les coudes vers le bas",
+      "Contrôlez la descente"
     ],
     "Curl biceps": [
-      "Gardez vos coudes collés au corps sans bouger",
-      "Montez le poids en contractant activement vos biceps",
-      "Faites une pause d'une seconde en haut du mouvement",
-      "Contrôlez la phase négative (descente)",
-      "Évitez tout balancement du corps"
+      "Coudes fixes contre le corps",
+      "Contractez fort en haut",
+      "Pas de balancier"
     ],
     "Soulevé de terre": [
-      "Gardez la barre proche du corps tout au long du mouvement",
-      "Commencez avec les hanches plus basses que les épaules",
-      "Engagez votre latis avant de soulever",
-      "Poussez avec vos jambes en gardant le dos droit",
-      "Verrouillez vos hanches et vos genoux au sommet"
+      "Barre collée au corps",
+      "Poussez avec les jambes",
+      "Gardez le dos verrouillé"
     ],
     "Développé épaules": [
-      "Gardez vos poignets alignés avec vos avant-bras",
-      "Évitez d'arquer votre dos pendant le mouvement",
-      "Expirez en poussant vers le haut",
-      "Maintenez vos abdominaux engagés",
-      "Descendez jusqu'à ce que vos bras soient parallèles au sol"
+      "Abdos gainés, dos droit",
+      "Poussez à la verticale",
+      "Contrôlez la descente"
     ],
     "Rowing barre": [
-      "Gardez votre dos droit et votre poitrine haute",
-      "Tirez la barre vers votre nombril",
-      "Serrez vos omoplates à la fin du mouvement",
-      "Contrôlez la descente du poids",
-      "Évitez de balancer votre corps"
+      "Tirez vers le nombril",
+      "Serrez les omoplates",
+      "Dos fixe, pas de balancier"
     ],
     "Extensions triceps": [
-      "Gardez vos coudes près de votre tête",
-      "Ne laissez pas vos coudes s'écarter pendant le mouvement",
-      "Concentrez-vous sur la contraction des triceps",
-      "Faites une pause en position haute",
-      "Descendez jusqu'à ce que vos avant-bras touchent vos biceps"
+      "Coudes fixes près de la tête",
+      "Extension complète en haut",
+      "Contrôlez la descente"
     ]
   };
 
-  // Si l'exercice n'est pas dans la liste, retourner des conseils généraux mais toujours utiles
   return tips[exerciseName] || [
-    "Maintenez une respiration régulière et contrôlée",
-    "Concentrez-vous sur la qualité plutôt que la quantité",
-    "Gardez une bonne posture pendant tout l'exercice",
-    "Écoutez votre corps et respectez ses limites",
-    "Restez concentré sur les muscles ciblés"
+    "Respiration fluide",
+    "Posture stable",
+    "Mouvement contrôlé"
   ];
 };
 
