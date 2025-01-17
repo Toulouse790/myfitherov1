@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check, ShoppingBag, X } from "lucide-react";
 import { MealContentProps } from "./types";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const MealContent = ({ 
   mealEntries, 
@@ -10,6 +12,44 @@ export const MealContent = ({
   onMealStatus,
   mealType 
 }: MealContentProps) => {
+  const { data: mealPlan } = useQuery({
+    queryKey: ['meal-plan'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('meal_plans')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) {
+        console.error('Error loading meal plan:', error);
+        return null;
+      }
+
+      return data;
+    }
+  });
+
+  const getCurrentDayMeal = () => {
+    if (!mealPlan?.plan_data) return generatedMeal;
+
+    const today = new Date();
+    const startDate = new Date(mealPlan.start_date);
+    const dayDiff = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (dayDiff < 0 || dayDiff >= mealPlan.plan_data.length) return generatedMeal;
+
+    const dayMeals = mealPlan.plan_data[dayDiff];
+    return dayMeals[mealType];
+  };
+
+  const currentMeal = getCurrentDayMeal();
+
   return (
     <div className="p-4 bg-background/50 rounded-lg space-y-4">
       {/* Existing entries */}
@@ -31,21 +71,21 @@ export const MealContent = ({
       )}
 
       {/* Generated meal suggestion */}
-      {generatedMeal && (
+      {currentMeal && (
         <div className="space-y-3">
           <Card className="p-3">
             <div className="space-y-2">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium">{generatedMeal.name}</h4>
+                  <h4 className="font-medium">{currentMeal.name}</h4>
                   <p className="text-sm text-muted-foreground">
-                    {generatedMeal.calories} kcal | {generatedMeal.proteins}g protéines
+                    {currentMeal.calories} kcal | {currentMeal.proteins}g protéines
                   </p>
                 </div>
               </div>
 
               {/* Shopping list section */}
-              {generatedMeal.quantities && generatedMeal.quantities.length > 0 && (
+              {currentMeal.quantities && currentMeal.quantities.length > 0 && (
                 <div className="mt-3 border-t pt-3">
                   <div className="flex items-center gap-2 mb-2">
                     <ShoppingBag className="h-4 w-4 text-muted-foreground" />
@@ -53,7 +93,7 @@ export const MealContent = ({
                   </div>
                   <ScrollArea className="h-[100px] w-full">
                     <ul className="space-y-1">
-                      {generatedMeal.quantities.map((item, index) => (
+                      {currentMeal.quantities.map((item, index) => (
                         <li key={index} className="text-sm flex items-center gap-2">
                           <span className="text-muted-foreground">•</span>
                           {item.item}: {item.amount}
@@ -65,9 +105,16 @@ export const MealContent = ({
               )}
 
               {/* Preparation instructions if available */}
-              {generatedMeal.preparation && (
+              {currentMeal.preparation && (
                 <p className="text-sm text-muted-foreground mt-2">
-                  {generatedMeal.preparation}
+                  {currentMeal.preparation}
+                </p>
+              )}
+
+              {/* Plan duration info */}
+              {mealPlan && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Jour {Math.floor((new Date().getTime() - new Date(mealPlan.start_date).getTime()) / (1000 * 60 * 60 * 24)) + 1} sur {mealPlan.plan_data.length}
                 </p>
               )}
             </div>

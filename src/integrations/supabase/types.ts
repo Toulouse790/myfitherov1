@@ -363,6 +363,48 @@ export type Database = {
         }
         Relationships: []
       }
+      diet_type_configurations: {
+        Row: {
+          carbs_multiplier: number | null
+          created_at: string
+          description: string | null
+          diet_type: string
+          fats_multiplier: number | null
+          id: string
+          name: string
+          protein_multiplier: number | null
+          recommended_foods: string[] | null
+          restricted_foods: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          carbs_multiplier?: number | null
+          created_at?: string
+          description?: string | null
+          diet_type: string
+          fats_multiplier?: number | null
+          id?: string
+          name: string
+          protein_multiplier?: number | null
+          recommended_foods?: string[] | null
+          restricted_foods?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          carbs_multiplier?: number | null
+          created_at?: string
+          description?: string | null
+          diet_type?: string
+          fats_multiplier?: number | null
+          id?: string
+          name?: string
+          protein_multiplier?: number | null
+          recommended_foods?: string[] | null
+          restricted_foods?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       exercise_sets: {
         Row: {
           calories_burned: number | null

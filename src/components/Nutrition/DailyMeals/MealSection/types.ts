@@ -1,14 +1,17 @@
-export interface MealSectionProps {
-  type: string;
-  label: string;
-  mealEntries: any[];
+export interface MealContentProps {
+  mealEntries: Array<{
+    id: string;
+    name: string;
+    calories: number;
+    proteins: number;
+  }>;
   generatedMeal?: {
     name: string;
     calories: number;
     proteins: number;
-    notes?: string;
     quantities?: Array<{ item: string; amount: string; }>;
+    preparation?: string;
   };
-  isExpanded: boolean;
-  onToggle: () => void;
+  onMealStatus?: (status: 'taken' | 'skipped') => void;
+  mealType: string;
 }
