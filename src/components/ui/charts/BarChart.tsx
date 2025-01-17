@@ -12,6 +12,8 @@ export interface BarChartProps {
   showGridLines?: boolean;
   startEndOnly?: boolean;
   showAnimation?: boolean;
+  minValue?: number;
+  maxValue?: number;
   onValueClick?: (props: any) => void;
 }
 
@@ -26,6 +28,8 @@ export const BarChart = ({
   showGridLines = true,
   startEndOnly = false,
   showAnimation = true,
+  minValue,
+  maxValue,
   onValueClick
 }: BarChartProps) => {
   const chartConfig = Object.fromEntries(
@@ -58,6 +62,7 @@ export const BarChart = ({
             fontSize={12}
             tickMargin={8}
             tickFormatter={valueFormatter}
+            domain={[minValue || 'auto', maxValue || 'auto']}
           />
           <Tooltip 
             cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
