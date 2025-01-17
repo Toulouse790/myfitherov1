@@ -28,10 +28,12 @@ export const MealPlanGenerator = () => {
   const handleGenerateMealPlan = async (preferences: MealPlanPreferences) => {
     setIsGenerating(true);
     try {
-      const plan = await generateMealPlan();
+      const plan = await generateMealPlan(selectedDuration);
       if (plan?.[0]) {
         console.log("Generated plan to save:", plan[0]);
         await saveMealPlanToJournal(plan[0], preferences.duration);
+        // Generate shopping list automatically after plan generation
+        await handleGenerateShoppingList();
       }
     } finally {
       setIsGenerating(false);
@@ -156,17 +158,16 @@ export const MealPlanGenerator = () => {
         </CardContent>
       </Card>
 
-      <GenerateShoppingListButton 
-        onClick={handleGenerateShoppingList}
-        shoppingList={shoppingList}
-      />
+      {shoppingList.length > 0 && (
+        <ShoppingList items={shoppingList} />
+      )}
 
       <ActiveMealPlans shoppingList={shoppingList} />
 
       {generatedPlan && (
         <GeneratedPlanDisplay 
           generatedPlan={generatedPlan}
-          durationDays={generatedPlan[0]?.duration || "7"}
+          durationDays={selectedDuration.toString()}
         />
       )}
     </div>
