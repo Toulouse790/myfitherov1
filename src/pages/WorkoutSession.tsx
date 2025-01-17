@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Dumbbell } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dumbbell, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -119,6 +120,27 @@ export default function WorkoutSession() {
       <div className="min-h-screen flex items-center justify-center pt-40">
         <div className="animate-spin">
           <Dumbbell className="h-8 w-8" />
+        </div>
+      </div>
+    );
+  }
+
+  if (exercises.length === 0) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container max-w-4xl mx-auto px-4 pt-40 pb-8 space-y-6">
+          <Card className="p-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <AlertCircle className="h-12 w-12 text-muted-foreground" />
+              <h2 className="text-xl font-semibold">Aucun exercice trouvé</h2>
+              <p className="text-muted-foreground">
+                Cette séance d'entraînement ne contient aucun exercice.
+              </p>
+              <Button onClick={() => navigate('/workouts')}>
+                Retourner aux entraînements
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     );
