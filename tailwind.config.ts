@@ -7,7 +7,7 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1rem",
       screens: {
         "2xl": "1400px",
       },
@@ -16,6 +16,54 @@ export default {
       fontFamily: {
         sans: ['SF Pro Display', 'Roboto', 'system-ui', 'sans-serif'],
         heading: ['SF Pro Display', 'Roboto', 'sans-serif'],
+      },
+      fontSize: {
+        'title': '20px',
+        'subtitle': '16px',
+        'body': '14px',
+        'caption': '12px',
+      },
+      spacing: {
+        '1': '4px',
+        '2': '8px',
+        '3': '12px',
+        '4': '16px',
+        '5': '20px',
+        '6': '24px',
+        'touch': '44px',
+      },
+      borderRadius: {
+        'button': '8px',
+        'card': '12px',
+        'progress': '3px',
+      },
+      boxShadow: {
+        'card': '0 2px 8px rgba(0, 0, 0, 0.1)',
+      },
+      minHeight: {
+        'card': '64px',
+      },
+      maxWidth: {
+        'button': '280px',
+      },
+      minWidth: {
+        'button': '120px',
+      },
+      height: {
+        'button': '44px',
+        'progress': '6px',
+      },
+      padding: {
+        'button-x': '16px',
+        'button-y': '12px',
+        'card': '16px',
+      },
+      margin: {
+        'section': '24px',
+        'card': '12px',
+      },
+      strokeWidth: {
+        '1.5': '1.5',
       },
       colors: {
         // Primary Colors
@@ -57,52 +105,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-      },
-      spacing: {
-        '1': '8px',
-        '2': '16px',
-        '3': '24px',
-        '4': '32px',
-        '5': '40px',
-        '6': '48px',
-      },
-      borderRadius: {
-        'button': '12px',
-        'card': '16px',
-        lg: "1rem",
-        md: "0.75rem",
-        sm: "0.5rem",
-      },
-      boxShadow: {
-        'card': '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
-      },
-      fontSize: {
-        'title': '24px',
-        'subtitle': '18px',
-        'body': '16px',
-        'caption': '14px',
-      },
-      scale: {
-        '98': '0.98',
-      },
-      keyframes: {
-        "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        "button-pulse": {
-          "0%, 100%": { transform: "scale(1)" },
-          "50%": { transform: "scale(0.98)" },
-        },
-        "progress": {
-          "0%": { width: "0%" },
-          "100%": { width: "100%" },
-        }
-      },
-      animation: {
-        "fade-up": "fade-up 0.3s ease-out",
-        "button-pulse": "button-pulse 0.3s ease-in-out",
-        "progress": "progress 0.3s ease-out",
       },
     },
   },

@@ -66,9 +66,7 @@
     --input: 215 25% 32%;
     --ring: 0 0% 100%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -82,42 +80,54 @@
   }
 
   h1 { 
-    @apply text-4xl md:text-5xl lg:text-6xl mb-6; 
+    @apply text-title font-bold mb-6;
   }
   
   h2 { 
-    @apply text-2xl md:text-3xl lg:text-4xl mb-4; 
+    @apply text-subtitle font-semibold mb-4;
   }
   
   h3 { 
-    @apply text-xl md:text-2xl lg:text-3xl mb-3; 
+    @apply text-subtitle font-medium mb-3;
   }
   
   p { 
-    @apply text-base md:text-lg leading-relaxed mb-4; 
+    @apply text-body font-normal mb-4;
   }
   
   small { 
-    @apply text-sm md:text-base font-light; 
+    @apply text-caption font-light;
   }
 
   button {
-    @apply rounded-button transition-all duration-300 hover:scale-[0.98] hover:opacity-90;
+    @apply h-button min-w-button max-w-button rounded-button px-button-x py-button-y text-body
+           transition-all duration-300 hover:scale-[0.98] hover:opacity-90;
   }
 
   input, textarea {
-    @apply rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+    @apply rounded-button border border-input bg-background px-4 py-3 text-body
+           ring-offset-background placeholder:text-muted-foreground
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
   }
 
   .card {
-    @apply rounded-xl shadow-lg bg-card p-6 transition-all duration-300 hover:shadow-xl;
+    @apply min-h-card rounded-card shadow-card bg-card p-card 
+           transition-all duration-300 hover:shadow-lg;
   }
 
   .progress-bar {
-    @apply h-2 rounded-full bg-muted overflow-hidden;
+    @apply h-progress rounded-progress bg-muted overflow-hidden;
   }
 
   .progress-bar-fill {
     @apply h-full bg-secondary animate-progress;
+  }
+
+  .icon {
+    @apply w-6 h-6 stroke-[1.5];
+  }
+
+  .nav-icon {
+    @apply w-5 h-5 stroke-[1.5];
   }
 }
