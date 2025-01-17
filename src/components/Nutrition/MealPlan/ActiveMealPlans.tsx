@@ -3,8 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { format, addDays } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { CalendarRange } from "lucide-react";
 
 interface ShoppingListItem {
@@ -14,8 +12,6 @@ interface ShoppingListItem {
 }
 
 export const ActiveMealPlans = () => {
-  const [selectedDuration, setSelectedDuration] = useState(7); // Par défaut 7 jours
-
   const { data: activePlans, isLoading } = useQuery({
     queryKey: ['active-meal-plans'],
     queryFn: async () => {
@@ -43,10 +39,7 @@ export const ActiveMealPlans = () => {
   const generateShoppingList = (planData: any[]): ShoppingListItem[] => {
     const ingredients: { [key: string]: { amount: number; unit: string; category: string } } = {};
     
-    // Ne prendre que les jours correspondant à la durée sélectionnée
-    const selectedDays = planData.slice(0, selectedDuration);
-    
-    selectedDays.forEach(day => {
+    planData.forEach(day => {
       Object.values(day).forEach((meal: any) => {
         if (meal.quantities) {
           meal.quantities.forEach((item: any) => {
@@ -104,31 +97,14 @@ export const ActiveMealPlans = () => {
     return acc;
   }, {});
 
-  const endDate = addDays(new Date(activePlans[0].start_date), selectedDuration - 1);
-
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <CalendarRange className="h-5 w-5" />
-              Liste de courses du {format(new Date(activePlans[0].start_date), 'dd MMMM', { locale: fr })} au{' '}
-              {format(endDate, 'dd MMMM yyyy', { locale: fr })}
-            </CardTitle>
-            <div className="flex gap-2">
-              {[7, 14, 30].map((days) => (
-                <Button
-                  key={days}
-                  variant={selectedDuration === days ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedDuration(days)}
-                >
-                  {days} jours
-                </Button>
-              ))}
-            </div>
-          </div>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <CalendarRange className="h-5 w-5" />
+            Liste de courses
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">

@@ -17,6 +17,7 @@ export const MealPlanGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const { generatedPlan, generateMealPlan } = useMealPlanGenerator();
   const { saveMealPlanToJournal } = useMealPlanSave();
+  const [selectedDuration, setSelectedDuration] = useState(7);
 
   const handleGenerateMealPlan = async (preferences: MealPlanPreferences) => {
     setIsGenerating(true);
@@ -33,8 +34,6 @@ export const MealPlanGenerator = () => {
 
   return (
     <div className="space-y-4">
-      <ActiveMealPlans />
-
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -61,10 +60,36 @@ export const MealPlanGenerator = () => {
               </div>
             </div>
 
+            <div className="flex justify-center gap-2 mb-4">
+              {[7, 14, 30].map((days) => (
+                <Button
+                  key={days}
+                  variant={selectedDuration === days ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedDuration(days)}
+                >
+                  {days} jours
+                </Button>
+              ))}
+            </div>
+
             <MealPlanForm onGenerate={handleGenerateMealPlan} />
           </div>
         </CardContent>
       </Card>
+
+      <Button 
+        className="w-full"
+        variant="outline"
+        onClick={() => {
+          // Trigger shopping list generation with selected duration
+          console.log("Generating shopping list for", selectedDuration, "days");
+        }}
+      >
+        Générer ta liste de courses
+      </Button>
+
+      <ActiveMealPlans />
 
       {generatedPlan && (
         <GeneratedPlanDisplay 
