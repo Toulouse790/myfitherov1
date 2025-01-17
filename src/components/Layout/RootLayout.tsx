@@ -15,7 +15,7 @@ export const RootLayout = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 100); // Reduced threshold to show button earlier
+      setShowScrollTop(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -33,11 +33,11 @@ export const RootLayout = () => {
       {isWorkoutSession && showScrollTop && (
         <Button
           variant="secondary"
-          size="lg"
-          className="fixed bottom-20 right-4 rounded-full shadow-xl z-50 p-3 bg-primary hover:bg-primary/90"
+          size="icon"
+          className="fixed bottom-20 left-4 rounded-full shadow-lg z-50 w-8 h-8 bg-primary hover:bg-primary/90"
           onClick={scrollToTop}
         >
-          <ChevronUp className="h-6 w-6 text-primary-foreground" />
+          <ChevronUp className="h-4 w-4 text-primary-foreground" />
         </Button>
       )}
       <Toaster />
