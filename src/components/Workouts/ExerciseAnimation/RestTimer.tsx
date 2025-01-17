@@ -28,7 +28,8 @@ export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
     >
       <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary">
         <Timer className="h-6 w-6" />
-        <span>{restTime}s</span>
+        <span>{restTime}</span>
+        <span className="text-lg">s</span>
       </div>
       <div className="flex justify-center items-center gap-4">
         <Button
