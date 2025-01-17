@@ -5,9 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfDay, subDays, format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 export const NutritionChart = () => {
-  const { dailyTargets } = useDailyTargets();
+  const { dailyTargets, consumedNutrients } = useDailyTargets();
+  const { toast } = useToast();
   
   const { data: weeklyData } = useQuery({
     queryKey: ['food-journal-weekly'],
@@ -17,7 +20,7 @@ export const NutritionChart = () => {
 
       const { data: entries, error } = await supabase
         .from('food_journal_entries')
-        .select('calories, created_at')
+        .select('calories, carbs, fats, created_at')
         .gte('created_at', sevenDaysAgo.toISOString())
         .lte('created_at', today.toISOString());
 
@@ -27,9 +30,14 @@ export const NutritionChart = () => {
       }
 
       // Group entries by day
-      const dailyCalories = entries.reduce((acc, entry) => {
+      const dailyNutrients = entries.reduce((acc, entry) => {
         const day = startOfDay(new Date(entry.created_at)).toISOString();
-        acc[day] = (acc[day] || 0) + entry.calories;
+        if (!acc[day]) {
+          acc[day] = { calories: 0, carbs: 0, fats: 0 };
+        }
+        acc[day].calories += entry.calories;
+        acc[day].carbs += entry.carbs;
+        acc[day].fats += entry.fats;
         return acc;
       }, {});
 
@@ -37,14 +45,58 @@ export const NutritionChart = () => {
       return Array.from({ length: 7 }, (_, i) => {
         const date = subDays(today, 6 - i);
         const dayStr = date.toISOString();
+        const dayData = dailyNutrients[dayStr] || { calories: 0, carbs: 0, fats: 0 };
+        
+        // Determine color based on whether it's today and if targets are met
+        const isToday = i === 6;
+        const isExceeded = isToday && (
+          dayData.calories > dailyTargets.calories ||
+          dayData.carbs > dailyTargets.carbs ||
+          dayData.fats > dailyTargets.fats
+        );
+        const isTooLow = isToday && (
+          dayData.calories < dailyTargets.calories * 0.9
+        );
+
         return {
           name: format(date, 'EEE', { locale: fr }),
           target: dailyTargets.calories,
-          actual: dailyCalories[dayStr] || 0
+          actual: dayData.calories,
+          color: isExceeded || isTooLow ? "#ea384c" : "#1EAEDB"
         };
       });
     }
   });
+
+  // Effect to check nutrition goals and show toast
+  useEffect(() => {
+    if (consumedNutrients) {
+      const isCaloriesExceeded = consumedNutrients.calories > dailyTargets.calories;
+      const isCaloriesTooLow = consumedNutrients.calories < dailyTargets.calories * 0.9;
+      const isCarbsExceeded = consumedNutrients.carbs > dailyTargets.carbs;
+      const isFatsExceeded = consumedNutrients.fats > dailyTargets.fats;
+
+      if (isCaloriesExceeded || isCarbsExceeded || isFatsExceeded) {
+        toast({
+          title: "Attention",
+          description: "Vous avez dépassé vos objectifs nutritionnels journaliers",
+          variant: "destructive",
+        });
+      } else if (isCaloriesTooLow) {
+        toast({
+          title: "Attention",
+          description: "Vous n'avez pas atteint vos objectifs caloriques journaliers",
+          variant: "destructive",
+        });
+      } else if (consumedNutrients.calories >= dailyTargets.calories * 0.9 && 
+                 consumedNutrients.calories <= dailyTargets.calories) {
+        toast({
+          title: "Félicitations !",
+          description: "Vous avez atteint vos objectifs nutritionnels de manière équilibrée",
+        });
+      }
+    }
+  }, [consumedNutrients, dailyTargets, toast]);
 
   const data = weeklyData || Array(7).fill({ target: dailyTargets.calories, actual: 0 });
 
@@ -64,7 +116,7 @@ export const NutritionChart = () => {
               "target",
               "actual"
             ]}
-            colors={["#8B5CF6", "#A78BFA"]}
+            colors={["#9b87f5", "#1EAEDB"]}
             valueFormatter={(value: number) => `${value} kcal`}
             yAxisWidth={48}
             showLegend={true}
@@ -75,7 +127,7 @@ export const NutritionChart = () => {
               <div className="bg-white p-2 rounded-lg border shadow-sm">
                 <p className="text-sm font-medium">{props.payload[0]?.payload.name}</p>
                 <div className="space-y-1">
-                  <p className="text-purple-500">
+                  <p className={`${props.payload[1]?.value > props.payload[0]?.value ? "text-red-500" : "text-blue-500"}`}>
                     Calories: {props.payload[1]?.value} / {props.payload[0]?.value} kcal
                   </p>
                 </div>
