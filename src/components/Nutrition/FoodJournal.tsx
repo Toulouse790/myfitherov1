@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { FoodEntryForm } from "./FoodEntryForm";
 import { FoodEntryList } from "./FoodEntryList";
@@ -14,6 +13,7 @@ export const FoodJournal = () => {
     carbs,
     fats,
     weight,
+    notes,
     baseCalories,
     selectedCategory,
     setNewFood,
@@ -22,6 +22,7 @@ export const FoodJournal = () => {
     setCarbs,
     setFats,
     setWeight,
+    setNotes,
     setSelectedCategory,
     handleAddEntry,
     handleDeleteEntry,
@@ -55,6 +56,7 @@ export const FoodJournal = () => {
           carbs={carbs}
           fats={fats}
           weight={weight}
+          notes={notes}
           baseCalories={baseCalories}
           selectedCategory={selectedCategory}
           onFoodChange={setNewFood}
@@ -63,6 +65,7 @@ export const FoodJournal = () => {
           onCarbsChange={setCarbs}
           onFatsChange={setFats}
           onWeightChange={setWeight}
+          onNotesChange={setNotes}
           onAddEntry={handleAddEntryWithLogging}
         />
         

@@ -25,6 +25,7 @@ export const DailyMeals = () => {
   const [carbs, setCarbs] = useState("");
   const [fats, setFats] = useState("");
   const [weight, setWeight] = useState("");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     const checkMealValidations = async () => {
@@ -181,6 +182,7 @@ export const DailyMeals = () => {
             carbs={carbs}
             fats={fats}
             weight={weight}
+            notes={notes}
             baseCalories={0}
             selectedCategory=""
             onFoodChange={setNewFood}
@@ -189,6 +191,7 @@ export const DailyMeals = () => {
             onCarbsChange={setCarbs}
             onFatsChange={setFats}
             onWeightChange={setWeight}
+            onNotesChange={setNotes}
             onAddEntry={handleAddEntry}
           />
         </DialogContent>

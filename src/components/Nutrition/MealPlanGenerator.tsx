@@ -5,25 +5,23 @@ import { GeneratedPlanDisplay } from "./MealPlan/GeneratedPlanDisplay";
 import { ActiveMealPlans } from "./MealPlan/ActiveMealPlans";
 import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
 import { useMealPlanSave } from "@/hooks/use-meal-plan-save";
+import { useState } from "react";
 
 export const MealPlanGenerator = () => {
-  const {
-    isGenerating,
-    durationDays,
-    maxBudget,
-    generatedPlan,
-    setDurationDays,
-    setMaxBudget,
-    generateMealPlan,
-  } = useMealPlanGenerator();
-
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { generatedPlan, generateMealPlan } = useMealPlanGenerator();
   const { saveMealPlanToJournal } = useMealPlanSave();
 
-  const handleGenerateMealPlan = async () => {
-    const plan = await generateMealPlan();
-    if (plan?.[0]) {
-      console.log("Generated plan to save:", plan[0]);
-      await saveMealPlanToJournal(plan[0], durationDays);
+  const handleGenerateMealPlan = async (preferences: { duration: string, dietType: string }) => {
+    setIsGenerating(true);
+    try {
+      const plan = await generateMealPlan(preferences);
+      if (plan?.[0]) {
+        console.log("Generated plan to save:", plan[0]);
+        await saveMealPlanToJournal(plan[0], parseInt(preferences.duration));
+      }
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -57,14 +55,7 @@ export const MealPlanGenerator = () => {
               </div>
             </div>
 
-            <MealPlanForm
-              durationDays={durationDays}
-              maxBudget={maxBudget}
-              isGenerating={isGenerating}
-              onDurationChange={setDurationDays}
-              onBudgetChange={setMaxBudget}
-              onGenerate={handleGenerateMealPlan}
-            />
+            <MealPlanForm onGenerate={handleGenerateMealPlan} />
           </div>
         </CardContent>
       </Card>
@@ -72,7 +63,7 @@ export const MealPlanGenerator = () => {
       {generatedPlan && (
         <GeneratedPlanDisplay 
           generatedPlan={generatedPlan}
-          durationDays={durationDays}
+          durationDays={parseInt(generatedPlan[0]?.duration || "7")}
         />
       )}
     </div>
