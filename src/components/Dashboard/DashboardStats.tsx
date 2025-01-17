@@ -37,8 +37,15 @@ export const DashboardStats = () => {
 
       const { data, error } = await supabase
         .from('training_stats')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select(`
+          *,
+          workout_sessions (
+            total_duration_minutes,
+            perceived_difficulty
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100);
       
       if (error) throw error;
 
@@ -58,8 +65,14 @@ export const DashboardStats = () => {
         weeklyWeight: calculateTotalWeight(weeklyStats),
         monthlyWeight: calculateTotalWeight(monthlyStats),
         yearlyWeight: calculateTotalWeight(yearlyStats),
-        totalMinutes: data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0),
-        totalCalories: Math.round((data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0) * 7.5))
+        totalMinutes: data.reduce((acc, stat) => {
+          const session = stat.workout_sessions;
+          return acc + (session?.total_duration_minutes || 0);
+        }, 0),
+        totalCalories: Math.round((data.reduce((acc, stat) => {
+          const session = stat.workout_sessions;
+          return acc + (session?.total_duration_minutes || 0);
+        }, 0) * 7.5))
       };
     }
   });
