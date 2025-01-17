@@ -42,22 +42,44 @@ export const useWorkoutSession = () => {
         return;
       }
 
-      // Définir les exercices de base selon le type
-      const defaultExercises = type === 'quick' ? [
-        "Extensions triceps",
-        "Développé couché",
-        "Squat"
-      ] : [
-        "Extensions triceps",
-        "Développé couché", 
-        "Squat",
-        "Soulevé de terre",
-        "Développé militaire"
-      ];
+      // Définir les exercices selon le type
+      let defaultExercises: string[];
+      let workoutType: string;
+
+      if (type === 'cardio') {
+        defaultExercises = [
+          "Course à pied",
+          "Vélo stationnaire",
+          "Rameur",
+          "Corde à sauter"
+        ];
+        workoutType = 'cardio';
+      } else if (type === 'hiit') {
+        defaultExercises = [
+          "Burpees",
+          "Mountain climbers",
+          "Jumping jacks",
+          "High knees"
+        ];
+        workoutType = 'hiit';
+      } else {
+        defaultExercises = type === 'quick' ? [
+          "Extensions triceps",
+          "Développé couché",
+          "Squat"
+        ] : [
+          "Extensions triceps",
+          "Développé couché", 
+          "Squat",
+          "Soulevé de terre",
+          "Développé militaire"
+        ];
+        workoutType = 'strength';
+      }
 
       const workoutData = {
         user_id: user.id,
-        workout_type: 'strength',
+        workout_type: workoutType,
         status: 'in_progress',
         target_duration_minutes: type === 'quick' ? 30 : 45,
         exercises: defaultExercises,

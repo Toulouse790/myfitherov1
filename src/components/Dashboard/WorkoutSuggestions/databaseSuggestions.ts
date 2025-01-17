@@ -9,7 +9,7 @@ export const databaseSuggestions = [
   {
     id: "db-2",
     title: "Séance cardio",
-    description: "Entraînement cardio-vasculaire",
+    description: "Course à pied, vélo, rameur...",
     icon_name: "Heart",
     type: "cardio"
   },
@@ -23,7 +23,7 @@ export const databaseSuggestions = [
   {
     id: "db-4",
     title: "Séance HIIT",
-    description: "High Intensity Interval Training",
+    description: "Burpees, mountain climbers...",
     icon_name: "Zap",
     type: "hiit"
   },
