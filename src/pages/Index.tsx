@@ -50,7 +50,7 @@ export default function Index() {
           className="mb-8"
         >
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            En route vers le succès ! 🚀
+            En route vers ton succès ! 🚀
           </h1>
         </motion.div>
 
