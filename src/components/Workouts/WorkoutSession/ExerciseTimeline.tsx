@@ -1,117 +1,147 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Check } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface ExerciseTimelineProps {
   exercises: string[];
   currentExerciseIndex: number;
 }
 
-const getExerciseTips = (exerciseName: string): string[] => {
+const getCardioTips = (exerciseName: string): string[] => {
   const tips: Record<string, string[]> = {
-    "Développé couché": [
-      "Coudes à 45°, serrez les omoplates",
-      "Touchez la poitrine, poussez explosif",
-      "Expirez en poussant"
+    "Course à pied": [
+      "Posture droite",
+      "Respiration régulière",
+      "Foulée naturelle"
     ],
-    "Squat": [
-      "Regard horizontal, dos droit",
-      "Genoux alignés avec orteils",
-      "Poussez dans les talons"
+    "Vélo stationnaire": [
+      "Régler la selle",
+      "Garder le dos droit",
+      "Pédaler fluide"
     ],
-    "Tractions": [
-      "Rétractez les omoplates avant de tirer",
-      "Tirez avec les coudes vers le bas",
-      "Contrôlez la descente"
+    "Rameur": [
+      "Pousser avec les jambes",
+      "Tirer avec le dos",
+      "Rythme constant"
     ],
-    "Curl biceps": [
-      "Coudes fixes contre le corps",
-      "Contractez fort en haut",
-      "Pas de balancier"
+    "Corde à sauter": [
+      "Sauts légers",
+      "Poignets souples",
+      "Regard horizontal"
     ],
-    "Soulevé de terre": [
-      "Barre collée au corps",
-      "Poussez avec les jambes",
-      "Gardez le dos verrouillé"
+    "Burpees": [
+      "Explosif à la montée",
+      "Gainage au sol",
+      "Respirer régulièrement"
     ],
-    "Développé épaules": [
-      "Abdos gainés, dos droit",
-      "Poussez à la verticale",
-      "Contrôlez la descente"
+    "Mountain climbers": [
+      "Gainage stable",
+      "Genoux vers poitrine",
+      "Rythme soutenu"
     ],
-    "Rowing barre": [
-      "Tirez vers le nombril",
-      "Serrez les omoplates",
-      "Dos fixe, pas de balancier"
+    "Jumping jacks": [
+      "Coordination bras-jambes",
+      "Atterrissage souple",
+      "Amplitude complète"
     ],
-    "Extensions triceps": [
-      "Coudes fixes près de la tête",
-      "Extension complète en haut",
-      "Contrôlez la descente"
+    "High knees": [
+      "Genoux hauts",
+      "Bras dynamiques",
+      "Rester sur l'avant du pied"
     ]
   };
 
   return tips[exerciseName] || [
-    "Respiration fluide",
-    "Posture stable",
-    "Mouvement contrôlé"
+    "Respiration régulière",
+    "Maintenir l'effort",
+    "Garder le rythme"
   ];
 };
 
 export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTimelineProps) => {
   const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
+  const [selectedCardioExercises, setSelectedCardioExercises] = useState<string[]>([]);
 
   const handleExerciseClick = (index: number) => {
     setSelectedExercise(selectedExercise === index ? null : index);
   };
 
-  return (
-    <div className="space-y-2">
-      {exercises.map((exercise, index) => (
-        <div key={index} className="space-y-2">
-          <div
-            onClick={() => handleExerciseClick(index)}
-            className={`
-              flex-shrink-0 px-4 py-2 rounded-lg cursor-pointer transition-all
-              ${index === currentExerciseIndex
-                ? 'bg-primary text-primary-foreground'
-                : index < currentExerciseIndex
-                ? 'bg-primary/20 text-primary'
-                : 'bg-primary/10 text-primary/80'
-              }
-              hover:opacity-90
-            `}
-          >
-            <div className="flex items-center justify-between">
-              <span>{exercise}</span>
-              {selectedExercise === index ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </div>
-          </div>
+  const handleCardioSelection = (exercise: string) => {
+    setSelectedCardioExercises(prev => {
+      if (prev.includes(exercise)) {
+        return prev.filter(ex => ex !== exercise);
+      }
+      return [...prev, exercise];
+    });
+  };
 
-          <AnimatePresence>
-            {selectedExercise === index && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="bg-primary/5 backdrop-blur-sm rounded-lg p-4 border border-primary/10 shadow-sm"
-              >
-                <div className="space-y-2">
-                  <h4 className="font-medium text-primary">Conseils techniques pour {exercise}</h4>
-                  <ul className="list-disc list-inside text-sm text-primary/70 space-y-1">
-                    {getExerciseTips(exercise).map((tip, tipIndex) => (
-                      <li key={tipIndex} className="leading-relaxed">{tip}</li>
+  // Si c'est une séance cardio (vérifié par le premier exercice)
+  const isCardioSession = exercises[0] === "Course à pied" || 
+                         exercises[0] === "Vélo stationnaire" || 
+                         exercises[0] === "Rameur" || 
+                         exercises[0] === "Corde à sauter";
+
+  if (isCardioSession) {
+    return (
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium mb-4">Sélectionnez vos exercices cardio</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {exercises.map((exercise, index) => (
+            <Card 
+              key={index}
+              className={`p-4 cursor-pointer transition-all ${
+                selectedCardioExercises.includes(exercise) 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'hover:bg-primary/10'
+              }`}
+              onClick={() => handleCardioSelection(exercise)}
+            >
+              <div className="flex items-center justify-between">
+                <span>{exercise}</span>
+                {selectedCardioExercises.includes(exercise) && (
+                  <Check className="h-4 w-4" />
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
+        
+        {selectedCardioExercises.length > 0 && (
+          <div className="mt-6">
+            <h4 className="font-medium mb-3">Exercices sélectionnés:</h4>
+            <div className="space-y-3">
+              {selectedCardioExercises.map((exercise, index) => (
+                <div
+                  key={index}
+                  className="bg-primary/10 p-4 rounded-lg"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h5 className="font-medium">{exercise}</h5>
+                  </div>
+                  <ul className="list-disc list-inside text-sm space-y-1">
+                    {getCardioTips(exercise).map((tip, tipIndex) => (
+                      <li key={tipIndex} className="text-primary/80">{tip}</li>
                     ))}
                   </ul>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Pour les autres types de séances, garder le comportement existant
+  return (
+    <div className="space-y-2">
+      {exercises.map((exercise, index) => (
+        <div key={index} className="flex items-center justify-between">
+          <span>{exercise}</span>
+          {currentExerciseIndex === index && <ChevronUp className="h-4 w-4" />}
+          {currentExerciseIndex !== index && <ChevronDown className="h-4 w-4" />}
         </div>
       ))}
     </div>
