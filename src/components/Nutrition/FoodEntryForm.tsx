@@ -16,6 +16,7 @@ interface FoodEntryFormProps {
   notes: string;
   baseCalories: number;
   selectedCategory: string;
+  preselectedMealType?: string;
   onFoodChange: (value: string) => void;
   onCaloriesChange: (value: string) => void;
   onProteinsChange: (value: string) => void;
@@ -36,6 +37,7 @@ export const FoodEntryForm = ({
   notes,
   baseCalories,
   selectedCategory,
+  preselectedMealType,
   onFoodChange,
   onCaloriesChange,
   onProteinsChange,
@@ -46,7 +48,7 @@ export const FoodEntryForm = ({
   onAddEntry,
 }: FoodEntryFormProps) => {
   const { toast } = useToast();
-  const [selectedMealType, setSelectedMealType] = useState("");
+  const [selectedMealType, setSelectedMealType] = useState(preselectedMealType || "");
   const [isCustomFood, setIsCustomFood] = useState(false);
   const [isCompositeMeal, setIsCompositeMeal] = useState(false);
   const [ingredients, setIngredients] = useState<Array<{ name: string; portion: string }>>([]);
@@ -82,20 +84,18 @@ export const FoodEntryForm = ({
       }
       onAddEntry(selectedMealType);
     }
-
-    setSelectedMealType("");
-    setIngredients([]);
-    setIsCompositeMeal(false);
   };
 
   return (
     <div className="space-y-4">
       <Card className="p-4 bg-white border border-gray-200">
         <div className="flex flex-col gap-4">
-          <MealTypeSelect 
-            value={selectedMealType}
-            onChange={setSelectedMealType}
-          />
+          {!preselectedMealType && (
+            <MealTypeSelect 
+              value={selectedMealType}
+              onChange={setSelectedMealType}
+            />
+          )}
 
           <FoodInputs
             newFood={newFood}
