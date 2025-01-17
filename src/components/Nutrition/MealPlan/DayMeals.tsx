@@ -14,6 +14,8 @@ interface DayMealsProps {
   carbsTarget?: number;
   hasMorningSnack?: boolean;
   hasAfternoonSnack?: boolean;
+  day: string;
+  isFirst?: boolean;
 }
 
 export const DayMeals = ({ 
@@ -24,7 +26,8 @@ export const DayMeals = ({
   totalCarbs = 0,
   carbsTarget = 0,
   hasMorningSnack = true,
-  hasAfternoonSnack = true
+  hasAfternoonSnack = true,
+  day
 }: DayMealsProps) => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
 
@@ -34,7 +37,8 @@ export const DayMeals = ({
     isTrainingDay,
     workoutTime,
     totalCarbs,
-    carbsTarget
+    carbsTarget,
+    day
   });
 
   const getCarbsStatus = () => {
@@ -51,7 +55,7 @@ export const DayMeals = ({
   };
 
   // Filtrer les types de repas selon les préférences
-  const filteredMealTitles = Object.entries(mealTitles).reduce((acc, [key, value]) => {
+  const filteredMealTitles = Object.entries(mealTitles || {}).reduce((acc, [key, value]) => {
     if (key === 'morning_snack' && !hasMorningSnack) return acc;
     if (key === 'afternoon_snack' && !hasAfternoonSnack) return acc;
     acc[key] = value;
@@ -60,6 +64,8 @@ export const DayMeals = ({
 
   return (
     <div className="space-y-4">
+      <h3 className="text-lg font-semibold">{day}</h3>
+      
       <Alert variant={getCarbsStatus() === "optimal" ? "default" : "destructive"}>
         <AlertDescription>
           {getCarbsMessage()} - 
