@@ -23,21 +23,21 @@ export const MealPlanForm = ({ onGenerate }: MealPlanFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Card className="p-4">
-        <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Card className="p-3">
+        <div className="space-y-2">
           <div>
             <Label>Type de régime</Label>
-            <RadioGroup value={dietType} onValueChange={setDietType} className="mt-2 space-y-2">
-              <div className={`flex items-center space-x-2 p-3 rounded-lg transition-colors ${dietType === 'balanced' ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}`}>
+            <RadioGroup value={dietType} onValueChange={setDietType} className="mt-1 space-y-1">
+              <div className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${dietType === 'balanced' ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}`}>
                 <RadioGroupItem value="balanced" id="balanced" />
                 <Label htmlFor="balanced" className="flex-grow cursor-pointer">Équilibré</Label>
               </div>
-              <div className={`flex items-center space-x-2 p-3 rounded-lg transition-colors ${dietType === 'highProtein' ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}`}>
+              <div className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${dietType === 'highProtein' ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}`}>
                 <RadioGroupItem value="highProtein" id="highProtein" />
                 <Label htmlFor="highProtein" className="flex-grow cursor-pointer">Prise de masse</Label>
               </div>
-              <div className={`flex items-center space-x-2 p-3 rounded-lg transition-colors ${dietType === 'lowCarb' ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}`}>
+              <div className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${dietType === 'lowCarb' ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}`}>
                 <RadioGroupItem value="lowCarb" id="lowCarb" />
                 <Label htmlFor="lowCarb" className="flex-grow cursor-pointer">Sèche extrême</Label>
               </div>
