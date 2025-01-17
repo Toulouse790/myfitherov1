@@ -27,49 +27,43 @@ export const SetRow = ({
   const isCompleted = completedSets >= setNumber + 1;
   const isCurrentSet = completedSets + 1 === setNumber + 1;
 
-  const handleSetComplete = () => {
-    if (!isCompleted && isCurrentSet && !isResting) {
-      onSetComplete();
-    }
-  };
-
   return (
     <div 
-      className={`p-3 rounded-lg ${
-        isCompleted ? 'bg-muted/50' : 'bg-card'
+      className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
+        isCompleted ? 'bg-muted/50' : 
+        isCurrentSet ? 'bg-primary/10' : 
+        'bg-background'
       }`}
     >
-      <div className="flex items-center justify-between gap-2">
+      <span className={`text-sm min-w-[30px] ${
+        isCompleted ? 'text-primary' : 'text-muted-foreground'
+      }`}>
+        {isCompleted ? <Check className="h-4 w-4" /> : `S${setNumber + 1}`}
+      </span>
+
+      <div className="flex-1 flex items-center gap-2">
+        <WeightInput 
+          weight={weight} 
+          onWeightChange={onWeightChange}
+          disabled={isCompleted || isResting || !isCurrentSet}
+        />
+        <RepsInput 
+          reps={reps} 
+          onRepsChange={onRepsChange}
+          disabled={isCompleted || isResting || !isCurrentSet}
+        />
+      </div>
+
+      {isCurrentSet && !isCompleted && !isResting && (
         <Button
           variant="ghost"
           size="sm"
-          className={`text-[11px] min-w-[40px] text-center ${
-            isCompleted 
-              ? 'bg-green-500/20 hover:bg-green-500/30 text-green-700' 
-              : 'text-muted-foreground hover:bg-primary/10'
-          }`}
-          onClick={handleSetComplete}
-          disabled={!isCurrentSet || isResting}
+          onClick={onSetComplete}
+          className="ml-2 hover:bg-primary/10"
         >
-          {isCompleted ? (
-            <Check className="h-4 w-4" />
-          ) : (
-            `S${setNumber + 1}`
-          )}
+          Valider
         </Button>
-        <div className="flex flex-1 items-center justify-center gap-2">
-          <WeightInput 
-            weight={weight} 
-            onWeightChange={onWeightChange}
-            disabled={isCompleted || isResting || !isCurrentSet}
-          />
-          <RepsInput 
-            reps={reps} 
-            onRepsChange={onRepsChange}
-            disabled={isCompleted || isResting || !isCurrentSet}
-          />
-        </div>
-      </div>
+      )}
     </div>
   );
 };

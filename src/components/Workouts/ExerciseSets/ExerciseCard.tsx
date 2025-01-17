@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { RestTimer } from "../ExerciseAnimation/RestTimer";
 import { ExerciseHeader } from "./ExerciseCard/ExerciseHeader";
@@ -31,6 +31,7 @@ export const ExerciseCard = ({
   isTransitioning
 }: ExerciseCardProps) => {
   const [isResting, setIsResting] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const { toast } = useToast();
   const [totalSets, setTotalSets] = useState(3);
   const [setWeights, setSetWeights] = useState<{ [key: number]: number }>({});
@@ -46,9 +47,7 @@ export const ExerciseCard = ({
   };
 
   const handleWeightChange = (value: number, setNumber: number) => {
-    if (setNumber < completedSets) {
-      return;
-    }
+    if (setNumber < completedSets) return;
     
     const newSetWeights = { ...setWeights };
     for (let i = setNumber; i < totalSets; i++) {
@@ -69,61 +68,60 @@ export const ExerciseCard = ({
   };
 
   return (
-    <div className="space-y-3 sm:space-y-4">
-      <ExerciseHeader exerciseName={exerciseName} sessionId={sessionId} />
+    <Card className="overflow-hidden transition-all duration-300">
+      <div 
+        className="p-4 cursor-pointer flex items-center justify-between bg-muted/10"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-medium">{exerciseName}</h3>
+          <span className="text-sm text-muted-foreground">
+            {completedSets}/{totalSets} séries
+          </span>
+        </div>
+        {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+      </div>
 
-      {restTimer !== null && completedSets > 0 && (
-        <div className="py-2">
-          <RestTimer 
-            restTime={restTimer} 
-            onRestTimeChange={handleRestComplete} 
-          />
+      {isExpanded && (
+        <div className="p-4 space-y-4">
+          {restTimer !== null && completedSets > 0 && (
+            <div className="py-2">
+              <RestTimer 
+                restTime={restTimer} 
+                onRestTimeChange={handleRestComplete} 
+              />
+            </div>
+          )}
+
+          <div className="space-y-2">
+            {Array.from({ length: totalSets }).map((_, setNumber) => (
+              <SetRow
+                key={setNumber}
+                setNumber={setNumber}
+                weight={setWeights[setNumber] || weight}
+                reps={reps}
+                completedSets={completedSets}
+                isResting={isResting}
+                onWeightChange={(value) => handleWeightChange(value, setNumber)}
+                onRepsChange={onRepsChange}
+                onSetComplete={handleSetComplete}
+              />
+            ))}
+
+            {totalSets === 3 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full mt-2 gap-2 hover:bg-primary/10"
+                onClick={handleAddSet}
+              >
+                <Plus className="h-4 w-4" />
+                Ajouter une série
+              </Button>
+            )}
+          </div>
         </div>
       )}
-
-      <div className="space-y-2">
-        <div className="flex items-center justify-center gap-4 px-3">
-          <div className="flex-1 text-xs text-muted-foreground text-center">KG</div>
-          <div className="flex-1 text-xs text-muted-foreground text-center">
-            {exerciseName.toLowerCase().includes("biceps") || 
-             exerciseName.toLowerCase().includes("triceps") || 
-             exerciseName.toLowerCase().includes("curl")
-              ? "RÉPÉTITIONS PAR BRAS"
-              : exerciseName.toLowerCase().includes("jambe") || 
-                exerciseName.toLowerCase().includes("fente") || 
-                exerciseName.toLowerCase().includes("mollet")
-                ? "RÉPÉTITIONS PAR JAMBE"
-                : "RÉPÉTITIONS"}
-          </div>
-          <div className="w-[72px]"></div>
-        </div>
-
-        {Array.from({ length: totalSets }).map((_, setNumber) => (
-          <SetRow
-            key={setNumber}
-            setNumber={setNumber}
-            weight={setWeights[setNumber] || weight}
-            reps={reps}
-            completedSets={completedSets}
-            isResting={isResting}
-            onWeightChange={(value) => handleWeightChange(value, setNumber)}
-            onRepsChange={onRepsChange}
-            onSetComplete={handleSetComplete}
-          />
-        ))}
-
-        {totalSets === 3 && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full mt-2 gap-2"
-            onClick={handleAddSet}
-          >
-            <Plus className="h-4 w-4" />
-            Ajouter une série
-          </Button>
-        )}
-      </div>
-    </div>
+    </Card>
   );
 };
