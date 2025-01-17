@@ -52,7 +52,7 @@ export const NutritionChart = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-2 sm:p-4">
-        <div className="h-[300px] w-full relative">
+        <div className="h-[400px] w-full relative"> {/* Increased height for better visibility */}
           <BarChart
             data={chartData}
             index="name"
@@ -60,13 +60,15 @@ export const NutritionChart = () => {
               "prévu",
               "réalisé"
             ]}
-            colors={["#9b87f5", "#1EAEDB"]}
+            colors={["#9b87f5", "#1EAEDB"]} // Using our custom color palette
             valueFormatter={(value: number) => `${value} kcal`}
             yAxisWidth={48}
             showLegend={true}
             showGridLines={false}
             startEndOnly={false}
             showAnimation={true}
+            minValue={0}
+            maxValue={Math.max(dailyTargets.calories * 1.2, consumedNutrients.calories * 1.2)} // Add 20% padding
             onValueClick={(props: any) => {
               if (props?.payload?.name) {
                 setSelectedDay(props.payload.name);
