@@ -13,34 +13,52 @@ interface WorkoutHeaderProps {
 export const WorkoutHeader = ({ 
   sessionId,
   estimatedCalories,
-  progress 
+  progress: initialProgress 
 }: WorkoutHeaderProps) => {
-  const [totalCalories, setTotalCalories] = useState(0);
   const [totalDuration, setTotalDuration] = useState(0);
+  const [totalCalories, setTotalCalories] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const fetchSessionStats = async () => {
       if (!sessionId) return;
 
-      const { data: sets } = await supabase
-        .from('exercise_sets')
-        .select('calories_burned, rest_time_seconds')
-        .eq('session_id', sessionId);
+      try {
+        // Fetch all exercise sets for this session
+        const { data: exerciseSets } = await supabase
+          .from('exercise_sets')
+          .select('*')
+          .eq('session_id', sessionId);
 
-      if (sets) {
-        // Calculer les calories totales
-        const calories = sets.reduce((sum, set) => sum + (set.calories_burned || 0), 0);
-        setTotalCalories(calories);
+        // Fetch workout session to get total planned exercises and sets
+        const { data: session } = await supabase
+          .from('workout_sessions')
+          .select('exercises')
+          .eq('id', sessionId)
+          .single();
 
-        // Calculer la durée totale basée sur le temps de repos
-        const duration = sets.reduce((sum, set) => sum + (set.rest_time_seconds || 0), 0);
-        setTotalDuration(duration);
+        if (exerciseSets && session?.exercises) {
+          // Calculate total rest time and calories
+          const totalRestTime = exerciseSets.reduce((sum, set) => sum + (set.rest_time_seconds || 0), 0);
+          const totalBurnedCalories = exerciseSets.reduce((sum, set) => sum + (set.calories_burned || 0), 0);
+          
+          // Calculate progress based on completed sets vs total expected sets
+          const totalExpectedSets = session.exercises.length * 3; // Assuming 3 sets per exercise
+          const completedSets = exerciseSets.length;
+          const currentProgress = (completedSets / totalExpectedSets) * 100;
+
+          setTotalDuration(totalRestTime);
+          setTotalCalories(totalBurnedCalories);
+          setProgress(currentProgress);
+        }
+      } catch (error) {
+        console.error('Error fetching session stats:', error);
       }
     };
 
     fetchSessionStats();
-    
-    // Mettre en place un listener pour les mises à jour
+
+    // Set up real-time subscription for updates
     const channel = supabase
       .channel('exercise_sets_changes')
       .on(
