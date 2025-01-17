@@ -35,9 +35,18 @@ export const ExerciseCard = ({
   const { toast } = useToast();
   const [totalSets, setTotalSets] = useState(3);
   const [setWeights, setSetWeights] = useState<{ [key: number]: number }>({});
-  const sessionId = window.location.pathname.split('/').pop();
 
   const handleSetComplete = () => {
+    if (completedSets >= totalSets) {
+      return;
+    }
+    
+    console.log("Completing set:", {
+      currentSet: completedSets + 1,
+      totalSets,
+      exerciseName
+    });
+    
     setIsResting(true);
     onSetComplete("moderate", "");
   };
@@ -60,6 +69,15 @@ export const ExerciseCard = ({
   };
 
   const handleAddSet = () => {
+    if (totalSets >= 5) {
+      toast({
+        title: "Maximum atteint",
+        description: "Vous ne pouvez pas ajouter plus de 5 séries",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setTotalSets(prev => prev + 1);
     toast({
       title: "Série ajoutée",
@@ -108,7 +126,7 @@ export const ExerciseCard = ({
               />
             ))}
 
-            {totalSets === 3 && (
+            {totalSets < 5 && (
               <Button
                 variant="ghost"
                 size="sm"
