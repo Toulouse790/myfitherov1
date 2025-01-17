@@ -83,22 +83,22 @@ export const SuggestionsList = ({ suggestions, onSuggestionClick }: {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
       {suggestions.map((suggestion) => {
         const IconComponent = iconMap[suggestion.icon_name as keyof typeof iconMap];
         return (
           <Card
             key={suggestion.id}
-            className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+            className="p-3 cursor-pointer hover:bg-muted/50 transition-colors min-h-[64px]"
             onClick={() => handleSuggestionClick(suggestion.type)}
           >
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-primary">
-                {IconComponent && <IconComponent className="w-5 h-5 text-white" />}
+            <div className="flex items-start space-x-3">
+              <div className="p-2 rounded-lg bg-primary shrink-0">
+                {IconComponent && <IconComponent className="w-5 h-5 text-primary-foreground" />}
               </div>
-              <div>
-                <h3 className="font-medium">{suggestion.title}</h3>
-                <p className="text-sm text-muted-foreground">
+              <div className="space-y-1">
+                <h3 className="text-[14px] font-medium leading-none">{suggestion.title}</h3>
+                <p className="text-[12px] text-muted-foreground">
                   {suggestion.description}
                 </p>
               </div>
