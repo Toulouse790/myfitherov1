@@ -65,6 +65,13 @@ export const MealContent = ({
                   <p className="text-sm text-muted-foreground">
                     {entry.calories} kcal | {entry.proteins}g protéines
                   </p>
+                  {entry.components && entry.components.length > 0 && (
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      {entry.components.map((component: { name: string; portion: string }, idx: number) => (
+                        <p key={idx}>{component.portion} de {component.name}</p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </Card>
@@ -83,6 +90,17 @@ export const MealContent = ({
                   <p className="text-sm text-muted-foreground">
                     {currentMeal.calories} kcal | {currentMeal.proteins}g protéines
                   </p>
+                  {/* Detailed portions */}
+                  {currentMeal.quantities && currentMeal.quantities.length > 0 && (
+                    <div className="mt-2 text-sm text-muted-foreground space-y-1">
+                      {currentMeal.quantities.map((item, index) => (
+                        <p key={index} className="flex items-center gap-2">
+                          <span className="text-muted-foreground">•</span>
+                          {item.amount} de {item.item}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
