@@ -6,16 +6,11 @@ interface ActionButtonsProps {
 }
 
 export const ActionButtons = ({ onAdd }: ActionButtonsProps) => {
-  const handleClick = () => {
-    console.log("ActionButtons: Add button clicked");
-    onAdd();
-  };
-
   return (
-    <div className="flex justify-end">
+    <div className="flex justify-end mt-4">
       <Button 
-        onClick={handleClick} 
-        className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+        onClick={onAdd} 
+        className="h-[36px] px-4 gap-2"
       >
         <Plus className="w-4 h-4" /> Ajouter
       </Button>

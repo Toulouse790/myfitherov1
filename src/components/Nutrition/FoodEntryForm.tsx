@@ -88,7 +88,7 @@ export const FoodEntryForm = ({
 
   return (
     <div className="space-y-4">
-      <Card className="p-4 bg-white border border-gray-200">
+      <Card className="p-3">
         <div className="flex flex-col gap-4">
           {!preselectedMealType && (
             <MealTypeSelect 

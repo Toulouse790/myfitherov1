@@ -48,16 +48,48 @@ export const FoodInputs = ({
   onIngredientsChange,
   setIsCustomFood,
 }: FoodInputsProps) => {
+  const handleFoodChange = (value: string) => {
+    onFoodChange(value);
+    const selectedFood = commonFoods.find(
+      (food) => food.name.toLowerCase().includes(value.toLowerCase())
+    );
+
+    if (selectedFood) {
+      setIsCustomFood(false);
+      onCaloriesChange(selectedFood.calories.toString());
+      onProteinsChange(selectedFood.proteins.toString());
+      onCarbsChange(selectedFood.carbs.toString());
+      onFatsChange(selectedFood.fats.toString());
+    } else {
+      setIsCustomFood(true);
+    }
+  };
+
+  const foodSuggestions = commonFoods
+    .filter((food) => 
+      food.name.toLowerCase().includes(newFood.toLowerCase())
+    )
+    .slice(0, 5);
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Aliment</label>
-          <Input
-            placeholder="Nom de l'aliment"
-            value={newFood}
-            onChange={(e) => onFoodChange(e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              placeholder="Nom de l'aliment"
+              value={newFood}
+              onChange={(e) => handleFoodChange(e.target.value)}
+              className="w-full"
+              list="food-suggestions"
+            />
+            <datalist id="food-suggestions">
+              {foodSuggestions.map((food) => (
+                <option key={food.id} value={food.name} />
+              ))}
+            </datalist>
+          </div>
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Poids (g)</label>
@@ -66,6 +98,7 @@ export const FoodInputs = ({
             placeholder="Poids en grammes"
             value={weight}
             onChange={(e) => onWeightChange(e.target.value)}
+            className="w-full"
           />
         </div>
       </div>
@@ -78,6 +111,7 @@ export const FoodInputs = ({
             placeholder="Calories"
             value={calories}
             onChange={(e) => onCaloriesChange(e.target.value)}
+            className="w-full"
           />
         </div>
         <div className="space-y-2">
@@ -87,6 +121,7 @@ export const FoodInputs = ({
             placeholder="Protéines"
             value={proteins}
             onChange={(e) => onProteinsChange(e.target.value)}
+            className="w-full"
           />
         </div>
         <div className="space-y-2">
@@ -96,6 +131,7 @@ export const FoodInputs = ({
             placeholder="Glucides"
             value={carbs}
             onChange={(e) => onCarbsChange(e.target.value)}
+            className="w-full"
           />
         </div>
       </div>
@@ -106,7 +142,7 @@ export const FoodInputs = ({
           placeholder="Ajoutez des notes sur votre repas..."
           value={notes}
           onChange={(e) => onNotesChange(e.target.value)}
-          className="min-h-[100px]"
+          className="min-h-[100px] w-full"
         />
       </div>
     </div>
