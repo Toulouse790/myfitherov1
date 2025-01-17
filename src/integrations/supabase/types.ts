@@ -526,6 +526,7 @@ export type Database = {
       meal_plans: {
         Row: {
           created_at: string
+          daily_status: Json | null
           end_date: string
           id: string
           plan_data: Json
@@ -535,6 +536,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          daily_status?: Json | null
           end_date: string
           id?: string
           plan_data: Json
@@ -544,6 +546,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          daily_status?: Json | null
           end_date?: string
           id?: string
           plan_data?: Json

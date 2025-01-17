@@ -1,15 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Check, Heart, X } from "lucide-react";
+import { Check, Heart, Plus, X } from "lucide-react";
 import { MealContentProps } from "./types";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { FoodEntryForm } from "../../FoodEntryForm";
 
 export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: MealContentProps) => {
   const hasEntries = Array.isArray(mealEntries) && mealEntries.length > 0;
   const { toast } = useToast();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isAddMealOpen, setIsAddMealOpen] = useState(false);
+  const [isPremium, setIsPremium] = useState(false); // À connecter avec votre logique premium
 
   const handleFavoriteClick = async () => {
     try {
@@ -64,7 +68,7 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
         </div>
       ) : (
         <div className="text-center">
-          {generatedMeal && (
+          {isPremium && generatedMeal ? (
             <Card className="p-3 mb-3">
               <div className="flex justify-between items-start">
                 <div>
@@ -90,6 +94,16 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
                 </div>
               </div>
             </Card>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAddMealOpen(true)}
+              className="mb-3"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Ajouter un repas manuellement
+            </Button>
           )}
           {onMealStatus && (
             <div className="flex justify-center gap-2">
@@ -115,6 +129,35 @@ export const MealContent = ({ mealEntries, generatedMeal, onMealStatus, type }: 
           )}
         </div>
       )}
+
+      <Dialog open={isAddMealOpen} onOpenChange={setIsAddMealOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ajouter un repas</DialogTitle>
+          </DialogHeader>
+          <FoodEntryForm
+            newFood=""
+            calories=""
+            proteins=""
+            carbs=""
+            fats=""
+            weight=""
+            notes=""
+            baseCalories={0}
+            selectedCategory=""
+            onFoodChange={() => {}}
+            onCaloriesChange={() => {}}
+            onProteinsChange={() => {}}
+            onCarbsChange={() => {}}
+            onFatsChange={() => {}}
+            onWeightChange={() => {}}
+            onNotesChange={() => {}}
+            onAddEntry={() => {
+              setIsAddMealOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
