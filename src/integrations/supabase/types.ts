@@ -469,6 +469,7 @@ export type Database = {
           is_composite: boolean | null
           meal_type: string
           name: string
+          notes: string | null
           portion_size: number | null
           portion_unit: string | null
           proteins: number
@@ -486,6 +487,7 @@ export type Database = {
           is_composite?: boolean | null
           meal_type?: string
           name: string
+          notes?: string | null
           portion_size?: number | null
           portion_unit?: string | null
           proteins: number
@@ -503,6 +505,7 @@ export type Database = {
           is_composite?: boolean | null
           meal_type?: string
           name?: string
+          notes?: string | null
           portion_size?: number | null
           portion_unit?: string | null
           proteins?: number
