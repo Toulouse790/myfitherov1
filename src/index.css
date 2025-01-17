@@ -76,58 +76,63 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-bold tracking-tight;
+    @apply font-heading tracking-tight;
   }
 
   h1 { 
-    @apply text-title font-bold mb-6;
+    @apply text-main-title font-bold mt-title-top mb-title-bottom;
   }
   
   h2 { 
-    @apply text-subtitle font-semibold mb-4;
+    @apply text-secondary-title font-semibold mb-4;
   }
   
   h3 { 
-    @apply text-subtitle font-medium mb-3;
+    @apply text-secondary-title font-medium mb-3;
   }
   
   p { 
-    @apply text-body font-normal mb-4;
+    @apply text-body font-normal mb-element;
   }
   
   small { 
-    @apply text-caption font-light;
+    @apply text-secondary font-normal;
   }
 
   button {
-    @apply h-button min-w-button max-w-button rounded-button px-button-x py-button-y text-body
-           transition-all duration-300 hover:scale-[0.98] hover:opacity-90;
+    @apply h-button w-[calc(100%-32px)] mx-4 rounded-button px-button-x 
+           text-button font-medium transition-all duration-300 
+           hover:opacity-90 active:scale-[0.98];
+  }
+
+  button.secondary {
+    @apply bg-white border border-input bg-opacity-80;
   }
 
   input, textarea {
-    @apply rounded-button border border-input bg-background px-4 py-3 text-body
+    @apply rounded-button border border-input bg-background px-4 py-2 text-body
            ring-offset-background placeholder:text-muted-foreground
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
   }
 
   .card {
-    @apply min-h-card rounded-card shadow-card bg-card p-card 
-           transition-all duration-300 hover:shadow-lg;
-  }
-
-  .progress-bar {
-    @apply h-progress rounded-progress bg-muted overflow-hidden;
-  }
-
-  .progress-bar-fill {
-    @apply h-full bg-secondary animate-progress;
-  }
-
-  .icon {
-    @apply w-6 h-6 stroke-[1.5];
+    @apply rounded-card shadow-card bg-card p-card 
+           transition-all duration-300;
   }
 
   .nav-icon {
     @apply w-5 h-5 stroke-[1.5];
+  }
+
+  .bottom-nav {
+    @apply h-nav py-2;
+  }
+
+  .bottom-nav-icon {
+    @apply w-5 h-5;
+  }
+
+  .bottom-nav-text {
+    @apply text-nav;
   }
 }

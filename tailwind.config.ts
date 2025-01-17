@@ -7,7 +7,7 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "1rem",
+      padding: "16px",
       screens: {
         "2xl": "1400px",
       },
@@ -18,10 +18,12 @@ export default {
         heading: ['SF Pro Display', 'Roboto', 'sans-serif'],
       },
       fontSize: {
-        'title': '20px',
-        'subtitle': '16px',
+        'main-title': '24px',
+        'secondary-title': '18px',
+        'button': '14px',
         'body': '14px',
-        'caption': '12px',
+        'secondary': '12px',
+        'nav': '10px',
       },
       spacing: {
         '1': '4px',
@@ -30,37 +32,28 @@ export default {
         '4': '16px',
         '5': '20px',
         '6': '24px',
-        'touch': '44px',
+        'section': '16px',
       },
       borderRadius: {
-        'button': '8px',
-        'card': '12px',
-        'progress': '3px',
+        'button': '6px',
+        'card': '8px',
       },
       boxShadow: {
-        'card': '0 2px 8px rgba(0, 0, 0, 0.1)',
-      },
-      minHeight: {
-        'card': '64px',
-      },
-      maxWidth: {
-        'button': '280px',
-      },
-      minWidth: {
-        'button': '120px',
+        'card': '0 1px 4px rgba(0, 0, 0, 0.05)',
       },
       height: {
-        'button': '44px',
-        'progress': '6px',
+        'button': '36px',
+        'nav': '56px',
       },
       padding: {
         'button-x': '16px',
-        'button-y': '12px',
-        'card': '16px',
+        'card': '12px',
       },
       margin: {
-        'section': '24px',
-        'card': '12px',
+        'title-top': '24px',
+        'title-bottom': '16px',
+        'section': '16px',
+        'element': '8px',
       },
       strokeWidth: {
         '1.5': '1.5',
