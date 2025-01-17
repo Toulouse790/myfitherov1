@@ -57,8 +57,8 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
               ${index === currentExerciseIndex
                 ? 'bg-primary text-primary-foreground'
                 : index < currentExerciseIndex
-                ? 'bg-muted text-muted-foreground'
-                : 'bg-secondary/10 text-secondary-foreground'
+                ? 'bg-primary/20 text-primary'
+                : 'bg-primary/10 text-primary/80'
               }
               hover:opacity-90
             `}
@@ -80,11 +80,11 @@ export const ExerciseTimeline = ({ exercises, currentExerciseIndex }: ExerciseTi
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border shadow-sm"
+                className="bg-primary/5 backdrop-blur-sm rounded-lg p-4 border border-primary/10 shadow-sm"
               >
                 <div className="space-y-2">
-                  <h4 className="font-medium">Conseils pour {exercise}</h4>
-                  <ul className="list-disc list-inside text-sm text-muted-foreground">
+                  <h4 className="font-medium text-primary">{`Conseils pour ${exercise}`}</h4>
+                  <ul className="list-disc list-inside text-sm text-primary/70">
                     {getExerciseTips(exercise).map((tip, tipIndex) => (
                       <li key={tipIndex}>{tip}</li>
                     ))}
