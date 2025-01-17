@@ -10,7 +10,6 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ShoppingList } from "./MealPlan/ShoppingList";
-import { GenerateShoppingListButton } from "./MealPlan/GenerateShoppingListButton";
 
 interface MealPlanPreferences {
   duration: string;
@@ -32,7 +31,6 @@ export const MealPlanGenerator = () => {
       if (plan?.[0]) {
         console.log("Generated plan to save:", plan[0]);
         await saveMealPlanToJournal(plan[0], preferences.duration);
-        // Generate shopping list automatically after plan generation
         await handleGenerateShoppingList();
       }
     } finally {
@@ -76,10 +74,8 @@ export const MealPlanGenerator = () => {
       const planData = plans[0].plan_data;
       const shoppingList = new Map();
 
-      // Calculer le nombre de jours à prendre en compte
       const daysToProcess = Math.min(selectedDuration, planData.length);
 
-      // Ne traiter que le nombre de jours sélectionné
       for (let i = 0; i < daysToProcess; i++) {
         const day = planData[i];
         Object.values(day).forEach((meal: any) => {
