@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { DayMeals } from "./DayMeals";
 import { ShoppingList } from "./ShoppingList";
+import { defaultMeals } from "@/data/meals/mealPlanGenerator";
 
 interface ActiveMealPlansProps {
   shoppingList?: string[];
@@ -66,6 +67,7 @@ export const ActiveMealPlans = ({ shoppingList = [] }: ActiveMealPlansProps) => 
               day={day} 
               meals={meals as any} 
               isFirst={index === 0}
+              mealTitles={defaultMeals}
             />
           ))}
         </CardContent>

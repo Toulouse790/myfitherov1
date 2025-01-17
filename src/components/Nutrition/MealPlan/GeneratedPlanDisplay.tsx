@@ -136,6 +136,7 @@ export const GeneratedPlanDisplay = ({
                   mealTitles={defaultMeals}
                   isTrainingDay={isTrainingDay}
                   workoutTime={workoutTime}
+                  day={weekDays[dayIndex]}
                 />
               </TabsContent>
             );
