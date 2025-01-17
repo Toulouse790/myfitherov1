@@ -14,6 +14,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
   const [carbs, setCarbs] = useState("");
   const [fats, setFats] = useState("");
   const [weight, setWeight] = useState("");
+  const [notes, setNotes] = useState("");
   const [baseCalories, setBaseCalories] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { toast } = useToast();
@@ -92,6 +93,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
         carbs: parseInt(carbs),
         fats: parseInt(fats),
         mealType: mealType,
+        notes: notes,
       });
 
       const newEntry: FoodEntry = {
@@ -102,6 +104,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
         carbs: data.carbs,
         fats: data.fats,
         mealType: data.meal_type,
+        notes: data.notes,
       };
 
       setEntries([newEntry, ...entries]);
@@ -111,6 +114,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
       setCarbs("");
       setFats("");
       setWeight("");
+      setNotes("");
       setBaseCalories(0);
 
       toast({
@@ -192,6 +196,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
     carbs,
     fats,
     weight,
+    notes,
     baseCalories,
     selectedCategory,
     filteredFoods,
@@ -201,6 +206,7 @@ export const useFoodJournal = (): FoodJournalState & FoodJournalActions => {
     setCarbs,
     setFats,
     setWeight,
+    setNotes,
     setSelectedCategory,
     handleAddEntry,
     handleSelectFood,

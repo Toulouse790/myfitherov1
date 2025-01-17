@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Lock, CalendarCheck, Dumbbell, Apple } from "lucide-react";
 import { MealPlanForm } from "./MealPlan/MealPlanForm";
