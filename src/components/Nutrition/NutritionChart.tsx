@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BarChart } from "@/components/ui/charts/BarChart";
 import { useDailyTargets } from "@/hooks/use-daily-targets";
-import { supabase } from "@/integrations/supabase/client";
+import { useMetricData } from "@/components/Workouts/TrendMetrics/useMetricData";
 import { startOfDay, subDays, format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +12,7 @@ export const NutritionChart = () => {
   const { toast } = useToast();
   const hasShownToastRef = useRef(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const { data: metricData } = useMetricData(7);
   
   useEffect(() => {
     if (consumedNutrients && !hasShownToastRef.current) {
@@ -54,7 +55,12 @@ export const NutritionChart = () => {
     }
   }, [consumedNutrients, dailyTargets, toast]);
 
-  const data = weeklyData || Array(7).fill({ target: dailyTargets.calories, actual: 0 });
+  // Format data for the chart
+  const chartData = metricData?.daily.map(day => ({
+    name: day.date,
+    target: dailyTargets.calories,
+    actual: day.value
+  })) || Array(7).fill({ target: dailyTargets.calories, actual: 0 });
 
   const InfoCard = ({ targetValue, actualValue, date }: { targetValue: number, actualValue: number, date: string }) => {
     const isGood = actualValue >= targetValue * 0.9 && actualValue <= targetValue;
@@ -86,7 +92,7 @@ export const NutritionChart = () => {
       <CardContent className="p-2 sm:p-4">
         <div className="h-[300px] w-full relative">
           <BarChart
-            data={data}
+            data={chartData}
             index="name"
             categories={[
               "target",
@@ -106,8 +112,8 @@ export const NutritionChart = () => {
           {selectedDay && (
             <InfoCard 
               date={selectedDay}
-              targetValue={data.find(d => d.name === selectedDay)?.target || 0}
-              actualValue={data.find(d => d.name === selectedDay)?.actual || 0}
+              targetValue={chartData.find(d => d.name === selectedDay)?.target || 0}
+              actualValue={chartData.find(d => d.name === selectedDay)?.actual || 0}
             />
           )}
         </div>

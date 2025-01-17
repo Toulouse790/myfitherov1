@@ -14,6 +14,7 @@ interface BarChartProps {
   showAnimation?: boolean;
   className?: string;
   customTooltip?: (props: any) => JSX.Element;
+  onValueClick?: (props: any) => void;
 }
 
 export const BarChart = ({
@@ -28,9 +29,9 @@ export const BarChart = ({
   startEndOnly = false,
   showAnimation = true,
   className,
-  customTooltip
+  customTooltip,
+  onValueClick
 }: BarChartProps) => {
-  // Générer des IDs uniques pour chaque barre
   const dataWithIds = data.map((item, idx) => ({
     ...item,
     uniqueId: `${item[index]}-${idx}`
@@ -46,7 +47,11 @@ export const BarChart = ({
   return (
     <ChartContainer config={chartConfig}>
       <ResponsiveContainer width="100%" height={300}>
-        <RechartsBarChart data={dataWithIds} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+        <RechartsBarChart 
+          data={dataWithIds} 
+          margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+          onClick={(data) => onValueClick?.(data.activePayload?.[0]?.payload)}
+        >
           <XAxis
             dataKey={index}
             axisLine={false}
