@@ -74,7 +74,12 @@ export const MealPlanGenerator = () => {
       const planData = plans[0].plan_data;
       const shoppingList = new Map();
 
-      planData.forEach(day => {
+      // Calculer le nombre de jours à prendre en compte
+      const daysToProcess = Math.min(selectedDuration, planData.length);
+
+      // Ne traiter que le nombre de jours sélectionné
+      for (let i = 0; i < daysToProcess; i++) {
+        const day = planData[i];
         Object.values(day).forEach((meal: any) => {
           if (meal.quantities) {
             meal.quantities.forEach((item: any) => {
@@ -95,7 +100,7 @@ export const MealPlanGenerator = () => {
             });
           }
         });
-      });
+      }
 
       const formattedList = Array.from(shoppingList.entries())
         .map(([item, details]) => `${item}: ${details.amount}${details.unit}`);
@@ -104,7 +109,7 @@ export const MealPlanGenerator = () => {
 
       toast({
         title: "Liste de courses générée",
-        description: "Votre liste de courses est prête !",
+        description: `Liste générée pour ${selectedDuration} jours`,
       });
 
     } catch (error) {
@@ -151,7 +156,10 @@ export const MealPlanGenerator = () => {
         </CardContent>
       </Card>
 
-      <GenerateShoppingListButton onClick={handleGenerateShoppingList} />
+      <GenerateShoppingListButton 
+        onClick={handleGenerateShoppingList}
+        shoppingList={shoppingList}
+      />
 
       <ActiveMealPlans shoppingList={shoppingList} />
 
