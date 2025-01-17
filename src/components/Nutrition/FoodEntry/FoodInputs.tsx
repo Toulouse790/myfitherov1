@@ -56,12 +56,48 @@ export const FoodInputs = ({
 
     if (selectedFood) {
       setIsCustomFood(false);
-      onCaloriesChange(selectedFood.calories.toString());
-      onProteinsChange(selectedFood.proteins.toString());
-      onCarbsChange(selectedFood.carbs.toString());
-      onFatsChange(selectedFood.fats.toString());
+      // Store base values for 100g
+      const baseCalories = selectedFood.calories;
+      const baseProteins = selectedFood.proteins;
+      const baseCarbs = selectedFood.carbs;
+      const baseFats = selectedFood.fats;
+      
+      // Update with current weight if it exists
+      if (weight) {
+        const ratio = parseFloat(weight) / 100;
+        onCaloriesChange(Math.round(baseCalories * ratio).toString());
+        onProteinsChange(Math.round(baseProteins * ratio).toString());
+        onCarbsChange(Math.round(baseCarbs * ratio).toString());
+        onFatsChange(Math.round(baseFats * ratio).toString());
+      } else {
+        onCaloriesChange(baseCalories.toString());
+        onProteinsChange(baseProteins.toString());
+        onCarbsChange(baseCarbs.toString());
+        onFatsChange(baseFats.toString());
+      }
     } else {
       setIsCustomFood(true);
+    }
+  };
+
+  const handleWeightChange = (newWeight: string) => {
+    onWeightChange(newWeight);
+    
+    // Only update nutrients if we have a selected food from common foods
+    if (!isCustomFood) {
+      const selectedFood = commonFoods.find(
+        (food) => food.name.toLowerCase().includes(newFood.toLowerCase())
+      );
+
+      if (selectedFood) {
+        const ratio = parseFloat(newWeight) / 100;
+        if (!isNaN(ratio)) {
+          onCaloriesChange(Math.round(selectedFood.calories * ratio).toString());
+          onProteinsChange(Math.round(selectedFood.proteins * ratio).toString());
+          onCarbsChange(Math.round(selectedFood.carbs * ratio).toString());
+          onFatsChange(Math.round(selectedFood.fats * ratio).toString());
+        }
+      }
     }
   };
 
@@ -97,7 +133,7 @@ export const FoodInputs = ({
             type="number"
             placeholder="Poids en grammes"
             value={weight}
-            onChange={(e) => onWeightChange(e.target.value)}
+            onChange={(e) => handleWeightChange(e.target.value)}
             className="w-full"
           />
         </div>
