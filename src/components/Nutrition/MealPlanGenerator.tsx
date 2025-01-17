@@ -56,8 +56,7 @@ export const MealPlanGenerator = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <CardTitle className="flex items-center gap-2">
-              <CalendarCheck className="h-5 w-5 text-primary" />
+            <CardTitle>
               Plan alimentaire personnalisé
             </CardTitle>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
