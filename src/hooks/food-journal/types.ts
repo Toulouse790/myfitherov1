@@ -8,6 +8,7 @@ export interface FoodJournalState {
   carbs: string;
   fats: string;
   weight: string;
+  notes: string;
   baseCalories: number;
   selectedCategory: string;
   filteredFoods: CommonFood[];
@@ -20,6 +21,7 @@ export interface FoodJournalActions {
   setCarbs: (value: string) => void;
   setFats: (value: string) => void;
   setWeight: (value: string) => void;
+  setNotes: (value: string) => void;
   setSelectedCategory: (value: string) => void;
   handleAddEntry: (mealType: string) => Promise<void>;
   handleSelectFood: (foodId: string) => void;

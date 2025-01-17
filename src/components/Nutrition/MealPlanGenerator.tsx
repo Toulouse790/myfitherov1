@@ -15,10 +15,10 @@ export const MealPlanGenerator = () => {
   const handleGenerateMealPlan = async (preferences: { duration: string, dietType: string }) => {
     setIsGenerating(true);
     try {
-      const plan = await generateMealPlan(preferences);
+      const plan = await generateMealPlan();
       if (plan?.[0]) {
         console.log("Generated plan to save:", plan[0]);
-        await saveMealPlanToJournal(plan[0], parseInt(preferences.duration));
+        await saveMealPlanToJournal(plan[0], preferences.duration);
       }
     } finally {
       setIsGenerating(false);

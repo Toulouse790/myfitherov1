@@ -25,3 +25,10 @@ export interface MealSectionProps {
   isExpanded: boolean;
   onToggle: () => void;
 }
+
+export interface MealHeaderProps {
+  label: string;
+  mealStatus?: 'taken' | 'skipped';
+  isExpanded: boolean;
+  onToggle: () => void;
+}
