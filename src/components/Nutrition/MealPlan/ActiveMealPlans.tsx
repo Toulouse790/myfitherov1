@@ -117,7 +117,7 @@ export const ActiveMealPlans = () => {
               {format(endDate, 'dd MMMM yyyy', { locale: fr })}
             </CardTitle>
             <div className="flex gap-2">
-              {[3, 7, 14].map((days) => (
+              {[7, 14, 30].map((days) => (
                 <Button
                   key={days}
                   variant={selectedDuration === days ? "default" : "outline"}
