@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface UseSetManagementProps {
   sessionId: string | null;
@@ -20,8 +21,18 @@ export const useSetManagement = ({
   const [reps, setReps] = useState<{ [key: string]: number }>({});
   const [repsPerSet, setRepsPerSet] = useState<{ [key: number]: number }>({});
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleAddSet = async () => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour ajouter une série",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (exerciseName && onSetsChange) {
       const currentSets = completedSets[exerciseName] || 0;
       const newSetsCount = currentSets + 1;
@@ -49,8 +60,13 @@ export const useSetManagement = ({
     notes: string,
     calories: number
   ) => {
-    if (!sessionId) {
-      throw new Error("Session ID is required");
+    if (!sessionId || !user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté et avoir une session active pour enregistrer une série",
+        variant: "destructive"
+      });
+      throw new Error("Session ID or user missing");
     }
 
     const currentSets = completedSets[exerciseName] || 0;
