@@ -7,6 +7,7 @@ import { ActiveMealPlans } from "./MealPlan/ActiveMealPlans";
 import { useMealPlanGenerator } from "@/hooks/use-meal-plan-generator";
 import { useMealPlanSave } from "@/hooks/use-meal-plan-save";
 import { useState } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 interface MealPlanPreferences {
   duration: string;
@@ -29,6 +30,24 @@ export const MealPlanGenerator = () => {
       }
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleGenerateShoppingList = async () => {
+    try {
+      console.log("Generating shopping list for", selectedDuration, "days");
+      // Pour l'instant on affiche juste un toast, on implémentera la génération plus tard
+      toast({
+        title: "Liste de courses",
+        description: `Génération de la liste pour ${selectedDuration} jours en cours de développement`,
+      });
+    } catch (error) {
+      console.error("Error generating shopping list:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer la liste de courses pour le moment",
+        variant: "destructive",
+      });
     }
   };
 
@@ -70,10 +89,7 @@ export const MealPlanGenerator = () => {
       <Button 
         className="w-full"
         variant="outline"
-        onClick={() => {
-          // Trigger shopping list generation with selected duration
-          console.log("Generating shopping list for", selectedDuration, "days");
-        }}
+        onClick={handleGenerateShoppingList}
       >
         Générer ta liste de courses
       </Button>
