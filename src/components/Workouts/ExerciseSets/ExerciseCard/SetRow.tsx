@@ -1,6 +1,7 @@
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Check } from "lucide-react";
-import { WeightInput } from "./WeightInput";
-import { RepsInput } from "./RepsInput";
 
 interface SetRowProps {
   setNumber: number;
@@ -47,15 +48,21 @@ export const SetRow = ({
       </button>
 
       <div className="flex-1 flex items-center gap-2">
-        <WeightInput 
-          weight={weight} 
-          onWeightChange={onWeightChange}
+        <Input
+          type="number"
+          value={weight}
+          onChange={(e) => onWeightChange(Number(e.target.value))}
+          className={`h-8 text-center text-sm px-2 ${isCompleted || isResting || !isCurrentSet ? 'bg-muted cursor-not-allowed' : ''}`}
           disabled={isCompleted || isResting || !isCurrentSet}
+          min={0}
         />
-        <RepsInput 
-          reps={reps} 
-          onRepsChange={onRepsChange}
+        <Input
+          type="number"
+          value={reps}
+          onChange={(e) => onRepsChange(Number(e.target.value))}
+          className={`h-8 text-center text-sm px-2 ${isCompleted || isResting || !isCurrentSet ? 'bg-muted cursor-not-allowed' : ''}`}
           disabled={isCompleted || isResting || !isCurrentSet}
+          min={0}
         />
       </div>
     </div>
