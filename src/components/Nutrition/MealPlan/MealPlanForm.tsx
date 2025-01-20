@@ -2,15 +2,17 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface MealPlanFormProps {
   onGenerate: (preferences: {
     duration: string;
     dietType: string;
   }) => void;
+  isGenerating: boolean;
 }
 
-export const MealPlanForm = ({ onGenerate }: MealPlanFormProps) => {
+export const MealPlanForm = ({ onGenerate, isGenerating }: MealPlanFormProps) => {
   const [dietType, setDietType] = useState("balanced");
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -47,6 +49,14 @@ export const MealPlanForm = ({ onGenerate }: MealPlanFormProps) => {
             </div>
           </RadioGroup>
         </div>
+
+        <Button 
+          type="submit" 
+          className="w-full mt-4"
+          disabled={isGenerating}
+        >
+          {isGenerating ? "Génération en cours..." : "Générer un plan"}
+        </Button>
       </Card>
     </form>
   );
