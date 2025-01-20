@@ -38,11 +38,15 @@ supabase.auth.onAuthStateChange((event, session) => {
 });
 
 // Test the connection
-supabase.from('profiles')
-  .select('count', { count: 'exact', head: true })
-  .then(() => {
+const testConnection = async () => {
+  try {
+    const { count } = await supabase
+      .from('profiles')
+      .select('*', { count: 'exact', head: true });
     console.log('Supabase connection successful');
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Supabase connection error:', error);
-  });
+  }
+};
+
+testConnection();

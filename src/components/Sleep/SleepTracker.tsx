@@ -19,7 +19,10 @@ export const SleepTracker = () => {
   const fetchUserActivityAndCalculateSleep = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log('No authenticated user found');
+        return;
+      }
 
       // Fetch user's activity level and training data - get most recent response
       const { data: questionnaire, error: questionnaireError } = await supabase
@@ -31,7 +34,7 @@ export const SleepTracker = () => {
 
       if (questionnaireError) {
         console.error('Error fetching activity level:', questionnaireError);
-        return;
+        throw questionnaireError;
       }
 
       if (!questionnaire || questionnaire.length === 0) {
@@ -51,7 +54,7 @@ export const SleepTracker = () => {
 
       if (statsError) {
         console.error('Error fetching training stats:', statsError);
-        return;
+        throw statsError;
       }
 
       // Calculate recommended sleep based on activity and training data
@@ -115,54 +118,56 @@ export const SleepTracker = () => {
   };
 
   const addSleepEntry = async (hours: number, minutes: number, quality: number) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour enregistrer votre sommeil",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const totalMinutes = hours * 60 + minutes;
-    const now = new Date();
-    const startTime = new Date(now.getTime() - totalMinutes * 60000);
-
-    const sleepData = {
-      user_id: user.id,
-      start_time: startTime.toISOString(),
-      end_time: now.toISOString(),
-      total_duration_minutes: totalMinutes,
-      quality_metrics: {
-        sleep_quality: quality,
-        deep_sleep_percentage: Math.round(quality * 10),
-        rem_sleep_percentage: Math.round(quality * 8),
-      },
-      environmental_data: {
-        temperature: 20,
-        noise_level: 25,
-        light_level: 2
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour enregistrer votre sommeil",
+          variant: "destructive",
+        });
+        return;
       }
-    };
 
-    const { error } = await supabase
-      .from('sleep_sessions')
-      .insert(sleepData);
+      const totalMinutes = hours * 60 + minutes;
+      const now = new Date();
+      const startTime = new Date(now.getTime() - totalMinutes * 60000);
 
-    if (error) {
+      const sleepData = {
+        user_id: user.id,
+        start_time: startTime.toISOString(),
+        end_time: now.toISOString(),
+        total_duration_minutes: totalMinutes,
+        quality_metrics: {
+          sleep_quality: quality,
+          deep_sleep_percentage: Math.round(quality * 10),
+          rem_sleep_percentage: Math.round(quality * 8),
+        },
+        environmental_data: {
+          temperature: 20,
+          noise_level: 25,
+          light_level: 2
+        }
+      };
+
+      const { error } = await supabase
+        .from('sleep_sessions')
+        .insert(sleepData);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Données de sommeil enregistrées",
+      });
+    } catch (error) {
+      console.error('Error saving sleep data:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'enregistrer les données de sommeil",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Succès",
-      description: "Données de sommeil enregistrées",
-    });
   };
 
   return (
