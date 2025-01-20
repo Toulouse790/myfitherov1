@@ -550,20 +550,28 @@ export type Database = {
       }
       exercise_sets: {
         Row: {
+          biomechanics: Json | null
           calories_burned: number | null
           completed_at: string | null
           created_at: string | null
+          equipment_setup: Json | null
+          exercise_cues: string[] | null
           exercise_name: string
+          exercise_technique: Json | null
+          exercise_variants: string[] | null
           failure_reps: boolean | null
           form_rating: number | null
           id: string
+          muscle_activation_level: Json | null
           notes: string | null
           one_rep_max: number | null
           perceived_difficulty: string | null
           previous_performance: Json | null
+          progression_metrics: Json | null
           reps: number
           rest_time_seconds: number | null
           rpe: number | null
+          safety_considerations: string[] | null
           session_id: string | null
           set_number: number
           set_type: string | null
@@ -573,20 +581,28 @@ export type Database = {
           weight: number | null
         }
         Insert: {
+          biomechanics?: Json | null
           calories_burned?: number | null
           completed_at?: string | null
           created_at?: string | null
+          equipment_setup?: Json | null
+          exercise_cues?: string[] | null
           exercise_name: string
+          exercise_technique?: Json | null
+          exercise_variants?: string[] | null
           failure_reps?: boolean | null
           form_rating?: number | null
           id?: string
+          muscle_activation_level?: Json | null
           notes?: string | null
           one_rep_max?: number | null
           perceived_difficulty?: string | null
           previous_performance?: Json | null
+          progression_metrics?: Json | null
           reps: number
           rest_time_seconds?: number | null
           rpe?: number | null
+          safety_considerations?: string[] | null
           session_id?: string | null
           set_number: number
           set_type?: string | null
@@ -596,20 +612,28 @@ export type Database = {
           weight?: number | null
         }
         Update: {
+          biomechanics?: Json | null
           calories_burned?: number | null
           completed_at?: string | null
           created_at?: string | null
+          equipment_setup?: Json | null
+          exercise_cues?: string[] | null
           exercise_name?: string
+          exercise_technique?: Json | null
+          exercise_variants?: string[] | null
           failure_reps?: boolean | null
           form_rating?: number | null
           id?: string
+          muscle_activation_level?: Json | null
           notes?: string | null
           one_rep_max?: number | null
           perceived_difficulty?: string | null
           previous_performance?: Json | null
+          progression_metrics?: Json | null
           reps?: number
           rest_time_seconds?: number | null
           rpe?: number | null
+          safety_considerations?: string[] | null
           session_id?: string | null
           set_number?: number
           set_type?: string | null
