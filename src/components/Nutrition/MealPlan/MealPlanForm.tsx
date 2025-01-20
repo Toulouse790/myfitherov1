@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-interface MealPlanFormProps {
+export interface MealPlanFormProps {
   onGenerate: (preferences: {
     duration: string;
     dietType: string;
