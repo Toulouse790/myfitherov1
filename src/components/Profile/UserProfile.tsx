@@ -11,11 +11,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { ProfileForm } from "./Sections/ProfileForm";
 import { Progress } from "@/components/ui/progress";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 export const UserProfile = () => {
   const [profile, setProfile] = useState<UserProfileType | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
+  const [trainingPreferences, setTrainingPreferences] = useState({
+    objective: "",
+    trainingLocation: "",
+    experienceLevel: ""
+  });
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -46,7 +53,7 @@ export const UserProfile = () => {
         height: data.height_cm,
         weight: data.weight_kg,
         goals: {
-          primary: "maintenance", // Changed from "general_fitness" to "maintenance"
+          primary: "maintenance",
           weeklyWorkouts: 4,
           dailyCalories: 2500,
           sleepHours: 8
@@ -71,6 +78,30 @@ export const UserProfile = () => {
     }
   };
 
+  const handleTrainingPreferenceChange = async (field: string, value: string) => {
+    setTrainingPreferences(prev => ({ ...prev, [field]: value }));
+    
+    const { error } = await supabase
+      .from('questionnaire_responses')
+      .upsert({
+        user_id: user?.id,
+        [field]: value
+      });
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les préférences",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Succès",
+        description: "Préférences mises à jour",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
   }, [user, toast]);
@@ -87,7 +118,7 @@ export const UserProfile = () => {
   }
 
   // Calculate profile completion percentage
-  const totalFields = 6; // username, avatar, birthDate, gender, height, weight
+  const totalFields = 6;
   let completedFields = 0;
   if (profile.username) completedFields++;
   if (profile.avatar) completedFields++;
@@ -135,6 +166,78 @@ export const UserProfile = () => {
           />
         </div>
 
+        {/* Préférences d'entraînement */}
+        <div className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+          <h2 className="text-xl font-semibold mb-4">Préférences d'entraînement</h2>
+          <div className="space-y-6">
+            {/* Objectif */}
+            <div className="space-y-4">
+              <h3 className="font-medium">Objectif principal</h3>
+              <RadioGroup 
+                value={trainingPreferences.objective}
+                onValueChange={(value) => handleTrainingPreferenceChange('objective', value)}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="weight_loss" id="weight_loss" />
+                  <Label htmlFor="weight_loss">Perte de poids</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="muscle_gain" id="muscle_gain" />
+                  <Label htmlFor="muscle_gain">Prise de masse</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="maintenance" id="maintenance" />
+                  <Label htmlFor="maintenance">Maintien</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Lieu d'entraînement */}
+            <div className="space-y-4">
+              <h3 className="font-medium">Lieu d'entraînement préféré</h3>
+              <RadioGroup 
+                value={trainingPreferences.trainingLocation}
+                onValueChange={(value) => handleTrainingPreferenceChange('available_equipment', value)}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="home" id="home" />
+                  <Label htmlFor="home">À la maison</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="gym" id="gym" />
+                  <Label htmlFor="gym">En salle de sport</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="outdoor" id="outdoor" />
+                  <Label htmlFor="outdoor">En extérieur</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Niveau d'expérience */}
+            <div className="space-y-4">
+              <h3 className="font-medium">Niveau d'expérience</h3>
+              <RadioGroup 
+                value={trainingPreferences.experienceLevel}
+                onValueChange={(value) => handleTrainingPreferenceChange('experience_level', value)}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="beginner" id="beginner" />
+                  <Label htmlFor="beginner">Débutant</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="intermediate" id="intermediate" />
+                  <Label htmlFor="intermediate">Intermédiaire</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="advanced" id="advanced" />
+                  <Label htmlFor="advanced">Avancé</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+        </div>
+
         {/* Subscription Status */}
         <div className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
@@ -159,23 +262,6 @@ export const UserProfile = () => {
             )}
           </div>
         </div>
-
-        <Link to="/training-preferences">
-          <div className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow group">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Dumbbell className="text-primary group-hover:text-primary/80 transition-colors" />
-                <div>
-                  <h2 className="text-xl font-semibold">Préférences d'entraînement</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Objectif, niveau d'activité, équipement disponible
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-            </div>
-          </div>
-        </Link>
 
         <div className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow space-y-6">
           <AppSettings language="Français" />
