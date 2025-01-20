@@ -1,142 +1,161 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslations } from "@/hooks/use-translations";
-import { ObjectiveSelect } from "./ObjectiveSelect";
-import { ActivityLevelSelect } from "./ActivityLevelSelect";
-import { NotificationPreferences } from "./NotificationPreferences";
-import { EquipmentSelect } from "./EquipmentSelect";
+import { supabase } from "@/integrations/supabase/client";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const TrainingPreferences = () => {
+  const { user } = useAuth();
   const { toast } = useToast();
-  const { t } = useTranslations();
-  const [notifications, setNotifications] = useState(true);
-  const [reminderTime, setReminderTime] = useState<string>("30");
-  const [questionnaire, setQuestionnaire] = useState<{
-    objective: string;
-    training_frequency: string;
-    experience_level: string;
-    available_equipment: string;
-  } | null>(null);
+  const navigate = useNavigate();
+  const [preferences, setPreferences] = useState({
+    objective: "",
+    available_equipment: "",
+    experience_level: ""
+  });
 
   useEffect(() => {
-    fetchQuestionnaireResponses();
-  }, []);
+    const fetchPreferences = async () => {
+      if (!user) return;
+      
+      const { data, error } = await supabase
+        .from('questionnaire_responses')
+        .select('objective, available_equipment, experience_level')
+        .eq('user_id', user.id)
+        .single();
 
-  const fetchQuestionnaireResponses = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger vos préférences",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    const { data, error } = await supabase
-      .from('questionnaire_responses')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(1);
+      if (data) {
+        setPreferences({
+          objective: data.objective || "",
+          available_equipment: data.available_equipment || "",
+          experience_level: data.experience_level || ""
+        });
+      }
+    };
 
-    if (error) {
-      console.error('Error fetching questionnaire responses:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger vos préférences d'entraînement",
-        variant: "destructive",
-      });
-      return;
-    }
+    fetchPreferences();
+  }, [user]);
 
-    if (data && data.length > 0) {
-      setQuestionnaire(data[0]);
-    }
-  };
-
-  const updateQuestionnaireResponse = async (field: string, value: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
+  const handlePreferenceChange = async (field: string, value: string) => {
+    setPreferences(prev => ({ ...prev, [field]: value }));
+    
     const { error } = await supabase
       .from('questionnaire_responses')
-      .update({ [field]: value })
-      .eq('user_id', user.id);
+      .upsert({
+        user_id: user?.id,
+        [field]: value
+      });
 
     if (error) {
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour vos préférences",
+        description: "Impossible de mettre à jour les préférences",
         variant: "destructive",
       });
-      return;
-    }
-
-    setQuestionnaire(prev => prev ? { ...prev, [field]: value } : null);
-    toast({
-      title: "Succès",
-      description: "Vos préférences ont été mises à jour",
-    });
-  };
-
-  const handleReminderTimeChange = async (value: string) => {
-    setReminderTime(value);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { error } = await supabase
-      .from('profiles')
-      .update({ reminder_time: value })
-      .eq('id', user.id);
-
-    if (error) {
+    } else {
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le délai de rappel",
-        variant: "destructive",
+        title: "Succès",
+        description: "Préférences mises à jour",
       });
-      return;
     }
-
-    toast({
-      title: "Succès",
-      description: "Le délai de rappel a été mis à jour",
-    });
   };
-
-  if (!questionnaire) return null;
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <h2 className="text-xl font-semibold mb-4">{t("profile.training.title")}</h2>
-        <div className="space-y-6">
-          <ObjectiveSelect
-            value={questionnaire.objective}
-            onChange={(value) => updateQuestionnaireResponse("objective", value)}
-          />
+    <div className="container mx-auto p-4 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="h-6 w-6" />
+        </Button>
+        <h1 className="text-2xl font-bold">Préférences d'entraînement</h1>
+      </div>
 
-          <Separator />
-
-          <ActivityLevelSelect
-            value={questionnaire.experience_level}
-            onChange={(value) => updateQuestionnaireResponse("experience_level", value)}
-          />
-
-          <Separator />
-
-          <EquipmentSelect
-            value={questionnaire.available_equipment}
-            onChange={(value) => updateQuestionnaireResponse("available_equipment", value)}
-          />
-
-          <Separator />
-
-          <NotificationPreferences
-            notifications={notifications}
-            reminderTime={reminderTime}
-            onNotificationsChange={setNotifications}
-            onReminderTimeChange={handleReminderTimeChange}
-          />
+      <div className="space-y-8">
+        {/* Objectif */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Objectif principal</h3>
+          <RadioGroup 
+            value={preferences.objective}
+            onValueChange={(value) => handlePreferenceChange('objective', value)}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="weight_loss" id="weight_loss" />
+              <Label htmlFor="weight_loss">Perte de poids</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="muscle_gain" id="muscle_gain" />
+              <Label htmlFor="muscle_gain">Prise de masse</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="maintenance" id="maintenance" />
+              <Label htmlFor="maintenance">Maintien</Label>
+            </div>
+          </RadioGroup>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Lieu d'entraînement */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Lieu d'entraînement préféré</h3>
+          <RadioGroup 
+            value={preferences.available_equipment}
+            onValueChange={(value) => handlePreferenceChange('available_equipment', value)}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="home" id="home" />
+              <Label htmlFor="home">À la maison</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="gym" id="gym" />
+              <Label htmlFor="gym">En salle de sport</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="outdoor" id="outdoor" />
+              <Label htmlFor="outdoor">En extérieur</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Niveau d'expérience */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Niveau d'expérience</h3>
+          <RadioGroup 
+            value={preferences.experience_level}
+            onValueChange={(value) => handlePreferenceChange('experience_level', value)}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="beginner" id="beginner" />
+              <Label htmlFor="beginner">Débutant</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="intermediate" id="intermediate" />
+              <Label htmlFor="intermediate">Intermédiaire</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="advanced" id="advanced" />
+              <Label htmlFor="advanced">Avancé</Label>
+            </div>
+          </RadioGroup>
+        </div>
+      </div>
+    </div>
   );
 };
