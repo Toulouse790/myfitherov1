@@ -554,14 +554,21 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           exercise_name: string
+          failure_reps: boolean | null
+          form_rating: number | null
           id: string
           notes: string | null
           one_rep_max: number | null
           perceived_difficulty: string | null
+          previous_performance: Json | null
           reps: number
           rest_time_seconds: number | null
+          rpe: number | null
           session_id: string | null
           set_number: number
+          set_type: string | null
+          target_muscle_activation: string[] | null
+          tempo_seconds: Json | null
           volume: number | null
           weight: number | null
         }
@@ -570,14 +577,21 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           exercise_name: string
+          failure_reps?: boolean | null
+          form_rating?: number | null
           id?: string
           notes?: string | null
           one_rep_max?: number | null
           perceived_difficulty?: string | null
+          previous_performance?: Json | null
           reps: number
           rest_time_seconds?: number | null
+          rpe?: number | null
           session_id?: string | null
           set_number: number
+          set_type?: string | null
+          target_muscle_activation?: string[] | null
+          tempo_seconds?: Json | null
           volume?: number | null
           weight?: number | null
         }
@@ -586,14 +600,21 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           exercise_name?: string
+          failure_reps?: boolean | null
+          form_rating?: number | null
           id?: string
           notes?: string | null
           one_rep_max?: number | null
           perceived_difficulty?: string | null
+          previous_performance?: Json | null
           reps?: number
           rest_time_seconds?: number | null
+          rpe?: number | null
           session_id?: string | null
           set_number?: number
+          set_type?: string | null
+          target_muscle_activation?: string[] | null
+          tempo_seconds?: Json | null
           volume?: number | null
           weight?: number | null
         }
