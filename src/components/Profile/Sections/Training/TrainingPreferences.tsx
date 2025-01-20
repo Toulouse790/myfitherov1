@@ -24,10 +24,17 @@ export const TrainingPreferences = () => {
     const fetchPreferences = async () => {
       if (!user) {
         setIsLoading(false);
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour accéder à vos préférences",
+          variant: "destructive",
+        });
         return;
       }
       
       try {
+        console.log("Fetching preferences for user:", user.id);
+        
         const { data, error } = await supabase
           .from('questionnaire_responses')
           .select('objective, available_equipment, experience_level')
@@ -45,6 +52,7 @@ export const TrainingPreferences = () => {
         }
 
         if (data) {
+          console.log("Fetched preferences:", data);
           setPreferences({
             objective: data.objective || "",
             available_equipment: data.available_equipment || "",
