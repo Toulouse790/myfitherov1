@@ -20,7 +20,6 @@ export const MealPlanGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const { generatedPlan, generateMealPlan } = useMealPlanGenerator();
   const { saveMealPlanToJournal } = useMealPlanSave();
-  const [selectedDuration, setSelectedDuration] = useState(7);
   const [shoppingList, setShoppingList] = useState<string[]>([]);
   const { toast } = useToast();
 
@@ -28,7 +27,7 @@ export const MealPlanGenerator = () => {
     setIsGenerating(true);
     try {
       console.log("Starting meal plan generation with preferences:", preferences);
-      const plan = await generateMealPlan(selectedDuration);
+      const plan = await generateMealPlan(7); // Utilisation d'une durée fixe de 7 jours
       
       if (plan?.[0]) {
         console.log("Generated plan:", plan[0]);
@@ -95,7 +94,7 @@ export const MealPlanGenerator = () => {
 
   const handleGenerateShoppingList = async (dietType: string = 'balanced') => {
     try {
-      console.log("Generating shopping list for", selectedDuration, "days with diet type:", dietType);
+      console.log("Generating shopping list for", 7, "days with diet type:", dietType);
       
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -134,7 +133,7 @@ export const MealPlanGenerator = () => {
       const shoppingList = new Map();
 
       const planData = plans[0].plan_data;
-      const daysToProcess = Math.min(selectedDuration, planData.length);
+      const daysToProcess = Math.min(7, planData.length);
 
       for (let i = 0; i < daysToProcess; i++) {
         const day = planData[i];
@@ -169,7 +168,7 @@ export const MealPlanGenerator = () => {
 
       toast({
         title: "Liste de courses générée",
-        description: `Liste générée pour ${selectedDuration} jours (${dietType})`,
+        description: `Liste générée pour 7 jours (${dietType})`,
       });
 
     } catch (error) {
@@ -198,19 +197,6 @@ export const MealPlanGenerator = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
-            <div className="flex justify-center gap-2 mb-4">
-              {[7, 14, 30].map((days) => (
-                <Button
-                  key={days}
-                  variant={selectedDuration === days ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedDuration(days)}
-                >
-                  {days} jours
-                </Button>
-              ))}
-            </div>
-
             <MealPlanForm 
               onGenerate={handleGenerateMealPlan}
               isGenerating={isGenerating}
@@ -228,7 +214,7 @@ export const MealPlanGenerator = () => {
       {generatedPlan && (
         <GeneratedPlanDisplay 
           generatedPlan={generatedPlan}
-          durationDays={selectedDuration.toString()}
+          durationDays="7"
         />
       )}
     </div>
