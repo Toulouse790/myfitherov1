@@ -41,11 +41,11 @@ export const MealPlanForm = ({ onGenerate, isGenerating }: MealPlanFormProps) =>
             </div>
             <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="highProtein" id="highProtein" />
-              <Label htmlFor="highProtein" className="cursor-pointer text-sm">Protéiné</Label>
+              <Label htmlFor="highProtein" className="cursor-pointer text-sm">Riche en protéines</Label>
             </div>
             <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="lowCarb" id="lowCarb" />
-              <Label htmlFor="lowCarb" className="cursor-pointer text-sm">Low Carb</Label>
+              <Label htmlFor="lowCarb" className="cursor-pointer text-sm">Pauvre en glucides</Label>
             </div>
             <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="vegetarian" id="vegetarian" />
@@ -53,7 +53,7 @@ export const MealPlanForm = ({ onGenerate, isGenerating }: MealPlanFormProps) =>
             </div>
             <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="vegan" id="vegan" />
-              <Label htmlFor="vegan" className="cursor-pointer text-sm">Végan</Label>
+              <Label htmlFor="vegan" className="cursor-pointer text-sm">Végétalien</Label>
             </div>
             <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="mediterranean" id="mediterranean" />
@@ -61,11 +61,11 @@ export const MealPlanForm = ({ onGenerate, isGenerating }: MealPlanFormProps) =>
             </div>
             <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="keto" id="keto" />
-              <Label htmlFor="keto" className="cursor-pointer text-sm">Keto</Label>
+              <Label htmlFor="keto" className="cursor-pointer text-sm">Cétogène</Label>
             </div>
             <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="glutenFree" id="glutenFree" />
-              <Label htmlFor="glutenFree" className="cursor-pointer text-sm">Sans Gluten</Label>
+              <Label htmlFor="glutenFree" className="cursor-pointer text-sm">Sans gluten</Label>
             </div>
           </RadioGroup>
         </div>
