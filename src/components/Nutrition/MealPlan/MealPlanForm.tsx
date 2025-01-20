@@ -47,6 +47,26 @@ export const MealPlanForm = ({ onGenerate, isGenerating }: MealPlanFormProps) =>
               <RadioGroupItem value="lowCarb" id="lowCarb" />
               <Label htmlFor="lowCarb" className="cursor-pointer text-sm">Low Carb</Label>
             </div>
+            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
+              <RadioGroupItem value="vegetarian" id="vegetarian" />
+              <Label htmlFor="vegetarian" className="cursor-pointer text-sm">Végétarien</Label>
+            </div>
+            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
+              <RadioGroupItem value="vegan" id="vegan" />
+              <Label htmlFor="vegan" className="cursor-pointer text-sm">Végan</Label>
+            </div>
+            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
+              <RadioGroupItem value="mediterranean" id="mediterranean" />
+              <Label htmlFor="mediterranean" className="cursor-pointer text-sm">Méditerranéen</Label>
+            </div>
+            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
+              <RadioGroupItem value="keto" id="keto" />
+              <Label htmlFor="keto" className="cursor-pointer text-sm">Keto</Label>
+            </div>
+            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
+              <RadioGroupItem value="glutenFree" id="glutenFree" />
+              <Label htmlFor="glutenFree" className="cursor-pointer text-sm">Sans Gluten</Label>
+            </div>
           </RadioGroup>
         </div>
 
