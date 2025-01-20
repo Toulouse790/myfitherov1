@@ -12,7 +12,7 @@ export const LocationSection = ({ value, onChange }: LocationSectionProps) => {
       <h3 className="text-lg font-medium">Lieu d'entraînement préféré</h3>
       <RadioGroup 
         value={value}
-        onValueChange={(value) => onChange('available_equipment', value)}
+        onValueChange={onChange}
         className="space-y-2"
       >
         <div className="flex items-center space-x-2">

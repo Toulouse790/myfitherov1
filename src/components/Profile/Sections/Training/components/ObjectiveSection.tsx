@@ -12,7 +12,7 @@ export const ObjectiveSection = ({ value, onChange }: ObjectiveSectionProps) => 
       <h3 className="text-lg font-medium">Objectif principal</h3>
       <RadioGroup 
         value={value}
-        onValueChange={(value) => onChange('objective', value)}
+        onValueChange={onChange}
         className="space-y-2"
       >
         <div className="flex items-center space-x-2">

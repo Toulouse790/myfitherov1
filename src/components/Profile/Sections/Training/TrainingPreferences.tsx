@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { ObjectiveSection } from "./components/ObjectiveSection";
 import { LocationSection } from "./components/LocationSection";
 import { ExperienceSection } from "./components/ExperienceSection";
@@ -18,7 +17,6 @@ interface Preferences {
 }
 
 export const TrainingPreferences = () => {
-  const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -30,63 +28,65 @@ export const TrainingPreferences = () => {
   });
 
   useEffect(() => {
-    const fetchPreferences = async () => {
-      if (!user) {
-        setIsLoading(false);
+    fetchPreferences();
+  }, []);
+
+  const fetchPreferences = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setIsLoading(false);
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour accéder à vos préférences",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      console.log("Fetching preferences for user:", user.id);
+      
+      const { data, error } = await supabase
+        .from('questionnaire_responses')
+        .select('objective, available_equipment, experience_level, training_frequency')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) {
+        console.error('Error fetching preferences:', error);
         toast({
           title: "Erreur",
-          description: "Vous devez être connecté pour accéder à vos préférences",
+          description: "Impossible de charger vos préférences",
           variant: "destructive",
         });
         return;
       }
-      
-      try {
-        console.log("Fetching preferences for user:", user.id);
-        
-        const { data, error } = await supabase
-          .from('questionnaire_responses')
-          .select('objective, available_equipment, experience_level, training_frequency')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
 
-        if (error) {
-          console.error('Error fetching preferences:', error);
-          toast({
-            title: "Erreur",
-            description: "Impossible de charger vos préférences",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        if (data) {
-          console.log("Fetched preferences:", data);
-          setPreferences({
-            objective: data.objective || "",
-            available_equipment: data.available_equipment || "",
-            experience_level: data.experience_level || "",
-            training_frequency: data.training_frequency || ""
-          });
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        toast({
-          title: "Erreur",
-          description: "Une erreur est survenue lors du chargement",
-          variant: "destructive",
+      if (data) {
+        console.log("Fetched preferences:", data);
+        setPreferences({
+          objective: data.objective || "",
+          available_equipment: data.available_equipment || "",
+          experience_level: data.experience_level || "",
+          training_frequency: data.training_frequency || ""
         });
-      } finally {
-        setIsLoading(false);
       }
-    };
-
-    fetchPreferences();
-  }, [user, toast]);
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors du chargement",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handlePreferenceChange = async (field: string, value: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     
     setPreferences(prev => ({ ...prev, [field]: value }));
@@ -122,6 +122,11 @@ export const TrainingPreferences = () => {
     }
   };
 
+  // Create wrapped update functions for each field
+  const handleObjectiveChange = (value: string) => handlePreferenceChange('objective', value);
+  const handleLocationChange = (value: string) => handlePreferenceChange('available_equipment', value);
+  const handleExperienceChange = (value: string) => handlePreferenceChange('experience_level', value);
+
   if (isLoading) {
     return (
       <Card className="p-6">
@@ -153,15 +158,15 @@ export const TrainingPreferences = () => {
         <Card className="p-6 space-y-8">
           <ObjectiveSection 
             value={preferences.objective}
-            onChange={handlePreferenceChange}
+            onChange={handleObjectiveChange}
           />
           <LocationSection 
             value={preferences.available_equipment}
-            onChange={handlePreferenceChange}
+            onChange={handleLocationChange}
           />
           <ExperienceSection 
             value={preferences.experience_level}
-            onChange={handlePreferenceChange}
+            onChange={handleExperienceChange}
           />
         </Card>
       </div>

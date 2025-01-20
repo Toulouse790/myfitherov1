@@ -12,7 +12,7 @@ export const ExperienceSection = ({ value, onChange }: ExperienceSectionProps) =
       <h3 className="text-lg font-medium">Niveau d'expérience</h3>
       <RadioGroup 
         value={value}
-        onValueChange={(value) => onChange('experience_level', value)}
+        onValueChange={onChange}
         className="space-y-2"
       >
         <div className="flex items-center space-x-2">
