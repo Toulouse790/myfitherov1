@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "./use-auth";
+import { useToast } from "./use-toast";
 
-interface UserPreferences {
+export interface UserPreferences {
   id: string;
   user_id: string;
-  measurement_unit: 'metric' | 'imperial';
+  measurement_unit: string;
   notifications_enabled: boolean;
   training_days: string[];
 }
@@ -40,7 +40,7 @@ export const useUserPreferences = () => {
     enabled: !!user
   });
 
-  const updatePreferences = useMutation({
+  const { mutate: updatePreferences } = useMutation({
     mutationFn: async (newPreferences: Partial<UserPreferences>) => {
       if (!user) throw new Error('User not authenticated');
 
@@ -62,8 +62,8 @@ export const useUserPreferences = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-preferences', user?.id] });
       toast({
-        title: "Préférences mises à jour",
-        description: "Vos préférences ont été enregistrées avec succès.",
+        title: "Succès",
+        description: "Vos préférences ont été mises à jour.",
       });
     },
     onError: (error) => {
@@ -73,12 +73,12 @@ export const useUserPreferences = () => {
         description: "Impossible de mettre à jour vos préférences.",
         variant: "destructive",
       });
-    }
+    },
   });
 
   return {
     preferences,
     isLoading,
-    updatePreferences: updatePreferences.mutate
+    updatePreferences,
   };
 };
