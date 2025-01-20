@@ -857,41 +857,71 @@ export type Database = {
         Row: {
           calories: number
           carbs: number
+          cooking_time_minutes: number | null
           created_at: string
           diet_types: string[] | null
+          difficulty_level: string | null
+          estimated_cost: number | null
           fats: number
           id: string
+          image_url: string | null
           ingredients: Json
           meal_type: string
           name: string
+          nutritional_info: Json | null
           preparation: string | null
           proteins: number
+          rating: number | null
+          reviews_count: number | null
+          season: string[] | null
+          servings: number | null
+          tags: string[] | null
         }
         Insert: {
           calories: number
           carbs: number
+          cooking_time_minutes?: number | null
           created_at?: string
           diet_types?: string[] | null
+          difficulty_level?: string | null
+          estimated_cost?: number | null
           fats: number
           id?: string
+          image_url?: string | null
           ingredients?: Json
           meal_type: string
           name: string
+          nutritional_info?: Json | null
           preparation?: string | null
           proteins: number
+          rating?: number | null
+          reviews_count?: number | null
+          season?: string[] | null
+          servings?: number | null
+          tags?: string[] | null
         }
         Update: {
           calories?: number
           carbs?: number
+          cooking_time_minutes?: number | null
           created_at?: string
           diet_types?: string[] | null
+          difficulty_level?: string | null
+          estimated_cost?: number | null
           fats?: number
           id?: string
+          image_url?: string | null
           ingredients?: Json
           meal_type?: string
           name?: string
+          nutritional_info?: Json | null
           preparation?: string | null
           proteins?: number
+          rating?: number | null
+          reviews_count?: number | null
+          season?: string[] | null
+          servings?: number | null
+          tags?: string[] | null
         }
         Relationships: []
       }
@@ -2240,6 +2270,78 @@ export type Database = {
         }
         Relationships: []
       }
+      popular_meal_suggestions: {
+        Row: {
+          calories: number | null
+          carbs: number | null
+          cooking_time_minutes: number | null
+          created_at: string | null
+          diet_types: string[] | null
+          difficulty_level: string | null
+          estimated_cost: number | null
+          fats: number | null
+          id: string | null
+          image_url: string | null
+          ingredients: Json | null
+          meal_type: string | null
+          name: string | null
+          nutritional_info: Json | null
+          preparation: string | null
+          proteins: number | null
+          rating: number | null
+          reviews_count: number | null
+          season: string[] | null
+          servings: number | null
+          tags: string[] | null
+        }
+        Insert: {
+          calories?: number | null
+          carbs?: number | null
+          cooking_time_minutes?: number | null
+          created_at?: string | null
+          diet_types?: string[] | null
+          difficulty_level?: string | null
+          estimated_cost?: number | null
+          fats?: number | null
+          id?: string | null
+          image_url?: string | null
+          ingredients?: Json | null
+          meal_type?: string | null
+          name?: string | null
+          nutritional_info?: Json | null
+          preparation?: string | null
+          proteins?: number | null
+          rating?: number | null
+          reviews_count?: number | null
+          season?: string[] | null
+          servings?: number | null
+          tags?: string[] | null
+        }
+        Update: {
+          calories?: number | null
+          carbs?: number | null
+          cooking_time_minutes?: number | null
+          created_at?: string | null
+          diet_types?: string[] | null
+          difficulty_level?: string | null
+          estimated_cost?: number | null
+          fats?: number | null
+          id?: string | null
+          image_url?: string | null
+          ingredients?: Json | null
+          meal_type?: string | null
+          name?: string | null
+          nutritional_info?: Json | null
+          preparation?: string | null
+          proteins?: number | null
+          rating?: number | null
+          reviews_count?: number | null
+          season?: string[] | null
+          servings?: number | null
+          tags?: string[] | null
+        }
+        Relationships: []
+      }
       positions_sportives: {
         Row: {
           created_at: string | null
@@ -2363,6 +2465,36 @@ export type Database = {
           parent_page_id: number
           path: string
           meta: Json
+        }[]
+      }
+      get_personalized_meal_suggestions: {
+        Args: {
+          p_user_id: string
+          p_meal_type?: string
+          p_max_calories?: number
+        }
+        Returns: {
+          calories: number
+          carbs: number
+          cooking_time_minutes: number | null
+          created_at: string
+          diet_types: string[] | null
+          difficulty_level: string | null
+          estimated_cost: number | null
+          fats: number
+          id: string
+          image_url: string | null
+          ingredients: Json
+          meal_type: string
+          name: string
+          nutritional_info: Json | null
+          preparation: string | null
+          proteins: number
+          rating: number | null
+          reviews_count: number | null
+          season: string[] | null
+          servings: number | null
+          tags: string[] | null
         }[]
       }
       halfvec_avg: {
