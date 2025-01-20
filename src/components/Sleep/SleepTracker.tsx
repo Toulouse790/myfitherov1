@@ -17,45 +17,62 @@ export const SleepTracker = () => {
   }, []);
 
   const fetchUserActivityAndCalculateSleep = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    // Fetch user's activity level and training data
-    const { data: questionnaire, error: questionnaireError } = await supabase
-      .from('questionnaire_responses')
-      .select('experience_level, training_frequency, workout_duration')
-      .eq('user_id', user.id)
-      .single();
+      // Fetch user's activity level and training data - get most recent response
+      const { data: questionnaire, error: questionnaireError } = await supabase
+        .from('questionnaire_responses')
+        .select('experience_level, training_frequency, workout_duration')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-    if (questionnaireError) {
-      console.error('Error fetching activity level:', questionnaireError);
-      return;
+      if (questionnaireError) {
+        console.error('Error fetching activity level:', questionnaireError);
+        return;
+      }
+
+      if (!questionnaire || questionnaire.length === 0) {
+        console.log('No questionnaire data found');
+        return;
+      }
+
+      const userQuestionnaire = questionnaire[0];
+
+      // Fetch recent training stats to assess physical expenditure
+      const { data: trainingStats, error: statsError } = await supabase
+        .from('training_stats')
+        .select('calories_burned, session_duration_minutes')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(7);
+
+      if (statsError) {
+        console.error('Error fetching training stats:', statsError);
+        return;
+      }
+
+      // Calculate recommended sleep based on activity and training data
+      const recommendedMinutes = calculateRecommendedSleep(
+        userQuestionnaire.experience_level,
+        userQuestionnaire.training_frequency,
+        userQuestionnaire.workout_duration,
+        trainingStats || []
+      );
+
+      const hours = Math.floor(recommendedMinutes / 60);
+      const minutes = recommendedMinutes % 60;
+      setRecommendedSleep(`${hours}h${minutes.toString().padStart(2, '0')}`);
+    } catch (error) {
+      console.error('Error fetching activity level:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger vos données d'activité",
+        variant: "destructive",
+      });
     }
-
-    // Fetch recent training stats to assess physical expenditure
-    const { data: trainingStats, error: statsError } = await supabase
-      .from('training_stats')
-      .select('calories_burned, session_duration_minutes')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(7);
-
-    if (statsError) {
-      console.error('Error fetching training stats:', statsError);
-      return;
-    }
-
-    // Calculate recommended sleep based on activity and training data
-    const recommendedMinutes = calculateRecommendedSleep(
-      questionnaire?.experience_level,
-      questionnaire?.training_frequency,
-      questionnaire?.workout_duration,
-      trainingStats
-    );
-
-    const hours = Math.floor(recommendedMinutes / 60);
-    const minutes = recommendedMinutes % 60;
-    setRecommendedSleep(`${hours}h${minutes.toString().padStart(2, '0')}`);
   };
 
   const calculateRecommendedSleep = (
