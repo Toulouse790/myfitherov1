@@ -23,7 +23,7 @@ export const supabase = createClient(
     },
     global: {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }
     },
     db: {
