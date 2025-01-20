@@ -4,6 +4,15 @@ import { useToast } from "@/hooks/use-toast";
 import { WorkoutCard } from "./WorkoutCard";
 import { GenerateWorkoutDialog } from "./GenerateWorkoutDialog";
 import { useState } from "react";
+import { WorkoutSuggestion } from "./types";
+import { LucideIcon, Bookmark, Target, Zap, Dumbbell } from "lucide-react";
+
+const iconMap: Record<string, LucideIcon> = {
+  "Bookmark": Bookmark,
+  "Target": Target,
+  "Zap": Zap,
+  "Dumbbell": Dumbbell
+};
 
 interface WorkoutSuggestionsProps {
   showAllSuggestions?: boolean;
@@ -36,13 +45,15 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
     meta: {
       errorMessage: "Impossible de charger les suggestions. Veuillez réessayer."
     },
-    onError: (error) => {
-      console.error('Error fetching suggestions:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les suggestions. Veuillez réessayer.",
-        variant: "destructive",
-      });
+    onSettled: (data, error) => {
+      if (error) {
+        console.error('Error fetching suggestions:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les suggestions. Veuillez réessayer.",
+          variant: "destructive",
+        });
+      }
     }
   });
 
@@ -61,16 +72,23 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
 
   return (
     <div className="space-y-4">
-      {displayedSuggestions.map((suggestion) => (
-        <WorkoutCard
-          key={suggestion.id}
-          suggestion={suggestion}
-          onGenerateClick={() => setIsGenerateOpen(true)}
-        />
-      ))}
+      {displayedSuggestions.map((suggestion: WorkoutSuggestion) => {
+        const IconComponent = iconMap[suggestion.icon_name] || Dumbbell;
+        
+        return (
+          <WorkoutCard
+            key={suggestion.id}
+            title={suggestion.title}
+            description={suggestion.description}
+            icon={<IconComponent className="w-5 h-5 text-primary" />}
+            onClick={() => setIsGenerateOpen(true)}
+            sessionId={suggestion.id}
+          />
+        );
+      })}
       
       <GenerateWorkoutDialog
-        open={isGenerateOpen}
+        isOpen={isGenerateOpen}
         onOpenChange={setIsGenerateOpen}
       />
     </div>
