@@ -35,46 +35,32 @@ export const MealPlanForm = ({ onGenerate, isGenerating }: MealPlanFormProps) =>
             onValueChange={setDietType}
             className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-1.5"
           >
-            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
-              <RadioGroupItem value="balanced" id="balanced" />
-              <Label htmlFor="balanced" className="cursor-pointer text-sm">Équilibré</Label>
-            </div>
-            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
-              <RadioGroupItem value="highProtein" id="highProtein" />
-              <Label htmlFor="highProtein" className="cursor-pointer text-sm">Riche en protéines</Label>
-            </div>
-            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
-              <RadioGroupItem value="lowCarb" id="lowCarb" />
-              <Label htmlFor="lowCarb" className="cursor-pointer text-sm">Pauvre en glucides</Label>
-            </div>
-            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
-              <RadioGroupItem value="vegetarian" id="vegetarian" />
-              <Label htmlFor="vegetarian" className="cursor-pointer text-sm">Végétarien</Label>
-            </div>
-            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
-              <RadioGroupItem value="vegan" id="vegan" />
-              <Label htmlFor="vegan" className="cursor-pointer text-sm">Végétalien</Label>
-            </div>
-            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
-              <RadioGroupItem value="mediterranean" id="mediterranean" />
-              <Label htmlFor="mediterranean" className="cursor-pointer text-sm">Méditerranéen</Label>
-            </div>
-            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
-              <RadioGroupItem value="keto" id="keto" />
-              <Label htmlFor="keto" className="cursor-pointer text-sm">Cétogène</Label>
-            </div>
-            <div className="flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors">
-              <RadioGroupItem value="glutenFree" id="glutenFree" />
-              <Label htmlFor="glutenFree" className="cursor-pointer text-sm">Sans gluten</Label>
-            </div>
+            {[
+              { value: "balanced", label: "Équilibré" },
+              { value: "highProtein", label: "Riche en protéines" },
+              { value: "lowCarb", label: "Pauvre en glucides" },
+              { value: "vegetarian", label: "Végétarien" },
+              { value: "vegan", label: "Végétalien" },
+              { value: "mediterranean", label: "Méditerranéen" },
+              { value: "keto", label: "Cétogène" },
+              { value: "glutenFree", label: "Sans gluten" },
+            ].map(({ value, label }) => (
+              <div
+                key={value}
+                className={`flex items-center space-x-1 rounded-lg border p-1.5 cursor-pointer hover:bg-muted/50 transition-colors ${
+                  dietType === value ? "bg-emerald/10 border-emerald" : ""
+                }`}
+              >
+                <RadioGroupItem value={value} id={value} />
+                <Label htmlFor={value} className="cursor-pointer text-sm">
+                  {label}
+                </Label>
+              </div>
+            ))}
           </RadioGroup>
         </div>
 
-        <Button 
-          type="submit" 
-          className="w-full mt-4"
-          disabled={isGenerating}
-        >
+        <Button type="submit" className="w-full mt-4" disabled={isGenerating}>
           {isGenerating ? "Génération en cours..." : "Générer un plan"}
         </Button>
       </Card>
