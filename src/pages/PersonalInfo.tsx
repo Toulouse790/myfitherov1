@@ -8,16 +8,19 @@ import { useNavigate } from "react-router-dom";
 const PersonalInfo = () => {
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
-        {/* En-tête avec bouton retour */}
         <div className="flex items-center gap-4 sticky top-14 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 py-3">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             className="hover:bg-muted"
             aria-label="Retour"
           >
@@ -26,7 +29,6 @@ const PersonalInfo = () => {
           <h1 className="text-2xl font-bold">Informations personnelles</h1>
         </div>
 
-        {/* Contenu principal */}
         <div className="w-full space-y-6">
           <Card className="p-4 sm:p-6">
             <ProfileForm
