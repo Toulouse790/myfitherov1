@@ -27,12 +27,33 @@ export const MealPlanGenerator = () => {
   const handleGenerateMealPlan = async (preferences: MealPlanPreferences) => {
     setIsGenerating(true);
     try {
+      console.log("Starting meal plan generation with preferences:", preferences);
       const plan = await generateMealPlan(selectedDuration);
+      
       if (plan?.[0]) {
-        console.log("Generated plan to save:", plan[0]);
+        console.log("Generated plan:", plan[0]);
         await saveMealPlanToJournal(plan[0], preferences.duration);
         await handleGenerateShoppingList(preferences.dietType);
+        
+        toast({
+          title: "Plan généré avec succès",
+          description: "Votre plan alimentaire a été créé et sauvegardé",
+        });
+      } else {
+        console.error("No plan generated");
+        toast({
+          title: "Erreur",
+          description: "Impossible de générer le plan pour le moment",
+          variant: "destructive",
+        });
       }
+    } catch (error) {
+      console.error("Error generating meal plan:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la génération du plan",
+        variant: "destructive",
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -43,7 +64,6 @@ export const MealPlanGenerator = () => {
     
     switch (dietType) {
       case "highProtein":
-        // Augmenter les protéines pour la prise de masse
         adjustedItems.forEach((details, item) => {
           if (item.toLowerCase().includes("poulet") || 
               item.toLowerCase().includes("boeuf") || 
@@ -55,7 +75,6 @@ export const MealPlanGenerator = () => {
         });
         break;
       case "lowCarb":
-        // Réduire les glucides pour la sèche extrême
         adjustedItems.forEach((details, item) => {
           if (item.toLowerCase().includes("riz") || 
               item.toLowerCase().includes("pâtes") || 
@@ -69,7 +88,6 @@ export const MealPlanGenerator = () => {
           }
         });
         break;
-      // Le cas "balanced" reste inchangé
     }
     
     return adjustedItems;
@@ -97,7 +115,10 @@ export const MealPlanGenerator = () => {
         .order('start_date', { ascending: false })
         .limit(1);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching meal plans:", error);
+        throw error;
+      }
 
       if (!plans || plans.length === 0) {
         toast({
@@ -108,9 +129,11 @@ export const MealPlanGenerator = () => {
         return;
       }
 
-      const planData = plans[0].plan_data;
+      console.log("Found active meal plan:", plans[0]);
+
       const shoppingList = new Map();
 
+      const planData = plans[0].plan_data;
       const daysToProcess = Math.min(selectedDuration, planData.length);
 
       for (let i = 0; i < daysToProcess; i++) {
@@ -137,7 +160,6 @@ export const MealPlanGenerator = () => {
         });
       }
 
-      // Ajuster les quantités en fonction du type de régime
       const adjustedShoppingList = adjustQuantitiesForDietType(shoppingList, dietType);
 
       const formattedList = Array.from(adjustedShoppingList.entries())
@@ -189,7 +211,10 @@ export const MealPlanGenerator = () => {
               ))}
             </div>
 
-            <MealPlanForm onGenerate={handleGenerateMealPlan} />
+            <MealPlanForm 
+              onGenerate={handleGenerateMealPlan}
+              isGenerating={isGenerating}
+            />
           </div>
         </CardContent>
       </Card>
