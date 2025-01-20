@@ -42,17 +42,14 @@ export const SignInForm = () => {
       }
 
       console.log("Connexion réussie, session:", data.session);
-      console.log("Redirection vers /");
       
       toast({
         title: "Connexion réussie",
         description: "Vous êtes maintenant connecté",
       });
 
-      // Attendre un court instant pour s'assurer que la session est bien enregistrée
-      setTimeout(() => {
-        navigate("/");
-      }, 100);
+      // Redirection vers /workouts après une connexion réussie
+      navigate("/workouts");
 
     } catch (err) {
       console.error("Erreur complète:", err);
