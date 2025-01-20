@@ -24,8 +24,8 @@ export const UnitPreferences = () => {
             <SelectValue placeholder="Choisir le système" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="metric">Métrique (kg, cm)</SelectItem>
-            <SelectItem value="imperial">Impérial (lb, in)</SelectItem>
+            <SelectItem value="metric">Métrique (kilogrammes, centimètres)</SelectItem>
+            <SelectItem value="imperial">Impérial (livres, pouces)</SelectItem>
           </SelectContent>
         </Select>
       </div>
