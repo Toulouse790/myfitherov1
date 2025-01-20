@@ -2,19 +2,27 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
+import { ObjectiveSection } from "./components/ObjectiveSection";
+import { LocationSection } from "./components/LocationSection";
+import { ExperienceSection } from "./components/ExperienceSection";
+
+interface Preferences {
+  objective: string;
+  available_equipment: string;
+  experience_level: string;
+  training_frequency: string;
+}
 
 export const TrainingPreferences = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [preferences, setPreferences] = useState({
+  const [preferences, setPreferences] = useState<Preferences>({
     objective: "",
     available_equipment: "",
     experience_level: "",
@@ -143,74 +151,18 @@ export const TrainingPreferences = () => {
 
       <div className="space-y-8 max-w-2xl mx-auto">
         <Card className="p-6 space-y-8">
-          {/* Objectif */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Objectif principal</h3>
-            <RadioGroup 
-              value={preferences.objective}
-              onValueChange={(value) => handlePreferenceChange('objective', value)}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="weight_loss" id="weight_loss" />
-                <Label htmlFor="weight_loss">Perte de poids</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="muscle_gain" id="muscle_gain" />
-                <Label htmlFor="muscle_gain">Prise de masse</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="maintenance" id="maintenance" />
-                <Label htmlFor="maintenance">Maintien</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Lieu d'entraînement */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Lieu d'entraînement préféré</h3>
-            <RadioGroup 
-              value={preferences.available_equipment}
-              onValueChange={(value) => handlePreferenceChange('available_equipment', value)}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="home" id="home" />
-                <Label htmlFor="home">À la maison</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="gym" id="gym" />
-                <Label htmlFor="gym">En salle de sport</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="outdoor" id="outdoor" />
-                <Label htmlFor="outdoor">En extérieur</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Niveau d'expérience */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Niveau d'expérience</h3>
-            <RadioGroup 
-              value={preferences.experience_level}
-              onValueChange={(value) => handlePreferenceChange('experience_level', value)}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="beginner" id="beginner" />
-                <Label htmlFor="beginner">Débutant</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="intermediate" id="intermediate" />
-                <Label htmlFor="intermediate">Intermédiaire</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="advanced" id="advanced" />
-                <Label htmlFor="advanced">Avancé</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <ObjectiveSection 
+            value={preferences.objective}
+            onChange={handlePreferenceChange}
+          />
+          <LocationSection 
+            value={preferences.available_equipment}
+            onChange={handlePreferenceChange}
+          />
+          <ExperienceSection 
+            value={preferences.experience_level}
+            onChange={handlePreferenceChange}
+          />
         </Card>
       </div>
     </div>
