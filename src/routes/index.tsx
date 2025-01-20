@@ -1,138 +1,78 @@
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import { RootLayout } from "@/components/Layout/RootLayout";
-import HomePage from "@/pages/Home";
-import SignInPage from "@/pages/SignIn";
-import SignUpPage from "@/pages/SignUp";
-import WorkoutsPage from "@/pages/Workouts";
-import WorkoutSessionPage from "@/pages/WorkoutSession";
-import NutritionPage from "@/pages/Nutrition";
-import CardioPage from "@/pages/Cardio";
-import SleepPage from "@/pages/Sleep";
-import SuggestionsPage from "@/pages/Suggestions";
-import WorkoutGeneratePage from "@/pages/WorkoutGenerate";
-import StatsPage from "@/pages/Stats";
-import ProfilePage from "@/pages/Profile";
-import TrainingPreferencesPage from "@/pages/TrainingPreferences";
-import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
-import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
+import { supabase } from "@/integrations/supabase/client";
+import RootLayout from "@/components/Layout/RootLayout";
 
-export const router = createBrowserRouter([
+// Lazy loading des pages
+const Index = lazy(() => import("@/pages/Index"));
+const SignIn = lazy(() => import("@/pages/SignIn"));
+const SignUp = lazy(() => import("@/pages/SignUp"));
+const Workouts = lazy(() => import("@/pages/Workouts"));
+const WorkoutSession = lazy(() => import("@/pages/WorkoutSession"));
+const WorkoutGenerate = lazy(() => import("@/pages/WorkoutGenerate"));
+const Profile = lazy(() => import("@/pages/Profile"));
+const Stats = lazy(() => import("@/pages/Stats"));
+const Sleep = lazy(() => import("@/pages/Sleep"));
+const Nutrition = lazy(() => import("@/pages/Nutrition"));
+const Suggestions = lazy(() => import("@/pages/Suggestions"));
+const TrainingPreferences = lazy(() => import("@/pages/TrainingPreferences"));
+
+// Définition des routes principales
+const routes = [
   {
     path: "/",
     element: <RootLayout />,
     children: [
-      {
-        index: true,
-        element: (
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "signin",
-        element: <SignInPage />,
-      },
-      {
-        path: "signup",
-        element: <SignUpPage />,
-      },
-      {
-        path: "workouts",
-        element: (
-          <ProtectedRoute>
-            <WorkoutsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workouts/:sessionId",
-        element: (
-          <ProtectedRoute>
-            <UnifiedWorkoutDetail />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workout-session",
-        element: (
-          <ProtectedRoute>
-            <WorkoutSessionPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "nutrition",
-        element: (
-          <ProtectedRoute>
-            <NutritionPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "cardio",
-        element: (
-          <ProtectedRoute>
-            <CardioPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "sleep",
-        element: (
-          <ProtectedRoute>
-            <SleepPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "suggestions",
-        element: (
-          <ProtectedRoute>
-            <SuggestionsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workout-generate",
-        element: (
-          <ProtectedRoute>
-            <WorkoutGeneratePage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "stats",
-        element: (
-          <ProtectedRoute>
-            <StatsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "profile",
-        element: (
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "training-preferences",
-        element: (
-          <ProtectedRoute>
-            <TrainingPreferencesPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "admin",
-        element: (
-          <ProtectedRoute>
-            <div>Admin Dashboard</div>
-          </ProtectedRoute>
-        ),
-      },
+      { path: "/", element: <Index /> },
+      { path: "/signin", element: <SignIn /> },
+      { path: "/signup", element: <SignUp /> },
+      { path: "/workouts", element: <Workouts /> },
+      { path: "/workouts/:id", element: <WorkoutSession /> },
+      { path: "/workout-generate", element: <WorkoutGenerate /> },
+      { path: "/profile", element: <Profile /> },
+      { path: "/stats", element: <Stats /> },
+      { path: "/sleep", element: <Sleep /> },
+      { path: "/nutrition", element: <Nutrition /> },
+      { path: "/suggestions", element: <Suggestions /> },
+      { path: "/training-preferences", element: <TrainingPreferences /> },
     ],
   },
-]);
+];
+
+// Fonction pour synchroniser les routes avec Supabase
+const syncRoutesToSupabase = async () => {
+  console.log("Syncing routes to Supabase...");
+  
+  try {
+    // Récupérer toutes les routes à plat
+    const flatRoutes = routes[0].children.map(route => ({
+      path: route.path,
+      component: route.element.type.name,
+      description: `Route for ${route.path}`,
+    }));
+
+    // Insérer ou mettre à jour les routes dans Supabase
+    const { error } = await supabase
+      .from('application_routes')
+      .upsert(flatRoutes, {
+        onConflict: 'path',
+        ignoreDuplicates: false
+      });
+
+    if (error) {
+      console.error('Error syncing routes:', error);
+    } else {
+      console.log('Routes successfully synced to Supabase');
+    }
+  } catch (error) {
+    console.error('Error in syncRoutesToSupabase:', error);
+  }
+};
+
+// Créer le router
+const router = createBrowserRouter(routes);
+
+// Synchroniser les routes au démarrage de l'application
+syncRoutesToSupabase();
+
+export default router;
