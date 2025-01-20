@@ -17,27 +17,37 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
   const { user } = useAuth();
   const { createWorkoutSession } = useWorkoutSession();
 
-  const { data: dbSuggestions = [] } = useQuery({
+  const { data: dbSuggestions = [], isError, isLoading } = useQuery({
     queryKey: ['workout-suggestions'],
     queryFn: async () => {
-      console.log("Fetching workout suggestions from database");
-      const { data, error } = await supabase
-        .from('workout_suggestions')
-        .select('*')
-        .eq('is_active', true);
+      try {
+        console.log("Fetching workout suggestions from database");
+        const { data, error } = await supabase
+          .from('workout_suggestions')
+          .select('*')
+          .eq('is_active', true);
 
-      if (error) {
-        console.error('Error fetching suggestions:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les suggestions",
-          variant: "destructive",
-        });
-        return [];
+        if (error) {
+          console.error('Error fetching suggestions:', error);
+          throw error;
+        }
+
+        console.log("Fetched suggestions:", data);
+        return data || [];
+      } catch (error) {
+        console.error('Failed to fetch suggestions:', error);
+        throw error;
       }
-
-      console.log("Fetched suggestions:", data);
-      return data || [];
+    },
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    onError: (error) => {
+      console.error('Error fetching suggestions:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les suggestions. Veuillez réessayer.",
+        variant: "destructive",
+      });
     }
   });
 
@@ -62,6 +72,15 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
   const displayedSuggestions = showAllSuggestions 
     ? allSuggestions 
     : allSuggestions.slice(0, 4);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4 animate-pulse">
+        <div className="h-32 bg-muted rounded-lg"></div>
+        <div className="h-32 bg-muted rounded-lg"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
