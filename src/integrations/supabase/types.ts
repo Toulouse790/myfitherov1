@@ -437,6 +437,63 @@ export type Database = {
           },
         ]
       }
+      diet_adaptations: {
+        Row: {
+          activity_level: string | null
+          allergies: string[] | null
+          created_at: string | null
+          diet_type_id: string | null
+          health_conditions: string[] | null
+          id: string
+          individual_adjustments: Json | null
+          intolerances: string[] | null
+          metabolic_rate: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_level?: string | null
+          allergies?: string[] | null
+          created_at?: string | null
+          diet_type_id?: string | null
+          health_conditions?: string[] | null
+          id?: string
+          individual_adjustments?: Json | null
+          intolerances?: string[] | null
+          metabolic_rate?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_level?: string | null
+          allergies?: string[] | null
+          created_at?: string | null
+          diet_type_id?: string | null
+          health_conditions?: string[] | null
+          id?: string
+          individual_adjustments?: Json | null
+          intolerances?: string[] | null
+          metabolic_rate?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diet_adaptations_diet_type_id_fkey"
+            columns: ["diet_type_id"]
+            isOneToOne: false
+            referencedRelation: "diet_type_configurations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diet_adaptations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       diet_type_configurations: {
         Row: {
           carbs_multiplier: number | null
@@ -444,11 +501,15 @@ export type Database = {
           description: string | null
           diet_type: string
           fats_multiplier: number | null
+          hydration_requirements: number | null
           id: string
+          meal_timing_recommendations: Json | null
+          micronutrient_focus: Json | null
           name: string
           protein_multiplier: number | null
           recommended_foods: string[] | null
           restricted_foods: string[] | null
+          scientific_references: string[] | null
           updated_at: string
         }
         Insert: {
@@ -457,11 +518,15 @@ export type Database = {
           description?: string | null
           diet_type: string
           fats_multiplier?: number | null
+          hydration_requirements?: number | null
           id?: string
+          meal_timing_recommendations?: Json | null
+          micronutrient_focus?: Json | null
           name: string
           protein_multiplier?: number | null
           recommended_foods?: string[] | null
           restricted_foods?: string[] | null
+          scientific_references?: string[] | null
           updated_at?: string
         }
         Update: {
@@ -470,11 +535,15 @@ export type Database = {
           description?: string | null
           diet_type?: string
           fats_multiplier?: number | null
+          hydration_requirements?: number | null
           id?: string
+          meal_timing_recommendations?: Json | null
+          micronutrient_focus?: Json | null
           name?: string
           protein_multiplier?: number | null
           recommended_foods?: string[] | null
           restricted_foods?: string[] | null
+          scientific_references?: string[] | null
           updated_at?: string
         }
         Relationships: []
