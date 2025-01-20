@@ -648,6 +648,47 @@ export type Database = {
         }
         Relationships: []
       }
+      micro_rewards: {
+        Row: {
+          claimed: boolean | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          points: number | null
+          reward_type: string
+          trigger_event: string
+          user_id: string | null
+        }
+        Insert: {
+          claimed?: boolean | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          points?: number | null
+          reward_type: string
+          trigger_event: string
+          user_id?: string | null
+        }
+        Update: {
+          claimed?: boolean | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          points?: number | null
+          reward_type?: string
+          trigger_event?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "micro_rewards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       muscle_measurements: {
         Row: {
           biceps_left_cm: number | null
@@ -882,6 +923,94 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_progress: {
+        Row: {
+          abandoned: boolean | null
+          answers: Json | null
+          completed: boolean | null
+          created_at: string
+          current_step: number
+          id: string
+          last_activity: string | null
+          user_id: string | null
+        }
+        Insert: {
+          abandoned?: boolean | null
+          answers?: Json | null
+          completed?: boolean | null
+          created_at?: string
+          current_step: number
+          id?: string
+          last_activity?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          abandoned?: boolean | null
+          answers?: Json | null
+          completed?: boolean | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          last_activity?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      periodic_goals: {
+        Row: {
+          completed: boolean | null
+          created_at: string
+          current_value: Json | null
+          end_date: string
+          goal_type: string
+          id: string
+          period_type: string
+          start_date: string
+          target_value: Json
+          user_id: string | null
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string
+          current_value?: Json | null
+          end_date: string
+          goal_type: string
+          id?: string
+          period_type: string
+          start_date: string
+          target_value: Json
+          user_id?: string | null
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string
+          current_value?: Json | null
+          end_date?: string
+          goal_type?: string
+          id?: string
+          period_type?: string
+          start_date?: string
+          target_value?: Json
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "periodic_goals_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1429,6 +1558,44 @@ export type Database = {
             foreignKeyName: "user_preferences_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_streaks: {
+        Row: {
+          created_at: string
+          current_streak: number | null
+          id: string
+          last_activity_date: string | null
+          longest_streak: number | null
+          streak_type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number | null
+          id?: string
+          last_activity_date?: string | null
+          longest_streak?: number | null
+          streak_type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number | null
+          id?: string
+          last_activity_date?: string | null
+          longest_streak?: number | null
+          streak_type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_streaks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
