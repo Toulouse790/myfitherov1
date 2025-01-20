@@ -14,6 +14,7 @@ import Sleep from "@/pages/Sleep";
 import WorkoutSession from "@/pages/WorkoutSession";
 import AdminDashboard from "@/pages/Admin/Dashboard";
 import Index from "@/pages/Index";
+import Profile from "@/pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,14 @@ const router = createBrowserRouter([
       {
         path: "/admin/dashboard",
         element: <AdminDashboard />,
+      },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
