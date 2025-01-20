@@ -41,8 +41,6 @@ const routes = [
 
 // Fonction pour synchroniser les routes avec Supabase
 const syncRoutesToSupabase = async () => {
-  console.log("Syncing routes to Supabase...");
-  
   try {
     // Vérifier d'abord si l'utilisateur est administrateur
     const { data: { user } } = await supabase.auth.getUser();
@@ -55,6 +53,7 @@ const syncRoutesToSupabase = async () => {
     const { data: userData, error: userError } = await supabase
       .from('profiles')
       .select('id')
+      .eq('id', user.id)
       .single();
 
     if (userError || !userData) {
@@ -69,18 +68,29 @@ const syncRoutesToSupabase = async () => {
       description: `Route for ${route.path}`,
     }));
 
-    // Insérer ou mettre à jour les routes dans Supabase
-    const { error } = await supabase
-      .from('application_routes')
-      .upsert(flatRoutes, {
-        onConflict: 'path',
-        ignoreDuplicates: false
-      });
+    // Tenter la synchronisation uniquement en mode développement
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        const { error } = await supabase
+          .from('application_routes')
+          .upsert(flatRoutes, {
+            onConflict: 'path',
+            ignoreDuplicates: false
+          });
 
-    if (error) {
-      console.error('Error syncing routes:', error);
-    } else {
-      console.log('Routes successfully synced to Supabase');
+        if (error) {
+          // Si l'erreur est liée aux permissions, on log simplement et on continue
+          if (error.code === '42501') {
+            console.log('Permission denied for route sync - continuing without sync');
+            return;
+          }
+          console.error('Error syncing routes:', error);
+        } else {
+          console.log('Routes successfully synced to Supabase');
+        }
+      } catch (error) {
+        console.log('Failed to sync routes - continuing without sync');
+      }
     }
   } catch (error) {
     console.error('Error in syncRoutesToSupabase:', error);
