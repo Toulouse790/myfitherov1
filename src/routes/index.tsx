@@ -44,6 +44,24 @@ const syncRoutesToSupabase = async () => {
   console.log("Syncing routes to Supabase...");
   
   try {
+    // Vérifier d'abord si l'utilisateur est administrateur
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      console.log("No user found - skipping route sync");
+      return;
+    }
+
+    const { data: userData, error: userError } = await supabase
+      .from('profiles')
+      .select('id')
+      .single();
+
+    if (userError || !userData) {
+      console.log("Not an admin user - skipping route sync");
+      return;
+    }
+
     // Récupérer toutes les routes à plat
     const flatRoutes = routes[0].children.map(route => ({
       path: route.path,
@@ -72,5 +90,7 @@ const syncRoutesToSupabase = async () => {
 // Créer le router
 export const router = createBrowserRouter(routes);
 
-// Synchroniser les routes au démarrage de l'application
-syncRoutesToSupabase();
+// Synchroniser les routes uniquement si nécessaire
+if (process.env.NODE_ENV === 'development') {
+  syncRoutesToSupabase();
+}
