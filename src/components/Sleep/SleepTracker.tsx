@@ -149,7 +149,7 @@ export const SleepTracker = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card>
       <CardContent className="p-6">
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
@@ -165,25 +165,25 @@ export const SleepTracker = () => {
                 Durée de sommeil
               </label>
               <div className="flex gap-4">
-                <div>
+                <div className="flex-1">
                   <input
                     type="number"
                     value={sleepHours}
                     onChange={(e) => setSleepHours(Number(e.target.value))}
                     min={0}
                     max={24}
-                    className="w-20 px-3 py-2 border rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                   />
                   <span className="ml-2">heures</span>
                 </div>
-                <div>
+                <div className="flex-1">
                   <input
                     type="number"
                     value={sleepMinutes}
                     onChange={(e) => setSleepMinutes(Number(e.target.value))}
                     min={0}
                     max={59}
-                    className="w-20 px-3 py-2 border rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                   />
                   <span className="ml-2">minutes</span>
                 </div>
@@ -195,13 +195,17 @@ export const SleepTracker = () => {
                 Qualité du sommeil (1-10)
               </label>
               <input
-                type="number"
+                type="range"
                 value={sleepQuality}
                 onChange={(e) => setSleepQuality(Number(e.target.value))}
                 min={1}
                 max={10}
-                className="w-20 px-3 py-2 border rounded-md"
+                className="w-full"
               />
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Mauvaise</span>
+                <span>Excellente</span>
+              </div>
             </div>
 
             <Button
@@ -211,8 +215,6 @@ export const SleepTracker = () => {
               Enregistrer
             </Button>
           </div>
-
-          <ConnectedDevices />
         </div>
       </CardContent>
     </Card>
