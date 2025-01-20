@@ -185,7 +185,7 @@ export const UserProfile = () => {
                 <div>
                   <h2 className="text-xl font-semibold">Préférences d'entraînement</h2>
                   <p className="text-sm text-muted-foreground">
-                    Personnalisez votre expérience d'entraînement
+                    Équipement, horaires et objectifs
                   </p>
                 </div>
               </div>
