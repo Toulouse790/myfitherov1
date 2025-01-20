@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { WorkoutCard } from "./WorkoutCard";
 import { GenerateWorkoutDialog } from "./GenerateWorkoutDialog";
 import { useState } from "react";
-import { WorkoutSuggestion } from "./types";
+import { WorkoutSuggestion, WorkoutSuggestionsProps } from "./types";
 import { LucideIcon, Bookmark, Target, Zap, Dumbbell } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -13,10 +13,6 @@ const iconMap: Record<string, LucideIcon> = {
   "Zap": Zap,
   "Dumbbell": Dumbbell
 };
-
-interface WorkoutSuggestionsProps {
-  showAllSuggestions?: boolean;
-}
 
 export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggestionsProps) => {
   const [isGenerateOpen, setIsGenerateOpen] = useState(false);
@@ -43,15 +39,15 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     meta: {
-      errorMessage: "Impossible de charger les suggestions. Veuillez réessayer."
-    },
-    onError: (error) => {
-      console.error('Error fetching suggestions:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les suggestions. Veuillez réessayer.",
-        variant: "destructive",
-      });
+      errorMessage: "Impossible de charger les suggestions. Veuillez réessayer.",
+      onError: (error: Error) => {
+        console.error('Error fetching suggestions:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les suggestions. Veuillez réessayer.",
+          variant: "destructive",
+        });
+      }
     }
   });
 
