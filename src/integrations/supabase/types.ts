@@ -326,6 +326,7 @@ export type Database = {
           food_category: string
           id: string
           ingredients: Json | null
+          micronutrients: Json | null
           name: string
           proteins: number
           serving_size: number
@@ -341,6 +342,7 @@ export type Database = {
           food_category: string
           id?: string
           ingredients?: Json | null
+          micronutrients?: Json | null
           name: string
           proteins: number
           serving_size?: number
@@ -356,12 +358,84 @@ export type Database = {
           food_category?: string
           id?: string
           ingredients?: Json | null
+          micronutrients?: Json | null
           name?: string
           proteins?: number
           serving_size?: number
           serving_unit?: string
         }
         Relationships: []
+      }
+      custom_recipes: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          ingredients: Json
+          instructions: Json | null
+          is_public: boolean | null
+          micronutrients: Json | null
+          name: string
+          preparation_time: number | null
+          servings: number | null
+          tags: string[] | null
+          total_calories: number
+          total_carbs: number
+          total_fats: number
+          total_proteins: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          ingredients: Json
+          instructions?: Json | null
+          is_public?: boolean | null
+          micronutrients?: Json | null
+          name: string
+          preparation_time?: number | null
+          servings?: number | null
+          tags?: string[] | null
+          total_calories: number
+          total_carbs: number
+          total_fats: number
+          total_proteins: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          ingredients?: Json
+          instructions?: Json | null
+          is_public?: boolean | null
+          micronutrients?: Json | null
+          name?: string
+          preparation_time?: number | null
+          servings?: number | null
+          tags?: string[] | null
+          total_calories?: number
+          total_carbs?: number
+          total_fats?: number
+          total_proteins?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_recipes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       diet_type_configurations: {
         Row: {
@@ -460,6 +534,51 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorite_meals: {
+        Row: {
+          created_at: string
+          food_entries: Json | null
+          id: string
+          meal_type: string
+          name: string
+          recipe_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          food_entries?: Json | null
+          id?: string
+          meal_type: string
+          name: string
+          recipe_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          food_entries?: Json | null
+          id?: string
+          meal_type?: string
+          name?: string
+          recipe_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorite_meals_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "custom_recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorite_meals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -606,6 +725,44 @@ export type Database = {
           },
         ]
       }
+      meal_reminders: {
+        Row: {
+          created_at: string
+          days_of_week: string[] | null
+          id: string
+          is_active: boolean | null
+          meal_type: string
+          reminder_time: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          days_of_week?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          meal_type: string
+          reminder_time: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          days_of_week?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          meal_type?: string
+          reminder_time?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_suggestions: {
         Row: {
           calories: number
@@ -682,6 +839,41 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "micro_rewards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      micronutrient_tracking: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          minerals: Json | null
+          user_id: string | null
+          vitamins: Json | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          minerals?: Json | null
+          user_id?: string | null
+          vitamins?: Json | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          minerals?: Json | null
+          user_id?: string | null
+          vitamins?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "micronutrient_tracking_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -923,6 +1115,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nutrition_exports: {
+        Row: {
+          created_at: string
+          date_range: unknown | null
+          export_type: string
+          file_url: string | null
+          id: string
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          date_range?: unknown | null
+          export_type: string
+          file_url?: string | null
+          id?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          date_range?: unknown | null
+          export_type?: string
+          file_url?: string | null
+          id?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nutrition_exports_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1483,6 +1713,7 @@ export type Database = {
       }
       user_nutrition_preferences: {
         Row: {
+          adaptive_tracking: Json | null
           allergies: string[] | null
           created_at: string
           excluded_foods: string[] | null
@@ -1494,6 +1725,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          adaptive_tracking?: Json | null
           allergies?: string[] | null
           created_at?: string
           excluded_foods?: string[] | null
@@ -1505,6 +1737,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          adaptive_tracking?: Json | null
           allergies?: string[] | null
           created_at?: string
           excluded_foods?: string[] | null

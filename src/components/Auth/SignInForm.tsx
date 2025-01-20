@@ -37,9 +37,9 @@ export const SignInForm = () => {
 
       console.log("Connexion réussie, session:", data.session);
       
-      // Vérifier si l'utilisateur a déjà répondu au questionnaire
-      const { data: questionnaireData, error: questionnaireError } = await supabase
-        .from('questionnaire_responses')
+      // Vérifier si l'utilisateur a déjà répondu au questionnaire nutritionnel
+      const { data: nutritionPrefs, error: prefsError } = await supabase
+        .from('user_nutrition_preferences')
         .select('id')
         .eq('user_id', data.session?.user.id)
         .single();
@@ -49,12 +49,12 @@ export const SignInForm = () => {
         description: "Vous êtes maintenant connecté",
       });
 
-      if (!questionnaireData) {
-        // Si pas de réponse au questionnaire, rediriger vers le questionnaire initial
+      if (!nutritionPrefs) {
+        // Si pas de préférences nutritionnelles, rediriger vers le questionnaire initial
         navigate("/initial-questionnaire");
       } else {
-        // Sinon, rediriger vers la page des entraînements
-        navigate("/workouts");
+        // Sinon, rediriger vers la page de nutrition
+        navigate("/nutrition");
       }
 
     } catch (err) {
