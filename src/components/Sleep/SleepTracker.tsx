@@ -97,9 +97,55 @@ export const SleepTracker = () => {
     return totalMinutes;
   };
 
-  const addSleepEntry = (hours: number, minutes: number, quality: number) => {
-    // Add your logic to save the sleep entry
-    console.log(`Sleep Entry: ${hours}h ${minutes}m, Quality: ${quality}`);
+  const addSleepEntry = async (hours: number, minutes: number, quality: number) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour enregistrer votre sommeil",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const totalMinutes = hours * 60 + minutes;
+    const now = new Date();
+    const startTime = new Date(now.getTime() - totalMinutes * 60000);
+
+    const sleepData = {
+      user_id: user.id,
+      start_time: startTime.toISOString(),
+      end_time: now.toISOString(),
+      total_duration_minutes: totalMinutes,
+      quality_metrics: {
+        sleep_quality: quality,
+        deep_sleep_percentage: Math.round(quality * 10),
+        rem_sleep_percentage: Math.round(quality * 8),
+      },
+      environmental_data: {
+        temperature: 20,
+        noise_level: 25,
+        light_level: 2
+      }
+    };
+
+    const { error } = await supabase
+      .from('sleep_sessions')
+      .insert(sleepData);
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'enregistrer les données de sommeil",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Succès",
+      description: "Données de sommeil enregistrées",
+    });
   };
 
   return (

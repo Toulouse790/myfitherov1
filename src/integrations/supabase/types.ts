@@ -1580,6 +1580,179 @@ export type Database = {
           },
         ]
       }
+      sleep_goals: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          target_bedtime: string
+          target_duration_minutes: number
+          target_wake_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          target_bedtime: string
+          target_duration_minutes: number
+          target_wake_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          target_bedtime?: string
+          target_duration_minutes?: number
+          target_wake_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_goals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sleep_habits: {
+        Row: {
+          created_at: string
+          habit_data: Json
+          habit_type: string
+          id: string
+          is_active: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          habit_data: Json
+          habit_type: string
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          habit_data?: Json
+          habit_type?: string
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_habits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sleep_reports: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          report_data: Json
+          report_type: string
+          start_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          report_data: Json
+          report_type: string
+          start_date: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          report_data?: Json
+          report_type?: string
+          start_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_reports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sleep_sessions: {
+        Row: {
+          created_at: string
+          device_data: Json | null
+          end_time: string
+          environmental_data: Json | null
+          id: string
+          is_nap: boolean | null
+          quality_metrics: Json | null
+          sleep_score: number | null
+          sleep_stages: Json | null
+          start_time: string
+          total_duration_minutes: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_data?: Json | null
+          end_time: string
+          environmental_data?: Json | null
+          id?: string
+          is_nap?: boolean | null
+          quality_metrics?: Json | null
+          sleep_score?: number | null
+          sleep_stages?: Json | null
+          start_time: string
+          total_duration_minutes?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_data?: Json | null
+          end_time?: string
+          environmental_data?: Json | null
+          id?: string
+          is_nap?: boolean | null
+          quality_metrics?: Json | null
+          sleep_score?: number | null
+          sleep_stages?: Json | null
+          start_time?: string
+          total_duration_minutes?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sport_positions: {
         Row: {
           created_at: string | null
@@ -2446,6 +2619,14 @@ export type Database = {
           carbs: number
           fats: number
         }[]
+      }
+      calculate_sleep_score: {
+        Args: {
+          duration_minutes: number
+          quality_metrics: Json
+          environmental_data: Json
+        }
+        Returns: number
       }
       calculate_total_daily_calories: {
         Args: {
