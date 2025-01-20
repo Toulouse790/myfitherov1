@@ -21,6 +21,8 @@ export const useUserPreferences = () => {
     queryFn: async () => {
       if (!user) return null;
       
+      console.log("[DEBUG] Fetching preferences for user:", user.id);
+      
       const { data, error } = await supabase
         .from('user_preferences')
         .select('*')
@@ -28,10 +30,11 @@ export const useUserPreferences = () => {
         .single();
 
       if (error) {
-        console.error('Error fetching preferences:', error);
+        console.error('[DEBUG] Error fetching preferences:', error);
         throw error;
       }
 
+      console.log("[DEBUG] Fetched preferences:", data);
       return data;
     },
     enabled: !!user
@@ -41,6 +44,9 @@ export const useUserPreferences = () => {
     mutationFn: async (newPreferences: Partial<UserPreferences>) => {
       if (!user) throw new Error('User not authenticated');
 
+      console.log("[DEBUG] Updating preferences for user:", user.id);
+      console.log("[DEBUG] New preferences:", newPreferences);
+
       const { error } = await supabase
         .from('user_preferences')
         .upsert({
@@ -48,7 +54,10 @@ export const useUserPreferences = () => {
           ...newPreferences
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[DEBUG] Error updating preferences:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-preferences', user?.id] });
@@ -58,7 +67,7 @@ export const useUserPreferences = () => {
       });
     },
     onError: (error) => {
-      console.error('Error updating preferences:', error);
+      console.error('[DEBUG] Error in mutation:', error);
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour vos préférences.",
