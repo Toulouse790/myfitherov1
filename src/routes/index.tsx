@@ -13,11 +13,16 @@ import TrainingPreferencesPage from "@/pages/TrainingPreferences";
 import Sleep from "@/pages/Sleep";
 import WorkoutSession from "@/pages/WorkoutSession";
 import AdminDashboard from "@/pages/Admin/Dashboard";
+import Index from "@/pages/Index";
 
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
+      {
+        path: "/",
+        element: <Index />,
+      },
       {
         path: "/favorite-meals",
         element: (
