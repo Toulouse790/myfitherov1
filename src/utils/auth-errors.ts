@@ -30,3 +30,26 @@ export const handleSignupError = (error: AuthError): string => {
       return error.message || "Une erreur est survenue lors de l'inscription.";
   }
 };
+
+export const handleAuthError = (error: AuthError): string => {
+  console.error("Detailed auth error:", error);
+
+  if (error.message.includes("Invalid login credentials")) {
+    return "Email ou mot de passe incorrect.";
+  }
+
+  if (error.message.includes("Email not confirmed")) {
+    return "Veuillez confirmer votre email avant de vous connecter.";
+  }
+
+  switch (error.status) {
+    case 500:
+      return "Erreur serveur. Veuillez réessayer dans quelques instants.";
+    case 401:
+      return "Email ou mot de passe incorrect.";
+    case 400:
+      return "Données de connexion invalides.";
+    default:
+      return error.message || "Une erreur est survenue lors de la connexion.";
+  }
+};
