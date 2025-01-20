@@ -40,7 +40,9 @@ export const TrainingPreferences = () => {
           .from('questionnaire_responses')
           .select('objective, available_equipment, experience_level, training_frequency')
           .eq('user_id', user.id)
-          .maybeSingle();
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
 
         if (error) {
           console.error('Error fetching preferences:', error);
@@ -84,10 +86,10 @@ export const TrainingPreferences = () => {
     try {
       const { error } = await supabase
         .from('questionnaire_responses')
-        .upsert({
-          user_id: user.id,
-          [field]: value
-        });
+        .update({ [field]: value })
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
 
       if (error) {
         toast({
@@ -160,37 +162,6 @@ export const TrainingPreferences = () => {
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="maintenance" id="maintenance" />
                 <Label htmlFor="maintenance">Maintien</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Fréquence d'entraînement */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Fréquence d'entraînement</h3>
-            <RadioGroup 
-              value={preferences.training_frequency}
-              onValueChange={(value) => handlePreferenceChange('training_frequency', value)}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1" id="freq_1" />
-                <Label htmlFor="freq_1">1 fois par semaine</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="2" id="freq_2" />
-                <Label htmlFor="freq_2">2 fois par semaine</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3" id="freq_3" />
-                <Label htmlFor="freq_3">3 fois par semaine</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="4" id="freq_4" />
-                <Label htmlFor="freq_4">4 fois par semaine</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="5" id="freq_5" />
-                <Label htmlFor="freq_5">5 fois par semaine</Label>
               </div>
             </RadioGroup>
           </div>
