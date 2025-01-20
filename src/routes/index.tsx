@@ -9,6 +9,15 @@ import PersonalInfo from "@/pages/PersonalInfo";
 import AppSettings from "@/pages/AppSettings";
 import Subscription from "@/pages/Subscription";
 import TrainingPreferences from "@/pages/TrainingPreferences";
+import Home from "@/pages/Home";
+import Workouts from "@/pages/Workouts";
+import Nutrition from "@/pages/Nutrition";
+import Sleep from "@/pages/Sleep";
+import Stats from "@/pages/Stats";
+import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
+import WorkoutSession from "@/pages/WorkoutSession";
+import WorkoutGenerate from "@/pages/WorkoutGenerate";
+import Cardio from "@/pages/Cardio";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +25,14 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <ErrorBoundary />,
     children: [
+      {
+        path: "/",
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "profile",
         element: (
@@ -53,6 +70,70 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <TrainingPreferences />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workouts",
+        element: (
+          <ProtectedRoute>
+            <Workouts />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workouts/session",
+        element: (
+          <ProtectedRoute>
+            <WorkoutSession />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workouts/generate",
+        element: (
+          <ProtectedRoute>
+            <WorkoutGenerate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "cardio",
+        element: (
+          <ProtectedRoute>
+            <Cardio />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "nutrition",
+        element: (
+          <ProtectedRoute>
+            <Nutrition />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "sleep",
+        element: (
+          <ProtectedRoute>
+            <Sleep />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "stats",
+        element: (
+          <ProtectedRoute>
+            <Stats />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "initial-questionnaire",
+        element: (
+          <ProtectedRoute>
+            <InitialQuestionnaire />
           </ProtectedRoute>
         ),
       }
