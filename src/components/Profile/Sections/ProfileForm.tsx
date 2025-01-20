@@ -1,118 +1,148 @@
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
+
+const formSchema = z.object({
+  birth_date: z.string().optional().nullable(),
+  gender: z.string().optional().nullable(),
+  height_cm: z.string().optional().nullable(),
+  weight_kg: z.string().optional().nullable(),
+});
 
 interface ProfileFormProps {
   initialData: {
-    birth_date?: string;
-    gender?: string;
-    height_cm?: number;
-    weight_kg?: number;
+    birth_date: string | null;
+    gender: string | null;
+    height_cm: number | null;
+    weight_kg: number | null;
   };
-  onUpdate: () => void;
+  onUpdate: (values: z.infer<typeof formSchema>) => void;
 }
 
-export const ProfileForm = ({ initialData, onUpdate }: ProfileFormProps) => {
-  const [birthDate, setBirthDate] = useState(initialData.birth_date || "");
-  const [gender, setGender] = useState(initialData.gender || "");
-  const [height, setHeight] = useState(initialData.height_cm?.toString() || "");
-  const [weight, setWeight] = useState(initialData.weight_kg?.toString() || "");
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+export function ProfileForm({ initialData, onUpdate }: ProfileFormProps) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      birth_date: initialData.birth_date || "",
+      gender: initialData.gender || "",
+      height_cm: initialData.height_cm?.toString() || "",
+      weight_kg: initialData.weight_kg?.toString() || "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        birth_date: birthDate || null,
-        gender: gender || null,
-        height_cm: height ? parseFloat(height) : null,
-        weight_kg: weight ? parseFloat(weight) : null,
-      })
-      .eq('id', (await supabase.auth.getUser()).data.user?.id);
-
-    setIsLoading(false);
-
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le profil",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    onUpdate(values);
     toast({
-      title: "Succès",
-      description: "Profil mis à jour avec succès",
+      title: "Profil mis à jour",
+      description: "Vos informations ont été enregistrées avec succès.",
     });
-    
-    onUpdate();
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="birthDate">Date de naissance</Label>
-        <Input
-          id="birthDate"
-          type="date"
-          value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-        />
-      </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="birth_date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date de naissance</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} className="w-full" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <div className="space-y-2">
-        <Label htmlFor="gender">Genre</Label>
-        <Select value={gender} onValueChange={setGender}>
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionnez votre genre" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="male">Homme</SelectItem>
-            <SelectItem value="female">Femme</SelectItem>
-            <SelectItem value="other">Autre</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Genre</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Sélectionnez votre genre" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="male">Homme</SelectItem>
+                    <SelectItem value="female">Femme</SelectItem>
+                    <SelectItem value="other">Autre</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <div className="space-y-2">
-        <Label htmlFor="height">Taille (cm)</Label>
-        <Input
-          id="height"
-          type="number"
-          min="0"
-          max="300"
-          value={height}
-          onChange={(e) => setHeight(e.target.value)}
-          placeholder="Entrez votre taille en cm"
-        />
-      </div>
+          <FormField
+            control={form.control}
+            name="height_cm"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Taille (cm)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="170"
+                    {...field}
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <div className="space-y-2">
-        <Label htmlFor="weight">Poids (kg)</Label>
-        <Input
-          id="weight"
-          type="number"
-          min="0"
-          max="500"
-          step="0.1"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          placeholder="Entrez votre poids en kg"
-        />
-      </div>
+          <FormField
+            control={form.control}
+            name="weight_kg"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Poids (kg)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="70"
+                    {...field}
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Mise à jour..." : "Mettre à jour le profil"}
-      </Button>
-    </form>
+        <Button 
+          type="submit" 
+          className="w-full sm:w-auto"
+        >
+          Enregistrer les modifications
+        </Button>
+      </form>
+    </Form>
   );
-};
+}
