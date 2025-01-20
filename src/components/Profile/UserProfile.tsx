@@ -9,21 +9,14 @@ import { ChevronRight, Crown, Dumbbell, User2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { ProfileForm } from "./Sections/ProfileForm";
+import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 
 export const UserProfile = () => {
   const [profile, setProfile] = useState<UserProfileType | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [trainingPreferences, setTrainingPreferences] = useState({
-    objective: "",
-    trainingLocation: "",
-    experienceLevel: ""
-  });
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -79,30 +72,6 @@ export const UserProfile = () => {
     }
   };
 
-  const handleTrainingPreferenceChange = async (field: string, value: string) => {
-    setTrainingPreferences(prev => ({ ...prev, [field]: value }));
-    
-    const { error } = await supabase
-      .from('questionnaire_responses')
-      .upsert({
-        user_id: user?.id,
-        [field]: value
-      });
-
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour les préférences",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Succès",
-        description: "Préférences mises à jour",
-      });
-    }
-  };
-
   useEffect(() => {
     fetchProfile();
   }, [user, toast]);
@@ -153,24 +122,22 @@ export const UserProfile = () => {
       )}
 
       <div className="space-y-4">
-        {/* Informations personnelles */}
-        <div className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow">
-          <h2 className="text-xl font-semibold mb-4">Informations personnelles</h2>
-          <ProfileForm
-            initialData={{
-              birth_date: profile.birthDate,
-              gender: profile.gender,
-              height_cm: profile.height,
-              weight_kg: profile.weight,
-            }}
-            onUpdate={fetchProfile}
-          />
-        </div>
+        <Card 
+          className="p-6 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate('/personal-info')}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <User2 className="w-5 h-5 text-primary" />
+              <h2 className="text-xl font-semibold">Informations personnelles</h2>
+            </div>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </div>
+        </Card>
 
-        {/* Préférences d'entraînement */}
-        <div 
+        <Card 
+          className="p-6 cursor-pointer hover:shadow-md transition-shadow"
           onClick={() => navigate('/training-preferences')}
-          className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -179,10 +146,12 @@ export const UserProfile = () => {
             </div>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
-        </div>
+        </Card>
 
-        {/* Subscription Status */}
-        <div className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+        <Card 
+          className="p-6 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate('/subscription')}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Crown className={profile.isPremium ? "text-yellow-500" : "text-muted-foreground"} />
@@ -193,26 +162,23 @@ export const UserProfile = () => {
                 </p>
               </div>
             </div>
-            {!profile.isPremium && (
-              <Button variant="default" className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white" onClick={() => {
-                toast({
-                  title: "Bientôt disponible",
-                  description: "L'abonnement premium sera bientôt disponible !",
-                });
-              }}>
-                Passer Premium
-              </Button>
-            )}
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
-        </div>
+        </Card>
 
-        <div className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow space-y-6">
-          <AppSettings language="Français" />
-        </div>
+        <Card 
+          className="p-6 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate('/app-settings')}
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Paramètres de l'application</h2>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </div>
+        </Card>
 
-        <div className="p-6 bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+        <Card className="p-6">
           <AccountActions />
-        </div>
+        </Card>
       </div>
     </div>
   );

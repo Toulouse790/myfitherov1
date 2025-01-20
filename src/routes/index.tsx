@@ -1,91 +1,177 @@
 import { createBrowserRouter } from "react-router-dom";
-import { RootLayout } from "@/components/Layout/RootLayout";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
-import FavoriteMeals from "@/pages/FavoriteMeals";
-import Cardio from "@/pages/Cardio";
-import Nutrition from "@/pages/Nutrition";
-import SignInPage from "@/pages/SignIn";
-import SignUpPage from "@/pages/SignUp";
-import Stats from "@/pages/Stats";
-import WorkoutGenerate from "@/pages/WorkoutGenerate";
-import Workouts from "@/pages/Workouts";
-import TrainingPreferencesPage from "@/pages/TrainingPreferences";
-import Sleep from "@/pages/Sleep";
-import WorkoutSession from "@/pages/WorkoutSession";
-import AdminDashboard from "@/pages/Admin/Dashboard";
-import Index from "@/pages/Index";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { RootLayout } from "@/components/Layout/RootLayout";
+import { AdminLayout } from "@/components/Admin/AdminLayout";
+import { AdminDashboard } from "@/components/Admin/AdminDashboard";
+import { AdminExercises } from "@/components/Admin/AdminExercises";
+import { AdminMedia } from "@/components/Admin/AdminMedia";
+import { SignIn } from "@/components/Auth/SignIn";
+import { SignUp } from "@/components/Auth/SignUp";
+import { ForgotPassword } from "@/components/Auth/ForgotPassword";
+import { ResetPassword } from "@/components/Auth/ResetPassword";
+import { Dashboard } from "@/components/Dashboard";
+import { Workouts } from "@/components/Workouts";
+import { WorkoutSession } from "@/components/Workouts/WorkoutSession";
+import { WorkoutCustomization } from "@/components/Workouts/WorkoutCustomization";
+import { WorkoutSummary } from "@/components/Workouts/WorkoutSummary";
+import { ExerciseLibrary } from "@/components/Workouts/ExerciseLibrary";
+import { Nutrition } from "@/components/Nutrition";
+import { Sleep } from "@/components/Sleep";
+import { Stats } from "@/components/Stats";
 import Profile from "@/pages/Profile";
+import PersonalInfo from "@/pages/PersonalInfo";
+import AppSettings from "@/pages/AppSettings";
+import Subscription from "@/pages/Subscription";
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
+    path: "/",
     element: <RootLayout />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
-        path: "/",
-        element: <Index />,
-      },
-      {
-        path: "/favorite-meals",
+        index: true,
         element: (
           <ProtectedRoute>
-            <FavoriteMeals />
+            <Dashboard />
           </ProtectedRoute>
         ),
       },
       {
-        path: "/cardio",
-        element: <Cardio />,
+        path: "workouts",
+        element: (
+          <ProtectedRoute>
+            <Workouts />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/nutrition",
-        element: <Nutrition />,
+        path: "workouts/exercise/library",
+        element: (
+          <ProtectedRoute>
+            <ExerciseLibrary />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/sign-in",
-        element: <SignInPage />,
+        path: "workouts/customize",
+        element: (
+          <ProtectedRoute>
+            <WorkoutCustomization />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/sign-up",
-        element: <SignUpPage />,
+        path: "workouts/summary",
+        element: (
+          <ProtectedRoute>
+            <WorkoutSummary />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/stats",
-        element: <Stats />,
+        path: "workouts/session/:sessionId",
+        element: (
+          <ProtectedRoute>
+            <WorkoutSession />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/workout-generate",
-        element: <WorkoutGenerate />,
+        path: "nutrition",
+        element: (
+          <ProtectedRoute>
+            <Nutrition />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/workouts",
-        element: <Workouts />,
+        path: "sleep",
+        element: (
+          <ProtectedRoute>
+            <Sleep />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/training-preferences",
-        element: <TrainingPreferencesPage />,
+        path: "stats",
+        element: (
+          <ProtectedRoute>
+            <Stats />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/sleep",
-        element: <Sleep />,
-      },
-      {
-        path: "/workout-session/:sessionId",
-        element: <WorkoutSession />,
-      },
-      {
-        path: "/admin/dashboard",
-        element: <AdminDashboard />,
-      },
-      {
-        path: "/profile",
+        path: "profile",
         element: (
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>
         ),
       },
+      {
+        path: "personal-info",
+        element: (
+          <ProtectedRoute>
+            <PersonalInfo />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "app-settings",
+        element: (
+          <ProtectedRoute>
+            <AppSettings />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "subscription",
+        element: (
+          <ProtectedRoute>
+            <Subscription />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin",
+        element: (
+          <ProtectedRoute adminOnly>
+            <AdminLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <AdminDashboard />,
+          },
+          {
+            path: "exercises",
+            element: <AdminExercises />,
+          },
+          {
+            path: "media",
+            element: <AdminMedia />,
+          },
+        ],
+      },
     ],
   },
+  {
+    path: "signin",
+    element: <SignIn />,
+  },
+  {
+    path: "signup",
+    element: <SignUp />,
+  },
+  {
+    path: "forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "reset-password",
+    element: <ResetPassword />,
+  },
 ]);
-
-export default router;
