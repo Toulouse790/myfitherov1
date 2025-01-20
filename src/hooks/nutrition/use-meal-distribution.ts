@@ -22,9 +22,9 @@ export const generateMealDistribution = (
   const hasMorningSnack = userPreferences?.questionnaire?.has_morning_snack ?? true;
   const hasAfternoonSnack = userPreferences?.questionnaire?.has_afternoon_snack ?? true;
 
-  if (todayPlan) {
+  if (todayPlan && todayPlan.breakfast && todayPlan.lunch && todayPlan.dinner) {
     console.log("Using today's plan:", todayPlan);
-    return {
+    const distribution: Record<string, MealDistribution> = {
       breakfast: {
         name: todayPlan.breakfast.name,
         calories: todayPlan.breakfast.calories,
@@ -42,24 +42,28 @@ export const generateMealDistribution = (
         calories: todayPlan.dinner.calories,
         proteins: todayPlan.dinner.proteins,
         preparation: todayPlan.dinner.preparation
-      },
-      ...(hasMorningSnack && todayPlan.snack ? {
-        morning_snack: {
-          name: `${todayPlan.snack.name} (matin)`,
-          calories: Math.round(todayPlan.snack.calories / 2),
-          proteins: Math.round(todayPlan.snack.proteins / 2),
-          preparation: todayPlan.snack.preparation
-        }
-      } : {}),
-      ...(hasAfternoonSnack && todayPlan.snack ? {
-        afternoon_snack: {
-          name: `${todayPlan.snack.name} (après-midi)`,
-          calories: Math.round(todayPlan.snack.calories / 2),
-          proteins: Math.round(todayPlan.snack.proteins / 2),
-          preparation: todayPlan.snack.preparation
-        }
-      } : {})
+      }
     };
+
+    if (hasMorningSnack && todayPlan.snack) {
+      distribution.morning_snack = {
+        name: `${todayPlan.snack.name} (matin)`,
+        calories: Math.round(todayPlan.snack.calories / 2),
+        proteins: Math.round(todayPlan.snack.proteins / 2),
+        preparation: todayPlan.snack.preparation
+      };
+    }
+
+    if (hasAfternoonSnack && todayPlan.snack) {
+      distribution.afternoon_snack = {
+        name: `${todayPlan.snack.name} (après-midi)`,
+        calories: Math.round(todayPlan.snack.calories / 2),
+        proteins: Math.round(todayPlan.snack.proteins / 2),
+        preparation: todayPlan.snack.preparation
+      };
+    }
+
+    return distribution;
   }
 
   // Distribution des calories selon les repas
@@ -74,8 +78,8 @@ export const generateMealDistribution = (
   const dinnerProteinRatio = 0.30;
   const snackProteinRatio = 0.10;
 
-  const totalCalories = dailyTargets.calories || 2000;
-  const totalProteins = dailyTargets.proteins || 150;
+  const totalCalories = dailyTargets?.calories || 2000;
+  const totalProteins = dailyTargets?.proteins || 150;
 
   let mealDistribution: Record<string, MealDistribution> = {
     breakfast: {
