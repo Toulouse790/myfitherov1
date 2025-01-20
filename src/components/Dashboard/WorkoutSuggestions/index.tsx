@@ -45,15 +45,13 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
     meta: {
       errorMessage: "Impossible de charger les suggestions. Veuillez réessayer."
     },
-    onSettled: (data, error) => {
-      if (error) {
-        console.error('Error fetching suggestions:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les suggestions. Veuillez réessayer.",
-          variant: "destructive",
-        });
-      }
+    onError: (error) => {
+      console.error('Error fetching suggestions:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les suggestions. Veuillez réessayer.",
+        variant: "destructive",
+      });
     }
   });
 
@@ -89,7 +87,7 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
       
       <GenerateWorkoutDialog
         isOpen={isGenerateOpen}
-        onOpenChange={setIsGenerateOpen}
+        onClose={() => setIsGenerateOpen(false)}
       />
     </div>
   );
