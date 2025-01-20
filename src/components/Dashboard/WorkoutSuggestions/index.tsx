@@ -41,13 +41,17 @@ export const WorkoutSuggestions = ({ showAllSuggestions = false }: WorkoutSugges
     },
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    onError: (error) => {
-      console.error('Error fetching suggestions:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les suggestions. Veuillez réessayer.",
-        variant: "destructive",
-      });
+    meta: {
+      errorMessage: "Impossible de charger les suggestions. Veuillez réessayer."
+    },
+    onSettled: (data, error) => {
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les suggestions. Veuillez réessayer.",
+          variant: "destructive",
+        });
+      }
     }
   });
 
