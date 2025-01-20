@@ -35,13 +35,13 @@ export const UnitPreferences = () => {
           <Ruler className="h-4 w-4" />
           Unités de distance
         </h3>
-        <Select onValueChange={handleUnitChange} defaultValue="km">
+        <Select onValueChange={handleUnitChange} defaultValue="cm">
           <SelectTrigger>
             <SelectValue placeholder="Choisir l'unité" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="km">Kilomètres</SelectItem>
-            <SelectItem value="mi">Miles</SelectItem>
+            <SelectItem value="cm">Centimètres</SelectItem>
+            <SelectItem value="in">Pouces</SelectItem>
           </SelectContent>
         </Select>
       </div>
