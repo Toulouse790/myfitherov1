@@ -70,9 +70,7 @@ const syncRoutesToSupabase = async () => {
 };
 
 // Créer le router
-const router = createBrowserRouter(routes);
+export const router = createBrowserRouter(routes);
 
 // Synchroniser les routes au démarrage de l'application
 syncRoutesToSupabase();
-
-export default router;
