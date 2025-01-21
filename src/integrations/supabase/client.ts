@@ -50,19 +50,9 @@ supabase.auth.onAuthStateChange((event, session) => {
 // Test the connection
 const testConnection = async () => {
   try {
-    console.log('Testing Supabase connection to workout_suggestions...');
-    const { data, error } = await supabase
-      .from('workout_suggestions')
-      .select('*')
-      .eq('is_active', true)
-      .order('suggested_order', { ascending: true });
-
-    if (error) {
-      console.error('Supabase connection error:', error);
-      throw error;
-    }
-
-    console.log('Supabase connection successful, received data:', data);
+    console.log('Testing Supabase connection...');
+    const { data: { user } } = await supabase.auth.getUser();
+    console.log('Current user:', user);
   } catch (error) {
     console.error('Error in test connection:', error);
   }
