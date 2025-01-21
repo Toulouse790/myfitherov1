@@ -3,8 +3,41 @@ import { NutritionChart } from "@/components/Nutrition/NutritionChart";
 import { MealPlanGenerator } from "@/components/Nutrition/MealPlanGenerator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DailyMeals } from "@/components/Nutrition/DailyMeals";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Nutrition = () => {
+  const { user, loading } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      toast({
+        title: "Accès refusé",
+        description: "Vous devez être connecté pour accéder à cette page",
+        variant: "destructive",
+      });
+      navigate("/sign-in");
+    }
+  }, [user, loading, toast, navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-center">
+          <p className="text-muted-foreground">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   const handleTabClick = (tabValue: string) => {
     const element = document.querySelector(`[value="${tabValue}"]`) as HTMLElement;
     if (element) {
