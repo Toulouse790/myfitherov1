@@ -130,7 +130,7 @@ export const WorkoutCard = ({
       <div className="flex justify-between items-start">
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">{description}</p>
         </div>
 
         {sessionId && (
