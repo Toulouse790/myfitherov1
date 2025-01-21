@@ -2,7 +2,6 @@ export interface WorkoutSuggestion {
   id: string;
   title: string;
   description: string;
-  icon_name: string;
   type: string;
   duration?: number | null;
   difficulty?: string | null;

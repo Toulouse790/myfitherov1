@@ -5,14 +5,7 @@ import { WorkoutCard } from "./WorkoutCard";
 import { GenerateWorkoutDialog } from "./GenerateWorkoutDialog";
 import { useState } from "react";
 import { WorkoutSuggestion, WorkoutSuggestionsProps } from "./types";
-import { LucideIcon, Bookmark, Target, Zap, Dumbbell } from "lucide-react";
-
-const iconMap: Record<string, LucideIcon> = {
-  "Bookmark": Bookmark,
-  "Target": Target,
-  "Zap": Zap,
-  "Dumbbell": Dumbbell
-};
+import { Dumbbell } from "lucide-react";
 
 export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggestionsProps) => {
   const [isGenerateOpen, setIsGenerateOpen] = useState(false);
@@ -74,20 +67,16 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
 
   return (
     <div className="space-y-4">
-      {displayedSuggestions.map((suggestion: WorkoutSuggestion) => {
-        const IconComponent = iconMap[suggestion.icon_name] || Dumbbell;
-        
-        return (
-          <WorkoutCard
-            key={suggestion.id}
-            title={suggestion.title}
-            description={suggestion.description}
-            icon={<IconComponent className="w-5 h-5 text-primary" />}
-            onClick={() => setIsGenerateOpen(true)}
-            sessionId={suggestion.id}
-          />
-        );
-      })}
+      {displayedSuggestions.map((suggestion: WorkoutSuggestion) => (
+        <WorkoutCard
+          key={suggestion.id}
+          title={suggestion.title}
+          description={suggestion.description}
+          icon={<Dumbbell className="w-5 h-5 text-primary" />}
+          onClick={() => setIsGenerateOpen(true)}
+          sessionId={suggestion.id}
+        />
+      ))}
       
       <GenerateWorkoutDialog
         isOpen={isGenerateOpen}
