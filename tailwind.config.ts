@@ -59,12 +59,12 @@ export default {
         '1.5': '1.5',
       },
       colors: {
-        // Primary Colors
+        // Primary Colors with better contrast for dark mode
         'deep-blue': '#1E3D59',
         'emerald': '#17B890',
         'dynamic-orange': '#FF6B6B',
         
-        // Secondary Colors
+        // Secondary Colors with improved contrast
         'pure-white': '#FFFFFF',
         'light-gray': '#F5F7FA',
         'dark-gray': '#4A4A4A',
@@ -72,30 +72,42 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: {
+          DEFAULT: "hsl(var(--background))",
+          dark: "#121212", // Darker background for dark mode
+        },
+        foreground: {
+          DEFAULT: "hsl(var(--foreground))",
+          dark: "#FFFFFF", // White text for dark mode
+        },
         primary: {
           DEFAULT: "#1E3D59",
+          dark: "#2A5A8A", // Lighter blue for dark mode
           foreground: "#FFFFFF",
         },
         secondary: {
           DEFAULT: "#17B890",
+          dark: "#1EE6B5", // Brighter green for dark mode
           foreground: "#FFFFFF",
         },
         accent: {
           DEFAULT: "#FF6B6B",
+          dark: "#FF8585", // Lighter red for dark mode
           foreground: "#FFFFFF",
         },
         destructive: {
           DEFAULT: "#FF6B6B",
+          dark: "#FF4444", // More vivid red for dark mode
           foreground: "#FFFFFF",
         },
         muted: {
           DEFAULT: "#F5F7FA",
+          dark: "#2A2A2A", // Darker gray for dark mode
           foreground: "#4A4A4A",
         },
         card: {
           DEFAULT: "hsl(var(--card))",
+          dark: "#1E1E1E", // Dark card background
           foreground: "hsl(var(--card-foreground))",
         },
       },
