@@ -118,7 +118,8 @@ export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: Wo
       {sessionId && (
         <button
           onClick={toggleFavorite}
-          className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-gray-700/50 transition-colors"
+          className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-700/50 transition-colors"
+          aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
         >
           <Heart 
             className={`h-4 w-4 transition-colors ${
