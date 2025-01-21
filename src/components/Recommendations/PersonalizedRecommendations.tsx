@@ -227,9 +227,12 @@ export const PersonalizedRecommendations = () => {
                     </TooltipProvider>
                   </div>
                   <p className="text-sm text-muted-foreground truncate">{rec.description}</p>
-                  <div className="flex gap-2 text-xs text-muted-foreground">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     {rec.dataPoints.map((point, index) => (
-                      <span key={index}>• {point}</span>
+                      <span key={index} className="inline-flex items-center">
+                        <span className="mr-1">•</span>
+                        {point}
+                      </span>
                     ))}
                   </div>
                 </div>
