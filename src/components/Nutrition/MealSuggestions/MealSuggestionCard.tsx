@@ -53,7 +53,7 @@ export const MealSuggestionCard = ({
         
         <div className="flex flex-wrap gap-2">
           {tags?.map((tag) => (
-            <Badge key={tag} variant="outline" className="text-xs">
+            <Badge key={tag} variant="outline">
               {tag}
             </Badge>
           ))}
