@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 export interface Exercise {
   name: string;
   sets: number;
@@ -24,104 +26,124 @@ interface UserProfile {
   workoutsPerWeek: number;
   dailyCalories: number;
   recoveryCapacity: 'low' | 'medium' | 'high';
+  experienceLevel?: string;
+  availableEquipment?: string;
 }
 
-const defaultProfile: UserProfile = {
-  age: 30,
-  weight: 75,
-  height: 175,
-  goal: 'muscle_gain',
-  workoutsPerWeek: 3,
-  dailyCalories: 2500,
-  recoveryCapacity: 'medium'
+const calculateExerciseScore = async (
+  exerciseName: string,
+  userProfile: UserProfile,
+  muscleRecoveryStatus: { muscleGroup: string; recoveryStatus: string }[]
+) => {
+  let score = 100;
+
+  // 1. Vérifier le niveau de difficulté par rapport à l'expérience
+  const { data: exerciseData } = await supabase
+    .from('unified_exercises')
+    .select('difficulty, muscle_group, location')
+    .eq('name', exerciseName)
+    .single();
+
+  if (exerciseData) {
+    // Ajuster le score en fonction du niveau de difficulté
+    if (userProfile.experienceLevel === 'beginner' && exerciseData.difficulty.includes('advanced')) {
+      score -= 40;
+    }
+    if (userProfile.experienceLevel === 'advanced' && exerciseData.difficulty.includes('beginner')) {
+      score -= 20;
+    }
+
+    // Vérifier si l'équipement nécessaire est disponible
+    if (exerciseData.location && !exerciseData.location.includes(userProfile.availableEquipment)) {
+      score -= 100; // Exercice impossible sans équipement
+    }
+
+    // Vérifier l'état de récupération du groupe musculaire
+    const muscleStatus = muscleRecoveryStatus.find(
+      status => status.muscleGroup === exerciseData.muscle_group
+    );
+    if (muscleStatus) {
+      switch (muscleStatus.recoveryStatus) {
+        case 'fatigued':
+          score -= 80;
+          break;
+        case 'recovering':
+          score -= 40;
+          break;
+        case 'recovered':
+          score += 10;
+          break;
+      }
+    }
+  }
+
+  return score;
 };
 
-const calculateCaloriesPerExercise = (
-  weight: number,
-  reps: number,
-  sets: number,
-  intensity: number
-): number => {
-  // MET (Metabolic Equivalent of Task) moyen pour la musculation
-  const MET = 5.0;
-  // Durée estimée par répétition en minutes (3 secondes par rep)
-  const duration = (reps * sets * 3) / 60;
-  // Formule de base des calories : MET * 3.5 * poids en kg * durée en minutes / 200
-  const baseCalories = (MET * 3.5 * weight * duration) / 200;
-  // Ajustement selon l'intensité
-  return Math.round(baseCalories * (1 + intensity));
-};
-
-export const generateWorkoutPlan = (
+export const generateWorkoutPlan = async (
   availableExercises: string[], 
-  profile: UserProfile = defaultProfile,
+  profile: UserProfile,
   muscleRecoveryStatus?: { muscleGroup: string; recoveryStatus: string }[]
-): WorkoutPlan => {
+): Promise<WorkoutPlan> => {
   console.log("Génération avec", availableExercises.length, "exercices disponibles");
   
-  // Calcul de l'intensité en fonction du profil et de la récupération
-  const baseIntensity = profile.workoutsPerWeek > 3 ? 0.8 : 0.7;
-  const recoveryModifier = profile.recoveryCapacity === 'high' ? 0.1 : 
-                          profile.recoveryCapacity === 'low' ? -0.1 : 0;
-  
-  // Ajustement de l'intensité en fonction du statut de récupération
-  let intensityModifier = 0;
-  if (muscleRecoveryStatus?.some(status => status.recoveryStatus === 'fatigued')) {
-    intensityModifier -= 0.2;
-  } else if (muscleRecoveryStatus?.every(status => status.recoveryStatus === 'recovered')) {
-    intensityModifier += 0.1;
-  }
-  
-  const intensity = Math.min(Math.max(baseIntensity + recoveryModifier + intensityModifier, 0.5), 0.9);
+  // Calculer les scores pour chaque exercice
+  const exerciseScores = await Promise.all(
+    availableExercises.map(async (exercise) => ({
+      name: exercise,
+      score: await calculateExerciseScore(exercise, profile, muscleRecoveryStatus || [])
+    }))
+  );
 
-  // Calcul du volume en fonction de l'objectif et de la récupération
-  const baseVolume = profile.goal === 'muscle_gain' ? 15 : 12;
-  const volumeModifier = profile.workoutsPerWeek > 3 ? 3 : 0;
-  const recoveryVolumeModifier = muscleRecoveryStatus?.some(status => status.recoveryStatus === 'fatigued') ? -3 : 0;
-  const volume = baseVolume + volumeModifier + recoveryVolumeModifier;
+  // Trier les exercices par score et filtrer ceux qui sont impossibles (score <= 0)
+  const viableExercises = exerciseScores
+    .filter(ex => ex.score > 0)
+    .sort((a, b) => b.score - a.score);
 
-  // Calcul des séries et répétitions
-  const setsAndReps = {
-    sets: profile.goal === 'muscle_gain' ? 4 : 3,
-    reps: profile.goal === 'muscle_gain' ? 10 : 12,
-  };
+  // Sélectionner les meilleurs exercices en respectant la variété des groupes musculaires
+  const selectedExercises: Exercise[] = [];
+  const usedMuscleGroups = new Set<string>();
 
-  // Temps de repos recommandé
-  const baseRest = profile.goal === 'muscle_gain' ? 90 : 60;
-  const restModifier = muscleRecoveryStatus?.some(status => status.recoveryStatus === 'fatigued') ? 30 : 0;
-  const recommendedRest = baseRest + restModifier;
+  for (const exercise of viableExercises) {
+    const { data: exerciseData } = await supabase
+      .from('unified_exercises')
+      .select('muscle_group')
+      .eq('name', exercise.name)
+      .single();
 
-  // Filtrer les exercices en fonction du statut de récupération
-  const availableForTraining = muscleRecoveryStatus 
-    ? availableExercises.filter(exercise => {
-        const muscleGroup = exercise.split('_')[0]; // Supposons que le nom contient le groupe musculaire
-        const status = muscleRecoveryStatus.find(s => s.muscleGroup === muscleGroup);
-        return !status || status.recoveryStatus !== 'fatigued';
-      })
-    : availableExercises;
+    if (exerciseData && !usedMuscleGroups.has(exerciseData.muscle_group)) {
+      usedMuscleGroups.add(exerciseData.muscle_group);
+      
+      // Adapter les séries et répétitions selon l'objectif et le niveau
+      const sets = profile.experienceLevel === 'beginner' ? 3 : 4;
+      const reps = profile.goal === 'muscle_gain' ? 8 : 12;
+      const restTime = profile.experienceLevel === 'beginner' ? 90 : 60;
 
-  // Sélection aléatoire d'exercices
-  const selectedExercises = [];
-  const numExercises = Math.min(3, availableForTraining.length);
-  const shuffledExercises = [...availableForTraining].sort(() => Math.random() - 0.5);
+      selectedExercises.push({
+        name: exercise.name,
+        sets,
+        reps,
+        restTime
+      });
+    }
 
-  for (let i = 0; i < numExercises; i++) {
-    const exercise = {
-      name: shuffledExercises[i],
-      sets: setsAndReps.sets,
-      reps: setsAndReps.reps,
-      restTime: recommendedRest
-    };
-    selectedExercises.push(exercise);
+    if (selectedExercises.length >= 4) break; // Limiter à 4 exercices maximum
   }
 
-  console.log("Exercices sélectionnés:", selectedExercises);
+  // Calculer l'intensité et le volume en fonction du profil
+  const intensity = profile.experienceLevel === 'beginner' ? 0.7 : 
+                   profile.experienceLevel === 'advanced' ? 0.9 : 0.8;
+
+  const volume = profile.goal === 'muscle_gain' ? 16 : 12;
 
   return {
     volume,
     intensity,
-    recommendedRest,
-    setsAndReps,
+    recommendedRest: profile.experienceLevel === 'beginner' ? 90 : 60,
+    setsAndReps: {
+      sets: profile.experienceLevel === 'beginner' ? 3 : 4,
+      reps: profile.goal === 'muscle_gain' ? 8 : 12
+    },
     exercises: selectedExercises
   };
 };
