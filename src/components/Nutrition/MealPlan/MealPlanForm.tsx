@@ -44,6 +44,7 @@ export const MealPlanForm = ({ onGenerate, isGenerating }: MealPlanFormProps) =>
               { value: "mediterranean", label: "Méditerranéen" },
               { value: "keto", label: "Cétogène" },
               { value: "glutenFree", label: "Sans gluten" },
+              { value: "high_fiber", label: "Riche en fibres" },
             ].map(({ value, label }) => (
               <div
                 key={value}
