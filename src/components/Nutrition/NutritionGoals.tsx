@@ -27,7 +27,7 @@ export const NutritionGoals = () => {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium">Repas du jour</CardTitle>
+        <CardTitle className="text-base font-medium">Balance énergétique</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
