@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { ProfileForm } from "@/components/Profile/Sections/ProfileForm";
+import { SmartScaleSection } from "@/components/Profile/Sections/SmartScaleSection";
 import { Header } from "@/components/Layout/Header";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -41,6 +42,8 @@ const PersonalInfo = () => {
               onUpdate={() => {}}
             />
           </Card>
+          
+          <SmartScaleSection />
         </div>
       </div>
     </div>

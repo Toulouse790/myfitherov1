@@ -1921,6 +1921,59 @@ export type Database = {
           },
         ]
       }
+      smart_scale_data: {
+        Row: {
+          body_fat_percentage: number | null
+          bone_mass_kg: number | null
+          created_at: string | null
+          device_info: Json | null
+          id: string
+          measured_at: string | null
+          metabolic_age: number | null
+          muscle_mass_kg: number | null
+          user_id: string
+          visceral_fat_level: number | null
+          water_percentage: number | null
+          weight_kg: number
+        }
+        Insert: {
+          body_fat_percentage?: number | null
+          bone_mass_kg?: number | null
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          measured_at?: string | null
+          metabolic_age?: number | null
+          muscle_mass_kg?: number | null
+          user_id: string
+          visceral_fat_level?: number | null
+          water_percentage?: number | null
+          weight_kg: number
+        }
+        Update: {
+          body_fat_percentage?: number | null
+          bone_mass_kg?: number | null
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          measured_at?: string | null
+          metabolic_age?: number | null
+          muscle_mass_kg?: number | null
+          user_id?: string
+          visceral_fat_level?: number | null
+          water_percentage?: number | null
+          weight_kg?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smart_scale_data_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sport_positions: {
         Row: {
           created_at: string | null
