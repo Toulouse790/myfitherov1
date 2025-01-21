@@ -198,8 +198,8 @@ export const PersonalizedRecommendations = () => {
             >
               <div className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-0.5">
-                    <h4 className="font-medium break-words">{rec.title}</h4>
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-0.5">
+                    <h4 className="font-medium break-words flex-1">{rec.title}</h4>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
