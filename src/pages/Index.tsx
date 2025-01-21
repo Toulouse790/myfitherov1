@@ -9,11 +9,13 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 export default function Index() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCreateSession = () => {
     if (!user) {
@@ -40,28 +42,45 @@ export default function Index() {
     }
 
     try {
-      const { data: preferences } = await supabase
+      setIsLoading(true);
+      
+      // Récupération des préférences utilisateur
+      const { data: preferences, error: prefError } = await supabase
         .from('questionnaire_responses')
         .select('*')
         .eq('user_id', user.id)
         .single();
 
-      const response = await supabase.functions.invoke('generate-workout', {
+      if (prefError) {
+        throw new Error("Impossible de récupérer vos préférences");
+      }
+
+      // Génération du programme
+      const { data, error } = await supabase.functions.invoke('generate-workout', {
         body: { userPreferences: preferences }
       });
 
-      if (response.error) throw response.error;
+      if (error) throw error;
 
+      // Navigation avec les données générées
       navigate('/workout-generate', { 
-        state: { generatedWorkout: response.data } 
+        state: { generatedWorkout: data } 
       });
+
+      toast({
+        title: "Programme généré !",
+        description: "Votre programme personnalisé est prêt.",
+      });
+
     } catch (error) {
       console.error('Error generating workout:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de générer le programme pour le moment",
+        description: error.message || "Impossible de générer le programme pour le moment",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -112,9 +131,10 @@ export default function Index() {
                 variant="outline"
                 className="flex-1 gap-2 h-16 text-lg hover:bg-primary/10 transition-all duration-300"
                 size="lg"
+                disabled={isLoading}
               >
-                <Sparkles className="w-6 h-6 animate-pulse" />
-                Laisse-moi faire
+                <Sparkles className={`w-6 h-6 ${isLoading ? 'animate-spin' : 'animate-pulse'}`} />
+                {isLoading ? 'Génération...' : 'Laisse-moi faire'}
               </Button>
               <Button
                 onClick={handleStats}
