@@ -13,6 +13,7 @@ interface Recommendation {
   category: "workout" | "nutrition" | "sleep";
   explanation: string;
   dataPoints: string[];
+  type: "improvement" | "positive";
 }
 
 export const PersonalizedRecommendations = () => {
@@ -44,20 +45,32 @@ export const PersonalizedRecommendations = () => {
         .order('created_at', { ascending: false })
         .limit(7);
 
-      // Analyser les données et générer des recommandations personnalisées
       const recommendations: Recommendation[] = [];
 
       // Recommandations d'entraînement
       if (workouts && workouts.length > 0) {
         const lastWorkout = workouts[0];
-        if (lastWorkout.perceived_difficulty === 'easy') {
+        const workoutsThisWeek = workouts.length;
+        
+        if (workoutsThisWeek >= 3) {
           recommendations.push({
-            id: "1",
+            id: "workout-positive",
+            title: "Excellente régularité !",
+            description: "Vous maintenez un rythme d'entraînement constant",
+            category: "workout",
+            type: "positive",
+            explanation: "Continuez sur cette lancée pour optimiser vos résultats",
+            dataPoints: [`${workoutsThisWeek} séances cette semaine`, "Régularité maintenue"]
+          });
+        } else if (lastWorkout.perceived_difficulty === 'easy') {
+          recommendations.push({
+            id: "workout-improvement",
             title: "Augmentez l'intensité",
             description: "Vos dernières séances semblent trop faciles",
             category: "workout",
+            type: "improvement",
             explanation: "Basé sur vos 5 dernières séances où la difficulté perçue était 'facile'",
-            dataPoints: ["Difficulté perçue: Facile", "Progression stable", "Bonne récupération"]
+            dataPoints: ["Difficulté perçue: Facile", "Progression possible", "Bonne récupération"]
           });
         }
       }
@@ -66,12 +79,24 @@ export const PersonalizedRecommendations = () => {
       if (nutrition && nutrition.length > 0) {
         const proteinTotal = nutrition.reduce((sum, entry) => sum + (entry.proteins || 0), 0);
         const avgProtein = proteinTotal / nutrition.length;
-        if (avgProtein < 100) {
+        
+        if (avgProtein >= 100) {
           recommendations.push({
-            id: "2",
+            id: "nutrition-positive",
+            title: "Excellent apport en protéines !",
+            description: "Vous atteignez vos objectifs protéiques",
+            category: "nutrition",
+            type: "positive",
+            explanation: "Un apport suffisant en protéines est essentiel pour la récupération",
+            dataPoints: [`Moyenne actuelle: ${Math.round(avgProtein)}g/jour`, "Objectif atteint !"]
+          });
+        } else {
+          recommendations.push({
+            id: "nutrition-improvement",
             title: "Augmentez vos protéines",
             description: "Pour optimiser votre récupération musculaire",
             category: "nutrition",
+            type: "improvement",
             explanation: "Votre apport moyen en protéines est inférieur aux recommandations",
             dataPoints: [`Moyenne actuelle: ${Math.round(avgProtein)}g/jour`, "Objectif: 100g/jour"]
           });
@@ -81,22 +106,49 @@ export const PersonalizedRecommendations = () => {
       // Recommandations sommeil
       if (sleep && sleep.length > 0) {
         const avgDuration = sleep.reduce((sum, session) => sum + (session.total_duration_minutes || 0), 0) / sleep.length;
-        if (avgDuration < 420) { // Moins de 7h
+        
+        if (avgDuration >= 420) { // 7h ou plus
           recommendations.push({
-            id: "3",
+            id: "sleep-positive",
+            title: "Excellent rythme de sommeil !",
+            description: "Vous maintenez une durée de sommeil optimale",
+            category: "sleep",
+            type: "positive",
+            explanation: "Un sommeil de qualité est essentiel pour la récupération et la progression",
+            dataPoints: [`Moyenne actuelle: ${Math.round(avgDuration/60)}h/nuit`, "Objectif atteint !"]
+          });
+        } else {
+          recommendations.push({
+            id: "sleep-improvement",
             title: "Optimisez votre sommeil",
             description: "Pour une meilleure récupération",
             category: "sleep",
+            type: "improvement",
             explanation: "Votre durée moyenne de sommeil est inférieure aux recommandations",
             dataPoints: [`Moyenne actuelle: ${Math.round(avgDuration/60)}h/nuit`, "Objectif: 7-8h/nuit"]
           });
         }
       }
 
+      // S'assurer qu'il y a au moins une recommandation par catégorie
+      const categories = ["workout", "nutrition", "sleep"];
+      categories.forEach(category => {
+        if (!recommendations.some(r => r.category === category)) {
+          recommendations.push({
+            id: `${category}-default`,
+            title: `Commencez à tracker votre ${category === 'workout' ? 'entraînement' : category === 'nutrition' ? 'alimentation' : 'sommeil'}`,
+            description: "Pour obtenir des recommandations personnalisées",
+            category: category as "workout" | "nutrition" | "sleep",
+            type: "improvement",
+            explanation: "Nous avons besoin de données pour vous fournir des recommandations pertinentes",
+            dataPoints: ["Commencez dès aujourd'hui"]
+          });
+        }
+      });
+
       return recommendations;
     },
-    // Rafraîchir les données chaque jour
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: 24 * 60 * 60 * 1000, // Rafraîchir les données chaque jour
   });
 
   if (isLoading) {
@@ -144,7 +196,11 @@ export const PersonalizedRecommendations = () => {
           {recommendations.map((rec) => (
             <div
               key={rec.id}
-              className="p-4 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors cursor-pointer"
+              className={`p-4 rounded-lg transition-colors cursor-pointer ${
+                rec.type === 'positive' 
+                  ? 'bg-green-500/10 hover:bg-green-500/20' 
+                  : 'bg-muted/50 hover:bg-muted/70'
+              }`}
             >
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
@@ -164,12 +220,12 @@ export const PersonalizedRecommendations = () => {
                   <Tooltip>
                     <TooltipTrigger>
                       <Badge 
-                        variant={
-                          rec.category === 'workout' ? 'default' :
-                          rec.category === 'nutrition' ? 'secondary' : 
-                          'outline'
-                        }
-                        className="capitalize"
+                        variant={rec.type === 'positive' ? 'default' : 'secondary'}
+                        className={`capitalize ${
+                          rec.category === 'workout' ? 'bg-blue-500' :
+                          rec.category === 'nutrition' ? 'bg-green-500' : 
+                          'bg-purple-500'
+                        } text-white`}
                       >
                         {rec.category}
                       </Badge>
