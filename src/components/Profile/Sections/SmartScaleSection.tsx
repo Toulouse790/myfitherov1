@@ -51,17 +51,28 @@ export const SmartScaleSection = () => {
   return (
     <Card className="mt-6">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-medium">
+        <CardTitle className="text-base font-medium flex items-center gap-2">
+          <Scale className="w-5 h-5 text-primary" />
           Balance connectée
         </CardTitle>
         <Button 
-          variant="outline" 
+          variant="default" 
           size="sm"
           onClick={handleConnect}
           disabled={isConnecting}
+          className="bg-emerald hover:bg-emerald/90"
         >
-          <Scale className="w-4 h-4 mr-2" />
-          {isConnecting ? "Connexion..." : "Connecter une balance"}
+          {isConnecting ? (
+            <>
+              <BluetoothConnected className="w-4 h-4 mr-2 animate-pulse" />
+              Connexion...
+            </>
+          ) : (
+            <>
+              <Bluetooth className="w-4 h-4 mr-2" />
+              Connecter
+            </>
+          )}
         </Button>
       </CardHeader>
       <CardContent>
