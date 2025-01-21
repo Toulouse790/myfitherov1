@@ -198,14 +198,14 @@ export const PersonalizedRecommendations = () => {
             >
               <div className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h4 className="font-medium truncate">{rec.title}</h4>
+                  <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                    <h4 className="font-medium break-words">{rec.title}</h4>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
                           <Badge 
                             variant={rec.type === 'positive' ? 'default' : 'secondary'}
-                            className={`capitalize shrink-0 ${
+                            className={`capitalize shrink-0 whitespace-nowrap ${
                               rec.category === 'workout' ? 'bg-blue-500' :
                               rec.category === 'nutrition' ? 'bg-green-500' : 
                               'bg-purple-500'
@@ -220,7 +220,7 @@ export const PersonalizedRecommendations = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  <p className="text-sm text-muted-foreground truncate">{rec.description}</p>
+                  <p className="text-sm text-muted-foreground break-words">{rec.description}</p>
                   <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     {rec.dataPoints.map((point, index) => (
                       <span key={index} className="inline-flex items-center">
