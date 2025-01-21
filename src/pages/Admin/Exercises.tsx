@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox"; // Added import
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useExerciseTable } from "@/hooks/exercise-table/useExerciseTable";
 import { ExerciseRow } from "@/components/Admin/ExerciseTable/ExerciseRow";
@@ -49,7 +49,7 @@ export default function ExercisesAdmin() {
           </Button>
           <Button
             variant="default"
-            onClick={() => handlePublish(selectedExercises)}
+            onClick={() => handlePublish(selectedExercises[0], "Exercice")}
             disabled={selectedExercises.length === 0}
           >
             Publier
@@ -69,7 +69,7 @@ export default function ExercisesAdmin() {
               <TableHead className="w-12">
                 <Checkbox
                   checked={selectedExercises.length === exercises.length}
-                  onCheckedChange={(checked) => handleSelectAll(checked as boolean, exercises)}
+                  onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
                 />
               </TableHead>
               <TableHead>Nom</TableHead>
@@ -93,7 +93,7 @@ export default function ExercisesAdmin() {
                 onNameChange={(name) => {
                   // Implement name change logic
                 }}
-                onPublish={() => handlePublish([exercise.id])}
+                onPublish={() => handlePublish(exercise.id, exercise.name)}
                 showImageUpload={showImageUpload === exercise.id}
                 showVideoUpload={showVideoUpload === exercise.id}
                 onImageClick={() => setShowImageUpload(showImageUpload === exercise.id ? null : exercise.id)}
