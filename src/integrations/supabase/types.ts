@@ -2505,12 +2505,17 @@ export type Database = {
       workout_sessions: {
         Row: {
           created_at: string | null
+          current_exercise_index: number | null
+          energy_level: number | null
           equipment_used: string[] | null
+          exercise_progress: Json | null
           exercises: string[] | null
           id: string
           initial_energy_level: string | null
           is_adapted: boolean | null
+          perceived_difficulty: string | null
           planned_start_time: string | null
+          session_notes: string | null
           started_at: string | null
           status: string
           target_duration_minutes: number | null
@@ -2522,12 +2527,17 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          current_exercise_index?: number | null
+          energy_level?: number | null
           equipment_used?: string[] | null
+          exercise_progress?: Json | null
           exercises?: string[] | null
           id?: string
           initial_energy_level?: string | null
           is_adapted?: boolean | null
+          perceived_difficulty?: string | null
           planned_start_time?: string | null
+          session_notes?: string | null
           started_at?: string | null
           status?: string
           target_duration_minutes?: number | null
@@ -2539,12 +2549,17 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          current_exercise_index?: number | null
+          energy_level?: number | null
           equipment_used?: string[] | null
+          exercise_progress?: Json | null
           exercises?: string[] | null
           id?: string
           initial_energy_level?: string | null
           is_adapted?: boolean | null
+          perceived_difficulty?: string | null
           planned_start_time?: string | null
+          session_notes?: string | null
           started_at?: string | null
           status?: string
           target_duration_minutes?: number | null
