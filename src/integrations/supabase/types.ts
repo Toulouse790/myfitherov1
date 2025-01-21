@@ -2569,7 +2569,6 @@ export type Database = {
           difficulty_levels: string[] | null
           equipment_required: string[] | null
           estimated_duration: number | null
-          icon_name: string
           id: string
           is_active: boolean | null
           muscle_groups: string[] | null
@@ -2586,7 +2585,6 @@ export type Database = {
           difficulty_levels?: string[] | null
           equipment_required?: string[] | null
           estimated_duration?: number | null
-          icon_name: string
           id?: string
           is_active?: boolean | null
           muscle_groups?: string[] | null
@@ -2603,7 +2601,6 @@ export type Database = {
           difficulty_levels?: string[] | null
           equipment_required?: string[] | null
           estimated_duration?: number | null
-          icon_name?: string
           id?: string
           is_active?: boolean | null
           muscle_groups?: string[] | null

@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Clock, ChefHat, Users, DollarSign, Star } from "lucide-react";
+import { Clock, ChefHat, Users, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface MealSuggestionCardProps {
@@ -71,10 +71,6 @@ export const MealSuggestionCard = ({
           <div className="flex items-center gap-2">
             <ChefHat className="w-4 h-4" />
             {calories} kcal
-          </div>
-          <div className="flex items-center gap-2">
-            <DollarSign className="w-4 h-4" />
-            {estimatedCost}€
           </div>
         </div>
 
