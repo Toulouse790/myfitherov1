@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox"; // Added import
 import { useToast } from "@/hooks/use-toast";
 import { useExerciseTable } from "@/hooks/exercise-table/useExerciseTable";
 import { ExerciseRow } from "@/components/Admin/ExerciseTable/ExerciseRow";
@@ -58,7 +59,7 @@ export default function ExercisesAdmin() {
 
       <FilterTabs 
         publishFilter={publishFilter}
-        onFilterChange={setPublishFilter}
+        onFilterChange={(value) => setPublishFilter(value)}
       />
 
       <div className="mt-6">
@@ -68,7 +69,7 @@ export default function ExercisesAdmin() {
               <TableHead className="w-12">
                 <Checkbox
                   checked={selectedExercises.length === exercises.length}
-                  onCheckedChange={handleSelectAll}
+                  onCheckedChange={(checked) => handleSelectAll(checked as boolean, exercises)}
                 />
               </TableHead>
               <TableHead>Nom</TableHead>
@@ -93,13 +94,13 @@ export default function ExercisesAdmin() {
                   // Implement name change logic
                 }}
                 onPublish={() => handlePublish([exercise.id])}
-                showImageUpload={showImageUpload}
-                showVideoUpload={showVideoUpload}
-                onImageClick={() => setShowImageUpload(!showImageUpload)}
-                onVideoClick={() => setShowVideoUpload(!showVideoUpload)}
+                showImageUpload={showImageUpload === exercise.id}
+                showVideoUpload={showVideoUpload === exercise.id}
+                onImageClick={() => setShowImageUpload(showImageUpload === exercise.id ? null : exercise.id)}
+                onVideoClick={() => setShowVideoUpload(showVideoUpload === exercise.id ? null : exercise.id)}
                 onUploadSuccess={() => {
-                  setShowImageUpload(false);
-                  setShowVideoUpload(false);
+                  setShowImageUpload(null);
+                  setShowVideoUpload(null);
                   toast({
                     title: "Succès",
                     description: "Le média a été téléchargé avec succès",
