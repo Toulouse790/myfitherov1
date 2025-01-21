@@ -18,8 +18,7 @@ export const supabase = createClient(
       persistSession: true,
       detectSessionInUrl: true,
       storage: localStorage,
-      storageKey: 'myfithero-auth',
-      flowType: 'pkce'
+      storageKey: 'myfithero-auth'
     },
     global: {
       headers: {
@@ -29,11 +28,6 @@ export const supabase = createClient(
     },
     db: {
       schema: 'public'
-    },
-    realtime: {
-      params: {
-        eventsPerSecond: 10
-      }
     }
   }
 );
@@ -48,7 +42,11 @@ const testConnection = async () => {
   try {
     console.log('Testing Supabase connection...');
     const { data: { user } } = await supabase.auth.getUser();
-    console.log('Current user:', user);
+    if (user) {
+      console.log('Current user:', user);
+    } else {
+      console.log('No authenticated user found');
+    }
   } catch (error) {
     console.error('Error in test connection:', error);
   }
