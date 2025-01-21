@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface WorkoutCardProps {
   title: string;
@@ -13,6 +14,7 @@ interface WorkoutCardProps {
 
 export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: WorkoutCardProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
 
   const toggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -39,10 +41,14 @@ export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: Wo
     }
   };
 
+  const handleCardClick = () => {
+    navigate('/workouts/generate');
+  };
+
   return (
     <Card 
       className="bg-[#2A2F3F] p-3 cursor-pointer hover:opacity-90 transition-all duration-300 transform hover:scale-[1.02] relative"
-      onClick={onClick}
+      onClick={handleCardClick}
     >
       <div className="space-y-2">
         <div className="rounded-full bg-[#1E2330] w-10 h-10 flex items-center justify-center">

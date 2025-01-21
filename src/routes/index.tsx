@@ -42,6 +42,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "workouts/generate",
+        element: (
+          <ProtectedRoute>
+            <WorkoutGenerate />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "profile",
         element: (
           <ProtectedRoute>
@@ -94,14 +102,6 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <WorkoutSession />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "workouts/generate",
-        element: (
-          <ProtectedRoute>
-            <WorkoutGenerate />
           </ProtectedRoute>
         ),
       },
