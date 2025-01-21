@@ -41,7 +41,7 @@ export const DashboardStats = () => {
           *,
           workout_sessions (
             total_duration_minutes,
-            perceived_difficulty
+            initial_energy_level
           )
         `)
         .order('created_at', { ascending: false })
