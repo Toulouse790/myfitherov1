@@ -41,24 +41,24 @@ const Nutrition = () => {
         </div>
 
         <TabsContent value="overview" className="space-y-4 mt-2">
-          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
-            <div className="space-y-4">
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+            <div className="space-y-4 w-full min-w-0">
               <NutritionGoals />
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 w-full min-w-0">
               <DailyMeals />
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="tracking" className="space-y-4 mt-2">
-          <div className="w-full">
+          <div className="w-full min-w-0">
             <NutritionChart />
           </div>
         </TabsContent>
 
         <TabsContent value="meal-plan" className="space-y-4 mt-2">
-          <div className="w-full">
+          <div className="w-full min-w-0">
             <MealPlanGenerator />
           </div>
         </TabsContent>
