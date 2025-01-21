@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 interface MealPlanFormProps {
-  onSubmit: (duration: number, type: string) => void;
-  isLoading?: boolean;
+  onGenerate: (preferences: { duration: string; dietType: string }) => void;
+  isGenerating?: boolean;
 }
 
-export const MealPlanForm = ({ onSubmit, isLoading }: MealPlanFormProps) => {
+export const MealPlanForm = ({ onGenerate, isGenerating }: MealPlanFormProps) => {
   const [type, setType] = useState<string>("balanced");
   const { toast } = useToast();
 
@@ -21,7 +21,7 @@ export const MealPlanForm = ({ onSubmit, isLoading }: MealPlanFormProps) => {
       });
       return;
     }
-    onSubmit(7, type); // Utilisation d'une durée par défaut de 7 jours
+    onGenerate({ duration: "7", dietType: type }); // Utilisation d'une durée par défaut de 7 jours
   };
 
   return (
@@ -38,8 +38,8 @@ export const MealPlanForm = ({ onSubmit, isLoading }: MealPlanFormProps) => {
         </Button>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Génération..." : "Générer"}
+      <Button type="submit" className="w-full" disabled={isGenerating}>
+        {isGenerating ? "Génération..." : "Générer"}
       </Button>
     </form>
   );
