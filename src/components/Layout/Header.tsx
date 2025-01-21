@@ -17,19 +17,6 @@ export const Header = ({ children }: HeaderProps) => {
           <div className="flex items-center">
             <Link to="/" className="mr-6 flex items-center space-x-2">
             </Link>
-            <nav className="flex items-center space-x-4">
-              {navigationItems.map((item) => (
-                !item.admin && (
-                  <Link
-                    key={item.href}
-                    to={item.href}
-                    className="text-sm font-medium text-muted-foreground hover:text-primary"
-                  >
-                    {item.title}
-                  </Link>
-                )
-              ))}
-            </nav>
           </div>
         </div>
       </header>
