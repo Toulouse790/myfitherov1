@@ -11,6 +11,7 @@ interface MealSuggestionCardProps {
   servings: number;
   rating?: number;
   tags?: string[];
+  imageUrl?: string;
 }
 
 export const MealSuggestionCard = ({
@@ -21,7 +22,8 @@ export const MealSuggestionCard = ({
   difficulty,
   servings,
   rating,
-  tags
+  tags,
+  imageUrl
 }: MealSuggestionCardProps) => {
   const difficultyColor = {
     easy: "bg-green-100 text-green-800",
@@ -29,11 +31,13 @@ export const MealSuggestionCard = ({
     hard: "bg-red-100 text-red-800"
   }[difficulty] || "bg-gray-100 text-gray-800";
 
+  const defaultImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c";
+
   return (
     <Card className="overflow-hidden group hover:shadow-lg transition-shadow">
       <div className="relative h-48 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+          src={imageUrl || defaultImage}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
         />

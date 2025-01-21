@@ -1023,6 +1023,7 @@ export type Database = {
           difficulty_level: string | null
           fats: number
           id: string
+          image_url: string | null
           ingredients: Json
           meal_type: string
           name: string
@@ -1044,6 +1045,7 @@ export type Database = {
           difficulty_level?: string | null
           fats: number
           id?: string
+          image_url?: string | null
           ingredients?: Json
           meal_type: string
           name: string
@@ -1065,6 +1067,7 @@ export type Database = {
           difficulty_level?: string | null
           fats?: number
           id?: string
+          image_url?: string | null
           ingredients?: Json
           meal_type?: string
           name?: string
@@ -2893,6 +2896,7 @@ export type Database = {
           difficulty_level: string | null
           fats: number
           id: string
+          image_url: string | null
           ingredients: Json
           meal_type: string
           name: string

@@ -41,6 +41,7 @@ export const PopularMealSuggestions = () => {
             servings={suggestion.servings}
             rating={suggestion.rating}
             tags={suggestion.tags}
+            imageUrl={suggestion.image_url}
           />
         ))}
       </div>
