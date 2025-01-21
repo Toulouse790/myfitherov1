@@ -20,35 +20,35 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
 
   console.log("Fetching workout suggestions from database");
 
-  const { data: suggestions = [], isLoading } = useQuery({
+  const { data: suggestions = [], isLoading, error } = useQuery({
     queryKey: ['workout-suggestions'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('workout_suggestions')
-        .select('*')
-        .eq('is_active', true)
-        .order('suggested_order', { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from('workout_suggestions')
+          .select('*')
+          .eq('is_active', true)
+          .order('suggested_order', { ascending: true });
 
-      if (error) {
-        throw error;
-      }
+        if (error) {
+          console.error('Error fetching suggestions:', error);
+          throw error;
+        }
 
-      console.log("Fetched suggestions:", data);
-      return data || [];
-    },
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    meta: {
-      errorMessage: "Impossible de charger les suggestions. Veuillez réessayer.",
-      onError: (error: Error) => {
-        console.error('Error fetching suggestions:', error);
+        console.log("Fetched suggestions:", data);
+        return data || [];
+      } catch (error) {
+        console.error('Error in workout suggestions query:', error);
         toast({
-          title: "Erreur",
+          title: "Erreur de chargement",
           description: "Impossible de charger les suggestions. Veuillez réessayer.",
           variant: "destructive",
         });
+        throw error;
       }
-    }
+    },
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   if (isLoading) {
@@ -56,6 +56,14 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
       <div className="space-y-4">
         <div className="h-32 bg-gray-100 animate-pulse rounded-lg"></div>
         <div className="h-32 bg-gray-100 animate-pulse rounded-lg"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-center text-red-500">
+        Une erreur est survenue lors du chargement des suggestions
       </div>
     );
   }
