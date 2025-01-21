@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Target, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
@@ -169,10 +169,7 @@ export const PersonalizedRecommendations = () => {
     <Card>
       <CardHeader className="space-y-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Target className="w-5 h-5 text-primary" />
-            <CardTitle>Recommandations personnalisées</CardTitle>
-          </div>
+          <CardTitle>Recommandations personnalisées</CardTitle>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -187,9 +184,6 @@ export const PersonalizedRecommendations = () => {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Suggestions basées sur votre activité des 7 derniers jours
-        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
