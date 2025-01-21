@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { navigationItems } from "./navigationItems";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -19,6 +20,19 @@ export const Header = ({ children }: HeaderProps) => {
                 MyFitHero
               </span>
             </Link>
+            <nav className="flex items-center space-x-4">
+              {navigationItems.map((item) => (
+                !item.admin && (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    {item.title}
+                  </Link>
+                )
+              ))}
+            </nav>
           </div>
         </div>
       </header>
