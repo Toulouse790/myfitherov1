@@ -3,6 +3,8 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { SortableCard } from "./SortableCard";
 import { WidgetWrapper } from "./WidgetComponents/WidgetWrapper";
 import { WidgetRenderer } from "./WidgetComponents/WidgetRenderer";
+import { useResizeObserver } from "@/hooks/use-resize-observer";
+import { useCallback } from "react";
 
 interface WidgetGridProps {
   isEditing: boolean;
@@ -45,13 +47,20 @@ export const WidgetGrid = ({
     }
   };
 
+  const handleResize = useCallback((entry: ResizeObserverEntry) => {
+    // Handle resize if needed
+    console.log('Widget resized:', entry.contentRect);
+  }, []);
+
+  const setResizeRef = useResizeObserver(handleResize);
+
   return (
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}
     >
-      <div className="grid gap-6 md:grid-cols-2 mt-6">
+      <div className="grid gap-6 md:grid-cols-2 mt-6" ref={setResizeRef}>
         <SortableContext 
           items={widgetConfigs?.map(w => w.id) || []} 
           strategy={verticalListSortingStrategy}
