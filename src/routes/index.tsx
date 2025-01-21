@@ -18,6 +18,13 @@ import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire"
 import WorkoutSession from "@/pages/WorkoutSession";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import Cardio from "@/pages/Cardio";
+import DashboardOverview from "@/pages/Dashboard/Overview";
+import DashboardStreaks from "@/pages/Dashboard/Streaks";
+import WeeklyGoals from "@/pages/Goals/Weekly";
+import MonthlyGoals from "@/pages/Goals/Monthly";
+import Notifications from "@/pages/Notifications";
+import WeeklyReport from "@/pages/Stats/WeeklyReport";
+import AchievementsHistory from "@/pages/Achievements/History";
 
 export const router = createBrowserRouter([
   {
@@ -136,7 +143,73 @@ export const router = createBrowserRouter([
             <InitialQuestionnaire />
           </ProtectedRoute>
         ),
-      }
+      },
+      {
+        path: "dashboard",
+        children: [
+          {
+            path: "overview",
+            element: (
+              <ProtectedRoute>
+                <DashboardOverview />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "streaks",
+            element: (
+              <ProtectedRoute>
+                <DashboardStreaks />
+              </ProtectedRoute>
+            ),
+          },
+        ],
+      },
+      {
+        path: "goals",
+        children: [
+          {
+            path: "weekly",
+            element: (
+              <ProtectedRoute>
+                <WeeklyGoals />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "monthly",
+            element: (
+              <ProtectedRoute>
+                <MonthlyGoals />
+              </ProtectedRoute>
+            ),
+          },
+        ],
+      },
+      {
+        path: "notifications",
+        element: (
+          <ProtectedRoute>
+            <Notifications />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "stats/weekly-report",
+        element: (
+          <ProtectedRoute>
+            <WeeklyReport />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "achievements/history",
+        element: (
+          <ProtectedRoute>
+            <AchievementsHistory />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {
