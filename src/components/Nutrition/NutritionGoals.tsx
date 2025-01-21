@@ -25,7 +25,7 @@ export const NutritionGoals = () => {
   };
 
   return (
-    <Card>
+    <Card className="p-4 sm:p-6 bg-[#F1F0FB] border border-[#D6BCFA]/20 rounded-xl shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-medium">Balance énergétique</CardTitle>
       </CardHeader>
@@ -35,7 +35,7 @@ export const NutritionGoals = () => {
             <span>Calories</span>
             <span>{consumed.calories} / {targets.calories} cal</span>
           </div>
-          <Progress value={calculateProgress(consumed.calories, targets.calories)} />
+          <Progress value={calculateProgress(consumed.calories, targets.calories)} className="h-2" />
         </div>
 
         <div className="space-y-2">
@@ -43,7 +43,7 @@ export const NutritionGoals = () => {
             <span>Protéines</span>
             <span>{consumed.proteins} / {targets.proteins}g</span>
           </div>
-          <Progress value={calculateProgress(consumed.proteins, targets.proteins)} />
+          <Progress value={calculateProgress(consumed.proteins, targets.proteins)} className="h-2" />
         </div>
 
         <div className="space-y-2">
@@ -51,7 +51,7 @@ export const NutritionGoals = () => {
             <span>Glucides</span>
             <span>{consumed.carbs} / {targets.carbs}g</span>
           </div>
-          <Progress value={calculateProgress(consumed.carbs, targets.carbs)} />
+          <Progress value={calculateProgress(consumed.carbs, targets.carbs)} className="h-2" />
         </div>
 
         <div className="space-y-2">
@@ -59,7 +59,7 @@ export const NutritionGoals = () => {
             <span>Lipides</span>
             <span>{consumed.fats} / {targets.fats}g</span>
           </div>
-          <Progress value={calculateProgress(consumed.fats, targets.fats)} />
+          <Progress value={calculateProgress(consumed.fats, targets.fats)} className="h-2" />
         </div>
       </CardContent>
     </Card>
