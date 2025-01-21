@@ -2763,11 +2763,47 @@ export type Database = {
         }
         Returns: boolean
       }
+      crosstab: {
+        Args: {
+          "": string
+        }
+        Returns: Record<string, unknown>[]
+      }
+      crosstab2: {
+        Args: {
+          "": string
+        }
+        Returns: Database["public"]["CompositeTypes"]["tablefunc_crosstab_2"][]
+      }
+      crosstab3: {
+        Args: {
+          "": string
+        }
+        Returns: Database["public"]["CompositeTypes"]["tablefunc_crosstab_3"][]
+      }
+      crosstab4: {
+        Args: {
+          "": string
+        }
+        Returns: Database["public"]["CompositeTypes"]["tablefunc_crosstab_4"][]
+      }
       delete_workout_session: {
         Args: {
           session_id: string
         }
         Returns: undefined
+      }
+      dmetaphone: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      dmetaphone_alt: {
+        Args: {
+          "": string
+        }
+        Returns: string
       }
       get_ai_usage_stats: {
         Args: {
@@ -2894,6 +2930,33 @@ export type Database = {
         }
         Returns: unknown
       }
+      json_matches_schema: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: boolean
+      }
+      jsonb_matches_schema: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: boolean
+      }
+      jsonschema_is_valid: {
+        Args: {
+          schema: Json
+        }
+        Returns: boolean
+      }
+      jsonschema_validation_errors: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: string[]
+      }
       l2_norm:
         | {
             Args: {
@@ -2946,6 +3009,12 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      soundex: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
       sparsevec_out: {
         Args: {
           "": unknown
@@ -2963,6 +3032,24 @@ export type Database = {
           "": unknown[]
         }
         Returns: number
+      }
+      text_soundex: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      unaccent: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      unaccent_init: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
       }
       vector_avg: {
         Args: {
@@ -3012,7 +3099,24 @@ export type Database = {
       [_ in never]: never
     }
     CompositeTypes: {
-      [_ in never]: never
+      tablefunc_crosstab_2: {
+        row_name: string | null
+        category_1: string | null
+        category_2: string | null
+      }
+      tablefunc_crosstab_3: {
+        row_name: string | null
+        category_1: string | null
+        category_2: string | null
+        category_3: string | null
+      }
+      tablefunc_crosstab_4: {
+        row_name: string | null
+        category_1: string | null
+        category_2: string | null
+        category_3: string | null
+        category_4: string | null
+      }
     }
   }
 }

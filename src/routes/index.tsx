@@ -8,6 +8,7 @@ import Profile from "@/pages/Profile";
 import PersonalInfo from "@/pages/PersonalInfo";
 import AppSettings from "@/pages/AppSettings";
 import Subscription from "@/pages/Subscription";
+import SubscriptionPlans from "@/pages/SubscriptionPlans";
 import TrainingPreferences from "@/pages/TrainingPreferences";
 import Home from "@/pages/Home";
 import Workouts from "@/pages/Workouts";
@@ -185,6 +186,14 @@ export const router = createBrowserRouter([
             ),
           },
         ],
+      },
+      {
+        path: "subscription-plans",
+        element: (
+          <ProtectedRoute>
+            <SubscriptionPlans />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "notifications",
