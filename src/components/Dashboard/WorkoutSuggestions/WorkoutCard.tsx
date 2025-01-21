@@ -51,7 +51,7 @@ export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: Wo
       onClick={handleCardClick}
     >
       <div className="space-y-2">
-        <div className="rounded-full bg-[#1E2330] w-10 h-10 flex items-center justify-center">
+        <div className="rounded-full bg-[#1E2330] w-8 h-8 flex items-center justify-center">
           {icon}
         </div>
         <h3 className="text-white font-medium text-sm sm:text-base">{title}</h3>
@@ -61,10 +61,10 @@ export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: Wo
       {sessionId && (
         <button
           onClick={toggleFavorite}
-          className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-700/50 transition-colors"
+          className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-gray-700/50 transition-colors"
         >
           <Heart 
-            className={`h-5 w-5 transition-colors ${
+            className={`h-4 w-4 transition-colors ${
               isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
             }`}
           />
