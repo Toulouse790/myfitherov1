@@ -3,7 +3,7 @@ import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { PersonalizedRecommendations } from "@/components/Recommendations/PersonalizedRecommendations";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus, Sparkles, ChartBar } from "lucide-react";
+import { Plus, Sparkles, ChartBar, Activity, Utensils } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -83,6 +83,32 @@ export default function Index() {
     navigate('/stats');
   };
 
+  const handleTrainingSuggestions = () => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour voir les suggestions d'entraînement",
+        variant: "destructive",
+      });
+      navigate('/signin');
+      return;
+    }
+    navigate('/suggestions');
+  };
+
+  const handleMealSuggestions = () => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour voir les suggestions de repas",
+        variant: "destructive",
+      });
+      navigate('/signin');
+      return;
+    }
+    navigate('/nutrition');
+  };
+
   return (
     <Header>
       <main className="container mx-auto px-4 py-8 space-y-8 max-w-6xl">
@@ -90,12 +116,13 @@ export default function Index() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          className="space-y-6"
         >
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             En route vers ton succès ! 🚀
           </h1>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Button 
               onClick={handleCreateSession}
               className="h-auto py-6 group hover:scale-[1.02] transition-all duration-300"
@@ -113,7 +140,7 @@ export default function Index() {
               disabled={isLoading}
             >
               <Sparkles className={`w-5 h-5 mr-2 ${isLoading ? 'animate-spin' : 'animate-pulse'}`} />
-              {isLoading ? 'Génération...' : 'Laisse-moi faire'}
+              Laisse-moi faire
             </Button>
 
             <Button
@@ -123,7 +150,27 @@ export default function Index() {
               size="lg"
             >
               <ChartBar className="w-5 h-5 mr-2" />
-              Mes statistiques
+              Statistiques
+            </Button>
+
+            <Button
+              onClick={handleTrainingSuggestions}
+              variant="outline"
+              className="h-auto py-6 hover:bg-primary/10 transition-all duration-300"
+              size="lg"
+            >
+              <Activity className="w-5 h-5 mr-2" />
+              Suggestions d'entraînement
+            </Button>
+
+            <Button
+              onClick={handleMealSuggestions}
+              variant="outline"
+              className="h-auto py-6 hover:bg-primary/10 transition-all duration-300 sm:col-span-2 lg:col-span-1"
+              size="lg"
+            >
+              <Utensils className="w-5 h-5 mr-2" />
+              Suggestions de repas
             </Button>
           </div>
         </motion.section>
