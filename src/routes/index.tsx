@@ -1,8 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
-import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
-import Home from "@/pages/Home";
+import Index from "@/pages/Index";
 import { authRoutes } from "./authRoutes";
 import { profileRoutes } from "./profileRoutes";
 import { workoutRoutes } from "./workoutRoutes";
@@ -16,12 +15,8 @@ export const router = createBrowserRouter([
     errorElement: <ErrorBoundary />,
     children: [
       {
-        path: "/",
-        element: (
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        ),
+        index: true,
+        element: <Index />,
       },
       ...profileRoutes,
       ...workoutRoutes,
