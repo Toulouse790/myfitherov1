@@ -27,7 +27,7 @@ export default function Index() {
     navigate('/workouts');
   };
 
-  const handleAIGeneration = () => {
+  const handleAIGeneration = async () => {
     if (!user) {
       toast({
         title: "Connexion requise",
@@ -37,7 +37,31 @@ export default function Index() {
       navigate('/signin');
       return;
     }
-    navigate('/workout-generate');
+
+    try {
+      const { data: preferences } = await supabase
+        .from('questionnaire_responses')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      const response = await supabase.functions.invoke('generate-workout', {
+        body: { userPreferences: preferences }
+      });
+
+      if (response.error) throw response.error;
+
+      navigate('/workout-generate', { 
+        state: { generatedWorkout: response.data } 
+      });
+    } catch (error) {
+      console.error('Error generating workout:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer le programme pour le moment",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleStats = () => {
@@ -89,7 +113,7 @@ export default function Index() {
                 size="lg"
               >
                 <Sparkles className="w-6 h-6 animate-pulse" />
-                Générer avec l'IA
+                Laisse-moi faire
               </Button>
               <Button
                 onClick={handleStats}
