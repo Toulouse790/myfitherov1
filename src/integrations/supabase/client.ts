@@ -30,10 +30,6 @@ export const supabase = createClient(
     db: {
       schema: 'public'
     },
-    // Add these options to handle CORS and fetch behavior
-    defaultHeaders: {
-      'X-Client-Info': 'supabase-js-web',
-    },
     realtime: {
       params: {
         eventsPerSecond: 10
