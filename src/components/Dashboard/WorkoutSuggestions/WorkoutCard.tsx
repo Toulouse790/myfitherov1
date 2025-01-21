@@ -1,57 +1,65 @@
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Heart } from "lucide-react";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface WorkoutCardProps {
   title: string;
   description: string;
-  icon: React.ReactNode;
-  onClick?: () => void;
   sessionId?: string;
+  onSelect?: () => void;
 }
 
-export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: WorkoutCardProps) => {
+export const WorkoutCard = ({ 
+  title, 
+  description, 
+  sessionId,
+  onSelect 
+}: WorkoutCardProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
-    // Vérifier si l'entraînement est déjà en favori
-    const checkFavoriteStatus = async () => {
-      if (!sessionId || !user) return;
+    if (user && sessionId) {
+      checkIfFavorite();
+    }
+  }, [user, sessionId]);
 
-      try {
-        const { data, error } = await supabase
-          .from('favorite_workouts')
-          .select('id')
-          .eq('session_id', sessionId)
-          .eq('user_id', user.id)
-          .maybeSingle();
+  const checkIfFavorite = async () => {
+    if (!user || !sessionId) return;
 
-        if (error) throw error;
-        setIsFavorite(!!data);
-      } catch (error) {
-        console.error('Erreur lors de la vérification des favoris:', error);
-      }
-    };
+    const { data, error } = await supabase
+      .from('favorite_workouts')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('session_id', sessionId)
+      .single();
 
-    checkFavoriteStatus();
-  }, [sessionId, user]);
+    if (error) {
+      console.error('Error checking favorite status:', error);
+      return;
+    }
+
+    setIsFavorite(!!data);
+  };
 
   const toggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
-
+    
     if (!user) {
       toast({
         title: "Connexion requise",
-        description: "Vous devez être connecté pour ajouter des favoris",
+        description: "Veuillez vous connecter pour ajouter des favoris",
         variant: "destructive",
       });
+      return;
+    }
+
+    if (!sessionId) {
+      console.error('No session ID provided');
       return;
     }
 
@@ -60,61 +68,52 @@ export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: Wo
         const { error } = await supabase
           .from('favorite_workouts')
           .delete()
-          .eq('session_id', sessionId)
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .eq('session_id', sessionId);
 
         if (error) throw error;
-        
+
         toast({
           title: "Retiré des favoris",
           description: "L'entraînement a été retiré de vos favoris",
         });
-        
-        setIsFavorite(false);
       } else {
         const { error } = await supabase
           .from('favorite_workouts')
-          .insert([{ 
-            session_id: sessionId,
-            user_id: user.id
-          }]);
+          .insert({
+            user_id: user.id,
+            session_id: sessionId
+          });
 
         if (error) throw error;
-        
+
         toast({
           title: "Ajouté aux favoris",
           description: "L'entraînement a été ajouté à vos favoris",
         });
-        
-        setIsFavorite(true);
       }
+
+      setIsFavorite(!isFavorite);
     } catch (error) {
-      console.error('Erreur lors de la gestion des favoris:', error);
+      console.error('Error toggling favorite:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de la gestion des favoris",
+        description: "Une erreur est survenue",
         variant: "destructive",
       });
     }
   };
 
-  const handleCardClick = () => {
-    navigate('/workouts/generate');
-  };
-
   return (
     <Card 
-      className="bg-[#2A2F3F] p-3 cursor-pointer hover:opacity-90 transition-all duration-300 transform hover:scale-[1.02] relative"
-      onClick={handleCardClick}
+      className="relative p-4 cursor-pointer hover:shadow-md transition-shadow ml-auto w-full max-w-md"
+      onClick={onSelect}
     >
       <div className="space-y-2">
-        <div className="rounded-full bg-[#1E2330] w-8 h-8 flex items-center justify-center">
-          {icon}
-        </div>
-        <h3 className="text-white font-medium text-sm sm:text-base">{title}</h3>
-        <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">{description}</p>
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-      
+
       {sessionId && (
         <button
           onClick={toggleFavorite}
@@ -123,7 +122,7 @@ export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: Wo
         >
           <Heart 
             className={`h-4 w-4 transition-colors ${
-              isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
+              isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-400'
             }`}
           />
         </button>
