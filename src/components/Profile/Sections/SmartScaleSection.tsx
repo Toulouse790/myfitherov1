@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Scale, Bluetooth, BluetoothSearching } from "lucide-react";
+import { Scale, Bluetooth, BluetoothSearching, LineChart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
