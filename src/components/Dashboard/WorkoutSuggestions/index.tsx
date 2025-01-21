@@ -28,8 +28,13 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
           throw error;
         }
 
-        console.log("Fetched suggestions:", data);
-        return data || [];
+        // Supprimer les doublons en utilisant un Set basé sur l'ID
+        const uniqueSuggestions = Array.from(
+          new Map(data.map(item => [item.id, item])).values()
+        );
+
+        console.log("Fetched unique suggestions:", uniqueSuggestions);
+        return uniqueSuggestions || [];
       } catch (error) {
         console.error('Error in workout suggestions query:', error);
         toast({
