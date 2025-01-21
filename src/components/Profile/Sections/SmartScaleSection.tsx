@@ -19,9 +19,14 @@ export const SmartScaleSection = () => {
         .order('measured_at', { ascending: false })
         .limit(30);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching scale data:', error);
+        throw error;
+      }
       return data;
-    }
+    },
+    retry: 1,
+    refetchOnWindowFocus: false
   });
 
   const handleConnect = async () => {
@@ -36,6 +41,7 @@ export const SmartScaleSection = () => {
         description: "Votre balance est maintenant connectée à l'application",
       });
     } catch (error) {
+      console.error('Error connecting to scale:', error);
       toast({
         title: "Erreur de connexion",
         description: "Impossible de connecter la balance. Veuillez réessayer.",
