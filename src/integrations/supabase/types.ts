@@ -50,6 +50,66 @@ export type Database = {
           },
         ]
       }
+      admin_exercise_management: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          difficulty_level: string
+          exercise_name: string
+          id: string
+          is_premium: boolean | null
+          muscle_group: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          difficulty_level: string
+          exercise_name: string
+          id?: string
+          is_premium?: boolean | null
+          muscle_group: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          difficulty_level?: string
+          exercise_name?: string
+          id?: string
+          is_premium?: boolean | null
+          muscle_group?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      admin_users: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       admin_widget_configs: {
         Row: {
           config: Json | null
@@ -550,6 +610,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      exercise_media: {
+        Row: {
+          created_at: string | null
+          exercise_id: string | null
+          id: string
+          is_primary: boolean | null
+          media_type: string
+          media_url: string
+          order_index: number | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          exercise_id?: string | null
+          id?: string
+          is_primary?: boolean | null
+          media_type: string
+          media_url: string
+          order_index?: number | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          exercise_id?: string | null
+          id?: string
+          is_primary?: boolean | null
+          media_type?: string
+          media_url?: string
+          order_index?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_media_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "admin_exercise_management"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       exercise_sets: {
         Row: {
