@@ -6,6 +6,7 @@ import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
 import { generateWorkoutPlan } from "./workoutPlanGenerator";
 import { useWorkoutSession } from "./useWorkoutSession";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 export interface GenerateWorkoutDialogProps {
   isOpen: boolean;
@@ -17,18 +18,36 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose }: GenerateWorkoutDialog
   const [generatedWorkout, setGeneratedWorkout] = useState<string[] | null>(null);
   const { createWorkoutSession } = useWorkoutSession();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleGenerate = async () => {
     try {
       setIsGenerating(true);
-      const workoutPlan = generateWorkoutPlan([
+      
+      // Default profile for demonstration - in production this should come from user preferences
+      const defaultProfile = {
+        age: 30,
+        weight: 70,
+        height: 175,
+        goal: 'muscle_gain',
+        workoutsPerWeek: 3,
+        dailyCalories: 2500,
+        recoveryCapacity: 'medium' as const,
+        experienceLevel: 'intermediate',
+        availableEquipment: 'full_gym'
+      };
+
+      const workoutPlan = await generateWorkoutPlan([
         "Développé couché",
         "Squat",
         "Rowing barre",
         "Développé militaire",
         "Curl biceps",
         "Extensions triceps"
-      ]);
+      ], 
+      defaultProfile,
+      []  // Empty array for muscle recovery status
+      );
       
       setGeneratedWorkout(workoutPlan.exercises.map(e => e.name));
       
