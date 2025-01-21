@@ -326,6 +326,7 @@ export type Database = {
           food_category: string
           id: string
           ingredients: Json | null
+          is_premium: boolean | null
           micronutrients: Json | null
           name: string
           proteins: number
@@ -342,6 +343,7 @@ export type Database = {
           food_category: string
           id?: string
           ingredients?: Json | null
+          is_premium?: boolean | null
           micronutrients?: Json | null
           name: string
           proteins: number
@@ -358,6 +360,7 @@ export type Database = {
           food_category?: string
           id?: string
           ingredients?: Json | null
+          is_premium?: boolean | null
           micronutrients?: Json | null
           name?: string
           proteins?: number
@@ -726,6 +729,38 @@ export type Database = {
           },
           {
             foreignKeyName: "favorite_workouts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_limits: {
+        Row: {
+          daily_usage: number | null
+          feature_type: string
+          id: string
+          last_reset: string | null
+          user_id: string | null
+        }
+        Insert: {
+          daily_usage?: number | null
+          feature_type: string
+          id?: string
+          last_reset?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          daily_usage?: number | null
+          feature_type?: string
+          id?: string
+          last_reset?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_limits_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1440,6 +1475,41 @@ export type Database = {
           },
         ]
       }
+      premium_trials: {
+        Row: {
+          conversion_status: string | null
+          end_date: string | null
+          id: string
+          start_date: string | null
+          trial_source: string | null
+          user_id: string | null
+        }
+        Insert: {
+          conversion_status?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string | null
+          trial_source?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          conversion_status?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string | null
+          trial_source?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_trials_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1946,6 +2016,7 @@ export type Database = {
           est_publié: boolean | null
           id: string
           image_url: string | null
+          is_premium: boolean | null
           location: string[] | null
           muscle_group: string
           name: string
@@ -1958,6 +2029,7 @@ export type Database = {
           est_publié?: boolean | null
           id?: string
           image_url?: string | null
+          is_premium?: boolean | null
           location?: string[] | null
           muscle_group: string
           name: string
@@ -1970,6 +2042,7 @@ export type Database = {
           est_publié?: boolean | null
           id?: string
           image_url?: string | null
+          is_premium?: boolean | null
           location?: string[] | null
           muscle_group?: string
           name?: string
@@ -2144,6 +2217,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_streaks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_subscriptions: {
+        Row: {
+          auto_renew: boolean | null
+          end_date: string | null
+          id: string
+          payment_provider: string | null
+          start_date: string | null
+          status: string
+          subscription_details: Json | null
+          subscription_type: string
+          user_id: string | null
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          end_date?: string | null
+          id?: string
+          payment_provider?: string | null
+          start_date?: string | null
+          status: string
+          subscription_details?: Json | null
+          subscription_type: string
+          user_id?: string | null
+        }
+        Update: {
+          auto_renew?: boolean | null
+          end_date?: string | null
+          id?: string
+          payment_provider?: string | null
+          start_date?: string | null
+          status?: string
+          subscription_details?: Json | null
+          subscription_type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -2417,6 +2534,7 @@ export type Database = {
           description: string | null
           exercise_data: Json | null
           id: string
+          is_premium: boolean | null
           is_public: boolean | null
           name: string
           updated_at: string | null
@@ -2427,6 +2545,7 @@ export type Database = {
           description?: string | null
           exercise_data?: Json | null
           id?: string
+          is_premium?: boolean | null
           is_public?: boolean | null
           name: string
           updated_at?: string | null
@@ -2437,6 +2556,7 @@ export type Database = {
           description?: string | null
           exercise_data?: Json | null
           id?: string
+          is_premium?: boolean | null
           is_public?: boolean | null
           name?: string
           updated_at?: string | null
@@ -2637,6 +2757,12 @@ export type Database = {
         }
         Returns: number
       }
+      check_premium_access: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
+      }
       delete_workout_session: {
         Args: {
           session_id: string
@@ -2815,6 +2941,10 @@ export type Database = {
           content: string
           similarity: number
         }[]
+      }
+      reset_daily_limits: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       sparsevec_out: {
         Args: {
