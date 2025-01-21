@@ -40,8 +40,6 @@ export const PopularMealSuggestions = () => {
             difficulty={suggestion.difficulty_level}
             servings={suggestion.servings}
             rating={suggestion.rating}
-            estimatedCost={suggestion.estimated_cost}
-            imageUrl={suggestion.image_url}
             tags={suggestion.tags}
           />
         ))}
