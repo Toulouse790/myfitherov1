@@ -37,7 +37,7 @@ export const WorkoutCard = ({
         .select('id')
         .eq('user_id', user.id)
         .eq('session_id', sessionId)
-        .maybeSingle(); // Utilisation de maybeSingle au lieu de single
+        .maybeSingle();
 
       if (error) throw error;
       setIsFavorite(!!data);
@@ -64,6 +64,24 @@ export const WorkoutCard = ({
     }
 
     try {
+      // Vérifier d'abord si la session existe
+      const { data: sessionExists, error: sessionError } = await supabase
+        .from('workout_sessions')
+        .select('id')
+        .eq('id', sessionId)
+        .maybeSingle();
+
+      if (sessionError) throw sessionError;
+
+      if (!sessionExists) {
+        toast({
+          title: "Erreur",
+          description: "Cette séance d'entraînement n'existe plus",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (isFavorite) {
         const { error } = await supabase
           .from('favorite_workouts')
@@ -98,7 +116,7 @@ export const WorkoutCard = ({
       console.error('Error toggling favorite:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue",
+        description: "Une erreur est survenue lors de la modification des favoris",
         variant: "destructive",
       });
     }
