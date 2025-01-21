@@ -106,27 +106,29 @@ export const WorkoutCard = ({
 
   return (
     <Card 
-      className="relative p-4 cursor-pointer hover:shadow-md transition-shadow ml-auto w-full max-w-md"
+      className="relative p-4 cursor-pointer hover:shadow-md transition-shadow"
       onClick={onSelect}
     >
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </div>
+      <div className="flex justify-between items-start">
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">{title}</h3>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
 
-      {sessionId && (
-        <button
-          onClick={toggleFavorite}
-          className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-700/50 transition-colors"
-          aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
-        >
-          <Heart 
-            className={`h-4 w-4 transition-colors ${
-              isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-400'
-            }`}
-          />
-        </button>
-      )}
+        {sessionId && (
+          <button
+            onClick={toggleFavorite}
+            className="p-1 rounded-full hover:bg-gray-700/50 transition-colors"
+            aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+          >
+            <Heart 
+              className={`h-4 w-4 transition-colors ${
+                isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-400'
+              }`}
+            />
+          </button>
+        )}
+      </div>
     </Card>
   );
 };

@@ -5,7 +5,6 @@ import { WorkoutCard } from "./WorkoutCard";
 import { GenerateWorkoutDialog } from "./GenerateWorkoutDialog";
 import { useState } from "react";
 import { WorkoutSuggestion, WorkoutSuggestionsProps } from "./types";
-import { Dumbbell } from "lucide-react";
 
 export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggestionsProps) => {
   const [isGenerateOpen, setIsGenerateOpen] = useState(false);
@@ -28,7 +27,6 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
           throw error;
         }
 
-        // Supprimer les doublons en utilisant un Set basé sur l'ID
         const uniqueSuggestions = Array.from(
           new Map(data.map(item => [item.id, item])).values()
         );
@@ -77,9 +75,8 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
           key={suggestion.id}
           title={suggestion.title}
           description={suggestion.description}
-          icon={<Dumbbell className="w-5 h-5 text-primary" />}
-          onClick={() => setIsGenerateOpen(true)}
           sessionId={suggestion.id}
+          onSelect={() => setIsGenerateOpen(true)}
         />
       ))}
       
