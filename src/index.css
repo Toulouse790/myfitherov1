@@ -102,7 +102,8 @@
   button {
     @apply h-button w-[calc(100%-32px)] mx-4 rounded-button px-button-x 
            text-button font-medium transition-all duration-300 
-           hover:opacity-90 active:scale-[0.98];
+           hover:opacity-90 active:scale-[0.98]
+           inline-flex items-center justify-center flex-wrap;
   }
 
   button.secondary {
@@ -117,7 +118,8 @@
 
   .card {
     @apply rounded-card shadow-card bg-card p-card 
-           transition-all duration-300;
+           transition-all duration-300
+           flex flex-wrap items-center;
   }
 
   .nav-icon {
