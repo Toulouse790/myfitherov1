@@ -1,8 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { Heart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface WorkoutCardProps {
   title: string;
@@ -15,29 +17,84 @@ interface WorkoutCardProps {
 export const WorkoutCard = ({ title, description, icon, onClick, sessionId }: WorkoutCardProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Vérifier si l'entraînement est déjà en favori
+    const checkFavoriteStatus = async () => {
+      if (!sessionId || !user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('favorite_workouts')
+          .select('id')
+          .eq('session_id', sessionId)
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (error) throw error;
+        setIsFavorite(!!data);
+      } catch (error) {
+        console.error('Erreur lors de la vérification des favoris:', error);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [sessionId, user]);
 
   const toggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour ajouter des favoris",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       if (isFavorite) {
         const { error } = await supabase
           .from('favorite_workouts')
           .delete()
-          .eq('session_id', sessionId);
+          .eq('session_id', sessionId)
+          .eq('user_id', user.id);
 
         if (error) throw error;
+        
+        toast({
+          title: "Retiré des favoris",
+          description: "L'entraînement a été retiré de vos favoris",
+        });
+        
         setIsFavorite(false);
       } else {
         const { error } = await supabase
           .from('favorite_workouts')
-          .insert([{ session_id: sessionId }]);
+          .insert([{ 
+            session_id: sessionId,
+            user_id: user.id
+          }]);
 
         if (error) throw error;
+        
+        toast({
+          title: "Ajouté aux favoris",
+          description: "L'entraînement a été ajouté à vos favoris",
+        });
+        
         setIsFavorite(true);
       }
     } catch (error) {
       console.error('Erreur lors de la gestion des favoris:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la gestion des favoris",
+        variant: "destructive",
+      });
     }
   };
 
