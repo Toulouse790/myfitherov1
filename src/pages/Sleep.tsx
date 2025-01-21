@@ -15,22 +15,13 @@ const Sleep = () => {
       <Tabs defaultValue="tracker" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3 h-auto">
           <TabsTrigger value="tracker" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            <div className="flex items-center gap-2 py-2">
-              <Moon className="w-4 h-4" />
-              <span>Suivi</span>
-            </div>
+            <span>Suivi</span>
           </TabsTrigger>
           <TabsTrigger value="history" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            <div className="flex items-center gap-2 py-2">
-              <History className="w-4 h-4" />
-              <span>Historique</span>
-            </div>
+            <span>Historique</span>
           </TabsTrigger>
           <TabsTrigger value="goals" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            <div className="flex items-center gap-2 py-2">
-              <Target className="w-4 h-4" />
-              <span>Objectifs</span>
-            </div>
+            <span>Objectifs</span>
           </TabsTrigger>
         </TabsList>
 
@@ -38,7 +29,6 @@ const Sleep = () => {
           <div className="grid gap-4 md:grid-cols-3">
             <Card className="p-4 col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <Moon className="w-5 h-5 text-primary" />
                 <h3 className="font-semibold">Score de sommeil</h3>
               </div>
               <div className="flex items-center justify-center p-8">
@@ -79,7 +69,6 @@ const Sleep = () => {
         <TabsContent value="history">
           <Card className="p-4">
             <div className="flex items-center gap-2 mb-4">
-              <History className="w-5 h-5" />
               <h3 className="font-semibold">Historique du sommeil</h3>
             </div>
             <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -91,7 +80,6 @@ const Sleep = () => {
         <TabsContent value="goals">
           <Card className="p-4">
             <div className="flex items-center gap-2 mb-4">
-              <Target className="w-5 h-5" />
               <h3 className="font-semibold">Objectifs de sommeil</h3>
             </div>
             <div className="h-[300px] flex items-center justify-center text-muted-foreground">
