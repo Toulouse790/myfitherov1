@@ -8,13 +8,38 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Index() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      toast({
+        title: "Accès refusé",
+        description: "Vous devez être connecté pour accéder à cette page",
+        variant: "destructive",
+      });
+      navigate("/sign-in");
+    }
+  }, [user, loading, navigate, toast]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-center">
+          <p className="text-muted-foreground">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   const handleCreateSession = () => {
     console.log("Attempting to create session...");
