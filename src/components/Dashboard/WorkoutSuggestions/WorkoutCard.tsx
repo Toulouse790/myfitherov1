@@ -31,19 +31,19 @@ export const WorkoutCard = ({
   const checkIfFavorite = async () => {
     if (!user || !sessionId) return;
 
-    const { data, error } = await supabase
-      .from('favorite_workouts')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('session_id', sessionId)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('favorite_workouts')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('session_id', sessionId)
+        .maybeSingle(); // Utilisation de maybeSingle au lieu de single
 
-    if (error) {
+      if (error) throw error;
+      setIsFavorite(!!data);
+    } catch (error) {
       console.error('Error checking favorite status:', error);
-      return;
     }
-
-    setIsFavorite(!!data);
   };
 
   const toggleFavorite = async (e: React.MouseEvent) => {
