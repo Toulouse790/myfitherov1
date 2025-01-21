@@ -52,6 +52,11 @@ export const MealContent = ({
   const currentMeal = getCurrentDayMeal();
   const currentDay = mealPlan ? Math.floor((new Date().getTime() - new Date(mealPlan.start_date).getTime()) / (1000 * 60 * 60 * 24)) + 1 : 1;
 
+  // Calculer le total des protéines des entrées
+  const totalProteins = mealEntries.reduce((sum, entry) => sum + (entry.proteins || 0), 0);
+  const targetProteins = currentMeal?.proteins || 0;
+  const proteinDiff = totalProteins - targetProteins;
+
   return (
     <div className="p-4 bg-background/50 rounded-lg space-y-4">
       {/* Existing entries */}
@@ -79,16 +84,23 @@ export const MealContent = ({
         </div>
       )}
 
-      {/* Generated meal suggestion */}
+      {/* Generated meal suggestion with protein goal comparison */}
       {currentMeal && (
         <div className="space-y-3">
           <Card className="p-3">
             <div className="space-y-2">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium">{currentMeal.name}</h4>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-medium">{currentMeal.name}</h4>
+                    {proteinDiff >= 0 && (
+                      <span className="text-xs text-green-500">
+                        Objectif protéines atteint (+{proteinDiff}g)
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-muted-foreground">
-                    {currentMeal.calories} kcal | {currentMeal.proteins}g protéines
+                    {currentMeal.calories} kcal | Objectif: {targetProteins}g protéines
                   </p>
                   {/* Detailed portions */}
                   {currentMeal.quantities && currentMeal.quantities.length > 0 && (
@@ -104,7 +116,6 @@ export const MealContent = ({
                 </div>
               </div>
 
-              {/* Shopping list section */}
               {currentMeal.quantities && currentMeal.quantities.length > 0 && (
                 <div className="mt-3 border-t pt-3">
                   <div className="flex items-center gap-2 mb-2">
@@ -124,14 +135,12 @@ export const MealContent = ({
                 </div>
               )}
 
-              {/* Preparation instructions if available */}
               {currentMeal.preparation && (
                 <p className="text-sm text-muted-foreground mt-2">
                   {currentMeal.preparation}
                 </p>
               )}
 
-              {/* Plan duration info with support for all durations */}
               {mealPlan && (
                 <p className="text-xs text-muted-foreground mt-2">
                   Jour {currentDay} sur {mealPlan.plan_data.length}
