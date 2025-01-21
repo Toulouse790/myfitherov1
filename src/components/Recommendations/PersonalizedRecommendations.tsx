@@ -196,45 +196,43 @@ export const PersonalizedRecommendations = () => {
           {recommendations.map((rec) => (
             <div
               key={rec.id}
-              className={`p-4 rounded-lg transition-colors cursor-pointer ${
+              className={`p-3 rounded-lg transition-colors cursor-pointer ${
                 rec.type === 'positive' 
                   ? 'bg-green-500/10 hover:bg-green-500/20' 
                   : 'bg-muted/50 hover:bg-muted/70'
               }`}
             >
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <h4 className="font-medium">{rec.title}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {rec.description}
-                  </p>
-                  <div className="mt-2 space-y-1">
+              <div className="flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h4 className="font-medium truncate">{rec.title}</h4>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Badge 
+                            variant={rec.type === 'positive' ? 'default' : 'secondary'}
+                            className={`capitalize shrink-0 ${
+                              rec.category === 'workout' ? 'bg-blue-500' :
+                              rec.category === 'nutrition' ? 'bg-green-500' : 
+                              'bg-purple-500'
+                            } text-white`}
+                          >
+                            {rec.category}
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">{rec.explanation}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <p className="text-sm text-muted-foreground truncate">{rec.description}</p>
+                  <div className="flex gap-2 text-xs text-muted-foreground">
                     {rec.dataPoints.map((point, index) => (
-                      <p key={index} className="text-xs text-muted-foreground">
-                        • {point}
-                      </p>
+                      <span key={index}>• {point}</span>
                     ))}
                   </div>
                 </div>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Badge 
-                        variant={rec.type === 'positive' ? 'default' : 'secondary'}
-                        className={`capitalize ${
-                          rec.category === 'workout' ? 'bg-blue-500' :
-                          rec.category === 'nutrition' ? 'bg-green-500' : 
-                          'bg-purple-500'
-                        } text-white`}
-                      >
-                        {rec.category}
-                      </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs">{rec.explanation}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
               </div>
             </div>
           ))}
