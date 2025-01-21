@@ -3,6 +3,7 @@ import Workouts from "@/pages/Workouts";
 import WorkoutSession from "@/pages/WorkoutSession";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import Cardio from "@/pages/Cardio";
+import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 
 export const workoutRoutes = [
   {
@@ -10,6 +11,14 @@ export const workoutRoutes = [
     element: (
       <ProtectedRoute>
         <Workouts />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "workouts/:sessionId",
+    element: (
+      <ProtectedRoute>
+        <UnifiedWorkoutDetail />
       </ProtectedRoute>
     ),
   },
