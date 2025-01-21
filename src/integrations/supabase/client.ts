@@ -24,6 +24,7 @@ export const supabase = createClient(
     global: {
       headers: {
         'Content-Type': 'application/json',
+        'apikey': supabaseAnonKey
       }
     },
     db: {
@@ -40,12 +41,21 @@ supabase.auth.onAuthStateChange((event, session) => {
 // Test the connection
 const testConnection = async () => {
   try {
-    const { count } = await supabase
-      .from('profiles')
-      .select('*', { count: 'exact', head: true });
-    console.log('Supabase connection successful');
+    console.log('Testing Supabase connection to workout_suggestions...');
+    const { data, error } = await supabase
+      .from('workout_suggestions')
+      .select('*')
+      .eq('is_active', true)
+      .order('suggested_order', { ascending: true });
+
+    if (error) {
+      console.error('Supabase connection error:', error);
+      throw error;
+    }
+
+    console.log('Supabase connection successful, received data:', data);
   } catch (error) {
-    console.error('Supabase connection error:', error);
+    console.error('Error in test connection:', error);
   }
 };
 
