@@ -26,7 +26,7 @@ export const Header = ({ children }: HeaderProps) => {
                   <Link
                     key={item.href}
                     to={item.href}
-                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                    className="text-sm font-medium text-muted-foreground hover:text-primary"
                   >
                     {item.title}
                   </Link>
