@@ -16,9 +16,6 @@ export const Header = ({ children }: HeaderProps) => {
         <div className="container flex h-14 items-center">
           <div className="flex items-center">
             <Link to="/" className="mr-6 flex items-center space-x-2">
-              <span className="hidden font-bold text-xl sm:inline-block">
-                MyFitHero
-              </span>
             </Link>
             <nav className="flex items-center space-x-4">
               {navigationItems.map((item) => (
