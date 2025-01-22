@@ -3,7 +3,6 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignUpForm } from "./SignUpForm";
 import { useSignup } from "@/hooks/use-signup";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -35,7 +34,7 @@ export const SignUp = () => {
       return;
     }
 
-    const { error: signupError, data } = await signup(email, password, username);
+    const { error: signupError } = await signup(email, password, username);
     
     if (signupError) {
       console.error("Signup error:", signupError);
@@ -47,8 +46,6 @@ export const SignUp = () => {
       return;
     }
 
-    // Profile will be created automatically by the database trigger
-    // No need to manually create it here anymore
     console.log("Signup successful, profile will be created by trigger");
   };
 
