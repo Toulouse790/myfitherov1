@@ -7,7 +7,7 @@ export interface QuestionnaireResponses {
   objective: string;
   training_frequency: string;
   experience_level: string;
-  available_equipment: string;
+  available_equipment: string[];
   workout_duration: string;
   diet_type: string;
   gender: string;
@@ -20,7 +20,7 @@ export const INITIAL_RESPONSES: QuestionnaireResponses = {
   objective: "",
   training_frequency: "",
   experience_level: "",
-  available_equipment: "",
+  available_equipment: [],
   workout_duration: "60",
   diet_type: "omnivore",
   gender: "male",

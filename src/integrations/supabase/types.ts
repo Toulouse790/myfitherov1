@@ -1664,7 +1664,7 @@ export type Database = {
       }
       questionnaire_responses: {
         Row: {
-          available_equipment: string | null
+          available_equipment: string[] | null
           created_at: string
           daily_energy_expenditure: number | null
           diet_type: string | null
@@ -1683,7 +1683,7 @@ export type Database = {
           workout_duration: string | null
         }
         Insert: {
-          available_equipment?: string | null
+          available_equipment?: string[] | null
           created_at?: string
           daily_energy_expenditure?: number | null
           diet_type?: string | null
@@ -1702,7 +1702,7 @@ export type Database = {
           workout_duration?: string | null
         }
         Update: {
-          available_equipment?: string | null
+          available_equipment?: string[] | null
           created_at?: string
           daily_energy_expenditure?: number | null
           diet_type?: string | null
