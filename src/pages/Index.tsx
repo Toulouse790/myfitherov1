@@ -156,15 +156,15 @@ export default function Index() {
 
   return (
     <Header>
-      <main className="container mx-auto px-4 py-8 space-y-8 max-w-6xl">
+      <main className="container mx-auto px-4 py-4 space-y-8 max-w-6xl">
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="space-y-6"
+          className="space-y-4"
         >
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            En route vers ton succès ! 🚀
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mt-2">
+            En route vers ton succès ! <span className="text-emerald">🚀</span>
           </h1>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -234,3 +234,5 @@ export default function Index() {
     </Header>
   );
 }
+
+export default Index;
