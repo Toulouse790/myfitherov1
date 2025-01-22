@@ -169,7 +169,7 @@ export const PersonalizedRecommendations = () => {
     <Card>
       <CardHeader className="space-y-2">
         <div className="flex items-center justify-between">
-          <CardTitle>Recommandations personnalisées</CardTitle>
+          <CardTitle className="text-lg">Recommandations personnalisées</CardTitle>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -199,7 +199,7 @@ export const PersonalizedRecommendations = () => {
               <div className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-0.5">
-                    <h4 className="font-medium break-words flex-1">{rec.title}</h4>
+                    <h4 className="text-sm font-medium break-words flex-1">{rec.title}</h4>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
@@ -220,7 +220,7 @@ export const PersonalizedRecommendations = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  <p className="text-sm text-muted-foreground break-words">{rec.description}</p>
+                  <p className="text-xs text-muted-foreground break-words">{rec.description}</p>
                   <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     {rec.dataPoints.map((point, index) => (
                       <span key={index} className="inline-flex items-center">
