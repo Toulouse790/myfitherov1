@@ -5,19 +5,34 @@ import { Label } from "@/components/ui/label";
 import { useSignIn } from "@/hooks/use-signin";
 import { useNavigate } from "react-router-dom";
 import { CardContent, CardFooter } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 export const SignInForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { handleSignIn, isLoading } = useSignIn();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await handleSignIn(username, password, true);
+      const result = await handleSignIn(username, password, true);
+      if (result?.error) {
+        console.error("Sign in error:", result.error);
+        toast({
+          variant: "destructive",
+          title: "Erreur de connexion",
+          description: result.error.message || "Une erreur est survenue lors de la connexion",
+        });
+      }
     } catch (error) {
       console.error("Erreur de connexion:", error);
+      toast({
+        variant: "destructive",
+        title: "Erreur de connexion",
+        description: "Une erreur est survenue lors de la connexion. Veuillez réessayer.",
+      });
     }
   };
 

@@ -17,7 +17,8 @@ export const supabase = createClient(
       persistSession: true,
       detectSessionInUrl: true,
       storage: localStorage,
-      storageKey: 'myfithero-auth'
+      storageKey: 'myfithero-auth',
+      flowType: 'pkce'
     },
     global: {
       headers: {
