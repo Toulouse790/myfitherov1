@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { handleAuthError } from "@/utils/auth-errors";
 
 export const SignInForm = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -19,8 +19,25 @@ export const SignInForm = () => {
     setIsLoading(true);
 
     try {
+      // 1. D'abord, on récupère l'email associé au username
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', username)
+        .single();
+
+      if (profileError || !profileData) {
+        toast({
+          title: "Erreur de connexion",
+          description: "Nom d'utilisateur invalide",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // 2. Ensuite, on se connecte avec l'email et le mot de passe
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: username, // On peut utiliser le username comme email car on a vérifié qu'il existe
         password,
       });
 
@@ -75,13 +92,13 @@ export const SignInForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full sm:w-[400px]">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="username">Nom d'utilisateur</Label>
         <Input
-          id="email"
-          type="email"
-          placeholder="votre@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="username"
+          type="text"
+          placeholder="Votre nom d'utilisateur"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
       </div>
