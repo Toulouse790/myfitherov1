@@ -25,11 +25,16 @@ export const useSignup = () => {
       }
 
       // 2. Vérifier si le pseudo existe déjà
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: profileError } = await supabase
         .from("profiles")
         .select("pseudo")
         .eq("pseudo", pseudo)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        console.error("Erreur lors de la vérification du pseudo:", profileError);
+        throw new Error("Erreur lors de la vérification du pseudo");
+      }
 
       if (existingProfile) {
         throw new Error("Ce pseudo est déjà utilisé");
