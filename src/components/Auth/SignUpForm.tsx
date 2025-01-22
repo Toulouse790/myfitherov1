@@ -1,45 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
 import { CardContent, CardFooter } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { useSignUp } from "@/hooks/use-signup";
+import { useState } from "react";
 
-interface SignUpFormProps {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  onUsernameChange: (value: string) => void;
-  onEmailChange: (value: string) => void;
-  onPasswordChange: (value: string) => void;
-  onConfirmPasswordChange: (value: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
-  isLoading: boolean;
-}
+export function SignUpForm() {
+  const [email, setEmail] = useState("");
+  const [pseudo, setPseudo] = useState("");
+  const [password, setPassword] = useState("");
+  const { signUp, isLoading, error } = useSignUp();
 
-export const SignUpForm = ({
-  username,
-  email,
-  password,
-  confirmPassword,
-  onUsernameChange,
-  onEmailChange,
-  onPasswordChange,
-  onConfirmPasswordChange,
-  onSubmit,
-  isLoading,
-}: SignUpFormProps) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await signUp({ email, password, pseudo });
+  };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleSubmit}>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="username">Nom d'utilisateur</Label>
+          <Label htmlFor="pseudo">Pseudo</Label>
           <Input
-            id="username"
+            id="pseudo"
             type="text"
-            placeholder="Votre nom d'utilisateur"
-            value={username}
-            onChange={(e) => onUsernameChange(e.target.value)}
+            placeholder="Votre pseudo"
+            value={pseudo}
+            onChange={(e) => setPseudo(e.target.value)}
             required
             disabled={isLoading}
           />
@@ -51,7 +39,7 @@ export const SignUpForm = ({
             type="email"
             placeholder="exemple@email.com"
             value={email}
-            onChange={(e) => onEmailChange(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
             disabled={isLoading}
           />
@@ -62,22 +50,14 @@ export const SignUpForm = ({
             id="password"
             type="password"
             value={password}
-            onChange={(e) => onPasswordChange(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
             disabled={isLoading}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => onConfirmPasswordChange(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </div>
+        {error && (
+          <p className="text-sm text-red-500 dark:text-red-400">{error}</p>
+        )}
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
         <Button type="submit" className="w-full" disabled={isLoading}>
@@ -92,4 +72,4 @@ export const SignUpForm = ({
       </CardFooter>
     </form>
   );
-};
+}
