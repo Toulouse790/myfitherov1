@@ -2,14 +2,14 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { SignUpForm } from "./SignUpForm";
-import { useSignup } from "@/hooks/use-signup";
+import { useSignUp } from "@/hooks/use-signup";
 import { useNavigate } from "react-router-dom";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pseudo, setPseudo] = useState("");
-  const { signUp, isLoading } = useSignup();
+  const { signUp, isLoading } = useSignUp();
   const { toast } = useToast();
   const navigate = useNavigate();
 
