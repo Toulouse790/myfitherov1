@@ -18,14 +18,16 @@ export const SignInForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Utiliser l'email comme pseudo par défaut si nécessaire
-      await handleSignIn(email, password);
+      const success = await handleSignIn(email, password);
+      if (success) {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Erreur de connexion:", error);
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
-        description: "Une erreur est survenue lors de la connexion. Veuillez réessayer.",
+        description: "Email ou mot de passe incorrect.",
       });
     }
   };
@@ -75,6 +77,7 @@ export const SignInForm = () => {
             variant="link" 
             className="p-0 h-auto font-semibold hover:text-primary transition-colors"
             onClick={() => navigate("/signup")}
+            type="button"
           >
             Inscrivez-vous
           </Button>
