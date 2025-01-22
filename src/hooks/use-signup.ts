@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 
 interface SignUpParams {
   email: string;
@@ -13,7 +12,6 @@ export const useSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const signUp = async ({ email, password, pseudo }: SignUpParams) => {
     try {
@@ -66,12 +64,6 @@ export const useSignup = () => {
 
       if (upsertError) throw upsertError;
 
-      toast({
-        title: "Création de compte réussie",
-        description: "Votre compte a bien été créé.",
-      });
-
-      navigate("/");
       return true;
 
     } catch (err) {

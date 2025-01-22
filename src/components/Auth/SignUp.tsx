@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { SignUpForm } from "./SignUpForm";
 import { useSignup } from "@/hooks/use-signup";
+import { useNavigate } from "react-router-dom";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export const SignUp = () => {
   const [pseudo, setPseudo] = useState("");
   const { signUp, isLoading } = useSignup();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +26,19 @@ export const SignUp = () => {
     }
 
     try {
-      await signUp({ 
+      const success = await signUp({ 
         email, 
         password, 
         pseudo 
       });
+      
+      if (success) {
+        toast({
+          title: "Succès",
+          description: "Inscription réussie! Vous êtes maintenant connecté.",
+        });
+        navigate("/");
+      }
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
       toast({
