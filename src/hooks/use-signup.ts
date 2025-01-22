@@ -41,8 +41,7 @@ export const useSignup = () => {
         password,
         options: {
           data: {
-            pseudo: pseudo,
-            username: pseudo // Ajout du username pour qu'il apparaisse dans le dashboard
+            pseudo: pseudo // On utilise uniquement pseudo
           }
         }
       });
