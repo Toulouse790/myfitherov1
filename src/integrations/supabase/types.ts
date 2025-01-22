@@ -1613,6 +1613,7 @@ export type Database = {
           avatar_url: string | null
           birth_date: string | null
           created_at: string
+          email: string | null
           gender: string | null
           height_cm: number | null
           id: string
@@ -1629,6 +1630,7 @@ export type Database = {
           avatar_url?: string | null
           birth_date?: string | null
           created_at?: string
+          email?: string | null
           gender?: string | null
           height_cm?: number | null
           id: string
@@ -1645,6 +1647,7 @@ export type Database = {
           avatar_url?: string | null
           birth_date?: string | null
           created_at?: string
+          email?: string | null
           gender?: string | null
           height_cm?: number | null
           id?: string

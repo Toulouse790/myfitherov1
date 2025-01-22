@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSignIn } from "@/hooks/use-signin";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CardContent, CardFooter } from "@/components/ui/card";
 
 export const SignInForm = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { handleSignIn, isLoading } = useSignIn();
   const navigate = useNavigate();
@@ -15,8 +15,7 @@ export const SignInForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await handleSignIn(email, password, true);
-      navigate("/");
+      await handleSignIn(username, password, true);
     } catch (error) {
       console.error("Erreur de connexion:", error);
     }
@@ -26,13 +25,13 @@ export const SignInForm = () => {
     <form onSubmit={handleSubmit}>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="username">Nom d'utilisateur</Label>
           <Input
-            id="email"
-            type="email"
-            placeholder="exemple@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="username"
+            type="text"
+            placeholder="Votre nom d'utilisateur"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             disabled={isLoading}
           />

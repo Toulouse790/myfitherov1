@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export const useSignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -9,13 +9,25 @@ export const useSignIn = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSignIn = async (email: string, password: string, rememberMe: boolean) => {
+  const handleSignIn = async (username: string, password: string, rememberMe: boolean) => {
     try {
       setIsLoading(true);
       setError(null);
 
+      // 1. Get email from username
+      const { data: profile, error: fetchError } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("username", username)
+        .single();
+
+      if (fetchError || !profile?.email) {
+        throw new Error("Aucun compte trouvé avec ce nom d'utilisateur.");
+      }
+
+      // 2. Sign in with email
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
+        email: profile.email,
         password,
       });
 
@@ -23,7 +35,7 @@ export const useSignIn = () => {
 
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue sur MyFitHero !",
+        description: `Bienvenue sur MyFitHero, ${username} !`,
       });
 
       navigate("/");
