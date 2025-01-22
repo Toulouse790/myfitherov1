@@ -2905,6 +2905,12 @@ export type Database = {
         }
         Returns: Database["public"]["CompositeTypes"]["tablefunc_crosstab_4"][]
       }
+      delete_user: {
+        Args: {
+          user_id: string
+        }
+        Returns: undefined
+      }
       delete_workout_session: {
         Args: {
           session_id: string
