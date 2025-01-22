@@ -9,7 +9,7 @@ export const SignUp = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
-  const { signup, isLoading } = useSignup();
+  const { signUp, isLoading } = useSignup();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,19 +34,11 @@ export const SignUp = () => {
       return;
     }
 
-    const { error: signupError } = await signup(email, password, username);
-    
-    if (signupError) {
-      console.error("Signup error:", signupError);
-      toast({
-        title: "Erreur",
-        description: signupError.message || "Une erreur est survenue lors de l'inscription",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    console.log("Signup successful, profile will be created by trigger");
+    await signUp({ 
+      email, 
+      password, 
+      pseudo: username 
+    });
   };
 
   return (
@@ -56,14 +48,12 @@ export const SignUp = () => {
           <CardTitle>Créer un compte</CardTitle>
         </CardHeader>
         <SignUpForm
-          username={username}
           email={email}
           password={password}
-          confirmPassword={confirmPassword}
-          onUsernameChange={setUsername}
+          pseudo={username}
           onEmailChange={setEmail}
           onPasswordChange={setPassword}
-          onConfirmPasswordChange={setConfirmPassword}
+          onPseudoChange={setUsername}
           onSubmit={handleSubmit}
           isLoading={isLoading}
         />

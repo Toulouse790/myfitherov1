@@ -3,22 +3,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { useSignup } from "@/hooks/use-signup";
-import { useState } from "react";
 
-export function SignUpForm() {
-  const [email, setEmail] = useState("");
-  const [pseudo, setPseudo] = useState("");
-  const [password, setPassword] = useState("");
-  const { signUp, isLoading, error } = useSignup();
+interface SignUpFormProps {
+  email: string;
+  password: string;
+  pseudo: string;
+  onEmailChange: (value: string) => void;
+  onPasswordChange: (value: string) => void;
+  onPseudoChange: (value: string) => void;
+  onSubmit: (e: React.FormEvent) => Promise<void>;
+  isLoading: boolean;
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await signUp({ email, password, pseudo });
-  };
-
+export function SignUpForm({
+  email,
+  password,
+  pseudo,
+  onEmailChange,
+  onPasswordChange,
+  onPseudoChange,
+  onSubmit,
+  isLoading
+}: SignUpFormProps) {
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="pseudo">Pseudo</Label>
@@ -27,7 +35,7 @@ export function SignUpForm() {
             type="text"
             placeholder="Votre pseudo"
             value={pseudo}
-            onChange={(e) => setPseudo(e.target.value)}
+            onChange={(e) => onPseudoChange(e.target.value)}
             required
             disabled={isLoading}
           />
@@ -39,7 +47,7 @@ export function SignUpForm() {
             type="email"
             placeholder="exemple@email.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => onEmailChange(e.target.value)}
             required
             disabled={isLoading}
           />
@@ -50,14 +58,11 @@ export function SignUpForm() {
             id="password"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => onPasswordChange(e.target.value)}
             required
             disabled={isLoading}
           />
         </div>
-        {error && (
-          <p className="text-sm text-red-500 dark:text-red-400">{error}</p>
-        )}
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
         <Button type="submit" className="w-full" disabled={isLoading}>
