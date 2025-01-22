@@ -167,8 +167,8 @@ export const PersonalizedRecommendations = () => {
 
   return (
     <Card>
-      <CardHeader className="space-y-2">
-        <div className="flex items-center justify-between">
+      <CardHeader>
+        <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-lg">Recommandations personnalisées</CardTitle>
           <TooltipProvider>
             <Tooltip>
