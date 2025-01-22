@@ -63,25 +63,13 @@ export const useSignup = () => {
 
       if (upsertError) throw upsertError;
 
-      // 4. Vérifier si l'utilisateur a déjà rempli le questionnaire
-      const { data: questionnaireData } = await supabase
-        .from("questionnaire_responses")
-        .select("id")
-        .eq("user_id", userId)
-        .maybeSingle();
-
       toast({
         title: "Succès",
-        description: "Inscription réussie! Vous êtes maintenant connecté.",
+        description: "Inscription réussie! Veuillez remplir le questionnaire initial.",
       });
 
-      // 5. Rediriger vers le questionnaire si pas encore rempli, sinon vers le dashboard
-      if (!questionnaireData) {
-        navigate("/questionnaire");
-      } else {
-        navigate("/");
-      }
-
+      // Redirection directe vers le questionnaire initial
+      navigate("/initial-questionnaire");
       return true;
 
     } catch (err) {
