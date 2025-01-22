@@ -17,15 +17,7 @@ export const SignInForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const result = await handleSignIn(username, password, true);
-      if (result?.error) {
-        console.error("Sign in error:", result.error);
-        toast({
-          variant: "destructive",
-          title: "Erreur de connexion",
-          description: result.error.message || "Une erreur est survenue lors de la connexion",
-        });
-      }
+      await handleSignIn(username, password, true);
     } catch (error) {
       console.error("Erreur de connexion:", error);
       toast({
