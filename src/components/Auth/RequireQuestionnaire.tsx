@@ -1,38 +1,45 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [hasQuestionnaire, setHasQuestionnaire] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkQuestionnaire = async () => {
-      if (!user) {
-        navigate("/signin");
-        return;
-      }
+      if (!user) return;
 
-      const { data } = await supabase
-        .from("questionnaire_responses")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      try {
+        const { data, error } = await supabase
+          .from("questionnaire_responses")
+          .select("id")
+          .eq("user_id", user.id)
+          .single();
 
-      if (!data) {
-        navigate("/initial-questionnaire");
+        if (error) throw error;
+        
+        setHasQuestionnaire(!!data);
+        
+        if (!data) {
+          navigate("/initial-questionnaire");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la vérification du questionnaire:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     checkQuestionnaire();
   }, [user, navigate]);
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return <div>Vérification du profil...</div>;
   }
 
-  return <>{children}</>;
+  return hasQuestionnaire ? <>{children}</> : null;
 };

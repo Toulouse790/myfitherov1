@@ -1,97 +1,42 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
-interface SignUpParams {
-  email: string;
-  password: string;
-  pseudo: string;
-}
-
-export const useSignup = () => {
+export const useSignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const signUp = async ({ email, password, pseudo }: SignUpParams) => {
+  const handleSignUp = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // 1. Vérifier si le pseudo existe déjà
-      const { data: existingProfile, error: profileError } = await supabase
-        .from("profiles")
-        .select("pseudo")
-        .eq("pseudo", pseudo)
-        .maybeSingle();
-
-      if (profileError) {
-        console.error("Erreur lors de la vérification du pseudo:", profileError);
-        throw new Error("Erreur lors de la vérification du pseudo");
-      }
-
-      if (existingProfile) {
-        throw new Error("Ce pseudo est déjà utilisé");
-      }
-
-      // 2. Créer l'utilisateur
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            pseudo: pseudo
-          }
-        }
       });
 
       if (signUpError) throw signUpError;
 
-      const userId = signUpData.user?.id;
-      if (!userId) throw new Error("Impossible de récupérer l'ID utilisateur");
-
-      // 3. Créer le profil
-      const { error: upsertError } = await supabase
-        .from("profiles")
-        .upsert({
-          id: userId,
-          pseudo: pseudo,
-          email: email,
-        });
-
-      if (upsertError) throw upsertError;
-
-      // 4. Vérifier si le questionnaire existe déjà
-      const { data: existingQuestionnaire } = await supabase
-        .from("questionnaire_responses")
-        .select("id")
-        .eq("user_id", userId)
-        .maybeSingle();
-
       toast({
-        title: "Succès",
-        description: "Inscription réussie! Veuillez remplir le questionnaire initial.",
+        title: "Inscription réussie",
+        description: "Bienvenue sur MyFitHero !",
       });
 
-      // 5. Rediriger vers le questionnaire ou l'accueil
-      if (!existingQuestionnaire) {
-        navigate("/initial-questionnaire");
-      } else {
-        navigate("/");
-      }
-      
+      // Redirection vers le questionnaire initial
+      navigate("/initial-questionnaire");
       return true;
 
     } catch (err) {
-      console.error("SignUp error:", err);
-      const errorMsg = err instanceof Error ? err.message : "Une erreur est survenue lors de la création du compte.";
-      setError(errorMsg);
+      console.error("Sign up error:", err);
+      setError(err instanceof Error ? err.message : "Une erreur est survenue lors de l'inscription");
       toast({
         variant: "destructive",
-        title: "Erreur de création de compte",
-        description: errorMsg,
+        title: "Erreur d'inscription",
+        description: err instanceof Error ? err.message : "Une erreur est survenue lors de l'inscription",
       });
       return false;
     } finally {
@@ -99,9 +44,5 @@ export const useSignup = () => {
     }
   };
 
-  return {
-    signUp,
-    isLoading,
-    error,
-  };
+  return { handleSignUp, isLoading, error };
 };

@@ -1,19 +1,20 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  const location = useLocation();
+  const navigate = useNavigate();
 
-  // Pendant le chargement, on peut afficher un loader ou rien
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/signin");
+    }
+  }, [user, loading, navigate]);
+
   if (loading) {
-    return null;
+    return <div>Chargement...</div>;
   }
 
-  // Une fois le chargement terminé, on redirige si pas d'utilisateur
-  if (!user) {
-    return <Navigate to="/signin" state={{ from: location }} replace />;
-  }
-
-  return <>{children}</>;
+  return user ? <>{children}</> : null;
 };

@@ -26,10 +26,46 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      ...profileRoutes,
-      ...workoutRoutes,
-      ...healthRoutes,
-      ...dashboardRoutes,
+      ...profileRoutes.map(route => ({
+        ...route,
+        element: (
+          <ProtectedRoute>
+            <RequireQuestionnaire>
+              {route.element}
+            </RequireQuestionnaire>
+          </ProtectedRoute>
+        ),
+      })),
+      ...workoutRoutes.map(route => ({
+        ...route,
+        element: (
+          <ProtectedRoute>
+            <RequireQuestionnaire>
+              {route.element}
+            </RequireQuestionnaire>
+          </ProtectedRoute>
+        ),
+      })),
+      ...healthRoutes.map(route => ({
+        ...route,
+        element: (
+          <ProtectedRoute>
+            <RequireQuestionnaire>
+              {route.element}
+            </RequireQuestionnaire>
+          </ProtectedRoute>
+        ),
+      })),
+      ...dashboardRoutes.map(route => ({
+        ...route,
+        element: (
+          <ProtectedRoute>
+            <RequireQuestionnaire>
+              {route.element}
+            </RequireQuestionnaire>
+          </ProtectedRoute>
+        ),
+      })),
     ],
   },
   ...authRoutes,
