@@ -42,7 +42,7 @@ function Index() {
           transition={{ duration: 0.5 }}
           className="space-y-4"
         >
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mt-2">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mt-2">
             En route vers ton succès ! <span className="text-emerald">🚀</span>
           </h1>
 
