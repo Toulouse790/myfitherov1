@@ -35,13 +35,14 @@ export const useSignup = () => {
         throw new Error("Ce pseudo est déjà utilisé");
       }
 
-      // 3. Créer l'utilisateur
+      // 3. Créer l'utilisateur avec les métadonnées
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            pseudo: pseudo
+            pseudo: pseudo,
+            username: pseudo // Ajout du username pour qu'il apparaisse dans le dashboard
           }
         }
       });
@@ -61,6 +62,11 @@ export const useSignup = () => {
         });
 
       if (upsertError) throw upsertError;
+
+      toast({
+        title: "Succès",
+        description: "Inscription réussie! Vous êtes maintenant connecté.",
+      });
 
       return true;
 
