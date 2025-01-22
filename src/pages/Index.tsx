@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 
-export default function Index() {
+function Index() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { toast } = useToast();
