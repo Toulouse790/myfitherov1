@@ -41,7 +41,7 @@ export const useSignup = () => {
         password,
         options: {
           data: {
-            pseudo: pseudo // On utilise uniquement pseudo
+            pseudo: pseudo
           }
         }
       });

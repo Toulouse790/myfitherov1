@@ -16,6 +16,15 @@ export const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!pseudo.trim()) {
+      toast({
+        title: "Erreur",
+        description: "Le pseudo est requis",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (password.length < 6) {
       toast({
         title: "Erreur",
@@ -29,7 +38,7 @@ export const SignUp = () => {
       const success = await signUp({ 
         email, 
         password, 
-        pseudo 
+        pseudo: pseudo.trim()
       });
       
       if (success) {
@@ -41,6 +50,11 @@ export const SignUp = () => {
       }
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
+        variant: "destructive",
+      });
     }
   };
 
