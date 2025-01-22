@@ -18,11 +18,16 @@ export const useSignup = () => {
       setIsLoading(true);
       setError(null);
 
-      // 1) Créer l'utilisateur (email, mdp) dans Supabase
+      // 1) Créer l'utilisateur avec les métadonnées incluant le pseudo
       const { data: signUpData, error: signUpError } =
         await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              pseudo: pseudo
+            }
+          }
         });
 
       if (signUpError) {
@@ -39,9 +44,9 @@ export const useSignup = () => {
       const { error: insertError } = await supabase
         .from("profiles")
         .insert({
-          user_id: userId,
-          pseudo,
-          email,
+          id: userId,
+          pseudo: pseudo,
+          email: email,
         });
 
       if (insertError) {
