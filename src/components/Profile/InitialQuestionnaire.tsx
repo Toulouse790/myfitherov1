@@ -65,7 +65,7 @@ export const InitialQuestionnaire = () => {
       case 6:
         return (
           <TrainingLocationStep
-            trainingLocation={responses.available_equipment}
+            trainingLocation={responses.available_equipment || []}
             onTrainingLocationChange={(value) => handleResponseChange("available_equipment", value)}
           />
         );
