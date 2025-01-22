@@ -1,120 +1,68 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { handleAuthError } from "@/utils/auth-errors";
+import { useSignin } from "@/hooks/use-signin";
+import { useNavigate } from "react-router-dom";
+import { CardContent, CardFooter } from "@/components/ui/card";
 
 export const SignInForm = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { signin, isLoading } = useSignin();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      // 1. D'abord, on récupère l'email associé au username
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('username', username)
-        .single();
-
-      if (profileError || !profileData) {
-        toast({
-          title: "Erreur de connexion",
-          description: "Nom d'utilisateur invalide",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // 2. Ensuite, on se connecte avec l'email et le mot de passe
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: username, // On peut utiliser le username comme email car on a vérifié qu'il existe
-        password,
-      });
-
-      if (error) {
-        console.error("Erreur de connexion:", error);
-        const errorMessage = handleAuthError(error);
-        toast({
-          title: "Erreur de connexion",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log("Connexion réussie, session:", data.session);
-      
-      // Vérifier si l'utilisateur a déjà répondu au questionnaire initial
-      const { data: questionnaire, error: questionnaireError } = await supabase
-        .from('questionnaire_responses')
-        .select('*')
-        .eq('user_id', data.session?.user.id)
-        .single();
-
-      if (questionnaireError) {
-        console.error("Erreur lors de la vérification du questionnaire:", questionnaireError);
-      }
-
-      toast({
-        title: "Connexion réussie",
-        description: "Vous êtes maintenant connecté",
-      });
-
-      // Rediriger vers la page principale si le questionnaire existe
-      if (questionnaire) {
-        navigate("/");
-      } else {
-        navigate("/initial-questionnaire");
-      }
-
-    } catch (err) {
-      console.error("Erreur complète:", err);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la connexion",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+    const { error } = await signin(email, password);
+    
+    if (!error) {
+      navigate("/");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full sm:w-[400px]">
-      <div className="space-y-2">
-        <Label htmlFor="username">Nom d'utilisateur</Label>
-        <Input
-          id="username"
-          type="text"
-          placeholder="Votre nom d'utilisateur"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Mot de passe</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Connexion..." : "Se connecter"}
-      </Button>
+    <form onSubmit={handleSubmit}>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="exemple@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">Mot de passe</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+        </div>
+      </CardContent>
+      <CardFooter className="flex flex-col space-y-4">
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Connexion en cours..." : "Se connecter"}
+        </Button>
+        <p className="text-sm text-center text-muted-foreground">
+          Pas encore de compte ?{" "}
+          <Button 
+            variant="link" 
+            className="p-0 h-auto font-semibold hover:text-primary transition-colors"
+            onClick={() => navigate("/signup")}
+          >
+            Inscrivez-vous
+          </Button>
+        </p>
+      </CardFooter>
     </form>
   );
 };
