@@ -41,11 +41,6 @@ export const SignUp = () => {
       }
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'inscription",
-        variant: "destructive",
-      });
     }
   };
 

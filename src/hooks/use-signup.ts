@@ -35,7 +35,7 @@ export const useSignup = () => {
         throw new Error("Ce pseudo est déjà utilisé");
       }
 
-      // 3. Créer l'utilisateur avec les métadonnées
+      // 3. Créer l'utilisateur
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -51,15 +51,13 @@ export const useSignup = () => {
       const userId = signUpData.user?.id;
       if (!userId) throw new Error("Impossible de récupérer l'ID utilisateur");
 
-      // 4. Upsert dans la table profiles
+      // 4. Créer le profil
       const { error: upsertError } = await supabase
         .from("profiles")
         .upsert({
           id: userId,
           pseudo: pseudo,
           email: email,
-        }, {
-          onConflict: 'id'
         });
 
       if (upsertError) throw upsertError;

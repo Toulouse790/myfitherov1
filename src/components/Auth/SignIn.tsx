@@ -1,23 +1,39 @@
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 import { SignInForm } from "./SignInForm";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Apple } from "lucide-react";
+import { useSignIn } from "@/hooks/use-signin";
 
 export const SignIn = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { handleSignIn, isLoading } = useSignIn();
+  const { toast } = useToast();
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      await handleSignIn(email, password);
+    } catch (error) {
+      console.error("Erreur lors de la connexion:", error);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-background to-muted/50">
-      <Card className="w-full max-w-md mx-auto shadow-lg animate-fade-up">
-        <CardHeader className="space-y-2 text-center">
-          <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-            <Apple className="h-6 w-6 text-primary" />
-          </div>
-          <CardTitle className="text-2xl font-bold">MyFitHero</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Suivez votre nutrition et atteignez vos objectifs
-          </p>
+    <div className="container mx-auto px-4 h-screen flex items-center justify-center">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Se connecter</CardTitle>
         </CardHeader>
-        <CardContent>
-          <SignInForm />
-        </CardContent>
+        <SignInForm
+          email={email}
+          password={password}
+          onEmailChange={setEmail}
+          onPasswordChange={setPassword}
+          onSubmit={onSubmit}
+          isLoading={isLoading}
+        />
       </Card>
     </div>
   );
