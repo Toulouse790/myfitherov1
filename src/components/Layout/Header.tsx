@@ -16,6 +16,7 @@ export const Header = ({ children }: HeaderProps) => {
         <div className="container flex h-14 items-center">
           <div className="flex items-center">
             <Link to="/" className="mr-6 flex items-center space-x-2">
+              <span className="font-bold text-xl text-primary">MyFitHero</span>
             </Link>
           </div>
         </div>
