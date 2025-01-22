@@ -1,34 +1,18 @@
-import { Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  const { toast } = useToast();
+  const location = useLocation();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      toast({
-        title: "Accès refusé",
-        description: "Vous devez être connecté pour accéder à cette page",
-        variant: "destructive",
-      });
-    }
-  }, [user, loading, toast]);
-
+  // Pendant le chargement, on peut afficher un loader ou rien
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-center">
-          <p className="text-muted-foreground">Chargement...</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
+  // Une fois le chargement terminé, on redirige si pas d'utilisateur
   if (!user) {
-    return <Navigate to="/sign-in" />;
+    return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
