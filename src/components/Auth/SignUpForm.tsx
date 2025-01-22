@@ -3,14 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { useSignUp } from "@/hooks/use-signup";
+import { useSignup } from "@/hooks/use-signup";
 import { useState } from "react";
 
 export function SignUpForm() {
   const [email, setEmail] = useState("");
   const [pseudo, setPseudo] = useState("");
   const [password, setPassword] = useState("");
-  const { signUp, isLoading, error } = useSignUp();
+  const { signUp, isLoading, error } = useSignup();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

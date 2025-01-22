@@ -1,130 +1,81 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { handleSignupError } from "@/utils/auth-errors";
 
-interface UseSignupProps {
-  onSuccess?: () => void;
+interface SignUpParams {
+  email: string;
+  password: string;
+  pseudo: string;
 }
 
-export const useSignup = ({ onSuccess }: UseSignupProps = {}) => {
+export const useSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
-  const signup = async (email: string, password: string, username: string) => {
-    setIsLoading(true);
-    console.log("Début de l'inscription...");
-
+  const signUp = async ({ email, password, pseudo }: SignUpParams) => {
     try {
-      // First, check if user already exists in auth
-      const { data: existingAuthUser } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      setIsLoading(true);
+      setError(null);
 
-      if (existingAuthUser?.user) {
-        console.log("User already exists in auth system");
-        toast({
-          title: "Compte existant",
-          description: "Un compte existe déjà avec cet email. Veuillez vous connecter.",
-          variant: "destructive",
-        });
-        navigate("/signin");
-        return { error: null };
-      }
-
-      // Check if username is taken
-      const { data: existingUser, error: checkError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('username', username)
-        .maybeSingle();
-
-      if (checkError) {
-        console.error("Error checking username:", checkError);
-        toast({
-          title: "Erreur",
-          description: "Impossible de vérifier la disponibilité du nom d'utilisateur",
-          variant: "destructive",
-        });
-        return { error: checkError };
-      }
-
-      if (existingUser) {
-        console.log("Username already taken");
-        toast({
-          title: "Erreur",
-          description: "Ce nom d'utilisateur est déjà pris",
-          variant: "destructive",
-        });
-        return { error: new Error("Username already taken") };
-      }
-
-      const { data, error: signupError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username: username,
-          },
-        },
-      });
-
-      console.log("Réponse de Supabase:", { data, error: signupError });
-
-      if (signupError) {
-        const errorMessage = handleSignupError(signupError);
-        console.error("Erreur lors de l'inscription:", signupError);
-        
-        if (signupError.message.includes("User already registered")) {
-          toast({
-            title: "Compte existant",
-            description: "Un compte existe déjà avec cet email. Veuillez vous connecter.",
-            variant: "destructive",
-          });
-          navigate("/signin");
-          return { error: null };
-        }
-
-        toast({
-          title: "Erreur",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        return { error: signupError };
-      }
-
-      if (data?.user) {
-        console.log("Inscription réussie !");
-        console.log("Signup successful, profile will be created by trigger");
-        toast({
-          title: "Bienvenue !",
-          description: `${username}, bienvenue dans cette belle aventure ! Configurons ensemble vos préférences.`,
-          duration: 5000,
+      // 1) Créer l'utilisateur (email, mdp) dans Supabase
+      const { data: signUpData, error: signUpError } =
+        await supabase.auth.signUp({
+          email,
+          password,
         });
 
-        onSuccess?.();
-        navigate("/initial-questionnaire");
+      if (signUpError) {
+        throw new Error(signUpError.message);
       }
 
-      return { data };
-    } catch (error: any) {
-      console.error("Erreur inattendue:", error);
+      // 2) Récupérer l'ID de l'utilisateur créé
+      const userId = signUpData.user?.id;
+      if (!userId) {
+        throw new Error("Impossible de récupérer l'ID utilisateur.");
+      }
+
+      // 3) Enregistrer le pseudo + email dans la table "profiles"
+      const { error: insertError } = await supabase
+        .from("profiles")
+        .insert({
+          user_id: userId,
+          pseudo,
+          email,
+        });
+
+      if (insertError) {
+        throw new Error(insertError.message);
+      }
+
+      // 4) Afficher un toast de succès
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue est survenue lors de l'inscription",
-        variant: "destructive",
+        title: "Création de compte réussie",
+        description: "Votre compte a bien été créé.",
       });
-      return { error };
+
+      return true;
+    } catch (err) {
+      console.error("SignUp error:", err);
+      const errorMsg =
+        err instanceof Error
+          ? err.message
+          : "Une erreur est survenue lors de la création du compte.";
+      setError(errorMsg);
+      toast({
+        variant: "destructive",
+        title: "Erreur de création de compte",
+        description: errorMsg,
+      });
+      return false;
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
-    signup,
+    signUp,
     isLoading,
+    error,
   };
 };
