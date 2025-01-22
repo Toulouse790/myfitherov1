@@ -7,7 +7,7 @@ import { useSignup } from "@/hooks/use-signup";
 export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [pseudo, setPseudo] = useState("");
   const { signUp, isLoading } = useSignup();
   const { toast } = useToast();
 
@@ -23,11 +23,20 @@ export const SignUp = () => {
       return;
     }
 
-    await signUp({ 
-      email, 
-      password, 
-      pseudo: username 
-    });
+    try {
+      await signUp({ 
+        email, 
+        password, 
+        pseudo 
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'inscription:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'inscription",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -39,10 +48,10 @@ export const SignUp = () => {
         <SignUpForm
           email={email}
           password={password}
-          pseudo={username}
+          pseudo={pseudo}
           onEmailChange={setEmail}
           onPasswordChange={setPassword}
-          onPseudoChange={setUsername}
+          onPseudoChange={setPseudo}
           onSubmit={handleSubmit}
           isLoading={isLoading}
         />
