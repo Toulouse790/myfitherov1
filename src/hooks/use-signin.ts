@@ -21,6 +21,23 @@ export const useSignIn = () => {
 
       if (signInError) throw signInError;
 
+      // Vérifier si le profil existe et a un pseudo
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('pseudo')
+        .eq('id', (await supabase.auth.getUser()).data.user?.id)
+        .single();
+
+      if (profileError || !profile.pseudo) {
+        // Mettre à jour le profil avec l'email comme pseudo si nécessaire
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ pseudo: email.split('@')[0] })
+          .eq('id', (await supabase.auth.getUser()).data.user?.id);
+
+        if (updateError) throw updateError;
+      }
+
       toast({
         title: "Connexion réussie",
         description: "Bienvenue sur MyFitHero !",

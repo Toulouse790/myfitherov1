@@ -18,6 +18,7 @@ export const SignInForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Utiliser l'email comme pseudo par défaut si nécessaire
       await handleSignIn(email, password);
     } catch (error) {
       console.error("Erreur de connexion:", error);
