@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,19 +13,14 @@ export const useSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const signUp = async ({ email, password, pseudo }: SignUpParams) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // 1. Vérifier si l'utilisateur est déjà connecté
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await supabase.auth.signOut();
-      }
-
-      // 2. Vérifier si le pseudo existe déjà
+      // 1. Vérifier si le pseudo existe déjà
       const { data: existingProfile, error: profileError } = await supabase
         .from("profiles")
         .select("pseudo")
@@ -40,7 +36,7 @@ export const useSignup = () => {
         throw new Error("Ce pseudo est déjà utilisé");
       }
 
-      // 3. Créer l'utilisateur avec les métadonnées
+      // 2. Créer l'utilisateur
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -56,7 +52,7 @@ export const useSignup = () => {
       const userId = signUpData.user?.id;
       if (!userId) throw new Error("Impossible de récupérer l'ID utilisateur");
 
-      // 4. Créer le profil
+      // 3. Créer le profil
       const { error: upsertError } = await supabase
         .from("profiles")
         .upsert({
@@ -67,10 +63,24 @@ export const useSignup = () => {
 
       if (upsertError) throw upsertError;
 
+      // 4. Vérifier si l'utilisateur a déjà rempli le questionnaire
+      const { data: questionnaireData } = await supabase
+        .from("questionnaire_responses")
+        .select("id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
       toast({
         title: "Succès",
         description: "Inscription réussie! Vous êtes maintenant connecté.",
       });
+
+      // 5. Rediriger vers le questionnaire si pas encore rempli, sinon vers le dashboard
+      if (!questionnaireData) {
+        navigate("/questionnaire");
+      } else {
+        navigate("/");
+      }
 
       return true;
 
