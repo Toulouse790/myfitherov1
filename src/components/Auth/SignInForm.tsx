@@ -14,10 +14,11 @@ export const SignInForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await handleSignIn(email, password, true);
-    
-    if (!error) {
+    try {
+      await handleSignIn(email, password, true);
       navigate("/");
+    } catch (error) {
+      console.error("Erreur de connexion:", error);
     }
   };
 
