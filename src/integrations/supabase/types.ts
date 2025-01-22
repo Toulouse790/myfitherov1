@@ -1621,6 +1621,7 @@ export type Database = {
           main_objective: string | null
           meal_notifications: boolean | null
           points: number | null
+          pseudo: string | null
           reminder_time: number | null
           updated_at: string
           username: string | null
@@ -1638,6 +1639,7 @@ export type Database = {
           main_objective?: string | null
           meal_notifications?: boolean | null
           points?: number | null
+          pseudo?: string | null
           reminder_time?: number | null
           updated_at?: string
           username?: string | null
@@ -1655,6 +1657,7 @@ export type Database = {
           main_objective?: string | null
           meal_notifications?: boolean | null
           points?: number | null
+          pseudo?: string | null
           reminder_time?: number | null
           updated_at?: string
           username?: string | null
