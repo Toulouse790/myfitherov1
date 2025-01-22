@@ -63,13 +63,25 @@ export const useSignup = () => {
 
       if (upsertError) throw upsertError;
 
+      // 4. Vérifier si le questionnaire existe déjà
+      const { data: existingQuestionnaire } = await supabase
+        .from("questionnaire_responses")
+        .select("id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
       toast({
         title: "Succès",
         description: "Inscription réussie! Veuillez remplir le questionnaire initial.",
       });
 
-      // Redirection vers le questionnaire initial avec le bon chemin
-      navigate("/initial-questionnaire");
+      // 5. Rediriger vers le questionnaire ou l'accueil
+      if (!existingQuestionnaire) {
+        navigate("/initial-questionnaire");
+      } else {
+        navigate("/");
+      }
+      
       return true;
 
     } catch (err) {
