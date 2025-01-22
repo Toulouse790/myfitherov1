@@ -37,24 +37,27 @@ export const SignInForm = () => {
 
       console.log("Connexion réussie, session:", data.session);
       
-      // Vérifier si l'utilisateur a déjà répondu au questionnaire nutritionnel
+      // Vérifier si l'utilisateur a déjà répondu au questionnaire initial
       const { data: questionnaire, error: questionnaireError } = await supabase
         .from('questionnaire_responses')
-        .select('id')
+        .select('*')
         .eq('user_id', data.session?.user.id)
         .single();
+
+      if (questionnaireError) {
+        console.error("Erreur lors de la vérification du questionnaire:", questionnaireError);
+      }
 
       toast({
         title: "Connexion réussie",
         description: "Vous êtes maintenant connecté",
       });
 
-      if (!questionnaire) {
-        // Si pas de questionnaire, rediriger vers le questionnaire initial
-        navigate("/initial-questionnaire");
-      } else {
-        // Sinon, rediriger vers la page principale
+      // Rediriger vers la page principale si le questionnaire existe
+      if (questionnaire) {
         navigate("/");
+      } else {
+        navigate("/initial-questionnaire");
       }
 
     } catch (err) {
