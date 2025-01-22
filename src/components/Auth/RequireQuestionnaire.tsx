@@ -18,9 +18,12 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
           .from("questionnaire_responses")
           .select("id")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle();
 
-        if (error) throw error;
+        if (error) {
+          console.error("Erreur lors de la vérification du questionnaire:", error);
+          throw error;
+        }
         
         setHasQuestionnaire(!!data);
         
