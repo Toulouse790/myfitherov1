@@ -9,7 +9,7 @@ export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pseudo, setPseudo] = useState("");
-  const { signUp, isLoading } = useSignUp();
+  const { handleSignUp, isLoading } = useSignUp();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -35,11 +35,7 @@ export const SignUp = () => {
     }
 
     try {
-      const success = await signUp({ 
-        email, 
-        password, 
-        pseudo: pseudo.trim()
-      });
+      const success = await handleSignUp(email, password);
       
       if (success) {
         toast({
