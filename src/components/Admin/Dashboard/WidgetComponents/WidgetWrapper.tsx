@@ -19,14 +19,14 @@ export const WidgetWrapper = ({
   onDeleteConfig,
 }: WidgetWrapperProps) => {
   return (
-    <div className="relative">
+    <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-sm">
       {!isEditing && (
         <Dialog>
           <DialogTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 z-10"
+              className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <Settings className="h-4 w-4" />
             </Button>
@@ -38,7 +38,9 @@ export const WidgetWrapper = ({
           />
         </Dialog>
       )}
-      {children}
+      <div className="p-4 group">
+        {children}
+      </div>
     </div>
   );
 };
