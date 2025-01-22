@@ -9,25 +9,13 @@ export const useSignIn = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSignIn = async (username: string, password: string, rememberMe: boolean) => {
+  const handleSignIn = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // 1. Get email from username
-      const { data: profile, error: fetchError } = await supabase
-        .from("profiles")
-        .select("email")
-        .eq("username", username)
-        .single();
-
-      if (fetchError || !profile?.email) {
-        throw new Error("Aucun compte trouvé avec ce nom d'utilisateur.");
-      }
-
-      // 2. Sign in with email
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: profile.email,
+        email,
         password,
       });
 
@@ -35,7 +23,7 @@ export const useSignIn = () => {
 
       toast({
         title: "Connexion réussie",
-        description: `Bienvenue sur MyFitHero, ${username} !`,
+        description: "Bienvenue sur MyFitHero !",
       });
 
       navigate("/");
@@ -48,6 +36,7 @@ export const useSignIn = () => {
         title: "Erreur de connexion",
         description: err instanceof Error ? err.message : "Une erreur est survenue lors de la connexion",
       });
+      throw err;
     } finally {
       setIsLoading(false);
     }

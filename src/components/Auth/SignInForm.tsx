@@ -6,9 +6,10 @@ import { useSignIn } from "@/hooks/use-signin";
 import { useNavigate } from "react-router-dom";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Mail, Lock } from "lucide-react";
 
 export const SignInForm = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { handleSignIn, isLoading } = useSignIn();
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export const SignInForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await handleSignIn(username, password, true);
+      await handleSignIn(email, password);
     } catch (error) {
       console.error("Erreur de connexion:", error);
       toast({
@@ -32,27 +33,35 @@ export const SignInForm = () => {
     <form onSubmit={handleSubmit}>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="username">Nom d'utilisateur</Label>
-          <Input
-            id="username"
-            type="text"
-            placeholder="Votre nom d'utilisateur"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            disabled={isLoading}
-          />
+          <Label htmlFor="email">Email</Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="vous@exemple.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="pl-10"
+              required
+              disabled={isLoading}
+            />
+          </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Mot de passe</Label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pl-10"
+              required
+              disabled={isLoading}
+            />
+          </div>
         </div>
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
