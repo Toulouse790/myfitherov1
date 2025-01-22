@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
 import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
+import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 import Index from "@/pages/Index";
 import { authRoutes } from "./authRoutes";
 import { profileRoutes } from "./profileRoutes";
@@ -18,9 +19,11 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <RequireQuestionnaire>
-            <Index />
-          </RequireQuestionnaire>
+          <ProtectedRoute>
+            <RequireQuestionnaire>
+              <Index />
+            </RequireQuestionnaire>
+          </ProtectedRoute>
         ),
       },
       ...profileRoutes,
