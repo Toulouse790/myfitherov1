@@ -68,7 +68,7 @@ export const useSignup = () => {
         description: "Inscription réussie! Veuillez remplir le questionnaire initial.",
       });
 
-      // Redirection directe vers le questionnaire initial
+      // Redirection vers le questionnaire initial avec le bon chemin
       navigate("/initial-questionnaire");
       return true;
 
