@@ -17,7 +17,16 @@ export const useSignIn = () => {
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {
+        console.error('Sign in error:', signInError);
+        throw signInError;
+      }
+
+      // Verify session was created
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No session created after sign in');
+      }
 
       toast({
         title: "Connexion réussie",
@@ -28,11 +37,12 @@ export const useSignIn = () => {
 
     } catch (err) {
       console.error("Sign in error:", err);
-      setError(err instanceof Error ? err.message : "Une erreur est survenue lors de la connexion");
+      const errorMessage = err instanceof Error ? err.message : "Email ou mot de passe incorrect";
+      setError(errorMessage);
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
-        description: err instanceof Error ? err.message : "Email ou mot de passe incorrect",
+        description: errorMessage,
       });
       return false;
     } finally {
