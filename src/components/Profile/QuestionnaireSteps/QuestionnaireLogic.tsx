@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface QuestionnaireResponses {
   gender: string;
@@ -20,6 +21,7 @@ export const useQuestionnaireLogic = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [responses, setResponses] = useState<QuestionnaireResponses>({
     gender: "",
     age: "",
@@ -73,9 +75,21 @@ export const useQuestionnaireLogic = () => {
       setStep(step + 1);
     } else if (step === 7) {
       try {
+        if (!user) {
+          toast({
+            title: "Erreur",
+            description: "Vous devez être connecté pour continuer",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const { error } = await supabase
           .from("questionnaire_responses")
-          .insert([responses]);
+          .insert([{
+            user_id: user.id,
+            ...responses
+          }]);
 
         if (error) throw error;
 
@@ -84,7 +98,7 @@ export const useQuestionnaireLogic = () => {
           description: "Vos préférences ont été enregistrées avec succès.",
         });
 
-        navigate("/dashboard");
+        navigate("/");
       } catch (error) {
         console.error("Error saving questionnaire:", error);
         toast({
