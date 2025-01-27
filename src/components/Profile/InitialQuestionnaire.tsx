@@ -8,7 +8,6 @@ import { DietTypeStep } from "./QuestionnaireSteps/DietTypeStep";
 import { PersonalInfoStep } from "./QuestionnaireSteps/PersonalInfoStep";
 import { GenderStep } from "./QuestionnaireSteps/GenderStep";
 import { useQuestionnaireLogic } from "./QuestionnaireSteps/QuestionnaireLogic";
-import { useToast } from "@/hooks/use-toast";
 
 export const InitialQuestionnaire = () => {
   const {
@@ -20,8 +19,6 @@ export const InitialQuestionnaire = () => {
     isStepValid,
   } = useQuestionnaireLogic();
   
-  const { toast } = useToast();
-
   console.log("InitialQuestionnaire - Mounting component");
   console.log("Current step:", step);
   console.log("Current responses:", responses);
