@@ -101,7 +101,11 @@ export const useQuestionnaireLogic = () => {
         toast({
           title: "Configuration terminée !",
           description: "Vos préférences ont été enregistrées avec succès.",
-        });console.error("Error saving questionnaire:", error);
+        });
+
+        navigate("/");
+      } catch (error) {
+        console.error("Error saving questionnaire:", error);
         toast({
           title: "Erreur",
           description: "Une erreur est survenue lors de l'enregistrement.",
