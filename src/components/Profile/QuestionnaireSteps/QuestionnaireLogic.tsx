@@ -35,7 +35,11 @@ export const useQuestionnaireLogic = () => {
     diet_type: "",
   });
 
+  console.log("QuestionnaireLogic - Current step:", step); // Debug log
+  console.log("QuestionnaireLogic - Current responses:", responses); // Debug log
+
   const handleResponseChange = (field: keyof QuestionnaireResponses, value: any) => {
+    console.log("Updating response:", field, value); // Debug log
     setResponses((prev) => ({
       ...prev,
       [field]: value,
@@ -43,6 +47,7 @@ export const useQuestionnaireLogic = () => {
   };
 
   const isStepValid = () => {
+    console.log("Checking step validity for step:", step); // Debug log
     switch (step) {
       case 1:
         return responses.gender !== "";

@@ -10,6 +10,8 @@ export const GenderStep = ({
   gender,
   onGenderChange,
 }: GenderStepProps) => {
+  console.log("GenderStep - Current gender:", gender); // Debug log
+  
   return (
     <div className="space-y-4">
       <h3 className="font-medium">Quel est votre genre ?</h3>
