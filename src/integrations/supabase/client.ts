@@ -33,7 +33,7 @@ export const supabase = createClient(
 supabase.auth.onAuthStateChange((event, session) => {
   console.log('Auth state changed:', { event, hasSession: !!session });
   
-  if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+  if (event === 'SIGNED_OUT') {
     // Clear any auth data from localStorage
     localStorage.removeItem('myfithero-auth');
   } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
