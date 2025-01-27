@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
-export const useWorkoutCompletion = (sessionId: string | null, userId: string | undefined) => {
+export const useWorkoutCompletion = (userId: string | undefined) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -11,34 +11,21 @@ export const useWorkoutCompletion = (sessionId: string | null, userId: string | 
     duration: number,
     muscleGroups: string[]
   ) => {
-    if (!sessionId || !userId) {
-      console.error("Session ID or User ID is missing");
-      return;
-    }
+    if (!userId) return;
 
     try {
-      // Mettre à jour le statut de la session
       await supabase
-        .from('workout_sessions')
-        .update({ status: 'completed' })
-        .eq('id', sessionId);
-
-      // Enregistrer les statistiques d'entraînement
-      const { error: statsError } = await supabase
         .from('training_stats')
         .insert({
           user_id: userId,
-          session_id: sessionId,
-          session_duration_minutes: duration,
           perceived_difficulty: difficulty,
-          muscle_groups_worked: muscleGroups,
+          session_duration_minutes: duration,
+          muscle_groups_worked: muscleGroups
         });
 
-      if (statsError) throw statsError;
-
       toast({
-        title: "Séance terminée !",
-        description: "Vos statistiques ont été enregistrées avec succès.",
+        title: "Séance terminée",
+        description: "Vos statistiques ont été enregistrées",
       });
 
       navigate('/');
@@ -46,7 +33,7 @@ export const useWorkoutCompletion = (sessionId: string | null, userId: string | 
       console.error('Error ending workout:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder les statistiques de la séance.",
+        description: "Impossible de sauvegarder les statistiques",
         variant: "destructive",
       });
     }

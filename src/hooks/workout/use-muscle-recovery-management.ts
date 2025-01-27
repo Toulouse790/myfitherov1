@@ -1,9 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 export const useMuscleRecoveryManagement = (userId: string | undefined) => {
-  const { toast } = useToast();
-
   const updateMuscleRecovery = async (
     exerciseName: string,
     intensity: number,
@@ -12,40 +9,19 @@ export const useMuscleRecoveryManagement = (userId: string | undefined) => {
     if (!userId) return;
 
     try {
-      console.log('Updating muscle recovery for:', {
-        userId,
-        exerciseName,
-        intensity,
-        duration
-      });
-      
-      const estimatedRecoveryHours = 48;
-      
-      // Use upsert operation with onConflict option
       const { error } = await supabase
         .from('muscle_recovery')
         .upsert({
           user_id: userId,
-          muscle_group: exerciseName,
+          muscle_group: exerciseName.toLowerCase(),
           intensity,
-          recovery_status: 'fatigued',
-          estimated_recovery_hours: estimatedRecoveryHours,
-          last_trained_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,muscle_group',
-          ignoreDuplicates: false
+          last_trained_at: new Date().toISOString(),
+          estimated_recovery_hours: Math.round(duration * intensity)
         });
 
       if (error) throw error;
-
-      console.log('Successfully updated muscle recovery for:', exerciseName);
     } catch (error) {
       console.error('Error updating muscle recovery:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le statut de récupération",
-        variant: "destructive",
-      });
     }
   };
 

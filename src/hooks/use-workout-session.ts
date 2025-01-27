@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useWorkoutTimer } from "./use-workout-timer";
-import { useWorkoutExercises } from "./use-workout-exercises";
-import { useWorkoutCompletion } from "./use-workout-completion";
-import { useWorkoutRegeneration } from "./use-workout-regeneration";
-import { useMuscleRecovery } from "./use-muscle-recovery";
-import { useMuscleRecoveryManagement } from "./use-muscle-recovery-management";
-import { useSessionManagement } from "./use-session-management";
-import { useRecoveryManagement } from "./use-recovery-management";
-import { useState, useEffect } from "react";
+import { useWorkoutExercises } from "./workout/use-workout-exercises";
+import { useWorkoutCompletion } from "./workout/use-workout-completion";
+import { useWorkoutRegeneration } from "./workout/use-workout-regeneration";
+import { useMuscleRecovery } from "./workout/use-muscle-recovery";
+import { useMuscleRecoveryManagement } from "./workout/use-muscle-recovery-management";
+import { useSessionManagement } from "./workout/use-session-management";
+import { useRecoveryManagement } from "./workout/use-recovery-management";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 

@@ -1,102 +1,44 @@
-import { useState, useEffect } from 'react';
-import { useRecoveryData } from './utils/useRecoveryData';
-import { calculateRecoveryStatus } from './utils/muscleGroupUtils';
-import { muscleRecoveryData } from '../../data/muscleRecoveryData';
-import { normalizeMuscleGroup } from './utils/muscleGroupUtils';
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-interface RecoveryStatus {
+export interface RecoveryStatus {
   muscleGroup: string;
   status: 'recovered' | 'partial' | 'fatigued';
-  remainingHours: number;
+  recoveryTime: number;
 }
 
 export const useMuscleRecovery = (muscleGroups: string[]) => {
   const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus[]>([]);
-  const { isLoading, fetchRecoveryData, updateRecoveryData } = useRecoveryData();
 
   useEffect(() => {
-    const updateRecoveryStatus = async () => {
-      if (!muscleGroups.length) return;
-
+    const fetchRecoveryStatus = async () => {
       try {
-        console.log('Fetching recovery data for muscle groups:', muscleGroups);
-        
-        const normalizedGroups = muscleGroups.map(group => normalizeMuscleGroup(group));
-        
-        console.log('Normalized muscle groups:', normalizedGroups);
-        
-        const recoveryData = await fetchRecoveryData(normalizedGroups);
-        if (!recoveryData) {
-          console.log('No recovery data returned');
-          return;
-        }
+        const { data, error } = await supabase
+          .from('muscle_recovery')
+          .select('*')
+          .in('muscle_group', muscleGroups);
 
-        console.log('Recovery data fetched:', recoveryData);
+        if (error) throw error;
 
-        const currentStatus = muscleGroups.map((group, index) => {
-          const normalizedGroup = normalizedGroups[index];
-          const lastTraining = recoveryData.find(d => 
-            normalizeMuscleGroup(d.muscle_group) === normalizedGroup
-          );
-          
-          const baseRecovery = muscleRecoveryData[group]?.recoveryTime || 48;
-          
-          const { status, remainingHours } = calculateRecoveryStatus(
-            lastTraining ? new Date(lastTraining.last_trained_at) : null,
-            lastTraining?.estimated_recovery_hours || baseRecovery
-          );
-
+        const status = muscleGroups.map(group => {
+          const muscleData = data?.find(d => d.muscle_group === group);
           return {
             muscleGroup: group,
-            status,
-            remainingHours
+            status: muscleData?.recovery_status || 'recovered',
+            recoveryTime: muscleData?.estimated_recovery_hours || 0
           };
         });
 
-        console.log('Updated recovery status:', currentStatus);
-        setRecoveryStatus(currentStatus);
+        setRecoveryStatus(status);
       } catch (error) {
-        console.error('Error updating recovery status:', error);
+        console.error('Error fetching recovery status:', error);
       }
     };
 
-    updateRecoveryStatus();
-  }, [muscleGroups, fetchRecoveryData]);
-
-  const updateRecoveryStatus = async (
-    muscleGroup: string,
-    intensity: number,
-    sessionDuration: number
-  ) => {
-    const normalizedGroup = normalizeMuscleGroup(muscleGroup);
-    const baseRecovery = muscleRecoveryData[muscleGroup]?.recoveryTime || 48;
-    const estimatedRecoveryHours = Math.round(baseRecovery * intensity);
-    
-    console.log('Updating recovery status for:', {
-      originalGroup: muscleGroup,
-      normalizedGroup,
-      intensity,
-      estimatedRecoveryHours
-    });
-    
-    const success = await updateRecoveryData(normalizedGroup, intensity, estimatedRecoveryHours);
-    
-    if (success) {
-      setRecoveryStatus(prev => prev.map(status => 
-        status.muscleGroup === muscleGroup
-          ? {
-              muscleGroup,
-              status: 'fatigued',
-              remainingHours: estimatedRecoveryHours
-            }
-          : status
-      ));
+    if (muscleGroups.length > 0) {
+      fetchRecoveryStatus();
     }
-  };
+  }, [muscleGroups]);
 
-  return {
-    recoveryStatus,
-    updateRecoveryStatus,
-    isLoading
-  };
+  return { recoveryStatus };
 };
