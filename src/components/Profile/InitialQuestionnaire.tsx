@@ -22,11 +22,12 @@ export const InitialQuestionnaire = () => {
   
   const { toast } = useToast();
 
-  console.log("Current step:", step); // Debug log
-  console.log("Current responses:", responses); // Debug log
+  console.log("InitialQuestionnaire - Mounting component");
+  console.log("Current step:", step);
+  console.log("Current responses:", responses);
 
   const renderStep = () => {
-    console.log("Rendering step:", step); // Debug log
+    console.log("Rendering step:", step);
     
     switch (step) {
       case 1:
@@ -85,7 +86,7 @@ export const InitialQuestionnaire = () => {
           />
         );
       default:
-        console.error("Invalid step:", step); // Debug log
+        console.error("Invalid step:", step);
         return null;
     }
   };
