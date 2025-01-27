@@ -18,6 +18,10 @@ export const profileRoutes = [
     ),
   },
   {
+    path: "initial-questionnaire",
+    element: <InitialQuestionnaire />,
+  },
+  {
     path: "personal-info",
     element: (
       <ProtectedRoute>
@@ -54,14 +58,6 @@ export const profileRoutes = [
     element: (
       <ProtectedRoute>
         <TrainingPreferences />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "initial-questionnaire",
-    element: (
-      <ProtectedRoute>
-        <InitialQuestionnaire />
       </ProtectedRoute>
     ),
   },
