@@ -29,7 +29,6 @@ export const useAuth = () => {
       console.log("Auth state changed:", { event, hasSession: !!session });
       
       if (event === 'SIGNED_OUT') {
-        // Only update user state if it's an explicit sign out
         setUser(null);
       } else if (session?.user) {
         setUser(session.user);
@@ -37,19 +36,6 @@ export const useAuth = () => {
       
       setLoading(false);
     });
-
-    // Attempt to recover session from storage on mount
-    const savedSession = localStorage.getItem('myfithero-auth');
-    if (savedSession) {
-      try {
-        const session = JSON.parse(savedSession);
-        if (session?.user) {
-          setUser(session.user);
-        }
-      } catch (error) {
-        console.error("Error recovering session:", error);
-      }
-    }
 
     return () => {
       subscription.unsubscribe();
