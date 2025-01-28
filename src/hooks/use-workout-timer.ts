@@ -9,13 +9,19 @@ export const useWorkoutTimer = () => {
     let interval: NodeJS.Timeout;
     
     if (isRunning && !isPaused) {
+      console.log("Timer started - initial duration:", duration);
       interval = setInterval(() => {
-        setDuration(prev => prev + 1);
+        setDuration(prev => {
+          const newDuration = prev + 1;
+          console.log("Timer tick - new duration:", newDuration);
+          return newDuration;
+        });
       }, 1000);
     }
 
     return () => {
       if (interval) {
+        console.log("Cleaning up timer interval");
         clearInterval(interval);
       }
     };
@@ -24,6 +30,12 @@ export const useWorkoutTimer = () => {
   const startTimer = useCallback(() => {
     console.log("Starting timer");
     setIsRunning(true);
+    setIsPaused(false);
+  }, []);
+
+  const stopTimer = useCallback(() => {
+    console.log("Stopping timer");
+    setIsRunning(false);
     setIsPaused(false);
   }, []);
 
@@ -49,8 +61,10 @@ export const useWorkoutTimer = () => {
     isRunning,
     isPaused,
     startTimer,
+    stopTimer,
     pauseTimer,
     resumeTimer,
-    resetTimer
+    resetTimer,
+    setIsRunning
   };
 };
