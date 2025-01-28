@@ -21,7 +21,7 @@ export const useWorkoutSession = () => {
 
   const { duration, isRunning, startTimer, stopTimer, resetTimer, setIsRunning } = useWorkoutTimer();
   const { exercises, isLoading, error } = useWorkoutExercises(user?.id);
-  const { handleConfirmEndWorkout } = useWorkoutCompletion();
+  const { handleConfirmEndWorkout } = useWorkoutCompletion(user?.id);
   const { handleRegenerateWorkout } = useWorkoutRegeneration();
   const { isCardio } = useSessionManagement();
   const { updateRecoveryStatus } = useRecoveryManagement();
@@ -151,8 +151,8 @@ export const useWorkoutSession = () => {
         }
 
         const exerciseName = exercises[index];
-        await updateRecoveryStatus(exerciseName, "moderate", duration);
-        await updateMuscleRecovery(exerciseName, "moderate", duration);
+        await updateRecoveryStatus(exerciseName, 0.7, duration);
+        await updateMuscleRecovery(exerciseName, 0.7, duration);
       } else {
         console.error("Invalid exercise index:", index);
       }
@@ -180,7 +180,7 @@ export const useWorkoutSession = () => {
     resetTimer,
     setIsRunning,
     createWorkoutSession,
-    handleRegenerateWorkout: () => handleRegenerateWorkout(),
+    handleRegenerateWorkout: () => handleRegenerateWorkout(user?.id),
     handleExerciseClick,
     handleConfirmEndWorkout
   };
