@@ -1667,6 +1667,7 @@ export type Database = {
       }
       questionnaire_responses: {
         Row: {
+          age: string | null
           available_equipment: string[] | null
           created_at: string
           daily_energy_expenditure: number | null
@@ -1675,6 +1676,7 @@ export type Database = {
           gender: string | null
           has_afternoon_snack: boolean | null
           has_morning_snack: boolean | null
+          height: string | null
           id: string
           objective: string | null
           position_id: string | null
@@ -1683,9 +1685,11 @@ export type Database = {
           training_time: string | null
           user_id: string | null
           wake_up_time: string | null
+          weight: string | null
           workout_duration: string | null
         }
         Insert: {
+          age?: string | null
           available_equipment?: string[] | null
           created_at?: string
           daily_energy_expenditure?: number | null
@@ -1694,6 +1698,7 @@ export type Database = {
           gender?: string | null
           has_afternoon_snack?: boolean | null
           has_morning_snack?: boolean | null
+          height?: string | null
           id?: string
           objective?: string | null
           position_id?: string | null
@@ -1702,9 +1707,11 @@ export type Database = {
           training_time?: string | null
           user_id?: string | null
           wake_up_time?: string | null
+          weight?: string | null
           workout_duration?: string | null
         }
         Update: {
+          age?: string | null
           available_equipment?: string[] | null
           created_at?: string
           daily_energy_expenditure?: number | null
@@ -1713,6 +1720,7 @@ export type Database = {
           gender?: string | null
           has_afternoon_snack?: boolean | null
           has_morning_snack?: boolean | null
+          height?: string | null
           id?: string
           objective?: string | null
           position_id?: string | null
@@ -1721,6 +1729,7 @@ export type Database = {
           training_time?: string | null
           user_id?: string | null
           wake_up_time?: string | null
+          weight?: string | null
           workout_duration?: string | null
         }
         Relationships: [

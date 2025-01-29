@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
 import { TrainingFrequencyStep } from "./QuestionnaireSteps/TrainingFrequencyStep";
@@ -90,9 +90,6 @@ export const InitialQuestionnaire = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="max-w-lg mx-auto">
-        <CardHeader>
-          <CardTitle>Configuration initiale</CardTitle>
-        </CardHeader>
         <CardContent className="space-y-6">
           {renderStep()}
           
