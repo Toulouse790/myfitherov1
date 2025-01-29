@@ -20,9 +20,9 @@ export const useWorkoutSession = () => {
 
   const { duration, isRunning, startTimer, stopTimer, resetTimer, setIsRunning } = useWorkoutTimer();
   const { exercises, isLoading, error } = useWorkoutExercises(sessionId);
-  const { handleConfirmEndWorkout } = useWorkoutCompletion(sessionId);
-  const { handleRegenerateWorkout } = useWorkoutRegeneration(sessionId);
-  const { isCardio } = useSessionManagement(sessionId);
+  const { handleConfirmEndWorkout } = useWorkoutCompletion();
+  const { handleRegenerateWorkout } = useWorkoutRegeneration();
+  const { isCardio } = useSessionManagement();
   const { updateRecoveryStatus } = useRecoveryManagement();
 
   const muscleGroups = exercises.map(exercise => {
@@ -94,7 +94,7 @@ export const useWorkoutSession = () => {
     stopTimer,
     resetTimer,
     setIsRunning,
-    handleRegenerateWorkout: () => handleRegenerateWorkout(user?.id),
+    handleRegenerateWorkout,
     handleExerciseClick,
     handleConfirmEndWorkout
   };
