@@ -15,6 +15,7 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
     const checkQuestionnaire = async () => {
       if (!user) {
         console.log("No user found, skipping questionnaire check");
+        setLoading(false);
         return;
       }
 
@@ -24,9 +25,9 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
           .from("questionnaire_responses")
           .select("id")
           .eq("user_id", user.id)
-          .maybeSingle();
+          .single();
 
-        if (error) {
+        if (error && error.code !== 'PGRST116') {
           console.error("Erreur lors de la vérification du questionnaire:", error);
           toast({
             title: "Erreur",
@@ -55,12 +56,19 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
   }, [user, navigate, toast]);
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-        <p>Vérification du profil...</p>
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Vérification du profil...</p>
+        </div>
       </div>
-    </div>;
+    );
+  }
+
+  // Si pas de questionnaire, on retourne null pour permettre l'affichage du questionnaire
+  if (!hasQuestionnaire && window.location.pathname === '/initial-questionnaire') {
+    return <>{children}</>;
   }
 
   return hasQuestionnaire ? <>{children}</> : null;
