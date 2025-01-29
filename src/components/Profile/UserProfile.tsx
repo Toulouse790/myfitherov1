@@ -22,53 +22,73 @@ export const UserProfile = () => {
   const fetchProfile = async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+    try {
+      // Fetch profile data
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
-    if (error) {
+      if (profileError) throw profileError;
+
+      // Fetch subscription status
+      const { data: subscriptionData, error: subscriptionError } = await supabase
+        .from('user_subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single();
+
+      if (subscriptionError && subscriptionError.code !== 'PGRST116') {
+        // PGRST116 means no rows found, which is expected for free users
+        throw subscriptionError;
+      }
+
+      const isPremium = subscriptionData?.subscription_type === 'premium' && 
+                       subscriptionData?.status === 'active' &&
+                       (subscriptionData?.end_date ? new Date(subscriptionData.end_date) > new Date() : true);
+
+      if (profileData) {
+        setProfile({
+          id: profileData.id,
+          username: profileData.username || '',
+          email: user.email || '',
+          avatar: profileData.avatar_url,
+          birthDate: profileData.birth_date,
+          gender: profileData.gender,
+          height: profileData.height_cm,
+          weight: profileData.weight_kg,
+          goals: {
+            primary: "maintenance",
+            weeklyWorkouts: 4,
+            dailyCalories: 2500,
+            sleepHours: 8
+          },
+          preferences: {
+            theme: "system",
+            language: "fr",
+            notifications: true,
+            useTutorial: true,
+            equipment: []
+          },
+          stats: {
+            workoutsCompleted: 0,
+            totalWorkoutMinutes: 0,
+            streakDays: 0,
+            points: profileData.points || 0,
+            level: profileData.level || 1
+          },
+          achievements: [],
+          isPremium: isPremium
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
       toast({
         title: "Erreur",
         description: "Impossible de charger le profil",
         variant: "destructive",
-      });
-      return;
-    }
-
-    if (data) {
-      setProfile({
-        id: data.id,
-        username: data.username || '',
-        email: user.email || '',
-        avatar: data.avatar_url,
-        birthDate: data.birth_date,
-        gender: data.gender,
-        height: data.height_cm,
-        weight: data.weight_kg,
-        goals: {
-          primary: "maintenance",
-          weeklyWorkouts: 4,
-          dailyCalories: 2500,
-          sleepHours: 8
-        },
-        preferences: {
-          theme: "system",
-          language: "fr",
-          notifications: true,
-          useTutorial: true,
-          equipment: []
-        },
-        stats: {
-          workoutsCompleted: 0,
-          totalWorkoutMinutes: 0,
-          streakDays: 0,
-          points: data.points || 0,
-          level: data.level || 1
-        },
-        achievements: [],
-        isPremium: false
       });
     }
   };
