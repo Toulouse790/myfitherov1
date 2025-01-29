@@ -5,7 +5,7 @@ import { useWorkoutExercises } from "./use-workout-exercises";
 
 export const useWorkoutSession = (sessionId?: string) => {
   const { user } = useAuth();
-  const { data: exercises } = useWorkoutExercises(sessionId);
+  const { exercises } = useWorkoutExercises(sessionId);
 
   const { data: session, isLoading } = useQuery({
     queryKey: ["workout-session", sessionId],
