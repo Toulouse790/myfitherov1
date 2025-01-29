@@ -25,9 +25,9 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
           .from("questionnaire_responses")
           .select("id")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle();
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
           console.error("Erreur lors de la vérification du questionnaire:", error);
           toast({
             title: "Erreur",
