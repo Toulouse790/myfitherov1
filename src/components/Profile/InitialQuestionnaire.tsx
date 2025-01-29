@@ -8,6 +8,7 @@ import { DietTypeStep } from "./QuestionnaireSteps/DietTypeStep";
 import { PersonalInfoStep } from "./QuestionnaireSteps/PersonalInfoStep";
 import { GenderStep } from "./QuestionnaireSteps/GenderStep";
 import { useQuestionnaireLogic } from "./QuestionnaireSteps/QuestionnaireLogic";
+import { useToast } from "@/hooks/use-toast";
 
 export const InitialQuestionnaire = () => {
   const {
@@ -18,6 +19,8 @@ export const InitialQuestionnaire = () => {
     handleBack,
     isStepValid,
   } = useQuestionnaireLogic();
+  
+  const { toast } = useToast();
 
   console.log("InitialQuestionnaire - Current step:", step);
   console.log("InitialQuestionnaire - Current responses:", responses);
