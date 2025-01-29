@@ -18,14 +18,11 @@ export const InitialQuestionnaire = () => {
     handleBack,
     isStepValid,
   } = useQuestionnaireLogic();
-  
-  console.log("InitialQuestionnaire - Mounting component");
-  console.log("Current step:", step);
-  console.log("Current responses:", responses);
+
+  console.log("InitialQuestionnaire - Current step:", step);
+  console.log("InitialQuestionnaire - Current responses:", responses);
 
   const renderStep = () => {
-    console.log("Rendering step:", step);
-    
     switch (step) {
       case 1:
         return (
@@ -83,7 +80,6 @@ export const InitialQuestionnaire = () => {
           />
         );
       default:
-        console.error("Invalid step:", step);
         return null;
     }
   };
