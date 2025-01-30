@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SignUpForm } from "./SignUpForm";
 import { useSignUp } from "@/hooks/use-signup";
 import { useNavigate } from "react-router-dom";
+import { handleSignupError } from "@/utils/auth-errors";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -44,11 +45,12 @@ export const SignUp = () => {
         });
         navigate("/initial-questionnaire");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur lors de l'inscription:", error);
+      const errorMessage = handleSignupError(error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
+        description: errorMessage,
         variant: "destructive",
       });
     }

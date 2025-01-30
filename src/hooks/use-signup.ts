@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { AuthError } from "@supabase/supabase-js";
 
 export const useSignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,24 +22,13 @@ export const useSignUp = () => {
 
       if (signUpError) throw signUpError;
 
-      toast({
-        title: "Inscription réussie",
-        description: "Bienvenue sur MyFitHero !",
-      });
-
-      // Redirection vers le questionnaire initial
-      navigate("/initial-questionnaire");
       return true;
-
     } catch (err) {
+      if (err instanceof AuthError) {
+        throw err;
+      }
       console.error("Sign up error:", err);
-      setError(err instanceof Error ? err.message : "Une erreur est survenue lors de l'inscription");
-      toast({
-        variant: "destructive",
-        title: "Erreur d'inscription",
-        description: err instanceof Error ? err.message : "Une erreur est survenue lors de l'inscription",
-      });
-      return false;
+      throw new Error("Une erreur est survenue lors de l'inscription");
     } finally {
       setIsLoading(false);
     }
