@@ -5,6 +5,7 @@ import { SignUpForm } from "./SignUpForm";
 import { useSignUp } from "@/hooks/use-signup";
 import { useNavigate } from "react-router-dom";
 import { handleSignupError } from "@/utils/auth-errors";
+import { supabase } from "@/integrations/supabase/client";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -36,13 +37,39 @@ export const SignUp = () => {
     }
 
     try {
-      const success = await handleSignUp(email, password);
-      
-      if (success) {
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            pseudo: pseudo,
+          },
+        },
+      });
+
+      if (signUpError) throw signUpError;
+
+      if (signUpData?.user) {
+        // Create profile manually if trigger didn't work
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: signUpData.user.id,
+            email: email,
+            pseudo: pseudo,
+            username: pseudo,
+          });
+
+        if (profileError) {
+          console.error("Error creating profile:", profileError);
+        }
+
         toast({
           title: "Succès",
           description: "Inscription réussie! Vous allez être redirigé vers le questionnaire initial.",
         });
+
+        // Redirect to initial questionnaire
         navigate("/initial-questionnaire");
       }
     } catch (error: any) {
