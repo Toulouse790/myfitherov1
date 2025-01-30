@@ -19,7 +19,7 @@ export const SignUp = () => {
     setIsLoading(true);
     
     try {
-      // Validation de base
+      // Vérification du pseudo
       if (!pseudo.trim()) {
         toast({
           title: "Erreur",
@@ -29,6 +29,7 @@ export const SignUp = () => {
         return;
       }
 
+      // Vérification du mot de passe
       if (password.length < 6) {
         toast({
           title: "Erreur",
@@ -38,7 +39,23 @@ export const SignUp = () => {
         return;
       }
 
-      // 1. Inscription de l'utilisateur
+      // 1. Vérifier si le pseudo existe déjà
+      const { data: existingUsers } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('username', pseudo);
+
+      if (existingUsers && existingUsers.length > 0) {
+        toast({
+          title: "Erreur",
+          description: "Ce pseudo est déjà utilisé. Veuillez en choisir un autre.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // 2. Inscription de l'utilisateur
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -46,26 +63,24 @@ export const SignUp = () => {
 
       if (signUpError) throw signUpError;
 
-      // 2. Si l'inscription réussit, on met à jour le profil
+      // 3. Si l'inscription réussit, on crée le profil
       if (signUpData?.user) {
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ 
+          .insert({ 
+            id: signUpData.user.id,
             pseudo: pseudo,
             username: pseudo,
             email: email 
-          })
-          .eq('id', signUpData.user.id);
+          });
 
         if (profileError) throw profileError;
 
-        // 3. Notification de succès
         toast({
           title: "Succès",
           description: "Inscription réussie! Redirection vers le questionnaire initial...",
         });
 
-        // 4. Redirection
         navigate("/initial-questionnaire");
       }
     } catch (error: any) {
