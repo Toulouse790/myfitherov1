@@ -2,7 +2,6 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { SignUpForm } from "./SignUpForm";
-import { useSignUp } from "@/hooks/use-signup";
 import { useNavigate } from "react-router-dom";
 import { handleSignupError } from "@/utils/auth-errors";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,12 +10,13 @@ export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pseudo, setPseudo] = useState("");
-  const { handleSignUp, isLoading } = useSignUp();
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     if (!pseudo.trim()) {
       toast({
@@ -24,6 +24,7 @@ export const SignUp = () => {
         description: "Le pseudo est requis",
         variant: "destructive",
       });
+      setIsLoading(false);
       return;
     }
 
@@ -33,6 +34,7 @@ export const SignUp = () => {
         description: "Le mot de passe doit contenir au moins 6 caractères",
         variant: "destructive",
       });
+      setIsLoading(false);
       return;
     }
 
@@ -80,6 +82,8 @@ export const SignUp = () => {
         description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
