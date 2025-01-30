@@ -52,36 +52,39 @@ export const SignUp = () => {
       if (signUpError) throw signUpError;
 
       if (signUpData?.user) {
-        console.log("Inscription réussie, création du profil pour:", signUpData.user.id);
+        console.log("Inscription réussie, vérification du profil pour:", signUpData.user.id);
         
-        // Create profile manually
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: signUpData.user.id,
-            email: email,
-            pseudo: pseudo,
-            username: pseudo,
-          });
-
-        if (profileError) {
-          console.error("Erreur lors de la création du profil:", profileError);
-          throw profileError;
-        }
-
-        // Verify profile creation
-        const { data: profileData, error: checkError } = await supabase
+        // First check if profile exists
+        const { data: existingProfile } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', signUpData.user.id)
           .single();
 
-        if (checkError || !profileData) {
-          console.error("Erreur lors de la vérification du profil:", checkError);
-          throw new Error("Le profil n'a pas été créé correctement");
-        }
+        if (!existingProfile) {
+          console.log("Aucun profil existant trouvé, création d'un nouveau profil");
+          // Create profile only if it doesn't exist
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: signUpData.user.id,
+              email: email,
+              pseudo: pseudo,
+              username: pseudo,
+            });
 
-        console.log("Profil créé avec succès:", profileData);
+          if (profileError) {
+            // If error is not duplicate key error, throw it
+            if (profileError.code !== '23505') {
+              console.error("Erreur lors de la création du profil:", profileError);
+              throw profileError;
+            } else {
+              console.log("Le profil existe déjà, continuation...");
+            }
+          }
+        } else {
+          console.log("Profil existant trouvé:", existingProfile);
+        }
 
         toast({
           title: "Succès",
