@@ -19,6 +19,7 @@ export const SignUp = () => {
     setIsLoading(true);
     
     try {
+      // Validation de base
       if (!pseudo.trim()) {
         toast({
           title: "Erreur",
@@ -37,61 +38,38 @@ export const SignUp = () => {
         return;
       }
 
-      console.log("Début de l'inscription pour:", email);
-
+      // 1. Inscription de l'utilisateur
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            pseudo: pseudo,
-          },
-        },
       });
 
       if (signUpError) throw signUpError;
 
+      // 2. Si l'inscription réussit, on met à jour le profil
       if (signUpData?.user) {
-        console.log("Inscription réussie pour l'utilisateur:", signUpData.user.id);
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ 
+            pseudo: pseudo,
+            username: pseudo,
+            email: email 
+          })
+          .eq('id', signUpData.user.id);
 
-        try {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .upsert({
-              id: signUpData.user.id,
-              email: email,
-              pseudo: pseudo,
-              username: pseudo,
-            }, { onConflict: 'id' });
+        if (profileError) throw profileError;
 
-          if (profileError) {
-            console.error("Erreur lors de l'upsert du profil:", profileError);
-            throw profileError;
-          }
+        // 3. Notification de succès
+        toast({
+          title: "Succès",
+          description: "Inscription réussie! Redirection vers le questionnaire initial...",
+        });
 
-          console.log("Profil créé/mis à jour avec succès");
-          
-          toast({
-            title: "Succès",
-            description: "Inscription réussie! Vous allez être redirigé vers le questionnaire initial.",
-          });
-
-          // Vérification de la session
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            console.log("Session active, redirection vers le questionnaire");
-            navigate("/initial-questionnaire");
-          } else {
-            console.error("Pas de session active après l'inscription");
-            throw new Error("Erreur d'authentification après l'inscription");
-          }
-        } catch (profileError: any) {
-          console.error("Erreur détaillée lors de la création du profil:", profileError);
-          throw profileError;
-        }
+        // 4. Redirection
+        navigate("/initial-questionnaire");
       }
     } catch (error: any) {
-      console.error("Erreur détaillée lors de l'inscription:", error);
+      console.error("Erreur lors de l'inscription:", error);
       const errorMessage = handleSignupError(error);
       toast({
         title: "Erreur",
