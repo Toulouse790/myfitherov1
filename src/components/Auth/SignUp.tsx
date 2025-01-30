@@ -1,10 +1,10 @@
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { SignUpForm } from "./SignUpForm";
-import { useNavigate } from "react-router-dom";
-import { handleSignupError } from "@/utils/auth-errors";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -17,45 +17,24 @@ export const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      // Vérification du pseudo
-      if (!pseudo.trim()) {
-        toast({
-          title: "Erreur",
-          description: "Le pseudo est requis",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Vérification du mot de passe
-      if (password.length < 6) {
-        toast({
-          title: "Erreur",
-          description: "Le mot de passe doit contenir au moins 6 caractères",
-          variant: "destructive",
-        });
-        return;
-      }
-
       // 1. Vérifier si le pseudo existe déjà
-      const { data: existingUsers } = await supabase
+      const { data: existingProfiles } = await supabase
         .from('profiles')
-        .select('username')
-        .eq('username', pseudo);
+        .select('pseudo')
+        .eq('pseudo', pseudo);
 
-      if (existingUsers && existingUsers.length > 0) {
+      if (existingProfiles && existingProfiles.length > 0) {
         toast({
           title: "Erreur",
-          description: "Ce pseudo est déjà utilisé. Veuillez en choisir un autre.",
+          description: "Ce pseudo est déjà utilisé",
           variant: "destructive",
         });
-        setIsLoading(false);
         return;
       }
 
-      // 2. Inscription de l'utilisateur
+      // 2. Créer le compte utilisateur
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -63,7 +42,10 @@ export const SignUp = () => {
 
       if (signUpError) throw signUpError;
 
-      // 3. Si l'inscription réussit, on met à jour le profil existant
+      // 3. Attendre un court instant pour que le trigger crée le profil
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // 4. Mettre à jour le profil avec les informations supplémentaires
       if (signUpData?.user) {
         const { error: profileError } = await supabase
           .from('profiles')
@@ -81,17 +63,16 @@ export const SignUp = () => {
 
         toast({
           title: "Succès",
-          description: "Inscription réussie! Redirection vers le questionnaire initial...",
+          description: "Votre compte a été créé avec succès",
         });
 
-        navigate("/initial-questionnaire");
+        navigate("/");
       }
     } catch (error: any) {
-      console.error("Erreur lors de l'inscription:", error);
-      const errorMessage = handleSignupError(error);
+      console.error("Erreur signup:", error);
       toast({
         title: "Erreur",
-        description: errorMessage,
+        description: error.message || "Une erreur est survenue lors de l'inscription",
         variant: "destructive",
       });
     } finally {
@@ -100,22 +81,81 @@ export const SignUp = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 h-screen flex items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Créer un compte</CardTitle>
-        </CardHeader>
-        <SignUpForm
-          email={email}
-          password={password}
-          pseudo={pseudo}
-          onEmailChange={setEmail}
-          onPasswordChange={setPassword}
-          onPseudoChange={setPseudo}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-        />
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md p-6 space-y-6">
+        <div className="space-y-2 text-center">
+          <h1 className="text-2xl font-bold">Créer un compte</h1>
+          <p className="text-muted-foreground">
+            Entrez vos informations pour créer votre compte
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="pseudo" className="text-sm font-medium">
+              Pseudo
+            </label>
+            <Input
+              id="pseudo"
+              placeholder="Votre pseudo"
+              value={pseudo}
+              onChange={(e) => setPseudo(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-sm font-medium">
+              Email
+            </label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="votre@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="password" className="text-sm font-medium">
+              Mot de passe
+            </label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? "Création en cours..." : "Créer mon compte"}
+          </Button>
+        </form>
+
+        <div className="text-center text-sm">
+          <p className="text-muted-foreground">
+            Déjà un compte?{" "}
+            <Button
+              variant="link"
+              className="p-0 h-auto font-normal"
+              onClick={() => navigate("/signin")}
+            >
+              Se connecter
+            </Button>
+          </p>
+        </div>
       </Card>
     </div>
   );
 };
+
+export default SignUp;
