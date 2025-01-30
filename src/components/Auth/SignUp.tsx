@@ -40,9 +40,9 @@ export const SignUp = () => {
       if (success) {
         toast({
           title: "Succès",
-          description: "Inscription réussie! Vous êtes maintenant connecté.",
+          description: "Inscription réussie! Vous allez être redirigé vers le questionnaire initial.",
         });
-        navigate("/");
+        navigate("/initial-questionnaire");
       }
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
