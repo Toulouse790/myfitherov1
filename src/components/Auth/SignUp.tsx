@@ -63,18 +63,21 @@ export const SignUp = () => {
 
       if (signUpError) throw signUpError;
 
-      // 3. Si l'inscription réussit, on crée le profil
+      // 3. Si l'inscription réussit, on met à jour le profil existant
       if (signUpData?.user) {
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({ 
-            id: signUpData.user.id,
+          .update({ 
             pseudo: pseudo,
             username: pseudo,
             email: email 
-          });
+          })
+          .eq('id', signUpData.user.id);
 
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error("Erreur mise à jour profil:", profileError);
+          throw profileError;
+        }
 
         toast({
           title: "Succès",
