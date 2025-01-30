@@ -18,27 +18,27 @@ export const SignUp = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    if (!pseudo.trim()) {
-      toast({
-        title: "Erreur",
-        description: "Le pseudo est requis",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    if (password.length < 6) {
-      toast({
-        title: "Erreur",
-        description: "Le mot de passe doit contenir au moins 6 caractères",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return;
-    }
-
     try {
+      if (!pseudo.trim()) {
+        toast({
+          title: "Erreur",
+          description: "Le pseudo est requis",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (password.length < 6) {
+        toast({
+          title: "Erreur",
+          description: "Le mot de passe doit contenir au moins 6 caractères",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log("Tentative d'inscription avec:", { email, pseudo });
+
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -52,7 +52,9 @@ export const SignUp = () => {
       if (signUpError) throw signUpError;
 
       if (signUpData?.user) {
-        // Create profile manually if trigger didn't work
+        console.log("Inscription réussie, création du profil pour:", signUpData.user.id);
+        
+        // Create profile manually
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
@@ -63,19 +65,41 @@ export const SignUp = () => {
           });
 
         if (profileError) {
-          console.error("Error creating profile:", profileError);
+          console.error("Erreur lors de la création du profil:", profileError);
+          throw profileError;
         }
+
+        // Verify profile creation
+        const { data: profileData, error: checkError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', signUpData.user.id)
+          .single();
+
+        if (checkError || !profileData) {
+          console.error("Erreur lors de la vérification du profil:", checkError);
+          throw new Error("Le profil n'a pas été créé correctement");
+        }
+
+        console.log("Profil créé avec succès:", profileData);
 
         toast({
           title: "Succès",
           description: "Inscription réussie! Vous allez être redirigé vers le questionnaire initial.",
         });
 
-        // Redirect to initial questionnaire
-        navigate("/initial-questionnaire");
+        // Ensure we're authenticated before redirecting
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          console.log("Session active, redirection vers le questionnaire");
+          navigate("/initial-questionnaire");
+        } else {
+          console.error("Pas de session active après l'inscription");
+          throw new Error("Erreur d'authentification après l'inscription");
+        }
       }
     } catch (error: any) {
-      console.error("Erreur lors de l'inscription:", error);
+      console.error("Erreur détaillée lors de l'inscription:", error);
       const errorMessage = handleSignupError(error);
       toast({
         title: "Erreur",
