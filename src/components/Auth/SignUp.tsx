@@ -37,7 +37,7 @@ export const SignUp = () => {
         return;
       }
 
-      console.log("Tentative d'inscription avec:", { email, pseudo });
+      console.log("Début de l'inscription pour:", email);
 
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
@@ -52,53 +52,42 @@ export const SignUp = () => {
       if (signUpError) throw signUpError;
 
       if (signUpData?.user) {
-        console.log("Inscription réussie, vérification du profil pour:", signUpData.user.id);
-        
-        // First check if profile exists
-        const { data: existingProfile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', signUpData.user.id)
-          .single();
+        console.log("Inscription réussie pour l'utilisateur:", signUpData.user.id);
 
-        if (!existingProfile) {
-          console.log("Aucun profil existant trouvé, création d'un nouveau profil");
-          // Create profile only if it doesn't exist
+        try {
           const { error: profileError } = await supabase
             .from('profiles')
-            .insert({
+            .upsert({
               id: signUpData.user.id,
               email: email,
               pseudo: pseudo,
               username: pseudo,
-            });
+            }, { onConflict: 'id' });
 
           if (profileError) {
-            // If error is not duplicate key error, throw it
-            if (profileError.code !== '23505') {
-              console.error("Erreur lors de la création du profil:", profileError);
-              throw profileError;
-            } else {
-              console.log("Le profil existe déjà, continuation...");
-            }
+            console.error("Erreur lors de l'upsert du profil:", profileError);
+            throw profileError;
           }
-        } else {
-          console.log("Profil existant trouvé:", existingProfile);
-        }
 
-        toast({
-          title: "Succès",
-          description: "Inscription réussie! Vous allez être redirigé vers le questionnaire initial.",
-        });
+          console.log("Profil créé/mis à jour avec succès");
+          
+          toast({
+            title: "Succès",
+            description: "Inscription réussie! Vous allez être redirigé vers le questionnaire initial.",
+          });
 
-        // Ensure we're authenticated before redirecting
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          console.log("Session active, redirection vers le questionnaire");
-          navigate("/initial-questionnaire");
-        } else {
-          console.error("Pas de session active après l'inscription");
-          throw new Error("Erreur d'authentification après l'inscription");
+          // Vérification de la session
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            console.log("Session active, redirection vers le questionnaire");
+            navigate("/initial-questionnaire");
+          } else {
+            console.error("Pas de session active après l'inscription");
+            throw new Error("Erreur d'authentification après l'inscription");
+          }
+        } catch (profileError: any) {
+          console.error("Erreur détaillée lors de la création du profil:", profileError);
+          throw profileError;
         }
       }
     } catch (error: any) {
