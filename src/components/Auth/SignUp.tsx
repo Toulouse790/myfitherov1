@@ -14,11 +14,13 @@ export const SignUp = () => {
 
     try {
       // Vérifier si l'email existe déjà
-      const { data: existingUser } = await supabase
+      const { data: existingUser, error: checkError } = await supabase
         .from('profiles')
         .select('email')
         .eq('email', email)
-        .single();
+        .maybeSingle();
+
+      if (checkError) throw checkError;
 
       if (existingUser) {
         toast({
