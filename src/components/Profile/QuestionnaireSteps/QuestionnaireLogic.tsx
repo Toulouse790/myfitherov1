@@ -104,7 +104,7 @@ export const useQuestionnaireLogic = () => {
         });
 
         // Redirection vers la page d'accueil après avoir complété le questionnaire
-        navigate("/");
+        navigate("/", { replace: true });
       } catch (error) {
         console.error("Error saving questionnaire:", error);
         toast({
