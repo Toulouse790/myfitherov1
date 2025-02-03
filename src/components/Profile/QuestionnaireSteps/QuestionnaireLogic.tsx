@@ -15,6 +15,7 @@ interface QuestionnaireAnswers {
   medical_conditions?: string;
 }
 
+// Renamed and exported as a named export
 export const useQuestionnaireLogic = () => {
   const [step, setStep] = useState(1);
   const [responses, setResponses] = useState<any>({});
