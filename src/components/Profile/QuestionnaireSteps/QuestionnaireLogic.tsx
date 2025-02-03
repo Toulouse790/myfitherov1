@@ -86,6 +86,7 @@ export const useQuestionnaireLogic = () => {
             description: "Vous devez être connecté pour continuer",
             variant: "destructive",
           });
+          navigate("/signin", { replace: true });
           return;
         }
 
@@ -103,7 +104,7 @@ export const useQuestionnaireLogic = () => {
           description: "Vos préférences ont été enregistrées avec succès.",
         });
 
-        // Redirection vers la page d'accueil après avoir complété le questionnaire
+        // Redirection vers la page d'accueil avec remplacement de l'historique
         navigate("/", { replace: true });
       } catch (error) {
         console.error("Error saving questionnaire:", error);

@@ -31,6 +31,7 @@ export const SignUp = () => {
           description: "Ce pseudo est déjà utilisé",
           variant: "destructive",
         });
+        setIsLoading(false);
         return;
       }
 
@@ -66,7 +67,8 @@ export const SignUp = () => {
           description: "Votre compte a été créé avec succès",
         });
 
-        navigate("/");
+        // Redirection vers le questionnaire initial
+        navigate("/initial-questionnaire", { replace: true });
       }
     } catch (error: any) {
       console.error("Erreur signup:", error);
