@@ -48,6 +48,16 @@ export const SignUp = () => {
       });
 
       if (signUpError) {
+        // Si l'utilisateur existe déjà, rediriger vers la page de connexion
+        if (signUpError.message.includes("User already registered")) {
+          toast({
+            title: "Compte existant",
+            description: "Un compte existe déjà avec cet email. Veuillez vous connecter.",
+          });
+          navigate("/signin", { replace: true });
+          return;
+        }
+
         const errorMessage = handleSignupError(signUpError);
         toast({
           title: "Erreur",
@@ -86,7 +96,7 @@ export const SignUp = () => {
       }
     } catch (error: any) {
       console.error("Erreur signup:", error);
-      if (!error.message.includes("User already registered")) {
+      if (!error.message?.includes("User already registered")) {
         toast({
           title: "Erreur",
           description: error.message || "Une erreur est survenue lors de l'inscription",
