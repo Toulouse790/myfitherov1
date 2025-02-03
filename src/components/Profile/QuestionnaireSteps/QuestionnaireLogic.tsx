@@ -96,6 +96,8 @@ export const useQuestionnaireLogic = () => {
           throw new Error("Profil utilisateur non trouvé");
         }
 
+        console.log("Enregistrement des réponses du questionnaire...");
+
         // Insérer les réponses
         const { error } = await supabase
           .from("questionnaire_responses")
@@ -105,6 +107,8 @@ export const useQuestionnaireLogic = () => {
           }]);
 
         if (error) throw error;
+
+        console.log("Questionnaire complété avec succès, redirection vers l'accueil...");
 
         toast({
           title: "Configuration terminée !",

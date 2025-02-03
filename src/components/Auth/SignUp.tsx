@@ -28,6 +28,7 @@ export const SignUp = () => {
           description: "Cet email est déjà utilisé",
           variant: "destructive",
         });
+        setLoading(false);
         return;
       }
 
@@ -58,6 +59,8 @@ export const SignUp = () => {
         throw new Error("Erreur lors de la création du profil");
       }
 
+      console.log("Compte créé avec succès, redirection vers le questionnaire...");
+      
       toast({
         title: "Compte créé avec succès",
         description: "Vous allez être redirigé vers le questionnaire initial",
