@@ -127,6 +127,7 @@ export const useQuestionnaireLogic = () => {
           description: "Redirection vers l'accueil...",
         });
 
+        // Rediriger vers la page d'accueil au lieu de signup
         navigate("/");
       } catch (error: any) {
         console.error('Error in submission process:', error);
