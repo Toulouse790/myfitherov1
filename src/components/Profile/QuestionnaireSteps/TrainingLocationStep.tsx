@@ -7,7 +7,7 @@ interface TrainingLocationStepProps {
 }
 
 export const TrainingLocationStep = ({
-  trainingLocation,
+  trainingLocation = [], // Add default empty array
   onTrainingLocationChange,
 }: TrainingLocationStepProps) => {
   const handleLocationChange = (location: string, checked: boolean) => {
