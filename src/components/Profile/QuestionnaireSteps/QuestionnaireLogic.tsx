@@ -15,6 +15,15 @@ interface QuestionnaireAnswers {
   medical_conditions?: string;
 }
 
+const mapObjectiveToProfile = (objective: string): string => {
+  const objectiveMap: { [key: string]: string } = {
+    'weight_loss': 'perte_de_poids',
+    'muscle_gain': 'prise_de_masse',
+    'maintenance': 'maintenance'
+  };
+  return objectiveMap[objective] || objective;
+};
+
 export const useQuestionnaireLogic = () => {
   const [step, setStep] = useState(1);
   const [responses, setResponses] = useState<any>({});
@@ -69,6 +78,14 @@ export const useQuestionnaireLogic = () => {
           description: "Enregistrement des réponses...",
         });
 
+        console.log("Updating profile with data:", {
+          id: user.id,
+          gender: responses.gender,
+          height_cm: Number(responses.height),
+          weight_kg: Number(responses.weight),
+          main_objective: mapObjectiveToProfile(responses.objective)
+        });
+
         // First, update or create the profile
         const { error: profileError } = await supabase
           .from('profiles')
@@ -77,7 +94,7 @@ export const useQuestionnaireLogic = () => {
             gender: responses.gender,
             height_cm: Number(responses.height),
             weight_kg: Number(responses.weight),
-            main_objective: responses.objective
+            main_objective: mapObjectiveToProfile(responses.objective)
           }, {
             onConflict: 'id'
           });
