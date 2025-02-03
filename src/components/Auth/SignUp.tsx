@@ -59,15 +59,29 @@ export const SignUp = () => {
         throw new Error("Erreur lors de la création du profil");
       }
 
-      console.log("Compte créé avec succès, redirection vers le questionnaire...");
-      
       toast({
-        title: "Compte créé avec succès",
-        description: "Vous allez être redirigé vers le questionnaire initial",
+        title: "Étape 1/4",
+        description: "Création du compte réussie",
+      });
+
+      toast({
+        title: "Étape 2/4",
+        description: "Profil créé avec succès",
+      });
+
+      toast({
+        title: "Étape 3/4",
+        description: "Redirection vers le questionnaire...",
       });
 
       // Redirection vers le questionnaire initial après création réussie
       navigate("/initial-questionnaire");
+
+      toast({
+        title: "Étape 4/4",
+        description: "Vous pouvez maintenant remplir le questionnaire",
+      });
+
     } catch (error: any) {
       console.error('Erreur:', error);
       toast({
