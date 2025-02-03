@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { handleSignupError } from "@/utils/auth-errors";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -39,9 +40,22 @@ export const SignUp = () => {
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            pseudo: pseudo,
+          }
+        }
       });
 
-      if (signUpError) throw signUpError;
+      if (signUpError) {
+        const errorMessage = handleSignupError(signUpError);
+        toast({
+          title: "Erreur",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw signUpError;
+      }
 
       // 3. Attendre un court instant pour que le trigger crée le profil
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -72,11 +86,13 @@ export const SignUp = () => {
       }
     } catch (error: any) {
       console.error("Erreur signup:", error);
-      toast({
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'inscription",
-        variant: "destructive",
-      });
+      if (!error.message.includes("User already registered")) {
+        toast({
+          title: "Erreur",
+          description: error.message || "Une erreur est survenue lors de l'inscription",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
