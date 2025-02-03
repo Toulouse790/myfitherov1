@@ -15,7 +15,6 @@ interface QuestionnaireAnswers {
   medical_conditions?: string;
 }
 
-// Renamed and exported as a named export
 export const useQuestionnaireLogic = () => {
   const [step, setStep] = useState(1);
   const [responses, setResponses] = useState<any>({});
@@ -70,6 +69,28 @@ export const useQuestionnaireLogic = () => {
           description: "Enregistrement des réponses...",
         });
 
+        // Ensure we have a profile before submitting
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Error checking profile:', profileError);
+          throw new Error('Erreur lors de la vérification du profil');
+        }
+
+        if (!profile) {
+          // Create profile if it doesn't exist
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert([{ id: user.id }]);
+
+          if (insertError) throw insertError;
+        }
+
+        // Now submit questionnaire responses
         const { error } = await supabase
           .from("questionnaire_responses")
           .insert([{
@@ -91,6 +112,7 @@ export const useQuestionnaireLogic = () => {
 
         navigate("/");
       } catch (error: any) {
+        console.error('Error submitting questionnaire:', error);
         toast({
           title: "Erreur",
           description: error.message || "Une erreur est survenue lors de l'enregistrement",
