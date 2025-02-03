@@ -69,36 +69,36 @@ export const useQuestionnaireLogic = () => {
           description: "Enregistrement des réponses...",
         });
 
-        // Ensure we have a profile before submitting
-        const { data: profile, error: profileError } = await supabase
+        // First, update or create the profile
+        const { error: profileError } = await supabase
           .from('profiles')
-          .select('id')
-          .eq('id', user.id)
-          .single();
+          .upsert({
+            id: user.id,
+            gender: responses.gender,
+            height_cm: Number(responses.height),
+            weight_kg: Number(responses.weight),
+            main_objective: responses.objective
+          }, {
+            onConflict: 'id'
+          });
 
         if (profileError) {
-          console.error('Error checking profile:', profileError);
-          throw new Error('Erreur lors de la vérification du profil');
+          console.error('Error updating profile:', profileError);
+          throw new Error('Erreur lors de la mise à jour du profil');
         }
 
-        if (!profile) {
-          // Create profile if it doesn't exist
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert([{ id: user.id }]);
-
-          if (insertError) throw insertError;
-        }
-
-        // Now submit questionnaire responses
-        const { error } = await supabase
+        // Then submit questionnaire responses
+        const { error: questionnaireError } = await supabase
           .from("questionnaire_responses")
           .insert([{
             user_id: user.id,
             ...responses
           }]);
 
-        if (error) throw error;
+        if (questionnaireError) {
+          console.error('Error submitting questionnaire:', questionnaireError);
+          throw questionnaireError;
+        }
 
         toast({
           title: "Étape 2/3",
@@ -112,7 +112,7 @@ export const useQuestionnaireLogic = () => {
 
         navigate("/");
       } catch (error: any) {
-        console.error('Error submitting questionnaire:', error);
+        console.error('Error in submission process:', error);
         toast({
           title: "Erreur",
           description: error.message || "Une erreur est survenue lors de l'enregistrement",
