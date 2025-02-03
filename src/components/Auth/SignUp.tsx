@@ -47,7 +47,7 @@ export const SignUp = () => {
       }
 
       // Procéder à l'inscription
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: { user }, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -57,17 +57,24 @@ export const SignUp = () => {
         },
       });
 
-      if (signUpError) {
-        console.error("Erreur signup:", signUpError);
-        toast({
-          title: "Erreur",
-          description: "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
-          variant: "destructive",
-        });
-        return;
+      if (signUpError) throw signUpError;
+
+      if (!user) throw new Error("No user returned after signup");
+
+      // Attendre que le trigger crée le profil
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Vérifier que le profil a été créé
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profile) {
+        throw new Error("Profile not created properly");
       }
 
-      // Succès
       toast({
         title: "Inscription réussie",
         description: "Votre compte a été créé avec succès.",
@@ -76,10 +83,10 @@ export const SignUp = () => {
       navigate("/initial-questionnaire", { replace: true });
 
     } catch (error: any) {
-      console.error("Erreur inattendue:", error);
+      console.error("Erreur signup:", error);
       toast({
         title: "Erreur",
-        description: "Une erreur inattendue est survenue. Veuillez réessayer.",
+        description: "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {
