@@ -15,87 +15,102 @@ interface QuestionnaireAnswers {
   medical_conditions?: string;
 }
 
-export const QuestionnaireLogic = () => {
-  const [answers, setAnswers] = useState<QuestionnaireAnswers>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export const useQuestionnaireLogic = () => {
+  const [step, setStep] = useState(1);
+  const [responses, setResponses] = useState<any>({});
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = async () => {
-    if (!user) {
-      toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour soumettre le questionnaire",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-
-      // Vérifier que le profil existe
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError || !profile) {
-        throw new Error("Profil utilisateur non trouvé");
-      }
-
-      toast({
-        title: "Étape 1/3",
-        description: "Enregistrement des réponses...",
-      });
-
-      // Insérer les réponses
-      const { error } = await supabase
-        .from("questionnaire_responses")
-        .insert([{
-          user_id: user.id,
-          ...answers
-        }]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Étape 2/3",
-        description: "Réponses enregistrées avec succès",
-      });
-
-      toast({
-        title: "Étape 3/3",
-        description: "Redirection vers l'accueil...",
-      });
-
-      // Redirection vers la page d'accueil
-      navigate("/");
-
-    } catch (error: any) {
-      toast({
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'enregistrement",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const updateAnswer = (key: keyof QuestionnaireAnswers, value: any) => {
-    setAnswers(prev => ({
+  const handleResponseChange = (field: string, value: any) => {
+    setResponses(prev => ({
       ...prev,
-      [key]: value
+      [field]: value
     }));
   };
 
+  const isStepValid = () => {
+    switch (step) {
+      case 1:
+        return !!responses.gender;
+      case 2:
+        return !!responses.age && !!responses.weight && !!responses.height;
+      case 3:
+        return !!responses.objective;
+      case 4:
+        return !!responses.training_frequency && !!responses.workout_duration;
+      case 5:
+        return !!responses.experience_level;
+      case 6:
+        return Array.isArray(responses.available_equipment) && responses.available_equipment.length > 0;
+      case 7:
+        return !!responses.diet_type;
+      default:
+        return false;
+    }
+  };
+
+  const handleNext = async () => {
+    if (step < 7) {
+      setStep(prev => prev + 1);
+    } else if (step === 7) {
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour soumettre le questionnaire",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      try {
+        toast({
+          title: "Étape 1/3",
+          description: "Enregistrement des réponses...",
+        });
+
+        const { error } = await supabase
+          .from("questionnaire_responses")
+          .insert([{
+            user_id: user.id,
+            ...responses
+          }]);
+
+        if (error) throw error;
+
+        toast({
+          title: "Étape 2/3",
+          description: "Réponses enregistrées avec succès",
+        });
+
+        toast({
+          title: "Étape 3/3",
+          description: "Redirection vers l'accueil...",
+        });
+
+        navigate("/");
+      } catch (error: any) {
+        toast({
+          title: "Erreur",
+          description: error.message || "Une erreur est survenue lors de l'enregistrement",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(prev => prev - 1);
+    }
+  };
+
   return {
-    answers,
-    updateAnswer,
-    handleSubmit,
-    isSubmitting
+    step,
+    responses,
+    handleResponseChange,
+    handleNext,
+    handleBack,
+    isStepValid,
   };
 };
