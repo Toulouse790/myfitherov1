@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const InitialQuestionnaire = () => {
   const {
@@ -28,11 +29,13 @@ export const InitialQuestionnaire = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    // Ne rediriger vers /signup que si l'utilisateur n'est vraiment pas connecté
+    if (!user && !supabase.auth.getSession()) {
       navigate("/signup");
     }
   }, [user, navigate]);
 
+  // Ne rien afficher pendant la vérification de la session
   if (!user) return null;
 
   console.log("InitialQuestionnaire - Current step:", step);
