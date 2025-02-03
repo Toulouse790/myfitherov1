@@ -63,6 +63,7 @@ export const SignUp = () => {
         description: "Vous allez être redirigé vers le questionnaire initial",
       });
 
+      // Redirection vers le questionnaire initial après création réussie
       navigate("/initial-questionnaire");
     } catch (error: any) {
       console.error('Erreur:', error);

@@ -111,6 +111,7 @@ export const useQuestionnaireLogic = () => {
           description: "Vos préférences ont été enregistrées avec succès.",
         });
 
+        // Redirection vers la page d'accueil après complétion du questionnaire
         navigate("/", { replace: true });
       } catch (error: any) {
         console.error("Error saving questionnaire:", error);
