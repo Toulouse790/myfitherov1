@@ -35,11 +35,7 @@ export const useQuestionnaireLogic = () => {
     diet_type: "",
   });
 
-  console.log("QuestionnaireLogic - Current step:", step);
-  console.log("QuestionnaireLogic - Current responses:", responses);
-
   const handleResponseChange = (field: keyof QuestionnaireResponses, value: any) => {
-    console.log("Updating response:", field, value);
     setResponses((prev) => ({
       ...prev,
       [field]: value,
@@ -47,7 +43,6 @@ export const useQuestionnaireLogic = () => {
   };
 
   const isStepValid = () => {
-    console.log("Checking step validity for step:", step);
     switch (step) {
       case 1:
         return responses.gender !== "";
@@ -86,10 +81,22 @@ export const useQuestionnaireLogic = () => {
             description: "Vous devez être connecté pour continuer",
             variant: "destructive",
           });
-          navigate("/signin", { replace: true });
+          navigate("/signin");
           return;
         }
 
+        // Vérifier que le profil existe
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError || !profile) {
+          throw new Error("Profil utilisateur non trouvé");
+        }
+
+        // Insérer les réponses
         const { error } = await supabase
           .from("questionnaire_responses")
           .insert([{
@@ -104,9 +111,8 @@ export const useQuestionnaireLogic = () => {
           description: "Vos préférences ont été enregistrées avec succès.",
         });
 
-        // Redirection vers la page d'accueil avec remplacement de l'historique
         navigate("/", { replace: true });
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error saving questionnaire:", error);
         toast({
           title: "Erreur",

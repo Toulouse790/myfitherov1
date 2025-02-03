@@ -2,52 +2,40 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { SignUpForm } from "./SignUpForm";
 
 export const SignUp = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async (email: string, password: string, pseudo: string) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const pseudo = formData.get('pseudo') as string;
+
     try {
-      setLoading(true);
-
-      // Vérifier d'abord si l'email existe
+      // Vérifier si l'email existe déjà
       const { data: existingUser } = await supabase
         .from('profiles')
-        .select('id')
+        .select('email')
         .eq('email', email)
         .single();
 
       if (existingUser) {
         toast({
-          title: "Email déjà utilisé",
-          description: "Un compte existe déjà avec cet email. Veuillez vous connecter.",
-          variant: "destructive",
-        });
-        navigate("/signin", { replace: true });
-        return;
-      }
-
-      // Vérifier si le pseudo est déjà utilisé
-      const { data: existingPseudo } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('pseudo', pseudo)
-        .single();
-
-      if (existingPseudo) {
-        toast({
-          title: "Pseudo déjà utilisé",
-          description: "Ce pseudo est déjà pris. Veuillez en choisir un autre.",
+          title: "Erreur",
+          description: "Cet email est déjà utilisé",
           variant: "destructive",
         });
         return;
       }
 
-      // Procéder à l'inscription
-      const { data: { user }, error: signUpError } = await supabase.auth.signUp({
+      // Créer le nouvel utilisateur
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -59,8 +47,6 @@ export const SignUp = () => {
 
       if (signUpError) throw signUpError;
 
-      if (!user) throw new Error("No user returned after signup");
-
       // Attendre que le trigger crée le profil
       await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -68,25 +54,24 @@ export const SignUp = () => {
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
-        .eq('id', user.id)
+        .eq('id', authData.user?.id)
         .single();
 
       if (profileError || !profile) {
-        throw new Error("Profile not created properly");
+        throw new Error("Erreur lors de la création du profil");
       }
 
       toast({
-        title: "Inscription réussie",
-        description: "Votre compte a été créé avec succès.",
+        title: "Compte créé avec succès",
+        description: "Vous allez être redirigé vers le questionnaire initial",
       });
-      
-      navigate("/initial-questionnaire", { replace: true });
 
+      navigate("/initial-questionnaire");
     } catch (error: any) {
-      console.error("Erreur signup:", error);
+      console.error('Erreur:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
+        description: error.message || "Une erreur est survenue",
         variant: "destructive",
       });
     } finally {
@@ -94,5 +79,60 @@ export const SignUp = () => {
     }
   };
 
-  return <SignUpForm onSubmit={handleSignUp} loading={loading} />;
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-md mx-auto">
+        <h1 className="text-2xl font-bold mb-6">Créer un compte</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium mb-1">
+              Mot de passe
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="pseudo" className="block text-sm font-medium mb-1">
+              Pseudo
+            </label>
+            <input
+              id="pseudo"
+              name="pseudo"
+              type="text"
+              required
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary text-white p-2 rounded hover:bg-primary/90 disabled:opacity-50"
+          >
+            {loading ? "Création en cours..." : "Créer un compte"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
