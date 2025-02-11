@@ -1,5 +1,6 @@
+
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -7,14 +8,30 @@ import { useToast } from "@/hooks/use-toast";
 export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [hasQuestionnaire, setHasQuestionnaire] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Liste des routes autorisées sans questionnaire
+  const allowedRoutes = [
+    '/initial-questionnaire',
+    '/signin',
+    '/signup',
+    '/auth',
+    '/profile'
+  ];
 
   useEffect(() => {
     const checkQuestionnaire = async () => {
       if (!user) {
         console.log("No user found, skipping questionnaire check");
+        setLoading(false);
+        return;
+      }
+
+      // Si la route actuelle est autorisée, on ne vérifie pas le questionnaire
+      if (allowedRoutes.includes(location.pathname)) {
         setLoading(false);
         return;
       }
@@ -41,8 +58,12 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
         console.log("Questionnaire status:", hasCompletedQuestionnaire);
         setHasQuestionnaire(hasCompletedQuestionnaire);
         
-        if (!hasCompletedQuestionnaire) {
+        if (!hasCompletedQuestionnaire && !allowedRoutes.includes(location.pathname)) {
           console.log("Redirecting to questionnaire");
+          toast({
+            title: "Questionnaire requis",
+            description: "Veuillez compléter le questionnaire initial pour accéder à cette page",
+          });
           navigate("/initial-questionnaire");
         }
       } catch (error) {
@@ -53,7 +74,7 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
     };
 
     checkQuestionnaire();
-  }, [user, navigate, toast]);
+  }, [user, navigate, toast, location.pathname]);
 
   if (loading) {
     return (
@@ -66,10 +87,10 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
     );
   }
 
-  // Si pas de questionnaire, on retourne null pour permettre l'affichage du questionnaire
-  if (!hasQuestionnaire && window.location.pathname === '/initial-questionnaire') {
+  // Si la route est autorisée ou si l'utilisateur a complété le questionnaire
+  if (allowedRoutes.includes(location.pathname) || hasQuestionnaire) {
     return <>{children}</>;
   }
 
-  return hasQuestionnaire ? <>{children}</> : null;
+  return null;
 };
