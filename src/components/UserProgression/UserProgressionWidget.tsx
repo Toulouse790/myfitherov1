@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Star, Trophy, Dumbbell, Utensils, Moon } from "lucide-react";
 import { useUserProgression } from "@/hooks/use-user-progression";
 import { Progress } from "@/components/ui/progress";
@@ -12,7 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 
 const ProgressionSkeleton = () => (
-  <div className="space-y-4 p-4">
+  <div className="space-y-4 p-4" role="progressbar" aria-busy="true" aria-label="Chargement de la progression">
     <Skeleton className="h-8 w-1/3" />
     <Skeleton className="h-4 w-full" />
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -23,7 +24,7 @@ const ProgressionSkeleton = () => (
   </div>
 );
 
-const CategoryCard = ({ 
+const CategoryCard = React.memo(({ 
   icon: Icon, 
   title, 
   points, 
@@ -37,9 +38,13 @@ const CategoryCard = ({
   <TooltipProvider>
     <Tooltip>
       <TooltipTrigger asChild>
-        <Card className="p-4 transition-all hover:scale-105 cursor-help">
+        <Card 
+          className="p-4 transition-all hover:scale-105 cursor-help"
+          role="article"
+          aria-label={`${title}: ${points} points`}
+        >
           <div className="flex items-center space-x-3">
-            <Icon className="w-5 h-5 text-primary" />
+            <Icon className="w-5 h-5 text-primary" aria-hidden="true" />
             <div className="flex-1">
               <h3 className="text-sm font-medium">{title}</h3>
               <p className="text-xs text-muted-foreground">
@@ -54,7 +59,9 @@ const CategoryCard = ({
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>
-);
+));
+
+CategoryCard.displayName = "CategoryCard";
 
 export function UserProgressionWidget() {
   const { 
@@ -70,21 +77,34 @@ export function UserProgressionWidget() {
   const pointsToNext = getRequiredPointsForLevel(nextLevel) - progression.total_points;
 
   return (
-    <div className="space-y-6 p-4 animate-fade-in">
+    <div 
+      className="space-y-6 p-4 animate-fade-in"
+      role="region"
+      aria-label="Progression utilisateur"
+    >
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Trophy className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-bold">Niveau {progression.current_level}</h2>
+            <Trophy className="w-6 h-6 text-primary" aria-hidden="true" />
+            <h2 className="text-xl font-bold">
+              Niveau {progression.current_level}
+            </h2>
           </div>
-          <div className="flex items-center space-x-2">
-            <Star className="w-5 h-5 text-yellow-500" />
+          <div className="flex items-center space-x-2" aria-label={`Total: ${progression.total_points} points`}>
+            <Star className="w-5 h-5 text-yellow-500" aria-hidden="true" />
             <span className="text-lg font-medium">{progression.total_points} points</span>
           </div>
         </div>
 
         <div className="space-y-1">
-          <Progress value={levelProgress} className="h-2 transition-all" />
+          <Progress 
+            value={levelProgress} 
+            className="h-2 transition-all"
+            aria-label={`Progression vers le niveau ${nextLevel}`}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={levelProgress}
+          />
           <p className="text-xs text-muted-foreground text-right">
             {pointsToNext} points jusqu'au niveau {nextLevel}
           </p>
