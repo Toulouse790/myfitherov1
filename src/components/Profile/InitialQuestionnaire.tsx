@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
@@ -12,7 +13,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export const InitialQuestionnaire = () => {
   const {
@@ -29,17 +29,19 @@ export const InitialQuestionnaire = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Ne rediriger vers /signup que si l'utilisateur n'est vraiment pas connecté
-    if (!user && !supabase.auth.getSession()) {
-      navigate("/signup");
-    }
-  }, [user, navigate]);
+    // Vérification du statut d'authentification
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/signup");
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
 
   // Ne rien afficher pendant la vérification de la session
   if (!user) return null;
-
-  console.log("InitialQuestionnaire - Current step:", step);
-  console.log("InitialQuestionnaire - Current responses:", responses);
 
   const renderStep = () => {
     switch (step) {

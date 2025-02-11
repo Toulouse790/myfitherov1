@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -127,8 +128,9 @@ export const useQuestionnaireLogic = () => {
           description: "Redirection vers l'accueil...",
         });
 
-        // Use window.location.href for a full page reload to ensure proper state reset
-        window.location.href = '/';
+        // Redirection vers la page d'accueil avec navigate
+        navigate("/", { replace: true });
+        
       } catch (error: any) {
         console.error('Error in submission process:', error);
         toast({
