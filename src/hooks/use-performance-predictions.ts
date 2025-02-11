@@ -3,6 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
+interface PerformancePrediction {
+  id: string;
+  prediction_data: Record<string, number>;
+  confidence_score: number;
+  predicted_at: string;
+  metadata: Record<string, any>;
+}
+
 export const usePerformancePredictions = (sportId?: string) => {
   const { user } = useAuth();
 
@@ -25,7 +33,7 @@ export const usePerformancePredictions = (sportId?: string) => {
         throw error;
       }
 
-      return data;
+      return data as PerformancePrediction;
     },
     enabled: !!user && !!sportId
   });

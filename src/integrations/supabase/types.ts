@@ -1508,6 +1508,69 @@ export type Database = {
           },
         ]
       }
+      performance_metrics: {
+        Row: {
+          id: string
+          metadata: Json | null
+          metric_type: string
+          recorded_at: string | null
+          training_cycle_id: string | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          id?: string
+          metadata?: Json | null
+          metric_type: string
+          recorded_at?: string | null
+          training_cycle_id?: string | null
+          user_id: string
+          value: number
+        }
+        Update: {
+          id?: string
+          metadata?: Json | null
+          metric_type?: string
+          recorded_at?: string | null
+          training_cycle_id?: string | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      performance_predictions: {
+        Row: {
+          confidence_score: number
+          historical_data: Json | null
+          id: string
+          metadata: Json | null
+          predicted_at: string | null
+          prediction_data: Json
+          sport_id: string
+          user_id: string
+        }
+        Insert: {
+          confidence_score: number
+          historical_data?: Json | null
+          id?: string
+          metadata?: Json | null
+          predicted_at?: string | null
+          prediction_data?: Json
+          sport_id: string
+          user_id: string
+        }
+        Update: {
+          confidence_score?: number
+          historical_data?: Json | null
+          id?: string
+          metadata?: Json | null
+          predicted_at?: string | null
+          prediction_data?: Json
+          sport_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       periodic_goals: {
         Row: {
           completed: boolean | null
