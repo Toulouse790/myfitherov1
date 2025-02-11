@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
@@ -13,6 +14,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useClaudeRecommendations } from "@/hooks/use-claude-recommendations";
+import { Loader2 } from "lucide-react";
 
 export const InitialQuestionnaire = () => {
   const {
@@ -28,8 +31,11 @@ export const InitialQuestionnaire = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const { data: recommendations, isLoading: isGeneratingRecommendations } = useClaudeRecommendations(
+    step === 7 ? responses : null
+  );
+
   useEffect(() => {
-    // Vérification du statut d'authentification
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -105,6 +111,74 @@ export const InitialQuestionnaire = () => {
     }
   };
 
+  const handleSubmitQuestionnaire = async () => {
+    if (!recommendations) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer les recommandations personnalisées. Veuillez réessayer.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Mettre à jour le profil
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          gender: responses.gender,
+          height_cm: Number(responses.height),
+          weight_kg: Number(responses.weight),
+          main_objective: responses.objective
+        }, {
+          onConflict: 'id'
+        });
+
+      if (profileError) throw profileError;
+
+      // Sauvegarder les réponses du questionnaire
+      const { error: questionnaireError } = await supabase
+        .from("questionnaire_responses")
+        .insert([{
+          user_id: user.id,
+          ...responses
+        }]);
+
+      if (questionnaireError) throw questionnaireError;
+
+      // Sauvegarder les recommandations de Claude
+      const { error: aiError } = await supabase
+        .from("ai_conversations")
+        .insert([{
+          user_id: user.id,
+          content: JSON.stringify(responses),
+          response: recommendations.response,
+          model: 'claude-3-opus-20240229',
+          metadata: {
+            type: 'initial_questionnaire',
+            recommendations: recommendations.metadata
+          }
+        }]);
+
+      if (aiError) throw aiError;
+
+      toast({
+        title: "Succès",
+        description: "Profil créé avec succès ! Redirection vers l'accueil...",
+      });
+
+      navigate("/", { replace: true });
+    } catch (error: any) {
+      console.error('Error in submission process:', error);
+      toast({
+        title: "Erreur",
+        description: error.message || "Une erreur est survenue lors de l'enregistrement",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="max-w-lg mx-auto">
@@ -123,10 +197,21 @@ export const InitialQuestionnaire = () => {
               Étape {step} sur 7
             </div>
             <Button
-              onClick={handleNext}
-              disabled={!isStepValid()}
+              onClick={step === 7 ? handleSubmitQuestionnaire : handleNext}
+              disabled={!isStepValid() || (step === 7 && isGeneratingRecommendations)}
             >
-              {step === 7 ? "Terminer" : "Suivant"}
+              {step === 7 ? (
+                isGeneratingRecommendations ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Génération des recommandations...
+                  </>
+                ) : (
+                  "Terminer"
+                )
+              ) : (
+                "Suivant"
+              )}
             </Button>
           </div>
         </CardContent>
