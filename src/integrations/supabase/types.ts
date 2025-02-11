@@ -2382,6 +2382,69 @@ export type Database = {
           },
         ]
       }
+      user_progression: {
+        Row: {
+          achievements_count: number | null
+          created_at: string | null
+          current_level: number | null
+          current_streak: Json | null
+          experience_points: number | null
+          id: string
+          level_history: Json | null
+          next_level_threshold: number | null
+          nutrition_multiplier: number | null
+          nutrition_points: number | null
+          sleep_multiplier: number | null
+          sleep_points: number | null
+          streak_points: number | null
+          total_points: number | null
+          updated_at: string | null
+          user_id: string
+          workout_multiplier: number | null
+          workout_points: number | null
+        }
+        Insert: {
+          achievements_count?: number | null
+          created_at?: string | null
+          current_level?: number | null
+          current_streak?: Json | null
+          experience_points?: number | null
+          id?: string
+          level_history?: Json | null
+          next_level_threshold?: number | null
+          nutrition_multiplier?: number | null
+          nutrition_points?: number | null
+          sleep_multiplier?: number | null
+          sleep_points?: number | null
+          streak_points?: number | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id: string
+          workout_multiplier?: number | null
+          workout_points?: number | null
+        }
+        Update: {
+          achievements_count?: number | null
+          created_at?: string | null
+          current_level?: number | null
+          current_streak?: Json | null
+          experience_points?: number | null
+          id?: string
+          level_history?: Json | null
+          next_level_threshold?: number | null
+          nutrition_multiplier?: number | null
+          nutrition_points?: number | null
+          sleep_multiplier?: number | null
+          sleep_points?: number | null
+          streak_points?: number | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id?: string
+          workout_multiplier?: number | null
+          workout_points?: number | null
+        }
+        Relationships: []
+      }
       user_streaks: {
         Row: {
           created_at: string
