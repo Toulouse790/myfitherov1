@@ -19,7 +19,14 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
     '/signin',
     '/signup',
     '/auth',
-    '/profile'
+    '/profile',
+    '/profile/settings',
+    '/profile/preferences',
+    '/subscription',
+    '/auth/reset-password',
+    '/auth/verify',
+    '/auth/callback',
+    '/auth/confirm'
   ];
 
   useEffect(() => {
@@ -30,8 +37,13 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
         return;
       }
 
-      // Si la route actuelle est autorisée, on ne vérifie pas le questionnaire
-      if (allowedRoutes.includes(location.pathname)) {
+      // Si la route actuelle est autorisée ou si elle commence par une des routes autorisées
+      const isAllowedRoute = allowedRoutes.some(route => 
+        location.pathname === route || location.pathname.startsWith(route + '/')
+      );
+
+      if (isAllowedRoute) {
+        console.log("Route autorisée:", location.pathname);
         setLoading(false);
         return;
       }
@@ -58,7 +70,7 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
         console.log("Questionnaire status:", hasCompletedQuestionnaire);
         setHasQuestionnaire(hasCompletedQuestionnaire);
         
-        if (!hasCompletedQuestionnaire && !allowedRoutes.includes(location.pathname)) {
+        if (!hasCompletedQuestionnaire && !isAllowedRoute) {
           console.log("Redirecting to questionnaire");
           toast({
             title: "Questionnaire requis",
@@ -88,7 +100,11 @@ export const RequireQuestionnaire = ({ children }: { children: React.ReactNode }
   }
 
   // Si la route est autorisée ou si l'utilisateur a complété le questionnaire
-  if (allowedRoutes.includes(location.pathname) || hasQuestionnaire) {
+  const isAllowedRoute = allowedRoutes.some(route => 
+    location.pathname === route || location.pathname.startsWith(route + '/')
+  );
+  
+  if (isAllowedRoute || hasQuestionnaire) {
     return <>{children}</>;
   }
 
