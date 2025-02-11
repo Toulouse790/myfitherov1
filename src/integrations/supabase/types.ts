@@ -2186,23 +2186,41 @@ export type Database = {
       }
       sports: {
         Row: {
+          category: Database["public"]["Enums"]["sport_category"] | null
           created_at: string | null
+          description: string | null
+          equipment: Json | null
           id: string
           name: string
+          physical_demands: Json | null
+          skill_requirements: Json | null
+          sub_category: string | null
           type: string
           updated_at: string | null
         }
         Insert: {
+          category?: Database["public"]["Enums"]["sport_category"] | null
           created_at?: string | null
+          description?: string | null
+          equipment?: Json | null
           id?: string
           name: string
+          physical_demands?: Json | null
+          skill_requirements?: Json | null
+          sub_category?: string | null
           type: string
           updated_at?: string | null
         }
         Update: {
+          category?: Database["public"]["Enums"]["sport_category"] | null
           created_at?: string | null
+          description?: string | null
+          equipment?: Json | null
           id?: string
           name?: string
+          physical_demands?: Json | null
+          skill_requirements?: Json | null
+          sub_category?: string | null
           type?: string
           updated_at?: string | null
         }
@@ -3390,7 +3408,15 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      sport_category:
+        | "team_sports"
+        | "individual_sports"
+        | "racket_sports"
+        | "motor_sports"
+        | "outdoor_extreme"
+        | "equestrian"
+        | "combat_sports"
+        | "paralympic"
     }
     CompositeTypes: {
       tablefunc_crosstab_2: {
