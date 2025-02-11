@@ -1,6 +1,5 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { calculateConfidenceScore } from "@/utils/ai-utils";
 
 export interface ClaudeResponse {
   response: string;
@@ -24,19 +23,36 @@ export class ClaudeService {
   private static generatePromptContext(historicalData: any): string {
     if (!historicalData) return '';
 
-    return `
-Contexte utilisateur :
-- Derniers entraînements : ${historicalData.recentWorkouts || 'Aucun'}
-- Habitudes alimentaires : ${historicalData.nutritionHabits || 'Non renseignées'}
-- Qualité du sommeil : ${historicalData.sleepQuality || 'Non renseignée'}
-- Progression : ${historicalData.progression || 'Non disponible'}
-`;
+    const workoutCount = historicalData.workouts?.length || 0;
+    const hasNutritionTracking = historicalData.nutrition?.length > 0;
+    const hasSleepTracking = historicalData.sleep?.length > 0;
+
+    let context = '\nContexte utilisateur :\n';
+    
+    if (workoutCount > 0) {
+      context += `- ${workoutCount} entraînements récents enregistrés\n`;
+    }
+
+    if (hasNutritionTracking) {
+      context += '- Suivi nutritionnel actif\n';
+    }
+
+    if (hasSleepTracking) {
+      context += '- Suivi du sommeil actif\n';
+    }
+
+    if (historicalData.previousRecommendations?.length > 0) {
+      const lastRecommendation = historicalData.previousRecommendations[0];
+      context += `- Dernière recommandation (${new Date(lastRecommendation.created_at).toLocaleDateString()}): ${lastRecommendation.recommendation_type}\n`;
+    }
+
+    return context;
   }
 
   private static generateQuestionnairePrompt(data: QuestionnaireData, historicalData?: any): string {
     const contextInfo = this.generatePromptContext(historicalData);
 
-    return `En tant qu'expert en fitness et nutrition, analyse les informations suivantes et fournit des recommandations personnalisées :
+    return `En tant qu'expert en fitness et nutrition, analyse les informations suivantes et fournit des recommandations personnalisées détaillées :
     
 Profil :
 - Genre : ${data.gender}
@@ -52,7 +68,7 @@ Profil :
 
 ${contextInfo}
 
-Fournis des recommandations détaillées pour :
+Fournis des recommandations détaillées et structurées pour :
 1. Plan d'entraînement adapté
 2. Conseils nutritionnels personnalisés
 3. Objectifs réalistes à court et moyen terme
@@ -62,50 +78,17 @@ Les recommandations doivent être :
 - Spécifiques et actionnables
 - Adaptées au niveau et à l'équipement
 - Progressives et mesurables
-- Sûres et durables`;
+- Sûres et durables
+- Basées sur les données historiques si disponibles`;
   }
 
-  private static async getUserHistoricalData(userId: string) {
-    try {
-      const { data: workouts } = await supabase
-        .from('workout_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      const { data: nutrition } = await supabase
-        .from('food_journal_entries')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(7);
-
-      const { data: sleep } = await supabase
-        .from('sleep_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(7);
-
-      return {
-        recentWorkouts: workouts?.length || 0,
-        nutritionHabits: nutrition?.length ? 'Suivi régulier' : 'Pas de suivi',
-        sleepQuality: sleep?.length ? 'Suivi régulier' : 'Pas de suivi',
-        progression: workouts?.length ? 'En progression' : 'Début du suivi'
-      };
-    } catch (error) {
-      console.error('Error fetching historical data:', error);
-      return null;
-    }
-  }
-
-  static async getPersonalizedRecommendations(questionnaireData: QuestionnaireData): Promise<ClaudeResponse> {
+  static async getPersonalizedRecommendations(
+    questionnaireData: QuestionnaireData,
+    historicalData?: any
+  ): Promise<ClaudeResponse> {
     try {
       console.log("Generating recommendations for:", questionnaireData);
-      
-      const { data: { user } } = await supabase.auth.getUser();
-      const historicalData = user ? await this.getUserHistoricalData(user.id) : null;
+      console.log("Historical data:", historicalData);
       
       const prompt = this.generateQuestionnairePrompt(questionnaireData, historicalData);
       
@@ -118,29 +101,8 @@ Les recommandations doivent être :
         throw error;
       }
 
-      const confidenceScore = calculateConfidenceScore(historicalData);
-
-      // Sauvegarder la recommandation
-      if (user) {
-        const { error: saveError } = await supabase
-          .from('ai_recommendations')
-          .insert({
-            user_id: user.id,
-            context: 'fitness',
-            recommendation_text: data.response,
-            confidence_score: confidenceScore,
-            input_data: questionnaireData,
-            recommendation_type: 'initial_assessment',
-            metadata: {
-              historical_data: historicalData,
-              model_version: 'claude-3-opus-20240229'
-            }
-          });
-
-        if (saveError) {
-          console.error('Error saving recommendation:', saveError);
-        }
-      }
+      // Calcul du score de confiance
+      const confidenceScore = this.calculateConfidenceScore(historicalData, questionnaireData);
 
       return {
         response: data.response,
@@ -154,5 +116,29 @@ Les recommandations doivent être :
       console.error('Error in Claude service:', error);
       throw error;
     }
+  }
+
+  private static calculateConfidenceScore(historicalData: any, questionnaireData: QuestionnaireData): number {
+    let score = 70; // Score de base
+
+    // Ajustement basé sur la complétude du questionnaire
+    const requiredFields = [
+      'gender', 'age', 'weight', 'height', 'objective',
+      'training_frequency', 'experience_level', 'workout_duration'
+    ];
+    const completionRate = requiredFields.filter(field => 
+      questionnaireData[field as keyof QuestionnaireData]
+    ).length / requiredFields.length;
+    score += completionRate * 10;
+
+    // Ajustement basé sur les données historiques
+    if (historicalData) {
+      if (historicalData.workouts?.length > 0) score += 5;
+      if (historicalData.nutrition?.length > 0) score += 5;
+      if (historicalData.sleep?.length > 0) score += 5;
+    }
+
+    // Limite le score à 100
+    return Math.min(Math.round(score), 100);
   }
 }
