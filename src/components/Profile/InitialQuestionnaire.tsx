@@ -61,12 +61,12 @@ export const InitialQuestionnaire = () => {
       case 2:
         return (
           <PersonalInfoStep
-            age={responses.age}
-            weight={responses.weight}
-            height={responses.height}
-            onAgeChange={(value) => handleResponseChange("age", value)}
-            onWeightChange={(value) => handleResponseChange("weight", value)}
-            onHeightChange={(value) => handleResponseChange("height", value)}
+            age={responses.age?.toString() || ""}
+            weight={responses.weight?.toString() || ""}
+            height={responses.height?.toString() || ""}
+            onAgeChange={(value) => handleResponseChange("age", Number(value))}
+            onWeightChange={(value) => handleResponseChange("weight", Number(value))}
+            onHeightChange={(value) => handleResponseChange("height", Number(value))}
           />
         );
       case 3:
@@ -79,10 +79,10 @@ export const InitialQuestionnaire = () => {
       case 4:
         return (
           <TrainingFrequencyStep
-            workoutsPerWeek={responses.training_frequency}
-            onWorkoutsPerWeekChange={(value) => handleResponseChange("training_frequency", value)}
-            workoutDuration={responses.workout_duration}
-            onWorkoutDurationChange={(value) => handleResponseChange("workout_duration", value)}
+            workoutsPerWeek={responses.training_frequency?.toString() || ""}
+            onWorkoutsPerWeekChange={(value) => handleResponseChange("training_frequency", Number(value))}
+            workoutDuration={responses.workout_duration?.toString() || ""}
+            onWorkoutDurationChange={(value) => handleResponseChange("workout_duration", Number(value))}
           />
         );
       case 5:
@@ -111,74 +111,6 @@ export const InitialQuestionnaire = () => {
     }
   };
 
-  const handleSubmitQuestionnaire = async () => {
-    if (!recommendations) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de générer les recommandations personnalisées. Veuillez réessayer.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      // Mettre à jour le profil
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: user.id,
-          gender: responses.gender,
-          height_cm: Number(responses.height),
-          weight_kg: Number(responses.weight),
-          main_objective: responses.objective
-        }, {
-          onConflict: 'id'
-        });
-
-      if (profileError) throw profileError;
-
-      // Sauvegarder les réponses du questionnaire
-      const { error: questionnaireError } = await supabase
-        .from("questionnaire_responses")
-        .insert([{
-          user_id: user.id,
-          ...responses
-        }]);
-
-      if (questionnaireError) throw questionnaireError;
-
-      // Sauvegarder les recommandations de Claude
-      const { error: aiError } = await supabase
-        .from("ai_conversations")
-        .insert([{
-          user_id: user.id,
-          content: JSON.stringify(responses),
-          response: recommendations.response,
-          model: 'claude-3-opus-20240229',
-          metadata: {
-            type: 'initial_questionnaire',
-            recommendations: recommendations.metadata
-          }
-        }]);
-
-      if (aiError) throw aiError;
-
-      toast({
-        title: "Succès",
-        description: "Profil créé avec succès ! Redirection vers l'accueil...",
-      });
-
-      navigate("/", { replace: true });
-    } catch (error: any) {
-      console.error('Error in submission process:', error);
-      toast({
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'enregistrement",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="max-w-lg mx-auto">
@@ -197,7 +129,7 @@ export const InitialQuestionnaire = () => {
               Étape {step} sur 7
             </div>
             <Button
-              onClick={step === 7 ? handleSubmitQuestionnaire : handleNext}
+              onClick={step === 7 ? handleNext : handleNext}
               disabled={!isStepValid() || (step === 7 && isGeneratingRecommendations)}
             >
               {step === 7 ? (
