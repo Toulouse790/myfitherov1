@@ -1,8 +1,17 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 
 const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
+const supabaseUrl = Deno.env.get('SUPABASE_URL');
+const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+if (!supabaseUrl || !supabaseServiceRoleKey) {
+  throw new Error('Required environment variables are not set.');
+}
+
+const supabaseClient = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,6 +25,8 @@ serve(async (req) => {
 
   try {
     const { content } = await req.json();
+
+    console.log('Sending request to Anthropic API with content:', content);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -37,6 +48,7 @@ serve(async (req) => {
     });
 
     const data = await response.json();
+    console.log('Received response from Anthropic:', data);
     
     // Store the conversation in the database
     const { data: insertData, error: insertError } = await supabaseClient
