@@ -2207,6 +2207,7 @@ export type Database = {
       }
       unified_exercises: {
         Row: {
+          biomechanics: Json | null
           created_at: string
           difficulty: string[]
           est_publié: boolean | null
@@ -2220,6 +2221,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          biomechanics?: Json | null
           created_at?: string
           difficulty?: string[]
           est_publié?: boolean | null
@@ -2233,6 +2235,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          biomechanics?: Json | null
           created_at?: string
           difficulty?: string[]
           est_publié?: boolean | null
