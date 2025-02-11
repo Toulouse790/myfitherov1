@@ -149,6 +149,36 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_conversations: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          model: string | null
+          response: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          model?: string | null
+          response: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          model?: string | null
+          response?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_training_data: {
         Row: {
           action_type: string
