@@ -179,6 +179,54 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_recommendations: {
+        Row: {
+          confidence_score: number | null
+          context: string
+          created_at: string
+          feedback: boolean | null
+          id: string
+          input_data: Json | null
+          metadata: Json | null
+          recommendation_text: string
+          recommendation_type: string
+          response_time_ms: number | null
+          updated_at: string
+          used_in_session: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          context: string
+          created_at?: string
+          feedback?: boolean | null
+          id?: string
+          input_data?: Json | null
+          metadata?: Json | null
+          recommendation_text: string
+          recommendation_type: string
+          response_time_ms?: number | null
+          updated_at?: string
+          used_in_session?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          confidence_score?: number | null
+          context?: string
+          created_at?: string
+          feedback?: boolean | null
+          id?: string
+          input_data?: Json | null
+          metadata?: Json | null
+          recommendation_text?: string
+          recommendation_type?: string
+          response_time_ms?: number | null
+          updated_at?: string
+          used_in_session?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_training_data: {
         Row: {
           action_type: string
