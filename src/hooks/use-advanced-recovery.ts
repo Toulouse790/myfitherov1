@@ -53,7 +53,7 @@ export const useAdvancedRecovery = (sessionId?: string) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['recovery-metrics']);
+      queryClient.invalidateQueries({ queryKey: ['recovery-metrics'] });
       toast({
         title: "Métriques mises à jour",
         description: "Les données de récupération ont été enregistrées",

@@ -43,11 +43,11 @@ export const TrainingPeriodization = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-sm text-muted-foreground">Phase</span>
-                  <p className="font-medium capitalize">{currentCycle.phase}</p>
+                  <p className="font-medium capitalize">{String(currentCycle.phase)}</p>
                 </div>
                 <div>
                   <span className="text-sm text-muted-foreground">Type</span>
-                  <p className="font-medium capitalize">{currentCycle.cycle_type}</p>
+                  <p className="font-medium capitalize">{String(currentCycle.cycle_type)}</p>
                 </div>
               </div>
 
@@ -57,7 +57,7 @@ export const TrainingPeriodization = () => {
                   {Object.entries(currentCycle.objectives).map(([key, value]) => (
                     <div key={key} className="flex justify-between">
                       <span className="capitalize">{key}</span>
-                      <span className="font-medium">{value}</span>
+                      <span className="font-medium">{String(value)}</span>
                     </div>
                   ))}
                 </div>

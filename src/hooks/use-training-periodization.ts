@@ -55,7 +55,7 @@ export const useTrainingPeriodization = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['training-periodization']);
+      queryClient.invalidateQueries({ queryKey: ['training-periodization'] });
       toast({
         title: "Cycle créé",
         description: "Le nouveau cycle d'entraînement a été créé avec succès",

@@ -42,7 +42,7 @@ export const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ sportI
             <div className="flex justify-between mb-2">
               <span className="text-sm font-medium">Niveau de confiance</span>
               <span className="text-sm text-muted-foreground">
-                {predictions.confidence_score}%
+                {predictions.confidence_score.toString()}%
               </span>
             </div>
             <Progress value={predictions.confidence_score} />
@@ -52,7 +52,7 @@ export const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ sportI
             {Object.entries(predictions.prediction_data).map(([metric, value]) => (
               <div key={metric} className="flex justify-between items-center">
                 <span className="text-sm capitalize">{metric.replace('_', ' ')}</span>
-                <span className="font-medium">{value}</span>
+                <span className="font-medium">{String(value)}</span>
               </div>
             ))}
           </div>
