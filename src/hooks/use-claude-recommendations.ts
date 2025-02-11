@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { ClaudeService, ClaudeResponse } from "@/services/claude-service";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useClaudeRecommendations = (questionnaireData: any) => {
   const { toast } = useToast();
@@ -10,7 +11,14 @@ export const useClaudeRecommendations = (questionnaireData: any) => {
     queryKey: ['claude-recommendations', questionnaireData],
     queryFn: async (): Promise<ClaudeResponse> => {
       try {
-        return await ClaudeService.getPersonalizedRecommendations(questionnaireData);
+        const recommendation = await ClaudeService.getPersonalizedRecommendations(questionnaireData);
+        
+        toast({
+          title: "Score de confiance",
+          description: `Confiance de la recommandation : ${recommendation.metadata?.confidence_score}%`,
+        });
+
+        return recommendation;
       } catch (error) {
         toast({
           title: "Erreur",
