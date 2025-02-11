@@ -31,19 +31,31 @@ export class ClaudeService {
     
     if (workoutCount > 0) {
       context += `- ${workoutCount} entraînements récents enregistrés\n`;
+      const recentWorkouts = historicalData.workouts
+        .slice(0, 3)
+        .map((w: any) => `  • ${w.workout_type} (${w.perceived_difficulty || 'difficulté non spécifiée'})\n`)
+        .join('');
+      context += `- Derniers entraînements:\n${recentWorkouts}`;
     }
 
     if (hasNutritionTracking) {
-      context += '- Suivi nutritionnel actif\n';
+      const avgCalories = historicalData.nutrition
+        .reduce((sum: number, entry: any) => sum + entry.calories, 0) / historicalData.nutrition.length;
+      context += `- Suivi nutritionnel actif (moyenne: ${Math.round(avgCalories)} calories/jour)\n`;
     }
 
     if (hasSleepTracking) {
-      context += '- Suivi du sommeil actif\n';
+      const avgSleepScore = historicalData.sleep
+        .reduce((sum: number, entry: any) => sum + (entry.sleep_score || 0), 0) / historicalData.sleep.length;
+      context += `- Suivi du sommeil actif (score moyen: ${Math.round(avgSleepScore)}/100)\n`;
     }
 
     if (historicalData.previousRecommendations?.length > 0) {
       const lastRecommendation = historicalData.previousRecommendations[0];
       context += `- Dernière recommandation (${new Date(lastRecommendation.created_at).toLocaleDateString()}): ${lastRecommendation.recommendation_type}\n`;
+      if (lastRecommendation.user_feedback?.wasHelpful !== undefined) {
+        context += `  • Feedback: ${lastRecommendation.user_feedback.wasHelpful ? 'Positif' : 'Négatif'}\n`;
+      }
     }
 
     return context;
@@ -136,6 +148,16 @@ Les recommandations doivent être :
       if (historicalData.workouts?.length > 0) score += 5;
       if (historicalData.nutrition?.length > 0) score += 5;
       if (historicalData.sleep?.length > 0) score += 5;
+      
+      // Bonus pour l'historique des recommandations
+      if (historicalData.previousRecommendations?.length > 0) {
+        const successfulRecommendations = historicalData.previousRecommendations
+          .filter((rec: any) => rec.user_feedback?.wasHelpful)
+          .length;
+        if (successfulRecommendations > 0) {
+          score += Math.min(successfulRecommendations * 2, 5);
+        }
+      }
     }
 
     // Limite le score à 100
