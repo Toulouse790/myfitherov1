@@ -18,11 +18,16 @@ async function genererUsernameUnique(username: string): Promise<string> {
 }
 
 async function usernameExiste(username: string): Promise<boolean> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('profiles')
     .select('id')
     .eq('username', username)
     .maybeSingle();
+
+  if (error) {
+    console.error('Erreur lors de la vérification du username:', error);
+    throw error;
+  }
 
   return !!data;
 }
@@ -37,7 +42,25 @@ export const useSignUp = () => {
       setIsLoading(true);
       setError(null);
 
-      // 1. Vérifier et générer un username unique
+      console.log('Début de l\'inscription pour:', { email, username });
+
+      // 1. Vérifier si l'email existe déjà
+      const { data: existingUser } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (existingUser) {
+        toast({
+          title: "Erreur",
+          description: "Un compte existe déjà avec cet email",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // 2. Générer un username unique
       const usernameUnique = await genererUsernameUnique(username);
       if (usernameUnique !== username) {
         toast({
@@ -46,7 +69,9 @@ export const useSignUp = () => {
         });
       }
 
-      // 2. Créer l'utilisateur avec les métadonnées
+      console.log('Username unique généré:', usernameUnique);
+
+      // 3. Créer l'utilisateur avec les métadonnées
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -58,6 +83,7 @@ export const useSignUp = () => {
       });
 
       if (signUpError) {
+        console.error('Erreur lors de l\'inscription:', signUpError);
         if (signUpError.message.includes("User already registered")) {
           toast({
             title: "Erreur",
@@ -69,29 +95,20 @@ export const useSignUp = () => {
         throw signUpError;
       }
 
-      // 3. Vérifier que le profil a bien été créé
-      if (signUpData.user) {
-        const { data: profileCheck, error: profileError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('id', signUpData.user.id)
-          .maybeSingle();
-
-        if (profileError) {
-          console.error("Erreur lors de la vérification du profil:", profileError);
-          // On ne lève pas l'erreur ici car le trigger devrait gérer la création
-        }
-
-        // 4. Création réussie
-        toast({
-          title: "Succès",
-          description: "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
-        });
-
-        return true;
+      // 4. Vérifier que l'inscription a réussi
+      if (!signUpData.user) {
+        throw new Error("L'inscription a échoué");
       }
 
-      return false;
+      console.log('Inscription réussie:', signUpData);
+
+      // 5. Succès
+      toast({
+        title: "Succès",
+        description: "Compte créé avec succès !",
+      });
+
+      return true;
 
     } catch (err) {
       console.error("Erreur d'inscription:", err);

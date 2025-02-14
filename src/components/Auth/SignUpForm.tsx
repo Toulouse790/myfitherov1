@@ -1,8 +1,10 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 interface SignUpFormProps {
   onSubmit: (email: string, password: string, pseudo: string) => Promise<void>;
@@ -35,6 +37,8 @@ export const SignUpForm = ({ onSubmit, loading }: SignUpFormProps) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                placeholder="votre@email.com"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -45,6 +49,8 @@ export const SignUpForm = ({ onSubmit, loading }: SignUpFormProps) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                placeholder="Minimum 6 caractères"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -55,11 +61,19 @@ export const SignUpForm = ({ onSubmit, loading }: SignUpFormProps) => {
                 value={pseudo}
                 onChange={(e) => setPseudo(e.target.value)}
                 required
+                placeholder="Votre pseudo"
+                disabled={loading}
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Inscription en cours..." : "S'inscrire"}
             </Button>
+            <div className="text-center text-sm text-muted-foreground mt-4">
+              Déjà inscrit ?{" "}
+              <Link to="/signin" className="text-primary hover:underline">
+                Se connecter
+              </Link>
+            </div>
           </form>
         </CardContent>
       </Card>

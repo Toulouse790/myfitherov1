@@ -1,3 +1,4 @@
+
 import { AuthError } from "@supabase/supabase-js";
 
 export const handleSignupError = (error: AuthError): string => {
@@ -19,7 +20,6 @@ export const handleSignupError = (error: AuthError): string => {
     return "Un compte existe déjà avec cet email. Veuillez vous connecter.";
   }
 
-  // Handle specific error codes
   switch (error.status) {
     case 409:
       return "Ce pseudo ou cet email est déjà utilisé. Veuillez en choisir un autre.";
