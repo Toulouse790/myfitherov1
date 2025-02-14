@@ -4,14 +4,14 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { useSignUp } from '../use-signup';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthError } from "@supabase/supabase-js";
-import { createMockUser, createMockSupabaseQuery } from './signup-test-utils';
+import { createMockUser, createMockSupabaseQuery, AuthMethodMock } from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: jest.fn(),
     auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn()
+      signUp: jest.fn() as AuthMethodMock,
+      signInWithPassword: jest.fn() as AuthMethodMock
     }
   }
 }));
@@ -29,11 +29,11 @@ describe('Gestion des Erreurs', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
-    (supabase.auth.signUp as jest.Mock).mockResolvedValue({
+    (supabase.auth.signUp as AuthMethodMock).mockResolvedValue({
       data: { user: mockUser, session: null },
       error: null
     });
-    (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValue({
+    (supabase.auth.signInWithPassword as AuthMethodMock).mockResolvedValue({
       data: { user: mockUser, session: null },
       error: null
     });
@@ -57,7 +57,7 @@ describe('Gestion des Erreurs', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
-    (supabase.auth.signUp as jest.Mock).mockRejectedValue(
+    (supabase.auth.signUp as AuthMethodMock).mockRejectedValue(
       new AuthError('Invalid password')
     );
 

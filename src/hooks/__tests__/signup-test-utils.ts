@@ -1,11 +1,18 @@
 
 import { jest } from '@jest/globals';
+import { AuthError, AuthResponse } from '@supabase/supabase-js';
 
 // Types pour les mocks
 export type SupabaseQueryResult<T> = Promise<{
   data: T | null;
   error: null | Error;
 }>;
+
+// Type générique pour les réponses Supabase
+export type MockSupabaseResponse<T = any> = {
+  data: T | null;
+  error: AuthError | null;
+};
 
 export type MockUser = {
   id: string;
@@ -20,6 +27,8 @@ export type MockUser = {
   role: string;
   updated_at: string;
 };
+
+export type AuthMethodMock = jest.Mock<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>>;
 
 // Mock utilisateur de base
 export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => ({
@@ -44,19 +53,23 @@ export const createMockSupabaseQuery = (options: {
   maybeSingleError?: Error | null;
   singleError?: Error | null;
 }) => {
+  const maybeSingleMock = jest.fn().mockResolvedValue({
+    data: options.maybeSingleData,
+    error: options.maybeSingleError
+  });
+
+  const singleMock = options.singleError
+    ? jest.fn().mockRejectedValue(options.singleError)
+    : jest.fn().mockResolvedValue({
+        data: options.singleData,
+        error: null
+      });
+
   return jest.fn().mockReturnValue({
     select: jest.fn().mockReturnValue({
       eq: jest.fn().mockReturnValue({
-        maybeSingle: jest.fn().mockResolvedValue({ 
-          data: options.maybeSingleData, 
-          error: options.maybeSingleError 
-        }),
-        single: options.singleError 
-          ? jest.fn().mockRejectedValue(options.singleError)
-          : jest.fn().mockResolvedValue({ 
-              data: options.singleData, 
-              error: null 
-            })
+        maybeSingle: maybeSingleMock,
+        single: singleMock
       })
     })
   });
