@@ -3,10 +3,11 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { useSignUp } from '../use-signup';
 import { supabase } from '@/integrations/supabase/client';
-import { createMockUser, createMockSupabaseQuery, createMockAuthMethod } from './signup-test-utils';
-
-const mockSignUp = createMockAuthMethod();
-const mockSignInWithPassword = createMockAuthMethod();
+import { 
+  createMockUser, 
+  createMockSupabaseQuery,
+  mockSuccessfulSignup 
+} from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -31,10 +32,9 @@ describe('Inscription Standard - Flux Nominal', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
-    (supabase.auth.signUp as jest.Mock).mockResolvedValue({
-      data: { user: mockUser, session: null },
-      error: null
-    });
+    (supabase.auth.signUp as jest.Mock).mockImplementation(() => 
+      Promise.resolve(mockSuccessfulSignup(mockUser))
+    );
 
     const { result } = renderHook(() => useSignUp());
 
