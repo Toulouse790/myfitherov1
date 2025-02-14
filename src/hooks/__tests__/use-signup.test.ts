@@ -12,21 +12,36 @@ type SupabaseQueryResult<T> = Promise<{
   error: null | Error;
 }>;
 
+// Types pour les mocks de Supabase
+type MockUser = {
+  id: string;
+  app_metadata: Record<string, any>;
+  user_metadata: Record<string, any>;
+  aud: string;
+  created_at: string;
+  email: string;
+  phone: string;
+  confirmed_at: string;
+  last_sign_in_at: string;
+  role: string;
+  updated_at: string;
+};
+
 // Mock des dépendances
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          maybeSingle: jest.fn<Promise<any>, []>>(),
-          single: jest.fn<Promise<any>, []>>()
-        })),
-        single: jest.fn<Promise<any>, []>>()
-      }))
-    })),
+    from: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          maybeSingle: jest.fn(),
+          single: jest.fn()
+        }),
+        single: jest.fn()
+      })
+    }),
     auth: {
-      signUp: jest.fn<Promise<any>, [any]>>(),
-      signInWithPassword: jest.fn<Promise<any>, [any]>>()
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn()
     }
   }
 }));
@@ -45,7 +60,7 @@ describe('useSignUp Hook', () => {
   describe('Inscription Standard - Flux Nominal', () => {
     it('devrait créer un compte et un profil avec succès', async () => {
       // Configuration des mocks pour un succès
-      const mockUser = { 
+      const mockUser: MockUser = { 
         id: 'test-user-id',
         app_metadata: {},
         user_metadata: {},
@@ -142,7 +157,7 @@ describe('useSignUp Hook', () => {
 
   describe('Gestion des Erreurs', () => {
     it('devrait gérer une erreur de création de profil', async () => {
-      const mockUser = { 
+      const mockUser: MockUser = { 
         id: 'test-user-id',
         app_metadata: {},
         user_metadata: {},
