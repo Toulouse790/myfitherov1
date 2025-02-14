@@ -2,9 +2,9 @@
 interface UserData {
   objective?: string;
   experience_level?: string;
-  training_frequency?: number;
+  training_frequency?: string | number; // Accepte les deux types
   available_equipment?: string[];
-  workout_duration?: number;
+  workout_duration?: string | number; // Accepte les deux types
   diet_type?: string;
 }
 

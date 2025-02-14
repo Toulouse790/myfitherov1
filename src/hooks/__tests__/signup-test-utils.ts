@@ -28,8 +28,8 @@ export type MockSupabaseResponse<T = unknown> = {
 };
 
 // Créateur de méthode mock Supabase générique
-export function createMockSupabaseMethod<T = unknown>() {
-  return jest.fn<Promise<MockSupabaseResponse<T>>, unknown[]>(() => 
+export function createMockSupabaseMethod<T>() {
+  return jest.fn<() => Promise<MockSupabaseResponse<T>>>(() => 
     Promise.resolve({
       data: null,
       error: null
@@ -77,7 +77,7 @@ export const createMockSupabaseQuery = <T>(options: {
 }) => {
   const mockQuery = createMockSupabaseMethod<T>();
 
-  mockQuery.mockReturnValue({
+  return mockQuery.mockReturnValue({
     select: jest.fn().mockReturnValue({
       eq: jest.fn().mockReturnValue({
         maybeSingle: jest.fn().mockResolvedValue(
@@ -92,16 +92,16 @@ export const createMockSupabaseQuery = <T>(options: {
       })
     })
   });
-
-  return mockQuery;
 };
 
-// Créateur de mock pour les méthodes d'authentification
-export const createMockAuthMethod = () => {
-  const mockAuth = createMockSupabaseMethod<AuthMethodResponse>();
-  mockAuth.mockResolvedValue(mockSuccessfulResponse({
-    user: createMockUser(),
-    session: null
-  }));
-  return mockAuth;
-};
+// Mock pour signup réussi
+export const mockSuccessfulSignup = (user: MockUser) => ({
+  data: { user, session: null },
+  error: null
+});
+
+// Mock pour signup échoué
+export const mockSignupError = (message: string) => ({
+  data: { user: null, session: null },
+  error: new AuthError(message)
+});
