@@ -51,7 +51,7 @@ export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => (
 });
 
 // Type de retour pour les requêtes Supabase
-type SupabaseQueryResponse = {
+type MockSupabaseQueryResponse = {
   data: any;
   error: Error | null;
 };
@@ -66,14 +66,14 @@ export const createMockSupabaseQuery = (options: {
   const maybeSingleMock = jest.fn().mockResolvedValue({
     data: options.maybeSingleData,
     error: options.maybeSingleError ?? null
-  });
+  } as MockSupabaseQueryResponse);
 
   const singleMock = options.singleError
-    ? jest.fn().mockRejectedValue(options.singleError)
+    ? jest.fn().mockRejectedValue(options.singleError as Error)
     : jest.fn().mockResolvedValue({
         data: options.singleData,
         error: null
-      });
+      } as MockSupabaseQueryResponse);
 
   return jest.fn().mockReturnValue({
     select: jest.fn().mockReturnValue({
@@ -87,5 +87,5 @@ export const createMockSupabaseQuery = (options: {
 
 // Créateur de mock pour les méthodes d'authentification
 export const createMockAuthMethod = () => {
-  return jest.fn<Promise<MockSupabaseResponse<MockAuthMethodResponse>>, [any]>();
+  return jest.fn(() => Promise.resolve({ data: null, error: null }));
 };
