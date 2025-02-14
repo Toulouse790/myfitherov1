@@ -6,8 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { AuthError } from "@supabase/supabase-js";
 import { createMockUser, createMockSupabaseQuery, MockSupabaseResponse, MockUser, MockAuthMethodResponse } from './signup-test-utils';
 
-const mockSignUp = jest.fn<MockAuthMethodResponse, [any]>();
-const mockSignInWithPassword = jest.fn<MockAuthMethodResponse, [any]>();
+const mockSignUp = jest.fn<MockAuthMethodResponse>();
+const mockSignInWithPassword = jest.fn<MockAuthMethodResponse>();
 
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {

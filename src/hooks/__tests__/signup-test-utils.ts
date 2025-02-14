@@ -63,14 +63,14 @@ export const createMockSupabaseQuery = (options: {
   maybeSingleError?: Error | null;
   singleError?: Error | null;
 }) => {
-  const maybeSingleMock = jest.fn<Promise<SupabaseQueryResponse>, []>().mockResolvedValue({
+  const maybeSingleMock = jest.fn().mockResolvedValue({
     data: options.maybeSingleData,
     error: options.maybeSingleError ?? null
   });
 
   const singleMock = options.singleError
-    ? jest.fn<Promise<SupabaseQueryResponse>, []>().mockRejectedValue(options.singleError)
-    : jest.fn<Promise<SupabaseQueryResponse>, []>().mockResolvedValue({
+    ? jest.fn().mockRejectedValue(options.singleError)
+    : jest.fn().mockResolvedValue({
         data: options.singleData,
         error: null
       });
