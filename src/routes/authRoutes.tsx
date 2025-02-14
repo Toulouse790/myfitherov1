@@ -1,13 +1,14 @@
-import { SignIn } from "@/components/Auth/SignIn";
-import { SignUp } from "@/components/Auth/SignUp";
+
+import SignInPage from "@/pages/SignIn";
+import SignUpPage from "@/pages/SignUp";
 
 export const authRoutes = [
   {
     path: "signin",
-    element: <SignIn />,
+    element: <SignInPage />,
   },
   {
     path: "signup",
-    element: <SignUp />,
+    element: <SignUpPage />,
   }
 ];

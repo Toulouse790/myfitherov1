@@ -24,7 +24,8 @@ export const SignUp = () => {
           title: "Inscription réussie",
           description: "Vous allez être redirigé vers le questionnaire initial",
         });
-        navigate("/initial-questionnaire", { replace: true });
+        // Utilisation de navigate avec un chemin absolu
+        navigate("/initial-questionnaire");
       }
     } catch (error: any) {
       console.error('Erreur lors de l\'inscription:', error);
@@ -38,5 +39,9 @@ export const SignUp = () => {
     }
   };
 
-  return <SignUpForm onSubmit={onSubmit} loading={loading} />;
+  return (
+    <div className="container mx-auto">
+      <SignUpForm onSubmit={onSubmit} loading={loading} />
+    </div>
+  );
 };

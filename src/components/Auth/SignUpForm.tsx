@@ -39,6 +39,7 @@ export const SignUpForm = ({ onSubmit, loading }: SignUpFormProps) => {
                 required
                 placeholder="votre@email.com"
                 disabled={loading}
+                autoComplete="email"
               />
             </div>
             <div className="space-y-2">
@@ -51,6 +52,7 @@ export const SignUpForm = ({ onSubmit, loading }: SignUpFormProps) => {
                 required
                 placeholder="Minimum 6 caractères"
                 disabled={loading}
+                autoComplete="new-password"
               />
             </div>
             <div className="space-y-2">
@@ -63,6 +65,7 @@ export const SignUpForm = ({ onSubmit, loading }: SignUpFormProps) => {
                 required
                 placeholder="Votre pseudo"
                 disabled={loading}
+                autoComplete="username"
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
