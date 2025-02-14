@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { generateDefaultRecommendation } from "./recommendations-service";
 
 export interface ClaudeResponse {
   response: string;
@@ -20,78 +21,25 @@ interface QuestionnaireData {
 }
 
 export class ClaudeService {
-  private static generatePromptContext(historicalData: any): string {
-    if (!historicalData) return '';
+  private static async getHistoricalData(userId: string) {
+    try {
+      const [workouts, nutrition, sleep, previousRecommendations] = await Promise.all([
+        supabase.from('workout_sessions').select('*').eq('user_id', userId).limit(5),
+        supabase.from('food_journal_entries').select('*').eq('user_id', userId).limit(7),
+        supabase.from('sleep_sessions').select('*').eq('user_id', userId).limit(7),
+        supabase.from('ai_recommendations').select('*').eq('user_id', userId).limit(5)
+      ]);
 
-    const workoutCount = historicalData.workouts?.length || 0;
-    const hasNutritionTracking = historicalData.nutrition?.length > 0;
-    const hasSleepTracking = historicalData.sleep?.length > 0;
-
-    let context = '\nContexte utilisateur :\n';
-    
-    if (workoutCount > 0) {
-      context += `- ${workoutCount} entraînements récents enregistrés\n`;
-      const recentWorkouts = historicalData.workouts
-        .slice(0, 3)
-        .map((w: any) => `  • ${w.workout_type} (${w.perceived_difficulty || 'difficulté non spécifiée'})\n`)
-        .join('');
-      context += `- Derniers entraînements:\n${recentWorkouts}`;
+      return {
+        workouts: workouts.data || [],
+        nutrition: nutrition.data || [],
+        sleep: sleep.data || [],
+        previousRecommendations: previousRecommendations.data || []
+      };
+    } catch (error) {
+      console.error('Error fetching historical data:', error);
+      return null;
     }
-
-    if (hasNutritionTracking) {
-      const avgCalories = historicalData.nutrition
-        .reduce((sum: number, entry: any) => sum + entry.calories, 0) / historicalData.nutrition.length;
-      context += `- Suivi nutritionnel actif (moyenne: ${Math.round(avgCalories)} calories/jour)\n`;
-    }
-
-    if (hasSleepTracking) {
-      const avgSleepScore = historicalData.sleep
-        .reduce((sum: number, entry: any) => sum + (entry.sleep_score || 0), 0) / historicalData.sleep.length;
-      context += `- Suivi du sommeil actif (score moyen: ${Math.round(avgSleepScore)}/100)\n`;
-    }
-
-    if (historicalData.previousRecommendations?.length > 0) {
-      const lastRecommendation = historicalData.previousRecommendations[0];
-      context += `- Dernière recommandation (${new Date(lastRecommendation.created_at).toLocaleDateString()}): ${lastRecommendation.recommendation_type}\n`;
-      if (lastRecommendation.user_feedback?.wasHelpful !== undefined) {
-        context += `  • Feedback: ${lastRecommendation.user_feedback.wasHelpful ? 'Positif' : 'Négatif'}\n`;
-      }
-    }
-
-    return context;
-  }
-
-  private static generateQuestionnairePrompt(data: QuestionnaireData, historicalData?: any): string {
-    const contextInfo = this.generatePromptContext(historicalData);
-
-    return `En tant qu'expert en fitness et nutrition, analyse les informations suivantes et fournit des recommandations personnalisées détaillées :
-    
-Profil :
-- Genre : ${data.gender}
-- Âge : ${data.age} ans
-- Poids : ${data.weight} kg
-- Taille : ${data.height} cm
-- Objectif principal : ${data.objective}
-- Fréquence d'entraînement : ${data.training_frequency} sessions/semaine
-- Niveau d'expérience : ${data.experience_level}
-- Durée d'entraînement : ${data.workout_duration} minutes
-- Équipement disponible : ${data.available_equipment?.join(', ')}
-- Type de régime : ${data.diet_type}
-
-${contextInfo}
-
-Fournis des recommandations détaillées et structurées pour :
-1. Plan d'entraînement adapté
-2. Conseils nutritionnels personnalisés
-3. Objectifs réalistes à court et moyen terme
-4. Points d'attention particuliers
-
-Les recommandations doivent être :
-- Spécifiques et actionnables
-- Adaptées au niveau et à l'équipement
-- Progressives et mesurables
-- Sûres et durables
-- Basées sur les données historiques si disponibles`;
   }
 
   static async getPersonalizedRecommendations(
@@ -102,26 +50,17 @@ Les recommandations doivent être :
       console.log("Generating recommendations for:", questionnaireData);
       console.log("Historical data:", historicalData);
       
-      const prompt = this.generateQuestionnairePrompt(questionnaireData, historicalData);
+      const recommendations = generateDefaultRecommendation(questionnaireData);
       
-      const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
-        body: { content: prompt }
-      });
-
-      if (error) {
-        console.error('Error getting recommendations:', error);
-        throw error;
-      }
-
       // Calcul du score de confiance
       const confidenceScore = this.calculateConfidenceScore(historicalData, questionnaireData);
 
       return {
-        response: data.response,
+        response: JSON.stringify(recommendations.recommendations),
         metadata: {
           confidence_score: confidenceScore,
           historical_data: historicalData,
-          ...data.metadata
+          recommendation_type: 'default'
         }
       };
     } catch (error) {
