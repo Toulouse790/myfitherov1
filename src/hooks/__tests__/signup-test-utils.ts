@@ -56,6 +56,12 @@ type MockSupabaseQueryResponse = {
   error: Error | null;
 };
 
+// Type pour la fonction mockée
+type MockFn = () => {
+  data: any;
+  error: Error | null;
+};
+
 // Création d'un mock Supabase query
 export const createMockSupabaseQuery = (options: {
   maybeSingleData?: any;
@@ -63,17 +69,20 @@ export const createMockSupabaseQuery = (options: {
   maybeSingleError?: Error | null;
   singleError?: Error | null;
 }) => {
-  const maybeSingleMock = jest.fn().mockResolvedValue({
+  const maybeSingleResult: MockSupabaseQueryResponse = {
     data: options.maybeSingleData,
     error: options.maybeSingleError ?? null
-  } as MockSupabaseQueryResponse);
+  };
 
+  const singleResult: MockSupabaseQueryResponse = {
+    data: options.singleData,
+    error: null
+  };
+
+  const maybeSingleMock = jest.fn().mockResolvedValue(maybeSingleResult);
   const singleMock = options.singleError
-    ? jest.fn().mockRejectedValue(options.singleError as Error)
-    : jest.fn().mockResolvedValue({
-        data: options.singleData,
-        error: null
-      } as MockSupabaseQueryResponse);
+    ? jest.fn().mockRejectedValue(options.singleError)
+    : jest.fn().mockResolvedValue(singleResult);
 
   return jest.fn().mockReturnValue({
     select: jest.fn().mockReturnValue({
@@ -87,5 +96,6 @@ export const createMockSupabaseQuery = (options: {
 
 // Créateur de mock pour les méthodes d'authentification
 export const createMockAuthMethod = () => {
-  return jest.fn(() => Promise.resolve({ data: null, error: null }));
+  return jest.fn<Promise<MockSupabaseResponse<MockAuthMethodResponse>>, []>()
+    .mockImplementation(() => Promise.resolve({ data: null, error: null }));
 };
