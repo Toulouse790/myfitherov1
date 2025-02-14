@@ -730,6 +730,44 @@ export type Database = {
           },
         ]
       }
+      exercise_recommendations: {
+        Row: {
+          created_at: string
+          difficulty: string | null
+          exercises: Json | null
+          id: string
+          muscle_groups: string[] | null
+          training_plan: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          difficulty?: string | null
+          exercises?: Json | null
+          id?: string
+          muscle_groups?: string[] | null
+          training_plan?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          difficulty?: string | null
+          exercises?: Json | null
+          id?: string
+          muscle_groups?: string[] | null
+          training_plan?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_recommendations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercise_sets: {
         Row: {
           biomechanics: Json | null
@@ -1814,12 +1852,15 @@ export type Database = {
           daily_energy_expenditure: number | null
           diet_type: string | null
           experience_level: string | null
+          fitness_level: string | null
           gender: string | null
           has_afternoon_snack: boolean | null
           has_morning_snack: boolean | null
           height: string | null
           id: string
+          medical_constraints: string[] | null
           objective: string | null
+          objectives: string[] | null
           position_id: string | null
           sport_id: string | null
           training_frequency: string | null
@@ -1836,12 +1877,15 @@ export type Database = {
           daily_energy_expenditure?: number | null
           diet_type?: string | null
           experience_level?: string | null
+          fitness_level?: string | null
           gender?: string | null
           has_afternoon_snack?: boolean | null
           has_morning_snack?: boolean | null
           height?: string | null
           id?: string
+          medical_constraints?: string[] | null
           objective?: string | null
+          objectives?: string[] | null
           position_id?: string | null
           sport_id?: string | null
           training_frequency?: string | null
@@ -1858,12 +1902,15 @@ export type Database = {
           daily_energy_expenditure?: number | null
           diet_type?: string | null
           experience_level?: string | null
+          fitness_level?: string | null
           gender?: string | null
           has_afternoon_snack?: boolean | null
           has_morning_snack?: boolean | null
           height?: string | null
           id?: string
+          medical_constraints?: string[] | null
           objective?: string | null
+          objectives?: string[] | null
           position_id?: string | null
           sport_id?: string | null
           training_frequency?: string | null
