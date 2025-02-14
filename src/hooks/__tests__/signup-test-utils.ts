@@ -29,11 +29,11 @@ export type MockSupabaseResponse<T = unknown> = {
 
 // Créateur de méthode mock Supabase générique
 export function createMockSupabaseMethod<T>() {
-  return jest.fn<() => Promise<MockSupabaseResponse<T>>>(() => 
+  return jest.fn(() => 
     Promise.resolve({
       data: null,
       error: null
-    })
+    } as MockSupabaseResponse<T>)
   );
 }
 
@@ -68,32 +68,6 @@ export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => (
   ...overrides
 });
 
-// Création d'un mock Supabase query
-export const createMockSupabaseQuery = <T>(options: {
-  maybeSingleData?: T;
-  singleData?: T;
-  maybeSingleError?: Error | null;
-  singleError?: Error | null;
-}) => {
-  const mockQuery = createMockSupabaseMethod<T>();
-
-  return mockQuery.mockReturnValue({
-    select: jest.fn().mockReturnValue({
-      eq: jest.fn().mockReturnValue({
-        maybeSingle: jest.fn().mockResolvedValue(
-          mockSuccessfulResponse(options.maybeSingleData)
-        ),
-        single: jest.fn().mockImplementation(() => {
-          if (options.singleError) {
-            return Promise.reject(options.singleError);
-          }
-          return Promise.resolve(mockSuccessfulResponse(options.singleData));
-        })
-      })
-    })
-  });
-};
-
 // Mock pour signup réussi
 export const mockSuccessfulSignup = (user: MockUser) => ({
   data: { user, session: null },
@@ -105,3 +79,33 @@ export const mockSignupError = (message: string) => ({
   data: { user: null, session: null },
   error: new AuthError(message)
 });
+
+// Création d'un mock Supabase query
+export const createMockSupabaseQuery = <T>(options: {
+  maybeSingleData?: T;
+  singleData?: T;
+  maybeSingleError?: Error | null;
+  singleError?: Error | null;
+}) => {
+  const mockQuery = jest.fn().mockReturnValue({
+    data: options.maybeSingleData,
+    error: options.maybeSingleError
+  });
+
+  return {
+    select: jest.fn().mockReturnValue({
+      eq: jest.fn().mockReturnValue({
+        maybeSingle: mockQuery,
+        single: jest.fn().mockImplementation(() => {
+          if (options.singleError) {
+            return Promise.reject(options.singleError);
+          }
+          return Promise.resolve({
+            data: options.singleData,
+            error: null
+          });
+        })
+      })
+    })
+  };
+};
