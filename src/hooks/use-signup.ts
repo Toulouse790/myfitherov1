@@ -5,23 +5,23 @@ import { useToast } from "@/hooks/use-toast";
 import { AuthError } from "@supabase/supabase-js";
 import { handleSignupError } from "@/utils/auth-errors";
 
-async function genererPseudoUnique(pseudo: string): Promise<string> {
-  let pseudoOriginal = pseudo;
+async function genererUsernameUnique(username: string): Promise<string> {
+  let usernameOriginal = username;
   let compteur = 1;
 
-  while (await pseudoExiste(pseudo)) {
-    pseudo = `${pseudoOriginal}_${compteur}`;
+  while (await usernameExiste(username)) {
+    username = `${usernameOriginal}_${compteur}`;
     compteur++;
   }
 
-  return pseudo;
+  return username;
 }
 
-async function pseudoExiste(pseudo: string): Promise<boolean> {
+async function usernameExiste(username: string): Promise<boolean> {
   const { data } = await supabase
     .from('profiles')
     .select('id')
-    .eq('pseudo', pseudo)
+    .eq('username', username)
     .maybeSingle();
 
   return !!data;
@@ -32,17 +32,17 @@ export const useSignUp = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleSignUp = async (email: string, password: string, pseudo: string) => {
+  const handleSignUp = async (email: string, password: string, username: string) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // 1. Vérifier et générer un pseudo unique
-      const pseudoUnique = await genererPseudoUnique(pseudo);
-      if (pseudoUnique !== pseudo) {
+      // 1. Vérifier et générer un username unique
+      const usernameUnique = await genererUsernameUnique(username);
+      if (usernameUnique !== username) {
         toast({
           title: "Information",
-          description: `Le pseudo ${pseudo} est déjà utilisé. Nous vous proposons ${pseudoUnique}`,
+          description: `Le nom d'utilisateur ${username} est déjà utilisé. Nous vous proposons ${usernameUnique}`,
         });
       }
 
@@ -52,7 +52,7 @@ export const useSignUp = () => {
         password,
         options: {
           data: {
-            pseudo: pseudoUnique,
+            username: usernameUnique,
           },
         },
       });
