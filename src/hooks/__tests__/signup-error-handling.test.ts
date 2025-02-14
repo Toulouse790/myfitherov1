@@ -4,10 +4,10 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { useSignUp } from '../use-signup';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthError } from "@supabase/supabase-js";
-import { createMockUser, createMockSupabaseQuery, MockSupabaseResponse, MockUser, MockAuthMethodResponse } from './signup-test-utils';
+import { createMockUser, createMockSupabaseQuery, createMockAuthMethod } from './signup-test-utils';
 
-const mockSignUp = jest.fn<MockAuthMethodResponse>();
-const mockSignInWithPassword = jest.fn<MockAuthMethodResponse>();
+const mockSignUp = createMockAuthMethod();
+const mockSignInWithPassword = createMockAuthMethod();
 
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {

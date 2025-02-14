@@ -29,10 +29,10 @@ export type MockUser = {
 };
 
 // Type pour les méthodes d'authentification mockées
-export type MockAuthMethodResponse = Promise<MockSupabaseResponse<{
+export type MockAuthMethodResponse = {
   user: MockUser;
   session: null;
-}>>;
+};
 
 // Mock utilisateur de base
 export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => ({
@@ -83,4 +83,9 @@ export const createMockSupabaseQuery = (options: {
       })
     })
   });
+};
+
+// Créateur de mock pour les méthodes d'authentification
+export const createMockAuthMethod = () => {
+  return jest.fn<Promise<MockSupabaseResponse<MockAuthMethodResponse>>, [any]>();
 };
