@@ -9,8 +9,14 @@ jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: jest.fn(),
     auth: {
-      signUp: jest.fn<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>, [any]>(),
-      signInWithPassword: jest.fn<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>, [any]>()
+      signUp: jest.fn().mockImplementation(() => Promise.resolve({
+        data: null,
+        error: null
+      })),
+      signInWithPassword: jest.fn().mockImplementation(() => Promise.resolve({
+        data: null,
+        error: null
+      }))
     }
   }
 }));
@@ -28,11 +34,11 @@ describe('Inscription Standard - Flux Nominal', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
-    (supabase.auth.signUp as jest.Mock<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>>).mockResolvedValue({
+    (supabase.auth.signUp as jest.Mock).mockResolvedValue({
       data: { user: mockUser, session: null },
       error: null
     });
-    (supabase.auth.signInWithPassword as jest.Mock<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>>).mockResolvedValue({
+    (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValue({
       data: { user: mockUser, session: null },
       error: null
     });
