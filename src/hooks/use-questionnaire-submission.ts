@@ -25,22 +25,29 @@ export const useQuestionnaireSubmission = () => {
         description: "Enregistrement des réponses...",
       });
 
-      // Update profile
+      // Update profile with all the information
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
           id: user.id,
           gender: responses.gender,
-          height_cm: Number(responses.height),
-          weight_kg: Number(responses.weight),
-          main_objective: responses.objective ? mapObjectiveToProfile(responses.objective) : null
+          age: responses.age ? Number(responses.age) : null,
+          height_cm: responses.height ? Number(responses.height) : null,
+          weight_kg: responses.weight ? Number(responses.weight) : null,
+          experience_level: responses.experience_level || null,
+          training_frequency: responses.training_frequency || null,
+          workout_duration: responses.workout_duration || '60',
+          available_equipment: responses.available_equipment || [],
+          diet_type: responses.diet_type || 'omnivore',
+          main_objective: responses.objective ? mapObjectiveToProfile(responses.objective) : null,
+          objectives: responses.objectives || []
         }, {
           onConflict: 'id'
         });
 
       if (profileError) throw profileError;
 
-      // Submit questionnaire responses
+      // Store full questionnaire responses for history
       const { error: questionnaireError } = await supabase
         .from("questionnaire_responses")
         .insert([{

@@ -1789,55 +1789,76 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age: number | null
+          available_equipment: string[] | null
           avatar_url: string | null
           birth_date: string | null
           created_at: string
+          diet_type: string | null
           email: string | null
+          experience_level: string | null
           gender: string | null
           height_cm: number | null
           id: string
           level: number | null
           main_objective: string | null
           meal_notifications: boolean | null
+          objectives: string[] | null
           points: number | null
           reminder_time: number | null
+          training_frequency: string | null
           updated_at: string
           username: string | null
           weight_kg: number | null
+          workout_duration: string | null
         }
         Insert: {
+          age?: number | null
+          available_equipment?: string[] | null
           avatar_url?: string | null
           birth_date?: string | null
           created_at?: string
+          diet_type?: string | null
           email?: string | null
+          experience_level?: string | null
           gender?: string | null
           height_cm?: number | null
           id: string
           level?: number | null
           main_objective?: string | null
           meal_notifications?: boolean | null
+          objectives?: string[] | null
           points?: number | null
           reminder_time?: number | null
+          training_frequency?: string | null
           updated_at?: string
           username?: string | null
           weight_kg?: number | null
+          workout_duration?: string | null
         }
         Update: {
+          age?: number | null
+          available_equipment?: string[] | null
           avatar_url?: string | null
           birth_date?: string | null
           created_at?: string
+          diet_type?: string | null
           email?: string | null
+          experience_level?: string | null
           gender?: string | null
           height_cm?: number | null
           id?: string
           level?: number | null
           main_objective?: string | null
           meal_notifications?: boolean | null
+          objectives?: string[] | null
           points?: number | null
           reminder_time?: number | null
+          training_frequency?: string | null
           updated_at?: string
           username?: string | null
           weight_kg?: number | null
+          workout_duration?: string | null
         }
         Relationships: []
       }
