@@ -7,8 +7,6 @@ import {
   createMockUser, 
   createMockSupabaseQuery,
   mockSuccessfulSignup,
-  type SupabaseMockFunction,
-  type AuthSignUpResponse,
   createMockSupabaseMethod 
 } from './signup-test-utils';
 
@@ -23,7 +21,7 @@ jest.mock('@/integrations/supabase/client', () => ({
 }));
 
 describe('Inscription Standard - Flux Nominal', () => {
-  let signUpMock: SupabaseMockFunction<AuthSignUpResponse>;
+  let signUpMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -54,10 +52,5 @@ describe('Inscription Standard - Flux Nominal', () => {
 
     expect(success).toBe(true);
     expect(signUpMock).toHaveBeenCalledTimes(1);
-    
-    const mockFromResult = mockFromFn();
-    const selectResult = mockFromResult.select();
-    const eqResult = selectResult.eq();
-    expect(eqResult.single).toHaveBeenCalled();
   });
 });

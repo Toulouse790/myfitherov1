@@ -8,9 +8,6 @@ import {
   createMockUser, 
   createMockSupabaseQuery, 
   mockSuccessfulSignup,
-  mockSignupError,
-  type SupabaseMockFunction,
-  type AuthSignUpResponse,
   createMockSupabaseMethod 
 } from './signup-test-utils';
 
@@ -25,7 +22,7 @@ jest.mock('@/integrations/supabase/client', () => ({
 }));
 
 describe('Gestion des Erreurs', () => {
-  let signUpMock: SupabaseMockFunction<AuthSignUpResponse>;
+  let signUpMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -37,7 +34,7 @@ describe('Gestion des Erreurs', () => {
     const mockUser = createMockUser();
     const mockFrom = createMockSupabaseQuery({
       maybeSingleData: null,
-      singleError: new AuthError('Erreur de création de profil', 400, 'ProfileCreationError', '')
+      singleError: new AuthError('Erreur de création de profil')
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
@@ -62,7 +59,7 @@ describe('Gestion des Erreurs', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
-    signUpMock.mockRejectedValue(new AuthError('Invalid password', 400, 'InvalidCredentials', ''));
+    signUpMock.mockRejectedValue(new AuthError('Invalid password'));
 
     const { result } = renderHook(() => useSignUp());
 

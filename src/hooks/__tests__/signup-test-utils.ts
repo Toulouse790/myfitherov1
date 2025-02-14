@@ -2,7 +2,6 @@
 import { jest } from '@jest/globals';
 import { AuthError } from '@supabase/supabase-js';
 
-// Types de base
 export type MockUser = {
   id: string;
   email: string;
@@ -22,21 +21,21 @@ export type MockSupabaseResponse<T = unknown> = {
   error: AuthError | null;
 };
 
-// Types pour les résultats d'authentification
 export type AuthSignUpResponse = {
   user: MockUser | null;
   session: null;
 };
 
-// Type pour les fonctions mock
-export type SupabaseMockFunction<T> = jest.Mock<Promise<MockSupabaseResponse<T>>>;
+// Ajustement du type pour les fonctions mock
+export type SupabaseMockFunction = jest.Mock;
 
-// Création de méthode mock générique
-export function createMockSupabaseMethod<T>(): SupabaseMockFunction<T> {
-  return jest.fn().mockResolvedValue({ data: null, error: null } as MockSupabaseResponse<T>);
+export function createMockSupabaseMethod() {
+  return jest.fn().mockResolvedValue({ 
+    data: null, 
+    error: null 
+  });
 }
 
-// Helpers pour les réponses
 export function mockSuccessfulResponse<T>(data: T): MockSupabaseResponse<T> {
   return {
     data,
@@ -47,11 +46,10 @@ export function mockSuccessfulResponse<T>(data: T): MockSupabaseResponse<T> {
 export function mockErrorResponse(message: string): MockSupabaseResponse<null> {
   return {
     data: null,
-    error: new AuthError(message, 400, "InvalidCredentials", "")
+    error: new AuthError(message)
   };
 }
 
-// Mock utilisateur
 export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => ({
   id: 'test-user-id',
   email: 'test@example.com',
@@ -67,7 +65,6 @@ export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => (
   ...overrides
 });
 
-// Mock pour les opérations d'authentification
 export const mockSuccessfulSignup = (user: MockUser): MockSupabaseResponse<AuthSignUpResponse> => ({
   data: { user, session: null },
   error: null
@@ -75,18 +72,8 @@ export const mockSuccessfulSignup = (user: MockUser): MockSupabaseResponse<AuthS
 
 export const mockSignupError = (message: string): MockSupabaseResponse<AuthSignUpResponse> => ({
   data: null,
-  error: new AuthError(message, 400, "InvalidCredentials", "")
+  error: new AuthError(message)
 });
-
-// Types pour la chaîne de requête Supabase
-export interface MockQueryChain<T> {
-  select: () => {
-    eq: (field: string, value: any) => {
-      single: () => Promise<MockSupabaseResponse<T>>;
-      maybeSingle: () => Promise<MockSupabaseResponse<T>>;
-    };
-  };
-}
 
 export type SupabaseQueryOptions<T> = {
   maybeSingleData?: T | null;
@@ -95,7 +82,7 @@ export type SupabaseQueryOptions<T> = {
   singleError?: AuthError | null;
 };
 
-// Création de mock query Supabase
+// Création de mock query Supabase simplifiée
 export const createMockSupabaseQuery = <T>(options: SupabaseQueryOptions<T>) => {
   const single = jest.fn().mockResolvedValue({
     data: options.singleData ?? null,
@@ -110,5 +97,5 @@ export const createMockSupabaseQuery = <T>(options: SupabaseQueryOptions<T>) => 
   const eq = jest.fn().mockReturnValue({ single, maybeSingle });
   const select = jest.fn().mockReturnValue({ eq });
 
-  return jest.fn<MockQueryChain<T>>().mockReturnValue({ select });
+  return jest.fn().mockReturnValue({ select });
 };

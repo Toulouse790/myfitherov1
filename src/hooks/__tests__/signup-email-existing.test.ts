@@ -4,12 +4,7 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { useSignUp } from '../use-signup';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  createMockSupabaseQuery,
-  type SupabaseMockFunction,
-  type AuthSignUpResponse,
-  createMockSupabaseMethod 
-} from './signup-test-utils';
+import { createMockSupabaseQuery, createMockSupabaseMethod } from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -32,7 +27,7 @@ describe('Email Existant', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    signUpMock = createMockSupabaseMethod<AuthSignUpResponse>();
+    signUpMock = createMockSupabaseMethod();
     (supabase.auth.signUp as jest.Mock) = signUpMock;
   });
 
