@@ -21,7 +21,8 @@ export const SignInForm = () => {
     try {
       const success = await handleSignIn(email, password);
       if (success) {
-        navigate("/");
+        // Redirection vers la page d'accueil après connexion réussie
+        navigate("/", { replace: true });
       }
     } catch (error) {
       console.error("Erreur de connexion:", error);

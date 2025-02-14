@@ -13,7 +13,7 @@ export const useSignIn = () => {
       setIsLoading(true);
       setError(null);
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -23,9 +23,7 @@ export const useSignIn = () => {
         throw signInError;
       }
 
-      // Verify session was created
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      if (!data.session) {
         throw new Error('No session created after sign in');
       }
 

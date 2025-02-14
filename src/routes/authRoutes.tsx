@@ -1,6 +1,7 @@
 
 import SignInPage from "@/pages/SignIn";
 import SignUpPage from "@/pages/SignUp";
+import { AuthConfirmPage } from "@/pages/AuthConfirm";
 
 export const authRoutes = [
   {
@@ -10,5 +11,9 @@ export const authRoutes = [
   {
     path: "signup",
     element: <SignUpPage />,
+  },
+  {
+    path: "confirm",
+    element: <AuthConfirmPage />,
   }
 ];
