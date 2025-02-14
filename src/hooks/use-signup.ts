@@ -5,6 +5,28 @@ import { useToast } from "@/hooks/use-toast";
 import { AuthError } from "@supabase/supabase-js";
 import { handleSignupError } from "@/utils/auth-errors";
 
+async function genererPseudoUnique(pseudo: string): Promise<string> {
+  let pseudoOriginal = pseudo;
+  let compteur = 1;
+
+  while (await pseudoExiste(pseudo)) {
+    pseudo = `${pseudoOriginal}_${compteur}`;
+    compteur++;
+  }
+
+  return pseudo;
+}
+
+async function pseudoExiste(pseudo: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('pseudo', pseudo)
+    .maybeSingle();
+
+  return !!data;
+}
+
 export const useSignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,24 +37,13 @@ export const useSignUp = () => {
       setIsLoading(true);
       setError(null);
 
-      // 1. Vérifier que le pseudo n'existe pas déjà
-      const { data: existingProfiles, error: profileCheckError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('pseudo', pseudo)
-        .single();
-
-      if (profileCheckError && profileCheckError.code !== 'PGRST116') {
-        throw profileCheckError;
-      }
-
-      if (existingProfiles) {
+      // 1. Vérifier et générer un pseudo unique
+      const pseudoUnique = await genererPseudoUnique(pseudo);
+      if (pseudoUnique !== pseudo) {
         toast({
-          title: "Erreur",
-          description: "Ce pseudo est déjà utilisé. Veuillez en choisir un autre.",
-          variant: "destructive",
+          title: "Information",
+          description: `Le pseudo ${pseudo} est déjà utilisé. Nous vous proposons ${pseudoUnique}`,
         });
-        return false;
       }
 
       // 2. Créer l'utilisateur avec les métadonnées
@@ -41,7 +52,7 @@ export const useSignUp = () => {
         password,
         options: {
           data: {
-            pseudo: pseudo,
+            pseudo: pseudoUnique,
           },
         },
       });
@@ -64,7 +75,7 @@ export const useSignUp = () => {
           .from('profiles')
           .select('id')
           .eq('id', signUpData.user.id)
-          .single();
+          .maybeSingle();
 
         if (profileError) {
           console.error("Erreur lors de la vérification du profil:", profileError);
