@@ -29,11 +29,11 @@ export type AuthSignUpResponse = {
 };
 
 // Type pour les fonctions mock
-export type SupabaseMockFunction<T> = jest.Mock<Promise<MockSupabaseResponse<T>>, []>;
+export type SupabaseMockFunction<T> = jest.Mock<Promise<MockSupabaseResponse<T>>>;
 
 // Création de méthode mock générique
 export function createMockSupabaseMethod<T>(): SupabaseMockFunction<T> {
-  return jest.fn().mockResolvedValue({ data: null, error: null });
+  return jest.fn().mockResolvedValue({ data: null, error: null } as MockSupabaseResponse<T>);
 }
 
 // Helpers pour les réponses
@@ -47,7 +47,7 @@ export function mockSuccessfulResponse<T>(data: T): MockSupabaseResponse<T> {
 export function mockErrorResponse(message: string): MockSupabaseResponse<null> {
   return {
     data: null,
-    error: new AuthError(message)
+    error: new AuthError(message, 400, "InvalidCredentials", "")
   };
 }
 
@@ -74,19 +74,19 @@ export const mockSuccessfulSignup = (user: MockUser): MockSupabaseResponse<AuthS
 });
 
 export const mockSignupError = (message: string): MockSupabaseResponse<AuthSignUpResponse> => ({
-  data: { user: null, session: null },
-  error: new AuthError(message)
+  data: null,
+  error: new AuthError(message, 400, "InvalidCredentials", "")
 });
 
 // Types pour la chaîne de requête Supabase
-type MockSupabaseQueryMethods<T> = {
-  select: jest.Mock<{ 
-    eq: jest.Mock<{
-      single: jest.Mock<Promise<MockSupabaseResponse<T>>>;
-      maybeSingle: jest.Mock<Promise<MockSupabaseResponse<T>>>;
-    }>;
-  }>;
-};
+export interface MockQueryChain<T> {
+  select: () => {
+    eq: (field: string, value: any) => {
+      single: () => Promise<MockSupabaseResponse<T>>;
+      maybeSingle: () => Promise<MockSupabaseResponse<T>>;
+    };
+  };
+}
 
 export type SupabaseQueryOptions<T> = {
   maybeSingleData?: T | null;
@@ -96,7 +96,7 @@ export type SupabaseQueryOptions<T> = {
 };
 
 // Création de mock query Supabase
-export const createMockSupabaseQuery = <T>(options: SupabaseQueryOptions<T>): jest.Mock => {
+export const createMockSupabaseQuery = <T>(options: SupabaseQueryOptions<T>) => {
   const single = jest.fn().mockResolvedValue({
     data: options.singleData ?? null,
     error: options.singleError ?? null
@@ -110,5 +110,5 @@ export const createMockSupabaseQuery = <T>(options: SupabaseQueryOptions<T>): je
   const eq = jest.fn().mockReturnValue({ single, maybeSingle });
   const select = jest.fn().mockReturnValue({ eq });
 
-  return jest.fn().mockReturnValue({ select });
+  return jest.fn<MockQueryChain<T>>().mockReturnValue({ select });
 };

@@ -5,6 +5,7 @@ export interface QuestionnaireResponse {
   height?: number;
   weight?: number;
   objective?: string;
+  objectives?: string[];
   training_frequency?: number;
   workout_duration?: number;
   experience_level?: string;

@@ -37,7 +37,7 @@ describe('Gestion des Erreurs', () => {
     const mockUser = createMockUser();
     const mockFrom = createMockSupabaseQuery({
       maybeSingleData: null,
-      singleError: new Error('Erreur de création de profil')
+      singleError: new AuthError('Erreur de création de profil', 400, 'ProfileCreationError', '')
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
@@ -62,7 +62,7 @@ describe('Gestion des Erreurs', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
-    signUpMock.mockRejectedValue(new AuthError('Invalid password'));
+    signUpMock.mockRejectedValue(new AuthError('Invalid password', 400, 'InvalidCredentials', ''));
 
     const { result } = renderHook(() => useSignUp());
 
