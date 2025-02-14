@@ -22,14 +22,13 @@ export type MockSupabaseResponse<T = unknown> = {
   error: AuthError | null;
 };
 
-export type MockSupabaseMethod<T = unknown> = jest.Mock<
-  Promise<MockSupabaseResponse<T>>,
-  [unknown?]
->;
+export type UnknownFunction = (...args: any[]) => any;
+
+export type MockSupabaseMethod<T = unknown> = jest.Mock<Promise<MockSupabaseResponse<T>>>;
 
 // Création de méthode mock générique
 export function createMockSupabaseMethod<T>(): MockSupabaseMethod<T> {
-  return jest.fn<Promise<MockSupabaseResponse<T>>, [unknown?]>().mockResolvedValue({
+  return jest.fn().mockResolvedValue({
     data: null,
     error: null
   });
@@ -43,7 +42,7 @@ export function mockSuccessfulResponse<T>(data: T): MockSupabaseResponse<T> {
   };
 }
 
-export function mockErrorResponse(error: AuthError): MockSupabaseResponse<never> {
+export function mockErrorResponse(error: AuthError): MockSupabaseResponse<unknown> {
   return {
     data: null,
     error
@@ -91,28 +90,30 @@ export type SupabaseQueryOptions<T> = {
   singleError?: Error | null;
 };
 
+// Types pour les réponses de query
+export type QueryResponse<T> = {
+  data: T | null;
+  error: Error | null;
+};
+
 // Création de mock query Supabase
 export const createMockSupabaseQuery = <T>(options: SupabaseQueryOptions<T>) => {
   const selectMock = jest.fn().mockReturnValue({
     eq: jest.fn().mockReturnValue({
       maybeSingle: jest.fn().mockResolvedValue({
-        data: options.maybeSingleData,
-        error: options.maybeSingleError
+        data: options.maybeSingleData ?? null,
+        error: options.maybeSingleError ?? null
       }),
       single: jest.fn().mockResolvedValue({
-        data: options.singleData,
-        error: options.singleError
+        data: options.singleData ?? null,
+        error: options.singleError ?? null
       })
     })
   });
 
-  return jest.fn().mockReturnValue({
+  const mockFn = jest.fn().mockReturnValue({
     select: selectMock
   });
-};
 
-// Types pour les réponses de query
-export type QueryResponse<T> = {
-  data: T | null;
-  error: Error | null;
+  return mockFn;
 };
