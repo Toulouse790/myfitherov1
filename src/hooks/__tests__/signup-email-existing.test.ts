@@ -28,11 +28,11 @@ jest.mock('@/hooks/use-toast', () => ({
 }));
 
 describe('Email Existant', () => {
-  let signUpMock: SupabaseMockFunction<AuthSignUpResponse>;
+  let signUpMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    signUpMock = createMockSupabaseMethod();
+    signUpMock = createMockSupabaseMethod<AuthSignUpResponse>();
     (supabase.auth.signUp as jest.Mock) = signUpMock;
   });
 
