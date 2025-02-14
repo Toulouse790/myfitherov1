@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { AuthError } from "@supabase/supabase-js";
+import { handleSignupError } from "@/utils/auth-errors";
 
 export const useSignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,26 +15,8 @@ export const useSignUp = () => {
       setIsLoading(true);
       setError(null);
 
-      // 1. Vérifier si l'email existe déjà
-      const { data: existingUser, error: checkError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('email', email)
-        .maybeSingle();
-
-      if (checkError) throw checkError;
-
-      if (existingUser) {
-        toast({
-          title: "Erreur",
-          description: "Cet email est déjà utilisé",
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      // 2. Créer le nouvel utilisateur
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      // 1. Vérifier d'abord si l'utilisateur existe déjà dans auth.users
+      const { data: signUpCheckData, error: signUpCheckError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -43,43 +26,55 @@ export const useSignUp = () => {
         },
       });
 
-      if (signUpError) throw signUpError;
+      if (signUpCheckError) {
+        if (signUpCheckError.message.includes("User already registered")) {
+          toast({
+            title: "Erreur",
+            description: "Un compte existe déjà avec cet email. Veuillez vous connecter.",
+            variant: "destructive",
+          });
+          return false;
+        }
+        throw signUpCheckError;
+      }
 
-      // 3. Immédiatement connecter l'utilisateur
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (signInError) throw signInError;
-
-      // 4. Attendre que le trigger crée le profil
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // 5. Vérifier que le profil a été créé
-      const { data: profile, error: profileError } = await supabase
+      // 2. Une fois l'utilisateur créé, vérifier le profil
+      const { data: profileCheck, error: profileCheckError } = await supabase
         .from('profiles')
         .select('id')
-        .eq('id', signUpData.user?.id)
+        .eq('id', signUpCheckData.user?.id)
         .single();
 
-      if (profileError || !profile) {
+      if (profileCheckError || !profileCheck) {
         throw new Error("Erreur lors de la création du profil");
       }
 
       toast({
         title: "Succès",
-        description: "Compte créé et connecté avec succès",
+        description: "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
       });
 
       return true;
 
     } catch (err) {
+      console.error("Erreur d'inscription:", err);
+      
       if (err instanceof AuthError) {
-        throw err;
+        const errorMessage = handleSignupError(err);
+        toast({
+          title: "Erreur",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Erreur",
+          description: "Une erreur est survenue lors de l'inscription",
+          variant: "destructive",
+        });
       }
-      console.error("Sign up error:", err);
-      throw new Error("Une erreur est survenue lors de l'inscription");
+      
+      throw err;
     } finally {
       setIsLoading(false);
     }
