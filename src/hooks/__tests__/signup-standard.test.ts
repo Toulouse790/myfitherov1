@@ -3,14 +3,14 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { useSignUp } from '../use-signup';
 import { supabase } from '@/integrations/supabase/client';
-import { createMockUser, createMockSupabaseQuery, AuthMethodMock } from './signup-test-utils';
+import { createMockUser, createMockSupabaseQuery, MockSupabaseResponse, MockUser } from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: jest.fn(),
     auth: {
-      signUp: jest.fn() as AuthMethodMock,
-      signInWithPassword: jest.fn() as AuthMethodMock
+      signUp: jest.fn<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>, [any]>(),
+      signInWithPassword: jest.fn<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>, [any]>()
     }
   }
 }));
@@ -28,11 +28,11 @@ describe('Inscription Standard - Flux Nominal', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
-    (supabase.auth.signUp as AuthMethodMock).mockResolvedValue({
+    (supabase.auth.signUp as jest.Mock<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>>).mockResolvedValue({
       data: { user: mockUser, session: null },
       error: null
     });
-    (supabase.auth.signInWithPassword as AuthMethodMock).mockResolvedValue({
+    (supabase.auth.signInWithPassword as jest.Mock<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>>).mockResolvedValue({
       data: { user: mockUser, session: null },
       error: null
     });

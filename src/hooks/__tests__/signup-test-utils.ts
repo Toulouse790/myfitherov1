@@ -28,8 +28,6 @@ export type MockUser = {
   updated_at: string;
 };
 
-export type AuthMethodMock = jest.Mock<Promise<MockSupabaseResponse<{ user: MockUser; session: null }>>>;
-
 // Mock utilisateur de base
 export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => ({
   id: 'test-user-id',
