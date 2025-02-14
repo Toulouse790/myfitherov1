@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -5,7 +6,7 @@ import { useWorkoutExercises } from "./use-workout-exercises";
 
 export const useWorkoutSession = (sessionId?: string) => {
   const { user } = useAuth();
-  const { exercises } = useWorkoutExercises(sessionId);
+  const { exercises, isLoading: exercisesLoading } = useWorkoutExercises(sessionId);
 
   const { data: session, isLoading } = useQuery({
     queryKey: ["workout-session", sessionId],
@@ -16,7 +17,7 @@ export const useWorkoutSession = (sessionId?: string) => {
         .from("workout_sessions")
         .select("*")
         .eq("id", sessionId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -27,6 +28,6 @@ export const useWorkoutSession = (sessionId?: string) => {
   return {
     session,
     exercises,
-    isLoading,
+    isLoading: isLoading || exercisesLoading,
   };
 };

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -14,19 +15,23 @@ export const useWorkoutExercises = (sessionId: string | null) => {
       }
 
       try {
-        const { data: session, error: sessionError } = await supabase
+        const { data, error: sessionError } = await supabase
           .from('workout_sessions')
           .select('exercises')
           .eq('id', sessionId)
-          .single();
+          .maybeSingle();
 
         if (sessionError) throw sessionError;
 
-        if (session?.exercises) {
-          setExercises(session.exercises);
+        if (data?.exercises) {
+          setExercises(data.exercises);
+        } else {
+          setExercises([]);
         }
       } catch (err) {
+        console.error('Error fetching exercises:', err);
         setError(err instanceof Error ? err : new Error('Failed to fetch exercises'));
+        setExercises([]);
       } finally {
         setIsLoading(false);
       }

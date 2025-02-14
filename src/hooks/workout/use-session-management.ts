@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -11,9 +12,12 @@ export const useSessionManagement = () => {
           .from('workout_sessions')
           .select('workout_type')
           .eq('status', 'in_progress')
-          .single();
+          .maybeSingle();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error checking session type:', error);
+          return;
+        }
 
         setIsCardio(data?.workout_type === 'cardio');
       } catch (error) {
