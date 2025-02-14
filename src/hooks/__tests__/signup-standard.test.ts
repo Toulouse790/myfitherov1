@@ -37,7 +37,7 @@ describe('Inscription Standard - Flux Nominal', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFromFn());
-    signUpMock.mockResolvedValue(mockSuccessfulSignup(mockUser));
+    signUpMock.mockImplementation(() => mockSuccessfulSignup(mockUser));
 
     const { result } = renderHook(() => useSignUp());
 
