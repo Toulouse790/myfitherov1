@@ -15,8 +15,28 @@ export const useSignUp = () => {
       setIsLoading(true);
       setError(null);
 
-      // 1. Vérifier d'abord si l'utilisateur existe déjà dans auth.users
-      const { data: signUpCheckData, error: signUpCheckError } = await supabase.auth.signUp({
+      // 1. Vérifier que le pseudo n'existe pas déjà
+      const { data: existingProfiles, error: profileCheckError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('pseudo', pseudo)
+        .single();
+
+      if (profileCheckError && profileCheckError.code !== 'PGRST116') {
+        throw profileCheckError;
+      }
+
+      if (existingProfiles) {
+        toast({
+          title: "Erreur",
+          description: "Ce pseudo est déjà utilisé. Veuillez en choisir un autre.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // 2. Créer l'utilisateur avec les métadonnées
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -26,8 +46,8 @@ export const useSignUp = () => {
         },
       });
 
-      if (signUpCheckError) {
-        if (signUpCheckError.message.includes("User already registered")) {
+      if (signUpError) {
+        if (signUpError.message.includes("User already registered")) {
           toast({
             title: "Erreur",
             description: "Un compte existe déjà avec cet email. Veuillez vous connecter.",
@@ -35,26 +55,32 @@ export const useSignUp = () => {
           });
           return false;
         }
-        throw signUpCheckError;
+        throw signUpError;
       }
 
-      // 2. Une fois l'utilisateur créé, vérifier le profil
-      const { data: profileCheck, error: profileCheckError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', signUpCheckData.user?.id)
-        .single();
+      // 3. Vérifier que le profil a bien été créé
+      if (signUpData.user) {
+        const { data: profileCheck, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', signUpData.user.id)
+          .single();
 
-      if (profileCheckError || !profileCheck) {
-        throw new Error("Erreur lors de la création du profil");
+        if (profileError) {
+          console.error("Erreur lors de la vérification du profil:", profileError);
+          // On ne lève pas l'erreur ici car le trigger devrait gérer la création
+        }
+
+        // 4. Création réussie
+        toast({
+          title: "Succès",
+          description: "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
+        });
+
+        return true;
       }
 
-      toast({
-        title: "Succès",
-        description: "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
-      });
-
-      return true;
+      return false;
 
     } catch (err) {
       console.error("Erreur d'inscription:", err);
