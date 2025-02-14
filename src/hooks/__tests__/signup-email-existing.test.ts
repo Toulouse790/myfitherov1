@@ -4,7 +4,11 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { useSignUp } from '../use-signup';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { createMockSupabaseQuery } from './signup-test-utils';
+import { 
+  createMockSupabaseQuery,
+  type MockSupabaseMethod,
+  type AuthSignUpResponse 
+} from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -23,8 +27,12 @@ jest.mock('@/hooks/use-toast', () => ({
 }));
 
 describe('Email Existant', () => {
+  let signUpMock: MockSupabaseMethod<AuthSignUpResponse>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    signUpMock = jest.fn();
+    (supabase.auth.signUp as jest.Mock) = signUpMock;
   });
 
   it('devrait bloquer l\'inscription avec un email existant', async () => {

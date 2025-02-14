@@ -8,7 +8,9 @@ import {
   createMockUser, 
   createMockSupabaseQuery, 
   mockSuccessfulSignup,
-  mockSignupError
+  mockSignupError,
+  type MockSupabaseMethod,
+  type AuthSignUpResponse 
 } from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
@@ -22,8 +24,12 @@ jest.mock('@/integrations/supabase/client', () => ({
 }));
 
 describe('Gestion des Erreurs', () => {
+  let signUpMock: MockSupabaseMethod<AuthSignUpResponse>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    signUpMock = jest.fn();
+    (supabase.auth.signUp as jest.Mock) = signUpMock;
   });
 
   it('devrait gérer une erreur de création de profil', async () => {
@@ -34,9 +40,7 @@ describe('Gestion des Erreurs', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
-    (supabase.auth.signUp as jest.Mock).mockImplementation(() => 
-      Promise.resolve(mockSuccessfulSignup(mockUser))
-    );
+    signUpMock.mockResolvedValue(mockSuccessfulSignup(mockUser));
 
     const { result } = renderHook(() => useSignUp());
 
@@ -57,9 +61,7 @@ describe('Gestion des Erreurs', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
-    (supabase.auth.signUp as jest.Mock).mockImplementation(() => 
-      Promise.reject(new AuthError('Invalid password'))
-    );
+    signUpMock.mockRejectedValue(new AuthError('Invalid password'));
 
     const { result } = renderHook(() => useSignUp());
 

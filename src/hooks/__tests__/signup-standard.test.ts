@@ -6,7 +6,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { 
   createMockUser, 
   createMockSupabaseQuery,
-  mockSuccessfulSignup 
+  mockSuccessfulSignup,
+  type MockSupabaseMethod,
+  type AuthSignUpResponse 
 } from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
@@ -20,8 +22,12 @@ jest.mock('@/integrations/supabase/client', () => ({
 }));
 
 describe('Inscription Standard - Flux Nominal', () => {
+  let signUpMock: MockSupabaseMethod<AuthSignUpResponse>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    signUpMock = jest.fn();
+    (supabase.auth.signUp as jest.Mock) = signUpMock;
   });
 
   it('devrait créer un compte et un profil avec succès', async () => {
@@ -32,9 +38,7 @@ describe('Inscription Standard - Flux Nominal', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
-    (supabase.auth.signUp as jest.Mock).mockImplementation(() => 
-      Promise.resolve(mockSuccessfulSignup(mockUser))
-    );
+    signUpMock.mockResolvedValue(mockSuccessfulSignup(mockUser));
 
     const { result } = renderHook(() => useSignUp());
 
@@ -48,5 +52,7 @@ describe('Inscription Standard - Flux Nominal', () => {
     });
 
     expect(success).toBe(true);
+    expect(signUpMock).toHaveBeenCalledTimes(1);
+    expect(mockFrom().select().eq().single).toHaveBeenCalled();
   });
 });
