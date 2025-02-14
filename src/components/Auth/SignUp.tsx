@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -17,8 +18,12 @@ export const SignUp = () => {
       const success = await handleSignUp(email, password, pseudo);
       
       if (success) {
-        // Si l'inscription et la connexion réussissent, rediriger vers le questionnaire
-        navigate("/initial-questionnaire");
+        toast({
+          title: "Inscription réussie",
+          description: "Vous allez être redirigé vers le questionnaire initial",
+        });
+        // On redirige vers le questionnaire initial
+        navigate("/initial-questionnaire", { replace: true });
       }
     } catch (error: any) {
       console.error('Erreur:', error);
