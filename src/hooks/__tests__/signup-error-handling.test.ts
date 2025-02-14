@@ -8,6 +8,7 @@ import {
   createMockUser, 
   createMockSupabaseQuery, 
   mockSuccessfulSignup,
+  mockSignupError,
   createMockSupabaseMethod 
 } from './signup-test-utils';
 
@@ -59,7 +60,7 @@ describe('Gestion des Erreurs', () => {
     });
 
     (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
-    signUpMock.mockRejectedValue(new AuthError('Invalid password'));
+    signUpMock.mockImplementation(() => mockSignupError('Invalid password'));
 
     const { result } = renderHook(() => useSignUp());
 
