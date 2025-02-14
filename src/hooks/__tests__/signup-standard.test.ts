@@ -7,7 +7,7 @@ import {
   createMockUser, 
   createMockSupabaseQuery,
   mockSuccessfulSignup,
-  type MockSupabaseMethod,
+  type SupabaseMockFunction,
   type AuthSignUpResponse 
 } from './signup-test-utils';
 
@@ -22,11 +22,11 @@ jest.mock('@/integrations/supabase/client', () => ({
 }));
 
 describe('Inscription Standard - Flux Nominal', () => {
-  let signUpMock: MockSupabaseMethod<AuthSignUpResponse>;
+  let signUpMock: SupabaseMockFunction<AuthSignUpResponse>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    signUpMock = jest.fn();
+    signUpMock = createMockSupabaseMethod();
     (supabase.auth.signUp as jest.Mock) = signUpMock;
   });
 
@@ -37,7 +37,7 @@ describe('Inscription Standard - Flux Nominal', () => {
       singleData: { id: mockUser.id }
     });
 
-    (supabase.from as jest.Mock).mockImplementation(mockFromFn);
+    (supabase.from as jest.Mock).mockImplementation(() => mockFromFn());
     signUpMock.mockResolvedValue(mockSuccessfulSignup(mockUser));
 
     const { result } = renderHook(() => useSignUp());

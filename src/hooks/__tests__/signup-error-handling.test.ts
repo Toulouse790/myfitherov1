@@ -9,8 +9,9 @@ import {
   createMockSupabaseQuery, 
   mockSuccessfulSignup,
   mockSignupError,
-  type MockSupabaseMethod,
-  type AuthSignUpResponse 
+  type SupabaseMockFunction,
+  type AuthSignUpResponse,
+  createMockSupabaseMethod
 } from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
@@ -24,11 +25,11 @@ jest.mock('@/integrations/supabase/client', () => ({
 }));
 
 describe('Gestion des Erreurs', () => {
-  let signUpMock: MockSupabaseMethod<AuthSignUpResponse>;
+  let signUpMock: SupabaseMockFunction<AuthSignUpResponse>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    signUpMock = jest.fn();
+    signUpMock = createMockSupabaseMethod();
     (supabase.auth.signUp as jest.Mock) = signUpMock;
   });
 
