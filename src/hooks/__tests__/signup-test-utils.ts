@@ -87,25 +87,20 @@ export const createMockSupabaseQuery = <T>(options: {
   maybeSingleError?: Error | null;
   singleError?: Error | null;
 }) => {
-  const mockQuery = jest.fn().mockReturnValue({
-    data: options.maybeSingleData,
-    error: options.maybeSingleError
-  });
-
-  return {
+  return jest.fn().mockReturnValue({
     select: jest.fn().mockReturnValue({
       eq: jest.fn().mockReturnValue({
-        maybeSingle: mockQuery,
-        single: jest.fn().mockImplementation(() => {
-          if (options.singleError) {
-            return Promise.reject(options.singleError);
-          }
-          return Promise.resolve({
+        maybeSingle: jest.fn().mockReturnValue({
+          data: options.maybeSingleData,
+          error: options.maybeSingleError
+        }),
+        single: jest.fn().mockReturnValue(
+          Promise.resolve({
             data: options.singleData,
-            error: null
-          });
-        })
+            error: options.singleError
+          })
+        )
       })
     })
-  };
+  });
 };

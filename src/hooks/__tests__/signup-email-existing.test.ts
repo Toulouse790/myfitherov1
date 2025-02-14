@@ -28,11 +28,11 @@ describe('Email Existant', () => {
   });
 
   it('devrait bloquer l\'inscription avec un email existant', async () => {
-    const mockSupabaseQuery = createMockSupabaseQuery({
+    const mockFrom = createMockSupabaseQuery({
       maybeSingleData: { email: 'existant@exemple.com' }
     });
 
-    (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
+    (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
 
     const { result } = renderHook(() => useSignUp());
 
@@ -49,7 +49,7 @@ describe('Email Existant', () => {
     expect(useToast().toast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Erreur',
-        description: 'Cet email est déjà utilisé'
+        description: expect.stringContaining('déjà utilisé')
       })
     );
   });

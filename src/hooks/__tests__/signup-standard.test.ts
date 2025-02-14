@@ -26,12 +26,12 @@ describe('Inscription Standard - Flux Nominal', () => {
 
   it('devrait créer un compte et un profil avec succès', async () => {
     const mockUser = createMockUser();
-    const mockSupabaseQuery = createMockSupabaseQuery({
+    const mockFrom = createMockSupabaseQuery({
       maybeSingleData: null,
       singleData: { id: mockUser.id }
     });
 
-    (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
+    (supabase.from as jest.Mock).mockImplementation(() => mockFrom());
     (supabase.auth.signUp as jest.Mock).mockImplementation(() => 
       Promise.resolve(mockSuccessfulSignup(mockUser))
     );
