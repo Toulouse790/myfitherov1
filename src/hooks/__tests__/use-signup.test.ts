@@ -6,20 +6,27 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { AuthError } from "@supabase/supabase-js";
 
+// Les retours typés pour les mocks
+type SupabaseQueryResult<T> = Promise<{
+  data: T | null;
+  error: null | Error;
+}>;
+
 // Mock des dépendances
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: jest.fn(() => ({
       select: jest.fn(() => ({
         eq: jest.fn(() => ({
-          maybeSingle: jest.fn()
+          maybeSingle: jest.fn<Promise<any>, []>>(),
+          single: jest.fn<Promise<any>, []>>()
         })),
-        single: jest.fn()
+        single: jest.fn<Promise<any>, []>>()
       }))
     })),
     auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn()
+      signUp: jest.fn<Promise<any>, [any]>>(),
+      signInWithPassword: jest.fn<Promise<any>, [any]>>()
     }
   }
 }));
@@ -52,22 +59,24 @@ describe('useSignUp Hook', () => {
         updated_at: '2024-03-20T12:00:00Z'
       };
 
-      const mockSupabaseQuery = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockResolvedValue({ data: null }),
-        single: jest.fn().mockResolvedValue({ data: { id: mockUser.id } })
-      };
+      const mockSupabaseQuery = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+            single: jest.fn().mockResolvedValue({ data: { id: mockUser.id }, error: null })
+          })
+        })
+      });
 
-      (supabase.from as jest.Mock).mockImplementation(() => mockSupabaseQuery);
+      (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
 
       (supabase.auth.signUp as jest.Mock).mockResolvedValue({
-        data: { user: mockUser },
+        data: { user: mockUser, session: null },
         error: null
       });
 
       (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValue({
-        data: { user: mockUser },
+        data: { user: mockUser, session: null },
         error: null
       });
 
@@ -97,14 +106,18 @@ describe('useSignUp Hook', () => {
 
   describe('Email Existant', () => {
     it('devrait bloquer l\'inscription avec un email existant', async () => {
-      // Mock pour simuler un email existant
-      const mockSupabaseQuery = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockResolvedValue({ data: { email: 'existant@exemple.com' } })
-      };
+      const mockSupabaseQuery = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            maybeSingle: jest.fn().mockResolvedValue({ 
+              data: { email: 'existant@exemple.com' },
+              error: null
+            })
+          })
+        })
+      });
 
-      (supabase.from as jest.Mock).mockImplementation(() => mockSupabaseQuery);
+      (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
 
       const { result } = renderHook(() => useSignUp());
 
@@ -129,7 +142,6 @@ describe('useSignUp Hook', () => {
 
   describe('Gestion des Erreurs', () => {
     it('devrait gérer une erreur de création de profil', async () => {
-      // Mock pour simuler une erreur lors de la création du profil
       const mockUser = { 
         id: 'test-user-id',
         app_metadata: {},
@@ -144,22 +156,24 @@ describe('useSignUp Hook', () => {
         updated_at: '2024-03-20T12:00:00Z'
       };
 
-      const mockSupabaseQuery = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockResolvedValue({ data: null }),
-        single: jest.fn().mockRejectedValue(new Error('Erreur de création de profil'))
-      };
+      const mockSupabaseQuery = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+            single: jest.fn().mockRejectedValue(new Error('Erreur de création de profil'))
+          })
+        })
+      });
 
-      (supabase.from as jest.Mock).mockImplementation(() => mockSupabaseQuery);
+      (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
 
       (supabase.auth.signUp as jest.Mock).mockResolvedValue({
-        data: { user: mockUser },
+        data: { user: mockUser, session: null },
         error: null
       });
 
       (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValue({
-        data: { user: mockUser },
+        data: { user: mockUser, session: null },
         error: null
       });
 
@@ -177,17 +191,18 @@ describe('useSignUp Hook', () => {
     });
 
     it('devrait gérer une erreur d\'authentification', async () => {
-      // Mock pour simuler une erreur d'authentification
-      const mockSupabaseQuery = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockResolvedValue({ data: null })
-      };
+      const mockSupabaseQuery = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null })
+          })
+        })
+      });
 
-      (supabase.from as jest.Mock).mockImplementation(() => mockSupabaseQuery);
+      (supabase.from as jest.Mock).mockImplementation(mockSupabaseQuery);
 
       (supabase.auth.signUp as jest.Mock).mockRejectedValue(
-        new Error('Invalid password')
+        new AuthError('Invalid password')
       );
 
       const { result } = renderHook(() => useSignUp());
