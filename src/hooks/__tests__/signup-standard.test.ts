@@ -8,7 +8,8 @@ import {
   createMockSupabaseQuery,
   mockSuccessfulSignup,
   type SupabaseMockFunction,
-  type AuthSignUpResponse 
+  type AuthSignUpResponse,
+  createMockSupabaseMethod 
 } from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({

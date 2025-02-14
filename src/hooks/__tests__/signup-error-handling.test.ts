@@ -11,7 +11,7 @@ import {
   mockSignupError,
   type SupabaseMockFunction,
   type AuthSignUpResponse,
-  createMockSupabaseMethod
+  createMockSupabaseMethod 
 } from './signup-test-utils';
 
 jest.mock('@/integrations/supabase/client', () => ({
