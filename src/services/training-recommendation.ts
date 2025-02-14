@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 interface UserProfile {
@@ -35,8 +34,19 @@ interface ExerciseRecommendation {
 
 async function getExercisesForMuscleGroup(
   muscleGroup: string, 
-  profile: UserProfile
+  profile: UserProfile,
+  muscleRecoveryStatus?: { muscleGroup: string; recoveryStatus: string }[]
 ): Promise<Exercise[]> {
+  const isRecovering = muscleRecoveryStatus?.some(
+    status => status.muscleGroup === muscleGroup && 
+    ['needs_rest', 'recovering'].includes(status.recoveryStatus)
+  );
+
+  if (isRecovering) {
+    console.log(`Skipping ${muscleGroup} as it needs recovery`);
+    return [];
+  }
+
   const { data: exercises, error } = await supabase
     .from('unified_exercises')
     .select('*')
@@ -167,24 +177,42 @@ function getProgressionStrategy(profile: UserProfile): string {
   }
 }
 
+async function getMuscleRecoveryStatus(userId: string): Promise<{ muscleGroup: string; recoveryStatus: string }[]> {
+  const { data, error } = await supabase
+    .from('muscle_recovery')
+    .select('muscle_group, recovery_status')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Error fetching muscle recovery status:', error);
+    return [];
+  }
+
+  return data.map(item => ({
+    muscleGroup: item.muscle_group,
+    recoveryStatus: item.recovery_status
+  }));
+}
+
 export async function generatePersonalizedTrainingPlan(profile: UserProfile): Promise<ExerciseRecommendation> {
-  // Sélection des groupes musculaires pertinents
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("User not authenticated");
+
+  const muscleRecoveryStatus = await getMuscleRecoveryStatus(user.id);
+  
   const muscleGroups = selectRelevantMuscleGroups(profile);
   
-  // Sélection des exercices optimaux
   const exercises = await Promise.all(
-    muscleGroups.map(group => getExercisesForMuscleGroup(group, profile))
+    muscleGroups.map(group => getExercisesForMuscleGroup(group, profile, muscleRecoveryStatus))
   ).then(exerciseArrays => exerciseArrays.flat().slice(0, 6)); // Limite à 6 exercices
   
-  // Construction du plan d'entraînement
   const trainingPlan = constructTrainingPlan(profile);
 
-  // Sauvegarde des recommandations dans la base de données
   try {
     const { error } = await supabase
       .from('exercise_recommendations')
       .insert({
-        user_id: (await supabase.auth.getUser()).data.user?.id,
+        user_id: user.id,
         muscle_groups: muscleGroups,
         difficulty: profile.fitnessLevel === 'beginner' ? 'easy' : 
                    profile.fitnessLevel === 'intermediate' ? 'medium' : 'hard',
