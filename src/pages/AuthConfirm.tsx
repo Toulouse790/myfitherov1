@@ -16,12 +16,12 @@ export const AuthConfirmPage = () => {
         if (error) throw error;
 
         if (session) {
-          // L'utilisateur est connecté, rediriger vers la page d'accueil
+          // L'utilisateur est connecté, rediriger vers le questionnaire
           toast({
             title: "Connexion réussie",
             description: "Bienvenue sur MyFitHero !",
           });
-          navigate('/', { replace: true });
+          navigate('/initial-questionnaire', { replace: true });
         } else {
           // Pas de session, rediriger vers la page de connexion
           toast({

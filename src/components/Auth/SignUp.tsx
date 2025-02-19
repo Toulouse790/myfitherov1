@@ -22,10 +22,10 @@ export const SignUp = () => {
         console.log('Inscription réussie, redirection...');
         toast({
           title: "Inscription réussie",
-          description: "Vous allez être redirigé vers le questionnaire initial",
+          description: "Veuillez confirmer votre email avant de continuer",
         });
-        // Utilisation de navigate avec un chemin absolu
-        navigate("/initial-questionnaire");
+        // Redirection vers la page de confirmation
+        navigate("/auth/confirm");
       }
     } catch (error: any) {
       console.error('Erreur lors de l\'inscription:', error);
