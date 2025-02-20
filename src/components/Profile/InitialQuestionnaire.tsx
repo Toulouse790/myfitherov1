@@ -39,7 +39,7 @@ export const InitialQuestionnaire = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate("/signup");
+        navigate("/signin");
       }
     };
     
@@ -111,6 +111,23 @@ export const InitialQuestionnaire = () => {
     }
   };
 
+  const onQuestionnaireComplete = async () => {
+    try {
+      await handleNext();
+      toast({
+        description: "Redirection vers l'accueil...",
+      });
+      navigate("/", { replace: true });
+    } catch (error) {
+      console.error('Erreur lors de la soumission du questionnaire:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la soumission du questionnaire",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="max-w-lg mx-auto">
@@ -129,7 +146,7 @@ export const InitialQuestionnaire = () => {
               Étape {step} sur 7
             </div>
             <Button
-              onClick={step === 7 ? handleNext : handleNext}
+              onClick={step === 7 ? onQuestionnaireComplete : handleNext}
               disabled={!isStepValid() || (step === 7 && isGeneratingRecommendations)}
             >
               {step === 7 ? (
@@ -151,3 +168,4 @@ export const InitialQuestionnaire = () => {
     </div>
   );
 };
+
