@@ -74,11 +74,12 @@ export const db = {
     table: string, 
     query?: string
   ): Promise<{ data: T[] | null; error: PostgrestError | null }> => {
-    return executeWithRetry(() => 
-      supabase
+    return executeWithRetry(async () => {
+      const result = await supabase
         .from(table)
-        .select(query || '*')
-    );
+        .select(query || '*');
+      return result;
+    });
   },
   
   /**
@@ -92,13 +93,14 @@ export const db = {
     id: string, 
     query?: string
   ): Promise<{ data: T | null; error: PostgrestError | null }> => {
-    return executeWithRetry(() => 
-      supabase
+    return executeWithRetry(async () => {
+      const result = await supabase
         .from(table)
         .select(query || '*')
         .eq('id', id)
-        .single()
-    );
+        .single();
+      return result;
+    });
   },
   
   /**
@@ -114,12 +116,13 @@ export const db = {
     value: any, 
     query?: string
   ): Promise<{ data: T[] | null; error: PostgrestError | null }> => {
-    return executeWithRetry(() => 
-      supabase
+    return executeWithRetry(async () => {
+      const result = await supabase
         .from(table)
         .select(query || '*')
-        .eq(column, value)
-    );
+        .eq(column, value);
+      return result;
+    });
   },
   
   /**
@@ -131,12 +134,13 @@ export const db = {
     table: string, 
     data: Partial<T> | Partial<T>[]
   ): Promise<{ data: T[] | null; error: PostgrestError | null }> => {
-    return executeWithRetry(() => 
-      supabase
+    return executeWithRetry(async () => {
+      const result = await supabase
         .from(table)
         .insert(data)
-        .select()
-    );
+        .select();
+      return result;
+    });
   },
   
   /**
@@ -152,13 +156,14 @@ export const db = {
     column: string, 
     value: any
   ): Promise<{ data: T[] | null; error: PostgrestError | null }> => {
-    return executeWithRetry(() => 
-      supabase
+    return executeWithRetry(async () => {
+      const result = await supabase
         .from(table)
         .update(data)
         .eq(column, value)
-        .select()
-    );
+        .select();
+      return result;
+    });
   },
   
   /**
@@ -172,12 +177,13 @@ export const db = {
     column: string, 
     value: any
   ): Promise<{ data: T[] | null; error: PostgrestError | null }> => {
-    return executeWithRetry(() => 
-      supabase
+    return executeWithRetry(async () => {
+      const result = await supabase
         .from(table)
         .delete()
         .eq(column, value)
-        .select()
-    );
+        .select();
+      return result;
+    });
   }
 };
