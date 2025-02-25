@@ -4,51 +4,66 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
 import { AuthenticatedLayout } from "@/components/Layout/AuthenticatedLayout";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+import { lazy, Suspense } from "react";
 
 // Pages d'authentification
-import SignInPage from "@/pages/SignIn";
-import SignUpPage from "@/pages/SignUp";
-import { AuthConfirmPage } from "@/pages/AuthConfirm";
+const SignInPage = lazy(() => import("@/pages/SignIn"));
+const SignUpPage = lazy(() => import("@/pages/SignUp"));
+const AuthConfirmPage = lazy(() => import("@/pages/AuthConfirm"));
 
 // Pages principales
-import Index from "@/pages/Index";
-import Profile from "@/pages/Profile";
-import Workouts from "@/pages/Workouts";
-import PersonalInfo from "@/pages/PersonalInfo";
-import AppSettings from "@/pages/AppSettings";
-import Subscription from "@/pages/Subscription";
-import SubscriptionPlans from "@/pages/SubscriptionPlans";
-import TrainingPreferences from "@/pages/TrainingPreferences";
-import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
-import Notifications from "@/pages/Notifications";
-import WorkoutGenerate from "@/pages/WorkoutGenerate";
-import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
-import Nutrition from "@/pages/Nutrition";
-import Sleep from "@/pages/Sleep";
-import Stats from "@/pages/Stats";
-import Cardio from "@/pages/Cardio";
+const Index = lazy(() => import("@/pages/Index"));
+const Profile = lazy(() => import("@/pages/Profile"));
+const Workouts = lazy(() => import("@/pages/Workouts"));
+const PersonalInfo = lazy(() => import("@/pages/PersonalInfo"));
+const AppSettings = lazy(() => import("@/pages/AppSettings"));
+const Subscription = lazy(() => import("@/pages/Subscription"));
+const SubscriptionPlans = lazy(() => import("@/pages/SubscriptionPlans"));
+const TrainingPreferences = lazy(() => import("@/pages/TrainingPreferences"));
+const InitialQuestionnaire = lazy(() => import("@/components/Profile/InitialQuestionnaire"));
+const Notifications = lazy(() => import("@/pages/Notifications"));
+const WorkoutGenerate = lazy(() => import("@/pages/WorkoutGenerate"));
+const UnifiedWorkoutDetail = lazy(() => import("@/components/Workouts/UnifiedWorkoutDetail"));
+const Nutrition = lazy(() => import("@/pages/Nutrition"));
+const Sleep = lazy(() => import("@/pages/Sleep"));
+const Stats = lazy(() => import("@/pages/Stats"));
+const Cardio = lazy(() => import("@/pages/Cardio"));
 
 // Pages du tableau de bord
-import DashboardOverview from "@/pages/Dashboard/Overview";
-import DashboardStreaks from "@/pages/Dashboard/Streaks";
-import WeeklyGoals from "@/pages/Goals/Weekly";
-import MonthlyGoals from "@/pages/Goals/Monthly";
-import WeeklyReport from "@/pages/Stats/WeeklyReport";
-import AchievementsHistory from "@/pages/Achievements/History";
+const DashboardOverview = lazy(() => import("@/pages/Dashboard/Overview"));
+const DashboardStreaks = lazy(() => import("@/pages/Dashboard/Streaks"));
+const WeeklyGoals = lazy(() => import("@/pages/Goals/Weekly"));
+const MonthlyGoals = lazy(() => import("@/pages/Goals/Monthly"));
+const WeeklyReport = lazy(() => import("@/pages/Stats/WeeklyReport"));
+const AchievementsHistory = lazy(() => import("@/pages/Achievements/History"));
+
+// Composant de chargement
+const Loading = () => (
+  <div className="flex items-center justify-center h-screen">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
+
+// Wrapper pour le chargement paresseux
+const withSuspense = (Component: React.LazyExoticComponent<any>) => (
+  <Suspense fallback={<Loading />}>
+    <Component />
+  </Suspense>
+);
 
 export const router = createBrowserRouter([
   // Routes publiques
   {
     path: "/signin",
-    element: <SignInPage />,
+    element: withSuspense(SignInPage),
   },
   {
     path: "/signup",
-    element: <SignUpPage />,
+    element: withSuspense(SignUpPage),
   },
   {
     path: "/auth/confirm",
-    element: <AuthConfirmPage />,
+    element: withSuspense(AuthConfirmPage),
   },
 
   // Routes protégées
@@ -63,7 +78,7 @@ export const router = createBrowserRouter([
           // Route pour le questionnaire initial (sans RequireQuestionnaire)
           {
             path: "initial-questionnaire",
-            element: <InitialQuestionnaire />,
+            element: withSuspense(InitialQuestionnaire),
           },
           
           // Toutes les autres routes protégées qui nécessitent le questionnaire
@@ -72,91 +87,91 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: "/",
-                element: <Index />
+                element: withSuspense(Index)
               },
               // Routes du profil
               {
                 path: "profile",
-                element: <Profile />
+                element: withSuspense(Profile)
               },
               {
                 path: "personal-info",
-                element: <PersonalInfo />
+                element: withSuspense(PersonalInfo)
               },
               {
                 path: "app-settings",
-                element: <AppSettings />
+                element: withSuspense(AppSettings)
               },
               {
                 path: "subscription",
-                element: <Subscription />
+                element: withSuspense(Subscription)
               },
               {
                 path: "subscription-plans",
-                element: <SubscriptionPlans />
+                element: withSuspense(SubscriptionPlans)
               },
               {
                 path: "training-preferences",
-                element: <TrainingPreferences />
+                element: withSuspense(TrainingPreferences)
               },
               {
                 path: "notifications",
-                element: <Notifications />
+                element: withSuspense(Notifications)
               },
               // Routes des entraînements
               {
                 path: "workouts",
-                element: <Workouts />
+                element: withSuspense(Workouts)
               },
               {
                 path: "workouts/:sessionId",
-                element: <UnifiedWorkoutDetail />
+                element: withSuspense(UnifiedWorkoutDetail)
               },
               {
                 path: "workouts/generate",
-                element: <WorkoutGenerate />
+                element: withSuspense(WorkoutGenerate)
               },
               // Routes de santé
               {
                 path: "nutrition",
-                element: <Nutrition />
+                element: withSuspense(Nutrition)
               },
               {
                 path: "sleep",
-                element: <Sleep />
+                element: withSuspense(Sleep)
               },
               {
                 path: "stats",
-                element: <Stats />
+                element: withSuspense(Stats)
               },
               {
                 path: "cardio",
-                element: <Cardio />
+                element: withSuspense(Cardio)
               },
               // Routes du tableau de bord
               {
                 path: "dashboard/overview",
-                element: <DashboardOverview />
+                element: withSuspense(DashboardOverview)
               },
               {
                 path: "dashboard/streaks",
-                element: <DashboardStreaks />
+                element: withSuspense(DashboardStreaks)
               },
               {
                 path: "goals/weekly",
-                element: <WeeklyGoals />
+                element: withSuspense(WeeklyGoals)
               },
               {
                 path: "goals/monthly",
-                element: <MonthlyGoals />
+                element: withSuspense(MonthlyGoals)
               },
               {
                 path: "stats/weekly-report",
-                element: <WeeklyReport />
+                element: withSuspense(WeeklyReport)
               },
               {
                 path: "achievements/history",
-                element: <AchievementsHistory />
+                element: withSuspense(AchievementsHistory)
               }
             ]
           }
