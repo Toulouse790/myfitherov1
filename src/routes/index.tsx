@@ -5,11 +5,13 @@ import { RootLayout } from "@/components/Layout/RootLayout";
 import { AuthenticatedLayout } from "@/components/Layout/AuthenticatedLayout";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 import { lazy, Suspense } from "react";
+import { AuthConfirmPage } from "@/pages/AuthConfirm";
+import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
+import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 
 // Pages d'authentification
 const SignInPage = lazy(() => import("@/pages/SignIn"));
 const SignUpPage = lazy(() => import("@/pages/SignUp"));
-const AuthConfirmPage = lazy(() => import("@/pages/AuthConfirm"));
 
 // Pages principales
 const Index = lazy(() => import("@/pages/Index"));
@@ -20,10 +22,8 @@ const AppSettings = lazy(() => import("@/pages/AppSettings"));
 const Subscription = lazy(() => import("@/pages/Subscription"));
 const SubscriptionPlans = lazy(() => import("@/pages/SubscriptionPlans"));
 const TrainingPreferences = lazy(() => import("@/pages/TrainingPreferences"));
-const InitialQuestionnaire = lazy(() => import("@/components/Profile/InitialQuestionnaire"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
 const WorkoutGenerate = lazy(() => import("@/pages/WorkoutGenerate"));
-const UnifiedWorkoutDetail = lazy(() => import("@/components/Workouts/UnifiedWorkoutDetail"));
 const Nutrition = lazy(() => import("@/pages/Nutrition"));
 const Sleep = lazy(() => import("@/pages/Sleep"));
 const Stats = lazy(() => import("@/pages/Stats"));
@@ -40,7 +40,7 @@ const AchievementsHistory = lazy(() => import("@/pages/Achievements/History"));
 // Composant de chargement
 const Loading = () => (
   <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
   </div>
 );
 
@@ -63,7 +63,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/auth/confirm",
-    element: withSuspense(AuthConfirmPage),
+    element: <AuthConfirmPage />,
   },
 
   // Routes protégées
@@ -78,7 +78,7 @@ export const router = createBrowserRouter([
           // Route pour le questionnaire initial (sans RequireQuestionnaire)
           {
             path: "initial-questionnaire",
-            element: withSuspense(InitialQuestionnaire),
+            element: <InitialQuestionnaire />,
           },
           
           // Toutes les autres routes protégées qui nécessitent le questionnaire
@@ -125,7 +125,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: "workouts/:sessionId",
-                element: withSuspense(UnifiedWorkoutDetail)
+                element: <UnifiedWorkoutDetail />
               },
               {
                 path: "workouts/generate",
