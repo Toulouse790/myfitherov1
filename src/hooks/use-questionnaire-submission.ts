@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { QuestionnaireResponse } from "@/types/questionnaire";
 import { mapObjectiveToProfile } from "@/utils/questionnaire";
+import { appCache } from "@/utils/cache";
 
 export const useQuestionnaireSubmission = () => {
   const { user } = useAuth();
@@ -56,6 +57,9 @@ export const useQuestionnaireSubmission = () => {
         }]);
 
       if (questionnaireError) throw questionnaireError;
+
+      // Mise à jour du cache immédiatement
+      appCache.set(`questionnaire_completed_${user.id}`, true, 3600);
 
       toast({
         title: "Étape 2/2",
