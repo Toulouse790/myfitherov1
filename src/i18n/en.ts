@@ -1,47 +1,70 @@
+
 export const en = {
   common: {
     save: "Save",
     cancel: "Cancel",
     edit: "Edit",
     delete: "Delete",
+    next: "Next",
+    previous: "Previous",
+    finish: "Finish",
+    loading: "Loading...",
+    error: "Error",
+    success: "Success"
   },
-  profile: {
-    training: {
-      title: "Training Preferences",
-      objective: {
-        label: "Main Objective",
-        weight_loss: "Weight Loss",
-        muscle_gain: "Muscle Gain",
-        maintenance: "Maintenance",
-      },
-      frequency: {
-        label: "Training Frequency",
-        days: "days per week",
-      },
-      level: {
-        label: "Activity Level",
-        sedentary: "Sedentary",
-        lightly_active: "Lightly Active",
-        moderately_active: "Moderately Active",
-        very_active: "Very Active",
-        extra_active: "Extremely Active",
-      },
-      equipment: {
-        label: "Available Equipment",
-        home: "At Home",
-        gym: "At the Gym",
-        outdoor: "Outdoors",
-      },
-      notifications: {
-        label: "Notifications",
-        description: "Training Reminders",
-        reminder: {
-          label: "Reminder Delay",
-          30: "30 minutes before",
-          60: "1 hour before",
-          120: "2 hours before",
-        },
-      },
+  auth: {
+    signIn: "Sign In",
+    signUp: "Sign Up",
+    signOut: "Sign Out",
+    email: "Email",
+    password: "Password",
+    forgotPassword: "Forgot Password?",
+    confirmEmail: "Confirm your email"
+  },
+  questionnaire: {
+    step: "Step {step} of {total}",
+    gender: {
+      title: "What is your gender?",
+      male: "Male",
+      female: "Female"
     },
-  },
+    personalInfo: {
+      title: "Personal Information",
+      age: "Age",
+      weight: "Weight",
+      height: "Height"
+    },
+    objective: {
+      title: "What is your main goal?",
+      weightLoss: "Weight Loss",
+      muscleGain: "Muscle Gain",
+      maintenance: "Maintenance"
+    },
+    trainingFrequency: {
+      title: "Training Frequency",
+      sessionsPerWeek: "Sessions per week",
+      duration: "Session duration"
+    },
+    activityLevel: {
+      title: "Activity Level",
+      sedentary: "Sedentary",
+      lightlyActive: "Lightly Active",
+      moderatelyActive: "Moderately Active",
+      veryActive: "Very Active",
+      extremelyActive: "Extremely Active"
+    },
+    training: {
+      title: "Where do you prefer to train?",
+      home: "At Home",
+      gym: "At the Gym",
+      outdoor: "Outdoors"
+    },
+    diet: {
+      title: "Diet Type",
+      omnivore: "Omnivore",
+      vegetarian: "Vegetarian",
+      vegan: "Vegan",
+      pescetarian: "Pescetarian"
+    }
+  }
 };

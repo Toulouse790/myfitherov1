@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useClaudeRecommendations } from "@/hooks/use-claude-recommendations";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const InitialQuestionnaire = () => {
   const {
@@ -30,6 +31,7 @@ export const InitialQuestionnaire = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const { data: recommendations, isLoading: isGeneratingRecommendations } = useClaudeRecommendations(
     step === 7 ? responses : null
@@ -46,7 +48,6 @@ export const InitialQuestionnaire = () => {
     checkAuth();
   }, [navigate]);
 
-  // Ne rien afficher pendant la vérification de la session
   if (!user) return null;
 
   const renderStep = () => {
@@ -123,10 +124,10 @@ export const InitialQuestionnaire = () => {
               onClick={handleBack}
               disabled={step === 1}
             >
-              Précédent
+              {t("common.previous")}
             </Button>
             <div className="text-sm text-muted-foreground">
-              Étape {step} sur 7
+              {t("questionnaire.step", { step, total: 7 })}
             </div>
             <Button
               onClick={handleNext}
@@ -136,13 +137,13 @@ export const InitialQuestionnaire = () => {
                 isGeneratingRecommendations ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Génération des recommandations...
+                    {t("common.loading")}
                   </>
                 ) : (
-                  "Terminer"
+                  t("common.finish")
                 )
               ) : (
-                "Suivant"
+                t("common.next")
               )}
             </Button>
           </div>
