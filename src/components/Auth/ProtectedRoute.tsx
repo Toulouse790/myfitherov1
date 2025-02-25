@@ -1,29 +1,26 @@
 
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/contexts/AuthContext";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+export const ProtectedRoute = () => {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      console.log("User not authenticated, redirecting to signin");
-      navigate("/signin");
-    }
-  }, [user, loading, navigate]);
-
+  // Afficher un spinner pendant le chargement
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement...</p>
-        </div>
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  return user ? <>{children}</> : null;
+  // Rediriger vers la page de connexion si non authentifié
+  if (!user) {
+    return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
+
+  // Rendre les routes enfants si authentifié
+  return <Outlet />;
 };
