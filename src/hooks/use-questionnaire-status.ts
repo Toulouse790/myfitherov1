@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { appCache } from '@/utils/cache';
 
 export const useQuestionnaireStatus = (userId?: string | null) => {
   const [hasCompletedQuestionnaire, setHasCompletedQuestionnaire] = useState<boolean | null>(null);
@@ -16,10 +17,10 @@ export const useQuestionnaireStatus = (userId?: string | null) => {
 
       try {
         // Utiliser la mise en cache du navigateur pour éviter des appels répétés
-        const cachedStatus = sessionStorage.getItem(`questionnaire_completed_${userId}`);
+        const cachedStatus = appCache.get<boolean>(`questionnaire_completed_${userId}`);
         
-        if (cachedStatus) {
-          setHasCompletedQuestionnaire(cachedStatus === 'true');
+        if (cachedStatus !== null) {
+          setHasCompletedQuestionnaire(cachedStatus);
           setIsLoading(false);
           return;
         }
@@ -34,7 +35,7 @@ export const useQuestionnaireStatus = (userId?: string | null) => {
         setHasCompletedQuestionnaire(completed);
         
         // Mettre en cache le résultat
-        sessionStorage.setItem(`questionnaire_completed_${userId}`, String(completed));
+        appCache.set(`questionnaire_completed_${userId}`, completed, 300); // Cache pour 5 minutes
       } catch (error) {
         console.error('Erreur lors de la vérification du questionnaire:', error);
         setHasCompletedQuestionnaire(false);
