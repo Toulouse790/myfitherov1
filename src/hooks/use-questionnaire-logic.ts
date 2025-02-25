@@ -23,16 +23,6 @@ export const useQuestionnaireLogic = () => {
   const handleNext = async () => {
     if (step < 7) {
       setStep(prev => (prev + 1) as QuestionnaireStep);
-    } else if (step === 7) {
-      try {
-        await submitQuestionnaire(responses);
-        toast({
-          description: "Redirection vers l'accueil...",
-        });
-        navigate("/", { replace: true });
-      } catch (error) {
-        // Error already handled by submitQuestionnaire
-      }
     }
   };
 
@@ -42,12 +32,14 @@ export const useQuestionnaireLogic = () => {
     }
   };
 
+  const isStepValid = () => validateStep(step, responses);
+
   return {
     step,
     responses,
     handleResponseChange,
     handleNext,
     handleBack,
-    isStepValid: () => validateStep(step, responses),
+    isStepValid,
   };
 };

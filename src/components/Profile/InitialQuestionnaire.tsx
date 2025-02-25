@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
@@ -11,19 +10,20 @@ import { GenderStep } from "./QuestionnaireSteps/GenderStep";
 import { useQuestionnaireLogic } from "./QuestionnaireSteps/QuestionnaireLogic";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useClaudeRecommendations } from "@/hooks/use-claude-recommendations";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { appCache } from "@/utils/cache";
 
 export const InitialQuestionnaire = () => {
   const {
     step,
     responses,
     handleResponseChange,
-    handleNext,
+    handleNext: originalHandleNext,
     handleBack,
     isStepValid,
   } = useQuestionnaireLogic();
@@ -31,8 +31,8 @@ export const InitialQuestionnaire = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const { t } = useLanguage();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: recommendations, isLoading: isGeneratingRecommendations } = useClaudeRecommendations(
     step === 7 ? responses : null
@@ -49,44 +49,58 @@ export const InitialQuestionnaire = () => {
     checkAuth();
   }, [navigate]);
 
-  if (!user) return null;
+  const submitQuestionnaire = async () => {
+    if (!user || isSubmitting) return;
 
-  const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
       const { error } = await supabase
-        .from("questionnaire_responses")
+        .from('questionnaire_responses')
         .insert({
           user_id: user.id,
-          gender: responses.gender,
-          age: responses.age,
-          height: responses.height,
-          weight: responses.weight,
-          objective: responses.objective,
-          training_frequency: responses.training_frequency,
-          workout_duration: responses.workout_duration,
-          experience_level: responses.experience_level,
-          available_equipment: responses.available_equipment,
-          diet_type: responses.diet_type
+          ...responses,
+          created_at: new Date().toISOString()
         });
 
       if (error) {
-        throw error;
+        console.error("Erreur lors de l'enregistrement du questionnaire:", error);
+        toast({
+          title: t("common.error"),
+          description: t("questionnaire.saveError"),
+          variant: "destructive",
+        });
+        return;
       }
 
-      navigate("/questionnaire-complete", { 
-        state: { returnTo: location.state?.from?.pathname || "/" },
-        replace: true 
+      appCache.set(`questionnaire_completed_${user.id}`, true, 3600);
+
+      toast({
+        title: t("common.success"),
+        description: t("questionnaire.saveSuccess"),
       });
-      
+
+      navigate("/", { replace: true });
     } catch (error) {
-      console.error("Erreur lors de l'enregistrement du questionnaire:", error);
+      console.error("Erreur lors de la soumission du questionnaire:", error);
       toast({
         title: t("common.error"),
-        description: t("questionnaire.submitError"),
-        variant: "destructive"
+        description: t("questionnaire.unexpectedError"),
+        variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const handleNext = () => {
+    if (step < 7) {
+      originalHandleNext();
+    } else if (step === 7 && !isGeneratingRecommendations) {
+      submitQuestionnaire();
+    }
+  };
+
+  if (!user) return null;
 
   const renderStep = () => {
     switch (step) {
@@ -168,11 +182,11 @@ export const InitialQuestionnaire = () => {
               {t("questionnaire.step", { step, total: 7 })}
             </div>
             <Button
-              onClick={step === 7 ? handleSubmit : handleNext}
-              disabled={!isStepValid() || (step === 7 && isGeneratingRecommendations)}
+              onClick={handleNext}
+              disabled={!isStepValid() || (step === 7 && (isGeneratingRecommendations || isSubmitting))}
             >
               {step === 7 ? (
-                isGeneratingRecommendations ? (
+                isGeneratingRecommendations || isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     {t("common.loading")}
