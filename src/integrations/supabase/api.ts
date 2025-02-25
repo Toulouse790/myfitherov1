@@ -1,139 +1,105 @@
 
+import { PostgrestError, PostgrestFilterBuilder, PostgrestQueryBuilder } from '@supabase/postgrest-js';
 import { supabase } from './client';
 import { refreshSession } from './auth';
-import type { PostgrestFilterBuilder, PostgrestBuilder } from '@supabase/postgrest-js';
 
-type SupabaseQuery<T> = PostgrestBuilder<T, T> & {
-  executeWithRetry?: () => Promise<{ data: T | null; error: Error | null }>;
-};
+type SupabaseResponse<T> = Promise<{
+  data: T | null;
+  error: PostgrestError | null;
+}>;
 
-// Wrapper pour les appels à l'API Supabase avec gestion automatique de l'authentification
+// Interface plus simple pour éviter les erreurs de type
 export const supabaseApi = {
-  from: <T>(table: string) => {
-    const query = supabase.from(table);
-    
-    // Intercepter la méthode select
-    const originalSelect = query.select;
-    query.select = function<SelectResult = T>(selectQuery?: string): SupabaseQuery<SelectResult> {
-      const builder = originalSelect.call(this, selectQuery);
+  // Méthode pour exécuter une requête avec retry automatique en cas d'erreur d'authentification
+  executeWithRetry: async <T>(
+    queryFn: () => SupabaseResponse<T>
+  ): SupabaseResponse<T> => {
+    try {
+      const { data, error } = await queryFn();
       
-      return {
-        ...builder,
-        executeWithRetry: async function() {
-          try {
-            const { data, error } = await builder;
-            
-            if (error && (
-              error.code === 'PGRST301' || 
-              error.code === '401' ||
-              (typeof error.message === 'string' && error.message.includes('JWT'))
-            )) {
-              console.log('Session expirée, tentative de rafraîchissement...');
-              // Problème d'authentification, essayer de rafraîchir la session
-              await refreshSession();
-              // Réessayer la requête
-              return await supabase.from(table).select(selectQuery);
-            }
-            
-            return { data, error };
-          } catch (e) {
-            console.error(`Erreur lors de l'exécution de la requête sur ${table}:`, e);
-            return { 
-              data: null, 
-              error: e instanceof Error ? e : new Error('Erreur inconnue') 
-            };
-          }
-        }
+      if (error && (
+        error.code === 'PGRST301' || 
+        error.code === '401' ||
+        (typeof error.message === 'string' && error.message.includes('JWT'))
+      )) {
+        console.log('Session expirée, tentative de rafraîchissement...');
+        await refreshSession();
+        return await queryFn();
+      }
+      
+      return { data, error };
+    } catch (e) {
+      console.error('Erreur lors de l\'exécution de la requête:', e);
+      return { 
+        data: null, 
+        error: e instanceof PostgrestError ? e : new PostgrestError('Erreur inconnue', '500') 
       };
-    };
+    }
+  },
 
-    // Intercepter la méthode insert
-    const originalInsert = query.insert;
-    query.insert = function<InsertResult = T>(values: Partial<T>): SupabaseQuery<InsertResult> {
-      const builder = originalInsert.call(this, values);
+  // Méthode pour faire une requête select avec retry
+  select: async <T>(
+    table: string, 
+    columns: string = '*',
+    filters?: (query: PostgrestFilterBuilder<any, any, T[]>) => PostgrestFilterBuilder<any, any, T[]>
+  ): SupabaseResponse<T[]> => {
+    return await supabaseApi.executeWithRetry(async () => {
+      let query = supabase
+        .from(table)
+        .select(columns) as PostgrestFilterBuilder<any, any, T[]>;
       
-      return {
-        ...builder,
-        executeWithRetry: async function() {
-          try {
-            const { data, error } = await builder;
-            
-            if (error && (error.code === '401' || error.message.includes('JWT'))) {
-              console.log('Session expirée lors de l\'insertion, tentative de rafraîchissement...');
-              await refreshSession();
-              return await supabase.from(table).insert(values);
-            }
-            
-            return { data, error };
-          } catch (e) {
-            console.error(`Erreur lors de l'insertion dans ${table}:`, e);
-            return { 
-              data: null, 
-              error: e instanceof Error ? e : new Error('Erreur inconnue') 
-            };
-          }
-        }
-      };
-    };
+      if (filters) {
+        query = filters(query);
+      }
+      
+      return await query;
+    });
+  },
 
-    // Intercepter la méthode update
-    const originalUpdate = query.update;
-    query.update = function<UpdateResult = T>(values: Partial<T>): SupabaseQuery<UpdateResult> {
-      const builder = originalUpdate.call(this, values);
+  // Méthode pour insérer des données avec retry
+  insert: async <T>(
+    table: string, 
+    values: Partial<T> | Partial<T>[]
+  ): SupabaseResponse<T> => {
+    return await supabaseApi.executeWithRetry(async () => {
+      const query = supabase
+        .from(table)
+        .insert(values)
+        .select()
+        .single() as PostgrestFilterBuilder<any, any, T>;
       
-      return {
-        ...builder,
-        executeWithRetry: async function() {
-          try {
-            const { data, error } = await builder;
-            
-            if (error && (error.code === '401' || error.message.includes('JWT'))) {
-              console.log('Session expirée lors de la mise à jour, tentative de rafraîchissement...');
-              await refreshSession();
-              return await supabase.from(table).update(values);
-            }
-            
-            return { data, error };
-          } catch (e) {
-            console.error(`Erreur lors de la mise à jour de ${table}:`, e);
-            return { 
-              data: null, 
-              error: e instanceof Error ? e : new Error('Erreur inconnue') 
-            };
-          }
-        }
-      };
-    };
+      return await query;
+    });
+  },
 
-    // Intercepter la méthode delete
-    const originalDelete = query.delete;
-    query.delete = function<DeleteResult = T>(): SupabaseQuery<DeleteResult> {
-      const builder = originalDelete.call(this);
+  // Méthode pour mettre à jour des données avec retry
+  update: async <T>(
+    table: string, 
+    values: Partial<T>,
+    filters: (query: PostgrestFilterBuilder<any, any, T>) => PostgrestFilterBuilder<any, any, T>
+  ): SupabaseResponse<T> => {
+    return await supabaseApi.executeWithRetry(async () => {
+      let query = supabase
+        .from(table)
+        .update(values) as PostgrestFilterBuilder<any, any, T>;
       
-      return {
-        ...builder,
-        executeWithRetry: async function() {
-          try {
-            const { data, error } = await builder;
-            
-            if (error && (error.code === '401' || error.message.includes('JWT'))) {
-              console.log('Session expirée lors de la suppression, tentative de rafraîchissement...');
-              await refreshSession();
-              return await supabase.from(table).delete();
-            }
-            
-            return { data, error };
-          } catch (e) {
-            console.error(`Erreur lors de la suppression dans ${table}:`, e);
-            return { 
-              data: null, 
-              error: e instanceof Error ? e : new Error('Erreur inconnue') 
-            };
-          }
-        }
-      };
-    };
-    
-    return query;
+      query = filters(query);
+      return await query.select().single();
+    });
+  },
+
+  // Méthode pour supprimer des données avec retry
+  delete: async <T>(
+    table: string,
+    filters: (query: PostgrestFilterBuilder<any, any, T>) => PostgrestFilterBuilder<any, any, T>
+  ): SupabaseResponse<T> => {
+    return await supabaseApi.executeWithRetry(async () => {
+      let query = supabase
+        .from(table)
+        .delete() as PostgrestFilterBuilder<any, any, T>;
+      
+      query = filters(query);
+      return await query.select().single();
+    });
   }
 };
