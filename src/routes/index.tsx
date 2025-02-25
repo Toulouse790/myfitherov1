@@ -60,106 +60,108 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
+          // Route pour le questionnaire initial (sans RequireQuestionnaire)
+          {
+            path: "initial-questionnaire",
+            element: <InitialQuestionnaire />,
+          },
+          
+          // Toutes les autres routes protégées qui nécessitent le questionnaire
           {
             element: <AuthenticatedLayout />,
             children: [
               {
                 path: "/",
-                element: <Index />,
+                element: <Index />
               },
               // Routes du profil
               {
                 path: "profile",
-                element: <Profile />,
+                element: <Profile />
               },
               {
                 path: "personal-info",
-                element: <PersonalInfo />,
+                element: <PersonalInfo />
               },
               {
                 path: "app-settings",
-                element: <AppSettings />,
+                element: <AppSettings />
               },
               {
                 path: "subscription",
-                element: <Subscription />,
+                element: <Subscription />
               },
               {
                 path: "subscription-plans",
-                element: <SubscriptionPlans />,
+                element: <SubscriptionPlans />
               },
               {
                 path: "training-preferences",
-                element: <TrainingPreferences />,
+                element: <TrainingPreferences />
               },
               {
                 path: "notifications",
-                element: <Notifications />,
+                element: <Notifications />
               },
               // Routes des entraînements
               {
                 path: "workouts",
-                element: <Workouts />,
+                element: <Workouts />
               },
               {
                 path: "workouts/:sessionId",
-                element: <UnifiedWorkoutDetail />,
+                element: <UnifiedWorkoutDetail />
               },
               {
                 path: "workouts/generate",
-                element: <WorkoutGenerate />,
+                element: <WorkoutGenerate />
               },
               // Routes de santé
               {
                 path: "nutrition",
-                element: <Nutrition />,
+                element: <Nutrition />
               },
               {
                 path: "sleep",
-                element: <Sleep />,
+                element: <Sleep />
               },
               {
                 path: "stats",
-                element: <Stats />,
+                element: <Stats />
               },
               {
                 path: "cardio",
-                element: <Cardio />,
+                element: <Cardio />
               },
               // Routes du tableau de bord
               {
                 path: "dashboard/overview",
-                element: <DashboardOverview />,
+                element: <DashboardOverview />
               },
               {
                 path: "dashboard/streaks",
-                element: <DashboardStreaks />,
+                element: <DashboardStreaks />
               },
               {
                 path: "goals/weekly",
-                element: <WeeklyGoals />,
+                element: <WeeklyGoals />
               },
               {
                 path: "goals/monthly",
-                element: <MonthlyGoals />,
+                element: <MonthlyGoals />
               },
               {
                 path: "stats/weekly-report",
-                element: <WeeklyReport />,
+                element: <WeeklyReport />
               },
               {
                 path: "achievements/history",
-                element: <AchievementsHistory />,
+                element: <AchievementsHistory />
               }
             ]
-          },
-          // Routes qui ne nécessitent pas le questionnaire
-          {
-            path: "initial-questionnaire",
-            element: <InitialQuestionnaire />,
           }
-        ],
-      },
-    ],
+        ]
+      }
+    ]
   }
 ]);
