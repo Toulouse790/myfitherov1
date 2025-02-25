@@ -2,7 +2,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
-import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
+import { AuthenticatedLayout } from "@/components/Layout/AuthenticatedLayout";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 
 // Pages d'authentification
@@ -61,96 +61,102 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
           {
-            path: "/",
-            element: <RequireQuestionnaire><Index /></RequireQuestionnaire>,
+            element: <AuthenticatedLayout />,
+            children: [
+              {
+                path: "/",
+                element: <Index />,
+              },
+              // Routes du profil
+              {
+                path: "profile",
+                element: <Profile />,
+              },
+              {
+                path: "personal-info",
+                element: <PersonalInfo />,
+              },
+              {
+                path: "app-settings",
+                element: <AppSettings />,
+              },
+              {
+                path: "subscription",
+                element: <Subscription />,
+              },
+              {
+                path: "subscription-plans",
+                element: <SubscriptionPlans />,
+              },
+              {
+                path: "training-preferences",
+                element: <TrainingPreferences />,
+              },
+              {
+                path: "notifications",
+                element: <Notifications />,
+              },
+              // Routes des entraînements
+              {
+                path: "workouts",
+                element: <Workouts />,
+              },
+              {
+                path: "workouts/:sessionId",
+                element: <UnifiedWorkoutDetail />,
+              },
+              {
+                path: "workouts/generate",
+                element: <WorkoutGenerate />,
+              },
+              // Routes de santé
+              {
+                path: "nutrition",
+                element: <Nutrition />,
+              },
+              {
+                path: "sleep",
+                element: <Sleep />,
+              },
+              {
+                path: "stats",
+                element: <Stats />,
+              },
+              {
+                path: "cardio",
+                element: <Cardio />,
+              },
+              // Routes du tableau de bord
+              {
+                path: "dashboard/overview",
+                element: <DashboardOverview />,
+              },
+              {
+                path: "dashboard/streaks",
+                element: <DashboardStreaks />,
+              },
+              {
+                path: "goals/weekly",
+                element: <WeeklyGoals />,
+              },
+              {
+                path: "goals/monthly",
+                element: <MonthlyGoals />,
+              },
+              {
+                path: "stats/weekly-report",
+                element: <WeeklyReport />,
+              },
+              {
+                path: "achievements/history",
+                element: <AchievementsHistory />,
+              }
+            ]
           },
+          // Routes qui ne nécessitent pas le questionnaire
           {
             path: "initial-questionnaire",
             element: <InitialQuestionnaire />,
-          },
-          // Routes du profil
-          {
-            path: "profile",
-            element: <RequireQuestionnaire><Profile /></RequireQuestionnaire>,
-          },
-          {
-            path: "personal-info",
-            element: <RequireQuestionnaire><PersonalInfo /></RequireQuestionnaire>,
-          },
-          {
-            path: "app-settings",
-            element: <RequireQuestionnaire><AppSettings /></RequireQuestionnaire>,
-          },
-          {
-            path: "subscription",
-            element: <RequireQuestionnaire><Subscription /></RequireQuestionnaire>,
-          },
-          {
-            path: "subscription-plans",
-            element: <RequireQuestionnaire><SubscriptionPlans /></RequireQuestionnaire>,
-          },
-          {
-            path: "training-preferences",
-            element: <RequireQuestionnaire><TrainingPreferences /></RequireQuestionnaire>,
-          },
-          {
-            path: "notifications",
-            element: <RequireQuestionnaire><Notifications /></RequireQuestionnaire>,
-          },
-          // Routes des entraînements
-          {
-            path: "workouts",
-            element: <RequireQuestionnaire><Workouts /></RequireQuestionnaire>,
-          },
-          {
-            path: "workouts/:sessionId",
-            element: <RequireQuestionnaire><UnifiedWorkoutDetail /></RequireQuestionnaire>,
-          },
-          {
-            path: "workouts/generate",
-            element: <RequireQuestionnaire><WorkoutGenerate /></RequireQuestionnaire>,
-          },
-          // Routes de santé
-          {
-            path: "nutrition",
-            element: <RequireQuestionnaire><Nutrition /></RequireQuestionnaire>,
-          },
-          {
-            path: "sleep",
-            element: <RequireQuestionnaire><Sleep /></RequireQuestionnaire>,
-          },
-          {
-            path: "stats",
-            element: <RequireQuestionnaire><Stats /></RequireQuestionnaire>,
-          },
-          {
-            path: "cardio",
-            element: <RequireQuestionnaire><Cardio /></RequireQuestionnaire>,
-          },
-          // Routes du tableau de bord
-          {
-            path: "dashboard/overview",
-            element: <RequireQuestionnaire><DashboardOverview /></RequireQuestionnaire>,
-          },
-          {
-            path: "dashboard/streaks",
-            element: <RequireQuestionnaire><DashboardStreaks /></RequireQuestionnaire>,
-          },
-          {
-            path: "goals/weekly",
-            element: <RequireQuestionnaire><WeeklyGoals /></RequireQuestionnaire>,
-          },
-          {
-            path: "goals/monthly",
-            element: <RequireQuestionnaire><MonthlyGoals /></RequireQuestionnaire>,
-          },
-          {
-            path: "stats/weekly-report",
-            element: <RequireQuestionnaire><WeeklyReport /></RequireQuestionnaire>,
-          },
-          {
-            path: "achievements/history",
-            element: <RequireQuestionnaire><AchievementsHistory /></RequireQuestionnaire>,
           }
         ],
       },
