@@ -44,3 +44,22 @@ supabase.auth.onAuthStateChange((event, session) => {
     }
   }
 });
+
+// Fonction d'aide pour vérifier rapidement l'état d'authentification
+export const getAuthStatus = async () => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    return {
+      isAuthenticated: !!session,
+      user: session?.user || null,
+      error: null
+    };
+  } catch (error) {
+    console.error("Erreur lors de la vérification de l'authentification:", error);
+    return {
+      isAuthenticated: false,
+      user: null,
+      error
+    };
+  }
+};
