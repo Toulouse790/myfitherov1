@@ -1,4 +1,5 @@
-import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+
+import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
 import DashboardOverview from "@/pages/Dashboard/Overview";
 import DashboardStreaks from "@/pages/Dashboard/Streaks";
 import WeeklyGoals from "@/pages/Goals/Weekly";
@@ -12,19 +13,11 @@ export const dashboardRoutes = [
     children: [
       {
         path: "overview",
-        element: (
-          <ProtectedRoute>
-            <DashboardOverview />
-          </ProtectedRoute>
-        ),
+        element: <RequireQuestionnaire><DashboardOverview /></RequireQuestionnaire>,
       },
       {
         path: "streaks",
-        element: (
-          <ProtectedRoute>
-            <DashboardStreaks />
-          </ProtectedRoute>
-        ),
+        element: <RequireQuestionnaire><DashboardStreaks /></RequireQuestionnaire>,
       },
     ],
   },
@@ -33,36 +26,20 @@ export const dashboardRoutes = [
     children: [
       {
         path: "weekly",
-        element: (
-          <ProtectedRoute>
-            <WeeklyGoals />
-          </ProtectedRoute>
-        ),
+        element: <RequireQuestionnaire><WeeklyGoals /></RequireQuestionnaire>,
       },
       {
         path: "monthly",
-        element: (
-          <ProtectedRoute>
-            <MonthlyGoals />
-          </ProtectedRoute>
-        ),
+        element: <RequireQuestionnaire><MonthlyGoals /></RequireQuestionnaire>,
       },
     ],
   },
   {
     path: "stats/weekly-report",
-    element: (
-      <ProtectedRoute>
-        <WeeklyReport />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><WeeklyReport /></RequireQuestionnaire>,
   },
   {
     path: "achievements/history",
-    element: (
-      <ProtectedRoute>
-        <AchievementsHistory />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><AchievementsHistory /></RequireQuestionnaire>,
   },
 ];

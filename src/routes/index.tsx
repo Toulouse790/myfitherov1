@@ -1,3 +1,4 @@
+
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
@@ -17,55 +18,18 @@ export const router = createBrowserRouter([
     errorElement: <ErrorBoundary />,
     children: [
       {
-        index: true,
-        element: (
-          <ProtectedRoute>
-            <RequireQuestionnaire>
-              <Index />
-            </RequireQuestionnaire>
-          </ProtectedRoute>
-        ),
+        element: <ProtectedRoute />,
+        children: [
+          {
+            index: true,
+            element: <RequireQuestionnaire><Index /></RequireQuestionnaire>,
+          },
+          ...profileRoutes,
+          ...workoutRoutes,
+          ...healthRoutes,
+          ...dashboardRoutes,
+        ],
       },
-      ...profileRoutes.map(route => ({
-        ...route,
-        element: (
-          <ProtectedRoute>
-            <RequireQuestionnaire>
-              {route.element}
-            </RequireQuestionnaire>
-          </ProtectedRoute>
-        ),
-      })),
-      ...workoutRoutes.map(route => ({
-        ...route,
-        element: (
-          <ProtectedRoute>
-            <RequireQuestionnaire>
-              {route.element}
-            </RequireQuestionnaire>
-          </ProtectedRoute>
-        ),
-      })),
-      ...healthRoutes.map(route => ({
-        ...route,
-        element: (
-          <ProtectedRoute>
-            <RequireQuestionnaire>
-              {route.element}
-            </RequireQuestionnaire>
-          </ProtectedRoute>
-        ),
-      })),
-      ...dashboardRoutes.map(route => ({
-        ...route,
-        element: (
-          <ProtectedRoute>
-            <RequireQuestionnaire>
-              {route.element}
-            </RequireQuestionnaire>
-          </ProtectedRoute>
-        ),
-      })),
     ],
   },
   ...authRoutes,

@@ -1,4 +1,5 @@
-import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+
+import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
 import Profile from "@/pages/Profile";
 import PersonalInfo from "@/pages/PersonalInfo";
 import AppSettings from "@/pages/AppSettings";
@@ -11,11 +12,7 @@ import Notifications from "@/pages/Notifications";
 export const profileRoutes = [
   {
     path: "profile",
-    element: (
-      <ProtectedRoute>
-        <Profile />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><Profile /></RequireQuestionnaire>,
   },
   {
     path: "initial-questionnaire",
@@ -23,50 +20,26 @@ export const profileRoutes = [
   },
   {
     path: "personal-info",
-    element: (
-      <ProtectedRoute>
-        <PersonalInfo />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><PersonalInfo /></RequireQuestionnaire>,
   },
   {
     path: "app-settings",
-    element: (
-      <ProtectedRoute>
-        <AppSettings />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><AppSettings /></RequireQuestionnaire>,
   },
   {
     path: "subscription",
-    element: (
-      <ProtectedRoute>
-        <Subscription />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><Subscription /></RequireQuestionnaire>,
   },
   {
     path: "subscription-plans",
-    element: (
-      <ProtectedRoute>
-        <SubscriptionPlans />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><SubscriptionPlans /></RequireQuestionnaire>,
   },
   {
     path: "training-preferences",
-    element: (
-      <ProtectedRoute>
-        <TrainingPreferences />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><TrainingPreferences /></RequireQuestionnaire>,
   },
   {
     path: "notifications",
-    element: (
-      <ProtectedRoute>
-        <Notifications />
-      </ProtectedRoute>
-    ),
+    element: <RequireQuestionnaire><Notifications /></RequireQuestionnaire>,
   },
 ];
