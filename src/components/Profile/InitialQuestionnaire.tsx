@@ -11,7 +11,7 @@ import { GenderStep } from "./QuestionnaireSteps/GenderStep";
 import { useQuestionnaireLogic } from "./QuestionnaireSteps/QuestionnaireLogic";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useClaudeRecommendations } from "@/hooks/use-claude-recommendations";
@@ -31,6 +31,7 @@ export const InitialQuestionnaire = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
 
   const { data: recommendations, isLoading: isGeneratingRecommendations } = useClaudeRecommendations(
@@ -49,6 +50,43 @@ export const InitialQuestionnaire = () => {
   }, [navigate]);
 
   if (!user) return null;
+
+  const handleSubmit = async () => {
+    try {
+      const { error } = await supabase
+        .from("questionnaire_responses")
+        .insert({
+          user_id: user.id,
+          gender: responses.gender,
+          age: responses.age,
+          height: responses.height,
+          weight: responses.weight,
+          objective: responses.objective,
+          training_frequency: responses.training_frequency,
+          workout_duration: responses.workout_duration,
+          experience_level: responses.experience_level,
+          available_equipment: responses.available_equipment,
+          diet_type: responses.diet_type
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      navigate("/questionnaire-complete", { 
+        state: { from: location.state?.from || { pathname: "/" } },
+        replace: true 
+      });
+      
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement du questionnaire:", error);
+      toast({
+        title: t("common.error"),
+        description: t("questionnaire.submitError"),
+        variant: "destructive"
+      });
+    }
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -130,7 +168,7 @@ export const InitialQuestionnaire = () => {
               {t("questionnaire.step", { step, total: 7 })}
             </div>
             <Button
-              onClick={handleNext}
+              onClick={step === 7 ? handleSubmit : handleNext}
               disabled={!isStepValid() || (step === 7 && isGeneratingRecommendations)}
             >
               {step === 7 ? (
