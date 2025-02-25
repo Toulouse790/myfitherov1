@@ -74,7 +74,7 @@ export const InitialQuestionnaire = () => {
       }
 
       navigate("/questionnaire-complete", { 
-        state: { from: location.state?.from || { pathname: "/" } },
+        state: { returnTo: location.state?.from?.pathname || "/" },
         replace: true 
       });
       
