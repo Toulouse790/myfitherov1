@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ObjectiveStep } from "./QuestionnaireSteps/ObjectiveStep";
@@ -11,19 +12,19 @@ import { useQuestionnaireLogic } from "./QuestionnaireSteps/QuestionnaireLogic";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useClaudeRecommendations } from "@/hooks/use-claude-recommendations";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { appCache } from "@/utils/cache";
 
 export const InitialQuestionnaire = () => {
   const {
     step,
     responses,
+    isSubmitting,
     handleResponseChange,
-    handleNext: originalHandleNext,
+    handleNext,
     handleBack,
     isStepValid,
   } = useQuestionnaireLogic();
@@ -32,7 +33,6 @@ export const InitialQuestionnaire = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: recommendations, isLoading: isGeneratingRecommendations } = useClaudeRecommendations(
     step === 7 ? responses : null
@@ -48,57 +48,6 @@ export const InitialQuestionnaire = () => {
     
     checkAuth();
   }, [navigate]);
-
-  const submitQuestionnaire = async () => {
-    if (!user || isSubmitting) return;
-
-    setIsSubmitting(true);
-    try {
-      const { error } = await supabase
-        .from('questionnaire_responses')
-        .insert({
-          user_id: user.id,
-          ...responses,
-          created_at: new Date().toISOString()
-        });
-
-      if (error) {
-        console.error("Erreur lors de l'enregistrement du questionnaire:", error);
-        toast({
-          title: t("common.error"),
-          description: t("questionnaire.saveError"),
-          variant: "destructive",
-        });
-        return;
-      }
-
-      appCache.set(`questionnaire_completed_${user.id}`, true, 3600);
-
-      toast({
-        title: t("common.success"),
-        description: t("questionnaire.saveSuccess"),
-      });
-
-      navigate("/", { replace: true });
-    } catch (error) {
-      console.error("Erreur lors de la soumission du questionnaire:", error);
-      toast({
-        title: t("common.error"),
-        description: t("questionnaire.unexpectedError"),
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleNext = () => {
-    if (step < 7) {
-      originalHandleNext();
-    } else if (step === 7 && !isGeneratingRecommendations) {
-      submitQuestionnaire();
-    }
-  };
 
   if (!user) return null;
 
@@ -183,7 +132,7 @@ export const InitialQuestionnaire = () => {
             </div>
             <Button
               onClick={handleNext}
-              disabled={!isStepValid() || (step === 7 && (isGeneratingRecommendations || isSubmitting))}
+              disabled={!isStepValid() || isSubmitting || (step === 7 && isGeneratingRecommendations)}
             >
               {step === 7 ? (
                 isGeneratingRecommendations || isSubmitting ? (
