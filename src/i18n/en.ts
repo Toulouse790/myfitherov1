@@ -1,4 +1,3 @@
-
 export const en = {
   common: {
     save: "Save",
@@ -19,7 +18,12 @@ export const en = {
     email: "Email",
     password: "Password",
     forgotPassword: "Forgot Password?",
-    confirmEmail: "Confirm your email"
+    confirmEmail: "Confirm your email",
+    verifying: "Verifying...",
+    pleaseWait: "Please wait while we verify your information.",
+    error: "Authentication Error",
+    sessionExpired: "Your session has expired, please sign in again",
+    confirmError: "An error occurred during confirmation"
   },
   questionnaire: {
     step: "Step {step} of {total}",
