@@ -1,4 +1,3 @@
-
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
@@ -8,6 +7,7 @@ import { lazy, Suspense } from "react";
 import { AuthConfirmPage } from "@/pages/AuthConfirm";
 import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
+import { QuestionnaireCompleteHandler } from "@/components/Profile/QuestionnaireCompleteHandler";
 
 // Pages d'authentification
 const SignInPage = lazy(() => import("@/pages/SignIn"));
@@ -64,6 +64,10 @@ export const router = createBrowserRouter([
   {
     path: "/auth/confirm",
     element: <AuthConfirmPage />,
+  },
+  {
+    path: "/questionnaire-complete",
+    element: <QuestionnaireCompleteHandler />,
   },
 
   // Routes protégées
