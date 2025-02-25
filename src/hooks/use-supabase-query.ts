@@ -26,71 +26,71 @@ export function useSupabaseQuery<T extends Record<string, any>>(options: QueryOp
   const [error, setError] = useState<PostgrestError | Error | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const cacheKey = options.cache 
-        ? `query_${options.table}_${JSON.stringify(options)}` 
-        : null;
-      
-      // Vérifier le cache si activé
-      if (cacheKey) {
-        const cachedData = appCache.get<T | T[]>(cacheKey);
-        if (cachedData) {
-          setData(cachedData);
-          setLoading(false);
-          return;
-        }
-      }
-
-      try {
-        let query = supabase
-          .from(options.table)
-          .select<string, T>(options.columns || '*');
-        
-        // Appliquer les filtres
-        if (options.filters) {
-          Object.entries(options.filters).forEach(([key, value]) => {
-            if (value !== undefined) {
-              query = query.eq(key, value);
-            }
-          });
-        }
-        
-        // Appliquer l'ordre
-        if (options.order) {
-          query = query.order(String(options.order.column), { 
-            ascending: options.order.ascending ?? true 
-          });
-        }
-        
-        // Appliquer la limite
-        if (options.limit) {
-          query = query.limit(options.limit);
-        }
-        
-        // Exécuter la requête
-        const { data: result, error: queryError } = options.single 
-          ? await query.maybeSingle()
-          : await query;
-        
-        if (queryError) throw queryError;
-        
-        setData(result as T | T[]);
-        setError(null);
-        
-        // Mettre en cache si activé
-        if (cacheKey && result) {
-          appCache.set(cacheKey, result, options.cacheTtl || 300);
-        }
-      } catch (err) {
-        console.error(`Erreur lors de la requête Supabase sur ${options.table}:`, err);
-        setError(err instanceof Error ? err : new Error(String(err)));
-        setData(null);
-      } finally {
+  const fetchData = async () => {
+    const cacheKey = options.cache 
+      ? `query_${options.table}_${JSON.stringify(options)}` 
+      : null;
+    
+    // Vérifier le cache si activé
+    if (cacheKey) {
+      const cachedData = appCache.get<T | T[]>(cacheKey);
+      if (cachedData) {
+        setData(cachedData);
         setLoading(false);
+        return;
       }
-    };
+    }
 
+    try {
+      let query = supabase
+        .from(options.table)
+        .select<string, T>(options.columns || '*');
+      
+      // Appliquer les filtres
+      if (options.filters) {
+        Object.entries(options.filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            query = query.eq(key, value);
+          }
+        });
+      }
+      
+      // Appliquer l'ordre
+      if (options.order) {
+        query = query.order(String(options.order.column), { 
+          ascending: options.order.ascending ?? true 
+        });
+      }
+      
+      // Appliquer la limite
+      if (options.limit) {
+        query = query.limit(options.limit);
+      }
+      
+      // Exécuter la requête
+      const { data: result, error: queryError } = options.single 
+        ? await query.maybeSingle()
+        : await query;
+      
+      if (queryError) throw queryError;
+      
+      setData(result as T | T[]);
+      setError(null);
+      
+      // Mettre en cache si activé
+      if (cacheKey && result) {
+        appCache.set(cacheKey, result, options.cacheTtl || 300);
+      }
+    } catch (err) {
+      console.error(`Erreur lors de la requête Supabase sur ${options.table}:`, err);
+      setError(err instanceof Error ? err : new Error(String(err)));
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [options.table, JSON.stringify(options)]);
 
@@ -113,4 +113,3 @@ export function useSupabaseQuery<T extends Record<string, any>>(options: QueryOp
     isSuccess: !loading && !error && data !== null 
   };
 }
-
