@@ -1,3 +1,4 @@
+
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
@@ -128,12 +129,12 @@ export const router = createBrowserRouter([
                 element: withSuspense(Workouts)
               },
               {
-                path: "workouts/:sessionId",
-                element: <UnifiedWorkoutDetail />
-              },
-              {
                 path: "workouts/generate",
                 element: withSuspense(WorkoutGenerate)
+              },
+              {
+                path: "workouts/:sessionId",
+                element: <UnifiedWorkoutDetail />
               },
               // Routes de santé
               {
