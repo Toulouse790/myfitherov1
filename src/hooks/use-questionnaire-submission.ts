@@ -1,6 +1,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { QuestionnaireResponse } from "@/types/questionnaire";
 import { mapObjectiveToProfile } from "@/utils/questionnaire";
@@ -9,6 +10,7 @@ import { appCache } from "@/utils/cache";
 export const useQuestionnaireSubmission = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const submitQuestionnaire = async (responses: QuestionnaireResponse) => {
     if (!user) {
@@ -64,6 +66,12 @@ export const useQuestionnaireSubmission = () => {
       toast({
         title: "Étape 2/2",
         description: "Réponses enregistrées avec succès",
+      });
+
+      // Rediriger vers le handler de complétion du questionnaire
+      navigate("/questionnaire-complete", { 
+        state: { returnTo: "/" },
+        replace: true 
       });
 
     } catch (error: any) {
