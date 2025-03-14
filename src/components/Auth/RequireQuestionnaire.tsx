@@ -70,8 +70,9 @@ export const RequireQuestionnaire: React.FC<RequireQuestionnaireProps> = ({ chil
   }
 
   if (!hasCompletedQuestionnaire && user) {
+    console.log("Redirection vers le questionnaire initial. Cache:", appCache.get(`questionnaire_completed_${user.id}`));
     // Rediriger vers le questionnaire, en conservant la destination d'origine
-    return <Navigate to="/initial-questionnaire" state={{ from: location }} replace />;
+    return <Navigate to="/initial-questionnaire" state={{ from: location.pathname }} replace />;
   }
 
   return <>{children}</>;

@@ -60,7 +60,7 @@ export const useQuestionnaireSubmission = () => {
 
       if (questionnaireError) throw questionnaireError;
 
-      // Mise à jour du cache immédiatement
+      // Mettre à jour le cache immédiatement après la soumission réussie
       appCache.set(`questionnaire_completed_${user.id}`, true, 3600);
 
       toast({

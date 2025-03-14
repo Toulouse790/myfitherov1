@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { QuestionnaireResponse, QuestionnaireStep } from "@/types/questionnaire";
 import { validateStep } from "@/utils/questionnaire";
 import { useQuestionnaireSubmission } from "./use-questionnaire-submission";
+import { appCache } from "@/utils/cache";
+import { useAuth } from "@/hooks/use-auth";
 
 export const useQuestionnaireLogic = () => {
   const [step, setStep] = useState<QuestionnaireStep>(1);
@@ -13,6 +15,7 @@ export const useQuestionnaireLogic = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { submitQuestionnaire } = useQuestionnaireSubmission();
+  const { user } = useAuth();
 
   const handleResponseChange = (field: keyof QuestionnaireResponse, value: any) => {
     setResponses(prev => ({
@@ -31,6 +34,11 @@ export const useQuestionnaireLogic = () => {
         toast({
           description: "Redirection vers l'accueil...",
         });
+        
+        // Mettre à jour le cache immédiatement
+        if (user?.id) {
+          appCache.set(`questionnaire_completed_${user.id}`, true, 3600);
+        }
         
         // Ajouter un délai avant la redirection
         setTimeout(() => {
