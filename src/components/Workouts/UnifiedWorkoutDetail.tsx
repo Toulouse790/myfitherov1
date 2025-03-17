@@ -4,12 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/contexts/AuthContext";
 import { WorkoutHeader } from "./WorkoutDetail/WorkoutHeader";
 import { ExerciseSets } from "./ExerciseSets";
 import { WorkoutNotes } from "./WorkoutDetail/WorkoutNotes";
 import { Loader2, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -29,8 +30,8 @@ export const UnifiedWorkoutDetail = () => {
       }
 
       if (!user) {
-        console.log("Utilisateur non authentifié, redirection vers /signin");
-        navigate('/signin');
+        debugLogger.log("UnifiedWorkoutDetail", "Utilisateur non authentifié, redirection vers /signin");
+        navigate('/signin', { state: { from: `/workouts/${sessionId}` } });
         return;
       }
 
@@ -51,7 +52,7 @@ export const UnifiedWorkoutDetail = () => {
 
         if (session?.exercises) {
           const validExercises = session.exercises.filter(Boolean);
-          console.log("Exercices chargés:", validExercises);
+          debugLogger.log("UnifiedWorkoutDetail", "Exercices chargés:", validExercises);
           setExercises(validExercises);
         }
       } catch (error) {

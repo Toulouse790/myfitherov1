@@ -1,49 +1,26 @@
+
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/use-auth";
-import { useWorkoutTimer } from "./use-workout-timer";
-import { useWorkoutExercises } from "./workout/use-workout-exercises";
-import { useWorkoutCompletion } from "./workout/use-workout-completion";
-import { useWorkoutRegeneration } from "./workout/use-workout-regeneration";
-import { useMuscleRecovery } from "./workout/use-muscle-recovery";
-import { useMuscleRecoveryManagement } from "./workout/use-muscle-recovery-management";
-import { useSessionManagement } from "./workout/use-session-management";
-import { useRecoveryManagement } from "./workout/use-recovery-management";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const useWorkoutSession = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number | null>(null);
-  const [workoutStarted, setWorkoutStarted] = useState(false);
-
-  const { duration, isRunning, startTimer, stopTimer, resetTimer, setIsRunning } = useWorkoutTimer();
-  const { exercises, isLoading, error } = useWorkoutExercises(user?.id);
-  const { handleConfirmEndWorkout } = useWorkoutCompletion(user?.id);
-  const { handleRegenerateWorkout } = useWorkoutRegeneration();
-  const { isCardio } = useSessionManagement();
-  const { updateRecoveryStatus } = useRecoveryManagement();
-
-  const muscleGroups = exercises.map(exercise => {
-    return exercise.toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '_');
-  });
-
-  const { recoveryStatus } = useMuscleRecovery(muscleGroups);
-  const { updateMuscleRecovery } = useMuscleRecoveryManagement(user?.id);
+  const { user } = useAuth();
 
   const createWorkoutSession = async (type: string) => {
     try {
       if (!user) {
+        debugLogger.warn("useWorkoutSession", "Tentative de création de séance sans authentification");
         toast({
-          title: "Erreur",
+          title: "Connexion requise",
           description: "Vous devez être connecté pour créer une séance",
           variant: "destructive",
         });
+        // Enregistrer la page actuelle et rediriger vers la connexion
+        navigate('/signin', { state: { from: '/workouts' } });
         return;
       }
 
@@ -120,16 +97,16 @@ export const useWorkoutSession = () => {
         .single();
 
       if (error) {
-        console.error('Supabase error:', error);
+        debugLogger.error("useWorkoutSession", "Erreur Supabase:", error);
         throw error;
       }
 
       if (workoutSession) {
-        console.log("Workout session created:", workoutSession);
+        debugLogger.log("useWorkoutSession", "Session d'entraînement créée:", workoutSession);
         navigate(`/workouts/${workoutSession.id}`);
       }
     } catch (error) {
-      console.error('Error creating workout:', error);
+      debugLogger.error("useWorkoutSession", "Erreur lors de la création de l'entraînement:", error);
       toast({
         title: "Erreur",
         description: "Impossible de créer la séance",
@@ -138,50 +115,5 @@ export const useWorkoutSession = () => {
     }
   };
 
-  const handleExerciseClick = async (index: number) => {
-    try {
-      if (index >= 0 && index < exercises.length) {
-        setCurrentExerciseIndex(index);
-        setWorkoutStarted(true);
-        startTimer();
-        
-        if (!user) {
-          console.error("No user available");
-          return;
-        }
-
-        const exerciseName = exercises[index];
-        await updateRecoveryStatus(exerciseName, 0.7, duration);
-        await updateMuscleRecovery(exerciseName, 0.7, duration);
-      } else {
-        console.error("Invalid exercise index:", index);
-      }
-    } catch (error) {
-      console.error('Error in handleExerciseClick:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du changement d'exercice",
-        variant: "destructive",
-      });
-    }
-  };
-
-  return {
-    user,
-    isCardio,
-    duration,
-    isRunning,
-    exercises,
-    currentExerciseIndex,
-    workoutStarted,
-    recoveryStatus,
-    startTimer,
-    stopTimer,
-    resetTimer,
-    setIsRunning,
-    createWorkoutSession,
-    handleRegenerateWorkout: () => handleRegenerateWorkout(user?.id),
-    handleExerciseClick,
-    handleConfirmEndWorkout
-  };
+  return { createWorkoutSession };
 };

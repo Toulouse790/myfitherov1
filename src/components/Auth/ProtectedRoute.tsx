@@ -2,10 +2,19 @@
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const ProtectedRoute = () => {
   const { user, loading } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+    debugLogger.log("ProtectedRoute", "Vérification de l'authentification:", { 
+      isAuthenticated: !!user, 
+      isLoading: loading,
+      path: location.pathname 
+    });
+  }, [user, loading, location]);
 
   // Afficher un spinner pendant le chargement
   if (loading) {
@@ -18,9 +27,13 @@ export const ProtectedRoute = () => {
 
   // Rediriger vers la page de connexion si non authentifié
   if (!user) {
-    return <Navigate to="/signin" state={{ from: location }} replace />;
+    debugLogger.warn("ProtectedRoute", "Utilisateur non authentifié, redirection vers la connexion", {
+      from: location.pathname
+    });
+    return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
   }
 
   // Rendre les routes enfants si authentifié
+  debugLogger.log("ProtectedRoute", "Utilisateur authentifié, accès autorisé");
   return <Outlet />;
 };

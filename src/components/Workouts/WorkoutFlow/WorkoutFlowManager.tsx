@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,10 @@ import { List, ClipboardList, Play, ArrowLeft, ArrowRight } from "lucide-react";
 import { ExerciseSelection } from "../ExerciseSelection";
 import { GeneratedWorkoutPreview } from "@/components/Dashboard/WorkoutSuggestions/GeneratedWorkoutPreview";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { debugLogger } from "@/utils/debug-logger";
 
 const steps = [
   { id: 1, title: "Sélection des exercices", icon: List },
@@ -17,6 +22,9 @@ export const WorkoutFlowManager = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const { createWorkoutSession } = useWorkoutSession();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleExerciseSelection = (exercises: string[]) => {
     setSelectedExercises(exercises);
@@ -37,7 +45,19 @@ export const WorkoutFlowManager = () => {
   };
 
   const handleStartWorkout = async () => {
+    if (!user) {
+      debugLogger.warn("WorkoutFlowManager", "Tentative de démarrer l'entraînement sans être connecté");
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour créer une séance",
+        variant: "destructive",
+      });
+      navigate('/signin', { state: { from: '/workouts' } });
+      return;
+    }
+
     if (selectedExercises.length > 0) {
+      debugLogger.log("WorkoutFlowManager", "Démarrage d'entraînement avec exercices:", selectedExercises);
       await createWorkoutSession('custom');
     }
   };
