@@ -1,7 +1,7 @@
 
 import { renderHook, act } from '@testing-library/react';
 import { useWorkoutTimer } from '../use-workout-timer';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 describe('useWorkoutTimer', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('useWorkoutTimer', () => {
     
     expect(result.current.duration).toBe(0);
     expect(result.current.isRunning).toBe(false);
-    expect(result.current.isPaused).toBe(false);
+    // Nous supprimons la vérification de isPaused car cette propriété n'existe pas
   });
 
   it('should start timer correctly', () => {
@@ -30,7 +30,7 @@ describe('useWorkoutTimer', () => {
     });
     
     expect(result.current.isRunning).toBe(true);
-    expect(result.current.isPaused).toBe(false);
+    // Nous supprimons la vérification de isPaused car cette propriété n'existe pas
   });
 
   it('should increment duration when timer is running', () => {
@@ -47,24 +47,28 @@ describe('useWorkoutTimer', () => {
     expect(result.current.duration).toBe(3);
   });
 
-  it('should pause timer correctly', () => {
+  it('should stop timer correctly', () => {
     const { result } = renderHook(() => useWorkoutTimer());
     
+    // Démarrer le timer
     act(() => {
       result.current.startTimer();
     });
     
+    // Avancer de 2 secondes
     act(() => {
       vi.advanceTimersByTime(2000);
     });
     
+    // Arrêter le timer
     act(() => {
-      result.current.pauseTimer();
+      result.current.stopTimer();
     });
     
-    expect(result.current.isPaused).toBe(true);
+    expect(result.current.isRunning).toBe(false);
+    expect(result.current.duration).toBe(2);
     
-    // Duration should not increase while paused
+    // La durée ne devrait pas augmenter après l'arrêt
     act(() => {
       vi.advanceTimersByTime(3000);
     });
@@ -72,38 +76,25 @@ describe('useWorkoutTimer', () => {
     expect(result.current.duration).toBe(2);
   });
 
-  it('should resume timer correctly', () => {
+  it('should not increment when timer is stopped', () => {
     const { result } = renderHook(() => useWorkoutTimer());
     
+    // S'assurer que le timer est arrêté
     act(() => {
-      result.current.startTimer();
+      result.current.stopTimer();
     });
     
-    act(() => {
-      vi.advanceTimersByTime(2000);
-    });
-    
-    act(() => {
-      result.current.pauseTimer();
-    });
-    
-    act(() => {
-      result.current.resumeTimer();
-    });
-    
-    expect(result.current.isPaused).toBe(false);
-    
-    // Duration should increase after resuming
     act(() => {
       vi.advanceTimersByTime(3000);
     });
     
-    expect(result.current.duration).toBe(5);
+    expect(result.current.duration).toBe(0);
   });
 
   it('should reset timer correctly', () => {
     const { result } = renderHook(() => useWorkoutTimer());
     
+    // Démarrer et avancer le timer
     act(() => {
       result.current.startTimer();
     });
@@ -114,12 +105,34 @@ describe('useWorkoutTimer', () => {
     
     expect(result.current.duration).toBe(5);
     
+    // Réinitialiser le timer
     act(() => {
       result.current.resetTimer();
     });
     
     expect(result.current.duration).toBe(0);
     expect(result.current.isRunning).toBe(false);
-    expect(result.current.isPaused).toBe(false);
+  });
+
+  it('should allow manual isRunning state control via setIsRunning', () => {
+    const { result } = renderHook(() => useWorkoutTimer());
+    
+    act(() => {
+      result.current.setIsRunning(true);
+    });
+    
+    expect(result.current.isRunning).toBe(true);
+    
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+    
+    expect(result.current.duration).toBe(2);
+    
+    act(() => {
+      result.current.setIsRunning(false);
+    });
+    
+    expect(result.current.isRunning).toBe(false);
   });
 });
