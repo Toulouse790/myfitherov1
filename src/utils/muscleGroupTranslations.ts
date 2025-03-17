@@ -1,11 +1,19 @@
+
 export const translateMuscleGroup = (muscleGroup: string): string => {
+  // Map de traduction des noms affichés vers les identifiants utilisés en BDD
+  const translationMap: { [key: string]: string } = {
+    'chest': 'pectoraux',
+    'back': 'dos',
+    'legs': 'jambes',
+    'shoulders': 'épaules',
+    'biceps': 'biceps',
+    'triceps': 'triceps', 
+    'abs': 'abdominaux'
+  };
+
   if (!muscleGroup) return '';
   
-  return muscleGroup
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '_');
+  return translationMap[muscleGroup.toLowerCase()] || muscleGroup.toLowerCase();
 };
 
 export const reverseTranslateMuscleGroup = (muscleGroup: string): string => {
@@ -13,7 +21,7 @@ export const reverseTranslateMuscleGroup = (muscleGroup: string): string => {
     'pectoraux': 'Pectoraux',
     'dos': 'Dos',
     'jambes': 'Jambes',
-    'epaules': 'Épaules',
+    'épaules': 'Épaules',
     'biceps': 'Biceps',
     'triceps': 'Triceps',
     'abdominaux': 'Abdominaux'

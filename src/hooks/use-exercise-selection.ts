@@ -21,10 +21,12 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           .eq('est_publié', true);
 
         if (muscleGroup) {
-          // Utiliser l'ID du groupe musculaire pour filtrer
+          // Traduire l'ID du groupe musculaire pour la requête
           const muscleGroupId = translateMuscleGroup(muscleGroup);
-          console.log("Recherche des exercices pour le groupe:", muscleGroupId);
-          query = query.eq('muscle_group', muscleGroupId);
+          console.log("Recherche des exercices pour le groupe traduit:", muscleGroupId);
+          
+          // Utiliser ilike pour une recherche insensible à la casse et partielle
+          query = query.ilike('muscle_group', `%${muscleGroupId}%`);
         }
 
         const { data, error } = await query;
@@ -36,9 +38,11 @@ export const useExerciseSelection = (muscleGroup?: string) => {
 
         console.log("Données reçues de Supabase:", data);
         
-        if (!data) {
-          console.log("Aucune donnée reçue de Supabase");
-          setExercises([]);
+        if (!data || data.length === 0) {
+          console.log("Aucun exercice trouvé, utilisation d'exercices de secours");
+          // Utiliser des exercices de secours pour ce groupe musculaire
+          const fallbackExercises = getFallbackExercises(muscleGroup);
+          setExercises(fallbackExercises);
           return;
         }
 
@@ -53,7 +57,10 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           description: "Impossible de charger les exercices",
           variant: "destructive",
         });
-        setExercises([]);
+        
+        // Utiliser des exercices de secours en cas d'erreur
+        const fallbackExercises = getFallbackExercises(muscleGroup);
+        setExercises(fallbackExercises);
       } finally {
         setIsLoading(false);
       }
@@ -61,6 +68,23 @@ export const useExerciseSelection = (muscleGroup?: string) => {
 
     fetchExercises();
   }, [muscleGroup, toast]);
+
+  // Fonction qui retourne des exercices de secours par groupe musculaire
+  const getFallbackExercises = (group?: string): string[] => {
+    if (!group) return [];
+
+    const fallbackMap: { [key: string]: string[] } = {
+      'chest': ["Développé couché", "Écarté avec haltères", "Pompes"],
+      'back': ["Tractions", "Rowing barre", "Tirage poitrine"],
+      'legs': ["Squat", "Fentes", "Extension des jambes"],
+      'shoulders': ["Développé militaire", "Élévations latérales", "Élévations frontales"],
+      'biceps': ["Curl biceps", "Curl marteau", "Curl incliné"],
+      'triceps': ["Dips", "Extension triceps", "Barre au front"],
+      'abs': ["Crunch", "Planche", "Relevé de jambes"]
+    };
+
+    return fallbackMap[group.toLowerCase()] || [];
+  };
 
   return { exercises, isLoading };
 };
