@@ -53,7 +53,7 @@ export const useWorkoutSession = () => {
     }
   }, [user]);
 
-  const createWorkoutSession = async (type: string) => {
+  const createWorkoutSession = async (type: string, customExercises?: string[]) => {
     try {
       if (!user) {
         debugLogger.warn("useWorkoutSession", "Tentative de création de séance sans authentification");
@@ -94,7 +94,10 @@ export const useWorkoutSession = () => {
       let defaultExercises: string[];
       let workoutType: string;
 
-      if (type === 'cardio') {
+      if (type === 'custom' && customExercises && customExercises.length > 0) {
+        defaultExercises = customExercises;
+        workoutType = 'strength';
+      } else if (type === 'cardio') {
         defaultExercises = [
           "Course à pied",
           "Vélo stationnaire",

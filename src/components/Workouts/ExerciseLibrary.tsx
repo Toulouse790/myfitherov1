@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { ExerciseSelection } from "./ExerciseSelection";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
@@ -32,7 +34,7 @@ export const ExerciseLibrary = () => {
     }
 
     try {
-      console.log("Création d'une nouvelle session avec les exercices:", selectedExercises);
+      debugLogger.log("ExerciseLibrary", "Création d'une nouvelle session avec les exercices:", selectedExercises);
       
       const { data: session, error } = await supabase
         .from('workout_sessions')

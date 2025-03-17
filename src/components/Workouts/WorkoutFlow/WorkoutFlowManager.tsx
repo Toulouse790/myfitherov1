@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,7 +57,7 @@ export const WorkoutFlowManager = () => {
 
     if (selectedExercises.length > 0) {
       debugLogger.log("WorkoutFlowManager", "Démarrage d'entraînement avec exercices:", selectedExercises);
-      await createWorkoutSession('custom');
+      await createWorkoutSession('custom', selectedExercises);
     }
   };
 
