@@ -11,16 +11,19 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
+import { MuscleGroupSelection } from "../MuscleGroupSelection";
 
 const steps = [
-  { id: 1, title: "Sélection des exercices", icon: List },
-  { id: 2, title: "Récapitulatif", icon: ClipboardList },
-  { id: 3, title: "Démarrage", icon: Play }
+  { id: 1, title: "Sélection de groupe musculaire", icon: List },
+  { id: 2, title: "Sélection des exercices", icon: List },
+  { id: 3, title: "Récapitulatif", icon: ClipboardList },
+  { id: 4, title: "Démarrage", icon: Play }
 ];
 
 export const WorkoutFlowManager = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
   const { createWorkoutSession } = useSessionActions();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -30,8 +33,13 @@ export const WorkoutFlowManager = () => {
     setSelectedExercises(exercises);
   };
 
+  const handleMuscleGroupSelection = (muscleId: string) => {
+    setSelectedMuscleGroup(muscleId);
+    setCurrentStep(2);
+  };
+
   const handleNext = () => {
-    if (currentStep < 3) {
+    if (currentStep < 4) {
       setCurrentStep(prev => prev + 1);
     } else {
       handleStartWorkout();
@@ -71,12 +79,7 @@ export const WorkoutFlowManager = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <ExerciseSelection
-              selectedExercises={selectedExercises}
-              onSelectionChange={handleExerciseSelection}
-              onClose={() => {}}
-              muscleGroup=""
-            />
+            <MuscleGroupSelection onSelectMuscleGroup={handleMuscleGroupSelection} />
           </motion.div>
         );
       case 2:
@@ -86,10 +89,25 @@ export const WorkoutFlowManager = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <GeneratedWorkoutPreview exercises={selectedExercises} />
+            <ExerciseSelection
+              selectedExercises={selectedExercises}
+              onSelectionChange={handleExerciseSelection}
+              onClose={() => {}}
+              muscleGroup={selectedMuscleGroup}
+            />
           </motion.div>
         );
       case 3:
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <GeneratedWorkoutPreview exercises={selectedExercises} />
+          </motion.div>
+        );
+      case 4:
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -160,22 +178,24 @@ export const WorkoutFlowManager = () => {
           Retour
         </Button>
 
-        <Button
-          onClick={handleNext}
-          disabled={selectedExercises.length === 0}
-        >
-          {currentStep === 3 ? (
-            <>
-              Commencer
-              <Play className="w-4 h-4 ml-2" />
-            </>
-          ) : (
-            <>
-              Suivant
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </>
-          )}
-        </Button>
+        {currentStep !== 1 && (
+          <Button
+            onClick={handleNext}
+            disabled={currentStep === 2 && selectedExercises.length === 0}
+          >
+            {currentStep === 4 ? (
+              <>
+                Commencer
+                <Play className="w-4 h-4 ml-2" />
+              </>
+            ) : (
+              <>
+                Suivant
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </>
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
 
 export const useExerciseSelection = (muscleGroup?: string) => {
   const [exercises, setExercises] = useState<string[]>([]);
@@ -19,10 +21,10 @@ export const useExerciseSelection = (muscleGroup?: string) => {
           .eq('est_publié', true);
 
         if (muscleGroup) {
-          // Convertir le nom du groupe musculaire en minuscules pour la comparaison
-          const normalizedMuscleGroup = muscleGroup.toLowerCase();
-          console.log("Recherche des exercices pour le groupe normalisé:", normalizedMuscleGroup);
-          query = query.ilike('muscle_group', normalizedMuscleGroup);
+          // Utiliser l'ID du groupe musculaire pour filtrer
+          const muscleGroupId = translateMuscleGroup(muscleGroup);
+          console.log("Recherche des exercices pour le groupe:", muscleGroupId);
+          query = query.eq('muscle_group', muscleGroupId);
         }
 
         const { data, error } = await query;
