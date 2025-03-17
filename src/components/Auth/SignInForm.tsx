@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock } from "lucide-react";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -19,13 +20,17 @@ export const SignInForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      debugLogger.log("SignInForm", "Tentative de connexion avec:", { email });
       const success = await handleSignIn(email, password);
       if (success) {
         // Redirection vers la page d'accueil après connexion réussie
+        debugLogger.log("SignInForm", "Connexion réussie, redirection vers l'accueil");
         navigate("/", { replace: true });
+      } else {
+        debugLogger.warn("SignInForm", "Échec de la connexion");
       }
     } catch (error) {
-      console.error("Erreur de connexion:", error);
+      debugLogger.error("SignInForm", "Erreur de connexion:", error);
       toast({
         variant: "destructive",
         title: "Erreur de connexion",

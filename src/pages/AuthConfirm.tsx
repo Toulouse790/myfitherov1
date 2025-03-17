@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const AuthConfirmPage = () => {
   const navigate = useNavigate();
@@ -13,12 +14,17 @@ export const AuthConfirmPage = () => {
   useEffect(() => {
     const handleAuthRedirect = async () => {
       try {
+        debugLogger.log("AuthConfirm", "Vérification de la session...");
         const { data: { session }, error } = await supabase.auth.getSession();
         
-        if (error) throw error;
+        if (error) {
+          debugLogger.error("AuthConfirm", "Erreur lors de la vérification de la session:", error);
+          throw error;
+        }
 
         if (session) {
           // L'utilisateur est connecté, rediriger vers le questionnaire
+          debugLogger.log("AuthConfirm", "Session trouvée, redirection vers le questionnaire");
           toast({
             title: "Connexion réussie",
             description: "Bienvenue sur MyFitHero !",
@@ -26,6 +32,7 @@ export const AuthConfirmPage = () => {
           navigate('/initial-questionnaire', { replace: true });
         } else {
           // Pas de session, rediriger vers la page de connexion
+          debugLogger.warn("AuthConfirm", "Aucune session trouvée");
           toast({
             variant: "destructive",
             title: t("auth.error"),
@@ -34,7 +41,7 @@ export const AuthConfirmPage = () => {
           navigate('/signin', { replace: true });
         }
       } catch (error) {
-        console.error('Erreur lors de la confirmation:', error);
+        debugLogger.error("AuthConfirm", "Erreur lors de la confirmation:", error);
         toast({
           variant: "destructive",
           title: t("common.error"),
