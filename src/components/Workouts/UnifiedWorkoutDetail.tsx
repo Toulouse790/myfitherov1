@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import { Loader2, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { debugLogger } from "@/utils/debug-logger";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
+import { useSessionActions } from "@/hooks/workout/use-session-actions";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -29,6 +29,8 @@ export const UnifiedWorkoutDetail = () => {
     totalWeight: 0,
     totalCalories: 0
   });
+
+  const { handleConfirmEndWorkout } = useSessionActions();
 
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -87,38 +89,26 @@ export const UnifiedWorkoutDetail = () => {
   };
 
   const handleFinishWorkout = async () => {
-    // Calculer quelques statistiques d'entraînement
-    // Dans un cas réel, vous pourriez récupérer ces données depuis la base de données
     const totalDurationMinutes = Math.floor(sessionDuration / 60);
     
-    // Données de statistiques simulées
     setWorkoutStats({
       duration: totalDurationMinutes,
-      totalWeight: Math.floor(Math.random() * 1000) + 500, // Simuler un poids total soulevé
-      totalCalories: Math.floor(Math.random() * 300) + 100 // Simuler des calories brûlées
+      totalWeight: Math.floor(Math.random() * 1000) + 500,
+      totalCalories: Math.floor(Math.random() * 300) + 100
     });
     
-    // Afficher le récapitulatif
     setShowSummary(true);
   };
 
   const handleConfirmEnd = async (difficulty: string, duration: number, muscleGroups: string[]) => {
     try {
-      await supabase
-        .from('workout_sessions')
-        .update({
-          status: 'completed',
-          total_duration_minutes: Math.floor(sessionDuration / 60),
-          difficulty_level: difficulty
-        })
-        .eq('id', sessionId);
-
+      await handleConfirmEndWorkout(difficulty, duration, muscleGroups);
+      
       toast({
         title: "Séance terminée !",
         description: "Félicitations ! Votre séance a été enregistrée.",
       });
 
-      // Rediriger vers la page des entraînements
       navigate('/workouts');
     } catch (error) {
       console.error('Error completing workout:', error);
@@ -176,7 +166,6 @@ export const UnifiedWorkoutDetail = () => {
         </Card>
       </motion.div>
 
-      {/* Dialog de récapitulatif de la séance */}
       <WorkoutSummaryDialog
         open={showSummary}
         onOpenChange={setShowSummary}

@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { LoadingButton } from "./GenerateWorkout/LoadingButton";
 import { WorkoutActions } from "./GenerateWorkout/WorkoutActions";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
 import { generateWorkoutPlan } from "./workoutPlanGenerator";
-import { useWorkoutSession } from "./useWorkoutSession";
+import { useSessionActions } from "@/hooks/workout/use-session-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -16,7 +17,7 @@ export interface GenerateWorkoutDialogProps {
 export const GenerateWorkoutDialog = ({ isOpen, onClose }: GenerateWorkoutDialogProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedWorkout, setGeneratedWorkout] = useState<string[] | null>(null);
-  const { createWorkoutSession } = useWorkoutSession();
+  const { createWorkoutSession } = useSessionActions();
   const { toast } = useToast();
   const { user } = useAuth();
 

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { List, ClipboardList, Play, ArrowLeft, ArrowRight } from "lucide-react";
 import { ExerciseSelection } from "../ExerciseSelection";
 import { GeneratedWorkoutPreview } from "@/components/Dashboard/WorkoutSuggestions/GeneratedWorkoutPreview";
-import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useSessionActions } from "@/hooks/workout/use-session-actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -20,7 +21,7 @@ const steps = [
 export const WorkoutFlowManager = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
-  const { createWorkoutSession } = useWorkoutSession();
+  const { createWorkoutSession } = useSessionActions();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();

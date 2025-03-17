@@ -1,12 +1,12 @@
 
 import { useParams } from "react-router-dom";
-import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useSessionActions } from "@/hooks/workout/use-session-actions";
 import { NoSessionView } from "./NextWorkoutDetail/NoSessionView";
 import { UnifiedWorkoutDetail } from "./UnifiedWorkoutDetail";
 
 export const NextWorkoutDetail = () => {
   const { sessionId } = useParams();
-  const { createWorkoutSession } = useWorkoutSession();
+  const { createWorkoutSession } = useSessionActions();
 
   if (!sessionId) {
     return <NoSessionView />;
