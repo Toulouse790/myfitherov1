@@ -25,17 +25,18 @@ export const NavigationButtons = ({
 
   return (
     <div className="flex justify-between mt-6 w-full">
-      <Button
-        variant="outline"
-        onClick={onBack}
-        className="px-5 py-2 h-12"
-        disabled={currentStep === 1}
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Retour
-      </Button>
-
       {currentStep !== 1 && (
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className="px-5 py-2 h-12"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Retour
+        </Button>
+      )}
+
+      {currentStep !== 1 ? (
         <Button
           onClick={onNext}
           className="px-5 py-2 h-12"
@@ -44,6 +45,17 @@ export const NavigationButtons = ({
           Suivant
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
+      ) : (
+        <div className="ml-auto">
+          <Button
+            onClick={onNext}
+            className="px-5 py-2 h-12"
+            disabled={isNextDisabled}
+          >
+            Suivant
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
       )}
     </div>
   );
