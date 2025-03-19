@@ -20,19 +20,7 @@ export const NavigationButtons = ({
   // On n'affiche pas les boutons de navigation sur la dernière étape
   // car un bouton principal est déjà présent dans StartWorkoutStep
   if (currentStep === totalSteps) {
-    return (
-      <div className="flex justify-start mt-6">
-        <Button
-          variant="outline"
-          onClick={onBack}
-          className="px-5 py-2 h-12"
-          disabled={currentStep === 1}
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour
-        </Button>
-      </div>
-    );
+    return null; // Ne rien afficher sur la dernière étape
   }
 
   return (
