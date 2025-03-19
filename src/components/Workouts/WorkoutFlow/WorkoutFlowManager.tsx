@@ -15,6 +15,7 @@ import { workoutSteps } from "./workoutSteps";
 import { StepIndicator } from "./components/StepIndicator";
 import { NavigationButtons } from "./components/NavigationButtons";
 import { StartWorkoutStep } from "./components/StartWorkoutStep";
+import { ExerciseSetManager } from "./components/ExerciseSetManager";
 
 export const WorkoutFlowManager = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -77,6 +78,13 @@ export const WorkoutFlowManager = () => {
     }
   };
 
+  const handleExerciseComplete = () => {
+    toast({
+      title: "Exercice terminé",
+      description: "Passez à l'exercice suivant",
+    });
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -122,6 +130,20 @@ export const WorkoutFlowManager = () => {
             exerciseCount={selectedExercises.length} 
             onStartWorkout={handleStartWorkout} 
           />
+        );
+      case 5: // Ajout d'une étape pour l'ExerciseSetManager
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="flex justify-center"
+          >
+            <ExerciseSetManager 
+              exerciseName="Rowing avec Haltères" 
+              onComplete={handleExerciseComplete}
+            />
+          </motion.div>
         );
       default:
         return null;
