@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 interface NavigationButtonsProps {
   currentStep: number;
@@ -52,8 +52,8 @@ export const NavigationButtons = ({
             className="px-5 py-2 h-12"
             disabled={isNextDisabled}
           >
-            Suivant
-            <ArrowRight className="w-4 h-4 ml-2" />
+            Valider
+            <Check className="w-4 h-4 ml-2" />
           </Button>
         </div>
       )}

@@ -35,6 +35,17 @@ export const WorkoutFlowManager = () => {
   };
 
   const handleNext = () => {
+    // Si on est à la première étape (sélection du groupe musculaire)
+    if (currentStep === 1) {
+      // On revient à la sélection des groupes musculaires après validation
+      // pour permettre à l'utilisateur de choisir d'autres exercices
+      toast({
+        title: "Groupe musculaire validé",
+        description: "Vous pouvez maintenant sélectionner un autre groupe musculaire",
+      });
+      return;
+    }
+    
     if (currentStep < workoutSteps.length) {
       setCurrentStep(prev => prev + 1);
     } else {
