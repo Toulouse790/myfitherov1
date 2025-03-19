@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { Badge } from "@/components/ui/badge";
 
 export interface FoodEntryListProps {
   entries: FoodEntry[];
@@ -126,7 +127,3 @@ export const FoodEntryList = ({ entries, onDelete }: FoodEntryListProps) => {
     </Card>
   );
 };
-
-import { Badge } from "@/components/ui/badge";
-
-export const Badge = Badge; // Réexporter Badge pour éviter les erreurs d'importation circulaire

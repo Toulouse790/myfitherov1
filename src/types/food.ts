@@ -1,3 +1,4 @@
+
 export interface CommonFood {
   id: string;
   name: string;
@@ -20,4 +21,5 @@ export interface FoodEntry {
   notes?: string;
   description?: string;
   status?: 'taken' | 'skipped' | null;
+  created_at?: string;
 }
