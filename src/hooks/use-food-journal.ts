@@ -124,7 +124,7 @@ export const useFoodJournal = () => {
         toast({
           title: "Attention",
           description: `${newFood} a déjà été ajouté à ${mealType} aujourd'hui`,
-          variant: "warning",
+          variant: "default", // Changé de "warning" à "default" car "warning" n'est pas un type valide
         });
 
         // L'utilisateur peut quand même l'ajouter s'il le souhaite
