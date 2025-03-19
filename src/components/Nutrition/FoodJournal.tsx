@@ -7,6 +7,8 @@ import { useFoodJournal } from "@/hooks/use-food-journal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
+import { FoodSuggestions } from "./FoodSuggestions";
+import { FoodEntry } from "@/types/food";
 
 export const FoodJournal = () => {
   const { toast } = useToast();
@@ -77,6 +79,23 @@ export const FoodJournal = () => {
     }
   };
 
+  const handleSelectSuggestion = (food: FoodEntry) => {
+    setNewFood(food.name);
+    setCalories(food.calories);
+    setProteins(food.proteins);
+    if (food.carbs) setCarbs(food.carbs);
+    if (food.fats) setFats(food.fats);
+    if (food.description) setNotes(food.description);
+    if (food.mealType) {
+      handleAddEntryWithLogging(food.mealType);
+    } else {
+      toast({
+        title: "Information",
+        description: "Veuillez sélectionner un type de repas pour cette suggestion",
+      });
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -112,6 +131,8 @@ export const FoodJournal = () => {
           onNotesChange={setNotes}
           onAddEntry={handleAddEntryWithLogging}
         />
+        
+        <FoodSuggestions onSelectFood={handleSelectSuggestion} />
         
         <div className="mt-8 space-y-4">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
