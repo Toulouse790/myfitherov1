@@ -96,6 +96,20 @@ export const FoodJournal = () => {
     }
   };
 
+  // Convertir les valeurs numériques en chaînes pour l'utilisation dans FoodEntryForm
+  const caloriesStr = calories.toString();
+  const proteinsStr = proteins.toString();
+  const carbsStr = carbs.toString();
+  const fatsStr = fats.toString();
+  const weightStr = weight.toString();
+
+  // Fonction pour convertir les chaînes en nombres lors des mises à jour
+  const handleCaloriesChange = (value: string) => setCalories(Number(value));
+  const handleProteinsChange = (value: string) => setProteins(Number(value));
+  const handleCarbsChange = (value: string) => setCarbs(Number(value));
+  const handleFatsChange = (value: string) => setFats(Number(value));
+  const handleWeightChange = (value: string) => setWeight(Number(value));
+
   return (
     <Card>
       <CardHeader>
@@ -114,20 +128,20 @@ export const FoodJournal = () => {
       <CardContent className="p-6">
         <FoodEntryForm
           newFood={newFood}
-          calories={calories}
-          proteins={proteins}
-          carbs={carbs}
-          fats={fats}
-          weight={weight}
+          calories={caloriesStr}
+          proteins={proteinsStr}
+          carbs={carbsStr}
+          fats={fatsStr}
+          weight={weightStr}
           notes={notes}
           baseCalories={baseCalories}
           selectedCategory={selectedCategory}
           onFoodChange={setNewFood}
-          onCaloriesChange={setCalories}
-          onProteinsChange={setProteins}
-          onCarbsChange={setCarbs}
-          onFatsChange={setFats}
-          onWeightChange={setWeight}
+          onCaloriesChange={handleCaloriesChange}
+          onProteinsChange={handleProteinsChange}
+          onCarbsChange={handleCarbsChange}
+          onFatsChange={handleFatsChange}
+          onWeightChange={handleWeightChange}
           onNotesChange={setNotes}
           onAddEntry={handleAddEntryWithLogging}
         />
