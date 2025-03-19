@@ -41,7 +41,7 @@ export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkout
           <Button 
             size="lg"
             onClick={onStartWorkout}
-            className="mt-6 px-8 py-6 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105"
+            className="mt-6 px-8 py-6 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 w-full sm:w-auto"
           >
             <Play className="w-6 h-6 mr-2" />
             C'est parti !
