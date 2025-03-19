@@ -3055,6 +3055,15 @@ export type Database = {
         }
         Relationships: []
       }
+      duplicate_records_report: {
+        Row: {
+          column_checked: string[] | null
+          duplicate_count: number | null
+          sample_values: Json | null
+          table_name: string | null
+        }
+        Relationships: []
+      }
       popular_meal_suggestions: {
         Row: {
           calories: number | null
@@ -3230,6 +3239,25 @@ export type Database = {
           "": string
         }
         Returns: string
+      }
+      find_duplicates_in_table: {
+        Args: {
+          table_name: string
+          column_names: string[]
+        }
+        Returns: {
+          duplicate_count: number
+          duplicate_values: Json
+        }[]
+      }
+      generate_duplicates_report: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          table_name: string
+          column_checked: string[]
+          duplicate_count: number
+          sample_values: Json
+        }[]
       }
       get_ai_usage_stats: {
         Args: {
@@ -3457,6 +3485,13 @@ export type Database = {
           "": unknown[]
         }
         Returns: number
+      }
+      suggest_duplicate_checks: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          table_name: string
+          suggested_columns: string[]
+        }[]
       }
       text_soundex: {
         Args: {
