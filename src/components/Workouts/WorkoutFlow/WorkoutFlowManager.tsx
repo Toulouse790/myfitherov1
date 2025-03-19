@@ -78,6 +78,7 @@ export const WorkoutFlowManager = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
+            className="flex justify-center"
           >
             <MuscleGroupSelection onSelectMuscleGroup={handleMuscleGroupSelection} />
           </motion.div>
@@ -92,7 +93,7 @@ export const WorkoutFlowManager = () => {
             <ExerciseSelection
               selectedExercises={selectedExercises}
               onSelectionChange={handleExerciseSelection}
-              onClose={() => {}}
+              onClose={() => setCurrentStep(1)}
               muscleGroup={selectedMuscleGroup}
             />
           </motion.div>
@@ -103,6 +104,7 @@ export const WorkoutFlowManager = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
+            className="flex justify-center"
           >
             <GeneratedWorkoutPreview exercises={selectedExercises} />
           </motion.div>
@@ -113,20 +115,22 @@ export const WorkoutFlowManager = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="text-center space-y-6"
+            className="flex justify-center text-center space-y-6"
           >
-            <h2 className="text-2xl font-bold">Prêt à commencer ?</h2>
-            <p className="text-muted-foreground">
-              {selectedExercises.length} exercices sélectionnés
-            </p>
-            <Button 
-              size="lg"
-              onClick={handleStartWorkout}
-              className="w-full sm:w-auto"
-            >
-              <Play className="w-5 h-5 mr-2" />
-              Démarrer l'entraînement
-            </Button>
+            <div>
+              <h2 className="text-2xl font-bold">Prêt à commencer ?</h2>
+              <p className="text-muted-foreground">
+                {selectedExercises.length} exercices sélectionnés
+              </p>
+              <Button 
+                size="lg"
+                onClick={handleStartWorkout}
+                className="mt-4 w-full sm:w-auto"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Démarrer l'entraînement
+              </Button>
+            </div>
           </motion.div>
         );
       default:

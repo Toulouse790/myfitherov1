@@ -13,7 +13,7 @@ export const MuscleGroupSelection = ({ onSelectMuscleGroup }: MuscleGroupSelecti
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-6"
+      className="space-y-6 max-w-3xl mx-auto"
     >
       <h2 className="text-xl font-bold text-center mb-6">
         Sélectionnez les groupes musculaires à travailler
