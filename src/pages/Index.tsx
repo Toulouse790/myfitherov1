@@ -33,9 +33,11 @@ export default function Index() {
 
   // Afficher le contenu de la page d'accueil si l'utilisateur est connecté
   return user ? (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Bienvenue sur MyFitHero</h1>
-      <p className="text-lg mb-4">Votre parcours fitness commence ici.</p>
+    <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
+      <div className="container mx-auto px-4 py-8 text-center max-w-3xl">
+        <h1 className="text-3xl font-bold mb-6">Bienvenue sur MyFitHero</h1>
+        <p className="text-lg mb-4">Votre parcours fitness commence ici.</p>
+      </div>
     </div>
   ) : null;
 }
