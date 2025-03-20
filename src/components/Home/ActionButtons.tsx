@@ -1,3 +1,4 @@
+
 import { Activity, ChartBar, Dumbbell, Plus, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHomeActions } from "@/hooks/use-home-actions";
@@ -40,6 +41,7 @@ export const ActionButtons = () => {
         variant="secondary"
         className="h-auto py-2 hover:bg-secondary/90 transition-all duration-300"
         size="lg"
+        data-testid="stats-button"
       >
         <ChartBar className="w-5 h-5 mr-2" />
         Statistiques
