@@ -15,17 +15,15 @@ const Home = () => {
           <UserProgressionWidget />
         </Card>
         
-        <Link to="/stats" className="block col-span-1">
-          <Card className="h-full p-6 hover:bg-accent transition-colors cursor-pointer border-2 border-transparent hover:border-primary/20">
-            <div className="flex flex-col items-center justify-center h-full space-y-4">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <ChartBar className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold">Statistiques</h3>
-              <p className="text-sm text-center text-muted-foreground">
-                Consultez vos performances et progression
-              </p>
+        <Link to="/stats" className="flex h-full">
+          <Card className="w-full h-full p-6 hover:bg-accent transition-colors cursor-pointer border-2 border-transparent hover:border-primary/20 flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <ChartBar className="w-8 h-8 text-primary" />
             </div>
+            <h3 className="text-xl font-semibold">Statistiques</h3>
+            <p className="text-sm text-center text-muted-foreground mt-2">
+              Consultez vos performances et progression
+            </p>
           </Card>
         </Link>
       </div>
