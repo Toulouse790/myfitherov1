@@ -6,9 +6,32 @@
   }
 
   .grid-layout {
-    @apply grid gap-6
+    @apply grid gap-4 sm:gap-6 
            grid-cols-1 
            sm:grid-cols-2 
            lg:grid-cols-3;
+  }
+  
+  /* Bottom Navigation */
+  .bottom-nav {
+    @apply h-14 sm:h-16 transition-all duration-300 backdrop-blur-sm;
+  }
+  
+  .bottom-nav-icon {
+    @apply h-5 w-5 sm:h-6 sm:w-6 transition-all duration-300;
+  }
+  
+  .bottom-nav-text {
+    @apply text-[10px] sm:text-xs font-medium transition-all duration-300;
+  }
+  
+  /* Responsive Containers */
+  .section-container {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-16;
+  }
+  
+  /* Responsive Cards */
+  .responsive-card {
+    @apply p-3 sm:p-4 md:p-6 transition-all duration-300;
   }
 }

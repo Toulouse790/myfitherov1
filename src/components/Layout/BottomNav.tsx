@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, Dumbbell, Apple, Moon, User } from "lucide-react";
 
@@ -13,7 +14,7 @@ export const BottomNav = () => {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-4 bottom-nav z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-2 sm:px-4 bottom-nav z-50">
       <div className="max-w-screen-xl mx-auto">
         <div className="flex justify-between items-center">
           {navItems.map((item, index) => {
@@ -23,7 +24,7 @@ export const BottomNav = () => {
               <Link
                 key={index}
                 to={item.path}
-                className={`flex flex-col items-center gap-0.5 p-1 rounded-lg transition-colors ${
+                className={`flex flex-col items-center gap-0.5 py-2 px-1 sm:px-3 rounded-lg transition-colors ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
