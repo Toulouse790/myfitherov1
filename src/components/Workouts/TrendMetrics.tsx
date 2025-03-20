@@ -8,10 +8,26 @@ import { MetricData } from "./TrendMetrics/types";
 
 export const TrendMetrics = () => {
   const [selectedMetric, setSelectedMetric] = useState<MetricData | null>(null);
-  const { data: stats, isLoading } = useMetricData(7);
+  const [days, setDays] = useState<number>(7);
+  const { data: stats, isLoading } = useMetricData(days);
 
   const calculateTotalValue = (data: any[] = []) => {
     return data.reduce((acc, curr) => acc + (curr.value || 0), 0);
+  };
+
+  const handlePeriodChange = (newDays: number) => {
+    setDays(newDays);
+  };
+
+  const getPeriodLabel = () => {
+    switch (days) {
+      case 14:
+        return "14 derniers jours";
+      case 30:
+        return "30 derniers jours";
+      default:
+        return "7 derniers jours";
+    }
   };
 
   const metrics: MetricData[] = [
@@ -48,7 +64,11 @@ export const TrendMetrics = () => {
   if (isLoading) {
     return (
       <div className="space-y-3">
-        <MetricHeader title="Tendances" period="7 derniers jours" />
+        <MetricHeader 
+          title="Tendances" 
+          period={getPeriodLabel()} 
+          onPeriodChange={handlePeriodChange}
+        />
         <div className="grid grid-cols-2 gap-2">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="animate-pulse">
@@ -65,7 +85,11 @@ export const TrendMetrics = () => {
 
   return (
     <div className="space-y-3">
-      <MetricHeader title="Tendances" period="7 derniers jours" />
+      <MetricHeader 
+        title="Tendances" 
+        period={getPeriodLabel()} 
+        onPeriodChange={handlePeriodChange}
+      />
       <MetricGrid metrics={metrics} onMetricClick={setSelectedMetric} />
 
       <MetricHistoryDialog
