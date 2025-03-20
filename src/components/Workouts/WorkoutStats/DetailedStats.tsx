@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { Activity, Dumbbell, Scale, Flame } from "lucide-react";
@@ -11,14 +12,22 @@ import { useAuth } from "@/hooks/use-auth";
 export const DetailedStats = () => {
   const { user } = useAuth();
 
-  const { data: exerciseStats } = useQuery({
+  const { data: exerciseStats, isLoading, error } = useQuery({
     queryKey: ['exercise-stats'],
     queryFn: async () => {
+      if (!user?.id) {
+        console.log("No user found");
+        return { stats: [], weekly: { weight: 0, duration: 0, calories: 0 }, 
+                 monthly: { weight: 0, duration: 0, calories: 0 }, 
+                 yearly: { weight: 0, duration: 0, calories: 0 } };
+      }
+
       const now = new Date();
       const weekStart = startOfWeek(now, { locale: fr });
       const monthStart = startOfMonth(now);
       const yearStart = startOfYear(now);
 
+      // Récupérer le poids de l'utilisateur pour le calcul des calories
       const { data: userProfile } = await supabase
         .from('muscle_measurements')
         .select('weight_kg')
@@ -38,6 +47,9 @@ export const DetailedStats = () => {
       const weightKg = userProfile?.weight_kg || 75;
       const gender = (userQuestionnaire?.gender || 'male') as 'male' | 'female';
 
+      console.log(`User weight: ${weightKg}kg, gender: ${gender}`);
+
+      // Récupérer les statistiques d'entraînement
       const { data: stats, error: statsError } = await supabase
         .from('training_stats')
         .select(`
@@ -47,47 +59,94 @@ export const DetailedStats = () => {
             perceived_difficulty
           )
         `)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (statsError) throw statsError;
+      if (statsError) {
+        console.error("Error fetching training stats:", statsError);
+        throw statsError;
+      }
 
-      const weeklyStats = stats?.filter(stat => new Date(stat.created_at) >= weekStart);
-      const monthlyStats = stats?.filter(stat => new Date(stat.created_at) >= monthStart);
-      const yearlyStats = stats?.filter(stat => new Date(stat.created_at) >= yearStart);
+      console.log(`Found ${stats?.length || 0} training stats`);
 
-      const calculateTotals = (data: any[]) => ({
-        weight: data.reduce((acc, stat) => acc + (stat.total_weight_lifted || 0), 0),
-        duration: data.reduce((acc, stat) => acc + (stat.session_duration_minutes || 0), 0),
-        calories: data.reduce((acc, stat) => {
-          const intensity = stat.perceived_difficulty === 'hard' ? 'high' : 
-                          stat.perceived_difficulty === 'easy' ? 'low' : 'moderate';
-          return acc + calculateExerciseCalories(
+      const weeklyStats = stats?.filter(stat => new Date(stat.created_at) >= weekStart) || [];
+      const monthlyStats = stats?.filter(stat => new Date(stat.created_at) >= monthStart) || [];
+      const yearlyStats = stats?.filter(stat => new Date(stat.created_at) >= yearStart) || [];
+
+      const calculateTotals = (data: any[]) => {
+        const totalWeight = data.reduce((acc, stat) => acc + (stat.total_weight_lifted || 0), 0);
+        const totalDuration = data.reduce((acc, stat) => {
+          const sessionDuration = stat.workout_sessions?.session_duration_minutes || 0;
+          return acc + sessionDuration;
+        }, 0);
+
+        const totalCalories = data.reduce((acc, stat) => {
+          const intensity = stat.workout_sessions?.perceived_difficulty === 'hard' ? 'high' : 
+                          stat.workout_sessions?.perceived_difficulty === 'easy' ? 'low' : 'moderate';
+          const duration = stat.workout_sessions?.session_duration_minutes || 0;
+          const calories = calculateExerciseCalories(
             weightKg,
-            stat.session_duration_minutes || 0,
+            duration,
             intensity,
             gender
           );
-        }, 0)
-      });
+          return acc + calories;
+        }, 0);
+
+        return { weight: totalWeight, duration: totalDuration, calories: totalCalories };
+      };
 
       return {
-        stats: stats?.map(stat => ({
-          ...stat,
-          calories: calculateExerciseCalories(
-            weightKg,
-            stat.session_duration_minutes || 0,
-            stat.perceived_difficulty === 'hard' ? 'high' : 
-            stat.perceived_difficulty === 'easy' ? 'low' : 'moderate',
-            gender
-          )
-        })) || [],
-        weekly: calculateTotals(weeklyStats || []),
-        monthly: calculateTotals(monthlyStats || []),
-        yearly: calculateTotals(yearlyStats || [])
+        stats: stats?.map(stat => {
+          const intensity = stat.workout_sessions?.perceived_difficulty === 'hard' ? 'high' : 
+                        stat.workout_sessions?.perceived_difficulty === 'easy' ? 'low' : 'moderate';
+          const duration = stat.workout_sessions?.session_duration_minutes || 0;
+          return {
+            ...stat,
+            session_duration_minutes: duration,
+            calories: calculateExerciseCalories(
+              weightKg,
+              duration,
+              intensity,
+              gender
+            )
+          };
+        }) || [],
+        weekly: calculateTotals(weeklyStats),
+        monthly: calculateTotals(monthlyStats),
+        yearly: calculateTotals(yearlyStats)
       };
-    }
+    },
+    enabled: !!user?.id
   });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[1, 2, 3].map(i => (
+            <Card key={i} className="p-6 animate-pulse">
+              <div className="bg-muted-foreground/20 h-5 w-32 rounded mb-4"></div>
+              <div className="space-y-2">
+                <div className="bg-muted-foreground/20 h-8 w-24 rounded"></div>
+                <div className="bg-muted-foreground/20 h-4 w-40 rounded"></div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error("Error in DetailedStats:", error);
+    return (
+      <div className="text-center py-8 text-destructive">
+        Une erreur est survenue lors du chargement des statistiques d'entraînement.
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -100,7 +159,7 @@ export const DetailedStats = () => {
   if (!exerciseStats?.stats.length) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        Aucune donnée d'entraînement disponible.
+        Aucune donnée d'entraînement disponible. Commencez à vous entraîner pour voir vos statistiques!
       </div>
     );
   }
@@ -170,14 +229,14 @@ export const DetailedStats = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {exerciseStats.stats.map((stat: any) => (
+              {exerciseStats.stats.slice(0, 10).map((stat: any) => (
                 <TableRow key={stat.id}>
                   <TableCell>
                     {format(new Date(stat.created_at), 'dd/MM/yyyy')}
                   </TableCell>
-                  <TableCell>{stat.session_duration_minutes}</TableCell>
+                  <TableCell>{stat.session_duration_minutes || 0}</TableCell>
                   <TableCell>{Math.round(stat.total_weight_lifted || 0)}</TableCell>
-                  <TableCell>{Math.round(stat.calories)}</TableCell>
+                  <TableCell>{Math.round(stat.calories || 0)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

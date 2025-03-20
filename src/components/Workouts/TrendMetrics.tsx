@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MetricHistoryDialog } from "@/components/Dashboard/MetricHistoryDialog";
 import { useMetricData } from "./TrendMetrics/useMetricData";
@@ -7,7 +8,11 @@ import { MetricData } from "./TrendMetrics/types";
 
 export const TrendMetrics = () => {
   const [selectedMetric, setSelectedMetric] = useState<MetricData | null>(null);
-  const { data: stats } = useMetricData(7);
+  const { data: stats, isLoading } = useMetricData(7);
+
+  const calculateTotalValue = (data: any[] = []) => {
+    return data.reduce((acc, curr) => acc + (curr.value || 0), 0);
+  };
 
   const metrics: MetricData[] = [
     { 
@@ -19,26 +24,44 @@ export const TrendMetrics = () => {
     },
     { 
       label: "Volume total", 
-      value: "31 209", 
+      value: calculateTotalValue(stats?.daily).toString(),
       color: "text-cyan-400",
       unit: "kg",
       history: stats || { daily: [], weekly: [], monthly: [] }
     },
     { 
       label: "Calories", 
-      value: "1 506", 
+      value: Math.round(calculateTotalValue(stats?.daily) * 0.5).toString(),
       color: "text-pink-400",
       unit: "kcal",
       history: stats || { daily: [], weekly: [], monthly: [] }
     },
     { 
       label: "Séries", 
-      value: "91", 
+      value: stats?.daily.length > 0 ? Math.round(calculateTotalValue(stats?.daily) / (stats.daily.length * 20)).toString() : "0",
       color: "text-purple-400",
       unit: "séries",
       history: stats || { daily: [], weekly: [], monthly: [] }
     }
   ];
+
+  if (isLoading) {
+    return (
+      <div className="space-y-3">
+        <MetricHeader title="Tendances" period="7 derniers jours" />
+        <div className="grid grid-cols-2 gap-2">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-muted rounded-md h-24 p-4">
+                <div className="bg-muted-foreground/20 h-3 w-20 rounded mb-3"></div>
+                <div className="bg-muted-foreground/20 h-5 w-14 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3">
