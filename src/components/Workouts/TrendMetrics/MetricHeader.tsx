@@ -35,16 +35,17 @@ export const MetricHeader = ({
       <h2 className="text-lg font-semibold text-white">{title}</h2>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="text-gray-400 flex items-center gap-1 text-xs">
+          <button className="text-gray-200 flex items-center gap-1 text-xs hover:text-white transition-colors">
             {period}
             <ChevronDown className="w-3 h-3" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="dark:bg-gray-800">
           {periods.map((p) => (
             <DropdownMenuItem 
               key={p.value}
               onClick={() => handlePeriodChange(p.value)}
+              className="dark:hover:bg-gray-700 dark:focus:bg-gray-700"
             >
               {p.label}
             </DropdownMenuItem>

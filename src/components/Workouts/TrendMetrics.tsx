@@ -72,9 +72,9 @@ export const TrendMetrics = () => {
         <div className="grid grid-cols-2 gap-2">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="animate-pulse">
-              <div className="bg-muted rounded-md h-24 p-4">
-                <div className="bg-muted-foreground/20 h-3 w-20 rounded mb-3"></div>
-                <div className="bg-muted-foreground/20 h-5 w-14 rounded"></div>
+              <div className="bg-gray-800 dark:bg-gray-800 rounded-md h-24 p-4">
+                <div className="bg-gray-700 dark:bg-gray-700 h-3 w-20 rounded mb-3"></div>
+                <div className="bg-gray-700 dark:bg-gray-700 h-5 w-14 rounded"></div>
               </div>
             </div>
           ))}

@@ -57,30 +57,30 @@ export const FoodEntryList = ({ entries, onDelete }: FoodEntryListProps) => {
   const groupedEntries = groupEntriesByDate();
 
   return (
-    <Card className="p-4 bg-white border border-gray-200">
+    <Card className="p-4 bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       <ScrollArea className="h-[400px]">
         <div className="space-y-6">
           {Object.entries(groupedEntries).map(([date, dateEntries]) => (
             <div key={date} className="space-y-2">
-              <h3 className="font-medium text-sm text-muted-foreground first-letter:uppercase">{date}</h3>
+              <h3 className="font-medium text-sm text-muted-foreground dark:text-gray-300 first-letter:uppercase">{date}</h3>
               
               <div className="space-y-2">
                 {dateEntries.map((entry) => (
                   <div
                     key={entry.id}
-                    className="flex items-start justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-100"
+                    className="flex items-start justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 dark:text-white"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-800">{entry.name}</p>
+                        <p className="font-medium text-gray-800 dark:text-gray-100">{entry.name}</p>
                         {entry.mealType && (
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="secondary" className="text-xs dark:bg-gray-600 dark:text-gray-200">
                             {getMealTypeLabel(entry.mealType)}
                           </Badge>
                         )}
                       </div>
                       
-                      <div className="flex flex-wrap gap-x-3 text-sm text-gray-600">
+                      <div className="flex flex-wrap gap-x-3 text-sm text-gray-600 dark:text-gray-300">
                         <span>{entry.calories} kcal</span>
                         <span>{entry.proteins}g protéines</span>
                         {entry.carbs > 0 && <span>{entry.carbs}g glucides</span>}
@@ -88,14 +88,14 @@ export const FoodEntryList = ({ entries, onDelete }: FoodEntryListProps) => {
                       </div>
                       
                       {entry.created_at && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                           <Clock className="w-3 h-3" />
                           <span>{format(new Date(entry.created_at), 'HH:mm')}</span>
                         </div>
                       )}
                       
                       {entry.notes && (
-                        <p className="text-sm text-gray-500 mt-1 italic">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 italic">
                           {entry.notes}
                         </p>
                       )}
@@ -105,7 +105,7 @@ export const FoodEntryList = ({ entries, onDelete }: FoodEntryListProps) => {
                       variant="ghost"
                       size="icon"
                       onClick={() => onDelete(entry.id)}
-                      className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+                      className="text-gray-500 hover:text-red-600 hover:bg-red-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-red-900/20"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -116,8 +116,8 @@ export const FoodEntryList = ({ entries, onDelete }: FoodEntryListProps) => {
           ))}
           
           {entries.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-              <UtensilsCrossed className="w-12 h-12 text-gray-300 mb-4" />
+            <div className="flex flex-col items-center justify-center py-8 text-gray-500 dark:text-gray-400">
+              <UtensilsCrossed className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" />
               <p>Aucun aliment dans le journal</p>
               <p className="text-sm">Commencez par ajouter un aliment ci-dessus</p>
             </div>

@@ -111,15 +111,15 @@ export const FoodJournal = () => {
   const handleWeightChange = (value: string) => setWeight(Number(value));
 
   return (
-    <Card>
+    <Card className="dark:bg-gray-800">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+        <CardTitle className="flex items-center justify-between dark:text-white">
           <span>Journal alimentaire</span>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="font-normal">
+            <Badge variant="outline" className="font-normal dark:text-gray-200 dark:border-gray-600">
               {totals.calories} kcal
             </Badge>
-            <Badge variant="outline" className="font-normal">
+            <Badge variant="outline" className="font-normal dark:text-gray-200 dark:border-gray-600">
               {totals.proteins}g protéines
             </Badge>
           </div>
@@ -150,13 +150,13 @@ export const FoodJournal = () => {
         
         <div className="mt-8 space-y-4">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-6 mb-4">
-              <TabsTrigger value="all">Tous</TabsTrigger>
-              <TabsTrigger value="breakfast">Petit déj</TabsTrigger>
-              <TabsTrigger value="morning_snack">Collation</TabsTrigger>
-              <TabsTrigger value="lunch">Déjeuner</TabsTrigger>
-              <TabsTrigger value="afternoon_snack">Goûter</TabsTrigger>
-              <TabsTrigger value="dinner">Dîner</TabsTrigger>
+            <TabsList className="grid grid-cols-6 mb-4 dark:bg-gray-700">
+              <TabsTrigger value="all" className="dark:data-[state=active]:bg-gray-600 dark:text-gray-200">Tous</TabsTrigger>
+              <TabsTrigger value="breakfast" className="dark:data-[state=active]:bg-gray-600 dark:text-gray-200">Petit déj</TabsTrigger>
+              <TabsTrigger value="morning_snack" className="dark:data-[state=active]:bg-gray-600 dark:text-gray-200">Collation</TabsTrigger>
+              <TabsTrigger value="lunch" className="dark:data-[state=active]:bg-gray-600 dark:text-gray-200">Déjeuner</TabsTrigger>
+              <TabsTrigger value="afternoon_snack" className="dark:data-[state=active]:bg-gray-600 dark:text-gray-200">Goûter</TabsTrigger>
+              <TabsTrigger value="dinner" className="dark:data-[state=active]:bg-gray-600 dark:text-gray-200">Dîner</TabsTrigger>
             </TabsList>
             
             <TabsContent value="all">
