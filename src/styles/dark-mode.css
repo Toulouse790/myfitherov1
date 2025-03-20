@@ -1,0 +1,23 @@
+
+@layer base {
+  /* Dark mode enhancements */
+  .dark .card {
+    @apply bg-gray-800 text-gray-100 border-gray-700;
+  }
+
+  .dark .dropdown-menu {
+    @apply bg-gray-800 text-gray-100;
+  }
+
+  .dark .muted-text {
+    @apply text-gray-300;
+  }
+
+  .dark .bg-muted {
+    @apply bg-gray-700;
+  }
+
+  .dark .bg-muted-foreground {
+    @apply text-gray-300;
+  }
+}

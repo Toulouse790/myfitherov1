@@ -1,0 +1,21 @@
+
+/* Import base styles and tailwind directives */
+@import './base.css';
+
+/* Import theme variables */
+@import './themes.css';
+
+/* Import component styles */
+@import './components.css';
+
+/* Import layout styles */
+@import './layout.css';
+
+/* Import section styles */
+@import './sections.css';
+
+/* Import dark mode styles */
+@import './dark-mode.css';
+
+/* Import animations */
+@import './animations.css';

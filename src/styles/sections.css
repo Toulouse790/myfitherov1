@@ -1,0 +1,18 @@
+
+@layer base {
+  /* Section Styles */
+  .section-muscu {
+    @apply bg-gradient-to-br from-[#F97316] to-[#ea384c]/90 text-white
+           transition-all duration-300;
+  }
+
+  .section-nutrition {
+    @apply bg-gradient-to-br from-[#22C55E] to-[#0EA5E9]/90 text-white
+           transition-all duration-300;
+  }
+
+  .section-sleep {
+    @apply bg-gradient-to-br from-[#0EA5E9] to-[#33C3F0]/90 text-white
+           transition-all duration-300;
+  }
+}
