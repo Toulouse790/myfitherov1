@@ -35,3 +35,10 @@ export interface NutritionPreferences {
   calorieGoal: number;
   proteinGoal: number;
 }
+
+export interface NutrientTotals {
+  calories: number;
+  proteins: number;
+  carbs: number;
+  fats: number;
+}
