@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSessionActions } from "@/hooks/workout/use-session-actions";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
+import { Loader2 } from "lucide-react";
 
 import { MuscleGroupSelection } from "../MuscleGroupSelection";
 import { ExerciseSelection } from "../ExerciseSelection";
@@ -16,12 +16,14 @@ import { StepIndicator } from "./components/StepIndicator";
 import { NavigationButtons } from "./components/NavigationButtons";
 import { StartWorkoutStep } from "./components/StartWorkoutStep";
 import { ExerciseSetManager } from "./components/ExerciseSetManager";
+import { useWorkoutExercisesState } from "@/hooks/workout/use-workout-exercises-state";
 
 export const WorkoutFlowManager = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
   const { createWorkoutSession } = useSessionActions();
+  const { isLoading } = useWorkoutExercisesState();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -36,10 +38,7 @@ export const WorkoutFlowManager = () => {
   };
 
   const handleNext = () => {
-    // Si on est à la première étape (sélection du groupe musculaire)
     if (currentStep === 1) {
-      // On revient à la sélection des groupes musculaires après validation
-      // pour permettre à l'utilisateur de choisir d'autres exercices
       toast({
         title: "Groupe musculaire validé",
         description: "Vous pouvez maintenant sélectionner un autre groupe musculaire",
@@ -84,6 +83,14 @@ export const WorkoutFlowManager = () => {
       description: "Passez à l'exercice suivant",
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="container max-w-4xl mx-auto p-4 flex items-center justify-center h-[60vh]">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -131,7 +138,7 @@ export const WorkoutFlowManager = () => {
             onStartWorkout={handleStartWorkout} 
           />
         );
-      case 5: // Ajout d'une étape pour l'ExerciseSetManager
+      case 5:
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
