@@ -1,6 +1,8 @@
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import { useTheme as useNextTheme } from "next-themes";
+import { ThemeProvider as NextThemeProvider } from "next-themes";
+import { type ThemeProviderProps } from "next-themes/dist/types";
 
 // Create a context to expose the theme value directly
 const ThemeContext = createContext<{ theme: string | undefined }>({
@@ -8,6 +10,16 @@ const ThemeContext = createContext<{ theme: string | undefined }>({
 });
 
 // Export the hook to get the current theme
-export const useTheme = () => useContext(ThemeContext);
+export const useTheme = () => {
+  const { theme } = useNextTheme();
+  return { theme };
+};
 
-// In case this file didn't exist or had other content, we're just focusing on exporting the useTheme hook
+// Export the ThemeProvider component
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return (
+    <NextThemeProvider attribute="class" defaultTheme="system" enableSystem {...props}>
+      {children}
+    </NextThemeProvider>
+  );
+}
