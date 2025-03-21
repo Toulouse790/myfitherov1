@@ -1,3 +1,4 @@
+
 import { Exercise } from '../../types/exercise';
 import { basicChestExercises } from './basicChestExercises';
 import { advancedChestExercises } from './advancedChestExercises';
