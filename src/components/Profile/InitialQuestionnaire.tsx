@@ -23,6 +23,7 @@ export const InitialQuestionnaire = () => {
     step,
     responses,
     isSubmitting,
+    validationMessage,
     handleResponseChange,
     handleNext,
     handleBack,
@@ -69,6 +70,7 @@ export const InitialQuestionnaire = () => {
             onAgeChange={(value) => handleResponseChange("age", Number(value))}
             onWeightChange={(value) => handleResponseChange("weight", Number(value))}
             onHeightChange={(value) => handleResponseChange("height", Number(value))}
+            validationMessage={validationMessage}
           />
         );
       case 3:

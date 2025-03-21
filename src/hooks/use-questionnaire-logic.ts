@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { QuestionnaireResponse, QuestionnaireStep } from "@/types/questionnaire";
-import { validateStep } from "@/utils/questionnaire";
+import { validateStep, getValidationMessage } from "@/utils/questionnaire";
 import { useQuestionnaireSubmission } from "./use-questionnaire-submission";
 import { appCache } from "@/utils/cache";
 import { useAuth } from "@/hooks/use-auth";
@@ -12,6 +12,7 @@ export const useQuestionnaireLogic = () => {
   const [step, setStep] = useState<QuestionnaireStep>(1);
   const [responses, setResponses] = useState<QuestionnaireResponse>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationMessage, setValidationMessage] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { submitQuestionnaire } = useQuestionnaireSubmission();
@@ -22,11 +23,27 @@ export const useQuestionnaireLogic = () => {
       ...prev,
       [field]: value
     }));
+    
+    // Effacer le message de validation lors de la modification
+    setValidationMessage(null);
   };
 
   const handleNext = async () => {
+    // Vérifier la validation
+    const message = getValidationMessage(step, responses);
+    if (message) {
+      setValidationMessage(message);
+      toast({
+        title: "Validation",
+        description: message,
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (step < 7) {
       setStep(prev => (prev + 1) as QuestionnaireStep);
+      setValidationMessage(null);
     } else if (step === 7 && !isSubmitting) {
       setIsSubmitting(true);
       try {
@@ -55,6 +72,7 @@ export const useQuestionnaireLogic = () => {
   const handleBack = () => {
     if (step > 1) {
       setStep(prev => (prev - 1) as QuestionnaireStep);
+      setValidationMessage(null);
     }
   };
 
@@ -64,6 +82,7 @@ export const useQuestionnaireLogic = () => {
     step,
     responses,
     isSubmitting,
+    validationMessage,
     handleResponseChange,
     handleNext,
     handleBack,
