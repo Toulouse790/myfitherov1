@@ -9,6 +9,13 @@ interface StartWorkoutStepProps {
 }
 
 export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkoutStepProps) => {
+  const handleStartClick = () => {
+    // Ajouter un log pour débugger
+    console.log("Bouton C'est parti cliqué, appel de onStartWorkout");
+    // Appel de la fonction passée en prop
+    onStartWorkout();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -40,7 +47,7 @@ export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkout
           
           <Button 
             size="lg"
-            onClick={onStartWorkout}
+            onClick={handleStartClick}
             className="mt-6 px-8 py-6 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 w-full sm:w-auto"
           >
             <Play className="w-6 h-6 mr-2" />
