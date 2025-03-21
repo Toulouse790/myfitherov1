@@ -10,11 +10,8 @@ interface StartWorkoutStepProps {
 
 export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkoutStepProps) => {
   const handleStartClick = () => {
-    // S'assurer qu'il y a au moins un exercice sélectionné
-    if (exerciseCount === 0) {
-      console.log("Aucun exercice sélectionné, action bloquée");
-      return;
-    }
+    // Plus besoin de vérifier s'il y a des exercices sélectionnés
+    // car nous allons générer la séance nous-mêmes
     
     // Ajouter un log pour débugger
     console.log("Bouton C'est parti cliqué, appel de onStartWorkout");
@@ -36,7 +33,9 @@ export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkout
       <div className="space-y-2 max-w-md">
         <h2 className="text-2xl font-bold">Votre entraînement est prêt !</h2>
         <p className="text-muted-foreground text-lg">
-          Vous avez sélectionné {exerciseCount} exercices pour cette séance
+          {exerciseCount > 0 
+            ? `Vous avez sélectionné ${exerciseCount} exercices pour cette séance`
+            : "Une séance personnalisée sera générée pour vous"}
         </p>
         
         <div className="flex flex-col items-center space-y-4 mt-6">
@@ -54,10 +53,7 @@ export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkout
           <Button 
             size="lg"
             onClick={handleStartClick}
-            disabled={exerciseCount === 0}
-            className={`mt-6 px-8 py-6 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 w-full sm:w-auto ${
-              exerciseCount === 0 ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className="mt-6 px-8 py-6 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 w-full sm:w-auto"
           >
             <Play className="w-6 h-6 mr-2" />
             C'est parti !
