@@ -37,7 +37,7 @@ export const ProfileCompletion = ({ profile }: ProfileCompletionProps) => {
   
   // Determine which fields are incomplete
   const incompleteFields = [
-    { name: 'Nom d'utilisateur', value: profile.username, icon: <User className="h-4 w-4" /> },
+    { name: 'Nom d\'utilisateur', value: profile.username, icon: <User className="h-4 w-4" /> },
     { name: 'Photo de profil', value: profile.avatar, icon: <User className="h-4 w-4" /> },
     { name: 'Genre', value: profile.gender, icon: <User className="h-4 w-4" /> },
     { name: 'Poids', value: profile.weight, icon: <Scale className="h-4 w-4" /> },
