@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Layout/Header";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Workouts() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { activeSession, formatTime, sessionTime } = useWorkoutSession();
   const [activeTab, setActiveTab] = useState("home");
@@ -59,7 +59,7 @@ export default function Workouts() {
             </CardHeader>
             <CardFooter>
               <Button 
-                onClick={() => router.push(`/workouts/start/${activeSession.program_id || activeSession.id}`)}
+                onClick={() => navigate(`/workouts/start/${activeSession.program_id || activeSession.id}`)}
                 className="w-full"
               >
                 Continuer la séance
@@ -98,7 +98,7 @@ export default function Workouts() {
                 </CardContent>
                 <CardFooter>
                   <Button
-                    onClick={() => router.push('/workouts/generate')}
+                    onClick={() => navigate('/workouts/generate')}
                     className="w-full"
                   >
                     <PlusCircle className="h-4 w-4 mr-2" />
@@ -202,7 +202,7 @@ export default function Workouts() {
                       <div 
                         key={session.id}
                         className="flex justify-between items-center p-3 bg-muted/20 rounded-lg hover:bg-muted/30 cursor-pointer transition-colors"
-                        onClick={() => router.push(`/workouts/summary/${session.id}`)}
+                        onClick={() => navigate(`/workouts/summary/${session.id}`)}
                       >
                         <div>
                           <p className="font-medium">{session.program?.name || 'Entraînement personnalisé'}</p>
@@ -219,7 +219,7 @@ export default function Workouts() {
                 )}
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full" onClick={() => router.push('/workouts/history')}>
+                <Button variant="outline" className="w-full" onClick={() => navigate('/workouts/history')}>
                   Voir tout l'historique
                 </Button>
               </CardFooter>

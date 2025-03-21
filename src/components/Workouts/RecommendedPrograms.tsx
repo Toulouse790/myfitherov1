@@ -5,19 +5,19 @@ import { Badge } from "@/components/ui/badge";
 import { Dumbbell, Clock, ArrowRight, Activity } from "lucide-react";
 import { useWorkoutRecommendations } from "@/hooks/use-workout-recommendations";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 
 export const RecommendedPrograms = () => {
   const { recommendations, isLoading } = useWorkoutRecommendations();
   const [expanded, setExpanded] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
   
   const displayedRecommendations = expanded 
     ? recommendations 
     : recommendations?.slice(0, 2);
   
   const startWorkout = (programId: string) => {
-    router.push(`/workouts/start/${programId}`);
+    navigate(`/workouts/start/${programId}`);
   };
   
   if (isLoading) {
@@ -62,7 +62,7 @@ export const RecommendedPrograms = () => {
                 Répondez à quelques questions pour obtenir un programme personnalisé
               </p>
               <Button 
-                onClick={() => router.push('/workouts/generate')}
+                onClick={() => navigate('/workouts/generate')}
                 className="mt-2"
               >
                 Générer un programme
@@ -80,7 +80,7 @@ export const RecommendedPrograms = () => {
         <h2 className="text-xl font-semibold">Programmes recommandés</h2>
         <Button 
           variant="ghost" 
-          onClick={() => router.push('/workouts/generate')}
+          onClick={() => navigate('/workouts/generate')}
           size="sm"
         >
           Nouveau programme

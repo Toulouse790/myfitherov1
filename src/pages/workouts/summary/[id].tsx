@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Layout/Header";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function WorkoutSummary() {
-  const router = useRouter();
-  const { id } = router.query;
+  const navigate = useNavigate();
+  const { id } = useParams();
   const { toast } = useToast();
   const { user } = useAuth();
   const [session, setSession] = useState<any>(null);
@@ -48,7 +48,7 @@ export default function WorkoutSummary() {
         description: "Impossible de charger les détails de la séance",
         variant: "destructive",
       });
-      router.push('/workouts');
+      navigate('/workouts');
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +119,7 @@ export default function WorkoutSummary() {
             <p className="text-muted-foreground mb-6">
               Cette séance d'entraînement n'existe pas ou n'est pas accessible.
             </p>
-            <Button onClick={() => router.push('/workouts')}>
+            <Button onClick={() => navigate('/workouts')}>
               Retour aux entraînements
             </Button>
           </div>
@@ -133,7 +133,7 @@ export default function WorkoutSummary() {
       <Header />
       <div className="container max-w-4xl mx-auto p-4">
         <div className="flex items-center mb-6">
-          <Button variant="ghost" size="icon" onClick={() => router.push('/workouts')}>
+          <Button variant="ghost" size="icon" onClick={() => navigate('/workouts')}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-2xl font-bold ml-2">
@@ -229,7 +229,7 @@ export default function WorkoutSummary() {
             <Share2 className="h-4 w-4 mr-2" />
             Partager
           </Button>
-          <Button onClick={() => router.push('/')}>
+          <Button onClick={() => navigate('/')}>
             <Home className="h-4 w-4 mr-2" />
             Accueil
           </Button>

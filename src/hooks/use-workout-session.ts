@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -18,7 +18,7 @@ interface WorkoutSession {
 }
 
 export const useWorkoutSession = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -81,7 +81,7 @@ export const useWorkoutSession = () => {
         description: "Veuillez vous connecter pour démarrer un entraînement",
         variant: "destructive",
       });
-      router.push('/signin');
+      navigate('/signin');
       return null;
     }
 
