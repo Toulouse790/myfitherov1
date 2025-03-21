@@ -12,8 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Modifions l'interface ProfileData pour rendre birth_date optionnel et compatible
-// avec le type accepté par ProfileForm
+// Interface ProfileData pour être compatible avec le type accepté par ProfileForm
 interface ProfileData {
   birth_date: string | null;
   gender: string | null;
@@ -64,8 +63,7 @@ const PersonalInfo = () => {
     fetchProfileData();
   }, [user, toast]);
 
-  // Adaptons la fonction handleUpdateProfile pour qu'elle soit compatible avec le type
-  // que ProfileForm attend
+  // Fonction handleUpdateProfile compatible avec le type attendu par ProfileForm
   const handleUpdateProfile = async (values: { 
     birth_date?: string | null;
     gender?: string | null;
@@ -75,14 +73,32 @@ const PersonalInfo = () => {
     if (!user) return;
     
     try {
+      // Préparation des données pour la mise à jour
+      const updateData: any = {};
+      
+      // Ne pas inclure birth_date si c'est une chaîne vide
+      if (values.birth_date !== undefined) {
+        updateData.birth_date = values.birth_date === "" ? null : values.birth_date;
+      }
+      
+      // Ajouter les autres champs s'ils sont définis
+      if (values.gender !== undefined) {
+        updateData.gender = values.gender;
+      }
+      
+      if (values.height_cm !== undefined) {
+        updateData.height_cm = values.height_cm ? parseFloat(values.height_cm.toString()) : null;
+      }
+      
+      if (values.weight_kg !== undefined) {
+        updateData.weight_kg = values.weight_kg ? parseFloat(values.weight_kg.toString()) : null;
+      }
+
+      console.log('Updating profile with data:', updateData);
+      
       const { error } = await supabase
         .from('profiles')
-        .update({
-          birth_date: values.birth_date,
-          gender: values.gender,
-          height_cm: values.height_cm ? parseFloat(values.height_cm.toString()) : null,
-          weight_kg: values.weight_kg ? parseFloat(values.weight_kg.toString()) : null,
-        })
+        .update(updateData)
         .eq('id', user.id);
 
       if (error) throw error;
