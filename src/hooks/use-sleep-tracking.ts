@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSleepDevices } from "./use-sleep-devices";
+import { useSleepDevices, SleepDevice } from "./use-sleep-devices";
 import { useSleepSubmission } from "./use-sleep-submission";
 import { useSleepStats } from "./use-sleep-stats";
 

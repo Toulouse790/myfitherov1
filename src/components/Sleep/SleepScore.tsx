@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useTheme } from "@/components/Theme/ThemeProvider";
+import { useTheme } from "@/components/Theme/ThemeProvider"; // Import du hook correctement
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Moon, ActivitySquare, Zap } from "lucide-react";

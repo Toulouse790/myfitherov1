@@ -1,5 +1,5 @@
 
-import { Button } from "@/components/ui/card";
+import { Button } from "@/components/ui/button"; // Correction de l'import
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useSleepTracking } from "@/hooks/use-sleep-tracking";
 import { useSleepDevices } from "@/hooks/use-sleep-devices";
