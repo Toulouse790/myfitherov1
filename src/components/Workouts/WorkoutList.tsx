@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { WorkoutCard } from "./WorkoutCard";
 import { WorkoutData } from "./types/workout";
@@ -13,6 +14,11 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+
+  // Filtrer les doublons potentiels par ID
+  const uniqueWorkouts = Array.from(
+    new Map(workouts.map(workout => [workout.id, workout])).values()
+  );
 
   const handleWorkoutClick = async (workout: WorkoutData) => {
     if (!user) {
@@ -65,7 +71,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
     }
   };
 
-  if (workouts.length === 0) {
+  if (uniqueWorkouts.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground animate-fade-in">
         Aucune séance ne correspond à vos critères.
@@ -75,7 +81,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
 
   return (
     <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 animate-fade-in">
-      {workouts.map((workout, index) => (
+      {uniqueWorkouts.map((workout, index) => (
         <div
           key={workout.id}
           className="opacity-0 animate-fade-in cursor-pointer"

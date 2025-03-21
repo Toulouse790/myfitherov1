@@ -1,3 +1,4 @@
+
 import { Exercise } from './exercises/types/exercise';
 import { validateExercise } from './exercises/types/exercise';
 import { basicChestExercises } from './exercises/data/chest/basicChestExercises';
@@ -11,16 +12,23 @@ import { absExercises } from './exercises/data/abs';
 import { cardioExercises } from './exercises/cardioExercises';
 
 const removeDuplicates = (exercises: Exercise[]): Exercise[] => {
-  const seen = new Set<string>();
-  return exercises.filter((exercise) => {
+  const exercisesById = new Map<string, Exercise>();
+  
+  exercises.forEach((exercise) => {
     if (!exercise || !validateExercise(exercise)) {
       console.warn(`Invalid exercise found: ${exercise?.name || 'unknown'}`);
-      return false;
+      return;
     }
-    const duplicate = seen.has(exercise.id);
-    seen.add(exercise.id);
-    return !duplicate;
+    
+    // Si l'ID existe déjà, ne pas l'ajouter à nouveau
+    if (!exercisesById.has(exercise.id)) {
+      exercisesById.set(exercise.id, exercise);
+    } else {
+      console.warn(`Duplicate exercise ID found: ${exercise.id} (${exercise.name})`);
+    }
   });
+  
+  return Array.from(exercisesById.values());
 };
 
 export const exercises: Exercise[] = removeDuplicates([
