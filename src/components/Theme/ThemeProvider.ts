@@ -1,5 +1,5 @@
 
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import { useTheme as useNextTheme } from "next-themes";
 import { ThemeProvider as NextThemeProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes/dist/types";
