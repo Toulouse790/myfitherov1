@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
 
 export const ActiveWorkout = () => {
-  const { sessionId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -22,35 +22,59 @@ export const ActiveWorkout = () => {
   const [restTime, setRestTime] = useState<number | null>(null);
   const [exercises, setExercises] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (sessionId) {
+    if (id) {
       fetchSessionDetails();
     }
-  }, [sessionId]);
+  }, [id]);
 
+  // Effet pour gérer le timer de repos
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    // Nettoyer l'intervalle précédent si existant
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
+    // Démarrer un nouveau timer si restTime est défini
     if (restTime !== null && restTime > 0) {
-      timer = setTimeout(() => {
-        setRestTime(prev => (prev !== null ? prev - 1 : null));
-      }, 1000);
-    } else if (restTime === 0) {
-      setRestTime(null);
-      if (currentSet >= totalSets) {
-        handleNextExercise();
-      } else {
-        toast({
-          title: "Repos terminé",
-          description: "Prêt pour la série suivante ?",
+      timerRef.current = setInterval(() => {
+        setRestTime(prev => {
+          if (prev === null || prev <= 1) {
+            // Nettoyer l'intervalle quand le timer atteint 0
+            if (timerRef.current) {
+              clearInterval(timerRef.current);
+              timerRef.current = null;
+            }
+            
+            // Notification que le repos est terminé
+            toast({
+              title: "Repos terminé",
+              description: "Prêt pour la série suivante ?",
+            });
+            
+            // Si toutes les séries sont terminées, passer à l'exercice suivant
+            if (currentSet >= totalSets) {
+              handleNextExercise();
+            }
+            
+            return null;
+          }
+          return prev - 1;
         });
-      }
+      }, 1000);
     }
 
+    // Nettoyer l'intervalle lors du démontage
     return () => {
-      if (timer) clearTimeout(timer);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     };
-  }, [restTime]);
+  }, [restTime, currentSet, totalSets]);
 
   const fetchSessionDetails = async () => {
     try {
@@ -64,7 +88,7 @@ export const ActiveWorkout = () => {
       const { data, error } = await supabase
         .from('workout_sessions')
         .select('*')
-        .eq('id', sessionId)
+        .eq('id', id)
         .eq('user_id', user.id)
         .single();
 
@@ -132,6 +156,13 @@ export const ActiveWorkout = () => {
     });
   };
 
+  const handleSkipRest = () => {
+    setRestTime(null);
+    if (currentSet > totalSets) {
+      handleNextExercise();
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
@@ -178,7 +209,7 @@ export const ActiveWorkout = () => {
             <div className="flex flex-col items-center gap-4 py-6">
               <div className="text-3xl font-mono">{restTime}s</div>
               <div className="text-muted-foreground">Temps de repos</div>
-              <Button variant="outline" onClick={() => setRestTime(null)}>
+              <Button variant="outline" onClick={handleSkipRest}>
                 Passer le repos
               </Button>
             </div>
