@@ -2,22 +2,24 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { UserProfile } from "@/types/user";
+import { CheckCircle2, Circle } from "lucide-react";
 
 interface ProfileCompletionProps {
   profile: UserProfile;
 }
 
 export const ProfileCompletion = ({ profile }: ProfileCompletionProps) => {
-  const totalFields = 6;
-  let completedFields = 0;
-  if (profile.username) completedFields++;
-  if (profile.avatar) completedFields++;
-  if (profile.birthDate) completedFields++;
-  if (profile.gender) completedFields++;
-  if (profile.height) completedFields++;
-  if (profile.weight) completedFields++;
+  const profileItems = [
+    { name: "Nom d'utilisateur", completed: !!profile.username },
+    { name: "Avatar", completed: !!profile.avatar },
+    { name: "Date de naissance", completed: !!profile.birthDate },
+    { name: "Genre", completed: !!profile.gender },
+    { name: "Taille", completed: !!profile.height },
+    { name: "Poids", completed: !!profile.weight }
+  ];
   
-  const completionPercentage = (completedFields / totalFields) * 100;
+  const completedItems = profileItems.filter(item => item.completed).length;
+  const completionPercentage = (completedItems / profileItems.length) * 100;
 
   if (completionPercentage >= 100) return null;
 
@@ -35,7 +37,23 @@ export const ProfileCompletion = ({ profile }: ProfileCompletionProps) => {
             {Math.round(completionPercentage)}%
           </span>
         </div>
-        <Progress value={completionPercentage} className="h-2" />
+        
+        <Progress value={completionPercentage} className="h-2 mb-4" />
+        
+        <div className="grid grid-cols-2 gap-3">
+          {profileItems.map((item, index) => (
+            <div key={index} className="flex items-center gap-2">
+              {item.completed ? (
+                <CheckCircle2 className="h-5 w-5 text-green-500" />
+              ) : (
+                <Circle className="h-5 w-5 text-muted-foreground" />
+              )}
+              <span className={item.completed ? "text-green-700 dark:text-green-300" : "text-muted-foreground"}>
+                {item.name}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </Card>
   );

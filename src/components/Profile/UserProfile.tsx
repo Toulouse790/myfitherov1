@@ -44,6 +44,17 @@ export const UserProfile = () => {
         throw subscriptionError;
       }
 
+      // Fetch progression data (points & level)
+      const { data: progressionData, error: progressionError } = await supabase
+        .from('user_progression')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (progressionError && progressionError.code !== 'PGRST116') {
+        console.error('Error fetching progression data:', progressionError);
+      }
+
       const isPremium = subscriptionData?.subscription_type === 'premium' && 
                        subscriptionData?.status === 'active' &&
                        (subscriptionData?.end_date ? new Date(subscriptionData.end_date) > new Date() : true);
@@ -59,7 +70,7 @@ export const UserProfile = () => {
           height: profileData.height_cm,
           weight: profileData.weight_kg,
           goals: {
-            primary: "maintenance",
+            primary: profileData.main_objective || "maintenance",
             weeklyWorkouts: 4,
             dailyCalories: 2500,
             sleepHours: 8
@@ -72,11 +83,11 @@ export const UserProfile = () => {
             equipment: []
           },
           stats: {
-            workoutsCompleted: 0,
-            totalWorkoutMinutes: 0,
-            streakDays: 0,
-            points: profileData.points || 0,
-            level: profileData.level || 1
+            workoutsCompleted: progressionData?.workout_count || 0,
+            totalWorkoutMinutes: progressionData?.total_workout_minutes || 0,
+            streakDays: progressionData?.current_streak || 0,
+            points: progressionData?.total_points || profileData.points || 0,
+            level: progressionData?.current_level || profileData.level || 1
           },
           achievements: [],
           isPremium: isPremium
@@ -118,6 +129,7 @@ export const UserProfile = () => {
           profile={profile} 
           onProfileUpdate={(updatedProfile) => {
             setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
+            fetchProfile(); // Refresh all profile data after update
           }}
         />
 

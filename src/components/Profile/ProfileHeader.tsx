@@ -1,3 +1,4 @@
+
 import { UserProfile } from "@/types/user";
 import { AvatarSection } from "./Sections/AvatarSection";
 import { UsernameSection } from "./Sections/UsernameSection";
@@ -5,6 +6,7 @@ import { PreferencesSheet } from "./Sections/PreferencesSheet";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
 
 interface ProfileHeaderProps {
   profile: UserProfile;
@@ -54,30 +56,32 @@ export const ProfileHeader = ({ profile, onProfileUpdate }: ProfileHeaderProps) 
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <AvatarSection
-          username={username}
-          selectedAvatar={selectedAvatar}
-          onAvatarSelect={(avatar) => {
-            setSelectedAvatar(avatar);
-            handleProfileUpdate({ avatar });
-          }}
-        />
-        <UsernameSection
-          username={username}
-          stats={profile.stats}
-          isPremium={profile.isPremium}
-          onUsernameChange={(newUsername) => {
-            setUsername(newUsername);
-            handleProfileUpdate({ username: newUsername });
-          }}
-        />
-      </div>
+    <Card className="p-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <AvatarSection
+            username={username}
+            selectedAvatar={selectedAvatar}
+            onAvatarSelect={(avatar) => {
+              setSelectedAvatar(avatar);
+              handleProfileUpdate({ avatar });
+            }}
+          />
+          <UsernameSection
+            username={username}
+            stats={profile.stats}
+            isPremium={profile.isPremium}
+            onUsernameChange={(newUsername) => {
+              setUsername(newUsername);
+              handleProfileUpdate({ username: newUsername });
+            }}
+          />
+        </div>
 
-      <div className="flex items-center gap-2">
-        <PreferencesSheet />
+        <div className="flex items-center gap-2">
+          <PreferencesSheet />
+        </div>
       </div>
-    </div>
+    </Card>
   );
 };
