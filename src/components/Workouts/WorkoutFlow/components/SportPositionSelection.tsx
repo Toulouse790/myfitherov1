@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Football, Basketball, Activity } from "lucide-react";
+import { ArrowLeft, DumbbellIcon, Activity, Trophy, Shirt } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -96,8 +96,9 @@ export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportP
   const getSportIcon = (sportName: string): JSX.Element => {
     const normalizedName = sportName.toLowerCase();
     
-    if (normalizedName.includes('foot')) return <Football className="h-6 w-6" />;
-    if (normalizedName.includes('basket')) return <Basketball className="h-6 w-6" />;
+    if (normalizedName.includes('foot')) return <Shirt className="h-6 w-6" />;
+    if (normalizedName.includes('basket')) return <Trophy className="h-6 w-6" />;
+    if (normalizedName.includes('rugby')) return <DumbbellIcon className="h-6 w-6" />;
     
     return <Activity className="h-6 w-6" />;
   };
