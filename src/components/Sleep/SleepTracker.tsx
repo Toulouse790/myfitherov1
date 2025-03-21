@@ -1,16 +1,32 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { ConnectedDevices } from "./ConnectedDevices";
+import { useSleepTracking } from "@/hooks/use-sleep-tracking";
+import { Loader2, Moon, Sun } from "lucide-react";
 
 export const SleepTracker = () => {
+  const {
+    sleepHours,
+    sleepMinutes,
+    sleepQuality,
+    isNap,
+    addSleepSession,
+    setSleepHours,
+    setSleepMinutes,
+    setSleepQuality,
+    setIsNap,
+    calculateRecommendedSleep,
+    isLoading
+  } = useSleepTracking();
+  
   const [recommendedSleep, setRecommendedSleep] = useState<string>("7-8 heures");
-  const [sleepHours, setSleepHours] = useState<number>(7);
-  const [sleepMinutes, setSleepMinutes] = useState<number>(0);
-  const [sleepQuality, setSleepQuality] = useState<number>(5);
-  const { toast } = useToast();
 
   useEffect(() => {
     fetchUserActivityAndCalculateSleep();
@@ -58,117 +74,28 @@ export const SleepTracker = () => {
       }
 
       // Calculate recommended sleep based on activity and training data
-      const recommendedMinutes = calculateRecommendedSleep(
+      const recommendation = calculateRecommendedSleep(
         userQuestionnaire.experience_level,
         userQuestionnaire.training_frequency,
         userQuestionnaire.workout_duration,
         trainingStats || []
       );
 
-      const hours = Math.floor(recommendedMinutes / 60);
-      const minutes = recommendedMinutes % 60;
-      setRecommendedSleep(`${hours}h${minutes.toString().padStart(2, '0')}`);
+      setRecommendedSleep(`${recommendation.hours}h${recommendation.minutes.toString().padStart(2, '0')}`);
     } catch (error) {
-      console.error('Error fetching activity level:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger vos données d'activité",
-        variant: "destructive",
-      });
+      console.error('Error calculating recommended sleep:', error);
     }
   };
 
-  const calculateRecommendedSleep = (
-    activityLevel: string | null,
-    trainingFrequency: string | null,
-    workoutDuration: string | null,
-    trainingStats: any[]
-  ): number => {
-    // Base sleep time in minutes (7 hours = 420 minutes)
-    let baseMinutes = 420;
-
-    // Adjust based on activity level
-    const activityMultiplier = {
-      sedentary: 0,
-      lightly_active: 15,
-      moderately_active: 30,
-      very_active: 45,
-      extra_active: 60
-    }[activityLevel || 'moderately_active'] || 30;
-
-    // Adjust based on training frequency
-    const frequencyMultiplier = {
-      '1-2': 10,
-      '3-4': 20,
-      '5+': 30
-    }[trainingFrequency || '3-4'] || 20;
-
-    // Calculate average daily calorie burn from recent workouts
-    const avgCaloriesBurned = trainingStats?.length
-      ? trainingStats.reduce((acc, stat) => acc + (stat.calories_burned || 0), 0) / trainingStats.length
-      : 0;
-
-    // Additional minutes based on calorie burn
-    const calorieAdjustment = Math.floor(avgCaloriesBurned / 100) * 5;
-
-    // Calculate total recommended sleep time in minutes
-    const totalMinutes = baseMinutes + activityMultiplier + frequencyMultiplier + calorieAdjustment;
-
-    return totalMinutes;
-  };
-
-  const addSleepEntry = async (hours: number, minutes: number, quality: number) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté pour enregistrer votre sommeil",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const totalMinutes = hours * 60 + minutes;
-      const now = new Date();
-      const startTime = new Date(now.getTime() - totalMinutes * 60000);
-
-      const sleepData = {
-        user_id: user.id,
-        start_time: startTime.toISOString(),
-        end_time: now.toISOString(),
-        total_duration_minutes: totalMinutes,
-        quality_metrics: {
-          sleep_quality: quality,
-          deep_sleep_percentage: Math.round(quality * 10),
-          rem_sleep_percentage: Math.round(quality * 8),
-        },
-        environmental_data: {
-          temperature: 20,
-          noise_level: 25,
-          light_level: 2
-        }
-      };
-
-      const { error } = await supabase
-        .from('sleep_sessions')
-        .insert(sleepData);
-
-      if (error) throw error;
-
-      toast({
-        title: "Succès",
-        description: "Données de sommeil enregistrées",
-      });
-    } catch (error) {
-      console.error('Error saving sleep data:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'enregistrer les données de sommeil",
-        variant: "destructive",
-      });
-    }
-  };
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6 flex justify-center items-center min-h-[200px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -181,62 +108,100 @@ export const SleepTracker = () => {
             </p>
           </div>
 
-          <div className="grid gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Durée de sommeil
-              </label>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <input
-                    type="number"
-                    value={sleepHours}
-                    onChange={(e) => setSleepHours(Number(e.target.value))}
-                    min={0}
-                    max={24}
-                    className="w-full px-3 py-2 border rounded-md"
+          <Tabs defaultValue="manual" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="manual">Saisie manuelle</TabsTrigger>
+              <TabsTrigger value="auto">Suivi automatique</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="manual" className="space-y-4 mt-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="is-nap" className="flex items-center gap-2">
+                  <Moon className="h-4 w-4" />
+                  <span>Type de sommeil</span>
+                </Label>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="is-nap"
+                    checked={isNap}
+                    onCheckedChange={setIsNap}
                   />
-                  <span className="ml-2">heures</span>
-                </div>
-                <div className="flex-1">
-                  <input
-                    type="number"
-                    value={sleepMinutes}
-                    onChange={(e) => setSleepMinutes(Number(e.target.value))}
-                    min={0}
-                    max={59}
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                  <span className="ml-2">minutes</span>
+                  <span className="text-sm">{isNap ? 'Sieste' : 'Nuit'}</span>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Qualité du sommeil (1-10)
-              </label>
-              <input
-                type="range"
-                value={sleepQuality}
-                onChange={(e) => setSleepQuality(Number(e.target.value))}
-                min={1}
-                max={10}
-                className="w-full"
-              />
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Mauvaise</span>
-                <span>Excellente</span>
+              <div className="grid gap-4">
+                <div>
+                  <Label className="block text-sm font-medium mb-2">
+                    Durée de sommeil
+                  </Label>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center">
+                        <Input
+                          type="number"
+                          value={sleepHours}
+                          onChange={(e) => setSleepHours(Number(e.target.value))}
+                          min={0}
+                          max={24}
+                          className="w-full"
+                        />
+                        <span className="ml-2">heures</span>
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center">
+                        <Input
+                          type="number"
+                          value={sleepMinutes}
+                          onChange={(e) => setSleepMinutes(Number(e.target.value))}
+                          min={0}
+                          max={59}
+                          className="w-full"
+                        />
+                        <span className="ml-2">minutes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="flex items-center gap-2 mb-2">
+                    <Sun className="h-4 w-4" />
+                    <span>Qualité du sommeil (1-10)</span>
+                  </Label>
+                  <input
+                    type="range"
+                    value={sleepQuality}
+                    onChange={(e) => setSleepQuality(Number(e.target.value))}
+                    min={1}
+                    max={10}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                    <span>Mauvaise</span>
+                    <span>Excellente</span>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={addSleepSession}
+                  className="w-full"
+                  size="lg"
+                >
+                  Enregistrer
+                </Button>
               </div>
-            </div>
-
-            <Button
-              onClick={() => addSleepEntry(sleepHours, sleepMinutes, sleepQuality)}
-              className="w-full"
-            >
-              Enregistrer
-            </Button>
-          </div>
+            </TabsContent>
+            
+            <TabsContent value="auto" className="space-y-4 mt-4">
+              <ConnectedDevices />
+              
+              <div className="text-center text-muted-foreground">
+                <p>Connectez un appareil pour suivre automatiquement votre sommeil</p>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </CardContent>
     </Card>

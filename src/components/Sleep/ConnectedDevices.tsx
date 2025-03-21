@@ -1,68 +1,22 @@
-import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Watch } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-// Add type declarations for Web Bluetooth API
-declare global {
-  interface Navigator {
-    bluetooth: {
-      requestDevice(options: {
-        filters: Array<{
-          services?: string[];
-          namePrefix?: string;
-        }>;
-        optionalServices?: string[];
-      }): Promise<{
-        name: string;
-        gatt?: {
-          connect(): Promise<any>;
-        };
-      }>;
-    };
-  }
-}
+import { useSleepTracking } from "@/hooks/use-sleep-tracking";
+import { Watch, Trash2, BatteryFull, RefreshCw } from "lucide-react";
 
 export const ConnectedDevices = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const { toast } = useToast();
+  const { connectedDevices, connectDevice } = useSleepTracking();
 
-  const connectDevice = async () => {
-    try {
-      // Vérifie si le navigateur supporte le Web Bluetooth
-      if (!navigator.bluetooth) {
-        toast({
-          title: "Non supporté",
-          description: "Votre navigateur ne supporte pas le Bluetooth",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const device = await navigator.bluetooth.requestDevice({
-        filters: [
-          { services: ['heart_rate'] },
-          { services: ['health_thermometer'] },
-          { namePrefix: 'Fitbit' },
-          { namePrefix: 'Garmin' },
-          { namePrefix: 'Apple Watch' }
-        ],
-        optionalServices: ['battery_service']
-      });
-
-      setIsConnected(true);
-      toast({
-        title: "Appareil connecté",
-        description: `${device.name} connecté avec succès`,
-      });
-    } catch (error) {
-      toast({
-        title: "Erreur de connexion",
-        description: "Impossible de se connecter à l'appareil",
-        variant: "destructive",
-      });
-    }
+  const formatLastSync = (dateString?: string) => {
+    if (!dateString) return "Jamais";
+    
+    const date = new Date(dateString);
+    return date.toLocaleString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
@@ -75,14 +29,50 @@ export const ConnectedDevices = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+          {connectedDevices && connectedDevices.length > 0 ? (
+            <div className="space-y-3">
+              {connectedDevices.map(device => (
+                <div key={device.id} className="flex items-center justify-between p-3 border rounded-md">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 p-2 rounded-full">
+                      <Watch className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">{device.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Dernière synchronisation: {formatLastSync(device.lastSync)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="icon" title="Synchroniser">
+                      <RefreshCw className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" title="Batterie">
+                      <BatteryFull className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" title="Supprimer">
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground mb-4">
+              Aucun appareil connecté
+            </p>
+          )}
+
           <Button
             onClick={connectDevice}
-            variant={isConnected ? "outline" : "default"}
+            variant={connectedDevices.length > 0 ? "outline" : "default"}
             className="w-full"
           >
-            {isConnected ? "Appareil connecté" : "Connecter un appareil"}
+            {connectedDevices.length > 0 ? "Connecter un autre appareil" : "Connecter un appareil"}
           </Button>
-          {isConnected && (
+          
+          {connectedDevices.length > 0 && (
             <p className="text-sm text-muted-foreground">
               Les données de votre montre seront automatiquement synchronisées
             </p>
