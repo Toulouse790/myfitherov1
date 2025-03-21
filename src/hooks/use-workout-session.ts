@@ -109,6 +109,13 @@ export const useWorkoutSession = () => {
       setSessionTime(0);
       startTimer();
       
+      // Rediriger vers la page de démarrage de la séance
+      if (programId) {
+        navigate(`/workouts/start/${programId}`);
+      } else {
+        navigate(`/workouts/session/${data.id}`);
+      }
+      
       return data;
     } catch (error) {
       console.error("Erreur lors de la création de la session:", error);
@@ -160,6 +167,9 @@ export const useWorkoutSession = () => {
         title: "Entraînement terminé",
         description: `Votre séance de ${durationMinutes} minutes a été enregistrée`,
       });
+      
+      // Rediriger vers la page de résumé
+      navigate(`/workouts/summary/${data.id}`);
       
       return data;
     } catch (error) {

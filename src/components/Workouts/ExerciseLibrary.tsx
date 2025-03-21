@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { debugLogger } from "@/utils/debug-logger";
+import { useWorkoutSession } from "@/hooks/use-workout-session";
 
 export const ExerciseLibrary = () => {
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
@@ -18,6 +18,7 @@ export const ExerciseLibrary = () => {
   const [showSummary, setShowSummary] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { startWorkout } = useWorkoutSession();
 
   const handleExerciseSelection = async (exerciseIds: string[]) => {
     setSelectedExercises(exerciseIds);
@@ -36,27 +37,10 @@ export const ExerciseLibrary = () => {
     try {
       debugLogger.log("ExerciseLibrary", "Création d'une nouvelle session avec les exercices:", selectedExercises);
       
-      const { data: session, error } = await supabase
-        .from('workout_sessions')
-        .insert([
-          { 
-            exercises: selectedExercises,
-            workout_type: 'strength',
-            status: 'in_progress',
-            target_duration_minutes: 45
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Erreur lors de la création de la session:', error);
-        throw error;
-      }
-
-      if (session) {
-        console.log("Session créée avec succès:", session);
-        navigate(`/workouts/${session.id}`);
+      const session = await startWorkout(undefined, selectedExercises);
+      
+      if (!session) {
+        throw new Error("Impossible de créer la session");
       }
     } catch (error) {
       console.error('Erreur lors de la création de la séance:', error);

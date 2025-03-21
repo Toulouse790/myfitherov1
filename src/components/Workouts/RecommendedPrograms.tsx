@@ -6,18 +6,33 @@ import { Dumbbell, Clock, ArrowRight, Activity } from "lucide-react";
 import { useWorkoutRecommendations } from "@/hooks/use-workout-recommendations";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useWorkoutSession } from "@/hooks/use-workout-session";
 
 export const RecommendedPrograms = () => {
   const { recommendations, isLoading } = useWorkoutRecommendations();
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
+  const { startWorkout } = useWorkoutSession();
   
   const displayedRecommendations = expanded 
     ? recommendations 
     : recommendations?.slice(0, 2);
   
-  const startWorkout = (programId: string) => {
-    navigate(`/workouts/start/${programId}`);
+  const handleStartWorkout = async (programId: string) => {
+    try {
+      // On récupère d'abord les exercices du programme
+      const program = recommendations?.find(p => p.id === programId);
+      
+      if (program) {
+        // Si on a les exercices, on utilise startWorkout du hook
+        await startWorkout(programId, program.exercises?.map(e => e.name));
+      } else {
+        // Sinon on redirige directement vers la page de démarrage
+        navigate(`/workouts/start/${programId}`);
+      }
+    } catch (error) {
+      console.error("Erreur lors du démarrage de l'entraînement:", error);
+    }
   };
   
   if (isLoading) {
@@ -123,7 +138,7 @@ export const RecommendedPrograms = () => {
             </CardContent>
             <CardFooter>
               <Button 
-                onClick={() => startWorkout(program.id)} 
+                onClick={() => handleStartWorkout(program.id)} 
                 className="w-full"
               >
                 Commencer l'entraînement
@@ -134,7 +149,7 @@ export const RecommendedPrograms = () => {
         ))}
       </div>
       
-      {recommendations.length > 2 && (
+      {recommendations && recommendations.length > 2 && (
         <Button
           variant="ghost"
           className="w-full"
