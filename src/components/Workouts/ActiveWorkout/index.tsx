@@ -1,14 +1,14 @@
 
-import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Timer, ArrowLeft, ArrowRight, Check, XCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useState, useEffect, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { WorkoutProgress } from "./WorkoutProgress";
+import { WorkoutHeader } from "./WorkoutHeader";
+import { ExerciseCard } from "./ExerciseCard";
+import { WorkoutActions } from "./WorkoutActions";
 
 export const ActiveWorkout = () => {
   const { id } = useParams();
@@ -176,16 +176,11 @@ export const ActiveWorkout = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/workouts')}>
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        
-        <div className="flex items-center gap-2">
-          <Timer className="h-5 w-5 text-primary" />
-          <span className="font-mono">{formatTime(sessionTime)}</span>
-        </div>
-      </div>
+      <WorkoutHeader 
+        navigate={navigate} 
+        sessionTime={sessionTime} 
+        formatTime={formatTime} 
+      />
 
       <div className="space-y-1">
         <h1 className="text-2xl font-bold">Séance d'entraînement</h1>
@@ -194,74 +189,23 @@ export const ActiveWorkout = () => {
         </div>
       </div>
 
-      <Progress value={progress} className="h-2" />
+      <WorkoutProgress progress={progress} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{currentExercise}</CardTitle>
-          <CardDescription>
-            Série {currentSet} sur {totalSets}
-          </CardDescription>
-        </CardHeader>
+      <ExerciseCard 
+        currentExercise={currentExercise}
+        currentSet={currentSet}
+        totalSets={totalSets}
+        restTime={restTime}
+        handleCompleteSet={handleCompleteSet}
+        handleSkipRest={handleSkipRest}
+      />
 
-        <CardContent>
-          {restTime !== null ? (
-            <div className="flex flex-col items-center gap-4 py-6">
-              <div className="text-3xl font-mono">{restTime}s</div>
-              <div className="text-muted-foreground">Temps de repos</div>
-              <Button variant="outline" onClick={handleSkipRest}>
-                Passer le repos
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-6 py-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <span className="font-medium">Répétitions recommandées</span>
-                  <div className="text-3xl font-bold mt-1">12</div>
-                </div>
-                <div>
-                  <span className="font-medium">Poids</span>
-                  <div className="text-3xl font-bold mt-1">20 kg</div>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-
-        <CardFooter>
-          {restTime === null && (
-            <Button 
-              className="w-full" 
-              onClick={handleCompleteSet}
-              disabled={currentExerciseIndex >= exercises.length}
-            >
-              Valider la série
-            </Button>
-          )}
-        </CardFooter>
-      </Card>
-
-      <div className="grid grid-cols-2 gap-4">
-        <Button 
-          variant="outline" 
-          onClick={handleFinishWorkout}
-          className="w-full"
-        >
-          <XCircle className="mr-2 h-4 w-4" />
-          Terminer
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          onClick={handleNextExercise}
-          className="w-full"
-          disabled={currentExerciseIndex >= exercises.length - 1}
-        >
-          Exercice suivant
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
+      <WorkoutActions 
+        handleFinishWorkout={handleFinishWorkout}
+        handleNextExercise={handleNextExercise}
+        currentExerciseIndex={currentExerciseIndex}
+        exercisesLength={exercises.length}
+      />
     </div>
   );
 };

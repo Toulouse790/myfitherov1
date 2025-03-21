@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { ExclamationTriangleIcon } from "lucide-react";
 
 export interface PersonalInfoStepProps {
   age: string;
