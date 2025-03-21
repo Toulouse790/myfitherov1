@@ -56,7 +56,7 @@ export const ProfileHeader = ({ profile, onProfileUpdate }: ProfileHeaderProps) 
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 overflow-hidden">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <AvatarSection

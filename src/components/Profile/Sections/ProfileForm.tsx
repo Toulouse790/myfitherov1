@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -19,6 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { Info } from "lucide-react";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
 
 const formSchema = z.object({
   birth_date: z.string().optional().nullable(),
@@ -50,11 +58,36 @@ export function ProfileForm({ initialData, onUpdate }: ProfileFormProps) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     onUpdate(values);
-    toast({
-      title: "Profil mis à jour",
-      description: "Vos informations ont été enregistrées avec succès.",
-    });
   }
+
+  // Calculer l'IMC (Indice de Masse Corporelle) si le poids et la taille sont disponibles
+  const calculateBMI = () => {
+    const weight = form.watch('weight_kg');
+    const height = form.watch('height_cm');
+    
+    if (!weight || !height) return null;
+    
+    const weightValue = parseFloat(weight);
+    const heightValue = parseFloat(height) / 100; // Convertir en mètres
+    
+    if (isNaN(weightValue) || isNaN(heightValue) || heightValue <= 0) return null;
+    
+    const bmi = weightValue / (heightValue * heightValue);
+    return bmi.toFixed(1);
+  };
+  
+  // Déterminer la catégorie d'IMC
+  const getBMICategory = (bmi: number) => {
+    if (bmi < 18.5) return { category: "Insuffisance pondérale", color: "text-blue-500" };
+    if (bmi < 25) return { category: "Corpulence normale", color: "text-green-500" };
+    if (bmi < 30) return { category: "Surpoids", color: "text-yellow-500" };
+    if (bmi < 35) return { category: "Obésité modérée", color: "text-orange-500" };
+    if (bmi < 40) return { category: "Obésité sévère", color: "text-red-500" };
+    return { category: "Obésité morbide", color: "text-red-700" };
+  };
+  
+  const bmi = calculateBMI();
+  const bmiInfo = bmi ? getBMICategory(parseFloat(bmi)) : null;
 
   return (
     <Form {...form}>
@@ -80,7 +113,7 @@ export function ProfileForm({ initialData, onUpdate }: ProfileFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Genre</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Sélectionnez votre genre" />
@@ -135,6 +168,28 @@ export function ProfileForm({ initialData, onUpdate }: ProfileFormProps) {
             )}
           />
         </div>
+
+        {bmi && (
+          <div className="mt-4 p-3 bg-muted rounded-md">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span>IMC:</span>
+                <span className="font-bold">{bmi}</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>L'Indice de Masse Corporelle permet d'évaluer votre corpulence</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className={bmiInfo?.color}>{bmiInfo?.category}</span>
+            </div>
+          </div>
+        )}
 
         <Button 
           type="submit" 

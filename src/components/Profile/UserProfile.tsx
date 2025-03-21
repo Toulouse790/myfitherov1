@@ -12,15 +12,20 @@ import { motion } from "framer-motion";
 import { ProfileStats } from "./Sections/Stats/ProfileStats";
 import { ProfileCompletion } from "./Sections/ProfileCompletion";
 import { ProfileNavigation } from "./Sections/Navigation/ProfileNavigation";
+import { UserInfo } from "./Sections/UserInfo";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const UserProfile = () => {
   const [profile, setProfile] = useState<UserProfileType | null>(null);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { user } = useAuth();
 
   const fetchProfile = async () => {
     if (!user) return;
     
+    setLoading(true);
     try {
       // Fetch profile data
       const { data: profileData, error: profileError } = await supabase
@@ -30,6 +35,26 @@ export const UserProfile = () => {
         .single();
 
       if (profileError) throw profileError;
+
+      // Fetch questionnaire data to ensure we have the most up-to-date information
+      const { data: questionnaireData, error: questionnaireError } = await supabase
+        .from('questionnaire_responses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      // Combine questionnaire data with profile if available
+      const combinedProfileData = {
+        ...profileData,
+        ...(questionnaireData && {
+          gender: questionnaireData.gender || profileData.gender,
+          height: questionnaireData.height || profileData.height_cm,
+          weight: questionnaireData.weight || profileData.weight_kg,
+          mainObjective: questionnaireData.objective || profileData.main_objective
+        })
+      };
 
       // Fetch subscription status
       const { data: subscriptionData, error: subscriptionError } = await supabase
@@ -69,9 +94,10 @@ export const UserProfile = () => {
           gender: profileData.gender,
           height: profileData.height_cm,
           weight: profileData.weight_kg,
+          mainObjective: profileData.main_objective || "maintenance",
           goals: {
-            primary: profileData.main_objective || "maintenance",
-            weeklyWorkouts: 4,
+            primary: combinedProfileData.mainObjective || "maintenance",
+            weeklyWorkouts: questionnaireData?.training_frequency ? parseInt(questionnaireData.training_frequency) : 4,
             dailyCalories: 2500,
             sleepHours: 8
           },
@@ -80,7 +106,7 @@ export const UserProfile = () => {
             language: "fr",
             notifications: true,
             useTutorial: true,
-            equipment: []
+            equipment: questionnaireData?.available_equipment || []
           },
           stats: {
             workoutsCompleted: progressionData?.workout_count || 0,
@@ -100,6 +126,8 @@ export const UserProfile = () => {
         description: "Impossible de charger le profil",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,22 +135,52 @@ export const UserProfile = () => {
     fetchProfile();
   }, [user, toast]);
 
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Card className="p-6">
+          <div className="flex items-center gap-4">
+            <Skeleton className="w-16 h-16 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+          </div>
+        </Card>
+        <Card className="p-6">
+          <Skeleton className="h-4 w-32 mb-4" />
+          <div className="grid grid-cols-3 gap-4">
+            <Skeleton className="h-20" />
+            <Skeleton className="h-20" />
+            <Skeleton className="h-20" />
+          </div>
+        </Card>
+        <Card className="p-6">
+          <Skeleton className="h-4 w-48 mb-4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full mt-2" />
+        </Card>
+      </div>
+    );
+  }
+
   if (!profile) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-center">
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
           <User2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">Chargement du profil...</p>
+          <p className="text-muted-foreground">Profil non disponible</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6 pb-24">
+    <div className="space-y-6 pb-24">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
         className="space-y-6"
       >
         <ProfileHeader 
@@ -135,7 +193,14 @@ export const UserProfile = () => {
 
         <ProfileStats stats={profile.stats} />
         
+        <Card className="p-6 overflow-hidden">
+          <h3 className="text-lg font-semibold mb-4">Mes informations</h3>
+          <UserInfo profile={profile} onUpdate={fetchProfile} />
+        </Card>
+        
         <ProfileCompletion profile={profile} />
+
+        <Separator className="my-6" />
 
         <ProfileNavigation isPremium={profile.isPremium} />
 
