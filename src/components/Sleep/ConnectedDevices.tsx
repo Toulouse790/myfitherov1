@@ -2,10 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useSleepTracking } from "@/hooks/use-sleep-tracking";
+import { useSleepDevices } from "@/hooks/use-sleep-devices";
 import { Watch, Trash2, BatteryFull, RefreshCw } from "lucide-react";
 
 export const ConnectedDevices = () => {
-  const { connectedDevices, connectDevice } = useSleepTracking();
+  const { connectedDevices } = useSleepTracking();
+  const { connectDevice, disconnectDevice, syncDevice } = useSleepDevices();
 
   const formatLastSync = (dateString?: string) => {
     if (!dateString) return "Jamais";
@@ -45,13 +47,23 @@ export const ConnectedDevices = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" title="Synchroniser">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      title="Synchroniser"
+                      onClick={() => syncDevice(device.id)}
+                    >
                       <RefreshCw className="w-4 h-4" />
                     </Button>
                     <Button variant="ghost" size="icon" title="Batterie">
                       <BatteryFull className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" title="Supprimer">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      title="Supprimer"
+                      onClick={() => disconnectDevice(device.id)}
+                    >
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
