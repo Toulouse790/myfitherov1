@@ -184,21 +184,29 @@ export const usePhysiologicalMetrics = () => {
     };
   }, [calculateDailyCalories]);
 
+  // Correction: transformons cette fonction pour gérer correctement la promesse
+  const calculateCaloriesBurned = useCallback(async (duration: number, intensity: string, gender: string) => {
+    try {
+      const physiologicalData = await fetchUserPhysiologicalData();
+      if (!physiologicalData) return 0;
+      
+      return calculateExerciseCalories(
+        physiologicalData.weight,
+        duration,
+        intensity as 'low' | 'moderate' | 'high',
+        gender as 'male' | 'female'
+      );
+    } catch (error) {
+      console.error("Erreur lors du calcul des calories brûlées:", error);
+      return 0;
+    }
+  }, [fetchUserPhysiologicalData]);
+
   return {
     fetchUserPhysiologicalData,
     calculateDailyCalories,
     calculateExerciseRecommendations,
     calculateNutrientTargets,
-    calculateCaloriesBurned: (duration: number, intensity: string, gender: string) => {
-      const data = fetchUserPhysiologicalData();
-      if (!data) return 0;
-      
-      return calculateExerciseCalories(
-        data.weight,
-        duration,
-        intensity as 'low' | 'moderate' | 'high',
-        gender as 'male' | 'female'
-      );
-    }
+    calculateCaloriesBurned
   };
 };
