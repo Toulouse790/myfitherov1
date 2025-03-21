@@ -12,6 +12,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
+// Modifions l'interface ProfileData pour rendre birth_date optionnel et compatible
+// avec le type accepté par ProfileForm
 interface ProfileData {
   birth_date: string | null;
   gender: string | null;
@@ -62,7 +64,14 @@ const PersonalInfo = () => {
     fetchProfileData();
   }, [user, toast]);
 
-  const handleUpdateProfile = async (values: ProfileData) => {
+  // Adaptons la fonction handleUpdateProfile pour qu'elle soit compatible avec le type
+  // que ProfileForm attend
+  const handleUpdateProfile = async (values: { 
+    birth_date?: string | null;
+    gender?: string | null;
+    height_cm?: string | null;
+    weight_kg?: string | null;
+  }) => {
     if (!user) return;
     
     try {
