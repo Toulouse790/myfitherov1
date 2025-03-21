@@ -5,6 +5,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { FoodEntry } from "@/types/food";
 import { useToast } from "@/hooks/use-toast";
 
+// Fonction utilitaire pour valider les valeurs numériques
+const validateNumericInput = (value: number | string, fieldName: string): { isValid: boolean; value: number; message?: string } => {
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  
+  if (isNaN(numValue)) {
+    return { isValid: false, value: 0, message: `La valeur de ${fieldName} n'est pas un nombre valide` };
+  }
+  
+  if (numValue < 0) {
+    return { isValid: false, value: 0, message: `La valeur de ${fieldName} ne peut pas être négative` };
+  }
+  
+  return { isValid: true, value: numValue };
+};
+
 export const useFoodJournal = () => {
   const [newFood, setNewFood] = useState("");
   const [calories, setCalories] = useState(0);
@@ -104,18 +119,68 @@ export const useFoodJournal = () => {
   };
 
   const handleAddEntry = async (mealType: string) => {
-    if (!newFood) {
-      throw new Error("Le nom de l'aliment est requis");
+    // Validation de base
+    if (!newFood || newFood.trim() === "") {
+      toast({
+        title: "Erreur de validation",
+        description: "Le nom de l'aliment est requis",
+        variant: "destructive",
+      });
+      return null;
     }
 
-    if (calories <= 0) {
-      throw new Error("Les calories doivent être supérieures à 0");
+    // Validation des valeurs numériques
+    const caloriesValidation = validateNumericInput(calories, "calories");
+    const proteinsValidation = validateNumericInput(proteins, "protéines");
+    const carbsValidation = validateNumericInput(carbs, "glucides");
+    const fatsValidation = validateNumericInput(fats, "lipides");
+
+    // Si une des validations échoue, afficher l'erreur et arrêter
+    if (!caloriesValidation.isValid) {
+      toast({
+        title: "Erreur de validation",
+        description: caloriesValidation.message,
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    if (!proteinsValidation.isValid) {
+      toast({
+        title: "Erreur de validation",
+        description: proteinsValidation.message,
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    if (!carbsValidation.isValid) {
+      toast({
+        title: "Erreur de validation",
+        description: carbsValidation.message,
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    if (!fatsValidation.isValid) {
+      toast({
+        title: "Erreur de validation",
+        description: fatsValidation.message,
+        variant: "destructive",
+      });
+      return null;
     }
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error("Vous devez être connecté pour ajouter un aliment");
+        toast({
+          title: "Connexion requise",
+          description: "Vous devez être connecté pour ajouter un aliment",
+          variant: "destructive",
+        });
+        return null;
       }
 
       // Vérifier les doublons
@@ -138,15 +203,20 @@ export const useFoodJournal = () => {
         .insert([{
           user_id: user.id,
           name: newFood,
-          calories: calories,
-          proteins: proteins,
-          carbs: carbs,
-          fats: fats,
+          calories: caloriesValidation.value,
+          proteins: proteinsValidation.value,
+          carbs: carbsValidation.value,
+          fats: fatsValidation.value,
           meal_type: mealType,
           notes: notes
         }]);
 
       if (error) {
+        toast({
+          title: "Erreur d'ajout",
+          description: `Impossible d'ajouter l'aliment: ${error.message}`,
+          variant: "destructive",
+        });
         throw error;
       }
 
@@ -160,6 +230,12 @@ export const useFoodJournal = () => {
       
       // Refresh entries
       await refetchEntries();
+      
+      toast({
+        title: "Succès",
+        description: `${newFood} a été ajouté à votre journal`,
+        variant: "default",
+      });
       
       return data;
     } catch (error) {
