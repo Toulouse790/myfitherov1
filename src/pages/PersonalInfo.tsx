@@ -76,40 +76,47 @@ const PersonalInfo = () => {
       // Préparation des données pour la mise à jour
       const updateData: any = {};
       
-      // Ne pas inclure birth_date si c'est une chaîne vide
-      if (values.birth_date !== undefined) {
+      // Vérifier et ajouter chaque champ à mettre à jour
+      if ('birth_date' in values) {
         updateData.birth_date = values.birth_date === "" ? null : values.birth_date;
       }
       
-      // Ajouter les autres champs s'ils sont définis
-      if (values.gender !== undefined) {
-        updateData.gender = values.gender;
+      if ('gender' in values) {
+        updateData.gender = values.gender || null;
       }
       
-      if (values.height_cm !== undefined) {
+      if ('height_cm' in values) {
         updateData.height_cm = values.height_cm ? parseFloat(values.height_cm.toString()) : null;
       }
       
-      if (values.weight_kg !== undefined) {
+      if ('weight_kg' in values) {
         updateData.weight_kg = values.weight_kg ? parseFloat(values.weight_kg.toString()) : null;
       }
 
       console.log('Updating profile with data:', updateData);
       
-      const { error } = await supabase
-        .from('profiles')
-        .update(updateData)
-        .eq('id', user.id);
+      // Ne faire la mise à jour que si au moins un champ a été modifié
+      if (Object.keys(updateData).length > 0) {
+        const { error } = await supabase
+          .from('profiles')
+          .update(updateData)
+          .eq('id', user.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Profil mis à jour",
-        description: "Vos informations ont été enregistrées avec succès.",
-      });
-      
-      // Navigate back to profile page
-      setTimeout(() => navigate('/profile'), 1500);
+        toast({
+          title: "Profil mis à jour",
+          description: "Vos informations ont été enregistrées avec succès.",
+        });
+        
+        // Navigate back to profile page
+        setTimeout(() => navigate('/profile'), 1500);
+      } else {
+        toast({
+          title: "Information",
+          description: "Aucune modification n'a été détectée."
+        });
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
