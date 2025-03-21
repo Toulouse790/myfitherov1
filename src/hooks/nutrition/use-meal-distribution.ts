@@ -1,132 +1,143 @@
-interface MealDistribution {
-  name: string;
+
+import { calculateBMR } from "./use-bmr-calculation";
+import { usePhysiologicalMetrics } from "../use-physiological-metrics";
+
+interface NutrientTargets {
   calories: number;
   proteins: number;
-  preparation?: string;
+  carbs: number;
+  fats: number;
 }
 
-interface MealPlanDay {
-  breakfast: { name: string; calories: number; proteins: number; preparation?: string };
-  lunch: { name: string; calories: number; proteins: number; preparation?: string };
-  dinner: { name: string; calories: number; proteins: number; preparation?: string };
-  snack?: { name: string; calories: number; proteins: number; preparation?: string };
+interface MealDistribution {
+  breakfast: {
+    calories: number;
+    proteins: number;
+    carbs: number;
+    fats: number;
+  };
+  lunch: {
+    calories: number;
+    proteins: number;
+    carbs: number;
+    fats: number;
+  };
+  dinner: {
+    calories: number;
+    proteins: number;
+    carbs: number;
+    fats: number;
+  };
+  snacks: {
+    calories: number;
+    proteins: number;
+    carbs: number;
+    fats: number;
+  };
 }
 
 export const generateMealDistribution = (
-  dailyTargets: { calories: number; proteins: number },
+  targets: NutrientTargets,
   userPreferences: any,
   todayPlan?: any
-) => {
-  console.log("Generating meal distribution with:", { dailyTargets, userPreferences, todayPlan });
-  
-  const hasMorningSnack = userPreferences?.questionnaire?.has_morning_snack ?? true;
-  const hasAfternoonSnack = userPreferences?.questionnaire?.has_afternoon_snack ?? true;
-
-  if (todayPlan && todayPlan.breakfast && todayPlan.lunch && todayPlan.dinner) {
-    console.log("Using today's plan:", todayPlan);
-    const distribution: Record<string, MealDistribution> = {
-      breakfast: {
-        name: todayPlan.breakfast.name,
-        calories: todayPlan.breakfast.calories,
-        proteins: todayPlan.breakfast.proteins,
-        preparation: todayPlan.breakfast.preparation
-      },
-      lunch: {
-        name: todayPlan.lunch.name,
-        calories: todayPlan.lunch.calories,
-        proteins: todayPlan.lunch.proteins,
-        preparation: todayPlan.lunch.preparation
-      },
-      dinner: {
-        name: todayPlan.dinner.name,
-        calories: todayPlan.dinner.calories,
-        proteins: todayPlan.dinner.proteins,
-        preparation: todayPlan.dinner.preparation
-      }
-    };
-
-    if (hasMorningSnack && todayPlan.snack) {
-      distribution.morning_snack = {
-        name: `${todayPlan.snack.name} (matin)`,
-        calories: Math.round(todayPlan.snack.calories / 2),
-        proteins: Math.round(todayPlan.snack.proteins / 2),
-        preparation: todayPlan.snack.preparation
-      };
-    }
-
-    if (hasAfternoonSnack && todayPlan.snack) {
-      distribution.afternoon_snack = {
-        name: `${todayPlan.snack.name} (après-midi)`,
-        calories: Math.round(todayPlan.snack.calories / 2),
-        proteins: Math.round(todayPlan.snack.proteins / 2),
-        preparation: todayPlan.snack.preparation
-      };
-    }
-
-    return distribution;
-  }
-
-  // Distribution des calories selon les repas
-  const breakfastRatio = 0.25; // 25% des calories pour le petit-déjeuner
-  const lunchRatio = 0.35;     // 35% des calories pour le déjeuner
-  const dinnerRatio = 0.30;    // 30% des calories pour le dîner
-  const snackRatio = 0.10;     // 10% des calories pour les collations (5% chacune si deux collations)
-
-  // Distribution des protéines selon les repas (similaire aux calories)
-  const breakfastProteinRatio = 0.25;
-  const lunchProteinRatio = 0.35;
-  const dinnerProteinRatio = 0.30;
-  const snackProteinRatio = 0.10;
-
-  const totalCalories = dailyTargets?.calories || 2000;
-  const totalProteins = dailyTargets?.proteins || 150;
-
-  let mealDistribution: Record<string, MealDistribution> = {
-    breakfast: {
-      calories: Math.round(totalCalories * breakfastRatio),
-      proteins: Math.round(totalProteins * breakfastProteinRatio),
-      name: "Petit-déjeuner équilibré"
-    },
-    lunch: {
-      calories: Math.round(totalCalories * lunchRatio),
-      proteins: Math.round(totalProteins * lunchProteinRatio),
-      name: "Déjeuner nutritif"
-    },
-    dinner: {
-      calories: Math.round(totalCalories * dinnerRatio),
-      proteins: Math.round(totalProteins * dinnerProteinRatio),
-      name: "Dîner léger"
-    }
+): MealDistribution => {
+  // Distribution par défaut
+  let distribution = {
+    breakfast: 0.25, // 25% des calories au petit-déjeuner
+    lunch: 0.35,     // 35% des calories au déjeuner
+    dinner: 0.3,     // 30% des calories au dîner
+    snacks: 0.1      // 10% des calories en collations
   };
 
-  // Ajuster les collations en fonction des préférences utilisateur
-  const individualSnackRatio = snackRatio / (hasMorningSnack && hasAfternoonSnack ? 2 : 1);
-  const individualSnackProteinRatio = snackProteinRatio / (hasMorningSnack && hasAfternoonSnack ? 2 : 1);
-
-  if (hasMorningSnack) {
-    mealDistribution.morning_snack = {
-      calories: Math.round(totalCalories * individualSnackRatio),
-      proteins: Math.round(totalProteins * individualSnackProteinRatio),
-      name: "Collation matinale"
+  // Ajuster la distribution selon l'objectif
+  if (userPreferences?.questionnaire?.objective === 'weight_loss') {
+    distribution = {
+      breakfast: 0.3,  // Plus au petit-déjeuner pour éviter les fringales
+      lunch: 0.4,      // Repas principal à midi
+      dinner: 0.2,     // Dîner léger
+      snacks: 0.1
+    };
+  } else if (userPreferences?.questionnaire?.objective === 'muscle_gain') {
+    distribution = {
+      breakfast: 0.25,
+      lunch: 0.3,
+      dinner: 0.3,
+      snacks: 0.15     // Plus de collations pour répartir les protéines
     };
   }
 
-  if (hasAfternoonSnack) {
-    mealDistribution.afternoon_snack = {
-      calories: Math.round(totalCalories * individualSnackRatio),
-      proteins: Math.round(totalProteins * individualSnackProteinRatio),
-      name: "Collation"
+  // Ajuster selon les entraînements (jours d'entraînement vs repos)
+  const hasWorkoutToday = userPreferences?.workoutSessions?.some((session: any) => {
+    const sessionDate = new Date(session.created_at);
+    const today = new Date();
+    return sessionDate.getDate() === today.getDate() &&
+           sessionDate.getMonth() === today.getMonth() &&
+           sessionDate.getFullYear() === today.getFullYear();
+  });
+
+  if (hasWorkoutToday) {
+    // Augmenter légèrement les calories les jours d'entraînement
+    const workoutBoost = 1.1; // +10%
+    targets = {
+      calories: Math.round(targets.calories * workoutBoost),
+      proteins: Math.round(targets.proteins * 1.1), // Plus de protéines
+      carbs: Math.round(targets.carbs * 1.2),       // Plus de glucides pour l'énergie
+      fats: targets.fats
     };
   }
 
-  // Vérification que la somme des calories correspond bien au total
-  const totalDistributedCalories = Object.values(mealDistribution).reduce((sum, meal) => sum + meal.calories, 0);
-  if (totalDistributedCalories !== totalCalories) {
-    const diff = totalCalories - totalDistributedCalories;
-    // Ajuster le repas principal pour compenser la différence
-    mealDistribution.lunch.calories += diff;
+  // Calculer les nutriments pour chaque repas
+  return {
+    breakfast: {
+      calories: Math.round(targets.calories * distribution.breakfast),
+      proteins: Math.round(targets.proteins * distribution.breakfast),
+      carbs: Math.round(targets.carbs * distribution.breakfast),
+      fats: Math.round(targets.fats * distribution.breakfast)
+    },
+    lunch: {
+      calories: Math.round(targets.calories * distribution.lunch),
+      proteins: Math.round(targets.proteins * distribution.lunch),
+      carbs: Math.round(targets.carbs * distribution.lunch),
+      fats: Math.round(targets.fats * distribution.lunch)
+    },
+    dinner: {
+      calories: Math.round(targets.calories * distribution.dinner),
+      proteins: Math.round(targets.proteins * distribution.dinner),
+      carbs: Math.round(targets.carbs * distribution.dinner),
+      fats: Math.round(targets.fats * distribution.dinner)
+    },
+    snacks: {
+      calories: Math.round(targets.calories * distribution.snacks),
+      proteins: Math.round(targets.proteins * distribution.snacks),
+      carbs: Math.round(targets.carbs * distribution.snacks),
+      fats: Math.round(targets.fats * distribution.snacks)
+    }
+  };
+};
+
+export const adjustMealTimingForWorkout = (
+  mealDistribution: MealDistribution,
+  workoutTime?: 'morning' | 'evening'
+): MealDistribution => {
+  if (!workoutTime) return mealDistribution;
+
+  const adjustedDistribution = { ...mealDistribution };
+
+  if (workoutTime === 'morning') {
+    // Augmenter les glucides au petit-déjeuner et réduire les graisses
+    adjustedDistribution.breakfast.carbs = Math.round(adjustedDistribution.breakfast.carbs * 1.2);
+    adjustedDistribution.breakfast.fats = Math.round(adjustedDistribution.breakfast.fats * 0.8);
+    
+    // Augmenter les protéines post-entraînement
+    adjustedDistribution.lunch.proteins = Math.round(adjustedDistribution.lunch.proteins * 1.2);
+  } else if (workoutTime === 'evening') {
+    // Augmenter les glucides au déjeuner pour préparer l'entraînement
+    adjustedDistribution.lunch.carbs = Math.round(adjustedDistribution.lunch.carbs * 1.2);
+    
+    // Augmenter les protéines au dîner pour la récupération
+    adjustedDistribution.dinner.proteins = Math.round(adjustedDistribution.dinner.proteins * 1.2);
+    adjustedDistribution.dinner.carbs = Math.round(adjustedDistribution.dinner.carbs * 0.9);
   }
 
-  console.log("Generated meal distribution:", mealDistribution);
-  return mealDistribution;
+  return adjustedDistribution;
 };
