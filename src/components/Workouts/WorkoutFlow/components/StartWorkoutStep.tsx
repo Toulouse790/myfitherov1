@@ -10,6 +10,12 @@ interface StartWorkoutStepProps {
 
 export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkoutStepProps) => {
   const handleStartClick = () => {
+    // S'assurer qu'il y a au moins un exercice sélectionné
+    if (exerciseCount === 0) {
+      console.log("Aucun exercice sélectionné, action bloquée");
+      return;
+    }
+    
     // Ajouter un log pour débugger
     console.log("Bouton C'est parti cliqué, appel de onStartWorkout");
     // Appel de la fonction passée en prop
@@ -48,7 +54,10 @@ export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkout
           <Button 
             size="lg"
             onClick={handleStartClick}
-            className="mt-6 px-8 py-6 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 w-full sm:w-auto"
+            disabled={exerciseCount === 0}
+            className={`mt-6 px-8 py-6 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 w-full sm:w-auto ${
+              exerciseCount === 0 ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
             <Play className="w-6 h-6 mr-2" />
             C'est parti !
