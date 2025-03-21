@@ -1,15 +1,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-
-export interface SleepDevice {
-  id: string;
-  name: string;
-  type: string;
-  batteryLevel: number;
-  lastSync?: string;
-  connected: boolean;
-}
+import { SleepDevice } from "@/types/sleep";
 
 // Ajoutons des appareils de sommeil fictifs pour la démonstration
 const mockDevices: SleepDevice[] = [
@@ -94,6 +86,6 @@ export const useSleepDevices = () => {
     disconnectDevice,
     syncDevice,
     isConnecting,
-    connectedDevices // Ajout de la propriété manquante
+    connectedDevices
   };
 };

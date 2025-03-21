@@ -1,14 +1,12 @@
 
-import { Button } from "@/components/ui/button"; // Correction de l'import
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useSleepTracking } from "@/hooks/use-sleep-tracking";
-import { useSleepDevices } from "@/hooks/use-sleep-devices";
 import { Watch, Trash2, BatteryFull, RefreshCw, PlusCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const ConnectedDevices = () => {
-  const { connectedDevices } = useSleepTracking();
-  const { connectDevice, disconnectDevice, syncDevice } = useSleepDevices();
+  const { connectedDevices, connectDevice, disconnectDevice, syncDevice } = useSleepTracking();
 
   const formatLastSync = (dateString?: string) => {
     if (!dateString) return "Jamais";

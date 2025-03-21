@@ -1,54 +1,12 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSleepDevices, SleepDevice } from "./use-sleep-devices";
+import { useSleepDevices } from "./use-sleep-devices";
 import { useSleepSubmission } from "./use-sleep-submission";
 import { useSleepStats } from "./use-sleep-stats";
-
-export interface SleepSession {
-  id?: string;
-  user_id?: string;
-  start_time: string;
-  end_time: string;
-  total_duration_minutes: number;
-  quality_metrics: SleepQualityMetrics;
-  environmental_data: EnvironmentalData;
-  sleep_score?: number;
-  is_nap?: boolean;
-}
-
-export interface SleepQualityMetrics {
-  sleep_quality: number; // 1-10
-  deep_sleep_percentage: number;
-  rem_sleep_percentage: number;
-  light_sleep_percentage?: number;
-  awake_time_minutes?: number;
-  wake_count?: number;
-}
-
-export interface EnvironmentalData {
-  temperature: number;
-  noise_level: number;
-  light_level: number;
-  humidity?: number;
-}
-
-export interface SleepStats {
-  average_duration: number;
-  average_score: number;
-  sleep_debt_minutes: number;
-  weekly_trend: number; // positif = amélioration
-  consistency_score: number;
-}
-
-export interface ConnectedDevice {
-  id: string;
-  name: string;
-  type: string;
-  connected: boolean;
-  lastSync?: string;
-}
+import { SleepSession } from "@/types/sleep";
 
 export const useSleepTracking = () => {
   const { user } = useAuth();
@@ -65,11 +23,14 @@ export const useSleepTracking = () => {
   // Utilisation des hooks spécialisés
   const { 
     connectedDevices, 
-    connectDevice 
+    connectDevice,
+    disconnectDevice,
+    syncDevice
   } = useSleepDevices();
 
   const {
-    addSleepSession
+    addSleepSession,
+    isSubmitting
   } = useSleepSubmission({
     sleepHours,
     sleepMinutes,
@@ -123,6 +84,7 @@ export const useSleepTracking = () => {
     lightLevel,
     isNap,
     connectedDevices,
+    isSubmitting,
     
     // Setters
     setSleepHours,
@@ -142,6 +104,8 @@ export const useSleepTracking = () => {
     // Actions
     addSleepSession,
     connectDevice,
+    disconnectDevice,
+    syncDevice,
     refetchSleepSessions,
     calculateRecommendedSleep
   };

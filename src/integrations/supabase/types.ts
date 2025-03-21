@@ -3260,6 +3260,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_table_for_duplicates: {
+        Args: {
+          table_name: string
+          column_names: string[]
+        }
+        Returns: {
+          duplicate_count: number
+          duplicate_values: Json
+        }[]
+      }
       crosstab: {
         Args: {
           "": string

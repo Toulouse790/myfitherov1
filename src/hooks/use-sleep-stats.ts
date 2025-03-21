@@ -1,146 +1,87 @@
 
-import { useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { SleepStats } from "./use-sleep-tracking";
+import { SleepStats, SleepRecommendation } from "@/types/sleep";
 
 export const useSleepStats = () => {
   const { user } = useAuth();
-  
-  // Récupérer les statistiques de sommeil
-  const { 
-    data: sleepStats,
-    isLoading: statsLoading 
-  } = useQuery({
-    queryKey: ['sleep-stats'],
-    queryFn: async () => {
-      if (!user) return null;
-      
-      // Récupérer les sessions de sommeil des 7 derniers jours
-      const { data: sleepSessions, error } = await supabase
-        .from('sleep_sessions')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('start_time', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
-        .order('start_time', { ascending: false });
-        
-      if (error) throw error;
-      
-      if (!sleepSessions || sleepSessions.length === 0) {
-        return null;
-      }
-      
-      // Calculer les statistiques
-      const avgDuration = sleepSessions.reduce((sum, session) => 
-        sum + session.total_duration_minutes, 0) / sleepSessions.length;
-        
-      const avgScore = sleepSessions.reduce((sum, session) => 
-        sum + (session.sleep_score || 0), 0) / sleepSessions.length;
-      
-      // Calcul de la dette de sommeil (basé sur un besoin de 8h par nuit)
-      const sleepDebt = sleepSessions.reduce(
-        (debt, session) => debt + Math.max(0, 480 - session.total_duration_minutes), 
-        0
-      );
-      
-      // Calculer la tendance: comparer moyenne des 3 derniers jours vs 4 jours précédents
-      const recent = sleepSessions.slice(0, 3);
-      const previous = sleepSessions.slice(3);
-      
-      const recentAvg = recent.length > 0 
-        ? recent.reduce((sum, s) => sum + (s.sleep_score || 0), 0) / recent.length 
-        : 0;
-        
-      const previousAvg = previous.length > 0 
-        ? previous.reduce((sum, s) => sum + (s.sleep_score || 0), 0) / previous.length 
-        : 0;
-        
-      const trend = previousAvg > 0 ? ((recentAvg - previousAvg) / previousAvg) * 100 : 0;
-      
-      // Régularité du sommeil
-      const bedTimes = sleepSessions.map(s => 
-        new Date(s.start_time).getHours() * 60 + new Date(s.start_time).getMinutes());
-        
-      const wakeTimes = sleepSessions.map(s => 
-        new Date(s.end_time).getHours() * 60 + new Date(s.end_time).getMinutes());
-      
-      const bedTimeVariance = calculateVariance(bedTimes);
-      const wakeTimeVariance = calculateVariance(wakeTimes);
-      
-      // Plus la variance est basse, plus la consistance est élevée
-      const consistencyScore = 100 - Math.min(100, (bedTimeVariance + wakeTimeVariance) / 60);
-      
-      return {
-        average_duration: avgDuration,
-        average_score: avgScore,
-        sleep_debt_minutes: sleepDebt,
-        weekly_trend: trend,
-        consistency_score: consistencyScore
-      } as SleepStats;
-    },
-    enabled: !!user
+  const [sleepStats, setSleepStats] = useState<SleepStats>({
+    average_duration: 420, // 7 heures en minutes
+    average_score: 85,
+    sleep_debt_minutes: 30,
+    weekly_trend: 5,  // 5% d'amélioration
+    consistency_score: 8
   });
 
-  // Fonction pour calculer la durée de sommeil recommandée
-  const calculateRecommendedSleep = useCallback((
-    activityLevel: string | null,
-    trainingFrequency: string | null,
-    workoutDuration: string | null,
-    trainingStats: any[] = []
-  ): { hours: number, minutes: number } => {
-    // Base sleep time in minutes (7 hours = 420 minutes)
-    let baseMinutes = 420;
+  useEffect(() => {
+    if (user) {
+      fetchSleepStats();
+    }
+  }, [user]);
 
-    // Adjust based on activity level
-    const activityMultiplier = {
-      'sedentary': 0,
-      'lightly_active': 15,
-      'moderately_active': 30,
-      'very_active': 45,
-      'extra_active': 60
-    }[activityLevel || 'moderately_active'] || 30;
+  const fetchSleepStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('sleep_stats')
+        .select('*')
+        .eq('user_id', user?.id)
+        .single();
 
-    // Adjust based on training frequency
-    const frequencyMultiplier = {
-      '1-2': 10,
-      '3-4': 20,
-      '5+': 30
-    }[trainingFrequency || '3-4'] || 20;
+      if (error) throw error;
+      
+      if (data) {
+        setSleepStats({
+          average_duration: data.average_duration || 420,
+          average_score: data.average_score || 85,
+          sleep_debt_minutes: data.sleep_debt_minutes || 30,
+          weekly_trend: data.weekly_trend || 0,
+          consistency_score: data.consistency_score || 7
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des statistiques de sommeil:", error);
+    }
+  };
 
-    // Calculate average daily calorie burn from recent workouts
-    const avgCaloriesBurned = trainingStats?.length
-      ? trainingStats.reduce((acc, stat) => acc + (stat.calories_burned || 0), 0) / trainingStats.length
-      : 0;
-
-    // Additional minutes based on calorie burn
-    const calorieAdjustment = Math.floor(avgCaloriesBurned / 100) * 5;
-
-    // Calculate total recommended sleep time in minutes
-    const totalMinutes = baseMinutes + activityMultiplier + frequencyMultiplier + calorieAdjustment;
+  const calculateRecommendedSleep = (
+    experienceLevel: string,
+    trainingFrequency: number,
+    workoutDuration: number,
+    trainingStats: any[]
+  ): SleepRecommendation => {
+    // Base de 7-8 heures pour un adulte en bonne santé
+    let recommendedHours = 7;
+    let recommendedMinutes = 30;
     
-    return {
-      hours: Math.floor(totalMinutes / 60),
-      minutes: totalMinutes % 60
-    };
-  }, []);
+    // Facteurs d'ajustement basés sur l'intensité de l'entraînement
+    if (experienceLevel === 'advanced' && trainingFrequency > 4) {
+      recommendedHours += 0.5;
+    }
+    
+    if (workoutDuration > 90) {
+      recommendedMinutes += 15;
+    }
+    
+    // Ajustement basé sur la dépense calorique récente
+    const recentCaloriesBurned = trainingStats.reduce((total, stat) => 
+      total + (stat.calories_burned || 0), 0);
+    
+    if (recentCaloriesBurned > 5000) {
+      recommendedMinutes += 15;
+    }
+    
+    // Normalisation des minutes
+    if (recommendedMinutes >= 60) {
+      recommendedHours += Math.floor(recommendedMinutes / 60);
+      recommendedMinutes = recommendedMinutes % 60;
+    }
+    
+    return { hours: recommendedHours, minutes: recommendedMinutes };
+  };
 
   return {
     sleepStats,
-    statsLoading,
     calculateRecommendedSleep
   };
 };
-
-// Fonction utilitaire pour calculer la variance
-function calculateVariance(numbers: number[]): number {
-  if (numbers.length <= 1) return 0;
-  
-  const avg = numbers.reduce((sum, val) => sum + val, 0) / numbers.length;
-  const squareDiffs = numbers.map(value => {
-    const diff = value - avg;
-    return diff * diff;
-  });
-  
-  return squareDiffs.reduce((sum, val) => sum + val, 0) / numbers.length;
-}
