@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Play } from "lucide-react";
+import { Play, ArrowLeft, ArrowRight } from "lucide-react";
 
 interface NavigationButtonsProps {
   currentStep: number;
@@ -20,23 +20,41 @@ export const NavigationButtons = ({
   // On n'affiche pas les boutons de navigation sur la dernière étape
   // car un bouton principal est déjà présent dans StartWorkoutStep
   if (currentStep === totalSteps) {
-    return null; // Ne rien afficher sur la dernière étape
+    return null;
   }
 
-  // On n'affiche que le bouton "Lancer la séance" sur la première étape
-  // et rien sur les autres étapes (car on a déjà la navigation en haut)
   return (
-    <div className="flex justify-end mt-6 w-full">
-      {currentStep === 1 && (
+    <div className="flex justify-between mt-6 w-full">
+      {currentStep > 1 ? (
         <Button
-          onClick={onNext}
-          className="px-5 py-2 h-12"
-          disabled={isNextDisabled}
+          variant="outline"
+          onClick={onBack}
+          className="flex items-center gap-2"
         >
-          Lancer la séance
-          <Play className="w-4 h-4 ml-2" />
+          <ArrowLeft className="w-4 h-4" />
+          Retour
         </Button>
+      ) : (
+        <div></div> // Espace réservé pour l'alignement
       )}
+
+      <Button
+        onClick={onNext}
+        className="px-5 py-2"
+        disabled={isNextDisabled}
+      >
+        {currentStep === totalSteps - 1 ? (
+          <>
+            Lancer la séance
+            <Play className="w-4 h-4 ml-2" />
+          </>
+        ) : (
+          <>
+            Suivant
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </>
+        )}
+      </Button>
     </div>
   );
 };

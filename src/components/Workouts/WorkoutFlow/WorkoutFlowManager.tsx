@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -17,16 +18,24 @@ import { NavigationButtons } from "./components/NavigationButtons";
 import { StartWorkoutStep } from "./components/StartWorkoutStep";
 import { ExerciseSetManager } from "./components/ExerciseSetManager";
 import { useWorkoutExercisesState } from "@/hooks/workout/use-workout-exercises-state";
+import { TrainingTypeSelection } from "./components/TrainingTypeSelection";
+import { SportPositionSelection } from "./components/SportPositionSelection";
+import { useSportExerciseSelection } from "@/hooks/use-sport-exercise-selection";
 
 export const WorkoutFlowManager = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [trainingType, setTrainingType] = useState<"muscle" | "sport" | null>(null);
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
+  const [selectedSportId, setSelectedSportId] = useState<string>("");
+  const [selectedPositionId, setSelectedPositionId] = useState<string>("");
   const { createWorkoutSession } = useSessionActions();
   const { isLoading } = useWorkoutExercisesState();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { exercises: sportExercises, isLoading: sportExercisesLoading } = 
+    useSportExerciseSelection(selectedSportId, selectedPositionId);
 
   const handleExerciseSelection = (exercises: string[]) => {
     setSelectedExercises(exercises);
@@ -34,14 +43,56 @@ export const WorkoutFlowManager = () => {
 
   const handleMuscleGroupSelection = (muscleId: string) => {
     setSelectedMuscleGroup(muscleId);
+    setCurrentStep(3);
+  };
+
+  const handleTrainingTypeSelection = (type: "muscle" | "sport") => {
+    setTrainingType(type);
     setCurrentStep(2);
   };
 
+  const handleSportPositionSelection = (sportId: string, positionId: string) => {
+    setSelectedSportId(sportId);
+    setSelectedPositionId(positionId);
+    
+    // Une fois le sport et le poste sélectionnés, passer à la sélection des exercices
+    if (sportExercises && sportExercises.length > 0) {
+      setSelectedExercises(sportExercises);
+    }
+    setCurrentStep(4); // Passer directement au récapitulatif pour les exercices par sport
+  };
+
   const handleNext = () => {
-    if (currentStep === 1) {
+    if (currentStep === 1 && !trainingType) {
       toast({
-        title: "Groupe musculaire validé",
-        description: "Vous pouvez maintenant sélectionner un autre groupe musculaire",
+        title: "Sélection requise",
+        description: "Veuillez choisir un type d'entraînement",
+      });
+      return;
+    }
+    
+    if (currentStep === 2) {
+      if (trainingType === "muscle" && !selectedMuscleGroup) {
+        toast({
+          title: "Sélection requise",
+          description: "Veuillez sélectionner un groupe musculaire",
+        });
+        return;
+      }
+      
+      if (trainingType === "sport" && (!selectedSportId || !selectedPositionId)) {
+        toast({
+          title: "Sélection requise",
+          description: "Veuillez sélectionner un sport et un poste",
+        });
+        return;
+      }
+    }
+    
+    if (currentStep === 3 && selectedExercises.length === 0) {
+      toast({
+        title: "Sélection requise",
+        description: "Veuillez sélectionner au moins un exercice",
       });
       return;
     }
@@ -84,7 +135,7 @@ export const WorkoutFlowManager = () => {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || sportExercisesLoading) {
     return (
       <div className="container max-w-4xl mx-auto p-4 flex items-center justify-center h-[60vh]">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -102,10 +153,28 @@ export const WorkoutFlowManager = () => {
             exit={{ opacity: 0, y: -20 }}
             className="flex justify-center"
           >
-            <MuscleGroupSelection onSelectMuscleGroup={handleMuscleGroupSelection} />
+            <TrainingTypeSelection onSelectTrainingType={handleTrainingTypeSelection} />
           </motion.div>
         );
       case 2:
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="flex justify-center"
+          >
+            {trainingType === "muscle" ? (
+              <MuscleGroupSelection onSelectMuscleGroup={handleMuscleGroupSelection} />
+            ) : (
+              <SportPositionSelection 
+                onSelectSportPosition={handleSportPositionSelection}
+                onBack={() => setCurrentStep(1)}
+              />
+            )}
+          </motion.div>
+        );
+      case 3:
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -115,12 +184,12 @@ export const WorkoutFlowManager = () => {
             <ExerciseSelection
               selectedExercises={selectedExercises}
               onSelectionChange={handleExerciseSelection}
-              onClose={() => setCurrentStep(1)}
+              onClose={() => setCurrentStep(2)}
               muscleGroup={selectedMuscleGroup}
             />
           </motion.div>
         );
-      case 3:
+      case 4:
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -131,26 +200,12 @@ export const WorkoutFlowManager = () => {
             <GeneratedWorkoutPreview exercises={selectedExercises} />
           </motion.div>
         );
-      case 4:
+      case 5:
         return (
           <StartWorkoutStep 
             exerciseCount={selectedExercises.length} 
             onStartWorkout={handleStartWorkout} 
           />
-        );
-      case 5:
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="flex justify-center"
-          >
-            <ExerciseSetManager 
-              exerciseName="Rowing avec Haltères" 
-              onComplete={handleExerciseComplete}
-            />
-          </motion.div>
         );
       default:
         return null;
@@ -175,7 +230,10 @@ export const WorkoutFlowManager = () => {
         totalSteps={workoutSteps.length}
         onBack={handleBack}
         onNext={handleNext}
-        isNextDisabled={currentStep === 2 && selectedExercises.length === 0}
+        isNextDisabled={
+          (currentStep === 1 && !trainingType) ||
+          (currentStep === 3 && selectedExercises.length === 0)
+        }
       />
     </div>
   );
