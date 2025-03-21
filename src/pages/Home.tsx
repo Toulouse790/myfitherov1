@@ -4,7 +4,6 @@ import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { UserProgressionWidget } from "@/components/UserProgression/UserProgressionWidget";
 import { Card } from "@/components/ui/card";
 import { ChartBar } from "lucide-react";
-import { Link } from "react-router-dom";
 import { ActionButtons } from "@/components/Home/ActionButtons";
 import { useHomeActions } from "@/hooks/use-home-actions";
 
