@@ -1,7 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
 
 export interface RestTimerProps {
   restTime: number;
@@ -9,21 +9,6 @@ export interface RestTimerProps {
 }
 
 export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
-  const handleTimeAdjustment = (adjustment: number) => {
-    const newTime = restTime + adjustment;
-    // Ensure rest time stays between 15 and 180 seconds
-    if (newTime >= 15 && newTime <= 180) {
-      console.log("Adjusting rest time by:", adjustment, "New time:", newTime);
-      onRestTimeChange(adjustment);
-    } else {
-      console.log("Invalid rest time adjustment. Current:", restTime, "Adjustment:", adjustment);
-    }
-  };
-
-  useEffect(() => {
-    console.log("Rest time updated:", restTime);
-  }, [restTime]);
-
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -34,13 +19,13 @@ export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
       <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary">
         <Timer className="h-6 w-6" />
         <span>{restTime}</span>
-        <span className="text-lg">s</span>
+        <span className="text-lg">secondes</span>
       </div>
       <div className="flex justify-center items-center gap-4">
         <Button
           variant="outline"
           size="sm"
-          onClick={() => handleTimeAdjustment(-15)}
+          onClick={() => onRestTimeChange(-15)}
           disabled={restTime <= 15}
           className="w-20 transition-all duration-200 hover:bg-destructive/10"
         >
@@ -49,7 +34,7 @@ export const RestTimer = ({ restTime, onRestTimeChange }: RestTimerProps) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => handleTimeAdjustment(15)}
+          onClick={() => onRestTimeChange(15)}
           disabled={restTime >= 180}
           className="w-20 transition-all duration-200 hover:bg-primary/10"
         >
