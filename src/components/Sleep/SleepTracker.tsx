@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
@@ -89,35 +89,35 @@ export const SleepTracker = () => {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="overflow-hidden border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10 shadow-md">
         <CardContent className="p-6 flex justify-center items-center min-h-[200px]">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
+    <Card className="overflow-hidden border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10 shadow-md hover:shadow-lg transition-all duration-300">
       <CardContent className="p-6">
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-bold">Suivi du sommeil</h2>
+            <h2 className="text-2xl font-bold text-blue-600">Suivi du sommeil</h2>
             <p className="text-muted-foreground">
-              Temps de sommeil recommandé : {recommendedSleep}
+              Temps de sommeil recommandé: <span className="text-blue-500 font-medium">{recommendedSleep}</span>
             </p>
           </div>
 
           <Tabs defaultValue="manual" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="manual">Saisie manuelle</TabsTrigger>
-              <TabsTrigger value="auto">Suivi automatique</TabsTrigger>
+              <TabsTrigger value="manual" className="data-[state=active]:bg-blue-500">Saisie manuelle</TabsTrigger>
+              <TabsTrigger value="auto" className="data-[state=active]:bg-blue-500">Suivi automatique</TabsTrigger>
             </TabsList>
             
             <TabsContent value="manual" className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
                 <Label htmlFor="is-nap" className="flex items-center gap-2">
-                  <Moon className="h-4 w-4" />
+                  <Moon className="h-4 w-4 text-blue-500" />
                   <span>Type de sommeil</span>
                 </Label>
                 <div className="flex items-center space-x-2">
@@ -125,14 +125,15 @@ export const SleepTracker = () => {
                     id="is-nap"
                     checked={isNap}
                     onCheckedChange={setIsNap}
+                    className="data-[state=checked]:bg-blue-500"
                   />
                   <span className="text-sm">{isNap ? 'Sieste' : 'Nuit'}</span>
                 </div>
               </div>
 
               <div className="grid gap-4">
-                <div>
-                  <Label className="block text-sm font-medium mb-2">
+                <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
+                  <Label className="block text-sm font-medium mb-2 text-blue-700 dark:text-blue-300">
                     Durée de sommeil
                   </Label>
                   <div className="flex gap-4">
@@ -144,7 +145,7 @@ export const SleepTracker = () => {
                           onChange={(e) => setSleepHours(Number(e.target.value))}
                           min={0}
                           max={24}
-                          className="w-full"
+                          className="w-full border-blue-200 dark:border-blue-700 focus:ring-blue-500"
                         />
                         <span className="ml-2">heures</span>
                       </div>
@@ -157,7 +158,7 @@ export const SleepTracker = () => {
                           onChange={(e) => setSleepMinutes(Number(e.target.value))}
                           min={0}
                           max={59}
-                          className="w-full"
+                          className="w-full border-blue-200 dark:border-blue-700 focus:ring-blue-500"
                         />
                         <span className="ml-2">minutes</span>
                       </div>
@@ -165,9 +166,9 @@ export const SleepTracker = () => {
                   </div>
                 </div>
 
-                <div>
-                  <Label className="flex items-center gap-2 mb-2">
-                    <Sun className="h-4 w-4" />
+                <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
+                  <Label className="flex items-center gap-2 mb-2 text-blue-700 dark:text-blue-300">
+                    <Sun className="h-4 w-4 text-amber-500" />
                     <span>Qualité du sommeil (1-10)</span>
                   </Label>
                   <input
@@ -176,7 +177,7 @@ export const SleepTracker = () => {
                     onChange={(e) => setSleepQuality(Number(e.target.value))}
                     min={1}
                     max={10}
-                    className="w-full"
+                    className="w-full accent-blue-500"
                   />
                   <div className="flex justify-between text-sm text-muted-foreground mt-1">
                     <span>Mauvaise</span>
@@ -186,7 +187,7 @@ export const SleepTracker = () => {
 
                 <Button
                   onClick={addSleepSession}
-                  className="w-full"
+                  className="w-full bg-blue-500 hover:bg-blue-600"
                   size="lg"
                 >
                   Enregistrer
@@ -197,7 +198,7 @@ export const SleepTracker = () => {
             <TabsContent value="auto" className="space-y-4 mt-4">
               <ConnectedDevices />
               
-              <div className="text-center text-muted-foreground">
+              <div className="text-center text-muted-foreground bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
                 <p>Connectez un appareil pour suivre automatiquement votre sommeil</p>
               </div>
             </TabsContent>

@@ -1,85 +1,61 @@
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ConnectedDevice } from "./use-sleep-tracking";
+
+export interface SleepDevice {
+  id: string;
+  name: string;
+  type: string;
+  batteryLevel: number;
+  lastSync?: string;
+  connected: boolean;
+}
 
 export const useSleepDevices = () => {
   const { toast } = useToast();
-  const [connectedDevices, setConnectedDevices] = useState<ConnectedDevice[]>([]);
+  const [isConnecting, setIsConnecting] = useState(false);
 
-  // Fonction pour connecter un appareil
-  const connectDevice = useCallback(async () => {
-    try {
-      // Vérification de l'API Web Bluetooth
-      if (typeof window !== 'undefined' && !('bluetooth' in navigator)) {
-        toast({
-          title: "Non supporté",
-          description: "Votre navigateur ne supporte pas le Bluetooth",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Simulation de connexion Bluetooth (car tous les navigateurs ne supportent pas Web Bluetooth)
-      // Dans une application réelle, vous utiliseriez navigator.bluetooth.requestDevice()
-      const mockDevice = {
-        name: `Montre connectée (${Math.floor(Math.random() * 1000)})`,
-        id: crypto.randomUUID()
-      };
+  const connectDevice = async () => {
+    setIsConnecting(true);
+    
+    // Simulating API call
+    setTimeout(() => {
+      setIsConnecting(false);
       
-      // Ajouter l'appareil à la liste
-      setConnectedDevices(prev => [
-        ...prev,
-        {
-          id: mockDevice.id,
-          name: mockDevice.name,
-          type: mockDevice.name.includes('Fitbit') ? 'Fitbit' : 
-                mockDevice.name.includes('Garmin') ? 'Garmin' : 
-                mockDevice.name.includes('Apple') ? 'Apple Watch' : 'Autre',
-          connected: true,
-          lastSync: new Date().toISOString()
-        }
-      ]);
-
       toast({
         title: "Appareil connecté",
-        description: `${mockDevice.name} connecté avec succès`,
+        description: "Votre montre a été connectée avec succès.",
       });
-    } catch (error) {
-      toast({
-        title: "Erreur de connexion",
-        description: "Impossible de se connecter à l'appareil",
-        variant: "destructive",
-      });
-    }
-  }, [toast]);
+    }, 1500);
+  };
 
-  // Fonction pour déconnecter un appareil
-  const disconnectDevice = useCallback((deviceId: string) => {
-    setConnectedDevices(prev => prev.filter(device => device.id !== deviceId));
+  const disconnectDevice = async (deviceId: string) => {
+    // Simulating API call
     toast({
       title: "Appareil déconnecté",
-      description: "L'appareil a été déconnecté avec succès",
+      description: "Votre appareil a été déconnecté avec succès.",
     });
-  }, [toast]);
+  };
 
-  // Fonction pour synchroniser un appareil
-  const syncDevice = useCallback((deviceId: string) => {
-    setConnectedDevices(prev => prev.map(device => 
-      device.id === deviceId 
-        ? { ...device, lastSync: new Date().toISOString() }
-        : device
-    ));
+  const syncDevice = async (deviceId: string) => {
     toast({
-      title: "Synchronisation terminée",
-      description: "Les données ont été synchronisées avec succès",
+      title: "Synchronisation en cours",
+      description: "Les données de votre appareil sont en cours de synchronisation.",
     });
-  }, [toast]);
+    
+    // Simulating API call
+    setTimeout(() => {
+      toast({
+        title: "Synchronisation terminée",
+        description: "Les données ont été mises à jour avec succès.",
+      });
+    }, 2000);
+  };
 
   return {
-    connectedDevices,
     connectDevice,
     disconnectDevice,
-    syncDevice
+    syncDevice,
+    isConnecting
   };
 };
