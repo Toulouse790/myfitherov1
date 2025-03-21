@@ -1,5 +1,5 @@
 
-import { Activity, ChartBar, Dumbbell, Plus, Utensils } from "lucide-react";
+import { Activity, Dumbbell, Plus, Utensils, Moon, ChartBar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHomeActions } from "@/hooks/use-home-actions";
 
@@ -10,62 +10,76 @@ export const ActionButtons = () => {
     handleStats,
     handleTrainingSuggestions,
     handleMealSuggestions,
+    handleSleepTracking,
     isLoading 
   } = useHomeActions();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Button 
-        onClick={handleCreateSession}
-        className="h-auto py-2 group hover:scale-[1.02] transition-all duration-300"
-        variant="default"
-        size="lg"
-      >
-        <Plus className="w-5 h-5 mr-2" />
-        Créer une séance
-      </Button>
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold">Actions rapides</h2>
+      
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <Button 
+          onClick={handleCreateSession}
+          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center group hover:scale-[1.02] transition-all duration-300"
+          variant="default"
+          size="lg"
+        >
+          <Dumbbell className="w-6 h-6 mb-2" />
+          <span className="text-sm">Démarrer un entraînement</span>
+        </Button>
 
-      <Button 
-        onClick={handleAIGeneration}
-        variant="outline"
-        className="h-auto py-2 hover:bg-primary/10 transition-all duration-300"
-        size="lg"
-        disabled={isLoading}
-      >
-        <Dumbbell className="w-5 h-5 mr-2" />
-        Générer avec l'IA
-      </Button>
+        <Button 
+          onClick={handleMealSuggestions}
+          variant="outline"
+          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-primary/10 transition-all duration-300"
+          size="lg"
+        >
+          <Utensils className="w-6 h-6 mb-2" />
+          <span className="text-sm">Enregistrer un repas</span>
+        </Button>
 
-      <Button
-        onClick={handleStats}
-        variant="secondary"
-        className="h-auto py-2 hover:bg-secondary/90 transition-all duration-300"
-        size="lg"
-        data-testid="stats-button"
-      >
-        <ChartBar className="w-5 h-5 mr-2" />
-        Statistiques
-      </Button>
+        <Button
+          onClick={handleSleepTracking}
+          variant="outline"
+          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-primary/10 transition-all duration-300"
+          size="lg"
+        >
+          <Moon className="w-6 h-6 mb-2" />
+          <span className="text-sm">Suivre mon sommeil</span>
+        </Button>
 
-      <Button
-        onClick={handleTrainingSuggestions}
-        variant="outline"
-        className="h-auto py-2 hover:bg-primary/10 transition-all duration-300"
-        size="lg"
-      >
-        <Activity className="w-5 h-5 mr-2" />
-        Suggestions d'entraînement
-      </Button>
+        <Button
+          onClick={handleAIGeneration}
+          variant="secondary"
+          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-secondary/90 transition-all duration-300"
+          size="lg"
+          disabled={isLoading}
+        >
+          <Plus className="w-6 h-6 mb-2" />
+          <span className="text-sm">Générer avec l'IA</span>
+        </Button>
 
-      <Button
-        onClick={handleMealSuggestions}
-        variant="outline"
-        className="h-auto py-2 hover:bg-primary/10 transition-all duration-300 sm:col-span-2 lg:col-span-1"
-        size="lg"
-      >
-        <Utensils className="w-5 h-5 mr-2" />
-        Suggestions de repas
-      </Button>
+        <Button
+          onClick={handleTrainingSuggestions}
+          variant="secondary"
+          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-secondary/90 transition-all duration-300"
+          size="lg"
+        >
+          <Activity className="w-6 h-6 mb-2" />
+          <span className="text-sm">Suggestions</span>
+        </Button>
+
+        <Button
+          onClick={handleStats}
+          variant="secondary"
+          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-secondary/90 transition-all duration-300"
+          size="lg"
+        >
+          <ChartBar className="w-6 h-6 mb-2" />
+          <span className="text-sm">Statistiques</span>
+        </Button>
+      </div>
     </div>
   );
 };

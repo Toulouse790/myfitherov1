@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -67,6 +68,20 @@ export const useHomeActions = () => {
   const handleMealSuggestions = () => {
     navigate('/nutrition');
   };
+  
+  const handleSleepTracking = () => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour accéder au suivi du sommeil",
+        variant: "destructive",
+      });
+      navigate('/signin', { state: { from: '/sleep' } });
+      return;
+    }
+    
+    navigate('/sleep');
+  };
 
   return {
     handleCreateSession,
@@ -74,6 +89,7 @@ export const useHomeActions = () => {
     handleStats,
     handleTrainingSuggestions,
     handleMealSuggestions,
+    handleSleepTracking,
     isLoading
   };
 };
