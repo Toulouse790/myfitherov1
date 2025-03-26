@@ -1,5 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Timer, Check } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SetButtonProps {
   isResting: boolean;
@@ -18,6 +20,8 @@ export const SetButton = ({
   restTime,
   isTransitioning = false
 }: SetButtonProps) => {
+  const { t } = useLanguage();
+  
   return (
     <Button
       onClick={onComplete}
@@ -27,20 +31,20 @@ export const SetButton = ({
       {isResting ? (
         <div className="flex items-center gap-2">
           <Timer className="h-5 w-5" />
-          <span>Repos: {restTime}s</span>
+          <span>{t("workouts.rest")}: {restTime}s</span>
         </div>
       ) : isTransitioning ? (
         <div className="flex items-center gap-2">
           <Timer className="h-5 w-5" />
-          <span>Préparation exercice suivant...</span>
+          <span>{t("workouts.preparingNextExercise")}</span>
         </div>
       ) : currentSet > maxSets ? (
         <div className="flex items-center gap-2">
           <Check className="h-5 w-5" />
-          <span>Exercice terminé</span>
+          <span>{t("workouts.exerciseCompleted")}</span>
         </div>
       ) : (
-        "Valider la série"
+        t("workouts.validateSet")
       )}
     </Button>
   );

@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { XCircle, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface WorkoutActionsProps {
   handleFinishWorkout: () => void;
@@ -15,6 +16,8 @@ export const WorkoutActions = ({
   currentExerciseIndex, 
   exercisesLength 
 }: WorkoutActionsProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="grid grid-cols-2 gap-4">
       <Button 
@@ -23,7 +26,7 @@ export const WorkoutActions = ({
         className="w-full"
       >
         <XCircle className="mr-2 h-4 w-4" />
-        Terminer
+        {t("workouts.finish")}
       </Button>
       
       <Button 
@@ -32,7 +35,7 @@ export const WorkoutActions = ({
         className="w-full"
         disabled={currentExerciseIndex >= exercisesLength - 1}
       >
-        Exercice suivant
+        {t("workouts.nextExercise")}
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
     </div>

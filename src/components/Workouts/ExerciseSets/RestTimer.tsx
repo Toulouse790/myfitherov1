@@ -1,5 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RestTimerProps {
   restTimer: number | null;
@@ -7,6 +9,8 @@ interface RestTimerProps {
 }
 
 export const RestTimer = ({ restTimer, onRestTimeChange }: RestTimerProps) => {
+  const { t } = useLanguage();
+  
   if (restTimer === null) return null;
 
   // Convert seconds to minutes and remaining seconds
@@ -15,8 +19,8 @@ export const RestTimer = ({ restTimer, onRestTimeChange }: RestTimerProps) => {
   
   // Format the time string
   const timeDisplay = minutes > 0 
-    ? `${minutes} min ${seconds.toString().padStart(2, '0')} sec`
-    : `${seconds} sec`;
+    ? `${minutes} ${t("common.min")} ${seconds.toString().padStart(2, '0')} ${t("common.sec")}`
+    : `${seconds} ${t("common.sec")}`;
 
   return (
     <div className="flex items-center justify-center gap-4">

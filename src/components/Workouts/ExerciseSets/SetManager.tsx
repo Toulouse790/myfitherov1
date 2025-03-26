@@ -1,13 +1,16 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
 import { RestTimer } from "./RestTimer";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SetManagerProps {
   onSetComplete: () => void;
 }
 
 export const SetManager = ({ onSetComplete }: SetManagerProps) => {
+  const { t } = useLanguage();
   const [sets, setSets] = useState<number>(3);
   const [currentSet, setCurrentSet] = useState<number>(1);
   const [restTimer, setRestTimer] = useState<number | null>(null);
@@ -42,7 +45,7 @@ export const SetManager = ({ onSetComplete }: SetManagerProps) => {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <p className="text-lg font-medium">
-            Série {currentSet} sur {sets}
+            {t("workouts.set")} {currentSet} {t("workouts.of")} {sets}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -75,7 +78,7 @@ export const SetManager = ({ onSetComplete }: SetManagerProps) => {
           onClick={handleSetComplete}
           disabled={currentSet > sets}
         >
-          {currentSet > sets ? "Exercice terminé" : "Valider la série"}
+          {currentSet > sets ? t("workouts.exerciseCompleted") : t("workouts.validateSet")}
         </Button>
       )}
     </div>

@@ -9,7 +9,8 @@ export const WorkoutSession = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div>
+      <div className="container max-w-2xl mx-auto p-4">
+        <h1 className="text-2xl font-bold text-center mb-6">{t("workouts.todayProgram")}</h1>
         <ExerciseList />
       </div>
     </div>

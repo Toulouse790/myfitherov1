@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Timer, Plus, Minus } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RestTimerProps {
   onComplete: () => void;
@@ -11,6 +13,7 @@ interface RestTimerProps {
 }
 
 export const RestTimer = ({ onComplete, initialTime = 90, onRestTimeChange }: RestTimerProps) => {
+  const { t } = useLanguage();
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(false);
   const [currentInitialTime, setCurrentInitialTime] = useState(initialTime);
@@ -47,7 +50,7 @@ export const RestTimer = ({ onComplete, initialTime = 90, onRestTimeChange }: Re
     <Card className="p-6 bg-muted">
       <div className="space-y-6">
         <div className="text-center">
-          <h3 className="text-xl font-semibold mb-2">Temps de repos</h3>
+          <h3 className="text-xl font-semibold mb-2">{t("workouts.restTime")}</h3>
           <div className="text-4xl font-bold">
             {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
           </div>
@@ -87,7 +90,7 @@ export const RestTimer = ({ onComplete, initialTime = 90, onRestTimeChange }: Re
           className="w-full" 
           onClick={() => setTimeLeft(0)}
         >
-          Passer le repos
+          {t("workouts.skipRest")}
         </Button>
       </div>
     </Card>

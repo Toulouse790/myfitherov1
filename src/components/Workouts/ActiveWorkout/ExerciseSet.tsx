@@ -1,8 +1,10 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Minus, Check } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ExerciseSetProps {
   exerciseName: string;
@@ -10,6 +12,7 @@ interface ExerciseSetProps {
 }
 
 export const ExerciseSet = ({ exerciseName, onComplete }: ExerciseSetProps) => {
+  const { t } = useLanguage();
   const [sets, setSets] = useState([{ reps: 12, weight: 20, completed: false }]);
 
   const addSet = () => {
@@ -50,7 +53,7 @@ export const ExerciseSet = ({ exerciseName, onComplete }: ExerciseSetProps) => {
           size="sm"
           onClick={addSet}
         >
-          Ajouter une série
+          {t("workouts.addSet")}
         </Button>
       </div>
 
@@ -58,7 +61,7 @@ export const ExerciseSet = ({ exerciseName, onComplete }: ExerciseSetProps) => {
         {sets.map((set, index) => (
           <Card key={index} className={`p-4 ${set.completed ? 'bg-muted' : ''}`}>
             <div className="flex items-center gap-4">
-              <span className="font-medium">Série {index + 1}</span>
+              <span className="font-medium">{t("workouts.set")} {index + 1}</span>
               
               <div className="flex items-center gap-2">
                 <Input
@@ -68,7 +71,7 @@ export const ExerciseSet = ({ exerciseName, onComplete }: ExerciseSetProps) => {
                   className="w-20"
                   disabled={set.completed}
                 />
-                <span>reps</span>
+                <span>{t("workouts.reps")}</span>
               </div>
 
               <div className="flex items-center gap-2">

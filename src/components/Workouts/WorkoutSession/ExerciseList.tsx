@@ -1,8 +1,10 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dumbbell, CheckCircle2 } from "lucide-react";
 import { ExerciseDetail } from "./ExerciseDetail";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Exercise {
   id: string;
@@ -13,11 +15,12 @@ interface Exercise {
 }
 
 export const ExerciseList = () => {
+  const { t } = useLanguage();
   const [exercises] = useState<Exercise[]>([
-    { id: "1", name: "Développé couché", sets: 4, reps: 12, completed: false },
-    { id: "2", name: "Rowing barre", sets: 4, reps: 12, completed: false },
-    { id: "3", name: "Squat", sets: 4, reps: 12, completed: false },
-    { id: "4", name: "Développé épaules", sets: 4, reps: 12, completed: false }
+    { id: "1", name: t("exercises.benchPress"), sets: 4, reps: 12, completed: false },
+    { id: "2", name: t("exercises.barbellRow"), sets: 4, reps: 12, completed: false },
+    { id: "3", name: t("exercises.squat"), sets: 4, reps: 12, completed: false },
+    { id: "4", name: t("exercises.shoulderPress"), sets: 4, reps: 12, completed: false }
   ]);
 
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
@@ -38,7 +41,6 @@ export const ExerciseList = () => {
 
   return (
     <div className="container max-w-2xl mx-auto p-4 space-y-4">
-      <h1 className="text-2xl font-bold text-center mb-6">Programme d'aujourd'hui</h1>
       <div className="grid gap-4">
         {exercises.map((exercise) => (
           <Card
@@ -60,7 +62,7 @@ export const ExerciseList = () => {
                 <div>
                   <h3 className="font-medium">{exercise.name}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {exercise.sets} séries • {exercise.reps} répétitions
+                    {exercise.sets} {t("workouts.sets")} • {exercise.reps} {t("workouts.reps")}
                   </p>
                 </div>
               </div>
@@ -72,7 +74,7 @@ export const ExerciseList = () => {
                     setSelectedExercise(exercise);
                   }}
                 >
-                  Commencer
+                  {t("workouts.start")}
                 </Button>
               )}
             </div>

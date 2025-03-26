@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Timer } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { NavigateFunction } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface WorkoutHeaderProps {
   navigate: NavigateFunction;
@@ -10,15 +11,20 @@ interface WorkoutHeaderProps {
 }
 
 export const WorkoutHeader = ({ navigate, sessionTime, formatTime }: WorkoutHeaderProps) => {
+  const { t } = useLanguage();
+  
   return (
-    <div className="flex items-center justify-between">
-      <Button variant="ghost" size="icon" onClick={() => navigate('/workouts')}>
-        <ArrowLeft className="h-5 w-5" />
+    <div className="flex items-center justify-between mb-6">
+      <Button 
+        variant="ghost" 
+        size="sm"
+        onClick={() => navigate('/workouts')}
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        {t("common.back")}
       </Button>
-      
-      <div className="flex items-center gap-2">
-        <Timer className="h-5 w-5 text-primary" />
-        <span className="font-mono">{formatTime(sessionTime)}</span>
+      <div className="text-lg font-mono">
+        {formatTime(sessionTime)}
       </div>
     </div>
   );
