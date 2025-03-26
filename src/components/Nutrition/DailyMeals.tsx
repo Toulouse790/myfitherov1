@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -154,7 +153,7 @@ export const DailyMeals = () => {
             <MealSection
               key={type}
               type={type}
-              label={t(`nutrition.mealTypes.${type}`, label)}
+              label={t(`nutrition.mealTypes.${type}`)}
               mealEntries={entriesByMealType[type] || []}
               generatedMeal={mealPlan[type] ? {
                 name: mealPlan[type].name || t("nutrition.suggestedMeal"),
@@ -202,3 +201,4 @@ export const DailyMeals = () => {
     </Card>
   );
 };
+
