@@ -1,5 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { SearchBar } from "./SearchBar";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LibraryHeaderProps {
   searchQuery: string;
@@ -14,12 +16,14 @@ export const LibraryHeader = ({
   selectedExercisesCount,
   onStartWorkout,
 }: LibraryHeaderProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex flex-col gap-4 mb-6">
       <div className="flex items-center justify-end">
         {selectedExercisesCount > 0 && (
           <Button onClick={onStartWorkout}>
-            Commencer la séance
+            {t("workouts.startWithSelected")}
           </Button>
         )}
       </div>

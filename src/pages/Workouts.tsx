@@ -4,10 +4,12 @@ import { Header } from "@/components/Layout/Header";
 import { WorkoutFlowManager } from "@/components/Workouts/WorkoutFlow/WorkoutFlowManager";
 import { useWorkoutExercisesState } from "@/hooks/workout/use-workout-exercises-state";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Workouts = () => {
   const { isLoading } = useWorkoutExercisesState();
   const [initialLoading, setInitialLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Simule un temps de chargement initial

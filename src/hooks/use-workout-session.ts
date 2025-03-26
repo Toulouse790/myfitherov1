@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface WorkoutSession {
   id: string;
@@ -21,6 +22,7 @@ export const useWorkoutSession = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [activeSession, setActiveSession] = useState<WorkoutSession | null>(null);
   const [sessionTime, setSessionTime] = useState(0);
@@ -77,11 +79,11 @@ export const useWorkoutSession = () => {
   const startWorkout = async (programId?: string, exercises?: string[]) => {
     if (!user) {
       toast({
-        title: "Connexion requise",
-        description: "Veuillez vous connecter pour démarrer un entraînement",
+        title: t("auth.error"),
+        description: t("auth.sessionExpired"),
         variant: "destructive",
       });
-      navigate('/signin');
+      navigate('/sign-in');
       return null;
     }
 
@@ -120,8 +122,8 @@ export const useWorkoutSession = () => {
     } catch (error) {
       console.error("Erreur lors de la création de la session:", error);
       toast({
-        title: "Erreur",
-        description: "Impossible de démarrer l'entraînement. Veuillez réessayer.",
+        title: t("common.error"),
+        description: t("common.error"),
         variant: "destructive",
       });
       return null;
@@ -164,8 +166,8 @@ export const useWorkoutSession = () => {
       setActiveSession(null);
       
       toast({
-        title: "Entraînement terminé",
-        description: `Votre séance de ${durationMinutes} minutes a été enregistrée`,
+        title: t("workouts.completeWorkout"),
+        description: `${t("workouts.totalDuration")}: ${durationMinutes} ${t("workouts.duration")}`,
       });
       
       // Rediriger vers la page de résumé
@@ -175,8 +177,8 @@ export const useWorkoutSession = () => {
     } catch (error) {
       console.error("Erreur lors de la finalisation de la session:", error);
       toast({
-        title: "Erreur",
-        description: "Impossible de terminer l'entraînement. Veuillez réessayer.",
+        title: t("common.error"),
+        description: t("common.error"),
         variant: "destructive",
       });
       return null;

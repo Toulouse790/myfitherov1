@@ -1,7 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Play } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface WorkoutActionsProps {
   onConfirm: () => Promise<void>;
@@ -11,6 +13,7 @@ export interface WorkoutActionsProps {
 export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps) => {
   const [isStarting, setIsStarting] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleStart = async () => {
     try {
@@ -19,8 +22,8 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
     } catch (error) {
       console.error('Error starting workout:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de démarrer la séance. Veuillez réessayer.",
+        title: t("common.error"),
+        description: t("common.error"),
         variant: "destructive",
       });
     } finally {
@@ -36,7 +39,7 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         disabled={isStarting}
       >
         <Play className="mr-2 h-4 w-4" />
-        {isStarting ? "Démarrage..." : "Commencer"}
+        {isStarting ? t("workouts.startSessionLoading") : t("workouts.startSession")}
       </Button>
       <Button 
         onClick={onRegenerate} 
@@ -45,7 +48,7 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         disabled={isStarting}
       >
         <RefreshCw className="mr-2 h-4 w-4" />
-        Régénérer
+        {t("workouts.regenerate")}
       </Button>
     </div>
   );
