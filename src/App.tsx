@@ -7,12 +7,10 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { router } from "@/routes";
 import { RouterProvider } from "react-router-dom";
 
-const queryClient = new QueryClient();
-
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
+    <LanguageProvider>
+      <QueryClientProvider client={new QueryClient()}>
         <ThemeProvider>
           <AuthProvider>
             <NotificationProvider>
@@ -20,8 +18,8 @@ function App() {
             </NotificationProvider>
           </AuthProvider>
         </ThemeProvider>
-      </LanguageProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </LanguageProvider>
   );
 }
 
