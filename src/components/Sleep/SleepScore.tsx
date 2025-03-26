@@ -2,14 +2,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useTheme } from "@/components/Theme/ThemeProvider"; // Import du hook correctement
+import { useTheme } from "@/components/Theme/ThemeProvider";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Moon, ActivitySquare, Zap } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const SleepScore = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [sleepScore, setSleepScore] = useState(87);
   const [sleepData, setSleepData] = useState({
     duration: "7h 24min",
@@ -44,10 +46,10 @@ export const SleepScore = () => {
     <Card className="overflow-hidden border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10 shadow-md hover:shadow-lg transition-all duration-300">
       <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-400 text-white">
         <CardTitle className="flex items-center justify-between">
-          <span>Score de sommeil</span>
+          <span>{t("sleep.sleepScore")}</span>
           <Badge variant="secondary" className="bg-white/20 hover:bg-white/30">
             <Clock className="h-3 w-3 mr-1" />
-            Nuit dernière
+            {t("sleep.lastNight")}
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -76,7 +78,7 @@ export const SleepScore = () => {
               />
             </div>
             <p className="mt-2 text-center text-muted-foreground">
-              Votre score est <span className="font-medium text-blue-600 dark:text-blue-400">excellent</span>
+              {t("sleep.score")} <span className="font-medium text-blue-600 dark:text-blue-400">{t("sleep.excellent").toLowerCase()}</span>
             </p>
           </motion.div>
 
@@ -90,7 +92,7 @@ export const SleepScore = () => {
             >
               <Clock className="h-4 w-4 text-blue-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Durée totale</p>
+                <p className="text-sm text-muted-foreground">{t("sleep.totalDuration")}</p>
                 <p className="font-medium">{sleepData.duration}</p>
               </div>
             </motion.div>
@@ -101,7 +103,7 @@ export const SleepScore = () => {
             >
               <Moon className="h-4 w-4 text-indigo-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Sommeil profond</p>
+                <p className="text-sm text-muted-foreground">{t("sleep.deepSleep")}</p>
                 <p className="font-medium">{sleepData.deepSleep}</p>
               </div>
             </motion.div>
@@ -112,7 +114,7 @@ export const SleepScore = () => {
             >
               <ActivitySquare className="h-4 w-4 text-purple-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Sommeil paradoxal</p>
+                <p className="text-sm text-muted-foreground">{t("sleep.remSleep")}</p>
                 <p className="font-medium">{sleepData.remSleep}</p>
               </div>
             </motion.div>
@@ -123,7 +125,7 @@ export const SleepScore = () => {
             >
               <Zap className="h-4 w-4 text-cyan-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Qualité</p>
+                <p className="text-sm text-muted-foreground">{t("sleep.quality")}</p>
                 <p className="font-medium">{sleepData.quality}</p>
               </div>
             </motion.div>

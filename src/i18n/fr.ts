@@ -1,4 +1,3 @@
-
 export const fr = {
   common: {
     save: "Enregistrer",
@@ -219,5 +218,46 @@ export const fr = {
       restrictions: "Restrictions alimentaires",
       allergies: "Allergies"
     }
+  },
+  sleep: {
+    title: "Sommeil",
+    tracking: "Suivi",
+    history: "Historique",
+    analysis: "Analyse",
+    tracker: "Tracker de sommeil",
+    score: "Score de sommeil",
+    sleepScore: "Score de sommeil",
+    trends: "Tendances",
+    correlations: "Corrélations",
+    trendChartsComing: "Graphiques de tendances à venir",
+    exerciseImpact: "Impact de l'exercice sur le sommeil",
+    recommendedTime: "Temps de sommeil recommandé",
+    manualEntry: "Saisie manuelle",
+    autoTracking: "Suivi automatique",
+    sleepType: "Type de sommeil",
+    duration: "Durée",
+    quality: "Qualité",
+    poor: "Médiocre",
+    excellent: "Excellent",
+    save: "Enregistrer",
+    nap: "Sieste",
+    night: "Nuit",
+    hours: "heures",
+    minutes: "minutes",
+    connectDevice: "Connectez un appareil de suivi du sommeil pour le suivi automatique",
+    lastNight: "Nuit dernière",
+    totalDuration: "Durée totale",
+    deepSleep: "Sommeil profond",
+    remSleep: "Sommeil paradoxal", 
+    lightSleep: "Sommeil léger",
+    awakeTime: "Temps éveillé",
+    sleepHistory: "Historique de sommeil",
+    previous: "Précédent",
+    today: "Aujourd'hui",
+    next: "Suivant",
+    bars: "Barres",
+    areas: "Aires",
+    week: "Semaine",
+    month: "Mois"
   }
 };

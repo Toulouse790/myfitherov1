@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, ChevronLeft, ChevronRight, BarChart2, LineChart } from "lucide-react";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Sample data - would be replaced with real data from API
 const generateSleepData = (days = 7) => {
@@ -30,6 +31,7 @@ export const SleepHistory = () => {
   const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
   const [data, setData] = useState(generateSleepData(7));
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   const handleRangeChange = (range: 'week' | 'month') => {
     setTimeRange(range);
@@ -58,7 +60,7 @@ export const SleepHistory = () => {
     >
       <Card className="overflow-hidden border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10 shadow-md hover:shadow-lg transition-all duration-300">
         <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-blue-600 to-blue-400 text-white p-4">
-          <CardTitle>Historique de sommeil</CardTitle>
+          <CardTitle>{t("sleep.sleepHistory")}</CardTitle>
           <div className="flex gap-2">
             <Button 
               variant="ghost" 
@@ -67,7 +69,7 @@ export const SleepHistory = () => {
               onClick={() => handleRangeChange('week')}
               disabled={timeRange === 'week'}
             >
-              Semaine
+              {t("sleep.week")}
             </Button>
             <Button 
               variant="ghost" 
@@ -76,7 +78,7 @@ export const SleepHistory = () => {
               onClick={() => handleRangeChange('month')}
               disabled={timeRange === 'month'}
             >
-              Mois
+              {t("sleep.month")}
             </Button>
           </div>
         </CardHeader>
@@ -85,14 +87,14 @@ export const SleepHistory = () => {
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="h-8">
                 <ChevronLeft className="h-4 w-4 mr-1" />
-                Précédent
+                {t("sleep.previous")}
               </Button>
               <Button variant="outline" size="sm" className="h-8">
                 <Calendar className="h-4 w-4 mr-1" />
-                Aujourd'hui
+                {t("sleep.today")}
               </Button>
               <Button variant="outline" size="sm" className="h-8">
-                Suivant
+                {t("sleep.next")}
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </div>
@@ -105,7 +107,7 @@ export const SleepHistory = () => {
                 onClick={() => setViewMode('bar')}
               >
                 <BarChart2 className="h-4 w-4 mr-1" />
-                Barres
+                {t("sleep.bars")}
               </Button>
               <Button 
                 variant={viewMode === 'area' ? "default" : "outline"} 
@@ -114,7 +116,7 @@ export const SleepHistory = () => {
                 onClick={() => setViewMode('area')}
               >
                 <LineChart className="h-4 w-4 mr-1" />
-                Aires
+                {t("sleep.areas")}
               </Button>
             </div>
           </div>
