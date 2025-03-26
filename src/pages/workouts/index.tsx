@@ -12,10 +12,12 @@ import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Workouts() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { activeSession, formatTime, sessionTime } = useWorkoutSession();
   const [activeTab, setActiveTab] = useState("home");
 
@@ -52,9 +54,9 @@ export default function Workouts() {
         {activeSession && (
           <Card className="mb-6 bg-primary/10">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Entraînement en cours</CardTitle>
+              <CardTitle className="text-lg">{t("workouts.activeSession")}</CardTitle>
               <CardDescription>
-                Durée: {formatTime(sessionTime)}
+                {t("workouts.duration")}: {formatTime(sessionTime)}
               </CardDescription>
             </CardHeader>
             <CardFooter>
@@ -62,7 +64,7 @@ export default function Workouts() {
                 onClick={() => navigate(`/workouts/start/${activeSession.program_id || activeSession.id}`)}
                 className="w-full"
               >
-                Continuer la séance
+                {t("workouts.continueSession")}
               </Button>
             </CardFooter>
           </Card>
@@ -72,15 +74,15 @@ export default function Workouts() {
           <TabsList className="grid grid-cols-3 mb-4">
             <TabsTrigger value="home">
               <Dumbbell className="h-4 w-4 mr-2" />
-              Accueil
+              {t("workouts.home")}
             </TabsTrigger>
             <TabsTrigger value="progress">
               <LineChart className="h-4 w-4 mr-2" />
-              Progrès
+              {t("workouts.progress")}
             </TabsTrigger>
             <TabsTrigger value="history">
               <History className="h-4 w-4 mr-2" />
-              Historique
+              {t("workouts.history")}
             </TabsTrigger>
           </TabsList>
           
@@ -88,9 +90,9 @@ export default function Workouts() {
             <div className="grid sm:grid-cols-2 gap-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Commencer un entraînement</CardTitle>
+                  <CardTitle>{t("workouts.startWorkout")}</CardTitle>
                   <CardDescription>
-                    Créez une nouvelle séance d'entraînement
+                    {t("workouts.createNewSession")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center py-4">
@@ -102,16 +104,16 @@ export default function Workouts() {
                     className="w-full"
                   >
                     <PlusCircle className="h-4 w-4 mr-2" />
-                    Nouvel entraînement
+                    {t("workouts.newWorkout")}
                   </Button>
                 </CardFooter>
               </Card>
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Mes dernières performances</CardTitle>
+                  <CardTitle>{t("workouts.latestPerformances")}</CardTitle>
                   <CardDescription>
-                    Suivez vos progrès et améliorez-vous
+                    {t("workouts.trackProgressDescription")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center py-4">
@@ -124,7 +126,7 @@ export default function Workouts() {
                     className="w-full"
                   >
                     <LineChart className="h-4 w-4 mr-2" />
-                    Voir mes progrès
+                    {t("workouts.viewProgress")}
                   </Button>
                 </CardFooter>
               </Card>
@@ -138,37 +140,37 @@ export default function Workouts() {
             
             <Card>
               <CardHeader>
-                <CardTitle>Mes prochains objectifs</CardTitle>
+                <CardTitle>{t("workouts.nextGoals")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-2 text-primary" />
-                      <span>S'entraîner 3 fois par semaine</span>
+                      <span>{t("workouts.goals.trainThreeTimes")}</span>
                     </div>
-                    <Button variant="outline" size="sm">Modifier</Button>
+                    <Button variant="outline" size="sm">{t("common.edit")}</Button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Dumbbell className="h-4 w-4 mr-2 text-primary" />
-                      <span>Augmenter de 5kg au développé couché</span>
+                      <span>{t("workouts.goals.increaseBenchPress")}</span>
                     </div>
-                    <Button variant="outline" size="sm">Modifier</Button>
+                    <Button variant="outline" size="sm">{t("common.edit")}</Button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Trophy className="h-4 w-4 mr-2 text-primary" />
-                      <span>Atteindre 10h d'entraînement ce mois-ci</span>
+                      <span>{t("workouts.goals.reachTrainingHours")}</span>
                     </div>
-                    <Button variant="outline" size="sm">Modifier</Button>
+                    <Button variant="outline" size="sm">{t("common.edit")}</Button>
                   </div>
                 </div>
               </CardContent>
               <CardFooter>
                 <Button variant="outline" className="w-full">
                   <PlusCircle className="h-4 w-4 mr-2" />
-                  Ajouter un objectif
+                  {t("workouts.addGoal")}
                 </Button>
               </CardFooter>
             </Card>
@@ -177,7 +179,7 @@ export default function Workouts() {
           <TabsContent value="history" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Historique de mes entraînements</CardTitle>
+                <CardTitle>{t("workouts.workoutHistory")}</CardTitle>
               </CardHeader>
               <CardContent>
                 {loadingSessions ? (
@@ -193,7 +195,7 @@ export default function Workouts() {
                   <div className="text-center py-6">
                     <History className="h-12 w-12 mx-auto text-muted-foreground opacity-50 mb-2" />
                     <p className="text-muted-foreground">
-                      Vous n'avez pas encore d'historique d'entraînement
+                      {t("workouts.noHistory")}
                     </p>
                   </div>
                 ) : (
@@ -205,7 +207,7 @@ export default function Workouts() {
                         onClick={() => navigate(`/workouts/summary/${session.id}`)}
                       >
                         <div>
-                          <p className="font-medium">{session.program?.name || 'Entraînement personnalisé'}</p>
+                          <p className="font-medium">{session.program?.name || t("workouts.customWorkout")}</p>
                           <p className="text-sm text-muted-foreground">
                             {new Date(session.created_at).toLocaleDateString()} • {session.total_duration_minutes} min
                           </p>
@@ -220,7 +222,7 @@ export default function Workouts() {
               </CardContent>
               <CardFooter>
                 <Button variant="outline" className="w-full" onClick={() => navigate('/workouts/history')}>
-                  Voir tout l'historique
+                  {t("workouts.viewFullHistory")}
                 </Button>
               </CardFooter>
             </Card>

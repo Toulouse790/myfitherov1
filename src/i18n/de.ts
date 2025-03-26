@@ -115,7 +115,41 @@ export const de = {
           60: "1 Stunde vorher",
           120: "2 Stunden vorher"
         }
+      },
+      errors: {
+        load: "Ihre Trainingseinstellungen konnten nicht geladen werden",
+        update: "Ihre Einstellungen konnten nicht aktualisiert werden",
+        reminder: "Die Erinnerungszeit konnte nicht aktualisiert werden"
+      },
+      success: {
+        update: "Ihre Einstellungen wurden aktualisiert",
+        reminder: "Die Erinnerungszeit wurde aktualisiert"
       }
     }
+  },
+  workouts: {
+    activeSession: "Aktives Training",
+    duration: "Dauer",
+    continueSession: "Sitzung fortsetzen",
+    home: "Startseite",
+    progress: "Fortschritt",
+    history: "Verlauf",
+    startWorkout: "Training starten",
+    createNewSession: "Neue Trainingseinheit erstellen",
+    newWorkout: "Neues Training",
+    latestPerformances: "Meine neuesten Leistungen",
+    trackProgressDescription: "Verfolgen Sie Ihren Fortschritt und verbessern Sie sich",
+    viewProgress: "Meinen Fortschritt anzeigen",
+    nextGoals: "Meine nächsten Ziele",
+    goals: {
+      trainThreeTimes: "3 Mal pro Woche trainieren",
+      increaseBenchPress: "Bankdrücken um 5kg steigern",
+      reachTrainingHours: "10 Trainingsstunden in diesem Monat erreichen"
+    },
+    addGoal: "Ziel hinzufügen",
+    workoutHistory: "Trainingsverlauf",
+    noHistory: "Sie haben noch keinen Trainingsverlauf",
+    customWorkout: "Benutzerdefiniertes Training",
+    viewFullHistory: "Vollständigen Verlauf anzeigen"
   }
 };

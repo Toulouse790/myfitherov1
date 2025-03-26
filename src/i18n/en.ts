@@ -115,7 +115,41 @@ export const en = {
           60: "1 hour before",
           120: "2 hours before"
         }
+      },
+      errors: {
+        load: "Unable to load your training preferences",
+        update: "Unable to update your preferences",
+        reminder: "Unable to update reminder time"
+      },
+      success: {
+        update: "Your preferences have been updated",
+        reminder: "Reminder time has been updated"
       }
     }
+  },
+  workouts: {
+    activeSession: "Active Workout",
+    duration: "Duration",
+    continueSession: "Continue Session",
+    home: "Home",
+    progress: "Progress",
+    history: "History",
+    startWorkout: "Start a Workout",
+    createNewSession: "Create a new workout session",
+    newWorkout: "New Workout",
+    latestPerformances: "My Latest Performances",
+    trackProgressDescription: "Track your progress and improve",
+    viewProgress: "View My Progress",
+    nextGoals: "My Next Goals",
+    goals: {
+      trainThreeTimes: "Train 3 times per week",
+      increaseBenchPress: "Increase bench press by 5kg",
+      reachTrainingHours: "Reach 10 hours of training this month"
+    },
+    addGoal: "Add Goal",
+    workoutHistory: "Workout History",
+    noHistory: "You don't have any workout history yet",
+    customWorkout: "Custom Workout",
+    viewFullHistory: "View Full History"
   }
 };

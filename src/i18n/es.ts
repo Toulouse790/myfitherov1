@@ -115,7 +115,41 @@ export const es = {
           60: "1 hora antes",
           120: "2 horas antes"
         }
+      },
+      errors: {
+        load: "No se pueden cargar tus preferencias de entrenamiento",
+        update: "No se pueden actualizar tus preferencias",
+        reminder: "No se puede actualizar el tiempo de recordatorio"
+      },
+      success: {
+        update: "Tus preferencias han sido actualizadas",
+        reminder: "El tiempo de recordatorio ha sido actualizado"
       }
     }
+  },
+  workouts: {
+    activeSession: "Entrenamiento activo",
+    duration: "Duración",
+    continueSession: "Continuar sesión",
+    home: "Inicio",
+    progress: "Progreso",
+    history: "Historial",
+    startWorkout: "Iniciar entrenamiento",
+    createNewSession: "Crear una nueva sesión de entrenamiento",
+    newWorkout: "Nuevo entrenamiento",
+    latestPerformances: "Mis últimos rendimientos",
+    trackProgressDescription: "Sigue tu progreso y mejora",
+    viewProgress: "Ver mi progreso",
+    nextGoals: "Mis próximos objetivos",
+    goals: {
+      trainThreeTimes: "Entrenar 3 veces por semana",
+      increaseBenchPress: "Aumentar press de banca en 5kg",
+      reachTrainingHours: "Alcanzar 10 horas de entrenamiento este mes"
+    },
+    addGoal: "Añadir objetivo",
+    workoutHistory: "Historial de entrenamientos",
+    noHistory: "Aún no tienes historial de entrenamientos",
+    customWorkout: "Entrenamiento personalizado",
+    viewFullHistory: "Ver historial completo"
   }
 };

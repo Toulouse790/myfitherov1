@@ -38,8 +38,8 @@ export const TrainingPreferences = () => {
 
     if (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de charger vos préférences d'entraînement",
+        title: t("common.error"),
+        description: t("profile.training.errors.load"),
         variant: "destructive",
       });
       return;
@@ -61,8 +61,8 @@ export const TrainingPreferences = () => {
 
     if (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour vos préférences",
+        title: t("common.error"),
+        description: t("profile.training.errors.update"),
         variant: "destructive",
       });
       return;
@@ -70,8 +70,8 @@ export const TrainingPreferences = () => {
 
     setQuestionnaire(prev => prev ? { ...prev, [field]: value } : null);
     toast({
-      title: "Succès",
-      description: "Vos préférences ont été mises à jour",
+      title: t("common.success"),
+      description: t("profile.training.success.update"),
     });
   };
 
@@ -87,16 +87,16 @@ export const TrainingPreferences = () => {
 
     if (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le délai de rappel",
+        title: t("common.error"),
+        description: t("profile.training.errors.reminder"),
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "Succès",
-      description: "Le délai de rappel a été mis à jour",
+      title: t("common.success"),
+      description: t("profile.training.success.reminder"),
     });
   };
 

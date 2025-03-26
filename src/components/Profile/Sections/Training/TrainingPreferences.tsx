@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,9 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ObjectiveSection } from "./components/ObjectiveSection";
-import { LocationSection } from "./components/LocationSection";
-import { ExperienceSection } from "./components/ExperienceSection";
+import { ObjectiveSelect } from "./ObjectiveSelect";
+import { EquipmentSelect } from "./EquipmentSelect";
+import { ActivityLevelSelect } from "./ActivityLevelSelect";
+import { NotificationPreferences } from "./NotificationPreferences";
+import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Preferences {
   objective: string;
@@ -19,7 +23,10 @@ interface Preferences {
 export const TrainingPreferences = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
+  const [notifications, setNotifications] = useState(true);
+  const [reminderTime, setReminderTime] = useState("30");
   const [preferences, setPreferences] = useState<Preferences>({
     objective: "",
     available_equipment: "",
@@ -36,8 +43,8 @@ export const TrainingPreferences = () => {
     if (!user) {
       setIsLoading(false);
       toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour accéder à vos préférences",
+        title: t("common.error"),
+        description: t("profile.training.errors.load"),
         variant: "destructive",
       });
       return;
@@ -57,8 +64,8 @@ export const TrainingPreferences = () => {
       if (error) {
         console.error('Error fetching preferences:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de charger vos préférences",
+          title: t("common.error"),
+          description: t("profile.training.errors.load"),
           variant: "destructive",
         });
         return;
@@ -76,8 +83,8 @@ export const TrainingPreferences = () => {
     } catch (error) {
       console.error('Error:', error);
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du chargement",
+        title: t("common.error"),
+        description: t("profile.training.errors.load"),
         variant: "destructive",
       });
     } finally {
@@ -101,22 +108,22 @@ export const TrainingPreferences = () => {
 
       if (error) {
         toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour les préférences",
+          title: t("common.error"),
+          description: t("profile.training.errors.update"),
           variant: "destructive",
         });
         console.error('Error updating preferences:', error);
       } else {
         toast({
-          title: "Succès",
-          description: "Préférences mises à jour",
+          title: t("common.success"),
+          description: t("profile.training.success.update"),
         });
       }
     } catch (error) {
       console.error('Error:', error);
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue",
+        title: t("common.error"),
+        description: t("profile.training.errors.update"),
         variant: "destructive",
       });
     }
@@ -126,6 +133,11 @@ export const TrainingPreferences = () => {
   const handleObjectiveChange = (value: string) => handlePreferenceChange('objective', value);
   const handleLocationChange = (value: string) => handlePreferenceChange('available_equipment', value);
   const handleExperienceChange = (value: string) => handlePreferenceChange('experience_level', value);
+  
+  const handleReminderTimeChange = (value: string) => {
+    setReminderTime(value);
+    // Implementation of reminder time change logic
+  };
 
   if (isLoading) {
     return (
@@ -142,34 +154,39 @@ export const TrainingPreferences = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <div className="flex items-center gap-4 mb-6 sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 py-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(-1)}
-          className="hover:bg-accent"
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
-        <h1 className="text-2xl font-bold">Préférences d'entraînement</h1>
-      </div>
-
-      <div className="space-y-8 max-w-2xl mx-auto">
-        <Card className="p-6 space-y-8">
-          <ObjectiveSection 
+      <Card className="p-6 space-y-8">
+        <h2 className="text-xl font-semibold">{t("profile.training.title")}</h2>
+        
+        <div className="space-y-6">
+          <ObjectiveSelect 
             value={preferences.objective}
             onChange={handleObjectiveChange}
           />
-          <LocationSection 
-            value={preferences.available_equipment}
-            onChange={handleLocationChange}
-          />
-          <ExperienceSection 
+          
+          <Separator />
+          
+          <ActivityLevelSelect 
             value={preferences.experience_level}
             onChange={handleExperienceChange}
           />
-        </Card>
-      </div>
+          
+          <Separator />
+          
+          <EquipmentSelect 
+            value={preferences.available_equipment}
+            onChange={handleLocationChange}
+          />
+          
+          <Separator />
+          
+          <NotificationPreferences
+            notifications={notifications}
+            reminderTime={reminderTime}
+            onNotificationsChange={setNotifications}
+            onReminderTimeChange={handleReminderTimeChange}
+          />
+        </div>
+      </Card>
     </div>
   );
 };
