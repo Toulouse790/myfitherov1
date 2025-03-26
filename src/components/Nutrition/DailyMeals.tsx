@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { FoodEntryForm } from "./FoodEntryForm";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const DailyMeals = () => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
@@ -19,6 +21,7 @@ export const DailyMeals = () => {
   const { mealPlan } = useDailyTargets();
   const { entriesByMealType, refetchEntries } = useFoodEntries();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [newFood, setNewFood] = useState("");
   const [calories, setCalories] = useState("");
   const [proteins, setProteins] = useState("");
@@ -96,8 +99,8 @@ export const DailyMeals = () => {
         });
 
       toast({
-        title: "Repas ajouté",
-        description: "Le repas a été ajouté avec succès",
+        title: t("nutrition.mealAdded"),
+        description: t("nutrition.mealAddedSuccess"),
       });
 
       setIsAddMealOpen(false);
@@ -113,8 +116,8 @@ export const DailyMeals = () => {
     } catch (error) {
       console.error('Error adding food entry:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter le repas",
+        title: t("common.error"),
+        description: t("nutrition.errorAddingMeal"),
         variant: "destructive",
       });
     }
@@ -123,7 +126,7 @@ export const DailyMeals = () => {
   return (
     <Card className="w-full">
       <CardHeader className="p-3 sm:p-4 flex flex-row items-center justify-between">
-        <CardTitle className="text-sm sm:text-base">Repas du jour</CardTitle>
+        <CardTitle className="text-sm sm:text-base">{t("nutrition.todaysMeals")}</CardTitle>
         <div className="flex gap-2">
           <Button 
             variant="outline" 
@@ -132,7 +135,7 @@ export const DailyMeals = () => {
             onClick={() => setIsAddMealOpen(true)}
           >
             <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Ajouter un repas</span>
+            <span className="hidden sm:inline">{t("nutrition.addMeal")}</span>
           </Button>
           <Button 
             variant="outline" 
@@ -141,7 +144,7 @@ export const DailyMeals = () => {
             onClick={() => setIsCheatMealOpen(true)}
           >
             <Pizza className="w-4 h-4" />
-            <span className="hidden sm:inline">Cheat Meal</span>
+            <span className="hidden sm:inline">{t("nutrition.cheatMeal")}</span>
           </Button>
         </div>
       </CardHeader>
@@ -151,10 +154,10 @@ export const DailyMeals = () => {
             <MealSection
               key={type}
               type={type}
-              label={label}
+              label={t(`nutrition.mealTypes.${type}`, label)}
               mealEntries={entriesByMealType[type] || []}
               generatedMeal={mealPlan[type] ? {
-                name: mealPlan[type].name || 'Repas suggéré',
+                name: mealPlan[type].name || t("nutrition.suggestedMeal"),
                 calories: mealPlan[type].calories,
                 proteins: mealPlan[type].proteins,
               } : undefined}
@@ -173,7 +176,7 @@ export const DailyMeals = () => {
       <Dialog open={isAddMealOpen} onOpenChange={setIsAddMealOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Ajouter un repas</DialogTitle>
+            <DialogTitle>{t("nutrition.addMeal")}</DialogTitle>
           </DialogHeader>
           <FoodEntryForm
             newFood={newFood}

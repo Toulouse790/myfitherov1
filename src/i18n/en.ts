@@ -151,5 +151,42 @@ export const en = {
     noHistory: "You don't have any workout history yet",
     customWorkout: "Custom Workout",
     viewFullHistory: "View Full History"
+  },
+  nutrition: {
+    title: "Nutrition",
+    overview: "Overview",
+    mealPlan: "Meal Plan",
+    tracking: "Tracking",
+    weeklyTracking: "Weekly Tracking",
+    foodJournal: "Food Journal",
+    todaysMeals: "Today's Meals",
+    addMeal: "Add Meal",
+    cheatMeal: "Cheat Meal",
+    mealAdded: "Meal Added",
+    mealAddedSuccess: "The meal was successfully added",
+    errorAddingMeal: "Unable to add the meal",
+    suggestedMeal: "Suggested Meal",
+    mealTypes: {
+      breakfast: "Breakfast",
+      morning_snack: "Morning Snack", 
+      lunch: "Lunch",
+      afternoon_snack: "Afternoon Snack",
+      dinner: "Dinner"
+    },
+    goals: "Nutrition Goals",
+    dailyStats: "Daily Statistics",
+    calories: "Calories",
+    proteins: "Proteins",
+    carbs: "Carbohydrates",
+    fats: "Fats",
+    remaining: "Remaining",
+    consumed: "Consumed",
+    target: "Target",
+    generatePlan: "Generate Meal Plan",
+    dietary: {
+      preferences: "Dietary Preferences",
+      restrictions: "Dietary Restrictions",
+      allergies: "Allergies"
+    }
   }
 };

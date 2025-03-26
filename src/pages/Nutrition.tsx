@@ -11,29 +11,31 @@ import { useNavigate } from "react-router-dom";
 import { FoodJournal } from "@/components/Nutrition/FoodJournal";
 import { Button } from "@/components/ui/button";
 import { PieChart, BarChart, Utensils } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Nutrition = () => {
   const { user, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!loading && !user) {
       toast({
-        title: "Accès refusé",
-        description: "Vous devez être connecté pour accéder à cette page",
+        title: t("auth.error"),
+        description: t("auth.sessionExpired"),
         variant: "destructive",
       });
       navigate("/sign-in");
     }
-  }, [user, loading, toast, navigate]);
+  }, [user, loading, toast, navigate, t]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-pulse text-center">
-          <p className="text-muted-foreground">Chargement...</p>
+          <p className="text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -54,7 +56,7 @@ const Nutrition = () => {
   return (
     <div className="container mx-auto px-2 sm:px-4 pb-24 animate-fade-up max-w-full sm:max-w-[95%] lg:max-w-[1280px]">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Nutrition</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{t("nutrition.title")}</h1>
         
         <div className="flex space-x-2">
           <Button 
@@ -64,7 +66,7 @@ const Nutrition = () => {
             className="flex items-center gap-1"
           >
             <PieChart className="h-4 w-4" />
-            <span className="hidden sm:inline">Vue d'ensemble</span>
+            <span className="hidden sm:inline">{t("nutrition.overview")}</span>
           </Button>
           <Button 
             variant={activeTab === "meal-plan" ? "default" : "outline"} 
@@ -73,7 +75,7 @@ const Nutrition = () => {
             className="flex items-center gap-1"
           >
             <Utensils className="h-4 w-4" />
-            <span className="hidden sm:inline">Plan repas</span>
+            <span className="hidden sm:inline">{t("nutrition.mealPlan")}</span>
           </Button>
           <Button 
             variant={activeTab === "tracking" ? "default" : "outline"} 
@@ -82,7 +84,7 @@ const Nutrition = () => {
             className="flex items-center gap-1"
           >
             <BarChart className="h-4 w-4" />
-            <span className="hidden sm:inline">Suivi</span>
+            <span className="hidden sm:inline">{t("nutrition.tracking")}</span>
           </Button>
         </div>
       </div>
@@ -94,25 +96,25 @@ const Nutrition = () => {
               value="overview" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              Vue d'ensemble
+              {t("nutrition.overview")}
             </TabsTrigger>
             <TabsTrigger 
               value="meal-plan" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              Plan repas
+              {t("nutrition.mealPlan")}
             </TabsTrigger>
             <TabsTrigger 
               value="tracking" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              Suivi hebdomadaire
+              {t("nutrition.weeklyTracking")}
             </TabsTrigger>
             <TabsTrigger 
               value="journal" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              Journal alimentaire
+              {t("nutrition.foodJournal")}
             </TabsTrigger>
           </TabsList>
         </div>

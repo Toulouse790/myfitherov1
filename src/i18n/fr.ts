@@ -151,5 +151,42 @@ export const fr = {
     noHistory: "Vous n'avez pas encore d'historique d'entraînement",
     customWorkout: "Entraînement personnalisé",
     viewFullHistory: "Voir tout l'historique"
+  },
+  nutrition: {
+    title: "Nutrition",
+    overview: "Vue d'ensemble",
+    mealPlan: "Plan de repas",
+    tracking: "Suivi",
+    weeklyTracking: "Suivi hebdomadaire",
+    foodJournal: "Journal alimentaire",
+    todaysMeals: "Repas du jour",
+    addMeal: "Ajouter un repas",
+    cheatMeal: "Repas exceptionnel",
+    mealAdded: "Repas ajouté",
+    mealAddedSuccess: "Le repas a été ajouté avec succès",
+    errorAddingMeal: "Impossible d'ajouter le repas",
+    suggestedMeal: "Repas suggéré",
+    mealTypes: {
+      breakfast: "Petit-déjeuner",
+      morning_snack: "Collation du matin", 
+      lunch: "Déjeuner",
+      afternoon_snack: "Collation de l'après-midi",
+      dinner: "Dîner"
+    },
+    goals: "Objectifs nutritionnels",
+    dailyStats: "Statistiques quotidiennes",
+    calories: "Calories",
+    proteins: "Protéines",
+    carbs: "Glucides",
+    fats: "Lipides",
+    remaining: "Restant",
+    consumed: "Consommé",
+    target: "Objectif",
+    generatePlan: "Générer un plan de repas",
+    dietary: {
+      preferences: "Préférences alimentaires",
+      restrictions: "Restrictions alimentaires",
+      allergies: "Allergies"
+    }
   }
 };
