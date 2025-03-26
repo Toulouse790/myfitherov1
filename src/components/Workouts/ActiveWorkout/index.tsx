@@ -9,12 +9,14 @@ import { WorkoutProgress } from "./WorkoutProgress";
 import { WorkoutHeader } from "./WorkoutHeader";
 import { ExerciseCard } from "./ExerciseCard";
 import { WorkoutActions } from "./WorkoutActions";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const ActiveWorkout = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const { activeSession, formatTime, sessionTime, finishWorkout } = useWorkoutSession();
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentSet, setCurrentSet] = useState(1);
@@ -51,8 +53,8 @@ export const ActiveWorkout = () => {
             
             // Notification que le repos est terminé
             toast({
-              title: "Repos terminé",
-              description: "Prêt pour la série suivante ?",
+              title: t("workouts.restFinished"),
+              description: t("workouts.readyForNextSet"),
             });
             
             // Si toutes les séries sont terminées, passer à l'exercice suivant
@@ -99,16 +101,16 @@ export const ActiveWorkout = () => {
       } else {
         // Pas d'exercices trouvés, offrir à l'utilisateur de retourner à la sélection
         toast({
-          title: "Aucun exercice trouvé",
-          description: "Veuillez sélectionner des exercices pour votre séance",
+          title: t("workouts.noExercisesFound"),
+          description: t("workouts.selectExercisesForSession"),
         });
         navigate('/workouts/generate');
       }
     } catch (error) {
       console.error("Erreur lors du chargement de la séance:", error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les détails de la séance",
+        title: t("common.error"),
+        description: t("workouts.unableToLoadSessionDetails"),
         variant: "destructive",
       });
     } finally {
@@ -123,16 +125,16 @@ export const ActiveWorkout = () => {
       setRestTime(90);
       
       toast({
-        title: "Série complétée !",
-        description: "Repos de 90 secondes avant la prochaine série",
+        title: t("workouts.setCompleted"),
+        description: t("workouts.restBeforeNextSet", { seconds: 90 }),
       });
     } else {
       // Série finale de l'exercice, vérifier s'il y a un exercice suivant
       setRestTime(120);
       
       toast({
-        title: "Exercice terminé !",
-        description: "Repos de 120 secondes avant le prochain exercice",
+        title: t("workouts.exerciseCompleted"),
+        description: t("workouts.restBeforeNextExercise", { seconds: 120 }),
       });
     }
   };
@@ -143,8 +145,8 @@ export const ActiveWorkout = () => {
       setCurrentSet(1);
     } else {
       toast({
-        title: "Séance terminée !",
-        description: "Tous les exercices sont complétés",
+        title: t("workouts.sessionCompleted"),
+        description: t("workouts.allExercisesCompleted"),
       });
     }
   };
@@ -183,9 +185,9 @@ export const ActiveWorkout = () => {
       />
 
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold">Séance d'entraînement</h1>
+        <h1 className="text-2xl font-bold">{t("workouts.workoutSession")}</h1>
         <div className="text-sm text-muted-foreground">
-          Exercice {currentExerciseIndex + 1} sur {exercises.length}
+          {t("workouts.exerciseProgress", { current: currentExerciseIndex + 1, total: exercises.length })}
         </div>
       </div>
 
