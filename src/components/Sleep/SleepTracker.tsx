@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ConnectedDevices } from "./ConnectedDevices";
 import { useSleepTracking } from "@/hooks/use-sleep-tracking";
 import { Loader2, Moon, Sun } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const SleepTracker = () => {
   const {
@@ -27,6 +28,7 @@ export const SleepTracker = () => {
   } = useSleepTracking();
   
   const [recommendedSleep, setRecommendedSleep] = useState<string>("7-8 heures");
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchUserActivityAndCalculateSleep();
@@ -102,23 +104,23 @@ export const SleepTracker = () => {
       <CardContent className="p-6">
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-bold text-blue-600">Suivi du sommeil</h2>
+            <h2 className="text-2xl font-bold text-blue-600">{t("sleep.tracking")}</h2>
             <p className="text-muted-foreground">
-              Temps de sommeil recommandé: <span className="text-blue-500 font-medium">{recommendedSleep}</span>
+              {t("sleep.recommendedTime")}: <span className="text-blue-500 font-medium">{recommendedSleep}</span>
             </p>
           </div>
 
           <Tabs defaultValue="manual" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="manual" className="data-[state=active]:bg-blue-500">Saisie manuelle</TabsTrigger>
-              <TabsTrigger value="auto" className="data-[state=active]:bg-blue-500">Suivi automatique</TabsTrigger>
+              <TabsTrigger value="manual" className="data-[state=active]:bg-blue-500">{t("sleep.manualEntry")}</TabsTrigger>
+              <TabsTrigger value="auto" className="data-[state=active]:bg-blue-500">{t("sleep.autoTracking")}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="manual" className="space-y-4 mt-4">
               <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
                 <Label htmlFor="is-nap" className="flex items-center gap-2">
                   <Moon className="h-4 w-4 text-blue-500" />
-                  <span>Type de sommeil</span>
+                  <span>{t("sleep.sleepType")}</span>
                 </Label>
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -127,14 +129,14 @@ export const SleepTracker = () => {
                     onCheckedChange={setIsNap}
                     className="data-[state=checked]:bg-blue-500"
                   />
-                  <span className="text-sm">{isNap ? 'Sieste' : 'Nuit'}</span>
+                  <span className="text-sm">{isNap ? t("sleep.nap") : t("sleep.night")}</span>
                 </div>
               </div>
 
               <div className="grid gap-4">
                 <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
                   <Label className="block text-sm font-medium mb-2 text-blue-700 dark:text-blue-300">
-                    Durée de sommeil
+                    {t("sleep.duration")}
                   </Label>
                   <div className="flex gap-4">
                     <div className="flex-1">
@@ -147,7 +149,7 @@ export const SleepTracker = () => {
                           max={24}
                           className="w-full border-blue-200 dark:border-blue-700 focus:ring-blue-500"
                         />
-                        <span className="ml-2">heures</span>
+                        <span className="ml-2">{t("sleep.hours")}</span>
                       </div>
                     </div>
                     <div className="flex-1">
@@ -160,7 +162,7 @@ export const SleepTracker = () => {
                           max={59}
                           className="w-full border-blue-200 dark:border-blue-700 focus:ring-blue-500"
                         />
-                        <span className="ml-2">minutes</span>
+                        <span className="ml-2">{t("sleep.minutes")}</span>
                       </div>
                     </div>
                   </div>
@@ -169,7 +171,7 @@ export const SleepTracker = () => {
                 <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
                   <Label className="flex items-center gap-2 mb-2 text-blue-700 dark:text-blue-300">
                     <Sun className="h-4 w-4 text-amber-500" />
-                    <span>Qualité du sommeil (1-10)</span>
+                    <span>{t("sleep.quality")} (1-10)</span>
                   </Label>
                   <input
                     type="range"
@@ -180,8 +182,8 @@ export const SleepTracker = () => {
                     className="w-full accent-blue-500"
                   />
                   <div className="flex justify-between text-sm text-muted-foreground mt-1">
-                    <span>Mauvaise</span>
-                    <span>Excellente</span>
+                    <span>{t("sleep.poor")}</span>
+                    <span>{t("sleep.excellent")}</span>
                   </div>
                 </div>
 
@@ -190,7 +192,7 @@ export const SleepTracker = () => {
                   className="w-full bg-blue-500 hover:bg-blue-600"
                   size="lg"
                 >
-                  Enregistrer
+                  {t("sleep.save")}
                 </Button>
               </div>
             </TabsContent>
@@ -199,7 +201,7 @@ export const SleepTracker = () => {
               <ConnectedDevices />
               
               <div className="text-center text-muted-foreground bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
-                <p>Connectez un appareil pour suivre automatiquement votre sommeil</p>
+                <p>{t("sleep.connectDevice")}</p>
               </div>
             </TabsContent>
           </Tabs>
