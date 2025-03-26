@@ -1,3 +1,4 @@
+
 export const en = {
   common: {
     save: "Save",
@@ -9,7 +10,18 @@ export const en = {
     finish: "Finish",
     loading: "Loading...",
     error: "Error",
-    success: "Success"
+    success: "Success",
+    back: "Back"
+  },
+  settings: {
+    appSettings: "Application Settings",
+    configureAppearance: "Configure the appearance and language of the application",
+    theme: "Theme",
+    customizeAppearance: "Customize appearance",
+    themeDescription: "Switch between light, dark or use system settings",
+    language: "Language",
+    selectLanguage: "Select language",
+    languageDescription: "Choose the user interface language"
   },
   auth: {
     signIn: "Sign In",

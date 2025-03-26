@@ -12,7 +12,7 @@ interface AppSettingsProps {
 
 export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => {
   const { toast } = useToast();
-  const { language: contextLanguage, setLanguage: setContextLanguage } = useLanguage();
+  const { language: contextLanguage, setLanguage: setContextLanguage, t } = useLanguage();
   const [language, setLanguage] = useState(initialLanguage);
 
   // Synchroniser l'état local avec le contexte au chargement
@@ -37,12 +37,10 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
     <div className="space-y-6">
       <div className="flex flex-col space-y-1.5">
         <h2 className="text-xl font-semibold">
-          {language === 'fr' ? "Paramètres de l'application" : "Application Settings"}
+          {t('settings.appSettings')}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {language === 'fr' 
-            ? "Configurez l'apparence et la langue de l'application" 
-            : "Configure the appearance and language of the application"}
+          {t('settings.configureAppearance')}
         </p>
       </div>
       
@@ -50,24 +48,22 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">
-              {language === 'fr' ? "Thème" : "Theme"}
+              {t('settings.theme')}
             </label>
             <Badge variant="outline" className="text-xs font-normal">
-              {language === 'fr' ? "Personnaliser l'apparence" : "Customize appearance"}
+              {t('settings.customizeAppearance')}
             </Badge>
           </div>
           <ThemeSelector />
           <p className="text-xs text-muted-foreground mt-1">
-            {language === 'fr' 
-              ? "Changez entre le mode clair, sombre ou utilisez les paramètres système" 
-              : "Switch between light, dark or use system settings"}
+            {t('settings.themeDescription')}
           </p>
         </div>
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">
-              {language === 'fr' ? "Langue" : "Language"}
+              {t('settings.language')}
             </label>
             <Badge variant="outline" className="text-xs font-normal">
               {language === 'fr' ? 'Français' : 'English'}
@@ -75,7 +71,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
           </div>
           <Select value={language} onValueChange={handleLanguageChange}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={language === 'fr' ? "Sélectionnez la langue" : "Select language"} />
+              <SelectValue placeholder={t('settings.selectLanguage')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="fr">Français</SelectItem>
@@ -83,9 +79,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground mt-1">
-            {language === 'fr' 
-              ? "Choisissez la langue de l'interface utilisateur" 
-              : "Choose the user interface language"}
+            {t('settings.languageDescription')}
           </p>
         </div>
       </div>

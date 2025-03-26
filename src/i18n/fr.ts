@@ -1,3 +1,4 @@
+
 export const fr = {
   common: {
     save: "Enregistrer",
@@ -9,7 +10,18 @@ export const fr = {
     finish: "Terminer",
     loading: "Chargement...",
     error: "Erreur",
-    success: "Succès"
+    success: "Succès",
+    back: "Retour"
+  },
+  settings: {
+    appSettings: "Paramètres de l'application",
+    configureAppearance: "Configurez l'apparence et la langue de l'application",
+    theme: "Thème",
+    customizeAppearance: "Personnaliser l'apparence",
+    themeDescription: "Changez entre le mode clair, sombre ou utilisez les paramètres système",
+    language: "Langue",
+    selectLanguage: "Sélectionnez la langue",
+    languageDescription: "Choisissez la langue de l'interface utilisateur"
   },
   auth: {
     signIn: "Se connecter",

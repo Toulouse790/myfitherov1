@@ -10,7 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const AppSettings = () => {
   const navigate = useNavigate();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,12 +27,12 @@ const AppSettings = () => {
             size="icon"
             onClick={() => navigate(-1)}
             className="hover:bg-muted"
-            aria-label="Retour"
+            aria-label={t('common.back')}
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-2xl font-bold">
-            {language === 'fr' ? "Paramètres de l'application" : "Application Settings"}
+            {t('settings.appSettings')}
           </h1>
         </div>
 
