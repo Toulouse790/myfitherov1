@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AppSettings = () => {
   const navigate = useNavigate();
+  const { language } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,11 +31,13 @@ const AppSettings = () => {
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-2xl font-bold">Paramètres de l'application</h1>
+          <h1 className="text-2xl font-bold">
+            {language === 'fr' ? "Paramètres de l'application" : "Application Settings"}
+          </h1>
         </div>
 
         <Card className="p-6 border border-border shadow-sm">
-          <AppSettingsComponent language="fr" />
+          <AppSettingsComponent language={language} />
         </Card>
       </motion.div>
     </div>
