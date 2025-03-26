@@ -23,13 +23,19 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
   const handleLanguageChange = (value: string) => {
     // Mettre à jour l'état local et le contexte global
     setLanguage(value);
-    setContextLanguage(value as "fr" | "en");
+    setContextLanguage(value as "fr" | "en" | "es" | "de");
+    
+    // Messages de confirmation dans la langue sélectionnée
+    const confirmMessages = {
+      fr: { title: "Langue mise à jour", description: "La langue a été changée en Français" },
+      en: { title: "Language updated", description: "Language has been changed to English" },
+      es: { title: "Idioma actualizado", description: "El idioma ha sido cambiado a Español" },
+      de: { title: "Sprache aktualisiert", description: "Die Sprache wurde auf Deutsch geändert" }
+    };
     
     toast({
-      title: value === 'fr' ? "Langue mise à jour" : "Language updated",
-      description: value === 'fr' 
-        ? "La langue a été changée en Français" 
-        : "Language has been changed to English",
+      title: confirmMessages[value as keyof typeof confirmMessages].title,
+      description: confirmMessages[value as keyof typeof confirmMessages].description,
     });
   };
 
@@ -66,7 +72,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
               {t('settings.language')}
             </label>
             <Badge variant="outline" className="text-xs font-normal">
-              {language === 'fr' ? 'Français' : 'English'}
+              {language === 'fr' ? 'Français' : language === 'en' ? 'English' : language === 'es' ? 'Español' : 'Deutsch'}
             </Badge>
           </div>
           <Select value={language} onValueChange={handleLanguageChange}>
@@ -76,6 +82,8 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
             <SelectContent>
               <SelectItem value="fr">Français</SelectItem>
               <SelectItem value="en">English</SelectItem>
+              <SelectItem value="es">Español</SelectItem>
+              <SelectItem value="de">Deutsch</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground mt-1">

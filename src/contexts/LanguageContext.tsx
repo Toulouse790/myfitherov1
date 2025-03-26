@@ -3,8 +3,10 @@ import React, { createContext, useContext, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { fr } from "@/i18n/fr";
 import { en } from "@/i18n/en";
+import { es } from "@/i18n/es";
+import { de } from "@/i18n/de";
 
-type Language = "fr" | "en";
+type Language = "fr" | "en" | "es" | "de";
 type Translations = typeof fr;
 
 interface LanguageContextType {
@@ -21,6 +23,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const translations = {
     fr,
     en,
+    es,
+    de,
   };
 
   const t = (key: string, params?: Record<string, string | number>) => {

@@ -1,3 +1,4 @@
+
 import {
   Sheet,
   SheetContent,
@@ -9,8 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 import { AppSettings } from "./AppSettings";
 import { AccountActions } from "./AccountActions";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const SettingsSheet = () => {
+  const { language, t } = useLanguage();
+  
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -20,10 +24,10 @@ export const SettingsSheet = () => {
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>Paramètres</SheetTitle>
+          <SheetTitle>{t('settings.appSettings')}</SheetTitle>
         </SheetHeader>
         <div className="space-y-6 py-6">
-          <AppSettings language="Français" />
+          <AppSettings language={language} />
           <AccountActions />
         </div>
       </SheetContent>
