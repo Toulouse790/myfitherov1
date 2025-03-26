@@ -15,12 +15,12 @@ export const fr = {
   },
   settings: {
     appSettings: "Paramètres de l'application",
-    configureAppearance: "Configurez l'apparence et la langue de l'application",
+    configureAppearance: "Configurer l'apparence et la langue de l'application",
     theme: "Thème",
     customizeAppearance: "Personnaliser l'apparence",
-    themeDescription: "Changez entre le mode clair, sombre ou utilisez les paramètres système",
+    themeDescription: "Basculer entre clair, sombre ou utiliser les paramètres système",
     language: "Langue",
-    selectLanguage: "Sélectionnez la langue",
+    selectLanguage: "Sélectionner la langue",
     languageDescription: "Choisissez la langue de l'interface utilisateur"
   },
   auth: {
@@ -30,12 +30,12 @@ export const fr = {
     email: "Email",
     password: "Mot de passe",
     forgotPassword: "Mot de passe oublié ?",
-    confirmEmail: "Confirmer votre email",
-    verifying: "Vérification en cours...",
+    confirmEmail: "Confirmez votre email",
+    verifying: "Vérification...",
     pleaseWait: "Veuillez patienter pendant que nous vérifions vos informations.",
     error: "Erreur d'authentification",
     sessionExpired: "Votre session a expiré, veuillez vous reconnecter",
-    confirmError: "Une erreur est survenue lors de la confirmation"
+    confirmError: "Une erreur s'est produite lors de la confirmation"
   },
   questionnaire: {
     step: "Étape {step} sur {total}",
@@ -53,13 +53,13 @@ export const fr = {
     objective: {
       title: "Quel est votre objectif principal ?",
       weightLoss: "Perte de poids",
-      muscleGain: "Prise de masse musculaire",
-      maintenance: "Maintien de la forme"
+      muscleGain: "Gain musculaire",
+      maintenance: "Maintien"
     },
     trainingFrequency: {
       title: "Fréquence d'entraînement",
       sessionsPerWeek: "Séances par semaine",
-      duration: "Durée des séances"
+      duration: "Durée de séance"
     },
     activityLevel: {
       title: "Niveau d'activité",
@@ -72,15 +72,50 @@ export const fr = {
     training: {
       title: "Où préférez-vous vous entraîner ?",
       home: "À la maison",
-      gym: "En salle",
+      gym: "À la salle de sport",
       outdoor: "En extérieur"
     },
     diet: {
-      title: "Régime alimentaire",
+      title: "Type de régime",
       omnivore: "Omnivore",
       vegetarian: "Végétarien",
-      vegan: "Vegan",
+      vegan: "Végétalien",
       pescetarian: "Pescétarien"
+    }
+  },
+  profile: {
+    training: {
+      title: "Préférences d'entraînement",
+      objective: {
+        label: "Objectif",
+        weight_loss: "Perte de poids",
+        muscle_gain: "Gain musculaire",
+        maintenance: "Maintien"
+      },
+      level: {
+        label: "Niveau d'activité",
+        sedentary: "Sédentaire",
+        lightly_active: "Légèrement actif",
+        moderately_active: "Modérément actif",
+        very_active: "Très actif",
+        extra_active: "Extrêmement actif"
+      },
+      equipment: {
+        label: "Équipement disponible",
+        home: "À la maison",
+        gym: "À la salle de sport",
+        outdoor: "En extérieur"
+      },
+      notifications: {
+        label: "Notifications d'entraînement",
+        description: "Recevez des rappels pour vos séances d'entraînement",
+        reminder: {
+          label: "Délai de rappel",
+          30: "30 minutes avant",
+          60: "1 heure avant",
+          120: "2 heures avant"
+        }
+      }
     }
   }
 };

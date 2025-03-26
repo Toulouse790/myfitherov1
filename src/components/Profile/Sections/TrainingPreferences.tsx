@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslations } from "@/hooks/use-translations";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { ObjectiveSelect } from "./Training/ObjectiveSelect";
 import { ActivityLevelSelect } from "./Training/ActivityLevelSelect";
 import { NotificationPreferences } from "./Training/NotificationPreferences";
@@ -11,7 +12,7 @@ import { EquipmentSelect } from "./Training/EquipmentSelect";
 
 export const TrainingPreferences = () => {
   const { toast } = useToast();
-  const { t } = useTranslations();
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState(true);
   const [reminderTime, setReminderTime] = useState<string>("30");
   const [questionnaire, setQuestionnaire] = useState<{

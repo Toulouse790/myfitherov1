@@ -1,5 +1,6 @@
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useTranslations } from "@/hooks/use-translations";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface EquipmentSelectProps {
   value: string;
@@ -7,7 +8,7 @@ interface EquipmentSelectProps {
 }
 
 export const EquipmentSelect = ({ value, onChange }: EquipmentSelectProps) => {
-  const { t } = useTranslations();
+  const { t } = useLanguage();
 
   return (
     <div className="space-y-2">

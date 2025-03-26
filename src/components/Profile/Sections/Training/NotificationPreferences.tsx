@@ -1,7 +1,8 @@
+
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Bell } from "lucide-react";
-import { useTranslations } from "@/hooks/use-translations";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NotificationPreferencesProps {
   notifications: boolean;
@@ -16,7 +17,7 @@ export const NotificationPreferences = ({
   onNotificationsChange,
   onReminderTimeChange,
 }: NotificationPreferencesProps) => {
-  const { t } = useTranslations();
+  const { t } = useLanguage();
 
   return (
     <div className="space-y-4">
