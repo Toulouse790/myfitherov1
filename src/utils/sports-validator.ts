@@ -11,18 +11,20 @@ export const validateSportPositions = async (): Promise<{
   invalidPositions: any[];
   message: string;
   sportsMappings?: {[key: string]: string};
+  sportsData?: any[];
 }> => {
   try {
     // 1. Récupérer tous les sports
     const { data: sports, error: sportsError } = await supabase
       .from('sports')
-      .select('id, name');
+      .select('id, name, type, category');
 
     if (sportsError) {
       throw sportsError;
     }
 
     debugLogger.log('SportValidator', `${sports.length} sports trouvés dans la base de données`);
+    debugLogger.log('SportValidator', 'Liste des sports:', sports.map(s => `${s.id}: ${s.name} (${s.type})`));
 
     // 2. Récupérer tous les postes
     const { data: positions, error: positionsError } = await supabase
@@ -67,7 +69,8 @@ export const validateSportPositions = async (): Promise<{
       valid,
       invalidPositions,
       message,
-      sportsMappings
+      sportsMappings,
+      sportsData: sports // Transmettre la liste complète des sports pour plus de contexte
     };
   } catch (error) {
     debugLogger.error('SportValidator', "Erreur lors de la validation sport-positions", error);
@@ -156,6 +159,94 @@ export const fixInvalidSportPositions = async (defaultSportId?: string): Promise
       success: false,
       fixedCount: 0,
       message: "Erreur lors de la correction des associations sport-position"
+    };
+  }
+};
+
+/**
+ * Récupère tous les sports et postes pour affichage dans le dashboard
+ */
+export const getSportsAndPositions = async (): Promise<{
+  sports: any[];
+  positions: any[];
+  error?: string;
+}> => {
+  try {
+    // Récupérer tous les sports
+    const { data: sports, error: sportsError } = await supabase
+      .from('sports')
+      .select('id, name, type, category')
+      .order('name');
+
+    if (sportsError) throw sportsError;
+
+    // Récupérer tous les postes avec le nom du sport associé
+    const { data: positions, error: positionsError } = await supabase
+      .from('sport_positions')
+      .select(`
+        id, 
+        name, 
+        sport_id,
+        sports:sport_id (name)
+      `)
+      .order('name');
+
+    if (positionsError) throw positionsError;
+
+    return {
+      sports,
+      positions
+    };
+  } catch (error) {
+    debugLogger.error('SportValidator', "Erreur lors de la récupération des sports et positions", error);
+    return {
+      sports: [],
+      positions: [],
+      error: "Erreur lors de la récupération des données"
+    };
+  }
+};
+
+/**
+ * Analyse et corrige les divergences entre noms d'interface et noms de base de données
+ */
+export const analyzeSportNameDiscrepancies = async (): Promise<{
+  discrepancies: any[];
+  suggestions: {[key: string]: string[]};
+}> => {
+  try {
+    const { sports, positions } = await getSportsAndPositions();
+    
+    // Créer un dictionnaire des sports pour vérifier les variations de noms
+    const sportVariations: {[key: string]: string[]} = {};
+    
+    sports.forEach(sport => {
+      // Convertir en minuscules et enlever les caractères spéciaux pour la comparaison
+      const simplifiedName = sport.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      
+      if (!sportVariations[simplifiedName]) {
+        sportVariations[simplifiedName] = [];
+      }
+      sportVariations[simplifiedName].push(sport.name);
+    });
+    
+    // Vérifier les sports qui ont plusieurs variantes de noms
+    const discrepancies = Object.entries(sportVariations)
+      .filter(([_, names]) => names.length > 1)
+      .map(([base, names]) => ({
+        baseForm: base,
+        variations: names
+      }));
+    
+    return {
+      discrepancies,
+      suggestions: sportVariations
+    };
+  } catch (error) {
+    debugLogger.error('SportValidator', "Erreur lors de l'analyse des noms de sports", error);
+    return {
+      discrepancies: [],
+      suggestions: {}
     };
   }
 };
