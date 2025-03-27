@@ -250,3 +250,96 @@ export const analyzeSportNameDiscrepancies = async (): Promise<{
     };
   }
 };
+
+/**
+ * Fixe le problème spécifique entre "Rugby" et "Rugby à XV"
+ * Cette fonction met à jour les postes de rugby avec l'ID correct
+ */
+export const fixRugbyPositions = async (): Promise<{
+  success: boolean;
+  fixedCount: number;
+  message: string;
+}> => {
+  try {
+    // 1. Trouver l'ID du sport "Rugby" dans la base de données
+    const { data: rugbySport, error: sportError } = await supabase
+      .from('sports')
+      .select('id, name')
+      .ilike('name', 'rugby')
+      .limit(1)
+      .single();
+
+    if (sportError) {
+      debugLogger.error('SportValidator', "Erreur lors de la recherche du sport Rugby", sportError);
+      return {
+        success: false,
+        fixedCount: 0,
+        message: "Impossible de trouver le sport Rugby dans la base de données"
+      };
+    }
+
+    debugLogger.log('SportValidator', `Sport Rugby trouvé: ${rugbySport.id} (${rugbySport.name})`);
+
+    // 2. Trouver toutes les positions de rugby sans association correcte
+    const { data: positions, error: positionsError } = await supabase
+      .from('sport_positions')
+      .select('id, name, sport_id')
+      .is('sport_id', null);
+
+    if (positionsError) {
+      debugLogger.error('SportValidator', "Erreur lors de la recherche des positions sans sport", positionsError);
+      return {
+        success: false,
+        fixedCount: 0,
+        message: "Erreur lors de la recherche des positions"
+      };
+    }
+
+    // Filtrer pour trouver uniquement les positions de rugby (liste non exhaustive)
+    const rugbyPositions = ["Pilier", "Talonneur", "Seconde ligne", "Troisième ligne aile", 
+                            "Troisième ligne centre", "Demi de mêlée", "Demi d'ouverture", 
+                            "Centre", "Ailier", "Arrière"];
+    
+    const rugbyPositionsToUpdate = positions.filter(pos => 
+      rugbyPositions.some(rp => pos.name.includes(rp) || rugbyPositions.includes(pos.name))
+    );
+
+    debugLogger.log('SportValidator', `Positions de Rugby à corriger trouvées: ${rugbyPositionsToUpdate.length}`);
+
+    if (rugbyPositionsToUpdate.length === 0) {
+      return {
+        success: true,
+        fixedCount: 0,
+        message: "Aucune position de Rugby à corriger"
+      };
+    }
+
+    // 3. Mettre à jour les positions de rugby avec l'ID correct
+    const { error: updateError, count } = await supabase
+      .from('sport_positions')
+      .update({ sport_id: rugbySport.id })
+      .in('id', rugbyPositionsToUpdate.map(p => p.id));
+
+    if (updateError) {
+      debugLogger.error('SportValidator', "Erreur lors de la mise à jour des positions de Rugby", updateError);
+      return {
+        success: false,
+        fixedCount: 0,
+        message: "Erreur lors de la correction des positions de Rugby"
+      };
+    }
+
+    return {
+      success: true,
+      fixedCount: count || 0,
+      message: `${count || 0} positions de Rugby ont été corrigées avec succès`
+    };
+  } catch (error) {
+    debugLogger.error('SportValidator', "Erreur lors de la correction des positions de Rugby", error);
+    return {
+      success: false,
+      fixedCount: 0,
+      message: "Erreur lors de la correction des positions de Rugby"
+    };
+  }
+};

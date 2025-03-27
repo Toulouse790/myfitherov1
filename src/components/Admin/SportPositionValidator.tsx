@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { validateSportPositions, fixInvalidSportPositions, getSportsAndPositions, analyzeSportNameDiscrepancies } from "@/utils/sports-validator";
+import { validateSportPositions, fixInvalidSportPositions, getSportsAndPositions, analyzeSportNameDiscrepancies, fixRugbyPositions } from "@/utils/sports-validator";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, AlertTriangle, CheckCircle, RefreshCw, Search, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 export const SportPositionValidator = () => {
   const [isValidating, setIsValidating] = useState(false);
   const [isFixing, setIsFixing] = useState(false);
+  const [isFixingRugby, setIsFixingRugby] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [validationResult, setValidationResult] = useState<any>(null);
   const [sports, setSports] = useState<any[]>([]);
@@ -122,6 +123,32 @@ export const SportPositionValidator = () => {
     }
   };
 
+  const handleFixRugby = async () => {
+    setIsFixingRugby(true);
+    try {
+      const result = await fixRugbyPositions();
+      
+      toast({
+        title: result.success ? "Correction du Rugby réussie" : "Échec de la correction du Rugby",
+        description: result.message,
+        variant: result.success ? "default" : "destructive",
+      });
+      
+      // Revalider après la correction
+      if (result.success && result.fixedCount > 0) {
+        await loadData();
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Erreur lors de la correction des positions de Rugby",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFixingRugby(false);
+    }
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -189,20 +216,39 @@ export const SportPositionValidator = () => {
                         </Select>
                       </div>
                       
-                      <Button 
-                        onClick={handleFix} 
-                        disabled={isFixing || !selectedSportId}
-                        className="w-full"
-                      >
-                        {isFixing ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Correction en cours...
-                          </>
-                        ) : (
-                          "Corriger les associations"
-                        )}
-                      </Button>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Button 
+                          onClick={handleFix} 
+                          disabled={isFixing || !selectedSportId}
+                          className="w-full"
+                        >
+                          {isFixing ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Correction en cours...
+                            </>
+                          ) : (
+                            "Corriger les associations"
+                          )}
+                        </Button>
+                        
+                        <Button 
+                          onClick={handleFixRugby} 
+                          disabled={isFixingRugby}
+                          className="w-full"
+                          variant="secondary"
+                        >
+                          {isFixingRugby ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Correction Rugby en cours...
+                            </>
+                          ) : (
+                            "Corriger le problème Rugby/Rugby à XV"
+                          )}
+                        </Button>
+                      </div>
+                      
                     </div>
                   </div>
                 )}
