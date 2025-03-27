@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 
@@ -252,8 +253,7 @@ export const analyzeSportNameDiscrepancies = async (): Promise<{
 
 /**
  * Fixe le problème spécifique entre "Rugby" et "Rugby à XV"
- * Cette fonction identifie les deux variantes du rugby dans la base de données
- * et associe toutes les positions de rugby au sport "Rugby à XV"
+ * Cette fonction recherche toutes les positions liées au rugby et les associe au sport "Rugby à XV"
  */
 export const fixRugbyPositions = async (): Promise<{
   success: boolean;
@@ -261,16 +261,16 @@ export const fixRugbyPositions = async (): Promise<{
   message: string;
 }> => {
   try {
+    debugLogger.log('SportValidator', 'Démarrage de la correction des positions Rugby');
+    
     // 1. Trouver l'ID du sport "Rugby à XV" dans la base de données
-    const { data: rugbyXVSport, error: sportError } = await supabase
+    const { data: rugbyXVSports, error: sportError } = await supabase
       .from('sports')
       .select('id, name')
-      .ilike('name', 'rugby à xv')
-      .limit(1)
-      .single();
+      .ilike('name', '%rugby%xv%');
 
-    if (sportError) {
-      debugLogger.error('SportValidator', "Erreur lors de la recherche du sport Rugby à XV", sportError);
+    if (sportError || !rugbyXVSports || rugbyXVSports.length === 0) {
+      debugLogger.error('SportValidator', "Erreur lors de la recherche du sport Rugby à XV", sportError || "Aucun résultat");
       return {
         success: false,
         fixedCount: 0,
@@ -278,57 +278,70 @@ export const fixRugbyPositions = async (): Promise<{
       };
     }
 
+    const rugbyXVSport = rugbyXVSports[0];
     debugLogger.log('SportValidator', `Sport Rugby à XV trouvé: ${rugbyXVSport.id} (${rugbyXVSport.name})`);
 
-    // 2. Vérifier également s'il existe un sport nommé "Rugby" (différent de "Rugby à XV")
-    const { data: rugbySport, error: rugbyError } = await supabase
+    // 2. Trouver tous les sports de type rugby (pour couvrir toutes les variantes possibles)
+    const { data: allRugbySports, error: allRugbyError } = await supabase
       .from('sports')
       .select('id, name')
-      .ilike('name', 'rugby')
-      .not('name', 'ilike', '%xv%')
-      .limit(1)
-      .maybeSingle();
+      .ilike('name', '%rugby%')
+      .neq('id', rugbyXVSport.id);  // Exclure le Rugby à XV que nous avons déjà trouvé
 
-    let oldRugbyId = null;
-    if (rugbySport && !rugbyError) {
-      debugLogger.log('SportValidator', `Sport Rugby trouvé également: ${rugbySport.id} (${rugbySport.name})`);
-      oldRugbyId = rugbySport.id;
+    if (allRugbyError) {
+      debugLogger.error('SportValidator', "Erreur lors de la recherche des sports de rugby", allRugbyError);
     }
 
-    // 3. Trouver toutes les positions de rugby sans association correcte ou associées à l'ancien ID Rugby
-    let query = supabase
+    const rugbyVariantIds = allRugbySports?.map(sport => sport.id) || [];
+    debugLogger.log('SportValidator', `Variantes de rugby trouvées: ${allRugbySports?.length || 0}`, 
+      allRugbySports?.map(s => `${s.id}: ${s.name}`) || []);
+
+    // 3. Trouver toutes les positions de rugby qui pourraient être mal associées
+    const rugbyPositionNames = [
+      "Pilier", "Talonneur", "Seconde ligne", "Troisième ligne aile", 
+      "Troisième ligne centre", "Demi de mêlée", "Demi d'ouverture", 
+      "Centre", "Ailier", "Arrière", "Troisième ligne", "Deuxième ligne",
+      "Première ligne"
+    ];
+
+    // Pour la requête OR complexe
+    let orConditions = rugbyVariantIds.map(id => `sport_id.eq.${id}`).join(',');
+    if (orConditions) {
+      orConditions = `sport_id.is.null,${orConditions}`;
+    } else {
+      orConditions = 'sport_id.is.null';
+    }
+
+    const { data: allPositions, error: positionsError } = await supabase
       .from('sport_positions')
       .select('id, name, sport_id');
 
-    if (oldRugbyId) {
-      // Si nous avons un ancien ID Rugby, chercher aussi les positions qui y sont associées
-      query = query.or(`sport_id.is.null,sport_id.eq.${oldRugbyId}`);
-    } else {
-      // Sinon, seulement chercher les positions sans sport_id
-      query = query.is('sport_id', null);
-    }
-
-    const { data: positions, error: positionsError } = await query;
-
     if (positionsError) {
-      debugLogger.error('SportValidator', "Erreur lors de la recherche des positions sans sport", positionsError);
+      debugLogger.error('SportValidator', "Erreur lors de la recherche des positions", positionsError);
       return {
         success: false,
         fixedCount: 0,
-        message: "Erreur lors de la recherche des positions"
+        message: "Erreur lors de la recherche des positions de rugby"
       };
     }
 
-    // Filtrer pour trouver uniquement les positions de rugby (liste non exhaustive)
-    const rugbyPositions = ["Pilier", "Talonneur", "Seconde ligne", "Troisième ligne aile", 
-                          "Troisième ligne centre", "Demi de mêlée", "Demi d'ouverture", 
-                          "Centre", "Ailier", "Arrière"];
-    
-    const rugbyPositionsToUpdate = positions.filter(pos => 
-      rugbyPositions.some(rp => pos.name.includes(rp) || rugbyPositions.includes(pos.name))
+    // Filtrer les positions de rugby par nom
+    const rugbyPositionsToUpdate = allPositions.filter(pos => 
+      // Soit position avec un nom de rugby
+      rugbyPositionNames.some(rp => 
+        pos.name.toLowerCase().includes(rp.toLowerCase()) || 
+        rugbyPositionNames.some(rpn => rpn.toLowerCase() === pos.name.toLowerCase())
+      ) ||
+      // Soit position associée à une variante de rugby
+      rugbyVariantIds.includes(pos.sport_id) ||
+      // Soit position sans sport qui contient le mot "rugby"
+      (pos.sport_id === null && pos.name.toLowerCase().includes('rugby'))
     );
 
     debugLogger.log('SportValidator', `Positions de Rugby à corriger trouvées: ${rugbyPositionsToUpdate.length}`);
+    rugbyPositionsToUpdate.forEach(pos => {
+      debugLogger.log('SportValidator', `Position: ${pos.id} ${pos.name} (sport_id: ${pos.sport_id || 'null'})`);
+    });
 
     if (rugbyPositionsToUpdate.length === 0) {
       return {
