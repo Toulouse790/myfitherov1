@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { validateSportPositions, getSportsAndPositions, analyzeSportNameDiscrepancies } from "@/utils/sports-validator";
 import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { useSportPositionValidator } from "./hooks/useSportPositionValidator";
 import { VerificationTab } from "./tabs/VerificationTab";
 import { ExplorerTab } from "./tabs/ExplorerTab";
 import { DiscrepanciesTab } from "./tabs/DiscrepanciesTab";
+import { EditSportTab } from "./tabs/EditSportTab";
 
 export const SportPositionValidator = () => {
   const [activeTab, setActiveTab] = useState("verification");
@@ -47,6 +47,7 @@ export const SportPositionValidator = () => {
             <TabsTrigger value="verification" className="flex-1">Vérification</TabsTrigger>
             <TabsTrigger value="explorer" className="flex-1">Explorer</TabsTrigger>
             <TabsTrigger value="discrepancies" className="flex-1">Divergences de noms</TabsTrigger>
+            <TabsTrigger value="edit" className="flex-1">Édition</TabsTrigger>
           </TabsList>
           
           <TabsContent value="verification">
@@ -67,6 +68,14 @@ export const SportPositionValidator = () => {
           
           <TabsContent value="discrepancies">
             <DiscrepanciesTab isLoading={isLoading} discrepancies={discrepancies} />
+          </TabsContent>
+
+          <TabsContent value="edit">
+            <EditSportTab 
+              isLoading={isLoading} 
+              sports={sports} 
+              onSportUpdated={loadData}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>
