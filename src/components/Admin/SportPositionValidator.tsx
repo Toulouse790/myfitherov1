@@ -1,11 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { validateSportPositions, fixInvalidSportPositions, getSportsAndPositions, analyzeSportNameDiscrepancies, fixRugbyPositions } from "@/utils/sports-validator";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, AlertTriangle, CheckCircle, RefreshCw, Search, Info } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +23,6 @@ export const SportPositionValidator = () => {
   const [discrepancies, setDiscrepancies] = useState<any[]>([]);
   const { toast } = useToast();
 
-  // Chargement initial automatique
   useEffect(() => {
     loadData();
   }, []);
@@ -33,7 +30,6 @@ export const SportPositionValidator = () => {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      // Récupérer les sports et les positions
       const { sports, positions, error } = await getSportsAndPositions();
       
       if (error) {
@@ -43,11 +39,9 @@ export const SportPositionValidator = () => {
       setSports(sports || []);
       setPositions(positions || []);
       
-      // Analyser les divergences de noms
       const { discrepancies } = await analyzeSportNameDiscrepancies();
       setDiscrepancies(discrepancies);
       
-      // Exécuter la validation
       await handleValidate();
     } catch (error) {
       console.error("Erreur lors du chargement des données:", error);
@@ -67,7 +61,6 @@ export const SportPositionValidator = () => {
       const result = await validateSportPositions();
       setValidationResult(result);
       
-      // Si on a trouvé des problèmes, sélectionner un sport par défaut
       if (!result.valid && sports.length > 0) {
         setSelectedSportId(sports[0].id);
       }
@@ -108,7 +101,6 @@ export const SportPositionValidator = () => {
         variant: result.success ? "default" : "destructive",
       });
       
-      // Revalider après la correction
       if (result.success && result.fixedCount > 0) {
         await loadData();
       }
@@ -134,7 +126,6 @@ export const SportPositionValidator = () => {
         variant: result.success ? "default" : "destructive",
       });
       
-      // Revalider après la correction
       if (result.success && result.fixedCount > 0) {
         await loadData();
       }
