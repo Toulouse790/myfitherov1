@@ -10,6 +10,7 @@ export const validateSportPositions = async (): Promise<{
   valid: boolean;
   invalidPositions: any[];
   message: string;
+  sportsMappings?: {[key: string]: string};
 }> => {
   try {
     // 1. Récupérer tous les sports
@@ -21,6 +22,8 @@ export const validateSportPositions = async (): Promise<{
       throw sportsError;
     }
 
+    debugLogger.log('SportValidator', `${sports.length} sports trouvés dans la base de données`);
+
     // 2. Récupérer tous les postes
     const { data: positions, error: positionsError } = await supabase
       .from('sport_positions')
@@ -30,11 +33,23 @@ export const validateSportPositions = async (): Promise<{
       throw positionsError;
     }
 
+    debugLogger.log('SportValidator', `${positions.length} postes trouvés dans la base de données`);
+
+    // Créer un mapping des IDs de sports vers leurs noms pour faciliter le diagnostic
+    const sportsMappings = sports.reduce((acc, sport) => {
+      acc[sport.id] = sport.name;
+      return acc;
+    }, {});
+
     // 3. Vérifier les associations
     const validSportIds = sports.map(sport => sport.id);
     const invalidPositions = positions.filter(position => 
       !position.sport_id || !validSportIds.includes(position.sport_id)
     );
+
+    if (invalidPositions.length > 0) {
+      debugLogger.log('SportValidator', 'Positions avec problèmes:', invalidPositions);
+    }
 
     const valid = invalidPositions.length === 0;
     const message = valid 
@@ -44,13 +59,15 @@ export const validateSportPositions = async (): Promise<{
     debugLogger.log('SportValidator', message, {
       totalSports: sports.length,
       totalPositions: positions.length,
-      invalidCount: invalidPositions.length
+      invalidCount: invalidPositions.length,
+      sportsList: sports.map(s => `${s.id}: ${s.name}`).join(', ')
     });
 
     return {
       valid,
       invalidPositions,
-      message
+      message,
+      sportsMappings
     };
   } catch (error) {
     debugLogger.error('SportValidator', "Erreur lors de la validation sport-positions", error);
@@ -104,8 +121,15 @@ export const fixInvalidSportPositions = async (defaultSportId?: string): Promise
       };
     }
 
+    debugLogger.log('SportValidator', `Correction avec le sport par défaut ID: ${defaultSportId}, Positions invalides: ${validation.invalidPositions.length}`);
+
     // Corriger les postes invalides
     const invalidIds = validation.invalidPositions.map(p => p.id);
+    
+    // Afficher des informations sur chaque position à corriger
+    validation.invalidPositions.forEach(pos => {
+      debugLogger.log('SportValidator', `Correction de la position: ${pos.id} (${pos.name}), sport_id actuel: ${pos.sport_id}`);
+    });
     
     const { error, count } = await supabase
       .from('sport_positions')
@@ -113,8 +137,13 @@ export const fixInvalidSportPositions = async (defaultSportId?: string): Promise
       .in('id', invalidIds);
 
     if (error) {
+      debugLogger.error('SportValidator', "Erreur lors de la mise à jour", error);
       throw error;
     }
+
+    // Vérifier à nouveau après correction
+    const postValidation = await validateSportPositions();
+    debugLogger.log('SportValidator', `État après correction: ${postValidation.valid ? 'Valide' : 'Toujours des problèmes'}`);
 
     return {
       success: true,

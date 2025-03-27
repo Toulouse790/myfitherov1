@@ -1,10 +1,10 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { validateSportPositions, fixInvalidSportPositions } from "@/utils/sports-validator";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, AlertTriangle, CheckCircle } from "lucide-react";
+import { Loader2, AlertTriangle, CheckCircle, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -15,6 +15,11 @@ export const SportPositionValidator = () => {
   const [sports, setSports] = useState<any[]>([]);
   const [selectedSportId, setSelectedSportId] = useState<string>("");
   const { toast } = useToast();
+
+  // Chargement initial automatique
+  useEffect(() => {
+    handleValidate();
+  }, []);
 
   const handleValidate = async () => {
     setIsValidating(true);
@@ -103,7 +108,13 @@ export const SportPositionValidator = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {validationResult && (
+        {isValidating && (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
+
+        {validationResult && !isValidating && (
           <div className="mb-6 p-4 rounded-md border bg-card">
             <div className="flex items-center gap-2 mb-2">
               {validationResult.valid ? (
@@ -120,7 +131,7 @@ export const SportPositionValidator = () => {
                 <ul className="list-disc pl-5 space-y-1">
                   {validationResult.invalidPositions.slice(0, 5).map((pos: any) => (
                     <li key={pos.id} className="text-sm text-muted-foreground">
-                      {pos.name} (ID: {pos.id})
+                      {pos.name} (ID: {pos.id}, Sport ID: {pos.sport_id || "non défini"})
                     </li>
                   ))}
                   {validationResult.invalidPositions.length > 5 && (
@@ -179,7 +190,10 @@ export const SportPositionValidator = () => {
               Validation en cours...
             </>
           ) : (
-            "Vérifier les associations"
+            <>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Revérifier les associations
+            </>
           )}
         </Button>
       </CardFooter>
