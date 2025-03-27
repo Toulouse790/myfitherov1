@@ -1,3 +1,4 @@
+
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
@@ -8,6 +9,7 @@ import { AuthConfirmPage } from "@/pages/AuthConfirm";
 import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 import { QuestionnaireCompleteHandler } from "@/components/Profile/QuestionnaireCompleteHandler";
+import AppSettings from "@/pages/AppSettings"; // Importation directe
 
 // Pages d'authentification
 const SignInPage = lazy(() => import("@/pages/SignIn"));
@@ -18,7 +20,6 @@ const Index = lazy(() => import("@/pages/Index"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const Workouts = lazy(() => import("@/pages/Workouts"));
 const PersonalInfo = lazy(() => import("@/pages/PersonalInfo"));
-const AppSettings = lazy(() => import("@/pages/AppSettings"));
 const Subscription = lazy(() => import("@/pages/Subscription"));
 const SubscriptionPlans = lazy(() => import("@/pages/SubscriptionPlans"));
 const TrainingPreferences = lazy(() => import("@/pages/TrainingPreferences"));
@@ -49,6 +50,11 @@ const withSuspense = (Component: React.LazyExoticComponent<any>) => (
   <Suspense fallback={<Loading />}>
     <Component />
   </Suspense>
+);
+
+// Pour AppSettings, nous n'utilisons plus le lazy loading
+const AppSettingsWithSuspense = (
+  <AppSettings />
 );
 
 export const router = createBrowserRouter([
@@ -104,7 +110,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: "app-settings",
-                element: withSuspense(AppSettings)
+                element: AppSettingsWithSuspense
               },
               {
                 path: "subscription",
