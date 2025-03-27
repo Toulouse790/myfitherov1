@@ -1,17 +1,22 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, DumbbellIcon, Activity, Trophy, Shirt } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Sport {
   id: string;
   name: string;
   type: string;
-  icon: JSX.Element;
 }
 
 interface Position {
@@ -28,8 +33,8 @@ interface SportPositionSelectionProps {
 export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportPositionSelectionProps) => {
   const [sports, setSports] = useState<Sport[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
-  const [selectedSport, setSelectedSport] = useState<Sport | null>(null);
-  const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
+  const [selectedSport, setSelectedSport] = useState<string | null>(null);
+  const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -42,14 +47,7 @@ export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportP
           .select('*');
 
         if (error) throw error;
-
-        // Associer des icônes aux sports
-        const sportsWithIcons = data.map(sport => ({
-          ...sport,
-          icon: getSportIcon(sport.name)
-        }));
-
-        setSports(sportsWithIcons);
+        setSports(data);
       } catch (error) {
         console.error('Erreur lors du chargement des sports:', error);
         toast({
@@ -73,7 +71,7 @@ export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportP
           const { data, error } = await supabase
             .from('sport_positions')
             .select('*')
-            .eq('sport_id', selectedSport.id);
+            .eq('sport_id', selectedSport);
 
           if (error) throw error;
           setPositions(data);
@@ -90,33 +88,22 @@ export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportP
       };
 
       fetchPositions();
+    } else {
+      setPositions([]);
     }
   }, [selectedSport, toast]);
 
-  const getSportIcon = (sportName: string): JSX.Element => {
-    const normalizedName = sportName.toLowerCase();
-    
-    if (normalizedName.includes('foot')) return <Shirt className="h-6 w-6" />;
-    if (normalizedName.includes('basket')) return <Trophy className="h-6 w-6" />;
-    if (normalizedName.includes('rugby')) return <DumbbellIcon className="h-6 w-6" />;
-    
-    return <Activity className="h-6 w-6" />;
+  const handleSportChange = (sportId: string) => {
+    setSelectedSport(sportId);
+    setSelectedPosition(null);
   };
 
-  const handleSelectPosition = (position: Position) => {
-    setSelectedPosition(position);
+  const handlePositionChange = (positionId: string) => {
+    setSelectedPosition(positionId);
     if (selectedSport) {
-      onSelectSportPosition(selectedSport.id, position.id);
+      onSelectSportPosition(selectedSport, positionId);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-40">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <motion.div
@@ -139,53 +126,65 @@ export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportP
       </div>
 
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-medium mb-4">Sélectionnez votre sport</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {sports.map(sport => (
-              <Card
-                key={sport.id}
-                className={`p-4 cursor-pointer transition-all hover:shadow-md ${
-                  selectedSport?.id === sport.id ? 'ring-2 ring-primary' : ''
-                }`}
-                onClick={() => setSelectedSport(sport)}
-              >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    {sport.icon}
-                  </div>
-                  <span className="font-medium">{sport.name}</span>
-                </div>
-              </Card>
-            ))}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        </div>
-
-        {selectedSport && (
-          <div>
-            <h3 className="text-lg font-medium mb-4">Sélectionnez votre poste</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {positions.length > 0 ? (
-                positions.map(position => (
-                  <Card
-                    key={position.id}
-                    className={`p-4 cursor-pointer transition-all hover:shadow-md ${
-                      selectedPosition?.id === position.id ? 'ring-2 ring-primary' : ''
-                    }`}
-                    onClick={() => handleSelectPosition(position)}
-                  >
-                    <div className="text-center">
-                      <span className="font-medium">{position.name}</span>
-                    </div>
-                  </Card>
-                ))
-              ) : (
-                <div className="col-span-full text-center py-8 text-muted-foreground">
-                  Aucun poste trouvé pour ce sport
-                </div>
-              )}
+        ) : (
+          <>
+            <div className="space-y-2">
+              <h3 className="text-md font-medium">Sélectionnez votre sport</h3>
+              <Select value={selectedSport || ""} onValueChange={handleSportChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choisir un sport" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sports.map((sport) => (
+                    <SelectItem key={sport.id} value={sport.id}>
+                      {sport.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </div>
+
+            {selectedSport && (
+              <div className="space-y-2">
+                <h3 className="text-md font-medium">Sélectionnez votre poste</h3>
+                <Select 
+                  value={selectedPosition || ""} 
+                  onValueChange={handlePositionChange}
+                  disabled={positions.length === 0}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={positions.length === 0 ? "Aucun poste disponible" : "Choisir un poste"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {positions.length > 0 ? (
+                      positions.map((position) => (
+                        <SelectItem key={position.id} value={position.id}>
+                          {position.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="none" disabled>
+                        Aucun poste disponible pour ce sport
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {selectedSport && selectedPosition && (
+              <Button 
+                className="w-full mt-4" 
+                onClick={() => onSelectSportPosition(selectedSport, selectedPosition)}
+              >
+                Confirmer la sélection
+              </Button>
+            )}
+          </>
         )}
       </div>
     </motion.div>
