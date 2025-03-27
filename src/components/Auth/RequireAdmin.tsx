@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { debugLogger } from "@/utils/debug-logger";
 
 export const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
 
@@ -41,7 +41,7 @@ export const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
     checkAdminStatus();
   }, [user]);
 
-  if (isLoading || isCheckingAdmin) {
+  if (loading || isCheckingAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
