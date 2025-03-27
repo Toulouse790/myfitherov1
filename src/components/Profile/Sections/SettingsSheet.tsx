@@ -11,9 +11,11 @@ import { Settings } from "lucide-react";
 import { AppSettings } from "./AppSettings";
 import { AccountActions } from "./AccountActions";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/components/Theme/useTheme";
 
 export const SettingsSheet = () => {
   const { language, t } = useLanguage();
+  const { theme } = useTheme();
   
   return (
     <Sheet>

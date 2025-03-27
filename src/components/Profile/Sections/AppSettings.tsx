@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/components/Theme/useTheme";
 
 interface AppSettingsProps {
   language: string;
@@ -13,6 +14,7 @@ interface AppSettingsProps {
 export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => {
   const { toast } = useToast();
   const { language: contextLanguage, setLanguage: setContextLanguage, t } = useLanguage();
+  const { theme } = useTheme();
   const [language, setLanguage] = useState(initialLanguage);
 
   // Synchroniser l'état local avec le contexte au chargement
@@ -57,7 +59,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
               {t('settings.theme')}
             </label>
             <Badge variant="outline" className="text-xs font-normal">
-              {t('settings.customizeAppearance')}
+              {theme === 'light' ? t('theme.lightMode') : theme === 'dark' ? t('theme.darkMode') : t('theme.systemMode')}
             </Badge>
           </div>
           <ThemeSelector />
