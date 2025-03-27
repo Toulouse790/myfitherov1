@@ -7,8 +7,12 @@ import { useSignIn } from "@/hooks/use-signin";
 import { useNavigate } from "react-router-dom";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Loader2 } from "lucide-react";
 import { debugLogger } from "@/utils/debug-logger";
+import { EmailInput } from "./SignInForm/EmailInput"; 
+import { PasswordInput } from "./SignInForm/PasswordInput";
+import { SubmitButton } from "./SignInForm/SubmitButton";
+import { NavigationLinks } from "./SignInForm/NavigationLinks";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -19,9 +23,22 @@ export const SignInForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     try {
       debugLogger.log("SignInForm", "Tentative de connexion avec:", { email });
+      
+      // Validation côté client
+      if (!email || !password) {
+        toast({
+          variant: "destructive",
+          title: "Erreur de saisie",
+          description: "Veuillez remplir tous les champs",
+        });
+        return;
+      }
+      
       const success = await handleSignIn(email, password);
+      
       if (success) {
         // Redirection vers la page d'accueil après connexion réussie
         debugLogger.log("SignInForm", "Connexion réussie, redirection vers l'accueil");
@@ -42,53 +59,12 @@ export const SignInForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              id="email"
-              type="email"
-              placeholder="vous@exemple.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="pl-10"
-              required
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Mot de passe</Label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="pl-10"
-              required
-              disabled={isLoading}
-            />
-          </div>
-        </div>
+        <EmailInput email={email} onChange={setEmail} />
+        <PasswordInput password={password} onChange={setPassword} />
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Connexion en cours..." : "Se connecter"}
-        </Button>
-        <p className="text-sm text-center text-muted-foreground">
-          Pas encore de compte ?{" "}
-          <Button 
-            variant="link" 
-            className="p-0 h-auto font-semibold hover:text-primary transition-colors"
-            onClick={() => navigate("/signup")}
-            type="button"
-          >
-            Inscrivez-vous
-          </Button>
-        </p>
+        <SubmitButton isLoading={isLoading} />
+        <NavigationLinks />
       </CardFooter>
     </form>
   );
