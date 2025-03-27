@@ -33,18 +33,18 @@ export const supabase = createClient(
 
 // Amélioration du logging pour faciliter le débogage des problèmes d'authentification
 supabase.auth.onAuthStateChange((event, session) => {
-  debugLogger.log('Auth state changed:', { event, hasSession: !!session });
+  debugLogger.log('Auth', `Auth state changed: ${event}`, { event, hasSession: !!session });
   
   if (event === 'SIGNED_OUT') {
-    debugLogger.log('User signed out, clearing auth data');
+    debugLogger.log('Auth', 'User signed out, clearing auth data');
     localStorage.removeItem('myfithero-auth');
   } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-    debugLogger.log('User signed in or token refreshed');
+    debugLogger.log('Auth', 'User signed in or token refreshed');
     if (session) {
       localStorage.setItem('myfithero-auth', JSON.stringify(session));
     }
   } else if (event === 'USER_UPDATED') {
-    debugLogger.log('User profile updated');
+    debugLogger.log('Auth', 'User profile updated');
   }
 });
 
@@ -58,7 +58,7 @@ export const getAuthStatus = async () => {
       error: null
     };
   } catch (error) {
-    debugLogger.error("Erreur lors de la vérification de l'authentification:", error);
+    debugLogger.error("Auth", "Erreur lors de la vérification de l'authentification", error);
     return {
       isAuthenticated: false,
       user: null,
@@ -73,14 +73,15 @@ export const testSupabaseConnection = async () => {
     const { data, error } = await supabase.from('profiles').select('count', { count: 'exact', head: true });
     
     if (error) {
-      debugLogger.error('Erreur de connexion à Supabase:', error);
+      debugLogger.error('Connexion', 'Erreur de connexion à Supabase', error);
       return { success: false, error };
     }
     
-    debugLogger.log('Connexion à Supabase réussie');
+    debugLogger.log('Connexion', 'Connexion à Supabase réussie');
     return { success: true };
   } catch (error) {
-    debugLogger.error('Exception lors de la connexion à Supabase:', error);
+    debugLogger.error('Connexion', 'Exception lors de la connexion à Supabase', error);
     return { success: false, error };
   }
 };
+
