@@ -97,7 +97,8 @@ export const fixRugbyPositions = async (): Promise<{
         .insert({
           name: 'Rugby à XV',
           type: 'team',
-          category: rugbySport.category
+          // Suppression de l'accès à rugbySport.category qui cause l'erreur
+          // On ne définit pas de category pour le moment
         })
         .select()
         .single();
