@@ -41,7 +41,37 @@ export const defaultSuggestions = [
     muscleGroups: ["legs", "push", "pull", "core"] // Groupes musculaires ciblés
   },
   {
-    id: 5, // Suggestion d'ajout
+    id: 5,
+    title: "Haut du corps",
+    description: "Focus sur le torse, les bras et les épaules",
+    icon_name: "ArrowUp",
+    type: "upper_body",
+    duration: 50,
+    difficulty: "moderate",
+    muscleGroups: ["chest", "back", "arms", "shoulders"]
+  },
+  {
+    id: 6,
+    title: "Bas du corps",
+    description: "Renforcez vos jambes et fessiers",
+    icon_name: "ArrowDown",
+    type: "lower_body",
+    duration: 45,
+    difficulty: "challenging",
+    muscleGroups: ["quads", "hamstrings", "glutes", "calves"]
+  },
+  {
+    id: 7,
+    title: "Circuit HIIT",
+    description: "Brûlez plus de calories en moins de temps",
+    icon_name: "Flame",
+    type: "hiit",
+    duration: 30,
+    difficulty: "intense",
+    restTime: "minimal"
+  },
+  {
+    id: 8, 
     title: "Programme en cours",
     description: "Continuer votre programme actuel",
     icon_name: "Calendar",
