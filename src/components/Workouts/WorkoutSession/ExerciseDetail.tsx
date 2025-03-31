@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChevronDown, ChevronUp, Timer, CheckCircle, ArrowLeft } from "lucide-react";
+import { ChevronDown, ChevronUp, Timer, CheckCircle, ArrowLeft, Plus, Minus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -33,12 +32,10 @@ export const ExerciseDetail = ({
   const [restInterval, setRestInterval] = useState<NodeJS.Timeout | null>(null);
   const [completedSets, setCompletedSets] = useState<number[]>([]);
   
-  // Utiliser le hook pour récupérer et mettre à jour les poids
   const { exerciseWeight, isLoading: isLoadingWeight, updateWeight, updateReps } = useExerciseWeights(exerciseName);
   const [weight, setWeight] = useState(20);
   const [reps, setReps] = useState(12);
   
-  // Charger le poids précédent de l'utilisateur pour cet exercice
   useEffect(() => {
     if (exerciseWeight) {
       console.log("Poids récupéré:", exerciseWeight);
@@ -47,7 +44,6 @@ export const ExerciseDetail = ({
     }
   }, [exerciseWeight]);
 
-  // Sauvegarder le poids lorsqu'il change
   const handleWeightChange = (newWeight: number) => {
     setWeight(newWeight);
     if (user) {
@@ -56,7 +52,6 @@ export const ExerciseDetail = ({
     }
   };
 
-  // Sauvegarder les répétitions lorsqu'elles changent
   const handleRepsChange = (newReps: number) => {
     setReps(newReps);
     if (user) {
@@ -65,7 +60,6 @@ export const ExerciseDetail = ({
     }
   };
 
-  // Nettoyer l'intervalle lors du démontage
   useEffect(() => {
     return () => {
       if (restInterval) clearInterval(restInterval);
@@ -77,7 +71,6 @@ export const ExerciseDetail = ({
       setCompletedSets([...completedSets, currentSet]);
       
       if (currentSet < totalSets) {
-        // Passer à la série suivante avec un temps de repos
         setIsResting(true);
         
         const interval = setInterval(() => {
@@ -95,7 +88,6 @@ export const ExerciseDetail = ({
         
         setRestInterval(interval);
         
-        // Calculer les calories brûlées (estimation)
         const caloriesBurned = Math.round(reps * weight * 0.15);
         
         toast({
@@ -103,13 +95,11 @@ export const ExerciseDetail = ({
           description: `${caloriesBurned} ${t("workouts.caloriesBurned") || "calories brûlées"}. ${t("workouts.restBeforeNextSet") || "Repos avant la prochaine série"}`,
         });
       } else {
-        // Dernière série terminée
         toast({
           title: t("workouts.exerciseCompleted") || "Exercice terminé",
           description: t("workouts.allSetsCompleted") || "Toutes les séries ont été complétées",
         });
         
-        // Retourner à la liste après une courte pause
         setTimeout(() => {
           onComplete(exerciseName, totalSets);
         }, 1500);
@@ -122,6 +112,10 @@ export const ExerciseDetail = ({
     setIsResting(false);
     setCurrentSet(prev => prev + 1);
     setRestTime(90);
+  };
+
+  const adjustRestTime = (seconds: number) => {
+    setRestTime(prev => Math.max(15, Math.min(180, prev + seconds)));
   };
 
   return (
@@ -149,7 +143,30 @@ export const ExerciseDetail = ({
           <Timer className="w-8 h-8 mx-auto text-primary animate-pulse" />
           <h3 className="text-xl font-semibold">{t("workouts.restTime") || "Temps de repos"}</h3>
           <p className="text-4xl font-mono">{restTime}s</p>
-          <Button variant="outline" onClick={skipRest}>
+          
+          <div className="flex justify-center items-center gap-4 my-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => adjustRestTime(-15)}
+              disabled={restTime <= 15}
+              className="h-10 w-10"
+            >
+              <Minus className="h-5 w-5" />
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => adjustRestTime(15)}
+              disabled={restTime >= 180}
+              className="h-10 w-10"
+            >
+              <Plus className="h-5 w-5" />
+            </Button>
+          </div>
+          
+          <Button variant="outline" onClick={skipRest} className="w-full">
             {t("workouts.skipRest") || "Passer le repos"}
           </Button>
         </div>
@@ -254,7 +271,6 @@ export const ExerciseDetail = ({
         </div>
       )}
 
-      {/* Afficher résumé des sets précédents */}
       {completedSets.length > 0 && !isResting && (
         <div className="space-y-2 border-t pt-4">
           <p className="text-sm font-medium">{t("workouts.completedSets") || "Séries complétées"}</p>
