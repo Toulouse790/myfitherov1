@@ -34,7 +34,7 @@ export const ExerciseDetail = ({
   const [completedSets, setCompletedSets] = useState<number[]>([]);
   
   // Utiliser le hook pour récupérer et mettre à jour les poids
-  const { exerciseWeight, isLoading: isLoadingWeight, updateWeight } = useExerciseWeights(exerciseName);
+  const { exerciseWeight, isLoading: isLoadingWeight, updateWeight, updateReps } = useExerciseWeights(exerciseName);
   const [weight, setWeight] = useState(20);
   const [reps, setReps] = useState(12);
   
@@ -53,6 +53,15 @@ export const ExerciseDetail = ({
     if (user) {
       console.log("Mise à jour du poids:", newWeight);
       updateWeight(newWeight);
+    }
+  };
+
+  // Sauvegarder les répétitions lorsqu'elles changent
+  const handleRepsChange = (newReps: number) => {
+    setReps(newReps);
+    if (user) {
+      console.log("Mise à jour des répétitions:", newReps);
+      updateReps(newReps);
     }
   };
 
@@ -179,20 +188,20 @@ export const ExerciseDetail = ({
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => setReps(Math.max(1, reps - 1))}
+                  onClick={() => handleRepsChange(Math.max(1, reps - 1))}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
                 <Input 
                   type="number" 
                   value={reps}
-                  onChange={(e) => setReps(Number(e.target.value))}
+                  onChange={(e) => handleRepsChange(Number(e.target.value))}
                   className="mx-2 text-center"
                 />
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => setReps(reps + 1)}
+                  onClick={() => handleRepsChange(reps + 1)}
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>

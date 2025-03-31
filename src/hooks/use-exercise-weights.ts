@@ -30,7 +30,6 @@ export const useExerciseWeights = (exerciseName: string) => {
         throw error;
       }
 
-      // Retourner les données ou une valeur par défaut
       console.log("Données récupérées:", data);
       return data || { weight: 20, reps: 12 };
     },
@@ -76,7 +75,6 @@ export const useExerciseWeights = (exerciseName: string) => {
     },
   });
 
-  // Ajout d'une mutation pour mettre à jour le nombre de répétitions
   const { mutate: updateReps } = useMutation({
     mutationFn: async (reps: number) => {
       if (!user) throw new Error('User not authenticated');
