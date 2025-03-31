@@ -28,7 +28,6 @@ export const ExerciseDetail = ({
   const { user } = useAuth();
   const [currentSet, setCurrentSet] = useState(1);
   const [totalSets, setTotalSets] = useState(initialSets);
-  const [reps, setReps] = useState(12);
   const [isResting, setIsResting] = useState(false);
   const [restTime, setRestTime] = useState(90);
   const [restInterval, setRestInterval] = useState<NodeJS.Timeout | null>(null);
@@ -37,10 +36,12 @@ export const ExerciseDetail = ({
   // Utiliser le hook pour récupérer et mettre à jour les poids
   const { exerciseWeight, isLoading: isLoadingWeight, updateWeight } = useExerciseWeights(exerciseName);
   const [weight, setWeight] = useState(20);
+  const [reps, setReps] = useState(12);
   
   // Charger le poids précédent de l'utilisateur pour cet exercice
   useEffect(() => {
     if (exerciseWeight) {
+      console.log("Poids récupéré:", exerciseWeight);
       setWeight(exerciseWeight.weight || 20);
       setReps(exerciseWeight.reps || 12);
     }
@@ -50,6 +51,7 @@ export const ExerciseDetail = ({
   const handleWeightChange = (newWeight: number) => {
     setWeight(newWeight);
     if (user) {
+      console.log("Mise à jour du poids:", newWeight);
       updateWeight(newWeight);
     }
   };
