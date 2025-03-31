@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Timer, Check } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SetButtonProps {
   isResting: boolean;
@@ -21,27 +22,29 @@ export const SetButton = ({
   isTransitioning = false
 }: SetButtonProps) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   
   return (
     <Button
       onClick={onComplete}
-      className="w-full h-12 text-lg"
+      className={`w-full ${isMobile ? 'h-14 text-base' : 'h-12 text-lg'} transition-all`}
       disabled={isResting || (currentSet > maxSets && !isTransitioning)}
+      size={isMobile ? "lg" : "default"}
     >
       {isResting ? (
         <div className="flex items-center gap-2">
           <Timer className="h-5 w-5" />
-          <span>{t("workouts.rest") || "Repos"}: {restTime}s</span>
+          <span className="truncate">{t("workouts.rest") || "Repos"}: {restTime}s</span>
         </div>
       ) : isTransitioning ? (
         <div className="flex items-center gap-2">
           <Timer className="h-5 w-5" />
-          <span>{t("workouts.preparingNextExercise") || "Préparation du prochain exercice"}</span>
+          <span className="truncate">{t("workouts.preparingNextExercise") || "Préparation du prochain exercice"}</span>
         </div>
       ) : currentSet > maxSets ? (
         <div className="flex items-center gap-2">
           <Check className="h-5 w-5" />
-          <span>{t("workouts.exerciseCompleted") || "Exercice terminé"}</span>
+          <span className="truncate">{t("workouts.exerciseCompleted") || "Exercice terminé"}</span>
         </div>
       ) : (
         t("workouts.validateSet") || "Valider la série"

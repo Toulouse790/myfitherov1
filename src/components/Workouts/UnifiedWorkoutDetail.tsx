@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +15,7 @@ import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { useSessionActions } from "@/hooks/workout/use-session-actions";
 import { ExerciseDetail } from "./WorkoutSession/ExerciseDetail";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -23,6 +23,7 @@ export const UnifiedWorkoutDetail = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const [exercises, setExercises] = useState<string[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [sessionDuration, setSessionDuration] = useState(0);
@@ -166,12 +167,13 @@ export const UnifiedWorkoutDetail = () => {
           <Card>
             <CardContent className="p-6">
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
                   <h2 className="text-2xl font-bold">{t("workouts.exerciseLibrary") || "Exercices de la séance"}</h2>
                   <Button 
                     variant="outline" 
                     onClick={handleFinishWorkout}
-                    className="gap-2"
+                    className={`gap-2 ${isMobile ? 'w-full mt-2' : ''}`}
+                    size={isMobile ? "lg" : "default"}
                   >
                     <Timer className="w-4 h-4" />
                     {t("workouts.completeWorkout") || "Terminer la séance"}

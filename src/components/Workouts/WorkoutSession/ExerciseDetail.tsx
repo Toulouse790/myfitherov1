@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useExerciseWeights } from "@/hooks/use-exercise-weights";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ExerciseDetailProps {
   exerciseName: string;
@@ -25,6 +27,7 @@ export const ExerciseDetail = ({
   const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const [currentSet, setCurrentSet] = useState(1);
   const [totalSets, setTotalSets] = useState(initialSets);
   const [isResting, setIsResting] = useState(false);
@@ -119,12 +122,12 @@ export const ExerciseDetail = ({
   };
 
   return (
-    <Card className="p-6 space-y-6">
+    <Card className="p-4 md:p-6 space-y-4 md:space-y-6">
       <div className="flex items-center">
         <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <h2 className="text-xl font-semibold">{exerciseName}</h2>
+        <h2 className="text-lg md:text-xl font-semibold truncate">{exerciseName}</h2>
       </div>
       
       <div className="space-y-2">
@@ -139,10 +142,10 @@ export const ExerciseDetail = ({
       </div>
       
       {isResting ? (
-        <div className="p-6 bg-secondary/10 rounded-lg space-y-4 text-center">
+        <div className="p-4 md:p-6 bg-secondary/10 rounded-lg space-y-4 text-center">
           <Timer className="w-8 h-8 mx-auto text-primary animate-pulse" />
-          <h3 className="text-xl font-semibold">{t("workouts.restTime") || "Temps de repos"}</h3>
-          <p className="text-4xl font-mono">{restTime}s</p>
+          <h3 className="text-lg md:text-xl font-semibold">{t("workouts.restTime") || "Temps de repos"}</h3>
+          <p className="text-3xl md:text-4xl font-mono">{restTime}s</p>
           
           <div className="flex justify-center items-center gap-4 my-4">
             <Button
@@ -151,6 +154,7 @@ export const ExerciseDetail = ({
               onClick={() => adjustRestTime(-15)}
               disabled={restTime <= 15}
               className="h-10 w-10"
+              aria-label="Diminuer le temps de repos de 15 secondes"
             >
               <Minus className="h-5 w-5" />
             </Button>
@@ -161,18 +165,24 @@ export const ExerciseDetail = ({
               onClick={() => adjustRestTime(15)}
               disabled={restTime >= 180}
               className="h-10 w-10"
+              aria-label="Augmenter le temps de repos de 15 secondes"
             >
               <Plus className="h-5 w-5" />
             </Button>
           </div>
           
-          <Button variant="outline" onClick={skipRest} className="w-full">
+          <Button 
+            variant="outline" 
+            onClick={skipRest} 
+            className="w-full"
+            size={isMobile ? "lg" : "default"}
+          >
             {t("workouts.skipRest") || "Passer le repos"}
           </Button>
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-4 md:space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
             <div className="space-y-2">
               <p className="text-sm font-medium">{t("workouts.weight") || "Poids"} (kg)</p>
               <div className="flex items-center">
@@ -180,6 +190,8 @@ export const ExerciseDetail = ({
                   variant="outline"
                   size="icon"
                   onClick={() => handleWeightChange(Math.max(0, weight - 2.5))}
+                  className="h-9 md:h-10 w-9 md:w-10"
+                  aria-label="Diminuer le poids"
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -187,12 +199,16 @@ export const ExerciseDetail = ({
                   type="number" 
                   value={weight}
                   onChange={(e) => handleWeightChange(Number(e.target.value))}
-                  className="mx-2 text-center"
+                  className="mx-2 text-center h-9 md:h-10"
+                  min={0}
+                  step={2.5}
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => handleWeightChange(weight + 2.5)}
+                  className="h-9 md:h-10 w-9 md:w-10"
+                  aria-label="Augmenter le poids"
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>
@@ -206,6 +222,8 @@ export const ExerciseDetail = ({
                   variant="outline"
                   size="icon"
                   onClick={() => handleRepsChange(Math.max(1, reps - 1))}
+                  className="h-9 md:h-10 w-9 md:w-10"
+                  aria-label="Diminuer les répétitions"
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -213,12 +231,15 @@ export const ExerciseDetail = ({
                   type="number" 
                   value={reps}
                   onChange={(e) => handleRepsChange(Number(e.target.value))}
-                  className="mx-2 text-center"
+                  className="mx-2 text-center h-9 md:h-10"
+                  min={1}
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => handleRepsChange(reps + 1)}
+                  className="h-9 md:h-10 w-9 md:w-10"
+                  aria-label="Augmenter les répétitions"
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>
@@ -234,6 +255,8 @@ export const ExerciseDetail = ({
                 size="icon"
                 onClick={() => setTotalSets(prev => Math.max(1, prev - 1))}
                 disabled={completedSets.length >= totalSets - 1}
+                className="h-9 md:h-10 w-9 md:w-10"
+                aria-label="Diminuer le nombre de séries"
               >
                 <ChevronDown className="h-4 w-4" />
               </Button>
@@ -246,13 +269,15 @@ export const ExerciseDetail = ({
                     setTotalSets(newValue);
                   }
                 }}
-                className="mx-2 text-center"
+                className="mx-2 text-center h-9 md:h-10"
                 min={completedSets.length + 1}
               />
               <Button
                 variant="outline"
                 size="icon"
                 onClick={() => setTotalSets(prev => prev + 1)}
+                className="h-9 md:h-10 w-9 md:w-10"
+                aria-label="Augmenter le nombre de séries"
               >
                 <ChevronUp className="h-4 w-4" />
               </Button>
@@ -260,8 +285,9 @@ export const ExerciseDetail = ({
           </div>
           
           <Button 
-            className="w-full h-12 gap-2"
+            className="w-full h-10 md:h-12 gap-2"
             onClick={handleCompleteSet}
+            size={isMobile ? "lg" : "default"}
           >
             <CheckCircle className="h-5 w-5" />
             {currentSet === totalSets 
