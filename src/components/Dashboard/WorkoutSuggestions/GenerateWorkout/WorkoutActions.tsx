@@ -23,7 +23,7 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
       console.error('Error starting workout:', error);
       toast({
         title: t("common.error"),
-        description: t("common.error"),
+        description: t("workouts.startSessionErrorDescription"),
         variant: "destructive",
       });
     } finally {

@@ -17,7 +17,7 @@ export const defaultSuggestions = [
     icon_name: "Target",
     type: "daily",
     duration: 45, // Durée moyenne en minutes
-    difficulty: "adaptive", // S'adapte au niveau de l'utilisateur
+    difficulty: "moderate", // S'adapte au niveau de l'utilisateur
     refreshDaily: true // Indique que la séance change chaque jour
   },
   {
@@ -28,7 +28,8 @@ export const defaultSuggestions = [
     type: "quick",
     duration: 25,
     difficulty: "moderate",
-    equipment: "minimal" // Indique le matériel nécessaire
+    equipment: "minimal", // Indique le matériel nécessaire
+    muscleGroups: ["full_body"]
   },
   {
     id: 4,

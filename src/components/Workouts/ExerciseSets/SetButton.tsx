@@ -30,25 +30,25 @@ export const SetButton = ({
       className={`w-full ${isMobile ? 'h-14 text-base' : 'h-12 text-lg'} transition-all`}
       disabled={isResting || (currentSet > maxSets && !isTransitioning)}
       size={isMobile ? "lg" : "default"}
-      aria-label={isResting ? t("workouts.restingLabel") || "En repos" : t("workouts.validateSetLabel") || "Valider la série"}
+      aria-label={isResting ? t("workouts.restingLabel") : t("workouts.validateSetLabel")}
     >
       {isResting ? (
         <div className="flex items-center gap-2">
           <Timer className="h-5 w-5" />
-          <span className="truncate">{t("workouts.rest") || "Repos"}: {restTime}s</span>
+          <span className="truncate">{t("workouts.rest")}: {restTime}s</span>
         </div>
       ) : isTransitioning ? (
         <div className="flex items-center gap-2">
           <Timer className="h-5 w-5" />
-          <span className="truncate">{t("workouts.preparingNextExercise") || "Préparation du prochain exercice"}</span>
+          <span className="truncate">{t("workouts.preparingNextExercise")}</span>
         </div>
       ) : currentSet > maxSets ? (
         <div className="flex items-center gap-2">
           <Check className="h-5 w-5" />
-          <span className="truncate">{t("workouts.exerciseCompleted") || "Exercice terminé"}</span>
+          <span className="truncate">{t("workouts.exerciseCompleted")}</span>
         </div>
       ) : (
-        t("workouts.validateSet") || "Valider la série"
+        t("workouts.validateSet")
       )}
     </Button>
   );

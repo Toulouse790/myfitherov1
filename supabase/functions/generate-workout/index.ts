@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { OpenAI } from "https://deno.land/x/openai@v4.20.1/mod.ts"
 
@@ -18,7 +19,22 @@ serve(async (req) => {
       apiKey: Deno.env.get('OPENAI_API_KEY')
     })
 
-    const prompt = `En tant qu'expert en fitness, génère un programme d'entraînement personnalisé avec ces préférences:
+    // Détermine le nombre d'exercices en fonction du type d'entraînement et de la durée
+    let exerciseCount = 4; // Valeur par défaut
+    
+    if (userPreferences.workoutType === 'quick') {
+      exerciseCount = 3; // Séance rapide : toujours 3 exercices
+    } else if (userPreferences.duration) {
+      if (userPreferences.duration <= 30) {
+        exerciseCount = Math.min(3, exerciseCount);
+      } else if (userPreferences.duration <= 45) {
+        exerciseCount = Math.min(5, exerciseCount);
+      } else {
+        exerciseCount = Math.min(7, exerciseCount);
+      }
+    }
+
+    const prompt = `En tant qu'expert en fitness, génère un programme d'entraînement personnalisé avec exactement ${exerciseCount} exercices et ces préférences:
     ${JSON.stringify(userPreferences, null, 2)}
     
     Format de réponse souhaité:
@@ -51,6 +67,16 @@ serve(async (req) => {
     })
 
     const workout = JSON.parse(response.choices[0].message.content)
+
+    // S'assurer que le nombre d'exercices correspond à la demande
+    if (workout.exercises.length > exerciseCount) {
+      workout.exercises = workout.exercises.slice(0, exerciseCount);
+    }
+    
+    // Ajuster la durée en fonction du nombre d'exercices
+    if (userPreferences.workoutType === 'quick') {
+      workout.duration = 25; // Forcer la durée à 25 minutes pour les séances rapides
+    }
 
     return new Response(
       JSON.stringify(workout),

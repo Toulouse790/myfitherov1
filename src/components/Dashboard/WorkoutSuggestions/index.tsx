@@ -8,12 +8,15 @@ import { useState, useEffect } from "react";
 import { WorkoutSuggestion, WorkoutSuggestionsProps } from "./types";
 import { defaultSuggestions } from "./defaultSuggestions";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { databaseSuggestions } from "./databaseSuggestions";
 
 export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggestionsProps) => {
   const [isGenerateOpen, setIsGenerateOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [localSuggestions, setLocalSuggestions] = useState<WorkoutSuggestion[]>([]);
 
   // Récupérer les suggestions depuis la base de données
@@ -32,8 +35,8 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
       } catch (error) {
         console.error('Error fetching suggestions:', error);
         toast({
-          title: "Erreur de chargement",
-          description: "Impossible de charger les suggestions. Utilisation des données locales.",
+          title: t("common.error"),
+          description: t("workouts.generationErrorDescription"),
           variant: "destructive",
         });
         return [];
@@ -67,17 +70,17 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
 
   // Mélanger et prioriser les suggestions en fonction de l'historique d'entraînement
   useEffect(() => {
-    // Combiner les suggestions de la DB avec les locales, avec priorité à la DB
-    const combinedSuggestions = [...dbSuggestions];
+    // Si nous avons des suggestions de la base de données, utilisez-les, sinon utilisez les suggestions par défaut
+    let combinedSuggestions: WorkoutSuggestion[] = [];
     
-    // Ajouter des suggestions locales si la DB n'en fournit pas assez
-    if (combinedSuggestions.length < 4) {
-      // Filtrer les suggestions locales qui ne sont pas déjà dans la DB
-      const dbIds = new Set(combinedSuggestions.map(s => s.id));
-      const missingLocalSuggestions = defaultSuggestions.filter(s => !dbIds.has(s.id));
-      
-      // Ajouter les suggestions locales manquantes
-      combinedSuggestions.push(...missingLocalSuggestions);
+    if (dbSuggestions && dbSuggestions.length > 0) {
+      combinedSuggestions = [...dbSuggestions];
+    } else if (databaseSuggestions && databaseSuggestions.length > 0) {
+      // Utiliser les suggestions de la base de données locale si l'API échoue
+      combinedSuggestions = [...databaseSuggestions];
+    } else {
+      // Fallback vers les suggestions par défaut
+      combinedSuggestions = [...defaultSuggestions];
     }
     
     // Personnaliser l'ordre en fonction de l'historique d'entraînement
@@ -118,6 +121,15 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
       }
     }
     
+    // Limiter le nombre de suggestions "quick" pour éviter de trop afficher cette option
+    const quickSuggestions = combinedSuggestions.filter(s => s.type === 'quick');
+    if (quickSuggestions.length > 1) {
+      const quickIndex = combinedSuggestions.findIndex(s => s.type === 'quick');
+      if (quickIndex !== -1) {
+        combinedSuggestions.splice(quickIndex, 1);
+      }
+    }
+    
     setLocalSuggestions(combinedSuggestions);
   }, [dbSuggestions, workoutHistory]);
 
@@ -141,7 +153,7 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold mb-3">Suggestions d'entraînement</h2>
+      <h2 className="text-xl font-semibold mb-3">{t("workouts.startWorkout")}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {displayedSuggestions.map((suggestion: WorkoutSuggestion) => (
           <WorkoutCard
