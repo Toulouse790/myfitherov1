@@ -21,6 +21,7 @@ import { TrainingTypeSelection } from "./components/TrainingTypeSelection";
 import { SportPositionSelection } from "./components/SportPositionSelection";
 import { useSportExerciseSelection } from "@/hooks/use-sport-exercise-selection";
 import { SportRecommendationOverview } from "./SportRecommendationOverview";
+import { supabase } from "@/integrations/supabase/client";
 
 export const WorkoutFlowManager = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -29,6 +30,8 @@ export const WorkoutFlowManager = () => {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
   const [selectedSportId, setSelectedSportId] = useState<string>("");
   const [selectedPositionId, setSelectedPositionId] = useState<string>("");
+  const [sportName, setSportName] = useState<string>("");
+  const [positionName, setPositionName] = useState<string>("");
   const { createWorkoutSession } = useSessionActions();
   const { isLoading } = useWorkoutExercisesState();
   const { user } = useAuth();
@@ -61,9 +64,32 @@ export const WorkoutFlowManager = () => {
     debugLogger.log("WorkoutFlowManager", "Type d'entraînement sélectionné:", type);
   };
 
-  const handleSportPositionSelection = (sportId: string, positionId: string) => {
+  const handleSportPositionSelection = async (sportId: string, positionId: string) => {
     setSelectedSportId(sportId);
     setSelectedPositionId(positionId);
+    
+    // Récupérer les noms du sport et de la position
+    try {
+      const { data: sportData } = await supabase
+        .from('sports')
+        .select('name')
+        .eq('id', sportId)
+        .single();
+      
+      const { data: positionData } = await supabase
+        .from('sport_positions')
+        .select('name')
+        .eq('id', positionId)
+        .single();
+        
+      if (sportData) setSportName(sportData.name);
+      if (positionData) setPositionName(positionData.name);
+      
+      debugLogger.log("WorkoutFlowManager", "Sport sélectionné:", sportData?.name);
+      debugLogger.log("WorkoutFlowManager", "Position sélectionnée:", positionData?.name);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des détails sport/position:", error);
+    }
     
     // Une fois le sport et le poste sélectionnés, passer à la sélection des exercices
     if (sportExercises && sportExercises.length > 0) {
@@ -225,8 +251,8 @@ export const WorkoutFlowManager = () => {
             {trainingType === "sport" && scientificRecommendations && (
               <SportRecommendationOverview 
                 recommendations={scientificRecommendations}
-                sportName={getSportName()}
-                positionName={getPositionName()}
+                sportName={sportName}
+                positionName={positionName}
               />
             )}
             <GeneratedWorkoutPreview exercises={selectedExercises} />
@@ -242,17 +268,6 @@ export const WorkoutFlowManager = () => {
       default:
         return null;
     }
-  };
-
-  // Fonctions auxiliaires pour obtenir les noms des sports et positions
-  const getSportName = () => {
-    // Cette fonction devrait être implémentée pour récupérer le nom du sport
-    return ""; // À compléter
-  };
-
-  const getPositionName = () => {
-    // Cette fonction devrait être implémentée pour récupérer le nom de la position
-    return ""; // À compléter
   };
 
   return (

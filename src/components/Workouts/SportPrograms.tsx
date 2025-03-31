@@ -1,8 +1,20 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { footballPrograms, basketballPrograms } from "@/data/teamSports";
-import { tennisPrograms, runningPrograms } from "@/data/individualSports";
+import { 
+  footballPrograms, 
+  basketballPrograms, 
+  volleyballPrograms, 
+  handballPrograms, 
+  hockeyPrograms 
+} from "@/data/teamSports";
+import { 
+  tennisPrograms, 
+  runningPrograms, 
+  swimmingPrograms, 
+  cyclingPrograms 
+} from "@/data/individualSports";
 import { SportProgram, SportType } from "@/types/sports";
 
 export const SportPrograms = () => {
@@ -67,12 +79,23 @@ export const SportPrograms = () => {
         </TabsList>
         <TabsContent value="team" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            {[...footballPrograms, ...basketballPrograms].map(renderProgram)}
+            {[
+              ...footballPrograms, 
+              ...basketballPrograms,
+              ...volleyballPrograms,
+              ...handballPrograms,
+              ...hockeyPrograms
+            ].map(renderProgram)}
           </div>
         </TabsContent>
         <TabsContent value="individual" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            {[...tennisPrograms, ...runningPrograms].map(renderProgram)}
+            {[
+              ...tennisPrograms, 
+              ...runningPrograms,
+              ...swimmingPrograms,
+              ...cyclingPrograms
+            ].map(renderProgram)}
           </div>
         </TabsContent>
       </Tabs>

@@ -1,3 +1,4 @@
+
 import { SportTrainingRecommendation } from "@/types/workout-session";
 
 /**
@@ -7,6 +8,8 @@ import { SportTrainingRecommendation } from "@/types/workout-session";
  * - International Journal of Sports Physiology and Performance
  * - Journal of Sports Science & Medicine
  * - Sports Medicine
+ * - European Journal of Sport Science
+ * - Scandinavian Journal of Medicine & Science in Sports
  */
 
 export const sportScienceRecommendations: Record<string, Record<string, SportTrainingRecommendation>> = {
@@ -454,6 +457,369 @@ export const sportScienceRecommendations: Record<string, Record<string, SportTra
     }
   },
   
+  // Volleyball
+  "volleyball": {
+    // Attaquant
+    "attaquant": {
+      primaryExercises: [
+        "Squat sauté", "Développé couché", "Bulgarian split squat", 
+        "Exercices de saut vertical", "Medicine ball throws"
+      ],
+      secondaryExercises: [
+        "Renforcement des épaules", "Stabilisation core", 
+        "Travail proprioceptif", "Nordic hamstring"
+      ],
+      performanceMetrics: {
+        vertical_jump: 10,
+        arm_swing_power: 9,
+        approach_speed: 8,
+        hitting_accuracy: 9,
+        block_timing: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.8, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour (sport en intérieur)"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération neuromusculaire", "Puissance explosive"]
+      }
+    },
+    // Passeur
+    "passeur": {
+      primaryExercises: [
+        "Exercices de proprioception des doigts", "Gainage", 
+        "Fentes latérales", "Step-ups", "Box jumps"
+      ],
+      secondaryExercises: [
+        "Renforcement poignets", "Rotateurs externes", 
+        "Travail d'équilibre", "Exercices de précision"
+      ],
+      performanceMetrics: {
+        setting_accuracy: 10,
+        decision_making: 10,
+        footwork: 9,
+        block_positioning: 8,
+        defensive_awareness: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.6, // g/kg poids corporel
+        carbohydrateIntake: 5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-3.5L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération cognitive", "Coordination fine"]
+      }
+    },
+    // Libéro
+    "libéro": {
+      primaryExercises: [
+        "Déplacements latéraux", "Exercices de réaction", 
+        "Squat", "Gainage", "Fentes dynamiques"
+      ],
+      secondaryExercises: [
+        "Stabilisation épaules", "Renforcement lombaires", 
+        "Travail proprioceptif", "Exercices d'agilité"
+      ],
+      performanceMetrics: {
+        reaction_time: 10,
+        passing_accuracy: 10,
+        agility: 9,
+        court_coverage: 9,
+        reading_opposing_hitters: 9
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 5, // g/kg poids corporel
+        hydrationNeeds: "Modérés à élevés - 2.5-3.5L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Vigilance", "Récupération cognitive"]
+      }
+    },
+    // Central (bloqueur)
+    "central": {
+      primaryExercises: [
+        "Squat jump", "Clean & press", "Planche latérale", 
+        "Sauts latéraux", "Développé épaules"
+      ],
+      secondaryExercises: [
+        "Renforcement poignets", "Stabilisation tronc", 
+        "Travail de coordination", "Box jumps latéraux"
+      ],
+      performanceMetrics: {
+        block_timing: 10,
+        lateral_movement: 9,
+        vertical_reach: 10,
+        reading_setters: 8,
+        transition_speed: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.8, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération musculaire", "Réactivité"]
+      }
+    }
+  },
+  
+  // Handball
+  "handball": {
+    // Gardien
+    "gardien": {
+      primaryExercises: [
+        "Squat sauté", "Exercices de réaction", "Split jumps", 
+        "Gainage latéral", "Déplacements explosifs"
+      ],
+      secondaryExercises: [
+        "Renforcement épaules", "Stabilisation poignets", 
+        "Travail proprioceptif", "Cardio fractionné"
+      ],
+      performanceMetrics: {
+        reaction_time: 10,
+        explosive_movement: 9,
+        flexibility: 9,
+        positional_awareness: 8,
+        mental_fortitude: 9
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.6, // g/kg poids corporel
+        carbohydrateIntake: 5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Concentration", "Récupération neuromusculaire"]
+      }
+    },
+    // Arrière
+    "arrière": {
+      primaryExercises: [
+        "Développé couché", "Squat", "Exercices de tir", 
+        "Burpees", "Plyométrie"
+      ],
+      secondaryExercises: [
+        "Renforcement triceps", "Stabilisation épaule", 
+        "Exercices de feinte", "Sprint résisté"
+      ],
+      performanceMetrics: {
+        throwing_power: 10,
+        shooting_accuracy: 9,
+        field_vision: 8,
+        defensive_skills: 7,
+        jump_shot_ability: 9
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération musculaire", "Coordination"]
+      }
+    },
+    // Pivot
+    "pivot": {
+      primaryExercises: [
+        "Squat", "Soulevé de terre", "Développé militaire", 
+        "Turkish get-up", "Rotation avec médecine-ball"
+      ],
+      secondaryExercises: [
+        "Renforcement lombo-abdominal", "Stabilisation épaules", 
+        "Travail d'équilibre", "Exercices de poussée"
+      ],
+      performanceMetrics: {
+        strength: 10,
+        contact_balance: 10,
+        positioning: 9,
+        screening: 9,
+        ball_handling: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.9, // g/kg poids corporel
+        carbohydrateIntake: 5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération musculaire intense", "Régénération tissulaire"]
+      }
+    },
+    // Ailier
+    "ailier": {
+      primaryExercises: [
+        "Sprint court", "Squat sauté", "Exercices de tir en suspension", 
+        "Déplacements latéraux", "Fentes dynamiques"
+      ],
+      secondaryExercises: [
+        "Renforcement poignets", "Travail proprioceptif", 
+        "Exercices de feinte", "Circuit training"
+      ],
+      performanceMetrics: {
+        speed: 10,
+        wing_shooting: 10,
+        counter_attack: 9,
+        agility: 9,
+        defensive_footwork: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération métabolique", "Réflexes"]
+      }
+    },
+    // Demi-centre
+    "demi-centre": {
+      primaryExercises: [
+        "Exercices de changement de direction", "Squat", "Box jumps", 
+        "Gainage dynamique", "Burpees"
+      ],
+      secondaryExercises: [
+        "Renforcement épaules", "Stabilisation core", 
+        "Travail proprioceptif", "Passes avec résistance"
+      ],
+      performanceMetrics: {
+        playmaking: 10,
+        decision_making: 10,
+        ball_handling: 9,
+        court_vision: 9,
+        defensive_reading: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération cognitive", "Coordination"]
+      }
+    }
+  },
+  
+  // Hockey sur glace
+  "hockey": {
+    // Gardien
+    "gardien": {
+      primaryExercises: [
+        "Déplacements latéraux spécifiques", "Squat", "Gainage profond", 
+        "Exercices de réaction", "Étirements dynamiques"
+      ],
+      secondaryExercises: [
+        "Renforcement lombaires", "Stabilisation épaules", 
+        "Travail proprioceptif", "Étirements spécifiques"
+      ],
+      performanceMetrics: {
+        reaction_time: 10,
+        lateral_movement: 10,
+        flexibility: 9,
+        positioning: 9,
+        recovery_speed: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération neurologique", "Concentration"]
+      }
+    },
+    // Défenseur
+    "défenseur": {
+      primaryExercises: [
+        "Squat", "Soulevé de terre", "Développé couché", 
+        "Exercices de patinage", "Box jumps"
+      ],
+      secondaryExercises: [
+        "Renforcement lombaire", "Core training", 
+        "Travail spécifique patinage arrière", "Pliométrie"
+      ],
+      performanceMetrics: {
+        strength: 9,
+        backward_skating: 10,
+        shot_blocking: 9,
+        checking: 9,
+        passing: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.8, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération musculaire", "Réparation tissulaire"]
+      }
+    },
+    // Attaquant
+    "attaquant": {
+      primaryExercises: [
+        "Sprint sur glace", "Squat sauté", "Rotations explosives", 
+        "Exercices de tir", "Départs explosifs"
+      ],
+      secondaryExercises: [
+        "Renforcement des poignets", "Exercices d'équilibre", 
+        "Travail de maniement", "Cardio fractionné"
+      ],
+      performanceMetrics: {
+        acceleration: 10,
+        shooting: 9,
+        puck_handling: 9,
+        offensive_awareness: 8,
+        forechecking: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.8, // g/kg poids corporel
+        carbohydrateIntake: 6, // g/kg poids corporel
+        hydrationNeeds: "Très élevés - 3.5-4.5L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération métabolique", "Régénération musculaire"]
+      }
+    },
+    // Centre
+    "centre": {
+      primaryExercises: [
+        "Exercices d'engagements", "Squat", "Gainage", 
+        "Sprint fractionné", "Rotations du tronc"
+      ],
+      secondaryExercises: [
+        "Core training", "Stabilisation bas du corps", 
+        "Travail d'équilibre", "Exercices de vision périphérique"
+      ],
+      performanceMetrics: {
+        faceoff_technique: 10,
+        two_way_play: 9,
+        hockey_iq: 9,
+        supporting_play: 8,
+        defensive_awareness: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.8, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération cognitive", "Endurance"]
+      }
+    }
+  },
+  
   // Sports individuels
   "tennis": {
     "general": {
@@ -510,5 +876,166 @@ export const sportScienceRecommendations: Record<string, Record<string, SportTra
         recoveryFocus: ["Récupération métabolique", "Régénération musculaire"]
       }
     }
+  },
+  "natation": {
+    "general": {
+      primaryExercises: [
+        "Pull-ups", "Développé militaire", "Rowing barre", 
+        "Gainage", "Squat"
+      ],
+      secondaryExercises: [
+        "Rotations externes", "Y raises", "Face pulls",
+        "Core anti-rotation", "Exercices d'épaules"
+      ],
+      performanceMetrics: {
+        shoulder_strength: 10,
+        core_stability: 9,
+        aerobic_capacity: 10,
+        technique_efficiency: 9,
+        breathing_control: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 6.5, // g/kg poids corporel (dépense élevée)
+        hydrationNeeds: "Très élevés - 3-4.5L/jour (déshydratation non perçue)"
+      },
+      sleepRecommendations: {
+        minHours: 9,
+        recoveryFocus: ["Récupération musculaire complète", "Endurance"]
+      }
+    },
+    "sprint": {
+      primaryExercises: [
+        "Développé couché", "Rowing avec élastique", "Medicine ball throws", 
+        "Planche", "Squat sauté"
+      ],
+      secondaryExercises: [
+        "Rotateurs externes", "Battle ropes", "Tirage vertical",
+        "Triceps extensions", "Renforcement mollets"
+      ],
+      performanceMetrics: {
+        power: 10,
+        explosive_strength: 9,
+        anaerobic_capacity: 10,
+        start_technique: 9,
+        underwater_phase: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.8, // g/kg poids corporel
+        carbohydrateIntake: 6, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération neuromusculaire", "Puissance"]
+      }
+    },
+    "distance": {
+      primaryExercises: [
+        "Natation fractionnée", "Développé couché", "Rowing", 
+        "Gainage latéral", "TRX rows"
+      ],
+      secondaryExercises: [
+        "Renforcement épaules", "Band pull-aparts", "Swiss ball rollouts",
+        "Gainage dynamique", "Prone Y raises"
+      ],
+      performanceMetrics: {
+        aerobic_endurance: 10,
+        stroke_efficiency: 10,
+        muscular_endurance: 9,
+        pacing: 8,
+        recovery_between_intervals: 9
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 7, // g/kg poids corporel (très haute dépense)
+        hydrationNeeds: "Critiques - 4-5L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 9,
+        recoveryFocus: ["Récupération métabolique", "Endurance musculaire"]
+      }
+    }
+  },
+  "cyclisme": {
+    "general": {
+      primaryExercises: [
+        "Squat", "Leg press", "Fentes", 
+        "Extensions quadriceps", "Gainage"
+      ],
+      secondaryExercises: [
+        "Hip thrusts", "Renforcement mollets", "Vélo à une jambe",
+        "Core anti-flexion", "Stabilisation lombaire"
+      ],
+      performanceMetrics: {
+        aerobic_power: 10,
+        lactate_threshold: 9,
+        leg_strength: 9,
+        core_stability: 8,
+        pedaling_technique: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.5, // g/kg poids corporel
+        carbohydrateIntake: 7, // g/kg poids corporel (besoins très élevés)
+        hydrationNeeds: "Critiques - 500-800ml/heure pendant l'effort"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération métabolique", "Récupération musculaire"]
+      }
+    },
+    "route": {
+      primaryExercises: [
+        "Squat", "Deadlift", "Step-ups", 
+        "Vélo fractionné", "Gainage"
+      ],
+      secondaryExercises: [
+        "Nordic hamstring", "Stabilisation hanche", "Exercices lombaires",
+        "Stretching", "Core anti-rotation"
+      ],
+      performanceMetrics: {
+        endurance: 10,
+        threshold_power: 9,
+        climbing_ability: 8,
+        tactical_awareness: 8,
+        recovery_capacity: 9
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.5, // g/kg poids corporel
+        carbohydrateIntake: 7.5, // g/kg poids corporel (en périodes d'entraînement intensif)
+        hydrationNeeds: "Très élevés - 3.5-5L/jour selon les conditions"
+      },
+      sleepRecommendations: {
+        minHours: 9,
+        recoveryFocus: ["Récupération des glycogènes", "Adaptation cardiovasculaire"]
+      }
+    },
+    "piste": {
+      primaryExercises: [
+        "Squat sauté", "Leg press", "Hack squat", 
+        "Sprint sur vélo", "Plyométrie"
+      ],
+      secondaryExercises: [
+        "Extensions de hanche", "Stabilisation core", "Box jumps",
+        "Renforcement lombaire", "Exercises ischio-jambiers"
+      ],
+      performanceMetrics: {
+        explosive_power: 10,
+        anaerobic_capacity: 10,
+        start_technique: 9,
+        neuromuscular_efficiency: 9,
+        race_tactics: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 6.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération neuromusculaire", "Puissance"]
+      }
+    }
   }
 };
+
