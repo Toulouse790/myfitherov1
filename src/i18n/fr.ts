@@ -1,3 +1,4 @@
+
 export const fr = {
   common: {
     save: "Enregistrer",
