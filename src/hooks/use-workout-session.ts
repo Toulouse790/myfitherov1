@@ -52,10 +52,11 @@ export const useWorkoutSession = () => {
       
       // Update the session to mark it as completed
       const data = await updateWorkoutSession(activeSession.id, {
-        completed: true,
+        status: 'completed',
         total_duration_minutes: durationMinutes,
         perceived_difficulty: additionalData.perceived_difficulty || 'moderate',
-        calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8) // Simple estimation
+        calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8), // Simple estimation
+        completed_at: new Date().toISOString()
       });
 
       if (data) {
@@ -63,7 +64,7 @@ export const useWorkoutSession = () => {
         
         toast({
           title: t("workouts.completeWorkout"),
-          description: `${t("workouts.totalDuration")}: ${durationMinutes} ${t("workouts.duration")}`,
+          description: `${t("workouts.totalDuration")}: ${durationMinutes} ${t("workouts.minutes")}`,
         });
         
         // Redirect to the summary page

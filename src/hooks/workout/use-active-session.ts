@@ -3,50 +3,50 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { WorkoutSession } from "@/types/workout-session";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { WorkoutSession } from "@/types/workout-session";
 
 export const useActiveSession = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeSession, setActiveSession] = useState<WorkoutSession | null>(null);
 
-  // Check for an active session on hook initialization
+  const checkActiveSession = async () => {
+    if (!user) return null;
+    
+    try {
+      setIsLoading(true);
+      
+      const { data, error } = await supabase
+        .from('workout_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'in_progress')
+        .order('created_at', { ascending: false })
+        .maybeSingle();
+
+      if (error) {
+        console.error(t("workouts.errors.activeSessionCheck"), error);
+        return null;
+      }
+      
+      setActiveSession(data);
+      return data;
+    } catch (error) {
+      console.error(t("workouts.errors.activeSessionCheck"), error);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       checkActiveSession();
     }
   }, [user]);
-
-  const checkActiveSession = async () => {
-    if (!user) return;
-    
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from('workout_sessions')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('completed', false)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      if (data) {
-        setActiveSession(data);
-      }
-    } catch (error) {
-      console.error(t("workouts.errors.activeSessionCheck"), error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return {
     isLoading,

@@ -37,8 +37,10 @@ export const useWorkoutOperations = () => {
           exercises: exercises || [],
           total_duration_minutes: 0,
           calories_burned: 0,
-          completed: false,
-          perceived_difficulty: 'moderate'
+          status: 'in_progress',
+          perceived_difficulty: 'moderate',
+          type: 'strength',
+          workout_type: 'strength'
         }])
         .select()
         .single();
@@ -49,7 +51,7 @@ export const useWorkoutOperations = () => {
       if (programId) {
         navigate(`/workouts/start/${programId}`);
       } else {
-        navigate(`/workouts/session/${data.id}`);
+        navigate(`/workouts/${data.id}`);
       }
       
       return data;

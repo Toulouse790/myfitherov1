@@ -24,7 +24,7 @@ export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessio
       </CardHeader>
       <CardFooter>
         <Button 
-          onClick={() => navigate(`/workouts/start/${activeSession.program_id || activeSession.id}`)}
+          onClick={() => navigate(`/workouts/${activeSession.id}`)}
           className="w-full"
         >
           {t("workouts.continueSession")}

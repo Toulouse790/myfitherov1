@@ -1,46 +1,39 @@
 
-import { useState, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 
-export const useSessionTimer = (initialTime: number = 0) => {
-  const [sessionTime, setSessionTime] = useState(initialTime);
-  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null);
+export const useSessionTimer = () => {
+  const [sessionTime, setSessionTime] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-      }
-    };
-  }, [timerInterval]);
-
-  const startTimer = () => {
-    if (timerInterval) {
-      clearInterval(timerInterval);
+  const startTimer = useCallback((initialSeconds = 0) => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
     }
     
-    const interval = setInterval(() => {
+    setSessionTime(initialSeconds);
+    
+    timerRef.current = setInterval(() => {
       setSessionTime(prev => prev + 1);
     }, 1000);
-    
-    setTimerInterval(interval);
-  };
+  }, []);
 
-  const stopTimer = () => {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      setTimerInterval(null);
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-  };
+  }, []);
 
-  const resetTimer = (newTime: number = 0) => {
-    setSessionTime(newTime);
-  };
+  const resetTimer = useCallback(() => {
+    stopTimer();
+    setSessionTime(0);
+  }, [stopTimer]);
 
-  const formatTime = (seconds: number): string => {
+  const formatTime = useCallback((seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
   return {
     sessionTime,
