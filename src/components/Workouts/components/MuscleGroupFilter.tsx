@@ -2,6 +2,7 @@
 import { muscleGroups } from "../workoutConstants";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 
 interface MuscleGroupFilterProps {
   selectedGroup: string;
@@ -13,6 +14,7 @@ export const MuscleGroupFilter = ({
   onGroupSelect,
 }: MuscleGroupFilterProps) => {
   const { t } = useLanguage();
+  const { translateMuscleGroupWithContext } = useExerciseTranslation();
   
   return (
     <div className="flex flex-wrap gap-2 mb-6">
@@ -30,7 +32,7 @@ export const MuscleGroupFilter = ({
           onClick={() => onGroupSelect(group.name)}
           className="whitespace-nowrap"
         >
-          {group.name}
+          {translateMuscleGroupWithContext(group.name)}
         </Button>
       ))}
     </div>

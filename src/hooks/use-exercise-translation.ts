@@ -1,18 +1,33 @@
 
 import { Exercise } from "@/components/Workouts/exercises/types/exercise";
-import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { translateMuscleGroup, reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useExerciseTranslation = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  // Cette fonction traduit le nom du groupe musculaire en utilisant le contexte de langue actuel
+  const translateMuscleGroupWithContext = (muscleGroup: string): string => {
+    if (!muscleGroup) return '';
+    
+    // Si on est en français, on utilise directement translateMuscleGroup
+    if (language === 'fr') {
+      return translateMuscleGroup(muscleGroup);
+    }
+    
+    // Pour les autres langues, on utilise d'abord reverseTranslateMuscleGroup pour obtenir la clé 
+    // puis t pour obtenir la traduction dans la langue actuelle
+    const key = reverseTranslateMuscleGroup(muscleGroup);
+    return t(`muscleGroups.${key}`, { fallback: muscleGroup });
+  };
 
   const translateExercise = (exercise: any): Exercise => {
     if (!exercise) return exercise;
     
     const translatedExercise = {
       ...exercise,
-      muscle_group: translateMuscleGroup(exercise.muscle_group),
-      muscleGroup: translateMuscleGroup(exercise.muscleGroup || exercise.muscle_group)
+      muscle_group: translateMuscleGroupWithContext(exercise.muscle_group),
+      muscleGroup: translateMuscleGroupWithContext(exercise.muscleGroup || exercise.muscle_group)
     };
     
     return translatedExercise;
@@ -25,14 +40,13 @@ export const useExerciseTranslation = () => {
 
   const translateMuscleGroups = (muscleGroups: string[]): string[] => {
     if (!muscleGroups || !Array.isArray(muscleGroups)) return [];
-    return muscleGroups.map(group => 
-      t(`muscleGroups.${group}`, { fallback: translateMuscleGroup(group) })
-    );
+    return muscleGroups.map(translateMuscleGroupWithContext);
   };
 
   return {
     translateExercise,
     translateExercises,
-    translateMuscleGroups
+    translateMuscleGroups,
+    translateMuscleGroupWithContext
   };
 };

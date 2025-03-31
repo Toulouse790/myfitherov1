@@ -3,9 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useWorkoutExercises } from "./use-workout-exercises";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useWorkoutSession = (sessionId?: string) => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { exercises, isLoading: exercisesLoading } = useWorkoutExercises(sessionId);
 
   const { data: session, isLoading } = useQuery({
@@ -19,7 +21,10 @@ export const useWorkoutSession = (sessionId?: string) => {
         .eq("id", sessionId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error(t("workouts.errors.sessionFetch"), error);
+        throw error;
+      }
       return data;
     },
     enabled: !!sessionId && !!user,

@@ -17,13 +17,13 @@ export default function Workouts() {
       <div className="container max-w-7xl mx-auto p-4 pt-40 pb-20">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">
-            {t("workouts.title") || "Entraînements"}
+            {t("workouts.title")}
           </h1>
           <button 
             onClick={() => setShowDebug(!showDebug)}
             className="text-xs text-muted-foreground hover:underline"
           >
-            {showDebug ? "Masquer débogage" : "Afficher débogage"}
+            {showDebug ? t("common.hideDebug") : t("common.showDebug")}
           </button>
         </div>
         
@@ -32,23 +32,23 @@ export default function Workouts() {
         <Tabs defaultValue="workout">
           <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="workout">
-              {t("workouts.startWorkout") || "Démarrer une séance"}
+              {t("workouts.startWorkout")}
             </TabsTrigger>
             <TabsTrigger value="library">
-              {t("workouts.library") || "Bibliothèque"}
+              {t("workouts.library")}
             </TabsTrigger>
             <TabsTrigger value="history">
-              {t("workouts.history") || "Historique"}
+              {t("workouts.history")}
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="workout" className="space-y-8">
             <div className="bg-muted/20 p-3 rounded-md text-sm text-muted-foreground mb-4">
-              <p>Pour une séance efficace, nous recommandons:</p>
+              <p>{t("workouts.recommendations")}</p>
               <ul className="list-disc pl-5 mt-1">
-                <li>20-30 min: 2-3 exercices</li>
-                <li>45 min: 4-5 exercices</li>
-                <li>60+ min: 5-7 exercices</li>
+                <li>{t("workouts.recommendationShort", { min: "20-30", exercises: "2-3" })}</li>
+                <li>{t("workouts.recommendationMedium", { min: "45", exercises: "4-5" })}</li>
+                <li>{t("workouts.recommendationLong", { min: "60+", exercises: "5-7" })}</li>
               </ul>
             </div>
             <SmartWorkoutGenerator />

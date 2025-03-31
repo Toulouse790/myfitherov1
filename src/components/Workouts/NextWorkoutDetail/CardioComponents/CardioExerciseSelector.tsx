@@ -1,4 +1,6 @@
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CardioExerciseSelectorProps {
   exercises: any[];
@@ -11,6 +13,8 @@ export const CardioExerciseSelector = ({
   selectedExercise,
   onExerciseChange
 }: CardioExerciseSelectorProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-4">
       <Select 
@@ -20,7 +24,7 @@ export const CardioExerciseSelector = ({
         }}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Sélectionner un exercice" />
+          <SelectValue placeholder={t("workouts.selectExercise")} />
         </SelectTrigger>
         <SelectContent>
           {exercises.map((exercise) => (

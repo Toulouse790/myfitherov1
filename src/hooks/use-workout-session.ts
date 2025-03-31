@@ -70,7 +70,7 @@ export const useWorkoutSession = () => {
         startTimer();
       }
     } catch (error) {
-      console.error("Erreur lors de la vérification de session active:", error);
+      console.error(t("workouts.errors.activeSessionCheck"), error);
     } finally {
       setIsLoading(false);
     }
@@ -120,10 +120,10 @@ export const useWorkoutSession = () => {
       
       return data;
     } catch (error) {
-      console.error("Erreur lors de la création de la session:", error);
+      console.error(t("workouts.errors.sessionCreate"), error);
       toast({
         title: t("common.error"),
-        description: t("common.error"),
+        description: t("workouts.errors.sessionCreateDescription"),
         variant: "destructive",
       });
       return null;
@@ -175,10 +175,10 @@ export const useWorkoutSession = () => {
       
       return data;
     } catch (error) {
-      console.error("Erreur lors de la finalisation de la session:", error);
+      console.error(t("workouts.errors.sessionFinalize"), error);
       toast({
         title: t("common.error"),
-        description: t("common.error"),
+        description: t("workouts.errors.sessionFinalizeDescription"),
         variant: "destructive",
       });
       return null;

@@ -26,20 +26,10 @@ export const translateMuscleGroup = (muscleGroup: string): string => {
   return translationMap[muscleGroup.toLowerCase()] || muscleGroup.toLowerCase();
 };
 
+// Cette fonction n'est plus utilisée car elle provoque des problèmes de hooks React
+// et est remplacée par la fonction translateMuscleGroupWithContext du hook useExerciseTranslation
 export const translateMuscleGroupWithContext = (muscleGroup: string): string => {
-  // Cette fonction est destinée à être utilisée lorsque le hook useLanguage est disponible
-  const useLanguageContext = () => {
-    try {
-      // Essayer d'utiliser le contexte LanguageContext
-      const { t } = useLanguage();
-      return t(`muscleGroups.${muscleGroup}`, { fallback: translateMuscleGroup(muscleGroup) });
-    } catch (error) {
-      // Fallback si le contexte n'est pas disponible
-      return translateMuscleGroup(muscleGroup);
-    }
-  };
-  
-  return useLanguageContext();
+  return translateMuscleGroup(muscleGroup);
 };
 
 export const reverseTranslateMuscleGroup = (muscleGroup: string): string => {
