@@ -1,96 +1,198 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Timer } from "lucide-react";
 
-interface Exercise {
-  id: string;
-  name: string;
-  sets: number;
-  reps: number;
-}
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { ChevronDown, ChevronUp, Timer, CheckCircle, ArrowLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 interface ExerciseDetailProps {
-  exercise: Exercise;
-  onComplete: (exerciseId: string) => void;
+  exerciseName: string;
+  onComplete: (exerciseName: string) => void;
   onBack: () => void;
 }
 
-export const ExerciseDetail = ({ exercise, onComplete, onBack }: ExerciseDetailProps) => {
+export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDetailProps) => {
+  const { t } = useLanguage();
+  const { toast } = useToast();
   const [currentSet, setCurrentSet] = useState(1);
-  const [restTimer, setRestTimer] = useState<number | null>(null);
+  const [totalSets, setTotalSets] = useState(3);
+  const [weight, setWeight] = useState(20);
+  const [reps, setReps] = useState(12);
+  const [isResting, setIsResting] = useState(false);
+  const [restTime, setRestTime] = useState(90);
+  const [completedSets, setCompletedSets] = useState<number[]>([]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (restTimer !== null && restTimer > 0) {
-      interval = setInterval(() => {
-        setRestTimer((prev) => {
-          if (prev === null || prev <= 1) {
-            clearInterval(interval);
-            return null;
-          }
-          return prev - 1;
+  const handleCompleteSet = () => {
+    if (currentSet <= totalSets) {
+      setCompletedSets([...completedSets, currentSet]);
+      
+      if (currentSet < totalSets) {
+        // Passer à la série suivante avec un temps de repos
+        setIsResting(true);
+        
+        const restInterval = setInterval(() => {
+          setRestTime(prev => {
+            if (prev <= 1) {
+              clearInterval(restInterval);
+              setIsResting(false);
+              setCurrentSet(prev => prev + 1);
+              setRestTime(90);
+              return 90;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
+        toast({
+          title: t("workouts.setCompleted"),
+          description: t("workouts.restBeforeNextSet"),
         });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [restTimer]);
-
-  const handleSetComplete = () => {
-    if (currentSet < exercise.sets) {
-      setRestTimer(90); // 90 secondes de repos
-      setCurrentSet((prev) => prev + 1);
-    } else {
-      onComplete(exercise.id);
+      } else {
+        // Dernière série terminée
+        toast({
+          title: t("workouts.exerciseCompleted"),
+          description: t("workouts.allSetsCompleted"),
+        });
+        
+        // Retourner à la liste après une courte pause
+        setTimeout(() => {
+          onComplete(exerciseName);
+        }, 1500);
+      }
     }
   };
 
-  const progress = ((currentSet - 1) / exercise.sets) * 100;
-
   return (
-    <div className="container max-w-2xl mx-auto p-4 space-y-6">
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onBack}
-          className="hover:bg-transparent"
-        >
-          <ArrowLeft className="h-6 w-6" />
+    <Card className="p-6 space-y-6">
+      <div className="flex items-center">
+        <Button variant="ghost" size="icon" onClick={onBack}>
+          <ArrowLeft className="w-5 h-5" />
         </Button>
-        <h1 className="text-2xl font-bold">{exercise.name}</h1>
+        <h2 className="text-xl font-semibold ml-2">{exerciseName}</h2>
       </div>
-
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Progression</span>
-            <span>{currentSet}/{exercise.sets} séries</span>
-          </div>
-          <Progress value={progress} className="h-2" />
+      
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <p className="font-medium">{t("workouts.progress")}:</p>
+          <p>
+            {t("workouts.set")} {currentSet} / {totalSets}
+          </p>
         </div>
-
-        <div className="bg-card p-6 rounded-lg space-y-4">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold">Série {currentSet}</h2>
-            <p className="text-muted-foreground">{exercise.reps} répétitions</p>
-          </div>
-
-          {restTimer !== null ? (
-            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary animate-pulse">
-              <Timer className="h-6 w-6" />
-              <span>{restTimer}s</span>
+        
+        <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+          <div 
+            className="bg-primary h-full transition-all duration-300" 
+            style={{ width: `${(completedSets.length / totalSets) * 100}%` }}
+          ></div>
+        </div>
+      </div>
+      
+      {isResting ? (
+        <div className="p-6 bg-secondary/10 rounded-lg space-y-4 text-center">
+          <Timer className="w-8 h-8 mx-auto text-primary animate-pulse" />
+          <h3 className="text-xl font-semibold">{t("workouts.restTime")}</h3>
+          <p className="text-3xl font-mono">{restTime}</p>
+          <Button variant="outline" onClick={() => {
+            setIsResting(false);
+            setCurrentSet(prev => prev + 1);
+            setRestTime(90);
+          }}>
+            {t("workouts.skipRest")}
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium">{t("workouts.weight")} (kg)</p>
+              <div className="flex items-center">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setWeight(prev => Math.max(0, prev - 2.5))}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+                <Input 
+                  type="number" 
+                  value={weight}
+                  onChange={(e) => setWeight(Number(e.target.value))}
+                  className="mx-2 text-center"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setWeight(prev => prev + 2.5)}
+                >
+                  <ChevronUp className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          ) : (
-            <Button
-              className="w-full h-12 text-lg"
-              onClick={handleSetComplete}
-            >
-              Valider la série
-            </Button>
-          )}
+            
+            <div className="space-y-2">
+              <p className="text-sm font-medium">{t("workouts.reps")}</p>
+              <div className="flex items-center">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setReps(prev => Math.max(1, prev - 1))}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+                <Input 
+                  type="number" 
+                  value={reps}
+                  onChange={(e) => setReps(Number(e.target.value))}
+                  className="mx-2 text-center"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setReps(prev => prev + 1)}
+                >
+                  <ChevronUp className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm font-medium">{t("workouts.numberOfSets")}</p>
+            <div className="flex items-center">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setTotalSets(prev => Math.max(1, prev - 1))}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+              <Input 
+                type="number" 
+                value={totalSets}
+                onChange={(e) => setTotalSets(Number(e.target.value))}
+                className="mx-2 text-center"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setTotalSets(prev => prev + 1)}
+              >
+                <ChevronUp className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          
+          <Button 
+            className="w-full h-12"
+            onClick={handleCompleteSet}
+          >
+            <CheckCircle className="mr-2 h-5 w-5" />
+            {t("workouts.validateSet")}
+          </Button>
         </div>
-      </div>
-    </div>
+      )}
+    </Card>
   );
 };

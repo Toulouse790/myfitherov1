@@ -1,86 +1,83 @@
 
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Dumbbell, CheckCircle2 } from "lucide-react";
-import { ExerciseDetail } from "./ExerciseDetail";
+import { CheckCircle2, Dumbbell } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Card } from "@/components/ui/card";
 
-interface Exercise {
-  id: string;
-  name: string;
-  sets: number;
-  reps: number;
-  completed: boolean;
+interface ExerciseListProps {
+  exercises: string[];
+  currentExerciseIndex: number;
+  exerciseProgress: Record<string, {
+    completed: boolean;
+    sets: number;
+    totalSets: number;
+  }>;
+  onExerciseSelect: (index: number) => void;
 }
 
-export const ExerciseList = () => {
+export const ExerciseList = ({ 
+  exercises, 
+  currentExerciseIndex, 
+  exerciseProgress,
+  onExerciseSelect 
+}: ExerciseListProps) => {
   const { t } = useLanguage();
-  const [exercises] = useState<Exercise[]>([
-    { id: "1", name: t("exercises.benchPress"), sets: 4, reps: 12, completed: false },
-    { id: "2", name: t("exercises.barbellRow"), sets: 4, reps: 12, completed: false },
-    { id: "3", name: t("exercises.squat"), sets: 4, reps: 12, completed: false },
-    { id: "4", name: t("exercises.shoulderPress"), sets: 4, reps: 12, completed: false }
-  ]);
-
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
-
-  const handleExerciseComplete = (exerciseId: string) => {
-    setSelectedExercise(null);
-  };
-
-  if (selectedExercise) {
-    return (
-      <ExerciseDetail
-        exercise={selectedExercise}
-        onComplete={handleExerciseComplete}
-        onBack={() => setSelectedExercise(null)}
-      />
-    );
-  }
-
+  
   return (
-    <div className="container max-w-2xl mx-auto p-4 space-y-4">
-      <div className="grid gap-4">
-        {exercises.map((exercise) => (
-          <Card
-            key={exercise.id}
-            className={`p-4 cursor-pointer transition-all hover:shadow-lg ${
-              exercise.completed ? "bg-muted" : "hover:border-primary"
-            }`}
-            onClick={() => !exercise.completed && setSelectedExercise(exercise)}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  {exercise.completed ? (
-                    <CheckCircle2 className="w-5 h-5 text-primary" />
-                  ) : (
-                    <Dumbbell className="w-5 h-5 text-primary" />
-                  )}
-                </div>
-                <div>
-                  <h3 className="font-medium">{exercise.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {exercise.sets} {t("workouts.sets")} • {exercise.reps} {t("workouts.reps")}
-                  </p>
-                </div>
+    <Card className="p-4">
+      <h2 className="font-semibold mb-4">{t("workouts.exerciseList")}</h2>
+      <div className="space-y-2">
+        {exercises.map((exercise, index) => {
+          const isActive = index === currentExerciseIndex;
+          const isCompleted = exerciseProgress[exercise]?.completed;
+          
+          return (
+            <div 
+              key={index}
+              className={`p-3 rounded-lg flex items-center cursor-pointer transition-colors ${
+                isActive 
+                  ? 'bg-primary/10 border border-primary/30' 
+                  : isCompleted 
+                    ? 'bg-muted' 
+                    : 'hover:bg-muted/50'
+              }`}
+              onClick={() => onExerciseSelect(index)}
+            >
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                isCompleted ? 'bg-green-100' : 'bg-primary/10'
+              }`}>
+                {isCompleted ? (
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                ) : (
+                  <Dumbbell className="w-4 h-4 text-primary" />
+                )}
               </div>
-              {!exercise.completed && (
-                <Button
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedExercise(exercise);
-                  }}
-                >
-                  {t("workouts.start")}
-                </Button>
-              )}
+              
+              <div className="flex-1">
+                <p className={`${isCompleted ? 'text-muted-foreground line-through' : ''}`}>
+                  {exercise}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {exerciseProgress[exercise]?.totalSets || 3} {t("workouts.sets")}
+                </p>
+              </div>
+              
+              <span className={`text-xs px-2 py-1 rounded ${
+                isCompleted 
+                  ? 'bg-green-100 text-green-700' 
+                  : isActive 
+                    ? 'bg-amber-100 text-amber-700' 
+                    : 'bg-gray-100 text-gray-500'
+              }`}>
+                {isCompleted 
+                  ? t("workouts.completed") 
+                  : isActive 
+                    ? t("workouts.inProgress") 
+                    : t("workouts.pending")}
+              </span>
             </div>
-          </Card>
-        ))}
+          );
+        })}
       </div>
-    </div>
+    </Card>
   );
 };
