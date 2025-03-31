@@ -1,28 +1,43 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ChevronDown, ChevronUp, Timer, CheckCircle, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 
 interface ExerciseDetailProps {
   exerciseName: string;
-  onComplete: (exerciseName: string) => void;
+  onComplete: (exerciseName: string, totalSets: number) => void;
   onBack: () => void;
+  initialSets?: number;
 }
 
-export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDetailProps) => {
+export const ExerciseDetail = ({ 
+  exerciseName, 
+  onComplete, 
+  onBack,
+  initialSets = 3
+}: ExerciseDetailProps) => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [currentSet, setCurrentSet] = useState(1);
-  const [totalSets, setTotalSets] = useState(3);
+  const [totalSets, setTotalSets] = useState(initialSets);
   const [weight, setWeight] = useState(20);
   const [reps, setReps] = useState(12);
   const [isResting, setIsResting] = useState(false);
   const [restTime, setRestTime] = useState(90);
+  const [restInterval, setRestInterval] = useState<NodeJS.Timeout | null>(null);
   const [completedSets, setCompletedSets] = useState<number[]>([]);
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (restInterval) clearInterval(restInterval);
+    };
+  }, [restInterval]);
 
   const handleCompleteSet = () => {
     if (currentSet <= totalSets) {
@@ -32,10 +47,10 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
         // Passer à la série suivante avec un temps de repos
         setIsResting(true);
         
-        const restInterval = setInterval(() => {
+        const interval = setInterval(() => {
           setRestTime(prev => {
             if (prev <= 1) {
-              clearInterval(restInterval);
+              clearInterval(interval);
               setIsResting(false);
               setCurrentSet(prev => prev + 1);
               setRestTime(90);
@@ -45,9 +60,14 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
           });
         }, 1000);
         
+        setRestInterval(interval);
+        
+        // Calculer les calories brûlées (estimation)
+        const caloriesBurned = Math.round(reps * weight * 0.15);
+        
         toast({
           title: t("workouts.setCompleted"),
-          description: t("workouts.restBeforeNextSet"),
+          description: `${caloriesBurned} ${t("workouts.caloriesBurned")}. ${t("workouts.restBeforeNextSet")}`,
         });
       } else {
         // Dernière série terminée
@@ -58,19 +78,26 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
         
         // Retourner à la liste après une courte pause
         setTimeout(() => {
-          onComplete(exerciseName);
+          onComplete(exerciseName, totalSets);
         }, 1500);
       }
     }
   };
 
+  const skipRest = () => {
+    if (restInterval) clearInterval(restInterval);
+    setIsResting(false);
+    setCurrentSet(prev => prev + 1);
+    setRestTime(90);
+  };
+
   return (
     <Card className="p-6 space-y-6">
       <div className="flex items-center">
-        <Button variant="ghost" size="icon" onClick={onBack}>
+        <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <h2 className="text-xl font-semibold ml-2">{exerciseName}</h2>
+        <h2 className="text-xl font-semibold">{exerciseName}</h2>
       </div>
       
       <div className="space-y-2">
@@ -81,24 +108,15 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
           </p>
         </div>
         
-        <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
-          <div 
-            className="bg-primary h-full transition-all duration-300" 
-            style={{ width: `${(completedSets.length / totalSets) * 100}%` }}
-          ></div>
-        </div>
+        <Progress value={(completedSets.length / totalSets) * 100} />
       </div>
       
       {isResting ? (
         <div className="p-6 bg-secondary/10 rounded-lg space-y-4 text-center">
           <Timer className="w-8 h-8 mx-auto text-primary animate-pulse" />
           <h3 className="text-xl font-semibold">{t("workouts.restTime")}</h3>
-          <p className="text-3xl font-mono">{restTime}</p>
-          <Button variant="outline" onClick={() => {
-            setIsResting(false);
-            setCurrentSet(prev => prev + 1);
-            setRestTime(90);
-          }}>
+          <p className="text-4xl font-mono">{restTime}s</p>
+          <Button variant="outline" onClick={skipRest}>
             {t("workouts.skipRest")}
           </Button>
         </div>
@@ -165,14 +183,21 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
                 variant="outline"
                 size="icon"
                 onClick={() => setTotalSets(prev => Math.max(1, prev - 1))}
+                disabled={completedSets.length >= totalSets - 1}
               >
                 <ChevronDown className="h-4 w-4" />
               </Button>
               <Input 
                 type="number" 
                 value={totalSets}
-                onChange={(e) => setTotalSets(Number(e.target.value))}
+                onChange={(e) => {
+                  const newValue = Number(e.target.value);
+                  if (newValue >= completedSets.length) {
+                    setTotalSets(newValue);
+                  }
+                }}
                 className="mx-2 text-center"
+                min={completedSets.length + 1}
               />
               <Button
                 variant="outline"
@@ -185,12 +210,29 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
           </div>
           
           <Button 
-            className="w-full h-12"
+            className="w-full h-12 gap-2"
             onClick={handleCompleteSet}
           >
-            <CheckCircle className="mr-2 h-5 w-5" />
-            {t("workouts.validateSet")}
+            <CheckCircle className="h-5 w-5" />
+            {currentSet === totalSets 
+              ? t("workouts.completeExercise") 
+              : t("workouts.validateSet")}
           </Button>
+        </div>
+      )}
+
+      {/* Afficher résumé des sets précédents */}
+      {completedSets.length > 0 && !isResting && (
+        <div className="space-y-2 border-t pt-4">
+          <p className="text-sm font-medium">{t("workouts.completedSets")}</p>
+          <div className="space-y-1">
+            {completedSets.map((setNum) => (
+              <div key={setNum} className="flex items-center justify-between text-sm">
+                <span>{t("workouts.set")} {setNum}</span>
+                <span className="text-muted-foreground">{reps} x {weight}kg</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </Card>
