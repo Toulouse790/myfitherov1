@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Header } from "@/components/Layout/Header";
-import { WorkoutLibrary, WorkoutHistory, WorkoutGenerator } from "@/components/Workouts";
+import { WorkoutLibrary, WorkoutHistory, SmartWorkoutGenerator } from "@/components/Workouts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { WorkoutFlowManager } from "@/components/Workouts/WorkoutFlow/WorkoutFlowManager";
@@ -43,7 +43,7 @@ export default function Workouts() {
           </TabsList>
           
           <TabsContent value="workout" className="space-y-8">
-            <WorkoutFlowManager />
+            <SmartWorkoutGenerator />
           </TabsContent>
           
           <TabsContent value="library">
