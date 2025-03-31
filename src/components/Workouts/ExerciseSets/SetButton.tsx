@@ -31,20 +31,20 @@ export const SetButton = ({
       {isResting ? (
         <div className="flex items-center gap-2">
           <Timer className="h-5 w-5" />
-          <span>{t("workouts.rest")}: {restTime}s</span>
+          <span>{t("workouts.rest") || "Repos"}: {restTime}s</span>
         </div>
       ) : isTransitioning ? (
         <div className="flex items-center gap-2">
           <Timer className="h-5 w-5" />
-          <span>{t("workouts.preparingNextExercise")}</span>
+          <span>{t("workouts.preparingNextExercise") || "Préparation du prochain exercice"}</span>
         </div>
       ) : currentSet > maxSets ? (
         <div className="flex items-center gap-2">
           <Check className="h-5 w-5" />
-          <span>{t("workouts.exerciseCompleted")}</span>
+          <span>{t("workouts.exerciseCompleted") || "Exercice terminé"}</span>
         </div>
       ) : (
-        t("workouts.validateSet")
+        t("workouts.validateSet") || "Valider la série"
       )}
     </Button>
   );

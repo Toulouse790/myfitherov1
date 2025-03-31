@@ -12,7 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 
 interface ExerciseDetailProps {
   exerciseName: string;
-  onComplete: (exerciseName: string, totalSets: number) => void;
+  onComplete: (exerciseName: string, totalSets?: number) => void;
   onBack: () => void;
   initialSets?: number;
 }

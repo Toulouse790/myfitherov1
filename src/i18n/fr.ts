@@ -1,3 +1,4 @@
+
 export const fr = {
   common: {
     save: "Enregistrer",
@@ -10,7 +11,9 @@ export const fr = {
     loading: "Chargement...",
     error: "Erreur",
     success: "Succès",
-    back: "Retour"
+    back: "Retour",
+    min: "min",
+    sec: "sec"
   },
   settings: {
     appSettings: "Paramètres de l'application",
@@ -180,7 +183,24 @@ export const fr = {
     totalDuration: "Durée totale",
     totalCalories: "Calories brûlées",
     totalSets: "Séries complétées",
-    workoutPerception: "Comment était cet entraînement ?"
+    workoutPerception: "Comment était cet entraînement?",
+    set: "Série",
+    sets: "Séries",
+    reps: "Répétitions",
+    weight: "Poids",
+    rest: "Repos",
+    exerciseCompleted: "Exercice terminé",
+    setCompleted: "Série complétée",
+    validateSet: "Valider la série",
+    completeExercise: "Terminer l'exercice",
+    skipRest: "Passer le repos",
+    restTime: "Temps de repos",
+    caloriesBurned: "calories brûlées",
+    restBeforeNextSet: "Repos avant la prochaine série",
+    allSetsCompleted: "Toutes les séries ont été complétées",
+    completedSets: "Séries complétées",
+    numberOfSets: "Nombre de séries",
+    preparingNextExercise: "Préparation du prochain exercice"
   },
   nutrition: {
     title: "Nutrition",

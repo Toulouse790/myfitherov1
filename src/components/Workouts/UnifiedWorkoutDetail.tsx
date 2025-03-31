@@ -15,12 +15,14 @@ import { debugLogger } from "@/utils/debug-logger";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { useSessionActions } from "@/hooks/workout/use-session-actions";
 import { ExerciseDetail } from "./WorkoutSession/ExerciseDetail";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [exercises, setExercises] = useState<string[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [sessionDuration, setSessionDuration] = useState(0);
@@ -118,15 +120,15 @@ export const UnifiedWorkoutDetail = () => {
       await handleConfirmEndWorkout(difficulty, duration, muscleGroups);
       
       toast({
-        title: "Séance terminée !",
-        description: "Félicitations ! Votre séance a été enregistrée.",
+        title: t("workouts.setCompleted") || "Séance terminée !",
+        description: t("workouts.allSetsCompleted") || "Félicitations ! Votre séance a été enregistrée.",
       });
 
       navigate('/workouts');
     } catch (error) {
       console.error('Error completing workout:', error);
       toast({
-        title: "Erreur",
+        title: t("common.error") || "Erreur",
         description: "Impossible de terminer la séance",
         variant: "destructive",
       });
@@ -165,14 +167,14 @@ export const UnifiedWorkoutDetail = () => {
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Exercices de la séance</h2>
+                  <h2 className="text-2xl font-bold">{t("workouts.exerciseLibrary") || "Exercices de la séance"}</h2>
                   <Button 
                     variant="outline" 
                     onClick={handleFinishWorkout}
                     className="gap-2"
                   >
                     <Timer className="w-4 h-4" />
-                    Terminer la séance
+                    {t("workouts.completeWorkout") || "Terminer la séance"}
                   </Button>
                 </div>
                 {exercises.map((exercise, index) => (
