@@ -10,6 +10,9 @@ import { defaultSuggestions } from "./defaultSuggestions";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { databaseSuggestions } from "./databaseSuggestions";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { Users } from "lucide-react";
 
 export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggestionsProps) => {
   const [isGenerateOpen, setIsGenerateOpen] = useState(false);
@@ -18,6 +21,7 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
   const { user } = useAuth();
   const { t } = useLanguage();
   const [localSuggestions, setLocalSuggestions] = useState<WorkoutSuggestion[]>([]);
+  const navigate = useNavigate();
 
   // Récupérer les suggestions depuis la base de données
   const { data: dbSuggestions = [], isLoading, error } = useQuery({
@@ -138,6 +142,10 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
     setIsGenerateOpen(true);
   };
 
+  const handleNavigateToSportsPrograms = () => {
+    navigate('/workouts');
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -167,6 +175,33 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
             onSelect={() => handleSelectWorkout(suggestion.type)}
           />
         ))}
+      </div>
+      
+      <div className="mt-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xl font-semibold">{t('workouts.sportPrograms')}</h2>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-2"
+            onClick={handleNavigateToSportsPrograms}
+          >
+            <Users size={16} />
+            {t('workouts.teamSports')}
+          </Button>
+        </div>
+        <div className="border rounded-md p-4 bg-muted/10">
+          <p className="text-sm text-muted-foreground mb-3">
+            {t('workouts.sportSpecificDescription') || "Entraînements adaptés à votre sport et votre position"}
+          </p>
+          <Button 
+            variant="default" 
+            className="w-full"
+            onClick={handleNavigateToSportsPrograms}
+          >
+            {t('common.view') || "Voir"}
+          </Button>
+        </div>
       </div>
       
       <GenerateWorkoutDialog

@@ -2,9 +2,10 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, LineChart, PlusCircle, Trophy } from "lucide-react";
+import { Dumbbell, Footprints, LineChart, PlusCircle, Trophy } from "lucide-react";
 import { RecommendedPrograms } from "@/components/Workouts/RecommendedPrograms";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SportPrograms } from "@/components/Workouts/SportPrograms";
 
 export function HomeTab() {
   const navigate = useNavigate();
@@ -36,6 +37,27 @@ export function HomeTab() {
         
         <Card>
           <CardHeader>
+            <CardTitle>{t("workouts.sportSpecific")}</CardTitle>
+            <CardDescription>
+              {t("workouts.sportSpecificDescription")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center py-4">
+            <Footprints className="h-16 w-16 text-primary/60" />
+          </CardContent>
+          <CardFooter>
+            <Button
+              onClick={() => document.getElementById('sport-programs-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="w-full"
+            >
+              <Footprints className="h-4 w-4 mr-2" />
+              {t("workouts.sportPrograms")}
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        <Card>
+          <CardHeader>
             <CardTitle>{t("workouts.latestPerformances")}</CardTitle>
             <CardDescription>
               {t("workouts.trackProgressDescription")}
@@ -58,6 +80,10 @@ export function HomeTab() {
       </div>
       
       <RecommendedPrograms />
+      
+      <div id="sport-programs-section">
+        <SportPrograms />
+      </div>
     </div>
   );
 }

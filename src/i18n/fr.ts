@@ -1,4 +1,3 @@
-
 export const fr = {
   common: {
     back: "Retour",
@@ -15,8 +14,8 @@ export const fr = {
     select: "Sélectionner",
     submit: "Soumettre",
     view: "Voir",
-    min: "min",
-    sec: "sec"
+    hideDebug: "Masquer le débogage",
+    showDebug: "Afficher le débogage"
   },
   auth: {
     signIn: "Connexion",
@@ -121,7 +120,16 @@ export const fr = {
     noPrograms: "Aucun programme disponible pour le lieu d'entraînement sélectionné.",
     teamSports: "Sports collectifs",
     individualSports: "Sports individuels",
-    sportPrograms: "Programmes sportifs"
+    sportPrograms: "Programmes sportifs",
+    recommendations: "Recommandations",
+    recommendationShort: "Court (${min} min, ${exercises} exercices)",
+    recommendationMedium: "Moyen (${min} min, ${exercises} exercices)",
+    recommendationLong: "Long (${min}+ min, ${exercises} exercices)",
+    sportSpecific: "Spécifique au Sport",
+    sportSpecificDescription: "Accédez à des programmes d'entraînement adaptés à votre sport et votre position",
+    chooseWorkoutType: "Choisissez votre type d'entraînement",
+    muscleGroups: "Groupes Musculaires",
+    muscleGroupsDescription: "Entraînez-vous par groupes musculaires ciblés"
   },
   difficulty: {
     easy: "Facile",
