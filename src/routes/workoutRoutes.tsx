@@ -1,6 +1,6 @@
 
 import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
-import Workouts from "@/pages/Workouts";
+import Workouts from "@/pages/workouts/index"; // Updated import path to be explicit
 import { WorkoutSession } from "@/components/Workouts/WorkoutSession";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 

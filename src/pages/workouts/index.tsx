@@ -12,7 +12,7 @@ export default function Workouts() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container max-w-4xl mx-auto p-4">
+      <div className="container max-w-4xl mx-auto p-4 pt-16">
         {activeSession && (
           <ActiveSessionCard 
             activeSession={activeSession} 
