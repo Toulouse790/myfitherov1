@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -17,8 +18,6 @@ export const Header = ({
             <Link to="/" className="mr-6 flex items-center space-x-2">
               <span className="font-bold text-xl text-primary">MyFitHero</span>
             </Link>
-            <span className="text-sm text-muted-foreground">
-          </span>
           </div>
         </div>
       </header>
