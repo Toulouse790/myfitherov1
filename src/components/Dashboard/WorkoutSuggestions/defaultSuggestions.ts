@@ -1,3 +1,4 @@
+
 export const defaultSuggestions = [
   {
     id: 1,
@@ -22,7 +23,7 @@ export const defaultSuggestions = [
   {
     id: 3,
     title: "Séance rapide",
-    description: "20-30 minutes d'entraînement",
+    description: "3 exercices essentiels en 25 minutes",
     icon_name: "Zap",
     type: "quick",
     duration: 25,

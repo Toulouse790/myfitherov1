@@ -49,28 +49,31 @@ export const useSessionActions = () => {
       // Définir les exercices selon le type
       let defaultExercises: string[];
       let workoutType: string;
+      let targetDuration: number;
 
       if (type === 'custom' && customExercises && customExercises.length > 0) {
         defaultExercises = customExercises;
         workoutType = 'strength';
+        targetDuration = customExercises.length <= 3 ? 30 : 45;
         debugLogger.log("useSessionActions", "Création d'une séance avec exercices personnalisés:", customExercises);
       } else if (type === 'cardio') {
         defaultExercises = [
           "Course à pied",
           "Vélo stationnaire",
-          "Rameur",
-          "Corde à sauter"
+          "Rameur"
         ];
         workoutType = 'cardio';
+        targetDuration = 30;
       } else if (type === 'hiit') {
         defaultExercises = [
           "Burpees",
           "Mountain climbers",
-          "Jumping jacks",
-          "High knees"
+          "Jumping jacks"
         ];
         workoutType = 'hiit';
+        targetDuration = 30;
       } else {
+        // Pour le quick workout, on limite à 3 exercices pour respecter les 20-30 minutes
         defaultExercises = type === 'quick' ? [
           "Extensions triceps",
           "Développé couché",
@@ -83,13 +86,14 @@ export const useSessionActions = () => {
           "Développé militaire"
         ];
         workoutType = 'strength';
+        targetDuration = type === 'quick' ? 25 : 45;
       }
 
       const workoutData = {
         user_id: user.id,
         workout_type: workoutType,
         status: 'in_progress',
-        target_duration_minutes: type === 'quick' ? 30 : 45,
+        target_duration_minutes: targetDuration,
         exercises: defaultExercises,
       };
 

@@ -43,6 +43,14 @@ export default function Workouts() {
           </TabsList>
           
           <TabsContent value="workout" className="space-y-8">
+            <div className="bg-muted/20 p-3 rounded-md text-sm text-muted-foreground mb-4">
+              <p>Pour une séance efficace, nous recommandons:</p>
+              <ul className="list-disc pl-5 mt-1">
+                <li>20-30 min: 2-3 exercices</li>
+                <li>45 min: 4-5 exercices</li>
+                <li>60+ min: 5-7 exercices</li>
+              </ul>
+            </div>
             <SmartWorkoutGenerator />
           </TabsContent>
           

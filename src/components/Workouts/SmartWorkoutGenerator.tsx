@@ -148,18 +148,23 @@ export function SmartWorkoutGenerator() {
     setIsGenerating(true);
     
     try {
+      // Limiter le nombre d'exercices en fonction de la durée
+      const maxExercises = duration[0] <= 30 ? 3 : (duration[0] <= 45 ? 4 : 6);
+      
       // Obtenir des exercices suggérés
       const exercises = await generateSuggestedExercises();
-      setSuggestedExercises(exercises);
+      // Limiter le nombre d'exercices pour respecter la durée
+      const limitedExercises = exercises.slice(0, maxExercises);
+      setSuggestedExercises(limitedExercises);
       
       // Simuler un délai pour l'expérience utilisateur
       setTimeout(() => {
         setIsGenerating(false);
         
-        if (exercises.length > 0) {
+        if (limitedExercises.length > 0) {
           toast({
             title: "Séance générée",
-            description: `${exercises.length} exercices ont été sélectionnés pour vous`,
+            description: `${limitedExercises.length} exercices ont été sélectionnés pour vous`,
           });
         } else {
           toast({
