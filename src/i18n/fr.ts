@@ -1,4 +1,3 @@
-
 export const fr = {
   common: {
     save: "Enregistrer",
@@ -204,7 +203,6 @@ export const fr = {
     restTimer: "Minuteur de repos",
     nextExercise: "Exercice suivant",
     completeSet: "Série terminée",
-    completeWorkout: "Terminer l'entraînement",
     summaryTitle: "Résumé de l'entraînement",
     totalDuration: "Durée totale",
     totalCalories: "Calories brûlées",
