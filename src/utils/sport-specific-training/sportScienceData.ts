@@ -1,4 +1,3 @@
-
 import { SportTrainingRecommendation } from "@/types/workout-session";
 
 /**
@@ -237,6 +236,87 @@ export const sportScienceRecommendations: Record<string, Record<string, SportTra
         recoveryFocus: ["Récupération des tissus conjonctifs", "Récupération musculaire intense"]
       }
     },
+    // Talonneur
+    "talonneur": {
+      primaryExercises: [
+        "Squat", "Développé couché", "Soulevé de terre",
+        "Rowing barre", "Renforcement cervical"
+      ],
+      secondaryExercises: [
+        "Gainage dynamique", "Tractions", "Exercices d'explosivité",
+        "Exercices de lancer"
+      ],
+      performanceMetrics: {
+        raw_strength: 9,
+        scrum_technique: 9,
+        throwing_accuracy: 10,
+        mobility: 8,
+        explosiveness: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.9, // g/kg poids corporel
+        carbohydrateIntake: 5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération musculaire", "Coordination fine"]
+      }
+    },
+    // Deuxième ligne
+    "deuxième ligne": {
+      primaryExercises: [
+        "Squat", "Soulevé de terre", "Développé couché", 
+        "Tirage vertical", "Fentes lestées"
+      ],
+      secondaryExercises: [
+        "Renforcement lombo-abdominal", "Extension du dos", 
+        "Travail des sauts", "Exercices d'agilité"
+      ],
+      performanceMetrics: {
+        raw_strength: 10,
+        lineout_jumping: 10,
+        work_rate: 8,
+        tackling: 8,
+        endurance: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 2.0, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération musculaire intense", "Récupération articulaire"]
+      }
+    },
+    // Troisième ligne
+    "troisième ligne": {
+      primaryExercises: [
+        "Sprint résisté", "Squat", "Gainage dynamique", 
+        "Clean & Jerk", "Burpees"
+      ],
+      secondaryExercises: [
+        "Fentes sautées", "Travail de changements de direction", 
+        "Rowing", "Box jumps"
+      ],
+      performanceMetrics: {
+        work_rate: 10,
+        tackling: 9,
+        speed: 8,
+        strength: 8,
+        ball_carrying: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.8, // g/kg poids corporel
+        carbohydrateIntake: 6, // g/kg poids corporel
+        hydrationNeeds: "Très élevés - 3.5-4.5L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8.5,
+        recoveryFocus: ["Récupération métabolique", "Récupération musculaire"]
+      }
+    },
     // Demi de mêlée
     "demi": {
       primaryExercises: [
@@ -264,6 +344,60 @@ export const sportScienceRecommendations: Record<string, Record<string, SportTra
         recoveryFocus: ["Récupération cognitive", "Coordination neuromusculaire"]
       }
     },
+    // Demi d'ouverture
+    "ouvreur": {
+      primaryExercises: [
+        "Squat sauté", "Exercices de kick", "Sprint fractionnés", 
+        "Travail de passes", "Exercices de précision"
+      ],
+      secondaryExercises: [
+        "Renforcement épaules", "Gainage dynamique", 
+        "Travail proprioceptif", "Exercices d'équilibre"
+      ],
+      performanceMetrics: {
+        kicking: 10,
+        decision_making: 10,
+        passing: 9,
+        vision: 9,
+        tackling: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.6, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération cognitive", "Précision technique"]
+      }
+    },
+    // Centre
+    "centre": {
+      primaryExercises: [
+        "Sprint résisté", "Squat sauté", "Bench press", 
+        "Exercices de plaquage", "Changements de direction"
+      ],
+      secondaryExercises: [
+        "Planche latérale", "Step-ups", "Rotations du tronc", 
+        "Exercices de passes"
+      ],
+      performanceMetrics: {
+        tackling: 9,
+        line_breaking: 9,
+        speed: 8,
+        power: 8,
+        ball_handling: 8
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.8, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération neuromusculaire", "Récupération des contacts"]
+      }
+    },
     // Ailier
     "ailier_rugby": {
       primaryExercises: [
@@ -289,6 +423,33 @@ export const sportScienceRecommendations: Record<string, Record<string, SportTra
       sleepRecommendations: {
         minHours: 8.5,
         recoveryFocus: ["Récupération musculaire", "Régénération nerveuse"]
+      }
+    },
+    // Arrière
+    "arrière": {
+      primaryExercises: [
+        "Exercices de kick", "Squat sauté", "Sprint", 
+        "Travail aérien", "Changements de direction"
+      ],
+      secondaryExercises: [
+        "Stabilisation cheville", "Renforcement lombaire", 
+        "Exercices d'équilibre", "Travail sous pression"
+      ],
+      performanceMetrics: {
+        kicking: 9,
+        aerial_skills: 10,
+        positioning: 9,
+        counter_attack: 9,
+        tackling: 7
+      },
+      nutritionGuidelines: {
+        proteinIntake: 1.7, // g/kg poids corporel
+        carbohydrateIntake: 5.5, // g/kg poids corporel
+        hydrationNeeds: "Élevés - 3-4L/jour"
+      },
+      sleepRecommendations: {
+        minHours: 8,
+        recoveryFocus: ["Récupération cognitive", "Vigilance"]
       }
     }
   },

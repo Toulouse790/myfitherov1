@@ -58,7 +58,7 @@ export const useSportExerciseSelection = (sportId?: string, positionId?: string)
 
       try {
         setIsLoading(true);
-        debugLogger.log("SportExerciseSelection", "Chargement des exercices pour le sport:", sportId, "et le poste:", positionId);
+        debugLogger.log("SportExerciseSelection", "Chargement des exercices pour le sport et le poste");
 
         // Récupérer d'abord les exercices depuis Supabase
         const { data, error } = await supabase
@@ -75,7 +75,7 @@ export const useSportExerciseSelection = (sportId?: string, positionId?: string)
           throw error;
         }
 
-        debugLogger.log("SportExerciseSelection", "Données reçues de Supabase:", data);
+        debugLogger.log("SportExerciseSelection", "Données reçues de Supabase");
         
         let exerciseNames: string[] = [];
         
@@ -104,7 +104,7 @@ export const useSportExerciseSelection = (sportId?: string, positionId?: string)
               ...recommendations.secondaryExercises
             ];
             
-            debugLogger.log("SportExerciseSelection", "Utilisation des recommandations scientifiques:", exerciseNames);
+            debugLogger.log("SportExerciseSelection", "Utilisation des recommandations scientifiques");
           } else {
             // Fallback sur des exercices génériques
             exerciseNames = getFallbackExercises();
@@ -114,7 +114,7 @@ export const useSportExerciseSelection = (sportId?: string, positionId?: string)
           exerciseNames = getFallbackExercises();
         }
         
-        debugLogger.log("SportExerciseSelection", "Exercices finaux:", exerciseNames);
+        debugLogger.log("SportExerciseSelection", "Exercices finaux");
         setExercises(exerciseNames);
 
       } catch (error) {
