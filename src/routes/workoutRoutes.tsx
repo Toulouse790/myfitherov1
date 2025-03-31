@@ -1,7 +1,7 @@
 
 import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
 import Workouts from "@/pages/Workouts";
-import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
+import { WorkoutSession } from "@/components/Workouts/WorkoutSession";
 import WorkoutGenerate from "@/pages/WorkoutGenerate";
 
 export const workoutRoutes = [
@@ -11,7 +11,7 @@ export const workoutRoutes = [
   },
   {
     path: "workouts/:sessionId",
-    element: <RequireQuestionnaire><UnifiedWorkoutDetail /></RequireQuestionnaire>,
+    element: <RequireQuestionnaire><WorkoutSession /></RequireQuestionnaire>,
   },
   {
     path: "workouts/generate",
