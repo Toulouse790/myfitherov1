@@ -30,6 +30,7 @@ export const SetButton = ({
       className={`w-full ${isMobile ? 'h-14 text-base' : 'h-12 text-lg'} transition-all`}
       disabled={isResting || (currentSet > maxSets && !isTransitioning)}
       size={isMobile ? "lg" : "default"}
+      aria-label={isResting ? t("workouts.restingLabel") || "En repos" : t("workouts.validateSetLabel") || "Valider la série"}
     >
       {isResting ? (
         <div className="flex items-center gap-2">

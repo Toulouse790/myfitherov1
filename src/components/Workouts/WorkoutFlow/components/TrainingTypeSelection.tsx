@@ -1,57 +1,98 @@
 
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Activity, Dumbbell } from "lucide-react";
+import { Dumbbell, Footprints } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface TrainingTypeSelectionProps {
   onSelectTrainingType: (type: "muscle" | "sport") => void;
 }
 
 export const TrainingTypeSelection = ({ onSelectTrainingType }: TrainingTypeSelectionProps) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-6 max-w-3xl mx-auto"
-    >
-      <h2 className="text-xl font-bold text-center mb-6">
-        Choisissez votre type d'entraînement
-      </h2>
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
-        <Card
-          onClick={() => onSelectTrainingType("muscle")}
-          className="p-6 cursor-pointer hover:shadow-md transition-all hover:border-primary"
-        >
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Dumbbell className="w-8 h-8 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">Par groupe musculaire</h3>
-              <p className="text-sm text-muted-foreground mt-2">
-                Sélectionnez les groupes musculaires que vous souhaitez travailler
-              </p>
-            </div>
-          </div>
-        </Card>
+  const { t } = useLanguage();
+  const [selectedType, setSelectedType] = useState<"muscle" | "sport" | null>(null);
 
-        <Card
-          onClick={() => onSelectTrainingType("sport")}
-          className="p-6 cursor-pointer hover:shadow-md transition-all hover:border-primary"
-        >
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Activity className="w-8 h-8 text-primary" />
+  const handleSelect = (type: "muscle" | "sport") => {
+    setSelectedType(type);
+    onSelectTrainingType(type);
+    debugLogger.log("TrainingTypeSelection", "Type d'entraînement sélectionné:", type);
+  };
+
+  return (
+    <div className="w-full max-w-3xl">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          {t("workouts.chooseWorkoutType") || "Choisissez votre type d'entraînement"}
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card 
+            onClick={() => handleSelect("muscle")}
+            className={`p-6 cursor-pointer hover:shadow-md transition-all hover:border-primary ${
+              selectedType === "muscle" ? "border-2 border-primary bg-primary/5" : ""
+            }`}
+            role="button"
+            aria-pressed={selectedType === "muscle"}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelect("muscle");
+              }
+            }}
+          >
+            <div className="flex flex-col items-center text-center gap-4 p-4">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <Dumbbell className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">
+                  {t("workouts.muscleGroups") || "Groupes Musculaires"}
+                </h3>
+                <p className="text-muted-foreground mt-2">
+                  {t("workouts.muscleGroupsDescription") || "Entraînez-vous par groupes musculaires ciblés"}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold">Spécifique au sport</h3>
-              <p className="text-sm text-muted-foreground mt-2">
-                Sélectionnez votre sport et votre poste pour des exercices adaptés
-              </p>
+          </Card>
+        
+          <Card 
+            onClick={() => handleSelect("sport")}
+            className={`p-6 cursor-pointer hover:shadow-md transition-all hover:border-primary ${
+              selectedType === "sport" ? "border-2 border-primary bg-primary/5" : ""
+            }`}
+            role="button"
+            aria-pressed={selectedType === "sport"}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelect("sport");
+              }
+            }}
+          >
+            <div className="flex flex-col items-center text-center gap-4 p-4">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <Footprints className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">
+                  {t("workouts.sportSpecific") || "Spécifique au Sport"}
+                </h3>
+                <p className="text-muted-foreground mt-2">
+                  {t("workouts.sportSpecificDescription") || "Entraînement adapté à votre sport et position"}
+                </p>
+              </div>
             </div>
-          </div>
-        </Card>
-      </div>
-    </motion.div>
+          </Card>
+        </div>
+      </motion.div>
+    </div>
   );
 };

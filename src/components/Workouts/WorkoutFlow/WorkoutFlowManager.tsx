@@ -39,16 +39,23 @@ export const WorkoutFlowManager = () => {
 
   const handleExerciseSelection = (exercises: string[]) => {
     setSelectedExercises(exercises);
+    // Log pour déboguer
+    debugLogger.log("WorkoutFlowManager", "Exercices sélectionnés:", exercises);
   };
 
   const handleMuscleGroupSelection = (muscleId: string) => {
     setSelectedMuscleGroup(muscleId);
+    // Assurer que nous passons bien à l'étape de sélection d'exercices
     setCurrentStep(3);
+    // Log pour déboguer
+    debugLogger.log("WorkoutFlowManager", "Groupe musculaire sélectionné:", muscleId);
   };
 
   const handleTrainingTypeSelection = (type: "muscle" | "sport") => {
     setTrainingType(type);
     setCurrentStep(2);
+    // Log pour déboguer
+    debugLogger.log("WorkoutFlowManager", "Type d'entraînement sélectionné:", type);
   };
 
   const handleSportPositionSelection = (sportId: string, positionId: string) => {
@@ -58,8 +65,13 @@ export const WorkoutFlowManager = () => {
     // Une fois le sport et le poste sélectionnés, passer à la sélection des exercices
     if (sportExercises && sportExercises.length > 0) {
       setSelectedExercises(sportExercises);
+      debugLogger.log("WorkoutFlowManager", "Exercices de sport chargés automatiquement:", sportExercises);
+    } else {
+      debugLogger.warn("WorkoutFlowManager", "Aucun exercice trouvé pour le sport et la position sélectionnés");
     }
-    setCurrentStep(4); // Passer directement au récapitulatif pour les exercices par sport
+    
+    // Passer directement au récapitulatif pour les exercices par sport
+    setCurrentStep(4);
   };
 
   const handleNext = () => {
@@ -97,6 +109,8 @@ export const WorkoutFlowManager = () => {
       return;
     }
     
+    debugLogger.log("WorkoutFlowManager", "Progression à l'étape suivante:", currentStep + 1);
+    
     if (currentStep < workoutSteps.length) {
       setCurrentStep(prev => prev + 1);
     } else {
@@ -106,6 +120,7 @@ export const WorkoutFlowManager = () => {
 
   const handleBack = () => {
     if (currentStep > 1) {
+      debugLogger.log("WorkoutFlowManager", "Retour à l'étape précédente:", currentStep - 1);
       setCurrentStep(prev => prev - 1);
     }
   };
@@ -125,6 +140,13 @@ export const WorkoutFlowManager = () => {
     if (selectedExercises.length > 0) {
       debugLogger.log("WorkoutFlowManager", "Démarrage d'entraînement avec exercices:", selectedExercises);
       await createWorkoutSession('custom', selectedExercises);
+    } else {
+      debugLogger.error("WorkoutFlowManager", "Tentative de démarrer un entraînement sans exercices sélectionnés");
+      toast({
+        title: "Aucun exercice sélectionné",
+        description: "Vous devez sélectionner au moins un exercice pour commencer",
+        variant: "destructive",
+      });
     }
   };
 

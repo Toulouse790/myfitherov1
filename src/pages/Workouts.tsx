@@ -1,41 +1,62 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Header } from "@/components/Layout/Header";
-import { WorkoutFlowManager } from "@/components/Workouts/WorkoutFlow/WorkoutFlowManager";
-import { useWorkoutExercisesState } from "@/hooks/workout/use-workout-exercises-state";
-import { Loader2 } from "lucide-react";
+import { WorkoutLibrary } from "@/components/Workouts/WorkoutLibrary";
+import { WorkoutHistory } from "@/components/Workouts/WorkoutHistory";
+import { WorkoutGenerator } from "@/components/Workouts/WorkoutGenerator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { WorkoutFlowManager } from "@/components/Workouts/WorkoutFlow/WorkoutFlowManager";
+import { DebugExercises } from "@/components/Workouts/components/DebugExercises";
 
-export const Workouts = () => {
-  const { isLoading } = useWorkoutExercisesState();
-  const [initialLoading, setInitialLoading] = useState(true);
+export default function Workouts() {
   const { t } = useLanguage();
-
-  useEffect(() => {
-    // Simule un temps de chargement initial
-    const timer = setTimeout(() => {
-      setInitialLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (initialLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-      </div>
-    );
-  }
-
+  const [showDebug, setShowDebug] = useState(false);
+  
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 pb-20">
-        <WorkoutFlowManager />
+      <div className="container max-w-7xl mx-auto p-4 pt-40 pb-20">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">
+            {t("workouts.title") || "Entraînements"}
+          </h1>
+          <button 
+            onClick={() => setShowDebug(!showDebug)}
+            className="text-xs text-muted-foreground hover:underline"
+          >
+            {showDebug ? "Masquer débogage" : "Afficher débogage"}
+          </button>
+        </div>
+        
+        {showDebug && <DebugExercises />}
+        
+        <Tabs defaultValue="workout">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="workout">
+              {t("workouts.startWorkout") || "Démarrer une séance"}
+            </TabsTrigger>
+            <TabsTrigger value="library">
+              {t("workouts.library") || "Bibliothèque"}
+            </TabsTrigger>
+            <TabsTrigger value="history">
+              {t("workouts.history") || "Historique"}
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="workout" className="space-y-8">
+            <WorkoutFlowManager />
+          </TabsContent>
+          
+          <TabsContent value="library">
+            <WorkoutLibrary />
+          </TabsContent>
+          
+          <TabsContent value="history">
+            <WorkoutHistory />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
-};
-
-export default Workouts;
+}

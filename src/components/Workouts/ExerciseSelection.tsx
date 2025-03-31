@@ -5,6 +5,8 @@ import { useExerciseSelection } from "@/hooks/use-exercise-selection";
 import { ExerciseGrid } from "./components/ExerciseGrid";
 import { motion } from "framer-motion";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { useEffect } from "react";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface ExerciseSelectionProps {
   selectedExercises: string[];
@@ -22,11 +24,17 @@ export const ExerciseSelection = ({
   const { exercises, isLoading } = useExerciseSelection(muscleGroup);
   const uniqueExercises = Array.from(new Set(exercises));
 
+  useEffect(() => {
+    debugLogger.log("ExerciseSelection", "Groupe musculaire reçu:", muscleGroup);
+    debugLogger.log("ExerciseSelection", "Exercices chargés:", uniqueExercises.length);
+  }, [muscleGroup, uniqueExercises.length]);
+
   const handleExerciseToggle = (exerciseName: string) => {
     const newSelection = selectedExercises.includes(exerciseName)
       ? selectedExercises.filter(name => name !== exerciseName)
       : [...selectedExercises, exerciseName];
     
+    debugLogger.log("ExerciseSelection", "Sélection mise à jour:", newSelection);
     onSelectionChange(newSelection);
   };
 
