@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { debugLogger } from "@/utils/debug-logger";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { useSessionActions } from "@/hooks/workout/use-session-actions";
+import { ExerciseDetail } from "./WorkoutSession/ExerciseDetail";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -24,6 +26,7 @@ export const UnifiedWorkoutDetail = () => {
   const [sessionDuration, setSessionDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [showSummary, setShowSummary] = useState(false);
+  const [showExerciseDetail, setShowExerciseDetail] = useState(false);
   const [workoutStats, setWorkoutStats] = useState({
     duration: 0,
     totalWeight: 0,
@@ -88,6 +91,16 @@ export const UnifiedWorkoutDetail = () => {
     }
   };
 
+  const handleExerciseClick = (index: number) => {
+    setCurrentExerciseIndex(index);
+    setShowExerciseDetail(true);
+    console.log("Exercice sélectionné:", exercises[index], "Index:", index);
+  };
+
+  const handleBackToList = () => {
+    setShowExerciseDetail(false);
+  };
+
   const handleFinishWorkout = async () => {
     const totalDurationMinutes = Math.floor(sessionDuration / 60);
     
@@ -132,39 +145,52 @@ export const UnifiedWorkoutDetail = () => {
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
       <WorkoutHeader sessionDuration={sessionDuration} />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Exercices de la séance</h2>
-                <Button 
-                  variant="outline" 
-                  onClick={handleFinishWorkout}
-                  className="gap-2"
-                >
-                  <Timer className="w-4 h-4" />
-                  Terminer la séance
-                </Button>
-              </div>
-              {exercises.map((exercise, index) => (
-                <div 
-                  key={index}
-                  className={`p-4 rounded-lg border ${
-                    index === currentExerciseIndex ? 'border-primary bg-primary/5' : ''
-                  }`}
-                >
-                  <h3 className="text-lg font-semibold">{exercise}</h3>
+      {showExerciseDetail ? (
+        <ExerciseDetail 
+          exerciseName={exercises[currentExerciseIndex]}
+          onComplete={(exerciseName) => {
+            handleExerciseComplete(currentExerciseIndex);
+            handleBackToList();
+          }}
+          onBack={handleBackToList}
+          initialSets={3}
+        />
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-bold">Exercices de la séance</h2>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleFinishWorkout}
+                    className="gap-2"
+                  >
+                    <Timer className="w-4 h-4" />
+                    Terminer la séance
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+                {exercises.map((exercise, index) => (
+                  <div 
+                    key={index}
+                    className={`p-4 rounded-lg border cursor-pointer hover:bg-primary/5 ${
+                      index === currentExerciseIndex ? 'border-primary bg-primary/5' : ''
+                    }`}
+                    onClick={() => handleExerciseClick(index)}
+                  >
+                    <h3 className="text-lg font-semibold">{exercise}</h3>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       <WorkoutSummaryDialog
         open={showSummary}
