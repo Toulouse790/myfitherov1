@@ -7,7 +7,7 @@ import { Dumbbell, Calendar, Clock, Zap } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export const WorkoutGenerator = () => {
+export function WorkoutGenerator() {
   const { t } = useLanguage();
   const [duration, setDuration] = useState([30]);
   const [intensity, setIntensity] = useState([50]);
@@ -99,4 +99,4 @@ export const WorkoutGenerator = () => {
       </Card>
     </div>
   );
-};
+}

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { MuscleGroupGrid } from "./components/MuscleGroupGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export const WorkoutLibrary = () => {
+export function WorkoutLibrary() {
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -63,4 +63,4 @@ export const WorkoutLibrary = () => {
       </Card>
     </div>
   );
-};
+}

@@ -1,9 +1,7 @@
 
 import { useState } from "react";
 import { Header } from "@/components/Layout/Header";
-import { WorkoutLibrary } from "@/components/Workouts/WorkoutLibrary";
-import { WorkoutHistory } from "@/components/Workouts/WorkoutHistory";
-import { WorkoutGenerator } from "@/components/Workouts/WorkoutGenerator";
+import { WorkoutLibrary, WorkoutHistory, WorkoutGenerator } from "@/components/Workouts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { WorkoutFlowManager } from "@/components/Workouts/WorkoutFlow/WorkoutFlowManager";

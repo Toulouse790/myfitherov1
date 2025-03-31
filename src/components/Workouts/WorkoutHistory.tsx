@@ -7,7 +7,7 @@ import { Calendar, ChevronLeft, ChevronRight, Clock, Dumbbell, History } from "l
 import { useAuth } from "@/hooks/use-auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export const WorkoutHistory = () => {
+export function WorkoutHistory() {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -109,4 +109,4 @@ export const WorkoutHistory = () => {
       </Card>
     </div>
   );
-};
+}
