@@ -80,6 +80,7 @@ export const fr = {
     startSessionLoading: "Démarrage...",
     regenerate: "Régénérer",
     generateSession: "Générer une séance",
+    generateWorkout: "Générer un entraînement",
     generationLoading: "Génération en cours...",
     validateSet: "Valider la série",
     validateSetLabel: "Valider la série",
@@ -111,7 +112,16 @@ export const fr = {
     generationErrorDescription: "Impossible de générer un entraînement. Veuillez réessayer.",
     fallbackWorkoutDescription: "Entraînement de base adapté à votre niveau",
     startSessionErrorTitle: "Erreur de démarrage",
-    startSessionErrorDescription: "Impossible de démarrer la séance. Veuillez réessayer."
+    startSessionErrorDescription: "Impossible de démarrer la séance. Veuillez réessayer.",
+    locationFilter: "Filtrer par lieu d'entraînement",
+    allLocations: "Tous les lieux",
+    atHome: "À la maison",
+    atGym: "En salle de sport",
+    outdoor: "En extérieur",
+    noPrograms: "Aucun programme disponible pour le lieu d'entraînement sélectionné.",
+    teamSports: "Sports collectifs",
+    individualSports: "Sports individuels",
+    sportPrograms: "Programmes sportifs"
   },
   difficulty: {
     easy: "Facile",
@@ -142,5 +152,11 @@ export const fr = {
     hamstrings: "Ischio-jambiers",
     glutes: "Fessiers",
     calves: "Mollets"
+  },
+  locations: {
+    all: "Tous les lieux",
+    home: "À la maison",
+    gym: "En salle de sport",
+    outdoor: "En extérieur"
   }
 };

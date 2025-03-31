@@ -20,11 +20,13 @@ import {
 import { SportProgram, SportType } from "@/types/sports";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const SportPrograms = () => {
   const [selectedType, setSelectedType] = useState<SportType>("team");
   const [selectedLocation, setSelectedLocation] = useState<string>("all");
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   // Récupérer les préférences d'emplacement de l'utilisateur
   useEffect(() => {
@@ -159,25 +161,25 @@ export const SportPrograms = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
-        <h2 className="text-2xl font-bold">Programmes sportifs</h2>
+        <h2 className="text-2xl font-bold">{t('workouts.sportPrograms')}</h2>
         
         <Select value={selectedLocation} onValueChange={setSelectedLocation}>
           <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Lieu d'entraînement" />
+            <SelectValue placeholder={t('workouts.locationFilter')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les lieux</SelectItem>
-            <SelectItem value="home">À la maison</SelectItem>
-            <SelectItem value="gym">En salle de sport</SelectItem>
-            <SelectItem value="outdoor">En extérieur</SelectItem>
+            <SelectItem value="all">{t('locations.all')}</SelectItem>
+            <SelectItem value="home">{t('locations.home')}</SelectItem>
+            <SelectItem value="gym">{t('locations.gym')}</SelectItem>
+            <SelectItem value="outdoor">{t('locations.outdoor')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <Tabs defaultValue="team" className="w-full">
         <TabsList className="w-full">
-          <TabsTrigger value="team" className="flex-1">Sports collectifs</TabsTrigger>
-          <TabsTrigger value="individual" className="flex-1">Sports individuels</TabsTrigger>
+          <TabsTrigger value="team" className="flex-1">{t('workouts.teamSports')}</TabsTrigger>
+          <TabsTrigger value="individual" className="flex-1">{t('workouts.individualSports')}</TabsTrigger>
         </TabsList>
         <TabsContent value="team" className="space-y-4">
           {filteredTeamPrograms.length > 0 ? (
@@ -187,7 +189,7 @@ export const SportPrograms = () => {
           ) : (
             <div className="text-center py-8">
               <p className="text-muted-foreground">
-                Aucun programme disponible pour le lieu d'entraînement sélectionné.
+                {t('workouts.noPrograms')}
               </p>
             </div>
           )}
@@ -200,7 +202,7 @@ export const SportPrograms = () => {
           ) : (
             <div className="text-center py-8">
               <p className="text-muted-foreground">
-                Aucun programme disponible pour le lieu d'entraînement sélectionné.
+                {t('workouts.noPrograms')}
               </p>
             </div>
           )}
