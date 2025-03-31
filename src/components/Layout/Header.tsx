@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { navigationItems } from "./navigationItems";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -21,20 +20,6 @@ export const Header = ({ children }: HeaderProps) => {
             </Link>
             <span className="text-sm text-muted-foreground">Votre bien-être, notre priorité</span>
           </div>
-          
-          {user && (
-            <div className="hidden md:flex items-center gap-4">
-              {navigationItems.map((item) => (
-                <Link 
-                  key={item.href}
-                  to={item.href}
-                  className="text-sm font-medium transition-colors hover:text-primary"
-                >
-                  {item.title}
-                </Link>
-              ))}
-            </div>
-          )}
         </div>
       </header>
       {children && <main className="min-h-[calc(100vh-3.5rem)]">{children}</main>}
