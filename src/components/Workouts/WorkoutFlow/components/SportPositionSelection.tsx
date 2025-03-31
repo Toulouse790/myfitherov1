@@ -1,117 +1,128 @@
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowLeft, } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { debugLogger } from "@/utils/debug-logger";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-interface Sport {
-  id: string;
-  name: string;
-  type: string;
-}
-
-interface Position {
-  id: string;
-  name: string;
-  sport_id: string;
-}
+import { Sport, SportPosition } from "@/types/workout-session";
+import { SportRecommendationOverview } from "../SportRecommendationOverview";
+import { useSportExerciseSelection } from "@/hooks/use-sport-exercise-selection";
 
 interface SportPositionSelectionProps {
   onSelectSportPosition: (sportId: string, positionId: string) => void;
   onBack: () => void;
 }
 
-export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportPositionSelectionProps) => {
+export function SportPositionSelection({ onSelectSportPosition, onBack }: SportPositionSelectionProps) {
   const [sports, setSports] = useState<Sport[]>([]);
-  const [positions, setPositions] = useState<Position[]>([]);
-  const [selectedSport, setSelectedSport] = useState<string | null>(null);
-  const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [positions, setPositions] = useState<SportPosition[]>([]);
+  const [isLoadingSports, setIsLoadingSports] = useState(true);
+  const [isLoadingPositions, setIsLoadingPositions] = useState(false);
+  const [selectedSportId, setSelectedSportId] = useState<string>("");
+  const [selectedPositionId, setSelectedPositionId] = useState<string>("");
   const { toast } = useToast();
+  
+  const { scientificRecommendations } = useSportExerciseSelection(
+    selectedSportId, 
+    selectedPositionId
+  );
 
   useEffect(() => {
-    const fetchSports = async () => {
+    async function fetchSports() {
       try {
-        setIsLoading(true);
+        setIsLoadingSports(true);
         const { data, error } = await supabase
           .from('sports')
-          .select('*');
-
+          .select('id, name, type, category');
+        
         if (error) throw error;
-        setSports(data);
+        
+        debugLogger.log("SportPositionSelection", "Sports chargés:", data?.length);
+        setSports(data || []);
       } catch (error) {
-        console.error('Erreur lors du chargement des sports:', error);
+        console.error("Erreur lors du chargement des sports:", error);
         toast({
           title: "Erreur",
-          description: "Impossible de charger les sports",
+          description: "Impossible de charger la liste des sports",
           variant: "destructive",
         });
       } finally {
-        setIsLoading(false);
+        setIsLoadingSports(false);
       }
-    };
-
+    }
+    
     fetchSports();
   }, [toast]);
 
   useEffect(() => {
-    if (selectedSport) {
-      const fetchPositions = async () => {
-        try {
-          setIsLoading(true);
-          const { data, error } = await supabase
-            .from('sport_positions')
-            .select('*')
-            .eq('sport_id', selectedSport);
-
-          if (error) throw error;
-          setPositions(data);
-        } catch (error) {
-          console.error('Erreur lors du chargement des postes:', error);
-          toast({
-            title: "Erreur",
-            description: "Impossible de charger les postes",
-            variant: "destructive",
-          });
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchPositions();
-    } else {
-      setPositions([]);
+    async function fetchPositions() {
+      if (!selectedSportId) {
+        setPositions([]);
+        return;
+      }
+      
+      try {
+        setIsLoadingPositions(true);
+        const { data, error } = await supabase
+          .from('sport_positions')
+          .select('id, name, sport_id, performance_metrics, recommended_exercises')
+          .eq('sport_id', selectedSportId);
+        
+        if (error) throw error;
+        
+        debugLogger.log("SportPositionSelection", "Positions chargées:", data?.length);
+        setPositions(data || []);
+      } catch (error) {
+        console.error("Erreur lors du chargement des positions:", error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les positions pour ce sport",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingPositions(false);
+      }
     }
-  }, [selectedSport, toast]);
+    
+    fetchPositions();
+  }, [selectedSportId, toast]);
 
-  const handleSportChange = (sportId: string) => {
-    setSelectedSport(sportId);
-    setSelectedPosition(null);
+  const handleSportChange = (value: string) => {
+    setSelectedSportId(value);
+    setSelectedPositionId("");
   };
 
-  const handlePositionChange = (positionId: string) => {
-    setSelectedPosition(positionId);
-    if (selectedSport) {
-      onSelectSportPosition(selectedSport, positionId);
+  const handlePositionChange = (value: string) => {
+    setSelectedPositionId(value);
+  };
+
+  const handleContinue = () => {
+    if (selectedSportId && selectedPositionId) {
+      onSelectSportPosition(selectedSportId, selectedPositionId);
+    } else {
+      toast({
+        title: "Sélection incomplète",
+        description: "Veuillez sélectionner un sport et un poste",
+        variant: "destructive",
+      });
     }
+  };
+
+  const getSelectedSportName = () => {
+    return sports.find(sport => sport.id === selectedSportId)?.name || "";
+  };
+
+  const getSelectedPositionName = () => {
+    return positions.find(position => position.id === selectedPositionId)?.name || "";
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-6"
-    >
-      <div className="flex items-center gap-4 mb-4">
+    <div className="space-y-6">
+      <div className="flex items-center gap-4 mb-6">
         <Button
           variant="ghost"
           size="icon"
@@ -120,23 +131,26 @@ export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportP
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-xl font-bold">
-          Sélection sport et poste
-        </h2>
+        <div>
+          <h2 className="text-2xl font-bold">Sélection sport et poste</h2>
+          <p className="text-sm text-muted-foreground">
+            Personnalisez votre entraînement en fonction de votre sport et votre poste
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        ) : (
-          <>
+      <Card className="p-6">
+        <CardContent className="p-0 space-y-6">
+          <div className="space-y-4">
             <div className="space-y-2">
-              <h3 className="text-md font-medium">Sélectionnez votre sport</h3>
-              <Select value={selectedSport || ""} onValueChange={handleSportChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choisir un sport" />
+              <Label htmlFor="sport-select">Sport</Label>
+              <Select 
+                value={selectedSportId} 
+                onValueChange={handleSportChange}
+                disabled={isLoadingSports}
+              >
+                <SelectTrigger id="sport-select">
+                  <SelectValue placeholder="Sélectionnez un sport" />
                 </SelectTrigger>
                 <SelectContent>
                   {sports.map((sport) => (
@@ -148,45 +162,52 @@ export const SportPositionSelection = ({ onSelectSportPosition, onBack }: SportP
               </Select>
             </div>
 
-            {selectedSport && (
+            {selectedSportId && (
               <div className="space-y-2">
-                <h3 className="text-md font-medium">Sélectionnez votre poste</h3>
+                <Label htmlFor="position-select">Poste</Label>
                 <Select 
-                  value={selectedPosition || ""} 
+                  value={selectedPositionId} 
                   onValueChange={handlePositionChange}
-                  disabled={positions.length === 0}
+                  disabled={isLoadingPositions || positions.length === 0}
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={positions.length === 0 ? "Aucun poste disponible" : "Choisir un poste"} />
+                  <SelectTrigger id="position-select">
+                    <SelectValue placeholder={
+                      isLoadingPositions 
+                        ? "Chargement..." 
+                        : positions.length === 0 
+                          ? "Aucun poste disponible" 
+                          : "Sélectionnez un poste"
+                    } />
                   </SelectTrigger>
                   <SelectContent>
-                    {positions.length > 0 ? (
-                      positions.map((position) => (
-                        <SelectItem key={position.id} value={position.id}>
-                          {position.name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="none" disabled>
-                        Aucun poste disponible pour ce sport
+                    {positions.map((position) => (
+                      <SelectItem key={position.id} value={position.id}>
+                        {position.name}
                       </SelectItem>
-                    )}
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             )}
+          </div>
 
-            {selectedSport && selectedPosition && (
-              <Button 
-                className="w-full mt-4" 
-                onClick={() => onSelectSportPosition(selectedSport, selectedPosition)}
-              >
-                Confirmer la sélection
-              </Button>
-            )}
-          </>
-        )}
-      </div>
-    </motion.div>
+          {selectedSportId && selectedPositionId && (
+            <SportRecommendationOverview 
+              recommendations={scientificRecommendations}
+              sportName={getSelectedSportName()}
+              positionName={getSelectedPositionName()}
+            />
+          )}
+
+          <Button 
+            onClick={handleContinue} 
+            className="w-full" 
+            disabled={!selectedSportId || !selectedPositionId}
+          >
+            Continuer
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
-};
+}

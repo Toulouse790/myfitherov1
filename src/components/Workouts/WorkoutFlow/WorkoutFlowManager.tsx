@@ -16,11 +16,11 @@ import { workoutSteps } from "./workoutSteps";
 import { StepIndicator } from "./components/StepIndicator";
 import { NavigationButtons } from "./components/NavigationButtons";
 import { StartWorkoutStep } from "./components/StartWorkoutStep";
-import { ExerciseSetManager } from "./components/ExerciseSetManager";
 import { useWorkoutExercisesState } from "@/hooks/workout/use-workout-exercises-state";
 import { TrainingTypeSelection } from "./components/TrainingTypeSelection";
 import { SportPositionSelection } from "./components/SportPositionSelection";
 import { useSportExerciseSelection } from "@/hooks/use-sport-exercise-selection";
+import { SportRecommendationOverview } from "./SportRecommendationOverview";
 
 export const WorkoutFlowManager = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -34,8 +34,11 @@ export const WorkoutFlowManager = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { exercises: sportExercises, isLoading: sportExercisesLoading } = 
-    useSportExerciseSelection(selectedSportId, selectedPositionId);
+  const { 
+    exercises: sportExercises, 
+    isLoading: sportExercisesLoading,
+    scientificRecommendations 
+  } = useSportExerciseSelection(selectedSportId, selectedPositionId);
 
   const handleExerciseSelection = (exercises: string[]) => {
     setSelectedExercises(exercises);
@@ -139,7 +142,7 @@ export const WorkoutFlowManager = () => {
 
     if (selectedExercises.length > 0) {
       debugLogger.log("WorkoutFlowManager", "Démarrage d'entraînement avec exercices:", selectedExercises);
-      await createWorkoutSession('custom', selectedExercises);
+      await createWorkoutSession(trainingType === 'sport' ? 'sport_specific' : 'custom', selectedExercises);
     } else {
       debugLogger.error("WorkoutFlowManager", "Tentative de démarrer un entraînement sans exercices sélectionnés");
       toast({
@@ -217,8 +220,15 @@ export const WorkoutFlowManager = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="flex justify-center"
+            className="flex flex-col justify-center space-y-6"
           >
+            {trainingType === "sport" && scientificRecommendations && (
+              <SportRecommendationOverview 
+                recommendations={scientificRecommendations}
+                sportName={getSportName()}
+                positionName={getPositionName()}
+              />
+            )}
             <GeneratedWorkoutPreview exercises={selectedExercises} />
           </motion.div>
         );
@@ -232,6 +242,17 @@ export const WorkoutFlowManager = () => {
       default:
         return null;
     }
+  };
+
+  // Fonctions auxiliaires pour obtenir les noms des sports et positions
+  const getSportName = () => {
+    // Cette fonction devrait être implémentée pour récupérer le nom du sport
+    return ""; // À compléter
+  };
+
+  const getPositionName = () => {
+    // Cette fonction devrait être implémentée pour récupérer le nom de la position
+    return ""; // À compléter
   };
 
   return (
