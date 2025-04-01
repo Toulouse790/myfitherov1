@@ -4,6 +4,7 @@ import { JournalHeader } from "./JournalHeader";
 import { JournalTabs } from "./JournalTabs";
 import { useFoodJournal } from "@/hooks/food-journal/use-food-journal";
 import { useToast } from "@/hooks/use-toast";
+import { FoodEntry } from "@/types/food";
 
 export const FoodJournal = () => {
   const { 
@@ -22,14 +23,16 @@ export const FoodJournal = () => {
       if (result) {
         toast({
           title: "Produit trouvé",
-          description: `${result.name} a été ajouté au journal`,
+          description: `${result.name || 'Produit'} a été ajouté au journal`,
         });
+        return true;
       } else {
         toast({
           title: "Produit non trouvé",
           description: "Essayez d'ajouter ce produit manuellement",
           variant: "destructive",
         });
+        return false;
       }
     } catch (error) {
       console.error("Error scanning barcode:", error);
@@ -38,6 +41,7 @@ export const FoodJournal = () => {
         description: "Une erreur s'est produite lors du scan",
         variant: "destructive",
       });
+      return false;
     }
   };
 

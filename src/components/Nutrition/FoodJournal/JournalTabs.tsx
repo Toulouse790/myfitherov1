@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FoodEntryList } from "../FoodEntryList";
 import { FoodEntry } from "@/types/food";
@@ -6,19 +7,18 @@ import { Apple, Coffee, Sandwich, Pizza, UtensilsCrossed, CalendarCheck } from "
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface JournalTabsProps {
-  activeTab: string;
-  setActiveTab: (value: string) => void;
-  filteredEntries: FoodEntry[];
-  handleDeleteEntry: (id: string) => Promise<void>;
+  entries: FoodEntry[];
+  isLoading: boolean;
+  onDeleteEntry: (id: string) => Promise<void>;
 }
 
 export const JournalTabs = ({ 
-  activeTab, 
-  setActiveTab, 
-  filteredEntries, 
-  handleDeleteEntry 
+  entries,
+  isLoading,
+  onDeleteEntry
 }: JournalTabsProps) => {
   const isMobile = useIsMobile();
+  const [activeTab, setActiveTab] = useState("all");
   
   const mealTypes = [
     { value: "all", label: "Tous", icon: CalendarCheck },
@@ -28,6 +28,11 @@ export const JournalTabs = ({
     { value: "afternoon_snack", label: "Goûter", icon: Apple },
     { value: "dinner", label: "Dîner", icon: Pizza }
   ];
+
+  // Filtrer les entrées en fonction de l'onglet actif
+  const filteredEntries = activeTab === "all" 
+    ? entries 
+    : entries.filter(entry => entry.mealType === activeTab || entry.meal_type === activeTab);
 
   return (
     <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
@@ -53,7 +58,7 @@ export const JournalTabs = ({
         <TabsContent key={type.value} value={type.value}>
           <FoodEntryList 
             entries={filteredEntries}
-            onDelete={handleDeleteEntry}
+            onDelete={onDeleteEntry}
           />
         </TabsContent>
       ))}

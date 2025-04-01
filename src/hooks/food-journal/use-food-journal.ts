@@ -166,8 +166,68 @@ export const useFoodJournal = () => {
     // Implementation pour sélectionner un aliment dans la liste des aliments courants
   };
 
-  const handleBarcodeScan = async (barcode: string) => {
-    // Implementation pour scanner un code-barres
+  const handleBarcodeScan = async (barcode: string): Promise<FoodEntry | null> => {
+    try {
+      console.log("Scanning barcode:", barcode);
+      
+      // Simuler une recherche dans une base de données d'aliments
+      // Dans une implémentation réelle, cela ferait une requête à une API de produits alimentaires
+      const isProductFound = Math.random() > 0.3; // 70% de chance de trouver le produit
+      
+      if (isProductFound) {
+        // Produit trouvé, on crée une entrée avec des valeurs simulées
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          toast({
+            title: "Connexion requise",
+            description: "Vous devez être connecté pour ajouter un aliment",
+            variant: "destructive",
+          });
+          return null;
+        }
+        
+        // Créer des données simulées basées sur le code-barres
+        const productName = `Produit ${barcode.substring(0, 4)}`;
+        const randomCalories = Math.floor(Math.random() * 500) + 100;
+        const randomProteins = Math.floor(Math.random() * 30);
+        const randomCarbs = Math.floor(Math.random() * 50);
+        const randomFats = Math.floor(Math.random() * 20);
+        
+        // Ajouter l'entrée à la base de données
+        const entry = {
+          user_id: user.id,
+          name: productName,
+          calories: randomCalories,
+          proteins: randomProteins,
+          carbs: randomCarbs,
+          fats: randomFats,
+          meal_type: "snack", // Par défaut
+          notes: `Scanné via code-barres: ${barcode}`
+        };
+        
+        const result = await addFoodEntry(user.id, entry);
+        
+        // Rafraîchir la liste des entrées
+        await refetchEntries();
+        
+        return {
+          id: result.id,
+          name: productName,
+          calories: randomCalories,
+          proteins: randomProteins,
+          carbs: randomCarbs,
+          fats: randomFats,
+          mealType: "snack",
+          notes: `Scanné via code-barres: ${barcode}`,
+          created_at: new Date().toISOString()
+        };
+      }
+      
+      return null; // Produit non trouvé
+    } catch (error) {
+      console.error("Error scanning barcode:", error);
+      return null;
+    }
   };
 
   return {
