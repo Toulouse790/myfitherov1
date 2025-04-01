@@ -359,7 +359,18 @@ export const fr = {
     connectSmartLights: "Connecter éclairage intelligent",
     autoAdjustLights: "Ajustement automatique de l'éclairage",
     sleepTips: "Conseils de sommeil",
-    dailyTip: "Conseil du jour"
+    dailyTip: "Conseil du jour",
+    save: "Enregistrer",
+    sleepType: "Type de sommeil",
+    night: "Nuit",
+    duration: "Durée",
+    hours: "heures",
+    minutes: "minutes",
+    quality: "Qualité",
+    poor: "Mauvaise",
+    fair: "Moyenne",
+    good: "Bonne",
+    excellent: "Excellente"
   },
   difficulty: {
     easy: "Facile",

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Timer, Check, Plus, Minus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ExerciseDetailProps {
   exerciseName: string;
@@ -13,6 +14,7 @@ interface ExerciseDetailProps {
 
 export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDetailProps) => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [sets, setSets] = useState<number>(3);
   const [currentSet, setCurrentSet] = useState<number>(1);
   const [weight, setWeight] = useState<number>(20);
@@ -40,13 +42,13 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
       }, 1000);
       
       toast({
-        title: "Série terminée !",
-        description: `Repos de 90 secondes avant la série ${currentSet + 1}`,
+        title: t("workouts.completeSet"),
+        description: `${t("workouts.rest")} 90 ${t("common.sec")} ${t("workouts.nextExercise")} ${currentSet + 1}`,
       });
     } else {
       toast({
-        title: "Exercice terminé !",
-        description: `Vous avez complété ${sets} séries de ${exerciseName}`,
+        title: t("workouts.exerciseCompleted"),
+        description: `${t("nutrition.completed")} ${sets} ${t("workouts.sets")} ${t("workouts.of")} ${exerciseName}`,
       });
       
       onComplete(sets);
@@ -84,7 +86,7 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour
+            {t("common.back")}
           </Button>
           <div className="flex items-center space-x-2">
             <Button 
@@ -95,7 +97,7 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span className="text-sm font-medium">{sets} séries</span>
+            <span className="text-sm font-medium">{sets} {t("workouts.sets")}</span>
             <Button 
               variant="outline" 
               size="sm"
@@ -111,12 +113,12 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
       <CardContent className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-sm font-medium mb-1">Série actuelle</p>
+            <p className="text-sm font-medium mb-1">{t("workouts.currentSet")}</p>
             <p className="text-2xl font-bold">{currentSet} / {sets}</p>
           </div>
           
           <div className="text-right">
-            <p className="text-sm font-medium mb-1">Poids</p>
+            <p className="text-sm font-medium mb-1">{t("workouts.weight")}</p>
             <div className="flex items-center space-x-2">
               <Button 
                 variant="outline" 
@@ -140,7 +142,7 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
         
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-sm font-medium mb-1">Répétitions</p>
+            <p className="text-sm font-medium mb-1">{t("workouts.reps")}</p>
             <div className="flex items-center space-x-2">
               <Button 
                 variant="outline" 
@@ -162,7 +164,7 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
           </div>
           
           <div className="text-right">
-            <p className="text-sm font-medium mb-1">Séries terminées</p>
+            <p className="text-sm font-medium mb-1">{t("workouts.completedSets")}</p>
             <p className="text-lg font-medium">{completedSets.length} / {sets}</p>
           </div>
         </div>
@@ -174,14 +176,14 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
                 <Timer className="h-6 w-6 text-primary mr-2" />
                 <span className="text-2xl font-bold text-primary">{restTimer}s</span>
               </div>
-              <p className="text-sm text-center mt-2">Temps de repos avant la prochaine série</p>
+              <p className="text-sm text-center mt-2">{t("workouts.restingText")}</p>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={skipRest} 
                 className="mt-4"
               >
-                Passer le repos
+                {t("workouts.skipRest")}
               </Button>
             </div>
           </div>
@@ -194,12 +196,12 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
             {currentSet <= sets ? (
               <>
                 <Check className="mr-2 h-5 w-5" />
-                Valider la série {currentSet}
+                {t("workouts.validateSet")} {currentSet}
               </>
             ) : (
               <>
                 <Check className="mr-2 h-5 w-5" />
-                Terminer l'exercice
+                {t("workouts.completeExercise")}
               </>
             )}
           </Button>
@@ -215,7 +217,7 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
                   : 'bg-muted text-muted-foreground'
               }`}
             >
-              Série {setNumber}
+              {t("workouts.set")} {setNumber}
             </div>
           ))}
         </div>
