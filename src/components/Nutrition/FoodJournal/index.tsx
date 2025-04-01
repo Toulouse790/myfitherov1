@@ -1,151 +1,61 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FoodEntryForm } from "../FoodEntryForm";
-import { FoodEntryList } from "../FoodEntryList";
-import { FoodSuggestions } from "../FoodSuggestions";
-import { JournalTabs } from "./JournalTabs";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { JournalHeader } from "./JournalHeader";
+import { JournalTabs } from "./JournalTabs";
+import { useFoodJournal } from "@/hooks/food-journal/use-food-journal";
 import { useToast } from "@/hooks/use-toast";
-import { useFoodJournal } from "@/hooks/use-food-journal";
-import { useState, useEffect } from "react";
-import { FoodEntry } from "@/types/food";
 
 export const FoodJournal = () => {
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("all");
-  const {
-    newFood,
-    calories,
-    proteins,
-    carbs,
-    fats,
-    weight,
-    notes,
-    baseCalories,
-    selectedCategory,
-    setNewFood,
-    setCalories,
-    setProteins,
-    setCarbs,
-    setFats,
-    setWeight,
-    setNotes,
-    setSelectedCategory,
+  const { 
+    entries, 
+    isLoading, 
     handleAddEntry,
     handleDeleteEntry,
-    entries
+    handleBarcodeScan
   } = useFoodJournal();
+  
+  const { toast } = useToast();
 
-  const [filteredEntries, setFilteredEntries] = useState<FoodEntry[]>(entries);
-
-  useEffect(() => {
-    if (activeTab === "all") {
-      setFilteredEntries(entries);
-    } else {
-      setFilteredEntries(entries.filter(entry => entry.mealType === activeTab));
-    }
-  }, [entries, activeTab]);
-
-  const getTotalNutrients = () => {
-    return filteredEntries.reduce((acc, entry) => ({
-      calories: acc.calories + entry.calories,
-      proteins: acc.proteins + entry.proteins,
-      carbs: acc.carbs + (entry.carbs || 0),
-      fats: acc.fats + (entry.fats || 0),
-    }), {
-      calories: 0,
-      proteins: 0,
-      carbs: 0,
-      fats: 0,
-    });
-  };
-
-  const totals = getTotalNutrients();
-
-  const handleAddEntryWithLogging = async (mealType: string) => {
+  const handleScanBarcode = async (barcode: string) => {
     try {
-      await handleAddEntry(mealType);
-      toast({
-        title: "Succès",
-        description: "L'aliment a été ajouté à votre journal",
-      });
+      const result = await handleBarcodeScan(barcode);
+      if (result) {
+        toast({
+          title: "Produit trouvé",
+          description: `${result.name} a été ajouté au journal`,
+        });
+      } else {
+        toast({
+          title: "Produit non trouvé",
+          description: "Essayez d'ajouter ce produit manuellement",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
-      console.error('Error adding food entry:', error);
+      console.error("Error scanning barcode:", error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter l'aliment",
+        title: "Erreur de scan",
+        description: "Une erreur s'est produite lors du scan",
         variant: "destructive",
       });
     }
   };
 
-  const handleSelectSuggestion = (food: FoodEntry) => {
-    setNewFood(food.name);
-    setCalories(food.calories);
-    setProteins(food.proteins);
-    if (food.carbs) setCarbs(food.carbs);
-    if (food.fats) setFats(food.fats);
-    if (food.description) setNotes(food.description);
-    if (food.mealType) {
-      handleAddEntryWithLogging(food.mealType);
-    } else {
-      toast({
-        title: "Information",
-        description: "Veuillez sélectionner un type de repas pour cette suggestion",
-      });
-    }
-  };
-
-  // Convertir les valeurs numériques en chaînes pour l'utilisation dans FoodEntryForm
-  const caloriesStr = calories.toString();
-  const proteinsStr = proteins.toString();
-  const carbsStr = carbs.toString();
-  const fatsStr = fats.toString();
-  const weightStr = weight.toString();
-
-  // Fonction pour convertir les chaînes en nombres lors des mises à jour
-  const handleCaloriesChange = (value: string) => setCalories(Number(value));
-  const handleProteinsChange = (value: string) => setProteins(Number(value));
-  const handleCarbsChange = (value: string) => setCarbs(Number(value));
-  const handleFatsChange = (value: string) => setFats(Number(value));
-  const handleWeightChange = (value: string) => setWeight(Number(value));
-
   return (
-    <Card className="dark:bg-gray-800">
-      <CardHeader>
-        <JournalHeader totals={totals} />
-      </CardHeader>
-      <CardContent className="p-6">
-        <FoodEntryForm
-          newFood={newFood}
-          calories={caloriesStr}
-          proteins={proteinsStr}
-          carbs={carbsStr}
-          fats={fatsStr}
-          weight={weightStr}
-          notes={notes}
-          baseCalories={baseCalories}
-          selectedCategory={selectedCategory}
-          onFoodChange={setNewFood}
-          onCaloriesChange={handleCaloriesChange}
-          onProteinsChange={handleProteinsChange}
-          onCarbsChange={handleCarbsChange}
-          onFatsChange={handleFatsChange}
-          onWeightChange={handleWeightChange}
-          onNotesChange={setNotes}
-          onAddEntry={handleAddEntryWithLogging}
+    <Card>
+      <CardHeader className="pb-3">
+        <JournalHeader 
+          onAddEntry={handleAddEntry} 
+          onScanBarcode={handleScanBarcode}
+          isLoading={isLoading}
         />
-        
-        <FoodSuggestions onSelectFood={handleSelectSuggestion} />
-        
-        <div className="mt-8 space-y-4">
-          <JournalTabs 
-            activeTab={activeTab} 
-            setActiveTab={setActiveTab} 
-            filteredEntries={filteredEntries} 
-            handleDeleteEntry={handleDeleteEntry} 
-          />
-        </div>
+      </CardHeader>
+      <CardContent>
+        <JournalTabs 
+          entries={entries} 
+          isLoading={isLoading} 
+          onDeleteEntry={handleDeleteEntry}
+        />
       </CardContent>
     </Card>
   );

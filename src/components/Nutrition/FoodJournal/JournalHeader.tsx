@@ -1,40 +1,57 @@
 
-import { CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { AppleIcon, FishIcon, WheatIcon } from "lucide-react";
-
-interface NutrientTotals {
-  calories: number;
-  proteins: number;
-  carbs: number;
-  fats: number;
-}
+import { Button } from "@/components/ui/button";
+import { Plus, Calendar, FilterX } from "lucide-react";
+import { FoodEntryDialog } from "../FoodEntry/FoodEntryDialog";
+import { useState } from "react";
+import { BarcodeScannerDialog } from "./BarcodeScannerDialog";
 
 interface JournalHeaderProps {
-  totals: NutrientTotals;
+  onAddEntry?: (mealType: string) => void;
+  onScanBarcode?: (barcode: string) => void;
+  isLoading?: boolean;
 }
 
-export const JournalHeader = ({ totals }: JournalHeaderProps) => {
+export const JournalHeader = ({ onAddEntry, onScanBarcode, isLoading }: JournalHeaderProps) => {
+  const [showFoodEntry, setShowFoodEntry] = useState(false);
+
+  const handleAddEntry = (mealType: string) => {
+    if (onAddEntry) {
+      onAddEntry(mealType);
+    }
+    setShowFoodEntry(false);
+  };
+
+  const handleBarcodeScanned = (barcode: string) => {
+    if (onScanBarcode) {
+      onScanBarcode(barcode);
+    }
+  };
+
   return (
-    <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between dark:text-white">
-      <span className="text-lg sm:text-xl font-bold">Journal alimentaire</span>
-      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-        <Badge variant="outline" className="text-xs sm:text-sm font-normal bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
-          {totals.calories} kcal
-        </Badge>
-        <Badge variant="outline" className="text-xs sm:text-sm font-normal bg-gray-50 flex items-center gap-1 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
-          <FishIcon className="h-3 w-3 text-blue-500" />
-          {totals.proteins}g
-        </Badge>
-        <Badge variant="outline" className="text-xs sm:text-sm font-normal bg-gray-50 flex items-center gap-1 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
-          <WheatIcon className="h-3 w-3 text-amber-500" />
-          {totals.carbs}g
-        </Badge>
-        <Badge variant="outline" className="text-xs sm:text-sm font-normal bg-gray-50 flex items-center gap-1 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
-          <AppleIcon className="h-3 w-3 text-rose-500" />
-          {totals.fats}g
-        </Badge>
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="text-lg font-medium">Journal alimentaire</h3>
+      <div className="flex gap-2">
+        <BarcodeScannerDialog onScanComplete={handleBarcodeScanned} />
+        
+        <Button
+          onClick={() => setShowFoodEntry(true)}
+          variant="default"
+          size="sm"
+          className="flex items-center gap-2"
+          disabled={isLoading}
+        >
+          <Plus className="h-4 w-4" />
+          <span>Ajouter</span>
+        </Button>
+        
+        {showFoodEntry && (
+          <FoodEntryDialog
+            open={showFoodEntry}
+            onOpenChange={setShowFoodEntry}
+            onSubmit={handleAddEntry}
+          />
+        )}
       </div>
-    </CardTitle>
+    </div>
   );
 };
