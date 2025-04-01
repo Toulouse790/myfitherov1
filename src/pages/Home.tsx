@@ -9,9 +9,12 @@ import { TodaySummary } from "@/components/Home/TodaySummary";
 import { TrendingStats } from "@/components/Home/TrendingStats";
 import { useAuth } from "@/hooks/use-auth";
 import { SpecialOfferCountdown } from "@/components/Subscription/SpecialOfferCountdown";
+import { PremiumFeaturesShowcase } from "@/components/Subscription/PremiumFeaturesShowcase";
 import { Button } from "@/components/ui/button";
-import { Crown, ArrowRight } from "lucide-react";
+import { Crown, ArrowRight, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 const Home = () => {
   const { handleStats } = useHomeActions();
@@ -37,7 +40,12 @@ const Home = () => {
       <ActionButtons />
 
       {/* Bannière Premium */}
-      <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg p-4 border border-indigo-200 dark:border-indigo-800">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg p-4 border border-indigo-200 dark:border-indigo-800 shadow-md hover:shadow-lg transition-all duration-300"
+      >
         <div className="flex flex-col sm:flex-row items-center justify-between">
           <div className="flex items-center gap-3 mb-3 sm:mb-0">
             <div className="bg-indigo-100 dark:bg-indigo-800 p-2 rounded-full">
@@ -58,12 +66,26 @@ const Home = () => {
             </span>
           </Button>
         </div>
-      </div>
+      </motion.div>
       
       {/* Afficher l'offre spéciale */}
       <SpecialOfferCountdown targetDate={targetDate} />
       
-      <WorkoutSuggestions />
+      {/* Vitrine des fonctionnalités premium */}
+      <PremiumFeaturesShowcase />
+      
+      {/* Programme d'entraînement recommandé */}
+      <Card className="p-6 space-y-4 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
+            <Zap className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+          </div>
+          <h2 className="text-xl font-bold">Programme d'entraînement recommandé</h2>
+        </div>
+        <WorkoutSuggestions showAllSuggestions={false} />
+      </Card>
+      
+      {/* Suggestions de repas populaires */}
       <PopularMealSuggestions />
     </div>
   );

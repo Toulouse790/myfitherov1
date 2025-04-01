@@ -1,185 +1,154 @@
 
-import { Check, X } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+import { 
+  Table, 
+  TableBody, 
+  TableCaption, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
 } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
+import { Check, X, HelpCircle } from "lucide-react";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const FeatureComparison = () => {
-  const { t } = useLanguage();
-
   const features = [
-    {
-      category: "Entraînement",
-      items: [
-        {
-          name: "Programmes d'entraînement",
-          free: "3 par mois",
-          premium: "Illimités"
-        },
-        {
-          name: "Bibliothèque d'exercices",
-          free: "Basique (50+ exercices)",
-          premium: "Complète (200+ exercices)"
-        },
-        {
-          name: "Analyse de posture",
-          free: "Non",
-          premium: "Oui"
-        },
-        {
-          name: "Visualisation 3D des muscles",
-          free: "Non",
-          premium: "Oui"
-        },
-        {
-          name: "Coach IA personnalisé",
-          free: "Non",
-          premium: "Oui"
-        }
-      ]
+    { 
+      name: "Nombre d'exercices disponibles", 
+      free: "50+", 
+      premium: "200+",
+      tooltip: "Accédez à une bibliothèque complète d'exercices avec vidéos et descriptions"
     },
-    {
-      category: "Nutrition",
-      items: [
-        {
-          name: "Journal alimentaire",
-          free: "Basique",
-          premium: "Avancé"
-        },
-        {
-          name: "Plans de repas personnalisés",
-          free: "1 par mois",
-          premium: "Illimités"
-        },
-        {
-          name: "Scan de code-barres",
-          free: "5 par jour",
-          premium: "Illimité"
-        },
-        {
-          name: "Reconnaissance d'image des plats",
-          free: "Non",
-          premium: "Oui"
-        },
-        {
-          name: "Liste de courses automatique",
-          free: "Non",
-          premium: "Oui"
-        }
-      ]
+    { 
+      name: "Programmes d'entraînement", 
+      free: "3 par mois", 
+      premium: "Illimités",
+      tooltip: "Créez et suivez des programmes d'entraînement adaptés à vos objectifs"
     },
-    {
-      category: "Sommeil",
-      items: [
-        {
-          name: "Suivi du sommeil",
-          free: "Basique",
-          premium: "Détaillé avec cycles"
-        },
-        {
-          name: "Sons de relaxation",
-          free: "3 sons disponibles",
-          premium: "Bibliothèque complète"
-        },
-        {
-          name: "Analyse et recommandations",
-          free: "Limitée",
-          premium: "Avancée et personnalisée"
-        },
-        {
-          name: "Connexion appareils de suivi",
-          free: "1 appareil",
-          premium: "Multiple"
-        },
-        {
-          name: "Hypnogramme du sommeil",
-          free: "Non",
-          premium: "Oui"
-        }
-      ]
+    { 
+      name: "Suivi de nutrition", 
+      free: "Basique", 
+      premium: "Avancé",
+      tooltip: "Suivez vos apports quotidiens en calories, macronutriments et micronutriments"
     },
-    {
-      category: "Général",
-      items: [
-        {
-          name: "Publicités",
-          free: "Oui",
-          premium: "Non"
-        },
-        {
-          name: "Support",
-          free: "Email standard",
-          premium: "Prioritaire"
-        },
-        {
-          name: "Exportation des données",
-          free: "Format basique",
-          premium: "Formats multiples et détaillés"
-        },
-        {
-          name: "Fonctionnalités communautaires",
-          free: "Limitées",
-          premium: "Complètes"
-        },
-        {
-          name: "Intégration avec appareils",
-          free: "Limitée",
-          premium: "Complète"
-        }
-      ]
-    }
+    { 
+      name: "Plans de repas personnalisés", 
+      free: false, 
+      premium: true,
+      tooltip: "Recevez des plans de repas adaptés à vos objectifs et préférences alimentaires"
+    },
+    { 
+      name: "Analyse de posture vidéo", 
+      free: false, 
+      premium: true,
+      tooltip: "Analysez votre technique d'exercice grâce à notre technologie d'IA"
+    },
+    { 
+      name: "Analyse avancée du sommeil", 
+      free: false, 
+      premium: true,
+      tooltip: "Obtenez des insights détaillés sur la qualité de votre sommeil et des recommandations"
+    },
+    { 
+      name: "Coach IA personnel", 
+      free: false, 
+      premium: true,
+      tooltip: "Bénéficiez de conseils personnalisés en temps réel pour atteindre vos objectifs"
+    },
+    { 
+      name: "Suivi de progression", 
+      free: "Limité", 
+      premium: "Détaillé",
+      tooltip: "Suivez votre progression avec des graphiques et des statistiques détaillées"
+    },
+    { 
+      name: "Export de données", 
+      free: false, 
+      premium: true,
+      tooltip: "Exportez vos données d'entraînement, de nutrition et de sommeil"
+    },
+    { 
+      name: "Mode hors-ligne", 
+      free: false, 
+      premium: true,
+      tooltip: "Accédez à vos programmes d'entraînement et plans de repas même sans connexion internet"
+    },
+    { 
+      name: "Publicités", 
+      free: true, 
+      premium: false,
+      tooltip: "Les utilisateurs premium bénéficient d'une expérience sans publicité",
+      reversed: true
+    },
+    { 
+      name: "Support prioritaire", 
+      free: false, 
+      premium: true,
+      tooltip: "Bénéficiez d'un support client prioritaire"
+    },
   ];
 
   return (
-    <Card className="w-full overflow-hidden p-1 sm:p-4">
-      <h3 className="text-xl font-semibold mb-4 px-4">Comparaison des fonctionnalités</h3>
-      
-      <div className="overflow-x-auto">
+    <Card className="bg-background">
+      <TooltipProvider>
         <Table>
+          <TableCaption>
+            Comparaison des fonctionnalités entre les plans Gratuit et Premium
+          </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[200px]">Fonctionnalité</TableHead>
-              <TableHead>Plan Gratuit</TableHead>
-              <TableHead>Plan Premium</TableHead>
+              <TableHead className="w-[300px]">Fonctionnalité</TableHead>
+              <TableHead className="text-center">Gratuit</TableHead>
+              <TableHead className="text-center">Premium</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {features.map((category) => (
-              <>
-                <TableRow key={category.category} className="bg-muted/40">
-                  <TableCell colSpan={3} className="font-medium">{category.category}</TableCell>
-                </TableRow>
-                {category.items.map((feature, index) => (
-                  <TableRow key={`${category.category}-${index}`}>
-                    <TableCell className="font-medium">{feature.name}</TableCell>
-                    <TableCell>
-                      {feature.free === "Non" ? (
-                        <X className="h-5 w-5 text-red-500" />
-                      ) : (
-                        <span className="text-sm">{feature.free}</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {feature.premium === "Oui" ? (
-                        <Check className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <span className="text-sm font-medium">{feature.premium}</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </>
+            {features.map((feature, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium flex items-center gap-2">
+                  {feature.name}
+                  <Tooltip delayDuration={300}>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>{feature.tooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TableCell>
+                <TableCell className="text-center">
+                  {typeof feature.free === 'boolean' ? (
+                    feature.free !== (feature.reversed || false) ? (
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    ) : (
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    )
+                  ) : (
+                    <span>{feature.free}</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-center">
+                  {typeof feature.premium === 'boolean' ? (
+                    feature.premium !== (feature.reversed || false) ? (
+                      <Check className="h-5 w-5 text-primary mx-auto" />
+                    ) : (
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    )
+                  ) : (
+                    <span className="text-primary font-medium">{feature.premium}</span>
+                  )}
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
-      </div>
+      </TooltipProvider>
     </Card>
   );
 };
