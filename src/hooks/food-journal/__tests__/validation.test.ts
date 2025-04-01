@@ -1,6 +1,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFoodValidation, validateNumericInput } from '../validation';
+import { useToast } from '@/hooks/use-toast'; // Ajout de l'import manquant
 
 // Mock useToast hook
 vi.mock('@/hooks/use-toast', () => ({
