@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, X, CreditCard, CalendarClock, Gem } from "lucide-react";
+import { Check, X, CreditCard, CalendarClock, Gem, ShieldCheck } from "lucide-react";
 
 export const SubscriptionPlans = () => {
   const { user } = useAuth();
@@ -58,6 +58,12 @@ export const SubscriptionPlans = () => {
     setIsLoading(true);
     try {
       if (isPro) {
+        // Simulation d'appel à l'API de paiement
+        toast({
+          title: "Redirection vers la page de paiement",
+          description: "Vous allez être redirigé vers notre page de paiement sécurisée",
+        });
+        
         // Simulation de souscription premium
         const { error } = await supabase
           .from('user_subscriptions')
@@ -118,8 +124,13 @@ export const SubscriptionPlans = () => {
     <div className="container mx-auto p-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">
+          <div className="mb-2 flex justify-center">
+            <Badge variant="outline" className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-primary">
+              <ShieldCheck className="w-3 h-3 mr-1" /> Offre de lancement
+            </Badge>
+          </div>
           <h2 className="text-3xl font-bold mb-2">{t("premium.title")}</h2>
-          <p className="text-muted-foreground mb-8">
+          <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
             {t("premium.unlock")}
           </p>
 

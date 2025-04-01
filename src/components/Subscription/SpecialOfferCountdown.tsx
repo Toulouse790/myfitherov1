@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight, Gift } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CountdownProps {
@@ -44,13 +44,13 @@ export const SpecialOfferCountdown = ({ targetDate }: CountdownProps) => {
     <Card className="p-6 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-200 dark:border-blue-800 my-8">
       <div className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <Sparkles className="h-5 w-5 text-yellow-500" />
+          <Gift className="h-5 w-5 text-pink-500" />
           <h3 className="text-xl font-bold">Offre spéciale de lancement</h3>
           <Sparkles className="h-5 w-5 text-yellow-500" />
         </div>
         
-        <p className="mb-6 text-muted-foreground">
-          30% de réduction sur l'abonnement annuel pour les premiers inscrits !
+        <p className="mb-6 text-muted-foreground max-w-xl mx-auto">
+          Profitez de <span className="font-bold text-primary">30% de réduction</span> sur l'abonnement annuel pendant une durée limitée ! Débloquez toutes les fonctionnalités premium et transformez votre expérience fitness.
         </p>
 
         <div className="grid grid-cols-4 gap-2 mb-6 max-w-md mx-auto">

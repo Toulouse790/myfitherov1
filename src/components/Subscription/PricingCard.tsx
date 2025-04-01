@@ -1,7 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, X, Crown, Sparkles } from "lucide-react";
+import { Check, X, Crown, Sparkles, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PricingCardProps {

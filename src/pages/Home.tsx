@@ -9,10 +9,14 @@ import { TodaySummary } from "@/components/Home/TodaySummary";
 import { TrendingStats } from "@/components/Home/TrendingStats";
 import { useAuth } from "@/hooks/use-auth";
 import { SpecialOfferCountdown } from "@/components/Subscription/SpecialOfferCountdown";
+import { Button } from "@/components/ui/button";
+import { Crown, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { handleStats } = useHomeActions();
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Date cible 30 jours à partir de maintenant
   const targetDate = new Date();
@@ -31,6 +35,30 @@ const Home = () => {
       </div>
       
       <ActionButtons />
+
+      {/* Bannière Premium */}
+      <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg p-4 border border-indigo-200 dark:border-indigo-800">
+        <div className="flex flex-col sm:flex-row items-center justify-between">
+          <div className="flex items-center gap-3 mb-3 sm:mb-0">
+            <div className="bg-indigo-100 dark:bg-indigo-800 p-2 rounded-full">
+              <Crown className="h-6 w-6 text-indigo-600 dark:text-indigo-300" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg">Découvrez MyFitHero Premium</h3>
+              <p className="text-sm text-muted-foreground">Débloquez toutes les fonctionnalités et atteignez vos objectifs plus rapidement</p>
+            </div>
+          </div>
+          <Button 
+            onClick={() => navigate('/subscription-plans')}
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+          >
+            <span className="flex items-center gap-2">
+              Voir les plans
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Button>
+        </div>
+      </div>
       
       {/* Afficher l'offre spéciale */}
       <SpecialOfferCountdown targetDate={targetDate} />
