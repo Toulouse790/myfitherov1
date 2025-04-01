@@ -6,7 +6,7 @@ import { FoodEntry } from "@/types/food";
 import { Apple, Coffee, Sandwich, Pizza, UtensilsCrossed, CalendarCheck } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-interface JournalTabsProps {
+export interface JournalTabsProps {
   entries: FoodEntry[];
   isLoading: boolean;
   onDeleteEntry: (id: string) => Promise<void>;
@@ -32,7 +32,7 @@ export const JournalTabs = ({
   // Filtrer les entrées en fonction de l'onglet actif
   const filteredEntries = activeTab === "all" 
     ? entries 
-    : entries.filter(entry => entry.mealType === activeTab || entry.meal_type === activeTab);
+    : entries.filter(entry => entry.mealType === activeTab);
 
   return (
     <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
