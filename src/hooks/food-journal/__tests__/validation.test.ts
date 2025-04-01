@@ -1,12 +1,15 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFoodValidation, validateNumericInput } from '../validation';
-import { useToast } from '@/hooks/use-toast'; // Ajout de l'import manquant
+import { useToast } from '@/hooks/use-toast';
+import { type Toast, type ToasterToast } from "@/components/ui/toast";
 
 // Mock useToast hook
 vi.mock('@/hooks/use-toast', () => ({
   useToast: () => ({
-    toast: vi.fn()
+    toast: vi.fn(),
+    dismiss: vi.fn(),
+    toasts: []
   })
 }));
 
@@ -42,7 +45,7 @@ describe('useFoodValidation', () => {
 
   beforeEach(() => {
     toastSpy = vi.fn();
-    vi.mocked(useToast).mockReturnValue({ toast: toastSpy });
+    vi.mocked(useToast).mockReturnValue({ toast: toastSpy, dismiss: vi.fn(), toasts: [] });
     validation = useFoodValidation();
   });
 
