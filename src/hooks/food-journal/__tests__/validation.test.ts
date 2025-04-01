@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFoodValidation, validateNumericInput } from '../validation';
 import { useToast } from '@/hooks/use-toast';
-import { type Toast, type ToasterToast } from "@/components/ui/toast";
+import { type Toast } from "@/components/ui/toast";
 
 // Mock useToast hook
 vi.mock('@/hooks/use-toast', () => ({

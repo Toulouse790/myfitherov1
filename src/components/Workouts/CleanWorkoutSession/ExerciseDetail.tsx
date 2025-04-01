@@ -1,201 +1,225 @@
 
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronUp, ChevronDown, Timer, Check } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, Timer, Check, Plus, Minus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseDetailProps {
   exerciseName: string;
-  onComplete: (exerciseName: string, totalSets: number) => void;
+  onComplete: (sets: number) => void;
   onBack: () => void;
-  initialSets: number;
 }
 
-export const ExerciseDetail = ({ exerciseName, onComplete, onBack, initialSets }: ExerciseDetailProps) => {
+export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDetailProps) => {
   const { toast } = useToast();
-  const [sets, setSets] = useState(Array(initialSets).fill(0).map((_, i) => ({
-    id: i + 1,
-    reps: 12,
-    weight: 20,
-    completed: false
-  })));
-  const [currentSet, setCurrentSet] = useState(1);
+  const [sets, setSets] = useState<number>(3);
+  const [currentSet, setCurrentSet] = useState<number>(1);
+  const [weight, setWeight] = useState<number>(20);
+  const [reps, setReps] = useState<number>(12);
   const [restTimer, setRestTimer] = useState<number | null>(null);
-
-  // Gestion du temps de repos
-  useState(() => {
-    if (restTimer === null) return;
-    
-    const interval = setInterval(() => {
-      setRestTimer(prev => {
-        if (prev === null || prev <= 1) {
-          clearInterval(interval);
-          return null;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    
-    return () => clearInterval(interval);
-  });
+  const [completedSets, setCompletedSets] = useState<number[]>([]);
 
   const handleSetComplete = () => {
-    // Marquer la série comme complétée
-    const updatedSets = sets.map(set => 
-      set.id === currentSet ? { ...set, completed: true } : set
-    );
-    setSets(updatedSets);
+    if (restTimer !== null) return;
     
-    // Vérifier si c'est la dernière série
-    if (currentSet < sets.length) {
+    setCompletedSets(prev => [...prev, currentSet]);
+    
+    if (currentSet < sets) {
       setCurrentSet(prev => prev + 1);
-      setRestTimer(90); // 90 secondes de repos
+      setRestTimer(90);
+      
+      const timerInterval = setInterval(() => {
+        setRestTimer(prev => {
+          if (prev === null || prev <= 0) {
+            clearInterval(timerInterval);
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
       
       toast({
-        title: "Série complétée",
-        description: "90 secondes de repos avant la prochaine série",
+        title: "Série terminée !",
+        description: `Repos de 90 secondes avant la série ${currentSet + 1}`,
       });
     } else {
-      // Toutes les séries sont terminées
       toast({
-        title: "Exercice terminé",
-        description: "Toutes les séries ont été complétées",
+        title: "Exercice terminé !",
+        description: `Vous avez complété ${sets} séries de ${exerciseName}`,
       });
       
-      // Notifier le parent que l'exercice est terminé
-      onComplete(exerciseName, sets.length);
+      onComplete(sets);
     }
   };
-
-  const handleRepsChange = (setId: number, value: number) => {
-    setSets(sets.map(set => 
-      set.id === setId ? { ...set, reps: Math.max(1, value) } : set
-    ));
-  };
-
-  const handleWeightChange = (setId: number, value: number) => {
-    setSets(sets.map(set => 
-      set.id === setId ? { ...set, weight: Math.max(0, value) } : set
-    ));
-  };
-
-  const handleSkipRest = () => {
+  
+  const skipRest = () => {
     setRestTimer(null);
+  };
+  
+  const handleSetsChange = (increment: boolean) => {
+    setSets(prev => {
+      const newValue = increment ? prev + 1 : prev - 1;
+      return Math.max(1, newValue);
+    });
+  };
+  
+  const handleWeightChange = (increment: boolean) => {
+    setWeight(prev => {
+      const change = increment ? 2.5 : -2.5;
+      return Math.max(0, prev + change);
+    });
+  };
+  
+  const handleRepsChange = (increment: boolean) => {
+    setReps(prev => {
+      const newValue = increment ? prev + 1 : prev - 1;
+      return Math.max(1, newValue);
+    });
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center">
-        <Button variant="ghost" size="icon" onClick={onBack}>
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
-        <h2 className="text-xl font-semibold ml-2">{exerciseName}</h2>
-      </div>
-      
-      {sets.map((set) => (
-        <Card key={set.id} className={`p-4 ${
-          set.id === currentSet ? 'border-primary' : ''
-        } ${
-          set.completed ? 'bg-gray-50' : ''
-        }`}>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="font-medium">Série {set.id}</h3>
-              {set.completed && <Check className="text-green-500 h-5 w-5" />}
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm text-gray-500">Poids (kg)</label>
-                <div className="flex items-center">
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => handleWeightChange(set.id, set.weight - 2.5)}
-                    disabled={set.completed || set.id !== currentSet}
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                  <Input 
-                    type="number" 
-                    value={set.weight} 
-                    onChange={(e) => handleWeightChange(set.id, parseFloat(e.target.value))}
-                    className="mx-2 text-center"
-                    disabled={set.completed || set.id !== currentSet}
-                  />
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => handleWeightChange(set.id, set.weight + 2.5)}
-                    disabled={set.completed || set.id !== currentSet}
-                  >
-                    <ChevronUp className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm text-gray-500">Répétitions</label>
-                <div className="flex items-center">
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => handleRepsChange(set.id, set.reps - 1)}
-                    disabled={set.completed || set.id !== currentSet}
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                  <Input 
-                    type="number" 
-                    value={set.reps} 
-                    onChange={(e) => handleRepsChange(set.id, parseInt(e.target.value))}
-                    className="mx-2 text-center"
-                    disabled={set.completed || set.id !== currentSet}
-                  />
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => handleRepsChange(set.id, set.reps + 1)}
-                    disabled={set.completed || set.id !== currentSet}
-                  >
-                    <ChevronUp className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="sm" onClick={onBack}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Retour
+          </Button>
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => handleSetsChange(false)}
+              disabled={sets <= 1}
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium">{sets} séries</span>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => handleSetsChange(true)}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
-        </Card>
-      ))}
+        </div>
+        <CardTitle className="text-xl mt-4">{exerciseName}</CardTitle>
+      </CardHeader>
       
-      {restTimer ? (
-        <div className="fixed bottom-20 right-0 left-0 mx-auto w-max">
-          <Card className="p-4 bg-primary text-primary-foreground">
-            <div className="flex items-center justify-between space-x-4">
-              <div className="flex items-center">
-                <Timer className="mr-2 h-5 w-5" />
-                <span className="text-xl font-semibold">{restTimer}s</span>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleSkipRest}>
-                Passer
+      <CardContent className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-sm font-medium mb-1">Série actuelle</p>
+            <p className="text-2xl font-bold">{currentSet} / {sets}</p>
+          </div>
+          
+          <div className="text-right">
+            <p className="text-sm font-medium mb-1">Poids</p>
+            <div className="flex items-center space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleWeightChange(false)}
+                disabled={weight <= 0}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="text-lg font-medium">{weight} kg</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleWeightChange(true)}
+              >
+                <Plus className="h-4 w-4" />
               </Button>
             </div>
-          </Card>
+          </div>
         </div>
-      ) : (
-        <Button 
-          className="w-full" 
-          size="lg"
-          onClick={handleSetComplete}
-          disabled={currentSet > sets.length || sets[currentSet - 1]?.completed}
-        >
-          {sets.every(set => set.completed) 
-            ? "Exercice terminé" 
-            : `Valider la série ${currentSet}`
-          }
-        </Button>
-      )}
-    </div>
+        
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-sm font-medium mb-1">Répétitions</p>
+            <div className="flex items-center space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleRepsChange(false)}
+                disabled={reps <= 1}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="text-lg font-medium">{reps}</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleRepsChange(true)}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          
+          <div className="text-right">
+            <p className="text-sm font-medium mb-1">Séries terminées</p>
+            <p className="text-lg font-medium">{completedSets.length} / {sets}</p>
+          </div>
+        </div>
+        
+        {restTimer !== null ? (
+          <div className="bg-muted p-4 rounded-lg">
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex items-center justify-center">
+                <Timer className="h-6 w-6 text-primary mr-2" />
+                <span className="text-2xl font-bold text-primary">{restTimer}s</span>
+              </div>
+              <p className="text-sm text-center mt-2">Temps de repos avant la prochaine série</p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={skipRest} 
+                className="mt-4"
+              >
+                Passer le repos
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <Button 
+            className="w-full py-6 text-lg" 
+            onClick={handleSetComplete}
+            disabled={completedSets.includes(currentSet)}
+          >
+            {currentSet <= sets ? (
+              <>
+                <Check className="mr-2 h-5 w-5" />
+                Valider la série {currentSet}
+              </>
+            ) : (
+              <>
+                <Check className="mr-2 h-5 w-5" />
+                Terminer l'exercice
+              </>
+            )}
+          </Button>
+        )}
+        
+        <div className="grid grid-cols-3 gap-2 mt-4">
+          {Array.from({ length: sets }, (_, i) => i + 1).map(setNumber => (
+            <div 
+              key={setNumber}
+              className={`p-2 text-center rounded-md ${
+                completedSets.includes(setNumber) 
+                  ? 'bg-primary/10 text-primary font-medium' 
+                  : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              Série {setNumber}
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
