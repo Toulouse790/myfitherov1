@@ -22,4 +22,6 @@ export interface FoodEntry {
   description?: string;
   status?: 'taken' | 'skipped' | null;
   created_at?: string;
+  is_composite?: boolean;
+  components?: Array<{ name: string; portion: string }>;
 }

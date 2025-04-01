@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -92,7 +93,6 @@ export const DailyMeals = () => {
         fats: parseInt(fats || '0'),
         mealType: mealType,
         notes: notes,
-        is_composite: isComposite,
         components: ingredients || []
       });
 

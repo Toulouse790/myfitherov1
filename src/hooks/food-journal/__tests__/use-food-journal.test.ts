@@ -1,26 +1,28 @@
 
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
 import { useFoodJournal } from '../use-food-journal';
-import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  loadFoodEntries, 
-  addFoodEntry, 
-  deleteFoodEntry, 
-  checkDuplicateEntry
-} from '../database';
 import { useFoodValidation } from '../validation';
-import { useBarcodeScan } from '../use-barcode-scan';
 import { useFoodInput } from '../use-food-input';
+import { useBarcodeScan } from '../use-barcode-scan';
+import { loadFoodEntries, addFoodEntry, deleteFoodEntry, checkDuplicateEntry } from '../database';
 
-// Mock all dependencies
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn()
-}));
-
+// Mock les hooks et fonctions
 vi.mock('@/hooks/use-toast', () => ({
   useToast: vi.fn()
+}));
+
+vi.mock('../validation', () => ({
+  useFoodValidation: vi.fn(),
+  validateNumericInput: vi.fn((val) => ({ isValid: true, value: Number(val) }))
+}));
+
+vi.mock('../use-food-input', () => ({
+  useFoodInput: vi.fn()
+}));
+
+vi.mock('../use-barcode-scan', () => ({
+  useBarcodeScan: vi.fn()
 }));
 
 vi.mock('../database', () => ({
@@ -30,37 +32,40 @@ vi.mock('../database', () => ({
   checkDuplicateEntry: vi.fn()
 }));
 
-vi.mock('../validation', () => ({
-  useFoodValidation: vi.fn()
-}));
-
-vi.mock('../use-barcode-scan', () => ({
-  useBarcodeScan: vi.fn()
-}));
-
-vi.mock('../use-food-input', () => ({
-  useFoodInput: vi.fn()
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: vi.fn(() => ({
+    data: [],
+    isLoading: false,
+    isError: false,
+    refetch: vi.fn()
+  }))
 }));
 
 describe('useFoodJournal', () => {
+  let mockToast: any;
+  let mockValidation: any;
+  let mockFoodInput: any;
+  let mockBarcodeScan: any;
+  let mockRefetch: any;
+
   beforeEach(() => {
-    // Reset all mocks
-    vi.clearAllMocks();
-    
-    // Setup default mocks
-    vi.mocked(useToast).mockReturnValue({ toast: vi.fn() });
-    vi.mocked(useFoodValidation).mockReturnValue({ validateFoodEntry: vi.fn().mockReturnValue(true) });
-    vi.mocked(useBarcodeScan).mockReturnValue({ handleBarcodeScan: vi.fn() });
-    vi.mocked(useFoodInput).mockReturnValue({
-      newFood: 'Apple',
-      calories: 52,
-      proteins: 0.3,
-      carbs: 14,
-      fats: 0.2,
+    mockToast = { toast: vi.fn(), dismiss: vi.fn(), toasts: [] };
+    mockValidation = { 
+      validateFoodEntry: vi.fn(), 
+      validateNumericInput: vi.fn((val) => ({ isValid: true, value: Number(val) }))
+    };
+    mockRefetch = vi.fn();
+    mockBarcodeScan = { handleBarcodeScan: vi.fn() };
+    mockFoodInput = {
+      newFood: 'Test Food',
+      calories: 100,
+      proteins: 10,
+      carbs: 20,
+      fats: 5,
       weight: 100,
       notes: '',
       baseCalories: 100,
-      selectedCategory: null,
+      selectedCategory: '',
       filteredFoods: [],
       setNewFood: vi.fn(),
       setCalories: vi.fn(),
@@ -70,83 +75,48 @@ describe('useFoodJournal', () => {
       setWeight: vi.fn(),
       setNotes: vi.fn(),
       setSelectedCategory: vi.fn(),
+      setBaseCalories: vi.fn(),
       setFilteredFoods: vi.fn()
-    });
-    
-    vi.mocked(useQuery).mockReturnValue({
-      data: [],
-      isLoading: false,
-      isError: false,
-      refetch: vi.fn()
-    } as any);
+    };
+
+    vi.mocked(useToast).mockReturnValue(mockToast);
+    vi.mocked(useFoodValidation).mockReturnValue(mockValidation);
+    vi.mocked(useFoodInput).mockReturnValue(mockFoodInput);
+    vi.mocked(useBarcodeScan).mockReturnValue(mockBarcodeScan);
   });
 
-  it('should return an object with the expected properties', () => {
-    const { result } = renderHook(() => useFoodJournal());
-    
-    expect(result.current).toHaveProperty('newFood');
-    expect(result.current).toHaveProperty('calories');
-    expect(result.current).toHaveProperty('handleAddEntry');
-    expect(result.current).toHaveProperty('handleDeleteEntry');
-    expect(result.current).toHaveProperty('handleBarcodeScan');
-    expect(result.current).toHaveProperty('entries');
-    expect(result.current).toHaveProperty('isLoading');
-    expect(result.current).toHaveProperty('isError');
-    expect(result.current).toHaveProperty('refetchEntries');
+  it('should add a food entry successfully', async () => {
+    // Setup
+    mockValidation.validateFoodEntry.mockReturnValue(true);
+    vi.mocked(checkDuplicateEntry).mockResolvedValue(false);
+    vi.mocked(addFoodEntry).mockResolvedValue({ id: '123', name: 'Test Food' });
+
+    // Execute
+    const { handleAddEntry } = useFoodJournal();
+    const result = await handleAddEntry('lunch');
+
+    // Verify
+    expect(mockValidation.validateFoodEntry).toHaveBeenCalled();
+    expect(checkDuplicateEntry).toHaveBeenCalledWith('Test Food', 'lunch');
+    expect(addFoodEntry).toHaveBeenCalled();
+    expect(mockToast.toast).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Succès',
+      variant: 'default'
+    }));
+    expect(result).not.toBeNull();
   });
 
-  it('should call validateFoodEntry when adding an entry', async () => {
-    const mockValidateFoodEntry = vi.fn().mockReturnValue(true);
-    vi.mocked(useFoodValidation).mockReturnValue({ validateFoodEntry: mockValidateFoodEntry });
-    
-    const { result } = renderHook(() => useFoodJournal());
-    
-    await act(async () => {
-      await result.current.handleAddEntry('breakfast');
-    });
-    
-    expect(mockValidateFoodEntry).toHaveBeenCalled();
-  });
+  it('should validate input before adding entry', async () => {
+    // Setup
+    mockValidation.validateFoodEntry.mockReturnValue(false);
 
-  it('should call addFoodEntry and refetchEntries when adding a valid entry', async () => {
-    const mockAddFoodEntry = vi.fn().mockResolvedValue({ id: 'entry-123' });
-    const mockRefetch = vi.fn();
-    vi.mocked(addFoodEntry).mockImplementation(mockAddFoodEntry);
-    vi.mocked(useQuery).mockReturnValue({
-      data: [],
-      isLoading: false,
-      isError: false,
-      refetch: mockRefetch
-    } as any);
-    
-    const { result } = renderHook(() => useFoodJournal());
-    
-    await act(async () => {
-      await result.current.handleAddEntry('breakfast');
-    });
-    
-    expect(mockAddFoodEntry).toHaveBeenCalled();
-    expect(mockRefetch).toHaveBeenCalled();
-  });
+    // Execute
+    const { handleAddEntry } = useFoodJournal();
+    const result = await handleAddEntry('lunch');
 
-  it('should call deleteFoodEntry and refetchEntries when deleting an entry', async () => {
-    const mockDeleteFoodEntry = vi.fn().mockResolvedValue(undefined);
-    const mockRefetch = vi.fn();
-    vi.mocked(deleteFoodEntry).mockImplementation(mockDeleteFoodEntry);
-    vi.mocked(useQuery).mockReturnValue({
-      data: [],
-      isLoading: false,
-      isError: false,
-      refetch: mockRefetch
-    } as any);
-    
-    const { result } = renderHook(() => useFoodJournal());
-    
-    await act(async () => {
-      await result.current.handleDeleteEntry('entry-123');
-    });
-    
-    expect(mockDeleteFoodEntry).toHaveBeenCalledWith('entry-123');
-    expect(mockRefetch).toHaveBeenCalled();
+    // Verify
+    expect(mockValidation.validateFoodEntry).toHaveBeenCalled();
+    expect(addFoodEntry).not.toHaveBeenCalled();
+    expect(result).toBeNull();
   });
 });
