@@ -8,10 +8,15 @@ import { WelcomeHeader } from "@/components/Home/WelcomeHeader";
 import { TodaySummary } from "@/components/Home/TodaySummary";
 import { TrendingStats } from "@/components/Home/TrendingStats";
 import { useAuth } from "@/hooks/use-auth";
+import { SpecialOfferCountdown } from "@/components/Subscription/SpecialOfferCountdown";
 
 const Home = () => {
   const { handleStats } = useHomeActions();
   const { user } = useAuth();
+  
+  // Date cible 30 jours à partir de maintenant
+  const targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + 30);
   
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6 md:space-y-8 pb-20">
@@ -26,6 +31,10 @@ const Home = () => {
       </div>
       
       <ActionButtons />
+      
+      {/* Afficher l'offre spéciale */}
+      <SpecialOfferCountdown targetDate={targetDate} />
+      
       <WorkoutSuggestions />
       <PopularMealSuggestions />
     </div>
