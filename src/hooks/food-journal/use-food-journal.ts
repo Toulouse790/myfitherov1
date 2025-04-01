@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FoodEntry } from "@/types/food";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +35,7 @@ export const useFoodJournal = () => {
     setWeight,
     setNotes,
     setSelectedCategory,
+    setFilteredFoods
   } = useFoodInput();
 
   const {
@@ -148,6 +148,7 @@ export const useFoodJournal = () => {
     setWeight,
     setNotes,
     setSelectedCategory,
+    setFilteredFoods,
     handleAddEntry,
     handleBarcodeScan,
     handleDeleteEntry,

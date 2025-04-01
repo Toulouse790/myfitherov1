@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { addFoodEntry, checkDuplicateEntry } from "@/hooks/food-journal/database";
 
 export const DailyMeals = () => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
@@ -83,19 +84,17 @@ export const DailyMeals = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      await supabase
-        .from('food_journal_entries')
-        .insert({
-          user_id: user.id,
-          name: newFood,
-          calories: parseInt(calories),
-          proteins: parseInt(proteins),
-          carbs: parseInt(carbs || '0'),
-          fats: parseInt(fats || '0'),
-          meal_type: mealType,
-          is_composite: isComposite,
-          components: ingredients || []
-        });
+      await addFoodEntry({
+        name: newFood,
+        calories: parseInt(calories),
+        proteins: parseInt(proteins),
+        carbs: parseInt(carbs || '0'),
+        fats: parseInt(fats || '0'),
+        mealType: mealType,
+        notes: notes,
+        is_composite: isComposite,
+        components: ingredients || []
+      });
 
       toast({
         title: t("nutrition.mealAdded"),
@@ -201,4 +200,3 @@ export const DailyMeals = () => {
     </Card>
   );
 };
-
