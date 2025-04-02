@@ -26,16 +26,16 @@ export function WorkoutGenerator() {
     <div className="space-y-6">
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>{t("workouts.generator") || "Générateur d'entraînement"}</CardTitle>
+          <CardTitle>{t("workouts.generator")}</CardTitle>
           <CardDescription>
-            {t("workouts.generatorDescription") || "Créez un entraînement personnalisé en fonction de vos préférences"}
+            {t("workouts.generatorDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="text-sm font-medium">
-                {t("workouts.duration") || "Durée"}: {duration[0]} min
+                {t("workouts.duration")}: {duration[0]} {t("common.min")}
               </label>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </div>
@@ -52,7 +52,7 @@ export function WorkoutGenerator() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="text-sm font-medium">
-                {t("workouts.intensity") || "Intensité"}: {intensity[0]}%
+                {t("workouts.intensity")}: {intensity[0]}%
               </label>
               <Zap className="h-4 w-4 text-muted-foreground" />
             </div>
@@ -69,11 +69,11 @@ export function WorkoutGenerator() {
           <div className="grid grid-cols-2 gap-4 my-4">
             <div className="flex flex-col items-center justify-center p-4 bg-muted/20 rounded-lg">
               <Calendar className="h-5 w-5 mb-2 text-primary" />
-              <span className="text-sm font-medium">{t("workouts.todayDate") || new Date().toLocaleDateString()}</span>
+              <span className="text-sm font-medium">{t("workouts.todayDate")}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-4 bg-muted/20 rounded-lg">
               <Dumbbell className="h-5 w-5 mb-2 text-primary" />
-              <span className="text-sm font-medium">{t("workouts.estimatedCalories") || "~250 kcal"}</span>
+              <span className="text-sm font-medium">~250 kcal</span>
             </div>
           </div>
 
@@ -86,12 +86,12 @@ export function WorkoutGenerator() {
             {isGenerating ? (
               <>
                 <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin mr-2" />
-                <span className="truncate">{t("workouts.generating") || "Génération en cours..."}</span>
+                <span className="truncate">{t("workouts.generationLoading")}</span>
               </>
             ) : (
               <>
                 <Dumbbell className="h-4 w-4 mr-2" />
-                <span className="truncate">{t("workouts.generateWorkout") || "Générer un entraînement"}</span>
+                <span className="truncate">{t("workouts.generateWorkout")}</span>
               </>
             )}
           </Button>
