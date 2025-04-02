@@ -28,7 +28,7 @@ export const useWorkoutOperations = () => {
 
     try {
       setIsLoading(true);
-      debugLogger.log("Démarrage de l'entraînement avec exercices:", exercises);
+      debugLogger.log("useWorkoutOperations", "Démarrage de l'entraînement avec exercices:", exercises);
       
       // Créer une session d'entraînement avec les champs corrects
       const sessionData = {
@@ -39,7 +39,7 @@ export const useWorkoutOperations = () => {
         target_duration_minutes: 45
       };
       
-      debugLogger.log("Données de session à insérer:", sessionData);
+      debugLogger.log("useWorkoutOperations", "Données de session à insérer:", sessionData);
       
       const { data, error } = await supabase
         .from('workout_sessions')
@@ -52,8 +52,8 @@ export const useWorkoutOperations = () => {
         throw error;
       }
       
-      debugLogger.log("Session créée avec succès:", data);
-      debugLogger.log("Session créée, redirection vers: workouts/" + data.id);
+      debugLogger.log("useWorkoutOperations", "Session créée avec succès:", data);
+      debugLogger.log("useWorkoutOperations", "Session créée, redirection vers: workouts/" + data.id);
       
       // Rediriger vers la page /workouts/session/:id pour utiliser le bon composant
       if (data) {
