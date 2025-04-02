@@ -38,7 +38,7 @@ export const ConnectedDevices = () => {
   return (
     <Card className="overflow-hidden border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10 shadow-md hover:shadow-lg transition-all duration-300">
       <CardHeader className="bg-gradient-to-r from-blue-600/90 to-blue-400/90 text-white p-4">
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
           <Watch className="w-5 h-5" />
           Appareils connectés
         </CardTitle>
@@ -63,8 +63,8 @@ export const ConnectedDevices = () => {
                       <Watch className="w-4 h-4 text-blue-600 dark:text-blue-300" />
                     </div>
                     <div>
-                      <p className="font-medium text-blue-700 dark:text-blue-300">{device.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="font-medium text-blue-700 dark:text-blue-300 text-sm truncate">{device.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">
                         Dernière synchronisation: {formatLastSync(device.lastSync)}
                       </p>
                     </div>
@@ -112,14 +112,16 @@ export const ConnectedDevices = () => {
           <Button
             onClick={connectDevice}
             variant={connectedDevices.length > 0 ? "outline" : "default"}
-            className={`w-full ${connectedDevices.length > 0 ? 'border-blue-300 text-blue-600 hover:bg-blue-50' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+            className={`w-full text-xs sm:text-sm ${connectedDevices.length > 0 ? 'border-blue-300 text-blue-600 hover:bg-blue-50' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
           >
             <PlusCircle className="w-4 h-4 mr-2" />
-            {connectedDevices.length > 0 ? "Connecter un autre appareil" : "Connecter un appareil"}
+            <span className="truncate">
+              {connectedDevices.length > 0 ? "Connecter un autre appareil" : "Connecter un appareil"}
+            </span>
           </Button>
           
           {connectedDevices.length > 0 && (
-            <p className="text-sm text-muted-foreground text-center mt-2">
+            <p className="text-xs text-muted-foreground text-center mt-2">
               Les données de vos appareils seront automatiquement synchronisées
             </p>
           )}

@@ -1,3 +1,4 @@
+
 import {
   Select,
   SelectContent,
@@ -34,7 +35,7 @@ export const FilterControls = ({
   return (
     <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
       <Select value={difficulty} onValueChange={onDifficultyChange}>
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="w-full sm:w-[180px] text-xs sm:text-sm">
           <SelectValue placeholder="Difficulté" />
         </SelectTrigger>
         <SelectContent>
@@ -48,7 +49,7 @@ export const FilterControls = ({
       </Select>
 
       <Select value={location} onValueChange={onLocationChange}>
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="w-full sm:w-[180px] text-xs sm:text-sm">
           <SelectValue placeholder="Lieu d'entraînement" />
         </SelectTrigger>
         <SelectContent>
@@ -74,7 +75,7 @@ export const FilterControls = ({
         </Button>
         <Button
           variant="outline"
-          className="gap-2"
+          className="gap-2 text-xs sm:text-sm"
           onClick={onReset}
         >
           <Filter className="h-4 w-4" />

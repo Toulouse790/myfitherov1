@@ -27,28 +27,28 @@ export const SetButton = ({
   return (
     <Button
       onClick={onComplete}
-      className={`w-full ${isMobile ? 'h-14 text-base' : 'h-12 text-lg'} transition-all`}
+      className={`w-full ${isMobile ? 'h-14 text-sm' : 'h-12 text-base'} transition-all`}
       disabled={isResting || (currentSet > maxSets && !isTransitioning)}
       size={isMobile ? "lg" : "default"}
       aria-label={isResting ? t("workouts.restingLabel") : t("workouts.validateSetLabel")}
     >
       {isResting ? (
-        <div className="flex items-center gap-2">
-          <Timer className="h-5 w-5" />
+        <div className="flex items-center gap-2 truncate">
+          <Timer className="h-5 w-5 flex-shrink-0" />
           <span className="truncate">{t("workouts.rest")}: {restTime}s</span>
         </div>
       ) : isTransitioning ? (
-        <div className="flex items-center gap-2">
-          <Timer className="h-5 w-5" />
+        <div className="flex items-center gap-2 truncate">
+          <Timer className="h-5 w-5 flex-shrink-0" />
           <span className="truncate">{t("workouts.preparingNextExercise")}</span>
         </div>
       ) : currentSet > maxSets ? (
-        <div className="flex items-center gap-2">
-          <Check className="h-5 w-5" />
+        <div className="flex items-center gap-2 truncate">
+          <Check className="h-5 w-5 flex-shrink-0" />
           <span className="truncate">{t("workouts.exerciseCompleted")}</span>
         </div>
       ) : (
-        t("workouts.validateSet")
+        <span className="truncate">{t("workouts.validateSet")}</span>
       )}
     </Button>
   );

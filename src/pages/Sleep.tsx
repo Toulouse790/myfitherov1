@@ -25,29 +25,29 @@ const Sleep = () => {
           <TabsList className="grid w-full grid-cols-3 h-auto">
             <TabsTrigger 
               value="tracker" 
-              className="data-[state=active]:bg-blue-500 data-[state=active]:text-primary-foreground"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-primary-foreground text-xs sm:text-sm truncate"
             >
-              <div className="flex items-center gap-2">
-                <Moon className="h-4 w-4" />
-                <span>{t("sleep.tracking")}</span>
+              <div className="flex items-center gap-2 truncate">
+                <Moon className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{t("sleep.tracking")}</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
               value="history" 
-              className="data-[state=active]:bg-blue-500 data-[state=active]:text-primary-foreground"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-primary-foreground text-xs sm:text-sm truncate"
             >
-              <div className="flex items-center gap-2">
-                <History className="h-4 w-4" />
-                <span>{t("sleep.history")}</span>
+              <div className="flex items-center gap-2 truncate">
+                <History className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{t("sleep.history")}</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
               value="insights" 
-              className="data-[state=active]:bg-blue-500 data-[state=active]:text-primary-foreground"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-primary-foreground text-xs sm:text-sm truncate"
             >
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                <span>{t("sleep.analysis")}</span>
+              <div className="flex items-center gap-2 truncate">
+                <TrendingUp className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{t("sleep.analysis")}</span>
               </div>
             </TabsTrigger>
           </TabsList>

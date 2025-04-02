@@ -20,19 +20,19 @@ export function WorkoutTabs({ activeTab, setActiveTab }: WorkoutTabsProps) {
       <TabsList className="grid w-full grid-cols-3 mb-4 sm:mb-6 md:mb-8">
         <TabsTrigger 
           value="home" 
-          className={`text-[10px] xs:text-xs sm:text-sm ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
+          className={`text-[10px] xs:text-xs sm:text-sm truncate ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
           {t("workouts.startWorkout")}
         </TabsTrigger>
         <TabsTrigger 
           value="library" 
-          className={`text-[10px] xs:text-xs sm:text-sm ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
+          className={`text-[10px] xs:text-xs sm:text-sm truncate ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
           {t("workouts.library")}
         </TabsTrigger>
         <TabsTrigger 
           value="history" 
-          className={`text-[10px] xs:text-xs sm:text-sm ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
+          className={`text-[10px] xs:text-xs sm:text-sm truncate ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
           {t("workouts.history")}
         </TabsTrigger>

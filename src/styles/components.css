@@ -21,7 +21,7 @@
 
   /* Button Styles */
   .btn {
-    @apply px-2 py-1 rounded-lg font-medium transition-all duration-300 hover:opacity-90 active:scale-[0.98];
+    @apply px-2 py-1 rounded-lg font-medium transition-all duration-300 hover:opacity-90 active:scale-[0.98] truncate overflow-hidden;
     font-size: 0.75rem;
   }
   @media (min-width: 640px) { 
@@ -64,7 +64,7 @@
   
   /* Responsive Text */
   .title-large {
-    @apply font-bold;
+    @apply font-bold truncate;
     font-size: 1rem;
   }
   @media (min-width: 640px) { .title-large { font-size: 1.125rem; } }
@@ -72,7 +72,7 @@
   @media (min-width: 1024px) { .title-large { font-size: 1.5rem; } }
   
   .title-medium {
-    @apply font-semibold;
+    @apply font-semibold truncate;
     font-size: 0.875rem;
   }
   @media (min-width: 640px) { .title-medium { font-size: 1rem; } }
@@ -80,7 +80,7 @@
   @media (min-width: 1024px) { .title-medium { font-size: 1.25rem; } }
   
   .title-small {
-    @apply font-medium;
+    @apply font-medium truncate;
     font-size: 0.75rem;
   }
   @media (min-width: 640px) { .title-small { font-size: 0.875rem; } }
