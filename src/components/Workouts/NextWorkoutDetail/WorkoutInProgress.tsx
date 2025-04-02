@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,15 +26,29 @@ export const WorkoutInProgress = ({
   const [weight, setWeight] = useState(20);
   const [reps, setReps] = useState(12);
   const { toast } = useToast();
-  const { restTimers, startRestTimer } = useRestTimer();
+  
+  // Utilisation correcte du hook useRestTimer
+  const { 
+    duration: restTimer, 
+    startTimer: startRestTimer,
+    isActive: isResting
+  } = useRestTimer({
+    initialDuration: 90,
+    onComplete: () => {
+      toast({
+        title: "Repos terminé !",
+        description: "C'est reparti ! Commencez la série suivante.",
+      });
+    }
+  });
 
   const currentExerciseName = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
-  const currentRestTimer = currentExerciseName ? restTimers[currentExerciseName] : null;
 
   const handleSetComplete = () => {
     if (currentSet < 4 && currentExerciseName) {
       setCurrentSet(prev => prev + 1);
-      startRestTimer(currentExerciseName);
+      // Démarrer le timer de repos
+      startRestTimer();
       
       const calories = Math.round(reps * weight * 0.15);
       
@@ -136,7 +151,7 @@ export const WorkoutInProgress = ({
           </div>
 
           <AnimatePresence>
-            {currentRestTimer !== null ? (
+            {restTimer !== null ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -144,13 +159,13 @@ export const WorkoutInProgress = ({
                 className="flex items-center justify-center gap-2 text-2xl font-bold text-primary"
               >
                 <Timer className="h-6 w-6" />
-                <span>{currentRestTimer}s</span>
+                <span>{restTimer}s</span>
               </motion.div>
             ) : (
               <Button
                 className="w-full h-12 text-lg"
                 onClick={handleSetComplete}
-                disabled={currentRestTimer !== null}
+                disabled={isResting}
               >
                 {currentSet === 4 ? "Terminer l'exercice" : "Valider la série"}
               </Button>
