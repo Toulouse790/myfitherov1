@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useWorkoutOperations } from "@/hooks/workout/use-workout-operations";
 import { useAuth } from "@/hooks/use-auth";
 import { 
   Dialog,
@@ -26,7 +26,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom" 
   const { toast } = useToast();
   const { t } = useLanguage();
   const { user } = useAuth();
-  const { startWorkout } = useWorkoutSession();
+  const { startWorkout } = useWorkoutOperations();
   const [generatedWorkout, setGeneratedWorkout] = useState<any>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
@@ -38,17 +38,37 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom" 
       if (!user) return null;
       
       try {
+        // Use maybeSingle instead of single to avoid error when no data is found
         const { data, error } = await supabase
           .from('user_preferences')
           .select('*')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
           
         if (error) throw error;
+        
+        // Return default preferences if no data found
+        if (!data) {
+          return {
+            fitness_level: 'beginner',
+            preferred_duration: 45,
+            training_location: 'home',
+            available_equipment: ['minimal'],
+            focus_areas: ['full_body']
+          };
+        }
+        
         return data;
       } catch (error) {
         console.error('Error fetching user preferences:', error);
-        return null;
+        // Return default preferences on error
+        return {
+          fitness_level: 'beginner',
+          preferred_duration: 45,
+          training_location: 'home',
+          available_equipment: ['minimal'],
+          focus_areas: ['full_body']
+        };
       }
     },
     enabled: !!user && isOpen
@@ -72,13 +92,22 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom" 
         muscleGroups: userPreferences?.focus_areas || ['full_body']
       };
       
-      // Appeler la fonction Supabase Edge pour générer l'entraînement
-      const { data: workout, error } = await supabase.functions.invoke('generate-workout', {
-        body: { userPreferences: preferences }
-      });
+      console.log("Génération d'un entraînement avec préférences:", preferences);
       
-      if (error) throw error;
-      setGeneratedWorkout(workout);
+      try {
+        // Appeler la fonction Supabase Edge pour générer l'entraînement
+        const { data: workout, error } = await supabase.functions.invoke('generate-workout', {
+          body: { userPreferences: preferences }
+        });
+        
+        if (error) throw error;
+        
+        console.log("Entraînement généré avec succès:", workout);
+        setGeneratedWorkout(workout);
+      } catch (edgeError) {
+        console.error('Error calling edge function:', edgeError);
+        throw new Error("Impossible d'appeler la fonction de génération");
+      }
       
     } catch (error) {
       console.error('Error generating workout:', error);
@@ -94,7 +123,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom" 
         exercises: fallbackExercises,
         duration: 45,
         difficulty: 'moderate',
-        description: t("workouts.fallbackWorkoutDescription")
+        description: t("workouts.fallbackWorkoutDescription") || "Voici un entraînement par défaut qui vous permettra de vous dépenser."
       });
       
     } finally {
@@ -149,6 +178,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom" 
       
       // Créer une session d'entraînement avec les exercices générés
       const exerciseNames = generatedWorkout.exercises.map((ex: any) => ex.name);
+      console.log("Démarrage de l'entraînement avec exercices:", exerciseNames);
       
       const session = await startWorkout(undefined, exerciseNames);
       
@@ -157,14 +187,14 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom" 
       }
       
       // Rediriger vers la page de session d'entraînement
-      navigate(`/workouts/session/${session.id}`);
+      console.log("Session créée, redirection vers:", `workouts/${session.id}`);
       onClose();
       
     } catch (error) {
       console.error('Error starting workout:', error);
       toast({
-        title: t("workouts.startSessionErrorTitle"),
-        description: t("workouts.startSessionErrorDescription"),
+        title: t("workouts.startSessionErrorTitle") || "Erreur",
+        description: t("workouts.startSessionErrorDescription") || "Impossible de démarrer la session",
         variant: "destructive",
       });
     } finally {

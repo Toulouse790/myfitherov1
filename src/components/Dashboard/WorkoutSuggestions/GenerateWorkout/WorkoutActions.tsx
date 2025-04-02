@@ -20,11 +20,17 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
     try {
       setIsStarting(true);
       await onConfirm();
+      
+      // Ajouter un toast de succès
+      toast({
+        title: "Entraînement démarré",
+        description: "Votre session d'entraînement a été créée avec succès.",
+      });
     } catch (error) {
       console.error('Error starting workout:', error);
       toast({
-        title: t("common.error"),
-        description: t("workouts.startSessionErrorDescription"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.startSessionErrorDescription") || "Impossible de démarrer la session d'entraînement",
         variant: "destructive",
       });
     } finally {

@@ -27,8 +27,9 @@ export const useWorkoutOperations = () => {
 
     try {
       setIsLoading(true);
+      console.log("Démarrage de l'entraînement avec exercices:", exercises);
       
-      // Create a new workout session
+      // Create a new workout session with the correct fields
       const { data, error } = await supabase
         .from('workout_sessions')
         .insert([{
@@ -36,7 +37,6 @@ export const useWorkoutOperations = () => {
           program_id: programId || null,
           exercises: exercises || [],
           total_duration_minutes: 0,
-          calories_burned: 0,
           status: 'in_progress',
           perceived_difficulty: 'moderate',
           type: 'strength',
@@ -45,7 +45,12 @@ export const useWorkoutOperations = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur création session:", error);
+        throw error;
+      }
+      
+      console.log("Session créée avec succès:", data);
       
       // Redirect to the appropriate page
       if (programId) {
