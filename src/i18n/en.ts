@@ -1,4 +1,3 @@
-
 export const en = {
   common: {
     save: "Save",
@@ -390,7 +389,13 @@ export const en = {
     poor: "Poor",
     fair: "Fair",
     good: "Good",
-    excellent: "Excellent"
+    excellent: "Excellent",
+    lastNight: "Last Night",
+    score: "Score",
+    recommendedTime: "Recommended Sleep Time",
+    manualEntry: "Manual Entry",
+    autoTracking: "Auto Tracking",
+    totalDuration: "Total Duration"
   },
   difficulty: {
     easy: "Easy",

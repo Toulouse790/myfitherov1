@@ -15,7 +15,7 @@ export const SleepScore = () => {
   const [sleepScore, setSleepScore] = useState(87);
   const [sleepData, setSleepData] = useState({
     duration: "7h 24min",
-    quality: "Bon",
+    quality: "good",
     deepSleep: "2h 15min",
     remSleep: "1h 40min",
     lightSleep: "3h 29min",
@@ -126,7 +126,7 @@ export const SleepScore = () => {
               <Zap className="h-4 w-4 text-cyan-500" />
               <div>
                 <p className="text-sm text-muted-foreground">{t("sleep.quality")}</p>
-                <p className="font-medium">{t(`sleep.${sleepData.quality.toLowerCase()}`)}</p>
+                <p className="font-medium">{t(`sleep.${sleepData.quality}`)}</p>
               </div>
             </motion.div>
           </motion.div>

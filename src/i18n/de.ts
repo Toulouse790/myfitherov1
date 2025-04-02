@@ -1,4 +1,3 @@
-
 export const de = {
   common: {
     save: "Speichern",
@@ -370,7 +369,13 @@ export const de = {
     poor: "Schlecht",
     fair: "Mäßig",
     good: "Gut",
-    excellent: "Ausgezeichnet"
+    excellent: "Ausgezeichnet",
+    lastNight: "Letzte Nacht",
+    score: "Punktzahl",
+    recommendedTime: "Empfohlene Schlafzeit",
+    manualEntry: "Manuelle Eingabe",
+    autoTracking: "Automatische Verfolgung",
+    totalDuration: "Gesamtdauer"
   },
   difficulty: {
     easy: "Leicht",
