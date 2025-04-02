@@ -26,18 +26,18 @@ export function WorkoutGenerator() {
     <div className="space-y-6">
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>{t("workouts.generator")}</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-xl sm:text-2xl">{t("workouts.generator")}</CardTitle>
+          <CardDescription className="text-sm sm:text-base">
             {t("workouts.generatorDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="text-sm font-medium">
+              <label className="text-xs sm:text-sm font-medium">
                 {t("workouts.duration")}: {duration[0]} {t("common.min")}
               </label>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </div>
             <Slider
               defaultValue={duration}
@@ -51,10 +51,10 @@ export function WorkoutGenerator() {
 
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="text-sm font-medium">
+              <label className="text-xs sm:text-sm font-medium">
                 {t("workouts.intensity")}: {intensity[0]}%
               </label>
-              <Zap className="h-4 w-4 text-muted-foreground" />
+              <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </div>
             <Slider
               defaultValue={intensity}
@@ -66,14 +66,14 @@ export function WorkoutGenerator() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 my-4">
-            <div className="flex flex-col items-center justify-center p-4 bg-muted/20 rounded-lg">
-              <Calendar className="h-5 w-5 mb-2 text-primary" />
-              <span className="text-sm font-medium">{t("workouts.todayDate")}</span>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 my-3 sm:my-4">
+            <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
+              <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
+              <span className="text-xs sm:text-sm font-medium">{t("workouts.todayDate")}</span>
             </div>
-            <div className="flex flex-col items-center justify-center p-4 bg-muted/20 rounded-lg">
-              <Dumbbell className="h-5 w-5 mb-2 text-primary" />
-              <span className="text-sm font-medium">~250 kcal</span>
+            <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
+              <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
+              <span className="text-xs sm:text-sm font-medium">~250 kcal</span>
             </div>
           </div>
 
@@ -85,13 +85,13 @@ export function WorkoutGenerator() {
           >
             {isGenerating ? (
               <>
-                <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin mr-2" />
-                <span className="truncate">{t("workouts.generationLoading")}</span>
+                <div className="h-3 w-3 sm:h-4 sm:w-4 border-2 border-current border-t-transparent animate-spin mr-2" />
+                <span className="text-xs sm:text-sm truncate">{t("workouts.generationLoading")}</span>
               </>
             ) : (
               <>
-                <Dumbbell className="h-4 w-4 mr-2" />
-                <span className="truncate">{t("workouts.generateWorkout")}</span>
+                <Dumbbell className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <span className="text-xs sm:text-sm truncate">{t("workouts.generateWorkout")}</span>
               </>
             )}
           </Button>

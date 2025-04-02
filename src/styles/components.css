@@ -2,7 +2,7 @@
 @layer base {
   /* Card Styles */
   .card {
-    @apply rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 sm:p-6 
+    @apply rounded-xl shadow-lg bg-white dark:bg-gray-800 p-3 sm:p-4 md:p-6 
            transition-all duration-300 hover:shadow-xl dark:text-white;
   }
 
@@ -20,7 +20,7 @@
 
   /* Button Styles */
   .btn {
-    @apply px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium text-sm sm:text-base
+    @apply px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs sm:text-sm md:text-base
            transition-all duration-300
            hover:opacity-90 active:scale-[0.98];
   }
@@ -42,32 +42,32 @@
     @apply sticky top-0 z-50 w-full
            backdrop-blur-sm bg-background/80
            border-b border-border/40
-           py-2 sm:py-3;
+           py-1.5 sm:py-2 md:py-3;
   }
 
   .footer {
-    @apply mt-auto py-4 sm:py-6 bg-neutral-900 text-white;
+    @apply mt-auto py-3 sm:py-4 md:py-6 bg-neutral-900 text-white;
   }
   
   /* Responsive Text */
   .title-large {
-    @apply text-lg sm:text-xl md:text-2xl font-bold;
+    @apply text-base sm:text-lg md:text-xl lg:text-2xl font-bold;
   }
   
   .title-medium {
-    @apply text-base sm:text-lg md:text-xl font-semibold;
+    @apply text-sm sm:text-base md:text-lg lg:text-xl font-semibold;
   }
   
   .title-small {
-    @apply text-sm sm:text-base font-medium;
+    @apply text-xs sm:text-sm md:text-base font-medium;
   }
   
   /* Responsive padding/margin */
   .section-padding {
-    @apply py-4 sm:py-6 md:py-8;
+    @apply py-3 sm:py-4 md:py-6 lg:py-8;
   }
   
   .section-margin {
-    @apply my-4 sm:my-6 md:my-8;
+    @apply my-3 sm:my-4 md:my-6 lg:my-8;
   }
 }

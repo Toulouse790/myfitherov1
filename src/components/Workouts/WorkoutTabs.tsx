@@ -17,28 +17,28 @@ export function WorkoutTabs({ activeTab, setActiveTab }: WorkoutTabsProps) {
   
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-3 mb-6 sm:mb-8">
+      <TabsList className="grid w-full grid-cols-3 mb-4 sm:mb-6 md:mb-8">
         <TabsTrigger 
           value="home" 
-          className={`text-xs sm:text-sm ${isMobile ? 'py-1.5 px-1' : ''}`}
+          className={`text-[10px] xs:text-xs sm:text-sm ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
           {t("workouts.startWorkout")}
         </TabsTrigger>
         <TabsTrigger 
           value="library" 
-          className={`text-xs sm:text-sm ${isMobile ? 'py-1.5 px-1' : ''}`}
+          className={`text-[10px] xs:text-xs sm:text-sm ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
           {t("workouts.library")}
         </TabsTrigger>
         <TabsTrigger 
           value="history" 
-          className={`text-xs sm:text-sm ${isMobile ? 'py-1.5 px-1' : ''}`}
+          className={`text-[10px] xs:text-xs sm:text-sm ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
           {t("workouts.history")}
         </TabsTrigger>
       </TabsList>
       
-      <TabsContent value="home" className="space-y-4 sm:space-y-6">
+      <TabsContent value="home" className="space-y-3 sm:space-y-4 md:space-y-6">
         <WorkoutGenerator />
       </TabsContent>
       
