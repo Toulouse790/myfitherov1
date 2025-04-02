@@ -1,93 +1,99 @@
 
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { History } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { Calendar, Clock, Dumbbell, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function HistoryTab() {
-  const navigate = useNavigate();
   const { t } = useLanguage();
-  const { user } = useAuth();
   
-  const { data: pastSessions, isLoading: loadingSessions } = useQuery({
-    queryKey: ['past-workout-sessions', user?.id],
-    queryFn: async () => {
-      if (!user) return [];
-      
-      const { data, error } = await supabase
-        .from('workout_sessions')
-        .select(`
-          *,
-          program:program_id(name)
-        `)
-        .eq('user_id', user.id)
-        .eq('completed', true)
-        .order('created_at', { ascending: false })
-        .limit(5);
-        
-      if (error) {
-        console.error("Erreur lors de la récupération des sessions passées:", error);
-        throw error;
+  // Animation variants
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
       }
-      
-      return data || [];
-    },
-    enabled: !!user
-  });
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
+  // Sample workout history data
+  const workoutHistory = [
+    { id: 1, date: "2023-06-15", type: "Chest & Triceps", duration: 45, exercises: 5 },
+    { id: 2, date: "2023-06-12", type: "Legs", duration: 60, exercises: 6 },
+    { id: 3, date: "2023-06-10", type: "Back & Biceps", duration: 50, exercises: 5 },
+  ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("workouts.workoutHistory")}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {loadingSessions ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex justify-between items-center p-3 bg-muted/20 rounded-lg animate-pulse">
-                <div className="h-4 w-1/3 bg-muted rounded"></div>
-                <div className="h-4 w-1/4 bg-muted rounded"></div>
-              </div>
-            ))}
+    <motion.div 
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="space-y-6"
+    >
+      <Card className="overflow-hidden border-border/40 bg-gradient-to-br from-card to-card/80">
+        <CardHeader className="bg-primary/5 pb-3">
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <Calendar className="h-5 w-5 text-primary" />
+            {t("workouts.workoutHistory")}
+          </CardTitle>
+          <CardDescription>
+            {t("workouts.recentWorkouts")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6">
+          {workoutHistory.length > 0 ? (
+            <div className="space-y-4">
+              {workoutHistory.map((workout) => (
+                <motion.div key={workout.id} variants={item}>
+                  <Card className="bg-background/50 hover:bg-background/70 transition-colors cursor-pointer">
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Dumbbell className="h-4 w-4 text-primary" />
+                            <h3 className="font-semibold">{workout.type}</h3>
+                          </div>
+                          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              <span>{workout.duration} min</span>
+                            </div>
+                            <div>
+                              <Badge variant="outline" className="text-xs">
+                                {workout.exercises} {t("workouts.exerciseLibrary").toLowerCase()}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10 text-muted-foreground">
+              <p>{t("workouts.noHistory")}</p>
+            </div>
+          )}
+          
+          <div className="mt-6 text-center">
+            <Button variant="outline" className="w-full sm:w-auto">
+              {t("workouts.viewFullHistory")}
+            </Button>
           </div>
-        ) : pastSessions?.length === 0 ? (
-          <div className="text-center py-6">
-            <History className="h-12 w-12 mx-auto text-muted-foreground opacity-50 mb-2" />
-            <p className="text-muted-foreground">
-              {t("workouts.noHistory")}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {pastSessions?.map((session) => (
-              <div 
-                key={session.id}
-                className="flex justify-between items-center p-3 bg-muted/20 rounded-lg hover:bg-muted/30 cursor-pointer transition-colors"
-                onClick={() => navigate(`/workouts/summary/${session.id}`)}
-              >
-                <div>
-                  <p className="font-medium">{session.program?.name || t("workouts.customWorkout")}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(session.created_at).toLocaleDateString()} • {session.total_duration_minutes} min
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span className="font-medium">{session.calories_burned} kcal</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-      <CardFooter>
-        <Button variant="outline" className="w-full" onClick={() => navigate('/workouts/history')}>
-          {t("workouts.viewFullHistory")}
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }

@@ -4,23 +4,63 @@ import { Header } from "@/components/Layout/Header";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { ActiveSessionCard } from "@/components/Workouts/ActiveSessionCard";
 import { WorkoutTabs } from "@/components/Workouts/WorkoutTabs";
+import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Dumbbell, Flame } from "lucide-react";
 
 export default function Workouts() {
   const { activeSession, formatTime, sessionTime } = useWorkoutSession();
   const [activeTab, setActiveTab] = useState("home");
+  const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
       <Header />
-      <div className="container max-w-4xl mx-auto p-4 pt-16">
+      <div className="container max-w-4xl mx-auto p-4 pt-20 pb-16">
+        <div className="flex flex-col items-center mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-center gap-3 mb-3"
+          >
+            <Flame className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
+              {t("workouts.title")}
+            </h1>
+            <Dumbbell className="h-8 w-8 text-primary" />
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-muted-foreground text-center max-w-lg"
+          >
+            {t("workouts.trackProgressDescription")}
+          </motion.p>
+        </div>
+        
         {activeSession && (
-          <ActiveSessionCard 
-            activeSession={activeSession} 
-            formattedTime={formatTime(sessionTime)} 
-          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <ActiveSessionCard 
+              activeSession={activeSession} 
+              formattedTime={formatTime(sessionTime)} 
+            />
+          </motion.div>
         )}
 
-        <WorkoutTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
+          <WorkoutTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        </motion.div>
       </div>
     </div>
   );
