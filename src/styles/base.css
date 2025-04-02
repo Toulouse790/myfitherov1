@@ -18,73 +18,73 @@
     @apply text-2xl font-bold tracking-tight;
     font-size: 1.5rem;
   }
-  @screen sm { h1 { font-size: 1.875rem; } }
-  @screen md { h1 { font-size: 2.25rem; } }
+  @media (min-width: 640px) { h1 { font-size: 1.875rem; } }
+  @media (min-width: 768px) { h1 { font-size: 2.25rem; } }
   
   h2 {
     @apply text-xl font-semibold tracking-tight;
     font-size: 1.25rem;
   }
-  @screen sm { h2 { font-size: 1.5rem; } }
-  @screen md { h2 { font-size: 1.875rem; } }
+  @media (min-width: 640px) { h2 { font-size: 1.5rem; } }
+  @media (min-width: 768px) { h2 { font-size: 1.875rem; } }
   
   h3 {
     @apply text-lg font-medium tracking-tight;
     font-size: 1.125rem;
   }
-  @screen sm { h3 { font-size: 1.25rem; } }
-  @screen md { h3 { font-size: 1.5rem; } }
+  @media (min-width: 640px) { h3 { font-size: 1.25rem; } }
+  @media (min-width: 768px) { h3 { font-size: 1.5rem; } }
   
   h4, h5, h6 {
     @apply text-base font-medium tracking-tight;
     font-size: 1rem;
   }
-  @screen sm { h4, h5, h6 { font-size: 1.125rem; } }
-  @screen md { h4, h5, h6 { font-size: 1.25rem; } }
+  @media (min-width: 640px) { h4, h5, h6 { font-size: 1.125rem; } }
+  @media (min-width: 768px) { h4, h5, h6 { font-size: 1.25rem; } }
   
   p {
     @apply text-sm;
     font-size: 0.875rem;
   }
-  @screen sm { p { font-size: 1rem; } }
-  @screen md { p { font-size: 1.125rem; } }
+  @media (min-width: 640px) { p { font-size: 1rem; } }
+  @media (min-width: 768px) { p { font-size: 1.125rem; } }
   
   label, input, button {
     @apply text-sm;
     font-size: 0.875rem;
   }
-  @screen sm { label, input, button { font-size: 1rem; } }
+  @media (min-width: 640px) { label, input, button { font-size: 1rem; } }
   
   /* Responsive text classes without circular dependencies */
   .text-xs {
     font-size: 0.75rem;
   }
-  @screen sm { .text-xs { font-size: 0.875rem; } }
+  @media (min-width: 640px) { .text-xs { font-size: 0.875rem; } }
   
   .text-sm {
     font-size: 0.875rem;
   }
-  @screen sm { .text-sm { font-size: 1rem; } }
+  @media (min-width: 640px) { .text-sm { font-size: 1rem; } }
   
   .text-base {
     font-size: 1rem;
   }
-  @screen sm { .text-base { font-size: 1.125rem; } }
+  @media (min-width: 640px) { .text-base { font-size: 1.125rem; } }
   
   .text-lg {
     font-size: 1.125rem;
   }
-  @screen sm { .text-lg { font-size: 1.25rem; } }
+  @media (min-width: 640px) { .text-lg { font-size: 1.25rem; } }
   
   .text-xl {
     font-size: 1.25rem;
   }
-  @screen sm { .text-xl { font-size: 1.5rem; } }
+  @media (min-width: 640px) { .text-xl { font-size: 1.5rem; } }
   
   .text-2xl {
     font-size: 1.5rem;
   }
-  @screen sm { .text-2xl { font-size: 1.75rem; } }
+  @media (min-width: 640px) { .text-2xl { font-size: 1.75rem; } }
   
   /* Responsive spacing */
   .pb-safe {
@@ -95,7 +95,7 @@
   button, a {
     @apply min-h-9;
   }
-  @screen sm { button, a { min-height: 2.5rem; } }
+  @media (min-width: 640px) { button, a { min-height: 2.5rem; } }
   
   /* Smooth scrolling */
   html {
