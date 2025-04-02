@@ -126,7 +126,7 @@ export const SleepScore = () => {
               <Zap className="h-4 w-4 text-cyan-500" />
               <div>
                 <p className="text-sm text-muted-foreground">{t("sleep.quality")}</p>
-                <p className="font-medium">{sleepData.quality}</p>
+                <p className="font-medium">{t(`sleep.${sleepData.quality.toLowerCase()}`)}</p>
               </div>
             </motion.div>
           </motion.div>
