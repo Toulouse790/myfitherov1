@@ -6,6 +6,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Dumbbell, Calendar, Clock, Zap } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 export function WorkoutGenerator() {
   const { t } = useLanguage();
@@ -13,14 +15,35 @@ export function WorkoutGenerator() {
   const [intensity, setIntensity] = useState([50]);
   const [isGenerating, setIsGenerating] = useState(false);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleGenerate = () => {
     setIsGenerating(true);
+    
     // Simuler un délai de génération
     setTimeout(() => {
-      setIsGenerating(false);
-    }, 2000);
+      try {
+        // Rediriger vers la page de génération d'entraînement
+        navigate('/workouts/generate', { 
+          state: { 
+            duration: duration[0],
+            intensity: intensity[0]
+          }
+        });
+      } catch (error) {
+        console.error("Erreur lors de la navigation:", error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de générer l'entraînement. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        setIsGenerating(false);
+      }
+    }, 1500);
   };
+
+  const estimatedCalories = Math.round((duration[0] * intensity[0] * 0.1) + 150);
 
   return (
     <div className="space-y-6">
@@ -69,18 +92,18 @@ export function WorkoutGenerator() {
           <div className="grid grid-cols-2 gap-3 sm:gap-4 my-3 sm:my-4">
             <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
               <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
-              <span className="text-xs sm:text-sm font-medium">{t("workouts.todayDate")}</span>
+              <span className="text-xs sm:text-sm font-medium truncate">{t("workouts.todayDate")}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
               <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
-              <span className="text-xs sm:text-sm font-medium">~250 kcal</span>
+              <span className="text-xs sm:text-sm font-medium truncate">~{estimatedCalories} kcal</span>
             </div>
           </div>
 
           <Button 
             onClick={handleGenerate} 
             disabled={isGenerating}
-            className="w-full"
+            className="w-full h-auto py-2 sm:py-3"
             size={isMobile ? "lg" : "default"}
           >
             {isGenerating ? (
