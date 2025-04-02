@@ -18,7 +18,7 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
   const { t } = useLanguage();
 
   const handleStart = async () => {
-    debugLogger.log("WorkoutActions", "Bouton de démarrage cliqué");
+    debugLogger.log("WorkoutActions", "Bouton de démarrage cliqué", {});
     try {
       setIsStarting(true);
       await onConfirm();

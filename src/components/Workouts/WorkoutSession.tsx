@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ExerciseList } from "./WorkoutSession/ExerciseList";
 import { ExerciseDetail } from "./WorkoutSession/ExerciseDetail";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,9 +8,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const WorkoutSession = () => {
   const { id: sessionId } = useParams();
+  const navigate = useNavigate();
   const [exercises, setExercises] = useState<string[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +30,12 @@ export const WorkoutSession = () => {
   // Charger les exercices de la séance d'entraînement
   useEffect(() => {
     const fetchSessionData = async () => {
-      if (!sessionId) return;
+      if (!sessionId) {
+        debugLogger.log("WorkoutSession", "ID de session manquant, impossible de charger les données", {});
+        return;
+      }
+      
+      debugLogger.log("WorkoutSession", "Chargement des données de la session:", sessionId);
       
       try {
         setIsLoading(true);
@@ -38,7 +45,12 @@ export const WorkoutSession = () => {
           .eq('id', sessionId)
           .single();
         
-        if (error) throw error;
+        if (error) {
+          debugLogger.log("WorkoutSession", "Erreur lors du chargement de la session:", error);
+          throw error;
+        }
+        
+        debugLogger.log("WorkoutSession", "Données de session chargées:", data);
         
         if (data?.exercises) {
           // Initialiser la progression pour chaque exercice

@@ -17,15 +17,15 @@ export const workoutRoutes = [
     element: <RequireQuestionnaire><WorkoutGenerate /></RequireQuestionnaire>,
   },
   {
-    path: "workouts/:sessionId",
-    element: <RequireQuestionnaire><CleanWorkoutSession /></RequireQuestionnaire>,
-  },
-  {
     path: "workouts/session/:id",
     element: <RequireQuestionnaire><WorkoutSessionPage /></RequireQuestionnaire>,
   },
   {
     path: "workouts/start/:id",
     element: <RequireQuestionnaire><StartWorkout /></RequireQuestionnaire>,
+  },
+  {
+    path: "workouts/:sessionId",
+    element: <RequireQuestionnaire><CleanWorkoutSession /></RequireQuestionnaire>,
   },
 ];

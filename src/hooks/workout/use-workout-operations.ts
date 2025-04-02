@@ -28,7 +28,7 @@ export const useWorkoutOperations = () => {
 
     try {
       setIsLoading(true);
-      debugLogger.log("useWorkoutOperations", "Démarrage de l'entraînement avec exercices:", exercises);
+      debugLogger.log("useWorkoutOperations", "Démarrage de l'entraînement avec exercices:", exercises || []);
       
       // Créer une session d'entraînement avec les champs corrects
       const sessionData = {
