@@ -2,9 +2,10 @@
 @layer base {
   /* Card Styles */
   .card {
-    @apply rounded-xl shadow-lg bg-white dark:bg-gray-800 p-3 sm:p-4 md:p-6 
-           transition-all duration-300 hover:shadow-xl dark:text-white;
+    @apply rounded-xl shadow-lg bg-white dark:bg-gray-800 p-3 transition-all duration-300 hover:shadow-xl dark:text-white;
   }
+  @screen sm { .card { padding: 1rem; } }
+  @screen md { .card { padding: 1.5rem; } }
 
   .card-muscu {
     @apply border-l-4 border-[#F97316];
@@ -20,9 +21,20 @@
 
   /* Button Styles */
   .btn {
-    @apply px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs sm:text-sm md:text-base
-           transition-all duration-300
-           hover:opacity-90 active:scale-[0.98];
+    @apply px-2 py-1 rounded-lg font-medium transition-all duration-300 hover:opacity-90 active:scale-[0.98];
+    font-size: 0.75rem;
+  }
+  @screen sm { 
+    .btn { 
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+    }
+  }
+  @screen md { 
+    .btn { 
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+    }
   }
 
   .btn-muscu {
@@ -39,35 +51,55 @@
 
   /* Header & Footer */
   .header {
-    @apply sticky top-0 z-50 w-full
-           backdrop-blur-sm bg-background/80
-           border-b border-border/40
-           py-1.5 sm:py-2 md:py-3;
+    @apply sticky top-0 z-50 w-full backdrop-blur-sm bg-background/80 border-b border-border/40 py-1.5;
   }
+  @screen sm { .header { padding-top: 0.5rem; padding-bottom: 0.5rem; } }
+  @screen md { .header { padding-top: 0.75rem; padding-bottom: 0.75rem; } }
 
   .footer {
-    @apply mt-auto py-3 sm:py-4 md:py-6 bg-neutral-900 text-white;
+    @apply mt-auto py-3 bg-neutral-900 text-white;
   }
+  @screen sm { .footer { padding-top: 1rem; padding-bottom: 1rem; } }
+  @screen md { .footer { padding-top: 1.5rem; padding-bottom: 1.5rem; } }
   
   /* Responsive Text */
   .title-large {
-    @apply text-base sm:text-lg md:text-xl lg:text-2xl font-bold;
+    @apply font-bold;
+    font-size: 1rem;
   }
+  @screen sm { .title-large { font-size: 1.125rem; } }
+  @screen md { .title-large { font-size: 1.25rem; } }
+  @screen lg { .title-large { font-size: 1.5rem; } }
   
   .title-medium {
-    @apply text-sm sm:text-base md:text-lg lg:text-xl font-semibold;
+    @apply font-semibold;
+    font-size: 0.875rem;
   }
+  @screen sm { .title-medium { font-size: 1rem; } }
+  @screen md { .title-medium { font-size: 1.125rem; } }
+  @screen lg { .title-medium { font-size: 1.25rem; } }
   
   .title-small {
-    @apply text-xs sm:text-sm md:text-base font-medium;
+    @apply font-medium;
+    font-size: 0.75rem;
   }
+  @screen sm { .title-small { font-size: 0.875rem; } }
+  @screen md { .title-small { font-size: 1rem; } }
   
   /* Responsive padding/margin */
   .section-padding {
-    @apply py-3 sm:py-4 md:py-6 lg:py-8;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
+  @screen sm { .section-padding { padding-top: 1rem; padding-bottom: 1rem; } }
+  @screen md { .section-padding { padding-top: 1.5rem; padding-bottom: 1.5rem; } }
+  @screen lg { .section-padding { padding-top: 2rem; padding-bottom: 2rem; } }
   
   .section-margin {
-    @apply my-3 sm:my-4 md:my-6 lg:my-8;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
   }
+  @screen sm { .section-margin { margin-top: 1rem; margin-bottom: 1rem; } }
+  @screen md { .section-margin { margin-top: 1.5rem; margin-bottom: 1.5rem; } }
+  @screen lg { .section-margin { margin-top: 2rem; margin-bottom: 2rem; } }
 }

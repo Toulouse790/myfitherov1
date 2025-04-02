@@ -15,52 +15,76 @@
 
   /* Typography - Responsive Text Sizes */
   h1 {
-    @apply text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight;
+    @apply text-2xl font-bold tracking-tight;
+    font-size: 1.5rem;
   }
+  @screen sm { h1 { font-size: 1.875rem; } }
+  @screen md { h1 { font-size: 2.25rem; } }
   
   h2 {
-    @apply text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight;
+    @apply text-xl font-semibold tracking-tight;
+    font-size: 1.25rem;
   }
+  @screen sm { h2 { font-size: 1.5rem; } }
+  @screen md { h2 { font-size: 1.875rem; } }
   
   h3 {
-    @apply text-lg sm:text-xl md:text-2xl font-medium tracking-tight;
+    @apply text-lg font-medium tracking-tight;
+    font-size: 1.125rem;
   }
+  @screen sm { h3 { font-size: 1.25rem; } }
+  @screen md { h3 { font-size: 1.5rem; } }
   
   h4, h5, h6 {
-    @apply text-base sm:text-lg md:text-xl font-medium tracking-tight;
+    @apply text-base font-medium tracking-tight;
+    font-size: 1rem;
   }
+  @screen sm { h4, h5, h6 { font-size: 1.125rem; } }
+  @screen md { h4, h5, h6 { font-size: 1.25rem; } }
   
   p {
-    @apply text-sm sm:text-base md:text-lg;
+    @apply text-sm;
+    font-size: 0.875rem;
   }
+  @screen sm { p { font-size: 1rem; } }
+  @screen md { p { font-size: 1.125rem; } }
   
   label, input, button {
-    @apply text-sm sm:text-base;
+    @apply text-sm;
+    font-size: 0.875rem;
   }
+  @screen sm { label, input, button { font-size: 1rem; } }
   
+  /* Responsive text classes without circular dependencies */
   .text-xs {
-    @apply text-[10px] sm:text-xs;
+    font-size: 0.75rem;
   }
+  @screen sm { .text-xs { font-size: 0.875rem; } }
   
   .text-sm {
-    @apply text-xs sm:text-sm;
+    font-size: 0.875rem;
   }
+  @screen sm { .text-sm { font-size: 1rem; } }
   
   .text-base {
-    @apply text-sm sm:text-base;
+    font-size: 1rem;
   }
+  @screen sm { .text-base { font-size: 1.125rem; } }
   
   .text-lg {
-    @apply text-base sm:text-lg;
+    font-size: 1.125rem;
   }
+  @screen sm { .text-lg { font-size: 1.25rem; } }
   
   .text-xl {
-    @apply text-lg sm:text-xl;
+    font-size: 1.25rem;
   }
+  @screen sm { .text-xl { font-size: 1.5rem; } }
   
   .text-2xl {
-    @apply text-xl sm:text-2xl;
+    font-size: 1.5rem;
   }
+  @screen sm { .text-2xl { font-size: 1.75rem; } }
   
   /* Responsive spacing */
   .pb-safe {
@@ -69,8 +93,9 @@
   
   /* Improve touch targets on mobile */
   button, a {
-    @apply min-h-9 sm:min-h-10;
+    @apply min-h-9;
   }
+  @screen sm { button, a { min-height: 2.5rem; } }
   
   /* Smooth scrolling */
   html {
