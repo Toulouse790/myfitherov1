@@ -32,6 +32,8 @@ export const useWorkoutSession = () => {
       
       // Start the timer with the calculated elapsed time
       startTimer();
+      
+      console.log("Session active trouvée:", activeSession);
     }
     
     return () => {
@@ -43,12 +45,21 @@ export const useWorkoutSession = () => {
     perceived_difficulty?: 'easy' | 'moderate' | 'hard';
     calories_burned?: number;
   } = {}) => {
-    if (!activeSession) return null;
+    if (!activeSession) {
+      console.log("Aucune session active trouvée lors de la tentative de terminer l'entraînement");
+      return null;
+    }
     
     stopTimer();
     
     try {
       const durationMinutes = Math.floor(sessionTime / 60);
+      
+      console.log("Finalisation de la session d'entraînement:", {
+        sessionId: activeSession.id,
+        duration: durationMinutes,
+        additionalData
+      });
       
       // Update the session to mark it as completed
       const data = await updateWorkoutSession(activeSession.id, {
@@ -72,6 +83,8 @@ export const useWorkoutSession = () => {
         
         return data;
       }
+      
+      console.log("Aucune donnée retournée après la mise à jour de la session");
       return null;
     } catch (error) {
       console.error(t("workouts.errors.sessionFinalize"), error);

@@ -10,9 +10,6 @@ interface StartWorkoutStepProps {
 
 export const StartWorkoutStep = ({ exerciseCount, onStartWorkout }: StartWorkoutStepProps) => {
   const handleStartClick = () => {
-    // Plus besoin de vérifier s'il y a des exercices sélectionnés
-    // car nous allons générer la séance nous-mêmes
-    
     // Ajouter un log pour débugger
     console.log("Bouton C'est parti cliqué, appel de onStartWorkout");
     // Appel de la fonction passée en prop
