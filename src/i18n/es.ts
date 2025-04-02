@@ -375,7 +375,15 @@ export const es = {
     recommendedTime: "Tiempo de sueño recomendado",
     manualEntry: "Entrada manual",
     autoTracking: "Seguimiento automático",
-    totalDuration: "Duración total"
+    totalDuration: "Duración total",
+    sleepHistory: "Historial de sueño",
+    week: "Semana",
+    month: "Mes",
+    previous: "Anterior",
+    today: "Hoy",
+    next: "Siguiente",
+    bars: "Barras",
+    areas: "Áreas"
   },
   difficulty: {
     easy: "Fácil",
