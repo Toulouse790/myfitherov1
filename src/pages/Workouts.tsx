@@ -1,67 +1,69 @@
 
 import { useState } from "react";
 import { Header } from "@/components/Layout/Header";
-import { WorkoutLibrary, WorkoutHistory, SmartWorkoutGenerator } from "@/components/Workouts";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { ActiveSessionCard } from "@/components/Workouts/ActiveSessionCard";
+import { WorkoutTabs } from "@/components/Workouts/WorkoutTabs";
+import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { WorkoutFlowManager } from "@/components/Workouts/WorkoutFlow/WorkoutFlowManager";
-import { DebugExercises } from "@/components/Workouts/components/DebugExercises";
+import { Dumbbell, Flame } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Workouts() {
+  const { activeSession, formatTime, sessionTime } = useWorkoutSession();
+  const [activeTab, setActiveTab] = useState("home");
   const { t } = useLanguage();
-  const [showDebug, setShowDebug] = useState(false);
-  
+  const isMobile = useIsMobile();
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
       <Header />
-      <div className="container max-w-7xl mx-auto p-4 pt-40 pb-20">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">
-            {t("workouts.title")}
-          </h1>
-          <button 
-            onClick={() => setShowDebug(!showDebug)}
-            className="text-xs text-muted-foreground hover:underline"
+      <div className="container max-w-4xl mx-auto px-4 pt-20 pb-24 sm:pb-16">
+        <div className="flex flex-col items-center mb-6 sm:mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3"
           >
-            {showDebug ? t("common.hideDebug") : t("common.showDebug")}
-          </button>
+            <Flame className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
+              {t("workouts.title")}
+            </h1>
+            <Dumbbell className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-sm sm:text-base text-muted-foreground text-center max-w-lg px-2"
+          >
+            {t("workouts.trackProgressDescription")}
+          </motion.p>
         </div>
         
-        {showDebug && <DebugExercises />}
-        
-        <Tabs defaultValue="workout">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="workout">
-              {t("workouts.startWorkout")}
-            </TabsTrigger>
-            <TabsTrigger value="library">
-              {t("workouts.library")}
-            </TabsTrigger>
-            <TabsTrigger value="history">
-              {t("workouts.history")}
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="workout" className="space-y-8">
-            <div className="bg-muted/20 p-3 rounded-md text-sm text-muted-foreground mb-4">
-              <p>{t("workouts.recommendations")}</p>
-              <ul className="list-disc pl-5 mt-1">
-                <li>{t("workouts.recommendationShort", { min: "20-30", exercises: "2-3" })}</li>
-                <li>{t("workouts.recommendationMedium", { min: "45", exercises: "4-5" })}</li>
-                <li>{t("workouts.recommendationLong", { min: "60+", exercises: "5-7" })}</li>
-              </ul>
-            </div>
-            <SmartWorkoutGenerator />
-          </TabsContent>
-          
-          <TabsContent value="library">
-            <WorkoutLibrary />
-          </TabsContent>
-          
-          <TabsContent value="history">
-            <WorkoutHistory />
-          </TabsContent>
-        </Tabs>
+        {activeSession && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="mb-6 sm:mb-8"
+          >
+            <ActiveSessionCard 
+              activeSession={activeSession} 
+              formattedTime={formatTime(sessionTime)} 
+            />
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+          className="w-full"
+        >
+          <WorkoutTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        </motion.div>
       </div>
     </div>
   );
