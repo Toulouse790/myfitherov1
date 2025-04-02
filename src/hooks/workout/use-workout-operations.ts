@@ -53,14 +53,18 @@ export const useWorkoutOperations = () => {
       }
       
       debugLogger.log("useWorkoutOperations", "Session créée avec succès:", data);
-      debugLogger.log("useWorkoutOperations", "Session créée, redirection vers: workouts/" + data.id);
+      
+      // Vérifier le chemin exact où nous voulons rediriger
+      const redirectPath = `/workouts/session/${data.id}`;
+      debugLogger.log("useWorkoutOperations", "Session créée, redirection vers:", redirectPath);
       
       // Rediriger vers la page /workouts/session/:id pour utiliser le bon composant
       if (data) {
-        navigate(`/workouts/session/${data.id}`);
+        navigate(redirectPath);
+        return data;
       }
       
-      return data;
+      return null;
     } catch (error) {
       console.error(t("workouts.errors.sessionCreate") || "Erreur lors de la création de la session", error);
       toast({
