@@ -1,82 +1,111 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useToast } from '@/hooks/use-toast';
 
-export const useRestTimer = (initialRestTime: number = 90) => {
-  const [restTimers, setRestTimers] = useState<{ [key: string]: number | null }>({});
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+interface UseRestTimerOptions {
+  initialDuration?: number;
+  onComplete?: () => void;
+  autoStart?: boolean;
+}
+
+export const useRestTimer = ({
+  initialDuration = 90,
+  onComplete,
+  autoStart = false
+}: UseRestTimerOptions = {}) => {
+  const [duration, setDuration] = useState<number | null>(autoStart ? initialDuration : null);
+  const [isActive, setIsActive] = useState(autoStart);
   const { toast } = useToast();
-  const audioContextRef = useRef<AudioContext | null>(null);
+  const { t } = useLanguage();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const playSound = useCallback(async () => {
-    try {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new AudioContext();
-      }
-      
-      const oscillator = audioContextRef.current.createOscillator();
-      const gainNode = audioContextRef.current.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContextRef.current.destination);
-      
-      oscillator.frequency.setValueAtTime(440, audioContextRef.current.currentTime); // A4 note
-      gainNode.gain.setValueAtTime(0.1, audioContextRef.current.currentTime); // Lower volume
-      
-      oscillator.start();
-      oscillator.stop(audioContextRef.current.currentTime + 0.2); // Short beep
-    } catch (error) {
-      console.error('Error playing sound:', error);
+  const clearTimerInterval = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
   }, []);
 
-  useEffect(() => {
-    const intervals: { [key: string]: NodeJS.Timeout } = {};
+  const startTimer = useCallback((customDuration?: number) => {
+    clearTimerInterval();
+    setDuration(customDuration ?? initialDuration);
+    setIsActive(true);
+  }, [clearTimerInterval, initialDuration]);
 
-    Object.entries(restTimers).forEach(([exerciseId, timer]) => {
-      if (timer !== null && timer > 0) {
-        console.log(`Rest timer for ${exerciseId}: ${timer}s`);
-        intervals[exerciseId] = setInterval(() => {
-          setRestTimers(prev => {
-            const currentTimer = prev[exerciseId];
-            if (currentTimer === null || currentTimer <= 1) {
-              playSound();
-              toast({
-                title: "Repos terminé !",
-                description: "C'est reparti ! Commencez la série suivante.",
-              });
-              return { ...prev, [exerciseId]: null };
-            }
-            return { ...prev, [exerciseId]: currentTimer - 1 };
-          });
-        }, 1000);
-      }
+  const pauseTimer = useCallback(() => {
+    clearTimerInterval();
+    setIsActive(false);
+  }, [clearTimerInterval]);
+
+  const resetTimer = useCallback(() => {
+    clearTimerInterval();
+    setDuration(initialDuration);
+    setIsActive(false);
+  }, [clearTimerInterval, initialDuration]);
+
+  const skipTimer = useCallback(() => {
+    clearTimerInterval();
+    setDuration(null);
+    setIsActive(false);
+    
+    if (onComplete) {
+      onComplete();
+    }
+    
+    toast({
+      title: t("workouts.restFinished") || "Rest skipped",
+      description: t("workouts.readyForNextSet") || "Ready for next set",
     });
+  }, [clearTimerInterval, onComplete, toast, t]);
 
-    return () => {
-      Object.values(intervals).forEach(interval => {
-        clearInterval(interval);
-      });
-    };
-  }, [restTimers, toast, playSound]);
-
-  const startRestTimer = useCallback((exerciseId: string) => {
-    console.log(`Starting rest timer for ${exerciseId}`);
-    setRestTimers(prev => ({
-      ...prev,
-      [exerciseId]: initialRestTime
-    }));
-  }, [initialRestTime]);
-
-  const cancelRestTimer = useCallback((exerciseId: string) => {
-    console.log(`Canceling rest timer for ${exerciseId}`);
-    setRestTimers(prev => ({
-      ...prev,
-      [exerciseId]: null
-    }));
+  const adjustTimer = useCallback((adjustment: number) => {
+    setDuration(prev => {
+      if (prev === null) return null;
+      return Math.max(1, prev + adjustment);
+    });
   }, []);
 
+  // Effect to handle the timer countdown
+  useEffect(() => {
+    if (isActive && duration !== null) {
+      intervalRef.current = setInterval(() => {
+        setDuration(prev => {
+          if (prev === null || prev <= 1) {
+            clearTimerInterval();
+            setIsActive(false);
+            
+            if (onComplete) {
+              onComplete();
+            }
+            
+            toast({
+              title: t("workouts.restFinished") || "Rest complete",
+              description: t("workouts.readyForNextSet") || "Ready for next set",
+            });
+            
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearTimerInterval();
+  }, [isActive, duration, clearTimerInterval, onComplete, toast, t]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => clearTimerInterval();
+  }, [clearTimerInterval]);
+
   return {
-    restTimers,
-    startRestTimer,
-    cancelRestTimer
+    duration,
+    isActive,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    skipTimer,
+    adjustTimer
   };
 };

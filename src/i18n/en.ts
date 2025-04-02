@@ -265,7 +265,26 @@ export const en = {
     exerciseForm3D: "3D Visualization",
     muscleVisualization: "Targeted Muscles Visualization",
     virtualCoaching: "Virtual Coaching",
-    aiFormCorrection: "AI Posture Correction"
+    aiFormCorrection: "AI Posture Correction",
+    currentSet: "Current Set",
+    completedSets: "Completed Sets",
+    weight: "Weight",
+    caloriesBurned: "calories burned",
+    restBeforeNextSet: "Rest before next set",
+    allSetsCompleted: "All sets completed",
+    workoutSession: "Workout Session",
+    exerciseProgress: "Exercise {current} of {total}",
+    noExercisesFound: "No exercises found",
+    selectExercisesForSession: "Please select exercises for this session",
+    unableToLoadSessionDetails: "Unable to load session details",
+    setCompleted: "Set completed",
+    restBeforeNextExercise: "Rest before next exercise",
+    sessionCompleted: "Session completed",
+    restFinished: "Rest finished",
+    readyForNextSet: "Ready for next set",
+    restingText: "Rest between sets",
+    skipRest: "Skip Rest",
+    of: "of"
   },
   nutrition: {
     title: "Nutrition",
@@ -320,7 +339,8 @@ export const en = {
     customRecipes: "Custom Recipes",
     createRecipe: "Create Recipe",
     favoriteRecipes: "Favorite Recipes",
-    saveRecipe: "Save Recipe"
+    saveRecipe: "Save Recipe",
+    completed: "Completed"
   },
   sleep: {
     title: "Sleep",

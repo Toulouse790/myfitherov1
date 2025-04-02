@@ -5,11 +5,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { WorkoutProgress } from "./WorkoutProgress";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { WorkoutHeader } from "./WorkoutHeader";
+import { WorkoutProgress } from "./WorkoutProgress";
 import { ExerciseCard } from "./ExerciseCard";
 import { WorkoutActions } from "./WorkoutActions";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 export const ActiveWorkout = () => {
   const { id } = useParams();
@@ -53,8 +53,8 @@ export const ActiveWorkout = () => {
             
             // Notification que le repos est terminé
             toast({
-              title: t("workouts.restFinished"),
-              description: t("workouts.readyForNextSet"),
+              title: t("workouts.restFinished") || "Repos terminé",
+              description: t("workouts.readyForNextSet") || "Prêt pour la prochaine série",
             });
             
             // Si toutes les séries sont terminées, passer à l'exercice suivant
@@ -101,16 +101,16 @@ export const ActiveWorkout = () => {
       } else {
         // Pas d'exercices trouvés, offrir à l'utilisateur de retourner à la sélection
         toast({
-          title: t("workouts.noExercisesFound"),
-          description: t("workouts.selectExercisesForSession"),
+          title: t("workouts.noExercisesFound") || "Aucun exercice trouvé",
+          description: t("workouts.selectExercisesForSession") || "Veuillez sélectionner des exercices pour cette séance",
         });
         navigate('/workouts/generate');
       }
     } catch (error) {
       console.error("Erreur lors du chargement de la séance:", error);
       toast({
-        title: t("common.error"),
-        description: t("workouts.unableToLoadSessionDetails"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.unableToLoadSessionDetails") || "Impossible de charger les détails de la séance",
         variant: "destructive",
       });
     } finally {
@@ -125,16 +125,16 @@ export const ActiveWorkout = () => {
       setRestTime(90);
       
       toast({
-        title: t("workouts.setCompleted"),
-        description: t("workouts.restBeforeNextSet", { seconds: 90 }),
+        title: t("workouts.setCompleted") || "Série terminée",
+        description: t("workouts.restBeforeNextSet", { seconds: 90 }) || "Reposez-vous avant la prochaine série",
       });
     } else {
       // Série finale de l'exercice, vérifier s'il y a un exercice suivant
       setRestTime(120);
       
       toast({
-        title: t("workouts.exerciseCompleted"),
-        description: t("workouts.restBeforeNextExercise", { seconds: 120 }),
+        title: t("workouts.exerciseCompleted") || "Exercice terminé",
+        description: t("workouts.restBeforeNextExercise", { seconds: 120 }) || "Reposez-vous avant le prochain exercice",
       });
     }
   };
@@ -145,8 +145,8 @@ export const ActiveWorkout = () => {
       setCurrentSet(1);
     } else {
       toast({
-        title: t("workouts.sessionCompleted"),
-        description: t("workouts.allExercisesCompleted"),
+        title: t("workouts.sessionCompleted") || "Séance terminée",
+        description: t("workouts.allExercisesCompleted") || "Tous les exercices ont été complétés",
       });
     }
   };
@@ -185,26 +185,27 @@ export const ActiveWorkout = () => {
       />
 
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold">{t("workouts.workoutSession")}</h1>
-        <div className="text-sm text-muted-foreground">
-          {t("workouts.exerciseProgress", { current: currentExerciseIndex + 1, total: exercises.length })}
-        </div>
+        <h1 className="text-2xl font-bold">{t("workouts.workoutSession") || "Séance d'entraînement"}</h1>
       </div>
 
-      <WorkoutProgress progress={progress} />
+      <WorkoutProgress 
+        progress={progress} 
+        currentExerciseIndex={currentExerciseIndex}
+        exercisesCount={exercises.length}
+      />
 
       <ExerciseCard 
         currentExercise={currentExercise}
         currentSet={currentSet}
         totalSets={totalSets}
         restTime={restTime}
-        handleCompleteSet={handleCompleteSet}
-        handleSkipRest={handleSkipRest}
+        onCompleteSet={handleCompleteSet}
+        onSkipRest={handleSkipRest}
       />
 
       <WorkoutActions 
-        handleFinishWorkout={handleFinishWorkout}
-        handleNextExercise={handleNextExercise}
+        onFinishWorkout={handleFinishWorkout}
+        onNextExercise={handleNextExercise}
         currentExerciseIndex={currentExerciseIndex}
         exercisesLength={exercises.length}
       />

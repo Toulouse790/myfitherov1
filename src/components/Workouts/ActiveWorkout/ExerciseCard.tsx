@@ -1,15 +1,16 @@
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Check, Timer } from "lucide-react";
 
 interface ExerciseCardProps {
   currentExercise: string;
   currentSet: number;
   totalSets: number;
   restTime: number | null;
-  handleCompleteSet: () => void;
-  handleSkipRest: () => void;
+  onCompleteSet: () => void;
+  onSkipRest: () => void;
 }
 
 export const ExerciseCard = ({
@@ -17,55 +18,61 @@ export const ExerciseCard = ({
   currentSet,
   totalSets,
   restTime,
-  handleCompleteSet,
-  handleSkipRest
+  onCompleteSet,
+  onSkipRest
 }: ExerciseCardProps) => {
   const { t } = useLanguage();
   
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{currentExercise}</CardTitle>
-        <CardDescription>
-          {t("workouts.setProgress", { current: currentSet, total: totalSets })}
-        </CardDescription>
+    <Card className="overflow-hidden">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-xl">{currentExercise}</CardTitle>
       </CardHeader>
-
-      <CardContent>
+      <CardContent className="space-y-4">
+        <div className="flex justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">{t("workouts.currentSet")}</p>
+            <p className="text-lg font-semibold">{currentSet} / {totalSets}</p>
+          </div>
+          
+          {restTime !== null && (
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground">{t("workouts.restTimer")}</p>
+              <p className="text-lg font-semibold">{restTime}s</p>
+            </div>
+          )}
+        </div>
+        
         {restTime !== null ? (
-          <div className="flex flex-col items-center gap-4 py-6">
-            <div className="text-3xl font-mono">{restTime}s</div>
-            <div className="text-muted-foreground">{t("workouts.restTime")}</div>
-            <Button variant="outline" onClick={handleSkipRest}>
+          <div className="space-y-2">
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-primary transition-all duration-1000" 
+                style={{ width: `${(1 - restTime / 90) * 100}%` }}
+              ></div>
+            </div>
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={onSkipRest}
+            >
+              <Timer className="mr-2 h-4 w-4" />
               {t("workouts.skipRest")}
             </Button>
           </div>
         ) : (
-          <div className="space-y-6 py-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="font-medium">{t("workouts.recommendedReps")}</span>
-                <div className="text-3xl font-bold mt-1">12</div>
-              </div>
-              <div>
-                <span className="font-medium">{t("workouts.weight")}</span>
-                <div className="text-3xl font-bold mt-1">20 kg</div>
-              </div>
-            </div>
-          </div>
-        )}
-      </CardContent>
-
-      <CardFooter>
-        {restTime === null && (
           <Button 
             className="w-full" 
-            onClick={handleCompleteSet}
+            onClick={onCompleteSet}
           >
-            {t("workouts.validateSet")}
+            <Check className="mr-2 h-4 w-4" />
+            {currentSet > totalSets 
+              ? t("workouts.completeExercise") 
+              : t("workouts.validateSet") + " " + currentSet
+            }
           </Button>
         )}
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 };

@@ -2,9 +2,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Timer, Check, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { RestTimer } from "./RestTimer";
+import { SetControls } from "./SetControls";
+import { SetProgress } from "./SetProgress";
 
 interface ExerciseDetailProps {
   exerciseName: string;
@@ -31,16 +34,6 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
       setCurrentSet(prev => prev + 1);
       setRestTimer(90);
       
-      const timerInterval = setInterval(() => {
-        setRestTimer(prev => {
-          if (prev === null || prev <= 0) {
-            clearInterval(timerInterval);
-            return null;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      
       toast({
         title: t("workouts.completeSet"),
         description: `${t("workouts.rest")} 90 ${t("common.sec")} ${t("workouts.nextExercise")} ${currentSet + 1}`,
@@ -55,29 +48,30 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
     }
   };
   
-  const skipRest = () => {
+  const handleRestComplete = () => {
     setRestTimer(null);
   };
   
-  const handleSetsChange = (increment: boolean) => {
-    setSets(prev => {
-      const newValue = increment ? prev + 1 : prev - 1;
-      return Math.max(1, newValue);
-    });
+  const handleSkipRest = () => {
+    setRestTimer(null);
   };
   
-  const handleWeightChange = (increment: boolean) => {
-    setWeight(prev => {
-      const change = increment ? 2.5 : -2.5;
-      return Math.max(0, prev + change);
-    });
+  const handleRestTimeChange = (adjustment: number) => {
+    if (restTimer !== null) {
+      setRestTimer(Math.max(15, restTimer + adjustment));
+    }
   };
   
-  const handleRepsChange = (increment: boolean) => {
-    setReps(prev => {
-      const newValue = increment ? prev + 1 : prev - 1;
-      return Math.max(1, newValue);
-    });
+  const handleSetsChange = (newValue: number) => {
+    setSets(newValue);
+  };
+  
+  const handleWeightChange = (newValue: number) => {
+    setWeight(newValue);
+  };
+  
+  const handleRepsChange = (newValue: number) => {
+    setReps(newValue);
   };
 
   return (
@@ -88,24 +82,13 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t("common.back")}
           </Button>
-          <div className="flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleSetsChange(false)}
-              disabled={sets <= 1}
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
-            <span className="text-sm font-medium">{sets} {t("workouts.sets")}</span>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleSetsChange(true)}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
+          <SetControls 
+            value={sets}
+            label={t("workouts.sets")}
+            onChange={handleSetsChange}
+            minValue={1}
+            disabled={completedSets.length > 0}
+          />
         </div>
         <CardTitle className="text-xl mt-4">{exerciseName}</CardTitle>
       </CardHeader>
@@ -119,48 +102,25 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
           
           <div className="text-right">
             <p className="text-sm font-medium mb-1">{t("workouts.weight")}</p>
-            <div className="flex items-center space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleWeightChange(false)}
-                disabled={weight <= 0}
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="text-lg font-medium">{weight} kg</span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleWeightChange(true)}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+            <SetControls 
+              value={weight}
+              label="kg"
+              onChange={handleWeightChange}
+              step={2.5}
+              minValue={0}
+            />
           </div>
         </div>
         
         <div className="flex justify-between items-center">
           <div>
             <p className="text-sm font-medium mb-1">{t("workouts.reps")}</p>
-            <div className="flex items-center space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleRepsChange(false)}
-                disabled={reps <= 1}
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="text-lg font-medium">{reps}</span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleRepsChange(true)}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+            <SetControls 
+              value={reps}
+              label=""
+              onChange={handleRepsChange}
+              minValue={1}
+            />
           </div>
           
           <div className="text-right">
@@ -170,23 +130,12 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
         </div>
         
         {restTimer !== null ? (
-          <div className="bg-muted p-4 rounded-lg">
-            <div className="flex flex-col items-center justify-center">
-              <div className="flex items-center justify-center">
-                <Timer className="h-6 w-6 text-primary mr-2" />
-                <span className="text-2xl font-bold text-primary">{restTimer}s</span>
-              </div>
-              <p className="text-sm text-center mt-2">{t("workouts.restingText")}</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={skipRest} 
-                className="mt-4"
-              >
-                {t("workouts.skipRest")}
-              </Button>
-            </div>
-          </div>
+          <RestTimer 
+            restTimer={restTimer} 
+            onRestComplete={handleRestComplete}
+            onSkipRest={handleSkipRest}
+            onRestTimeChange={handleRestTimeChange}
+          />
         ) : (
           <Button 
             className="w-full py-6 text-lg" 
@@ -207,20 +156,7 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack }: ExerciseDet
           </Button>
         )}
         
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          {Array.from({ length: sets }, (_, i) => i + 1).map(setNumber => (
-            <div 
-              key={setNumber}
-              className={`p-2 text-center rounded-md ${
-                completedSets.includes(setNumber) 
-                  ? 'bg-primary/10 text-primary font-medium' 
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              {t("workouts.set")} {setNumber}
-            </div>
-          ))}
-        </div>
+        <SetProgress sets={sets} completedSets={completedSets} />
       </CardContent>
     </Card>
   );
