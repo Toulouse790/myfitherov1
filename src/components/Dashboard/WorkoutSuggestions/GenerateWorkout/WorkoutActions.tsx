@@ -4,6 +4,7 @@ import { RefreshCw, Play } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 export interface WorkoutActionsProps {
   onConfirm: () => Promise<void>;
@@ -17,16 +18,12 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
   const { t } = useLanguage();
 
   const handleStart = async () => {
-    console.log("Bouton de démarrage cliqué");
+    debugLogger.log("Bouton de démarrage cliqué");
     try {
       setIsStarting(true);
       await onConfirm();
       
-      // Ajouter un toast de succès
-      toast({
-        title: "Entraînement démarré",
-        description: "Votre session d'entraînement a été créée avec succès.",
-      });
+      // Toast de succès déjà géré dans useWorkoutOperations
     } catch (error) {
       console.error('Error starting workout:', error);
       toast({

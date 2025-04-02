@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { WorkoutSession, WorkoutSessionUpdate } from "@/types/workout-session";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const useWorkoutOperations = () => {
   const navigate = useNavigate();
@@ -27,10 +28,9 @@ export const useWorkoutOperations = () => {
 
     try {
       setIsLoading(true);
-      console.log("Démarrage de l'entraînement avec exercices:", exercises);
+      debugLogger.log("Démarrage de l'entraînement avec exercices:", exercises);
       
       // Créer une session d'entraînement avec les champs corrects
-      // Supprimer le champ program_id qui cause l'erreur
       const sessionData = {
         user_id: user.id,
         exercises: exercises || [],
@@ -39,7 +39,7 @@ export const useWorkoutOperations = () => {
         target_duration_minutes: 45
       };
       
-      console.log("Données de session à insérer:", sessionData);
+      debugLogger.log("Données de session à insérer:", sessionData);
       
       const { data, error } = await supabase
         .from('workout_sessions')
@@ -52,11 +52,12 @@ export const useWorkoutOperations = () => {
         throw error;
       }
       
-      console.log("Session créée avec succès:", data);
+      debugLogger.log("Session créée avec succès:", data);
+      debugLogger.log("Session créée, redirection vers: workouts/" + data.id);
       
-      // Rediriger vers la page appropriée
+      // Rediriger vers la page /workouts/session/:id pour utiliser le bon composant
       if (data) {
-        navigate(`/workouts/${data.id}`);
+        navigate(`/workouts/session/${data.id}`);
       }
       
       return data;
