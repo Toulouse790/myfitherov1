@@ -46,7 +46,7 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         disabled={isStarting}
       >
         <Play className="mr-2 h-4 w-4" />
-        {isStarting ? t("workouts.startSessionLoading") : t("workouts.startSession")}
+        {isStarting ? t("workouts.startSessionLoading") || "Chargement..." : t("workouts.startSession") || "Commencer"}
       </Button>
       <Button 
         onClick={onRegenerate} 
@@ -55,7 +55,7 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         disabled={isStarting}
       >
         <RefreshCw className="mr-2 h-4 w-4" />
-        {t("workouts.regenerate")}
+        {t("workouts.regenerate") || "Régénérer"}
       </Button>
     </div>
   );

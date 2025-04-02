@@ -17,8 +17,8 @@ export const useWorkoutOperations = () => {
   const startWorkout = async (programId?: string, exercises?: string[]) => {
     if (!user) {
       toast({
-        title: t("auth.error"),
-        description: t("auth.sessionExpired"),
+        title: t("auth.error") || "Erreur d'authentification",
+        description: t("auth.sessionExpired") || "Session expirée, veuillez vous reconnecter",
         variant: "destructive",
       });
       navigate('/sign-in');
@@ -29,19 +29,21 @@ export const useWorkoutOperations = () => {
       setIsLoading(true);
       console.log("Démarrage de l'entraînement avec exercices:", exercises);
       
-      // Create a new workout session with the correct fields
+      // Créer une session d'entraînement avec les champs corrects
+      const sessionData = {
+        user_id: user.id,
+        program_id: programId || null,
+        exercises: exercises || [],
+        status: 'in_progress',
+        workout_type: 'strength',
+        target_duration_minutes: 45
+      };
+      
+      console.log("Données de session à insérer:", sessionData);
+      
       const { data, error } = await supabase
         .from('workout_sessions')
-        .insert([{
-          user_id: user.id,
-          program_id: programId || null,
-          exercises: exercises || [],
-          total_duration_minutes: 0,
-          status: 'in_progress',
-          perceived_difficulty: 'moderate',
-          type: 'strength',
-          workout_type: 'strength'
-        }])
+        .insert([sessionData])
         .select()
         .single();
 
@@ -52,7 +54,7 @@ export const useWorkoutOperations = () => {
       
       console.log("Session créée avec succès:", data);
       
-      // Redirect to the appropriate page
+      // Rediriger vers la page appropriée
       if (programId) {
         navigate(`/workouts/start/${programId}`);
       } else {
@@ -61,10 +63,10 @@ export const useWorkoutOperations = () => {
       
       return data;
     } catch (error) {
-      console.error(t("workouts.errors.sessionCreate"), error);
+      console.error(t("workouts.errors.sessionCreate") || "Erreur lors de la création de la session", error);
       toast({
-        title: t("common.error"),
-        description: t("workouts.errors.sessionCreateDescription"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.sessionCreateDescription") || "Impossible de créer une session d'entraînement",
         variant: "destructive",
       });
       return null;
@@ -88,10 +90,10 @@ export const useWorkoutOperations = () => {
       
       return data;
     } catch (error) {
-      console.error(t("workouts.errors.sessionUpdate"), error);
+      console.error(t("workouts.errors.sessionUpdate") || "Erreur lors de la mise à jour de la session", error);
       toast({
-        title: t("common.error"),
-        description: t("workouts.errors.sessionUpdateDescription"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.sessionUpdateDescription") || "Impossible de mettre à jour la session",
         variant: "destructive",
       });
       return null;

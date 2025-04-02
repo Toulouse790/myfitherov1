@@ -13,9 +13,18 @@ serve(async (req) => {
   }
 
   try {
-    const { userPreferences } = await req.json()
+    let userPreferences = {};
+    
+    try {
+      const body = await req.json();
+      userPreferences = body.userPreferences || {};
+      console.log("Préférences utilisateur reçues:", userPreferences);
+    } catch (parseError) {
+      console.error("Erreur de parsing des préférences:", parseError);
+      userPreferences = {};
+    }
 
-    // Vérifier les préférences et définir des valeurs par défaut si nécessaire
+    // Valider les préférences et définir des valeurs par défaut
     const validatedPreferences = {
       workoutType: userPreferences.workoutType || 'custom',
       userLevel: userPreferences.userLevel || 'beginner',
@@ -28,8 +37,15 @@ serve(async (req) => {
     console.log("Generating workout with preferences:", validatedPreferences);
 
     try {
+      const apiKey = Deno.env.get('OPENAI_API_KEY');
+      
+      if (!apiKey) {
+        console.error("Clé API OpenAI manquante");
+        throw new Error("Configuration API manquante");
+      }
+      
       const openai = new OpenAI({
-        apiKey: Deno.env.get('OPENAI_API_KEY')
+        apiKey: apiKey
       });
 
       // Détermine le nombre d'exercices en fonction du type d'entraînement et de la durée
@@ -80,16 +96,24 @@ serve(async (req) => {
         ]
       })
 
-      // Fallback en cas de problème avec l'API
       if (!response?.choices?.[0]?.message?.content) {
+        console.error("Réponse invalide de l'API OpenAI");
         throw new Error("Réponse invalide de l'API OpenAI");
       }
 
       try {
-        const workout = JSON.parse(response.choices[0].message.content);
+        const content = response.choices[0].message.content;
+        console.log("Réponse OpenAI:", content);
+        
+        const workout = JSON.parse(content);
+
+        // S'assurer que le format est valide
+        if (!workout.exercises || !Array.isArray(workout.exercises)) {
+          throw new Error("Format d'exercices invalide");
+        }
 
         // S'assurer que le nombre d'exercices correspond à la demande
-        if (workout.exercises && workout.exercises.length > exerciseCount) {
+        if (workout.exercises.length > exerciseCount) {
           workout.exercises = workout.exercises.slice(0, exerciseCount);
         }
         
@@ -106,6 +130,7 @@ serve(async (req) => {
         );
       } catch (parseError) {
         console.error("Error parsing OpenAI response:", parseError);
+        console.error("Raw response:", response.choices[0].message.content);
         
         // Retourner un entraînement par défaut
         const fallbackWorkout = {
@@ -128,12 +153,32 @@ serve(async (req) => {
       }
     } catch (openaiError) {
       console.error("OpenAI API error:", openaiError);
-      throw openaiError;
+      
+      // Entraînement de secours en cas d'erreur OpenAI
+      const backupWorkout = {
+        exercises: [
+          { name: "Pompes", sets: 3, reps: 10, rest: 60 },
+          { name: "Squats", sets: 3, reps: 15, rest: 60 },
+          { name: "Planche", sets: 3, reps: 30, rest: 45 },
+          { name: "Fentes avant", sets: 3, reps: 12, rest: 60 }
+        ],
+        duration: 30,
+        difficulty: 'beginner',
+        description: "Entraînement de secours qui cible plusieurs groupes musculaires."
+      };
+      
+      return new Response(
+        JSON.stringify(backupWorkout),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        }
+      );
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error général:', error);
     
-    // Retourner un entraînement par défaut en cas d'erreur
+    // Retourner un entraînement par défaut en cas d'erreur générale
     const emergencyFallback = {
       exercises: [
         { name: "Pompes", sets: 3, reps: 10, rest: 60 },
