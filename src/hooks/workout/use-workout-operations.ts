@@ -30,9 +30,9 @@ export const useWorkoutOperations = () => {
       console.log("Démarrage de l'entraînement avec exercices:", exercises);
       
       // Créer une session d'entraînement avec les champs corrects
+      // Supprimer le champ program_id qui cause l'erreur
       const sessionData = {
         user_id: user.id,
-        program_id: programId || null,
         exercises: exercises || [],
         status: 'in_progress',
         workout_type: 'strength',
@@ -55,9 +55,7 @@ export const useWorkoutOperations = () => {
       console.log("Session créée avec succès:", data);
       
       // Rediriger vers la page appropriée
-      if (programId) {
-        navigate(`/workouts/start/${programId}`);
-      } else {
+      if (data) {
         navigate(`/workouts/${data.id}`);
       }
       

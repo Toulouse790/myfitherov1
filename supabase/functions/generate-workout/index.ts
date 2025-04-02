@@ -36,12 +36,94 @@ serve(async (req) => {
 
     console.log("Generating workout with preferences:", validatedPreferences);
 
+    // Fonction pour générer l'entraînement de secours basé sur les préférences
+    const generateBackupWorkout = () => {
+      // Déterminer le nombre d'exercices en fonction du type d'entraînement et de la durée
+      let exerciseCount = 4; // Valeur par défaut
+      
+      if (validatedPreferences.workoutType === 'quick') {
+        exerciseCount = 3; // Séance rapide : toujours 3 exercices
+      } else if (validatedPreferences.duration) {
+        if (validatedPreferences.duration <= 30) {
+          exerciseCount = Math.min(3, exerciseCount);
+        } else if (validatedPreferences.duration <= 45) {
+          exerciseCount = Math.min(5, exerciseCount);
+        } else {
+          exerciseCount = Math.min(7, exerciseCount);
+        }
+      }
+
+      // Sélectionner les exercices en fonction du groupe musculaire
+      let exercises = [];
+      
+      const fullBodyExercises = [
+        { name: "Pompes", sets: 3, reps: 10, rest: 60 },
+        { name: "Squats", sets: 3, reps: 15, rest: 60 },
+        { name: "Planche", sets: 3, reps: 30, rest: 45 },
+        { name: "Fentes avant", sets: 3, reps: 12, rest: 60 },
+        { name: "Mountain climbers", sets: 3, reps: 20, rest: 30 }
+      ];
+      
+      const upperBodyExercises = [
+        { name: "Pompes", sets: 3, reps: 10, rest: 60 },
+        { name: "Dips sur chaise", sets: 3, reps: 12, rest: 60 },
+        { name: "Élévations latérales", sets: 3, reps: 15, rest: 45 },
+        { name: "Pompes diamant", sets: 3, reps: 10, rest: 60 }
+      ];
+      
+      const lowerBodyExercises = [
+        { name: "Squats", sets: 3, reps: 15, rest: 60 },
+        { name: "Fentes avant", sets: 3, reps: 12, rest: 60 },
+        { name: "Élévations de bassin", sets: 3, reps: 15, rest: 45 },
+        { name: "Squats sautés", sets: 3, reps: 10, rest: 60 }
+      ];
+      
+      const coreExercises = [
+        { name: "Planche", sets: 3, reps: 30, rest: 45 },
+        { name: "Crunchs", sets: 3, reps: 20, rest: 30 },
+        { name: "Russian twists", sets: 3, reps: 15, rest: 30 },
+        { name: "Mountain climbers", sets: 3, reps: 20, rest: 30 }
+      ];
+      
+      // Sélectionner les exercices en fonction du groupe musculaire
+      if (validatedPreferences.muscleGroups.includes('upper_body')) {
+        exercises = [...exercises, ...upperBodyExercises];
+      }
+      
+      if (validatedPreferences.muscleGroups.includes('lower_body')) {
+        exercises = [...exercises, ...lowerBodyExercises];
+      }
+      
+      if (validatedPreferences.muscleGroups.includes('core')) {
+        exercises = [...exercises, ...coreExercises];
+      }
+      
+      // Si aucun groupe spécifique n'est sélectionné ou si 'full_body' est sélectionné
+      if (exercises.length === 0 || validatedPreferences.muscleGroups.includes('full_body')) {
+        exercises = [...fullBodyExercises];
+      }
+      
+      // Limiter au nombre d'exercices calculé
+      exercises = exercises.slice(0, exerciseCount);
+      
+      return {
+        exercises: exercises,
+        duration: validatedPreferences.duration,
+        difficulty: validatedPreferences.userLevel,
+        description: `Programme ${validatedPreferences.workoutType} pour un entraînement de ${validatedPreferences.duration} minutes.`
+      };
+    };
+
     try {
       const apiKey = Deno.env.get('OPENAI_API_KEY');
       
       if (!apiKey) {
-        console.error("Clé API OpenAI manquante");
-        throw new Error("Configuration API manquante");
+        console.log("Clé API OpenAI manquante, utilisation du programme de secours");
+        const backupWorkout = generateBackupWorkout();
+        return new Response(
+          JSON.stringify(backupWorkout),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
       
       const openai = new OpenAI({
@@ -98,7 +180,11 @@ serve(async (req) => {
 
       if (!response?.choices?.[0]?.message?.content) {
         console.error("Réponse invalide de l'API OpenAI");
-        throw new Error("Réponse invalide de l'API OpenAI");
+        const backupWorkout = generateBackupWorkout();
+        return new Response(
+          JSON.stringify(backupWorkout),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       try {
@@ -133,19 +219,10 @@ serve(async (req) => {
         console.error("Raw response:", response.choices[0].message.content);
         
         // Retourner un entraînement par défaut
-        const fallbackWorkout = {
-          exercises: [
-            { name: "Pompes", sets: 3, reps: 10, rest: 60 },
-            { name: "Squats", sets: 3, reps: 15, rest: 60 },
-            { name: "Planche", sets: 3, reps: 30, rest: 45 }
-          ],
-          duration: validatedPreferences.duration || 30,
-          difficulty: validatedPreferences.userLevel || 'beginner',
-          description: "Entraînement de base qui cible tout le corps."
-        };
+        const backupWorkout = generateBackupWorkout();
         
         return new Response(
-          JSON.stringify(fallbackWorkout),
+          JSON.stringify(backupWorkout),
           { 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           }
@@ -155,17 +232,7 @@ serve(async (req) => {
       console.error("OpenAI API error:", openaiError);
       
       // Entraînement de secours en cas d'erreur OpenAI
-      const backupWorkout = {
-        exercises: [
-          { name: "Pompes", sets: 3, reps: 10, rest: 60 },
-          { name: "Squats", sets: 3, reps: 15, rest: 60 },
-          { name: "Planche", sets: 3, reps: 30, rest: 45 },
-          { name: "Fentes avant", sets: 3, reps: 12, rest: 60 }
-        ],
-        duration: 30,
-        difficulty: 'beginner',
-        description: "Entraînement de secours qui cible plusieurs groupes musculaires."
-      };
+      const backupWorkout = generateBackupWorkout();
       
       return new Response(
         JSON.stringify(backupWorkout),
@@ -178,8 +245,9 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error général:', error);
     
-    // Retourner un entraînement par défaut en cas d'erreur générale
-    const emergencyFallback = {
+    // Utiliser une fonction qui génère un entraînement selon les préférences
+    // même en cas d'erreur générale
+    const emergencyWorkout = {
       exercises: [
         { name: "Pompes", sets: 3, reps: 10, rest: 60 },
         { name: "Squats", sets: 3, reps: 15, rest: 60 },
@@ -191,7 +259,7 @@ serve(async (req) => {
     };
     
     return new Response(
-      JSON.stringify(emergencyFallback),
+      JSON.stringify(emergencyWorkout),
       { 
         status: 200, // Return 200 even on error to prevent UI errors
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }

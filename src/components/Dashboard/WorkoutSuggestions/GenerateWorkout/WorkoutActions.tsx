@@ -12,6 +12,7 @@ export interface WorkoutActionsProps {
 
 export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps) => {
   const [isStarting, setIsStarting] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -38,6 +39,22 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
     }
   };
 
+  const handleRegenerate = async () => {
+    try {
+      setIsRegenerating(true);
+      await onRegenerate();
+    } catch (error) {
+      console.error('Error regenerating workout:', error);
+      toast({
+        title: t("common.error") || "Erreur",
+        description: "Impossible de régénérer l'entraînement",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
+
   return (
     <div className="flex gap-4">
       <Button 
@@ -46,15 +63,23 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         disabled={isStarting}
       >
         <Play className="mr-2 h-4 w-4" />
-        {isStarting ? t("workouts.startSessionLoading") || "Chargement..." : t("workouts.startSession") || "Commencer"}
+        {isStarting ? (
+          <>
+            <span className="animate-pulse">
+              {t("workouts.startSessionLoading") || "Chargement..."}
+            </span>
+          </>
+        ) : (
+          t("workouts.startSession") || "Commencer"
+        )}
       </Button>
       <Button 
-        onClick={onRegenerate} 
+        onClick={handleRegenerate} 
         variant="outline" 
         className="flex-1"
-        disabled={isStarting}
+        disabled={isStarting || isRegenerating}
       >
-        <RefreshCw className="mr-2 h-4 w-4" />
+        <RefreshCw className={`mr-2 h-4 w-4 ${isRegenerating ? 'animate-spin' : ''}`} />
         {t("workouts.regenerate") || "Régénérer"}
       </Button>
     </div>
