@@ -16,6 +16,7 @@ export const workoutRoutes = [
     path: "workouts/generate",
     element: <RequireQuestionnaire><WorkoutGenerate /></RequireQuestionnaire>,
   },
+  // L'ordre des routes est important - les routes les plus spécifiques d'abord
   {
     path: "workouts/session/:id",
     element: <RequireQuestionnaire><WorkoutSessionPage /></RequireQuestionnaire>,
@@ -24,6 +25,7 @@ export const workoutRoutes = [
     path: "workouts/start/:id",
     element: <RequireQuestionnaire><StartWorkout /></RequireQuestionnaire>,
   },
+  // Cette route doit être la dernière car elle est plus générique
   {
     path: "workouts/:sessionId",
     element: <RequireQuestionnaire><CleanWorkoutSession /></RequireQuestionnaire>,

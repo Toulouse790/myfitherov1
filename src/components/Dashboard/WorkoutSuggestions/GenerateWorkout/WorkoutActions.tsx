@@ -26,6 +26,7 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
       // Toast de succès déjà géré dans useWorkoutOperations
     } catch (error) {
       console.error('Error starting workout:', error);
+      debugLogger.log("WorkoutActions", "Erreur lors du démarrage de l'entraînement:", {error});
       toast({
         title: t("common.error") || "Erreur",
         description: t("workouts.startSessionErrorDescription") || "Impossible de démarrer la session d'entraînement",

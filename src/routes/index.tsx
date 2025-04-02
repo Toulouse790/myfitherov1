@@ -17,7 +17,8 @@ const SignUpPage = lazy(() => import("@/pages/SignUp"));
 
 const Index = lazy(() => import("@/pages/Index"));
 const Profile = lazy(() => import("@/pages/Profile"));
-const Workouts = lazy(() => import("@/pages/Workouts"));
+// Correction: utiliser le bon chemin pour Workouts pour éviter le conflit
+const Workouts = lazy(() => import("@/pages/workouts/index"));
 const PersonalInfo = lazy(() => import("@/pages/PersonalInfo"));
 const Subscription = lazy(() => import("@/pages/Subscription"));
 const SubscriptionPlans = lazy(() => import("@/pages/SubscriptionPlans"));
@@ -117,18 +118,8 @@ export const router = createBrowserRouter([
                 path: "notifications",
                 element: withSuspense(Notifications)
               },
-              {
-                path: "workouts",
-                element: withSuspense(Workouts)
-              },
-              {
-                path: "workouts/generate",
-                element: withSuspense(WorkoutGenerate)
-              },
-              {
-                path: "workouts/:sessionId",
-                element: <UnifiedWorkoutDetail />
-              },
+              // Retiré l'entrée ici pour éviter le conflit avec les routes dans workoutRoutes
+              // La page principale workouts sera gérée par les workoutRoutes
               {
                 path: "nutrition",
                 element: withSuspense(Nutrition)

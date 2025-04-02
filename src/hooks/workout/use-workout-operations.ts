@@ -54,13 +54,15 @@ export const useWorkoutOperations = () => {
       
       debugLogger.log("useWorkoutOperations", "Session créée avec succès:", data);
       
-      // Vérifier le chemin exact où nous voulons rediriger
+      // S'assurer que le chemin est correct et commence par un slash
       const redirectPath = `/workouts/session/${data.id}`;
       debugLogger.log("useWorkoutOperations", "Session créée, redirection vers:", redirectPath);
       
-      // Rediriger vers la page /workouts/session/:id pour utiliser le bon composant
       if (data) {
-        navigate(redirectPath);
+        // Utiliser setTimeout pour assurer que la navigation se produit après le rendu
+        setTimeout(() => {
+          navigate(redirectPath);
+        }, 100);
         return data;
       }
       
