@@ -284,7 +284,20 @@ export const fr = {
     skipRest: "Passer le repos",
     completeExercise: "Terminer l'exercice",
     completedSets: "Séries complétées",
-    numberOfSets: "Nombre de séries"
+    numberOfSets: "Nombre de séries",
+    exerciseList: "Liste des exercices",
+    completed: "Terminé",
+    inProgress: "En cours",
+    pending: "À venir",
+    workoutSession: "Séance d'entraînement",
+    exerciseProgress: "Exercice {current} sur {total}",
+    restFinished: "Repos terminé",
+    readyForNextSet: "Prêt pour la prochaine série",
+    selectExercisesForSession: "Veuillez sélectionner des exercices pour cette séance",
+    unableToLoadSessionDetails: "Impossible de charger les détails de la séance",
+    sessionCompleted: "Séance terminée",
+    allExercisesCompleted: "Tous les exercices ont été complétés",
+    addSet: "Ajouter une série"
   },
   nutrition: {
     title: "Nutrition",
