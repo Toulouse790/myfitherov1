@@ -185,7 +185,7 @@ export const fr = {
     startSessionLoading: "Démarrage...",
     generateWorkout: "Générer un entraînement",
     sessionGenerated: "Séance générée",
-    exerciseLibrary: "Bibliothèque d'exercices",
+    exerciseLibrary: "Exercices",
     allMuscleGroups: "Tous les groupes musculaires",
     searchExercises: "Rechercher des exercices",
     startWithSelected: "Commencer avec la sélection",
@@ -264,7 +264,9 @@ export const fr = {
     exerciseForm3D: "Visualisation 3D",
     muscleVisualization: "Visualisation des muscles sollicités",
     virtualCoaching: "Coaching virtuel",
-    aiFormCorrection: "Correction IA de posture"
+    aiFormCorrection: "Correction IA de posture",
+    weight: "Poids",
+    time: "Temps"
   },
   nutrition: {
     title: "Nutrition",
@@ -307,7 +309,7 @@ export const fr = {
     foodImageRecognition: "Reconnaissance d'image",
     takePhoto: "Prendre une photo du plat",
     shoppingList: "Liste de courses",
-    generateShoppingList: "Générer liste de courses",
+    generateShoppingList: "Génération liste de courses",
     addToShoppingList: "Ajouter à la liste",
     mealDelivery: "Services de repas",
     mealDeliveryIntegration: "Commander des ingrédients",

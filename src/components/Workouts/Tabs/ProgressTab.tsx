@@ -78,9 +78,9 @@ export function ProgressTab() {
         <CardContent className="pt-6">
           <Tabs defaultValue="weight" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-4 bg-background/50">
-              <TabsTrigger value="weight">Poids</TabsTrigger>
-              <TabsTrigger value="sets">Séries</TabsTrigger>
-              <TabsTrigger value="time">Temps</TabsTrigger>
+              <TabsTrigger value="weight">{t("workouts.weight")}</TabsTrigger>
+              <TabsTrigger value="sets">{t("workouts.sets")}</TabsTrigger>
+              <TabsTrigger value="time">{t("workouts.time")}</TabsTrigger>
             </TabsList>
             <TabsContent value="weight" className="h-[200px] flex items-center justify-center">
               <div className="text-center text-muted-foreground">
