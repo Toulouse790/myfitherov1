@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { muscleGroups } from "../Workouts/workoutConstants";
-import { reverseTranslateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 
 interface FilterDialogProps {
   open: boolean;
@@ -16,6 +16,8 @@ interface FilterDialogProps {
 }
 
 export const FilterDialog = ({ open, onOpenChange, onFilterApply }: FilterDialogProps) => {
+  const { translateMuscleGroupWithContext } = useExerciseTranslation();
+  
   const handleFilterApply = (groupId: string) => {
     console.log('Applying filter with group:', groupId);
     onFilterApply(groupId.toLowerCase());
@@ -35,7 +37,7 @@ export const FilterDialog = ({ open, onOpenChange, onFilterApply }: FilterDialog
               onClick={() => handleFilterApply(group.id)}
               className="w-full justify-start"
             >
-              {group.name}
+              {translateMuscleGroupWithContext(group.id)}
             </Button>
           ))}
         </div>
