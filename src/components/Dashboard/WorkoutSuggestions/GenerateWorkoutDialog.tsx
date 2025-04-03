@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -17,9 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Dumbbell, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { GenerateWorkoutDialogProps } from "./types";
 import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 
+// Suppression de l'importation qui crée le conflit
+// import { GenerateWorkoutDialogProps } from "./types";
+
+// Définition de l'interface directement dans ce fichier au lieu de l'importer
 interface GenerateWorkoutDialogProps {
   isOpen: boolean;
   onClose: () => void;
