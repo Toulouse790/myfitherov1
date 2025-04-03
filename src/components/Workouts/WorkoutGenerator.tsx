@@ -24,7 +24,7 @@ export function WorkoutGenerator() {
     // Simuler un délai de génération
     setTimeout(() => {
       try {
-        // Rediriger vers la page de génération d'entraînement
+        // Rediriger vers la page de génération d'entraînement avec la durée sélectionnée
         navigate('/workouts/generate', { 
           state: { 
             duration: duration[0],
@@ -113,7 +113,7 @@ export function WorkoutGenerator() {
               </>
             ) : (
               <>
-                <Dumbbell className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <Dumbbell className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="text-xs sm:text-sm truncate">{t("workouts.generateWorkout")}</span>
               </>
             )}
