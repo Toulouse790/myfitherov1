@@ -70,10 +70,29 @@ export const useWorkoutSuggestions = () => {
     let combinedSuggestions: WorkoutSuggestion[] = [];
     
     if (dbSuggestions && dbSuggestions.length > 0) {
-      combinedSuggestions = [...dbSuggestions];
+      // Convertir les données de la base de données en format WorkoutSuggestion
+      combinedSuggestions = dbSuggestions.map(item => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        type: item.type,
+        duration: item.estimated_duration,
+        difficulty: Array.isArray(item.difficulty_levels) && item.difficulty_levels.length > 0 
+          ? item.difficulty_levels[0] 
+          : null,
+        muscleGroups: item.muscle_groups || []
+      }));
     } else if (databaseSuggestions && databaseSuggestions.length > 0) {
       // Utiliser les suggestions de la base de données locale si l'API échoue
-      combinedSuggestions = [...databaseSuggestions];
+      combinedSuggestions = databaseSuggestions.map(item => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        type: item.type,
+        duration: null,
+        difficulty: null,
+        muscleGroups: []
+      }));
     } else {
       // Fallback vers les suggestions par défaut
       combinedSuggestions = [...defaultSuggestions];

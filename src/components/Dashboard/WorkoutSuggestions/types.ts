@@ -7,13 +7,19 @@ export interface GenerateWorkoutDialogProps {
 }
 
 export interface WorkoutSuggestion {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   type: string;
-  duration: number;
-  difficulty: string;
-  muscleGroups: string[];
+  duration?: number | null;
+  difficulty?: string | null;
+  muscleGroups?: string[];
+  icon_name?: string;
+  lastUsed?: string | null;
+  refreshDaily?: boolean;
+  equipment?: string;
+  restTime?: string;
+  programProgress?: string | number | null;
 }
 
 export interface WorkoutSuggestionsProps {
