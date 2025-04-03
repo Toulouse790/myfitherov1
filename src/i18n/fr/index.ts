@@ -1,7 +1,6 @@
 
 import { common } from "./common";
-import { settings } from "./settings";
-import { theme } from "./theme";
+import { settings, theme } from "./settings";
 import { workouts } from "./workouts";
 import { auth } from "./auth";
 import { dashboard } from "./dashboard";
