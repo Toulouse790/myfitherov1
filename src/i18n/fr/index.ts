@@ -1,33 +1,26 @@
 
 import { common } from "./common";
-import { settings, theme } from "./settings";
-import { auth } from "./auth";
-import { questionnaire } from "./questionnaire";
-import { profile } from "./profile";
+import { settings } from "./settings";
+import { theme } from "./theme";
 import { workouts } from "./workouts";
+import { auth } from "./auth";
+import { dashboard } from "./dashboard";
+import { profile } from "./profile";
 import { nutrition } from "./nutrition";
+import { difficulty } from "./difficulty";
 import { sleep } from "./sleep";
-import { difficulty, muscleGroups, locations } from "./categories";
-import { premium } from "./premium";
-import { community } from "./community";
-import { analytics } from "./analytics";
-import { wearables } from "./wearables";
+import { muscleGroups } from "./muscleGroups";
 
 export const fr = {
   common,
   settings,
   theme,
-  auth,
-  questionnaire,
-  profile,
   workouts,
+  auth,
+  dashboard,
+  profile,
   nutrition,
-  sleep,
   difficulty,
-  muscleGroups,
-  locations,
-  premium,
-  community,
-  analytics,
-  wearables
+  sleep,
+  muscleGroups
 };
