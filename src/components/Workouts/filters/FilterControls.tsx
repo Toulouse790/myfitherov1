@@ -42,7 +42,7 @@ export const FilterControls = ({
           <SelectItem value="all">Toutes</SelectItem>
           {difficultyLevels.map((level) => (
             <SelectItem key={level.id} value={level.id}>
-              {level.name}
+              {level.value}
             </SelectItem>
           ))}
         </SelectContent>

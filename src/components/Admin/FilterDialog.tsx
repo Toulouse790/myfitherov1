@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -15,11 +16,9 @@ interface FilterDialogProps {
 }
 
 export const FilterDialog = ({ open, onOpenChange, onFilterApply }: FilterDialogProps) => {
-  const handleFilterApply = (groupName: string) => {
-    const englishGroup = reverseTranslateMuscleGroup(groupName);
-    console.log('Applying filter with group:', groupName);
-    console.log('Translated to English:', englishGroup);
-    onFilterApply(englishGroup.toLowerCase());
+  const handleFilterApply = (groupId: string) => {
+    console.log('Applying filter with group:', groupId);
+    onFilterApply(groupId.toLowerCase());
     onOpenChange(false); // Ferme la boîte de dialogue après la sélection
   };
 
@@ -33,7 +32,7 @@ export const FilterDialog = ({ open, onOpenChange, onFilterApply }: FilterDialog
           {muscleGroups.map((group) => (
             <Button
               key={group.id}
-              onClick={() => handleFilterApply(group.name)}
+              onClick={() => handleFilterApply(group.id)}
               className="w-full justify-start"
             >
               {group.name}

@@ -76,7 +76,7 @@ export function LibraryWorkoutCard({ template }: LibraryWorkoutCardProps) {
         
         {muscleGroups.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-2">
-            {muscleGroups.map(group => (
+            {muscleGroups.map((group: string) => (
               <span 
                 key={group} 
                 className="text-xs bg-secondary/50 text-secondary-foreground px-2 py-0.5 rounded-full"

@@ -1,3 +1,4 @@
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { WorkoutFormData, muscleGroups, difficultyLevels } from "./workoutConstants";
+import { muscleGroups, difficultyLevels, WorkoutFormData } from "./workoutConstants";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 
@@ -108,7 +109,7 @@ export const WorkoutForm = ({
                 key={level.id} 
                 value={level.id}
               >
-                {level.name}
+                {level.value}
               </SelectItem>
             ))}
           </SelectContent>

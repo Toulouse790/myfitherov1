@@ -28,11 +28,11 @@ export const MuscleGroupFilter = ({
       {muscleGroups.map((group) => (
         <Button
           key={group.id}
-          variant={selectedGroup === group.name ? "default" : "outline"}
-          onClick={() => onGroupSelect(group.name)}
+          variant={selectedGroup === group.id ? "default" : "outline"}
+          onClick={() => onGroupSelect(group.id)}
           className="whitespace-nowrap"
         >
-          {translateMuscleGroupWithContext(group.name)}
+          {group.name}
         </Button>
       ))}
     </div>
