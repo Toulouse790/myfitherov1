@@ -15,11 +15,11 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, Dumbbell, X, RefreshCw } from "lucide-react";
+import { Loader2, Dumbbell, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { GenerateWorkoutDialogProps } from "./types";
-import { translateMuscleGroup } from "@/utils/muscleGroupTranslations";
+import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 
 export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom", initialDuration = 45 }: GenerateWorkoutDialogProps) => {
   const navigate = useNavigate();
@@ -27,6 +27,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
   const { t } = useLanguage();
   const { user } = useAuth();
   const { startWorkout } = useWorkoutOperations();
+  const { translateMuscleGroupWithContext } = useExerciseTranslation();
   const [generatedWorkout, setGeneratedWorkout] = useState<any>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
@@ -86,7 +87,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
       const preferences = {
         userLevel: userPreferences?.fitness_level || 'beginner',
         workoutType: workoutType,
-        duration: userPreferences?.preferred_duration || initialDuration || 45,
+        duration: initialDuration || userPreferences?.preferred_duration || 45,
         location: userPreferences?.training_location || 'home',
         equipment: userPreferences?.available_equipment || 'minimal',
         muscleGroups: userPreferences?.focus_areas || ['full_body']
@@ -124,10 +125,10 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
       });
       
       // Générer un entraînement de secours local en cas d'échec avec des exercices variés
-      const fallbackExercises = getFallbackExercises(workoutType);
+      const fallbackExercises = getFallbackExercises(workoutType, initialDuration);
       setGeneratedWorkout({
         exercises: fallbackExercises,
-        duration: initialDuration || 45,
+        duration: initialDuration,
         difficulty: 'moderate',
         description: t("workouts.fallbackWorkoutDescription") || "Voici un entraînement par défaut qui vous permettra de vous dépenser."
       });
@@ -138,7 +139,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
   };
 
   // Obtenir des exercices de secours basés sur le type d'entraînement avec plus de variété
-  const getFallbackExercises = (type: string) => {
+  const getFallbackExercises = (type: string, duration: number) => {
     // Exercices par défaut en cas d'échec de l'API avec plus de variété
     const exercisePool = {
       full_body: [
@@ -173,14 +174,71 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
         { name: "Jumping jacks", sets: 3, reps: 30, rest: 30 },
         { name: "Squats sautés", sets: 3, reps: 12, rest: 30 },
         { name: "Planche", sets: 3, reps: 30, rest: 30 }
+      ],
+      custom: [
+        { name: "Pompes", sets: 3, reps: 12, rest: 60 },
+        { name: "Squats", sets: 3, reps: 15, rest: 60 },
+        { name: "Fentes", sets: 3, reps: 12, rest: 60 },
+        { name: "Mountain Climbers", sets: 3, reps: 20, rest: 45 },
+        { name: "Gainage", sets: 3, reps: 30, rest: 45 },
+        { name: "Crunchs", sets: 3, reps: 15, rest: 45 },
+        { name: "Dips", sets: 3, reps: 10, rest: 60 },
+        { name: "Burpees", sets: 3, reps: 10, rest: 45 }
+      ],
+      cardio: [
+        { name: "Course à pied", sets: 1, reps: duration * 60, rest: 0 },
+        { name: "Vélo", sets: 1, reps: duration * 60, rest: 0 },
+        { name: "Rameur", sets: 1, reps: duration * 60, rest: 0 },
+        { name: "Corde à sauter", sets: 3, reps: 60, rest: 30 }
+      ],
+      hiit: [
+        { name: "Burpees", sets: 4, reps: 12, rest: 30 },
+        { name: "Mountain climbers", sets: 4, reps: 30, rest: 30 },
+        { name: "Jumping jacks", sets: 4, reps: 40, rest: 30 },
+        { name: "Squats sautés", sets: 4, reps: 15, rest: 30 },
+        { name: "High knees", sets: 4, reps: 40, rest: 30 }
+      ],
+      strength: [
+        { name: "Développé couché", sets: 4, reps: 8, rest: 90 },
+        { name: "Squats", sets: 4, reps: 10, rest: 90 },
+        { name: "Soulevé de terre", sets: 4, reps: 8, rest: 120 },
+        { name: "Tractions", sets: 3, reps: 8, rest: 90 },
+        { name: "Développé militaire", sets: 3, reps: 10, rest: 90 }
+      ],
+      weight_loss: [
+        { name: "Burpees", sets: 3, reps: 15, rest: 45 },
+        { name: "Cardio (course)", sets: 1, reps: 600, rest: 0 },
+        { name: "Circuit training", sets: 3, reps: 1, rest: 60 },
+        { name: "Jumping jacks", sets: 3, reps: 40, rest: 30 },
+        { name: "Mountain climbers", sets: 3, reps: 30, rest: 30 }
+      ],
+      muscle_gain: [
+        { name: "Développé couché", sets: 4, reps: 8, rest: 90 },
+        { name: "Rowing barre", sets: 4, reps: 8, rest: 90 },
+        { name: "Curl biceps", sets: 3, reps: 12, rest: 60 },
+        { name: "Extensions triceps", sets: 3, reps: 12, rest: 60 },
+        { name: "Développé militaire", sets: 3, reps: 10, rest: 90 }
+      ],
+      recovery: [
+        { name: "Étirements", sets: 1, reps: 300, rest: 0 },
+        { name: "Marche", sets: 1, reps: 600, rest: 0 },
+        { name: "Yoga", sets: 1, reps: 900, rest: 0 },
+        { name: "Mobilité articulaire", sets: 1, reps: 300, rest: 0 }
+      ],
+      power: [
+        { name: "Squats sautés", sets: 4, reps: 8, rest: 90 },
+        { name: "Fentes sautées", sets: 4, reps: 8, rest: 90 },
+        { name: "Box jumps", sets: 4, reps: 6, rest: 90 },
+        { name: "Kettlebell swings", sets: 4, reps: 12, rest: 60 },
+        { name: "Medicine ball slams", sets: 3, reps: 10, rest: 60 }
       ]
     };
     
     // Sélectionner un ensemble d'exercices aléatoires basé sur le type
-    const exercises = exercisePool[type as keyof typeof exercisePool] || exercisePool.full_body;
+    const exercises = exercisePool[type as keyof typeof exercisePool] || exercisePool.custom;
     
     // Déterminer le nombre d'exercices basé sur la durée
-    const targetDuration = initialDuration || 45;
+    const targetDuration = duration;
     const exerciseCount = Math.max(3, Math.min(8, Math.floor(targetDuration / 15) + 2));
     
     // Mélanger les exercices pour plus de variété
@@ -256,7 +314,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
                   <h3 className="font-semibold">{t("workouts.workoutPreview")}</h3>
                   <div className="flex gap-2">
                     <Badge>
-                      ~{generatedWorkout.duration} {t("workouts.minutes")}
+                      ~{generatedWorkout.duration} {t("common.minutes")}
                     </Badge>
                     <Badge variant="outline">
                       {t(`difficulty.${generatedWorkout.difficulty}`) || generatedWorkout.difficulty}
@@ -276,11 +334,11 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
                       <div>
                         <p className="font-medium">{exercise.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {exercise.sets} {t("workouts.sets")} × {exercise.reps} {t("workouts.reps")}
+                          {exercise.sets} {t("workouts.sets")} × {exercise.reps} {exercise.reps === 1 ? "" : t("workouts.reps")}
                         </p>
                       </div>
                       <Badge variant="outline">
-                        {exercise.rest}s {t("workouts.restLabel")}
+                        {exercise.rest}s {t("workouts.rest")}
                       </Badge>
                     </div>
                   </Card>

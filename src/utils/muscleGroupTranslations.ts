@@ -1,5 +1,9 @@
 
-import { useLanguage } from "@/contexts/LanguageContext";
+/**
+ * Ce fichier contient des fonctions utilitaires pour traduire les noms de groupes musculaires.
+ * Attention: la fonction translateMuscleGroupWithContext a été déplacée vers useExerciseTranslation
+ * pour une meilleure gestion du contexte React.
+ */
 
 export const translateMuscleGroup = (muscleGroup: string): string => {
   if (!muscleGroup) return '';
@@ -20,16 +24,11 @@ export const translateMuscleGroup = (muscleGroup: string): string => {
     'quads': 'quadriceps',
     'hamstrings': 'ischio-jambiers',
     'glutes': 'fessiers',
-    'calves': 'mollets'
+    'calves': 'mollets',
+    'cardio': 'cardio'
   };
 
   return translationMap[muscleGroup.toLowerCase()] || muscleGroup.toLowerCase();
-};
-
-// Cette fonction n'est plus utilisée car elle provoque des problèmes de hooks React
-// et est remplacée par la fonction translateMuscleGroupWithContext du hook useExerciseTranslation
-export const translateMuscleGroupWithContext = (muscleGroup: string): string => {
-  return translateMuscleGroup(muscleGroup);
 };
 
 export const reverseTranslateMuscleGroup = (muscleGroup: string): string => {
@@ -48,7 +47,8 @@ export const reverseTranslateMuscleGroup = (muscleGroup: string): string => {
     'quadriceps': 'quads',
     'ischio-jambiers': 'hamstrings',
     'fessiers': 'glutes',
-    'mollets': 'calves'
+    'mollets': 'calves',
+    'cardio': 'cardio'
   };
 
   const key = muscleGroup.toLowerCase();

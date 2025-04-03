@@ -1,13 +1,15 @@
 
 export const difficulty = {
   easy: "Leicht",
-  moderate: "Moderat",
-  challenging: "Herausfordernd",
-  intense: "Intensiv",
-  adaptive: "Adaptiv",
   beginner: "Anfänger",
+  moderate: "Mäßig",
+  medium: "Mittel",
   intermediate: "Fortgeschritten",
-  advanced: "Experte"
+  challenging: "Herausfordernd",
+  hard: "Schwer",
+  intense: "Intensiv",
+  advanced: "Fortgeschritten",
+  expert: "Experte"
 };
 
 export const muscleGroups = {
@@ -15,25 +17,23 @@ export const muscleGroups = {
   back: "Rücken",
   legs: "Beine",
   shoulders: "Schultern",
-  arms: "Arme",
   biceps: "Bizeps",
   triceps: "Trizeps",
-  abs: "Bauch",
+  abs: "Bauchmuskeln",
+  core: "Rumpf",
   full_body: "Ganzkörper",
   upper_body: "Oberkörper",
   lower_body: "Unterkörper",
-  core: "Rumpf",
-  push: "Drücken",
-  pull: "Ziehen",
   quads: "Quadrizeps",
   hamstrings: "Beinbeuger",
-  glutes: "Gesäß",
-  calves: "Waden"
+  glutes: "Gesäßmuskeln",
+  calves: "Waden",
+  cardio: "Cardio"
 };
 
 export const locations = {
-  all: "Alle Orte",
-  home: "Zu Hause",
-  gym: "Im Fitnessstudio",
-  outdoor: "Im Freien"
+  home: "Zuhause",
+  gym: "Fitnessstudio",
+  outdoor: "Draußen",
+  anywhere: "Überall"
 };

@@ -12,6 +12,9 @@ export default function WorkoutGenerate() {
   const duration = state?.duration || 45;
   const intensity = state?.intensity || 50;
 
+  console.log("WorkoutGenerate - duration:", duration);
+  console.log("WorkoutGenerate - intensity:", intensity);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />

@@ -10,13 +10,7 @@ export const useExerciseTranslation = () => {
   const translateMuscleGroupWithContext = (muscleGroup: string): string => {
     if (!muscleGroup) return '';
     
-    // Si on est en français, on utilise directement translateMuscleGroup
-    if (language === 'fr') {
-      return translateMuscleGroup(muscleGroup);
-    }
-    
-    // Pour les autres langues, on utilise d'abord reverseTranslateMuscleGroup pour obtenir la clé 
-    // puis t pour obtenir la traduction dans la langue actuelle
+    // Utiliser l'API de traduction pour obtenir la traduction dans la langue actuelle
     const key = reverseTranslateMuscleGroup(muscleGroup);
     return t(`muscleGroups.${key}`, { fallback: muscleGroup });
   };
