@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -21,7 +20,21 @@ import { Card } from "@/components/ui/card";
 import { GenerateWorkoutDialogProps } from "./types";
 import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 
-export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom", initialDuration = 45 }: GenerateWorkoutDialogProps) => {
+interface GenerateWorkoutDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialDuration?: number;
+  initialIntensity?: number; 
+  workoutType?: string;
+}
+
+export const GenerateWorkoutDialog = ({ 
+  isOpen, 
+  onClose, 
+  initialDuration = 45, 
+  initialIntensity = 50,
+  workoutType = ""
+}: GenerateWorkoutDialogProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -31,15 +44,16 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
   const [generatedWorkout, setGeneratedWorkout] = useState<any>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [duration, setDuration] = useState(initialDuration);
+  const [intensity, setIntensity] = useState(initialIntensity);
+  const [selectedType, setSelectedType] = useState(workoutType || "");
 
-  // Récupérer les préférences d'entraînement de l'utilisateur
   const { data: userPreferences, isLoading: loadingPreferences } = useQuery({
     queryKey: ['user-preferences', user?.id],
     queryFn: async () => {
       if (!user) return null;
       
       try {
-        // Use maybeSingle instead of single to avoid error when no data is found
         const { data, error } = await supabase
           .from('user_preferences')
           .select('*')
@@ -48,7 +62,6 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
           
         if (error) throw error;
         
-        // Return default preferences if no data found
         if (!data) {
           return {
             fitness_level: 'beginner',
@@ -62,7 +75,6 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
         return data;
       } catch (error) {
         console.error('Error fetching user preferences:', error);
-        // Return default preferences on error
         return {
           fitness_level: 'beginner',
           preferred_duration: initialDuration || 45,
@@ -75,7 +87,6 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
     enabled: !!user && isOpen
   });
 
-  // Générer un entraînement avec l'API
   const generateWorkout = async () => {
     if (loadingPreferences) return;
     
@@ -83,11 +94,10 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
       setIsGenerating(true);
       setGeneratedWorkout(null);
       
-      // Adapter les préférences à la fonction de génération de workout
       const preferences = {
         userLevel: userPreferences?.fitness_level || 'beginner',
-        workoutType: workoutType,
-        duration: initialDuration || userPreferences?.preferred_duration || 45,
+        workoutType: selectedType,
+        duration: duration || userPreferences?.preferred_duration || 45,
         location: userPreferences?.training_location || 'home',
         equipment: userPreferences?.available_equipment || 'minimal',
         muscleGroups: userPreferences?.focus_areas || ['full_body']
@@ -96,7 +106,6 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
       console.log("Génération d'un entraînement avec préférences:", preferences);
       
       try {
-        // Appeler la fonction Supabase Edge pour générer l'entraînement
         const { data: workout, error } = await supabase.functions.invoke('generate-workout', {
           body: { userPreferences: preferences }
         });
@@ -105,7 +114,6 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
         
         console.log("Entraînement généré avec succès:", workout);
         
-        // S'assurer que la durée reflète celle demandée
         if (workout && typeof workout === 'object') {
           workout.duration = preferences.duration;
         }
@@ -124,11 +132,10 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
         variant: "destructive",
       });
       
-      // Générer un entraînement de secours local en cas d'échec avec des exercices variés
-      const fallbackExercises = getFallbackExercises(workoutType, initialDuration);
+      const fallbackExercises = getFallbackExercises(selectedType, duration);
       setGeneratedWorkout({
         exercises: fallbackExercises,
-        duration: initialDuration,
+        duration: duration,
         difficulty: 'moderate',
         description: t("workouts.fallbackWorkoutDescription") || "Voici un entraînement par défaut qui vous permettra de vous dépenser."
       });
@@ -138,9 +145,7 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
     }
   };
 
-  // Obtenir des exercices de secours basés sur le type d'entraînement avec plus de variété
   const getFallbackExercises = (type: string, duration: number) => {
-    // Exercices par défaut en cas d'échec de l'API avec plus de variété
     const exercisePool = {
       full_body: [
         { name: "Squats", sets: 3, reps: 12, rest: 60 },
@@ -234,28 +239,22 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
       ]
     };
     
-    // Sélectionner un ensemble d'exercices aléatoires basé sur le type
     const exercises = exercisePool[type as keyof typeof exercisePool] || exercisePool.custom;
     
-    // Déterminer le nombre d'exercices basé sur la durée
     const targetDuration = duration;
     const exerciseCount = Math.max(3, Math.min(8, Math.floor(targetDuration / 15) + 2));
     
-    // Mélanger les exercices pour plus de variété
     const shuffled = [...exercises].sort(() => 0.5 - Math.random());
     
-    // Retourner le nombre approprié d'exercices
     return shuffled.slice(0, exerciseCount);
   };
 
-  // Démarrer l'entraînement généré
   const startGeneratedWorkout = async () => {
     if (!generatedWorkout || !user) return;
     
     try {
       setIsStarting(true);
       
-      // Créer une session d'entraînement avec les exercices générés
       const exerciseNames = generatedWorkout.exercises.map((ex: any) => ex.name);
       console.log("Démarrage de l'entraînement avec exercices:", exerciseNames);
       
@@ -265,7 +264,6 @@ export const GenerateWorkoutDialog = ({ isOpen, onClose, workoutType = "custom",
         throw new Error("Impossible de créer la session d'entraînement");
       }
       
-      // Rediriger vers la page de session d'entraînement
       console.log("Session créée, redirection vers:", `workouts/${session.id}`);
       onClose();
       navigate(`/workouts/${session.id}`);

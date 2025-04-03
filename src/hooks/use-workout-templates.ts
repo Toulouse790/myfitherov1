@@ -1,73 +1,50 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
-interface WorkoutTemplate {
-  id: string;
-  user_id: string;
-  name: string;
-  description?: string;
-  exercise_data: any[];
-  is_public: boolean;
-}
-
-export const useWorkoutTemplates = () => {
+export function useWorkoutTemplates() {
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const { data: templates, isLoading } = useQuery({
-    queryKey: ['workout-templates', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('workout_templates')
-        .select('*')
-        .or(`user_id.eq.${user?.id},is_public.eq.true`);
-
-      if (error) {
-        console.error('Error fetching templates:', error);
-        throw error;
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      if (!user) {
+        setIsLoading(false);
+        return;
       }
 
-      return data;
-    },
-    enabled: !!user
-  });
+      try {
+        setIsLoading(true);
+        
+        // Récupérer les modèles publics ET les modèles de l'utilisateur
+        const { data, error } = await supabase
+          .from('workout_templates')
+          .select('*')
+          .or(`is_public.eq.true,user_id.eq.${user.id}`);
 
-  const saveTemplate = useMutation({
-    mutationFn: async (template: Partial<WorkoutTemplate>) => {
-      if (!user) throw new Error('User not authenticated');
+        if (error) {
+          throw error;
+        }
 
-      const { error } = await supabase
-        .from('workout_templates')
-        .insert([{
-          user_id: user.id,
-          ...template
-        }]);
+        setTemplates(data || []);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des modèles d'entraînement:", error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les modèles d'entraînement",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workout-templates', user?.id] });
-      toast({
-        title: "Template sauvegardé",
-        description: "Votre template d'entraînement a été enregistré avec succès.",
-      });
-    },
-    onError: (error) => {
-      console.error('Error saving template:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder le template.",
-        variant: "destructive",
-      });
-    }
-  });
+    fetchTemplates();
+  }, [user]);
 
-  return {
-    templates,
-    isLoading,
-    saveTemplate: saveTemplate.mutate
-  };
-};
+  return { templates, isLoading };
+}

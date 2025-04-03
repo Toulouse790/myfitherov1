@@ -1,37 +1,29 @@
+
+import { Dumbbell, Activity, Heart, Users } from "lucide-react";
+
 export const muscleGroups = [
-  { id: 'chest', name: 'Pectoraux', color: 'bg-red-500' },
-  { id: 'back', name: 'Dos', color: 'bg-blue-500' },
-  { id: 'legs', name: 'Jambes', color: 'bg-green-500' },
-  { id: 'shoulders', name: 'Épaules', color: 'bg-yellow-500' },
-  { id: 'biceps', name: 'Biceps', color: 'bg-purple-500' },
-  { id: 'triceps', name: 'Triceps', color: 'bg-pink-500' },
-  { id: 'abs', name: 'Abdominaux', color: 'bg-orange-500' }
+  { id: "chest", icon: Dumbbell },
+  { id: "back", icon: Dumbbell },
+  { id: "legs", icon: Dumbbell },
+  { id: "shoulders", icon: Dumbbell },
+  { id: "biceps", icon: Dumbbell },
+  { id: "triceps", icon: Dumbbell },
+  { id: "abs", icon: Dumbbell },
+  { id: "core", icon: Dumbbell },
+  { id: "full_body", icon: Users },
+  { id: "upper_body", icon: Dumbbell },
+  { id: "lower_body", icon: Dumbbell },
+  { id: "cardio", icon: Heart }
 ];
 
 export const difficultyLevels = [
-  { id: 'beginner', name: 'Débutant' },
-  { id: 'intermediate', name: 'Intermédiaire' },
-  { id: 'advanced', name: 'Avancé' }
+  { id: "beginner", value: "Débutant" },
+  { id: "intermediate", value: "Intermédiaire" },
+  { id: "advanced", value: "Avancé" }
 ];
 
-export const locations = [
-  { id: 'home', name: 'Maison' },
-  { id: 'gym', name: 'Salle' },
-  { id: 'outdoor', name: 'Extérieur' }
+export const workoutLocations = [
+  { id: "home", value: "Maison" },
+  { id: "gym", value: "Salle de sport" },
+  { id: "outdoor", value: "Extérieur" }
 ];
-
-export interface WorkoutFormData {
-  title: string;
-  muscleGroups: string[];
-  difficulty: string;
-  duration: string;
-  exercises: string;
-}
-
-export const initialFormData: WorkoutFormData = {
-  title: "",
-  muscleGroups: [],
-  difficulty: "",
-  duration: "",
-  exercises: ""
-};
