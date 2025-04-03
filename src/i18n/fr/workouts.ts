@@ -140,5 +140,9 @@ export const workouts = {
   filters: "Filtres",
   toggleFilters: "Afficher/Masquer les filtres",
   searchPlaceholder: "Rechercher un entraînement...",
-  chooseGroup: "Choisissez un groupe musculaire pour commencer"
+  chooseGroup: "Choisissez un groupe musculaire pour commencer",
+  libraryDescription: "Parcourez notre bibliothèque d'exercices classés par groupe musculaire",
+  exercises: "exercices",
+  confirmation: "Êtes-vous sûr de vouloir terminer cette séance d'entraînement ?",
+  completeWorkout: "Terminer l'entraînement"
 };

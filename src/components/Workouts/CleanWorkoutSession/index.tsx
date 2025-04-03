@@ -11,12 +11,24 @@ import { Progress } from "@/components/ui/progress";
 import { Loader2, ArrowLeft, CheckCircle2, Timer, RotateCw } from "lucide-react";
 import { ExerciseItem } from "./ExerciseItem";
 import { ExerciseDetail } from "./ExerciseDetail";
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const CleanWorkoutSession = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
   const [exercises, setExercises] = useState<string[]>([]);
@@ -25,6 +37,7 @@ export const CleanWorkoutSession = () => {
   const [exerciseProgress, setExerciseProgress] = useState<Record<string, { completed: boolean; sets: number }>>({}); 
   const [sessionDuration, setSessionDuration] = useState(0);
   const [startTime] = useState(Date.now());
+  const [showFinishDialog, setShowFinishDialog] = useState(false);
 
   // Timer pour le suivi de la durée de session
   useEffect(() => {
@@ -108,25 +121,35 @@ export const CleanWorkoutSession = () => {
     if (!sessionId) return;
     
     try {
+      console.log("Finalisation de la séance d'entraînement:", sessionId);
       const totalExercises = exercises.length;
       const completedExercises = Object.values(exerciseProgress).filter(ex => ex.completed).length;
       const durationMinutes = Math.ceil(sessionDuration / 60);
       
-      await supabase
+      const { error } = await supabase
         .from('workout_sessions')
         .update({
           status: 'completed',
           total_duration_minutes: durationMinutes,
+          completed_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
         .eq('id', sessionId);
+        
+      if (error) {
+        console.error("Erreur lors de la mise à jour de la séance:", error);
+        throw error;
+      }
 
       toast({
         title: "Félicitations !",
         description: `Séance terminée en ${durationMinutes} minutes`,
       });
       
-      navigate('/workouts');
+      console.log("Redirection vers /workouts après finalisation");
+      setTimeout(() => {
+        navigate('/workouts');
+      }, 300);
     } catch (error) {
       console.error('Erreur lors de la finalisation de la séance:', error);
       toast({
@@ -182,22 +205,22 @@ export const CleanWorkoutSession = () => {
           <CardContent className="p-4">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <h1 className="text-xl font-bold">Séance d'entraînement</h1>
+                <h1 className="text-xl font-bold">{t("workouts.workoutSession")}</h1>
                 <p className="text-muted-foreground">
-                  Durée: {formatDuration(sessionDuration)}
+                  {t("workouts.duration")}: {formatDuration(sessionDuration)}
                 </p>
               </div>
               
               <Button variant="outline" size="sm" onClick={() => navigate('/workouts')}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Retour
+                {t("common.back")}
               </Button>
             </div>
             
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Progression: {Math.round(progress)}%</span>
-                <span>{totalComplete}/{exercises.length} exercices</span>
+                <span>{t("workouts.progress")}: {Math.round(progress)}%</span>
+                <span>{totalComplete}/{exercises.length} {t("workouts.exercises")}</span>
               </div>
               <Progress value={progress} className="h-2" />
             </div>
@@ -215,15 +238,15 @@ export const CleanWorkoutSession = () => {
             {/* Exercice en cours */}
             <Card className="mb-6">
               <CardContent className="p-4">
-                <h2 className="text-lg font-medium mb-4">Exercice actuel</h2>
+                <h2 className="text-lg font-medium mb-4">{t("workouts.currentExercise")}</h2>
                 <div className="p-4 border rounded-lg bg-muted/20">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-medium text-lg">{currentExercise}</p>
                       <p className="text-sm text-muted-foreground">
                         {exerciseProgress[currentExercise]?.completed 
-                          ? "Terminé" 
-                          : "En attente"}
+                          ? t("workouts.completed") 
+                          : t("workouts.pending")}
                       </p>
                     </div>
                     <Button 
@@ -235,8 +258,8 @@ export const CleanWorkoutSession = () => {
                         : <Timer className="mr-2 h-4 w-4" />
                       }
                       {exerciseProgress[currentExercise]?.completed 
-                        ? "Revoir" 
-                        : "Commencer"}
+                        ? t("common.edit") 
+                        : t("workouts.start")}
                     </Button>
                   </div>
                 </div>
@@ -246,7 +269,7 @@ export const CleanWorkoutSession = () => {
             {/* Liste des exercices */}
             <Card className="mb-6">
               <CardContent className="p-4">
-                <h2 className="text-lg font-medium mb-4">Liste des exercices</h2>
+                <h2 className="text-lg font-medium mb-4">{t("workouts.exerciseList")}</h2>
                 <div className="space-y-2">
                   {exercises.map((exercise, index) => (
                     <ExerciseItem
@@ -261,20 +284,43 @@ export const CleanWorkoutSession = () => {
               </CardContent>
             </Card>
 
-            {/* Bouton de fin de séance */}
-            <div className="flex justify-center">
+            {/* Boutons d'action pour la séance */}
+            <div className="flex justify-center gap-4 flex-wrap">
               <Button 
-                size="lg" 
-                onClick={handleFinishWorkout}
-                disabled={totalComplete === 0}
+                variant="outline" 
+                onClick={() => setShowFinishDialog(true)}
                 className="w-full sm:w-auto"
               >
-                <CheckCircle2 className="mr-2 h-5 w-5" />
-                Terminer la séance
+                {t("workouts.finishWorkout")}
+              </Button>
+              
+              <Button 
+                onClick={() => handleExerciseClick(currentExerciseIndex)}
+                className="w-full sm:w-auto"
+              >
+                <Timer className="mr-2 h-4 w-4" />
+                {t("workouts.continueSession")}
               </Button>
             </div>
           </>
         )}
+
+        <AlertDialog open={showFinishDialog} onOpenChange={setShowFinishDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t("workouts.finishWorkout")}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t("workouts.confirmation") || "Êtes-vous sûr de vouloir terminer cette séance d'entraînement ?"}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleFinishWorkout}>
+                {t("common.confirm")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
