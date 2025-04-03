@@ -32,7 +32,7 @@ export const MuscleGroupFilter = ({
           onClick={() => onGroupSelect(group.id)}
           className="whitespace-nowrap"
         >
-          {group.name}
+          {translateMuscleGroupWithContext(group.name)}
         </Button>
       ))}
     </div>
