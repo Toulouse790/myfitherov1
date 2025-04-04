@@ -45,14 +45,9 @@ export const useHomeActions = () => {
     }, 1500);
   };
 
-  const handleMealSuggestions = () => {
-    navigate('/nutrition');
-  };
-
   return {
     handleCreateSession,
     handleAIGeneration,
-    handleMealSuggestions,
     isLoading
   };
 };

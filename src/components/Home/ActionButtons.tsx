@@ -1,13 +1,12 @@
 
-import { Activity, Dumbbell, Plus, Utensils } from "lucide-react";
+import { Activity, Dumbbell, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHomeActions } from "@/hooks/use-home-actions";
 
 export const ActionButtons = () => {
   const { 
     handleCreateSession, 
-    handleAIGeneration, 
-    handleMealSuggestions,
+    handleAIGeneration,
     isLoading 
   } = useHomeActions();
 
@@ -15,7 +14,7 @@ export const ActionButtons = () => {
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">Actions rapides</h2>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <Button 
           onClick={handleCreateSession}
           className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center group hover:scale-[1.02] transition-all duration-300"
@@ -24,16 +23,6 @@ export const ActionButtons = () => {
         >
           <Dumbbell className="w-6 h-6 mb-2" />
           <span className="text-sm">Démarrer un entraînement</span>
-        </Button>
-
-        <Button 
-          onClick={handleMealSuggestions}
-          variant="outline"
-          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-primary/10 transition-all duration-300"
-          size="lg"
-        >
-          <Utensils className="w-6 h-6 mb-2" />
-          <span className="text-sm">Enregistrer un repas</span>
         </Button>
 
         <Button
