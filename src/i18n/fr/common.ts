@@ -28,5 +28,7 @@ export const common = {
   month: "mois",
   months: "mois",
   year: "année",
-  years: "années"
+  years: "années",
+  refresh: "Rafraîchir",
+  view: "Voir"
 };

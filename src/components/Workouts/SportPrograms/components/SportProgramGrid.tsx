@@ -3,6 +3,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProgramCard } from "./ProgramCard";
 import { SportProgram } from "@/utils/api/sportProgramsApi";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface SportProgramGridProps {
   programs: SportProgram[];
@@ -30,8 +32,14 @@ export const SportProgramGrid = ({ programs, onSelectProgram }: SportProgramGrid
     }
     
     return (
-      <div className="col-span-full text-center py-10">
-        <p className="text-muted-foreground">{emptyMessage}</p>
+      <div className="col-span-full text-center py-6">
+        <Alert variant="default" className="bg-muted/40 border-muted">
+          <AlertCircle className="h-5 w-5 text-muted-foreground" />
+          <AlertTitle className="text-foreground">{t("programs.noDataAvailable")}</AlertTitle>
+          <AlertDescription className="text-muted-foreground">
+            {emptyMessage}
+          </AlertDescription>
+        </Alert>
       </div>
     );
   };

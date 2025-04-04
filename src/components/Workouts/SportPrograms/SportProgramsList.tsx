@@ -5,9 +5,12 @@ import { SportProgramGrid } from "./components/SportProgramGrid";
 import { useSportPrograms } from "./hooks/useSportPrograms";
 import { debugLogger } from "@/utils/debug-logger";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Info } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const SportProgramsList = () => {
+  const { t } = useLanguage();
   const { 
     sports,
     positions,
@@ -33,7 +36,7 @@ export const SportProgramsList = () => {
     return (
       <div className="p-8 text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Chargement...</p>
+        <p className="mt-4 text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -42,14 +45,14 @@ export const SportProgramsList = () => {
   if (sports.length === 0) {
     return (
       <div className="p-8 text-center">
-        <p className="text-muted-foreground">Aucun sport disponible</p>
+        <p className="text-muted-foreground">{t("sports.noSportsAvailable")}</p>
         <Button 
           onClick={refreshData}
           variant="outline"
           className="mt-4 flex items-center gap-2"
         >
           <RefreshCw size={16} />
-          Rafraîchir les données
+          {t("common.refresh")}
         </Button>
       </div>
     );
@@ -58,7 +61,7 @@ export const SportProgramsList = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-medium">Sports disponibles: {sports.length}</h2>
+        <h2 className="text-lg font-medium">{t("sports.availableSports", {count: sports.length})}</h2>
         <Button 
           onClick={refreshData}
           variant="outline"
@@ -66,9 +69,18 @@ export const SportProgramsList = () => {
           className="flex items-center gap-2"
         >
           <RefreshCw size={16} />
-          Rafraîchir
+          {t("common.refresh")}
         </Button>
       </div>
+      
+      {selectedSport && positions.length === 0 && (
+        <Alert variant="default" className="bg-muted/20 border-muted">
+          <Info className="h-4 w-4 text-muted-foreground" />
+          <AlertDescription className="text-muted-foreground">
+            {t("positions.noPositionsAvailable")}
+          </AlertDescription>
+        </Alert>
+      )}
       
       <SportProgramFilters 
         sports={sports}

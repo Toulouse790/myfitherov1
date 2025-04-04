@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { fr } from "@/i18n/fr";
@@ -28,7 +27,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return 'en'; // Langue par défaut si aucune correspondance
   };
 
-  // Correction: Ajout d'une valeur par défaut comme deuxième argument
   const [language, setLanguage] = useLocalStorage<Language>("language", getBrowserLanguage());
 
   const translations = {
