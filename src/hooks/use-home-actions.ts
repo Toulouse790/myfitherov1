@@ -4,18 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { debugLogger } from "@/utils/debug-logger";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useHomeActions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleCreateSession = () => {
     if (!user) {
       toast({
-        title: "Connexion requise",
-        description: "Vous devez être connecté pour créer une séance",
+        title: t("auth.signIn"),
+        description: t("workouts.errors.sessionFetch"),
         variant: "destructive",
       });
       navigate('/signin', { state: { from: '/workouts' } });
@@ -31,8 +33,8 @@ export const useHomeActions = () => {
     if (!user) {
       setIsLoading(false);
       toast({
-        title: "Connexion requise",
-        description: "Vous devez être connecté pour utiliser cette fonctionnalité",
+        title: t("auth.signIn"),
+        description: t("workouts.errors.sessionFetch"),
         variant: "destructive",
       });
       navigate('/signin', { state: { from: '/workouts' } });

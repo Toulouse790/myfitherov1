@@ -3,12 +3,13 @@ export const workouts = {
   title: "Entraînements",
   activeSession: "Session active",
   duration: "Durée",
+  durationMinutes: "{duration} minutes",
   continueSession: "Continuer la session",
   home: "Accueil",
   progress: "Progrès",
   history: "Historique",
   trackProgressDescription: "Suivez vos progrès et améliorez vos performances",
-  startWorkout: "Commencer un entraînement",
+  startWorkout: "Démarrer un entraînement",
   createNewSession: "Créer une nouvelle séance",
   newWorkout: "Nouvel entraînement",
   latestPerformances: "Dernières performances",
@@ -29,7 +30,7 @@ export const workouts = {
   regenerate: "Régénérer",
   startSession: "Commencer la séance",
   startSessionLoading: "Démarrage...",
-  generateWorkout: "Générer un entraînement",
+  generateWorkout: "Générer avec l'IA",
   sessionGenerated: "Séance générée",
   exerciseLibrary: "Bibliothèque d'exercices",
   allMuscleGroups: "Tous les groupes musculaires",
@@ -142,7 +143,7 @@ export const workouts = {
   errors: {
     sessionFinalize: "Erreur lors de la finalisation de la séance",
     sessionFinalizeDescription: "Une erreur s'est produite lors de la finalisation de la séance",
-    sessionFetch: "Erreur lors de la récupération de la séance",
+    sessionFetch: "Vous devez être connecté pour créer une séance",
     activeSessionCheck: "Erreur lors de la vérification des sessions actives"
   }
 };

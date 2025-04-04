@@ -13,10 +13,12 @@ import { Crown, ArrowRight, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Home = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   // Date cible 30 jours à partir de maintenant
   const targetDate = new Date();

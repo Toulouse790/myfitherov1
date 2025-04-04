@@ -2,6 +2,7 @@
 import { Activity, Dumbbell, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHomeActions } from "@/hooks/use-home-actions";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const ActionButtons = () => {
   const { 
@@ -9,6 +10,8 @@ export const ActionButtons = () => {
     handleAIGeneration,
     isLoading 
   } = useHomeActions();
+  
+  const { t } = useLanguage();
 
   return (
     <div className="space-y-4">
@@ -22,7 +25,7 @@ export const ActionButtons = () => {
           size="lg"
         >
           <Dumbbell className="w-6 h-6 mb-2" />
-          <span className="text-sm">Démarrer un entraînement</span>
+          <span className="text-sm">{t("workouts.startWorkout")}</span>
         </Button>
 
         <Button
@@ -33,7 +36,7 @@ export const ActionButtons = () => {
           disabled={isLoading}
         >
           <Plus className="w-6 h-6 mb-2" />
-          <span className="text-sm">Générer avec l'IA</span>
+          <span className="text-sm">{t("workouts.generateWorkout")}</span>
         </Button>
       </div>
     </div>
