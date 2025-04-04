@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 import { SportProgram } from "./programs";
@@ -27,7 +26,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           }
         }
       ])
-      .select(); // Correction: pas d'arguments dans select()
+      .select();
       
     debugLogger.log("workoutSessions", "Résultat de la création de session:", data ? "Succès" : "Échec", error);
     
@@ -43,14 +42,20 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
 };
 
 async function updateUserData(userId: string, sessionId: string) {
-  await updateUserProfile(userId);
-  await updateUserProgression(userId);
-  await updateUserPreferences(userId);
-  await updateUserStreaks(userId);
-  await createTrainingStats(userId, sessionId);
+  debugLogger.log("workoutSessions", "Début de la mise à jour des données utilisateur pour UserId:", userId, "SessionId:", sessionId);
   
-  // Vérification des tables après création de session
-  await verifyUserTables(userId, sessionId);
+  try {
+    await updateUserProfile(userId);
+    await updateUserProgression(userId);
+    await updateUserPreferences(userId);
+    await updateUserStreaks(userId);
+    await createTrainingStats(userId, sessionId);
+    
+    // Vérification des tables après création de session
+    await verifyUserTables(userId, sessionId);
+  } catch (error) {
+    debugLogger.error("workoutSessions", "Erreur lors de la mise à jour des données utilisateur:", error);
+  }
 }
 
 async function updateUserProfile(userId: string) {
@@ -200,20 +205,28 @@ async function updateUserStreaks(userId: string) {
 }
 
 async function createTrainingStats(userId: string, sessionId: string) {
-  const { error: statsError } = await supabase
-    .from('training_stats')
-    .insert([{
-      user_id: userId,
-      session_id: sessionId,
-      session_duration_minutes: 45, // Valeur par défaut
-      calories_burned: 450, // Estimation moyenne
-      muscle_groups_worked: ['jambes', 'bras', 'core'],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }]);
-    
-  if (statsError) {
-    debugLogger.error("workoutSessions", "Erreur lors de la création des statistiques d'entraînement:", statsError);
+  debugLogger.log("workoutSessions", "Début de création des statistiques d'entraînement pour UserId:", userId, "SessionId:", sessionId);
+  
+  try {
+    const { data, error: statsError } = await supabase
+      .from('training_stats')
+      .insert([{
+        user_id: userId,
+        session_id: sessionId,
+        session_duration_minutes: 45, // Valeur par défaut
+        calories_burned: 450, // Estimation moyenne
+        muscle_groups_worked: ['jambes', 'bras', 'core'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }]);
+      
+    if (statsError) {
+      debugLogger.error("workoutSessions", "Erreur lors de la création des statistiques d'entraînement:", statsError);
+    } else {
+      debugLogger.log("workoutSessions", "Statistiques d'entraînement créées avec succès:", data);
+    }
+  } catch (error) {
+    debugLogger.error("workoutSessions", "Exception lors de la création des statistiques d'entraînement:", error);
   }
 }
 
