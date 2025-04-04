@@ -97,7 +97,7 @@ export const WorkoutCard = ({
           variant="default"
           size="sm"
         >
-          {t("workouts.selectWorkout")}
+          {t("workouts.start")}
         </Button>
       </CardFooter>
     </Card>
