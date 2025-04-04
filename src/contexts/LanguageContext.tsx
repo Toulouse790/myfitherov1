@@ -45,7 +45,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       
       for (const k of keys) {
         if (current[k] === undefined) {
-          debugLogger.warn(`Translation missing for key: ${key} in language: ${language}`);
+          debugLogger.warn("Translation missing", `Key: ${key} in language: ${language}`);
           
           // Essayez de trouver la clé dans une autre langue si la fallback n'est pas spécifiée
           if (!params?.fallback) {
