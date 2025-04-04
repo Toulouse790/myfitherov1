@@ -1,11 +1,11 @@
 
-import { Sport, fetchSports } from './sports';
-import { SportPosition, fetchPositions } from './positions';
-import { SportProgram, fetchPrograms, fetchActivePrograms } from './programs';
+import { fetchSports, Sport } from './sports';
+import { fetchPositions, SportPosition } from './positions';
+import { fetchPrograms, fetchActivePrograms, SportProgram } from './programs';
 import { createWorkoutFromProgram } from './workoutSessions';
 
-// Exporter les interfaces
-export { Sport, SportPosition, SportProgram };
+// Exporter les interfaces comme types
+export type { Sport, SportPosition, SportProgram };
 
 // Réexporter les fonctions depuis les modules individuels
 export { 
