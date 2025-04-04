@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 import { SportProgram } from "./programs";
@@ -42,7 +41,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
   }
 };
 
-// Fonction utilitaire pour mettre à jour toutes les données utilisateur liées à une nouvelle session
 async function updateUserData(userId: string, sessionId: string) {
   await updateUserProfile(userId);
   await updateUserProgression(userId);
