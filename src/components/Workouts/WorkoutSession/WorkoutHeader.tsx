@@ -17,22 +17,34 @@ import {
 } from "@/components/ui/alert-dialog";
 
 interface WorkoutHeaderProps {
-  sessionName: string;
-  sessionDuration: number;
-  formatDuration: (seconds: number) => string;
-  totalProgress: number;
+  sessionId?: string;
+  sessionName?: string;
+  sessionDuration?: number;
+  formatDuration?: (seconds: number) => string;
+  totalProgress?: number;
+  progress?: number;
+  estimatedCalories?: number;
   onFinishWorkout?: () => Promise<void>;
 }
 
 export const WorkoutHeader = ({
+  sessionId,
   sessionName,
-  sessionDuration,
+  sessionDuration = 0,
   formatDuration,
-  totalProgress,
+  totalProgress = 0,
+  progress = 0,
+  estimatedCalories = 0,
   onFinishWorkout
 }: WorkoutHeaderProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  
+  // Utiliser progress si totalProgress n'est pas fourni
+  const displayProgress = totalProgress || progress;
+  
+  // Formater la durée si la fonction est fournie
+  const formattedDuration = formatDuration ? formatDuration(sessionDuration) : `${Math.floor(sessionDuration / 60)}:${(sessionDuration % 60).toString().padStart(2, '0')}`;
 
   return (
     <div className="bg-background sticky top-16 z-10 pt-2 pb-4 mb-4 border-b">
@@ -41,13 +53,13 @@ export const WorkoutHeader = ({
           <Button variant="ghost" size="icon" onClick={() => navigate('/workouts')}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-xl font-bold">{sessionName}</h1>
+          <h1 className="text-xl font-bold">{sessionName || "Séance d'entraînement"}</h1>
         </div>
         
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 bg-muted/40 px-2 py-1 rounded-md">
             <TimerIcon className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">{formatDuration(sessionDuration)}</span>
+            <span className="text-sm font-medium">{formattedDuration}</span>
           </div>
 
           {onFinishWorkout && (
@@ -77,9 +89,12 @@ export const WorkoutHeader = ({
       
       <div className="space-y-1">
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>{Math.round(totalProgress)}% {t("common.completed")}</span>
+          <span>{Math.round(displayProgress)}% {t("common.completed")}</span>
+          {estimatedCalories > 0 && (
+            <span>{estimatedCalories} {t("workouts.calories")}</span>
+          )}
         </div>
-        <Progress value={totalProgress} className="h-1.5" />
+        <Progress value={displayProgress} className="h-1.5" />
       </div>
     </div>
   );
