@@ -9,7 +9,6 @@ import { TodaySummary } from "@/components/Home/TodaySummary";
 import { TrendingStats } from "@/components/Home/TrendingStats";
 import { useAuth } from "@/hooks/use-auth";
 import { SpecialOfferCountdown } from "@/components/Subscription/SpecialOfferCountdown";
-import { PremiumFeaturesShowcase } from "@/components/Subscription/PremiumFeaturesShowcase";
 import { Button } from "@/components/ui/button";
 import { Crown, ArrowRight, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -69,9 +68,6 @@ const Home = () => {
       
       {/* Afficher l'offre spéciale */}
       <SpecialOfferCountdown targetDate={targetDate} />
-      
-      {/* Vitrine des fonctionnalités premium */}
-      <PremiumFeaturesShowcase />
       
       {/* Programme d'entraînement recommandé */}
       <Card className="p-6 space-y-4 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10">
