@@ -107,6 +107,11 @@ function calculateSleepScore(sleepData: any[]): number {
   qualityScore = (avgQuality / 10) * 25; // Qualité sur 10
   
   // Évaluer la régularité du sommeil
+  // Créons une nouvelle instance pour éviter la référence à sevenDaysAgo
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  
   const hasDailySleep = sleepData.length >= Math.min(7, (new Date().getTime() - sevenDaysAgo.getTime()) / (24 * 3600 * 1000));
   consistencyScore = hasDailySleep ? 25 : (sleepData.length / 7) * 25;
   
