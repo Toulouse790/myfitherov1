@@ -1,4 +1,3 @@
-
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { UserProgressionWidget } from "@/components/UserProgression/UserProgressionWidget";
 import { ActionButtons } from "@/components/Home/ActionButtons";
@@ -14,18 +13,19 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-
 const Home = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLanguage();
-  
+  const {
+    t
+  } = useLanguage();
+
   // Date cible 30 jours à partir de maintenant
   const targetDate = new Date();
   targetDate.setDate(targetDate.getDate() + 30);
-  
-  return (
-    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6 md:space-y-8 pb-20">
+  return <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6 md:space-y-8 pb-20">
       <WelcomeHeader />
       
       {/* Actions rapides - Déplacées tout en haut pour un accès immédiat */}
@@ -37,7 +37,7 @@ const Home = () => {
           <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
             <Zap className="h-5 w-5 text-blue-600 dark:text-blue-300" />
           </div>
-          <h2 className="text-xl font-bold">Programme d'entraînement recommandé</h2>
+          <h2 className="text-xl font-bold">Recommandé</h2>
         </div>
         <WorkoutSuggestions showAllSuggestions={false} />
       </Card>
@@ -54,12 +54,16 @@ const Home = () => {
       <SpecialOfferCountdown targetDate={targetDate} />
       
       {/* Bannière Premium - Déplacée vers le bas car moins prioritaire */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg p-4 border border-indigo-200 dark:border-indigo-800 shadow-md hover:shadow-lg transition-all duration-300"
-      >
+      <motion.div initial={{
+      opacity: 0,
+      y: 20
+    }} animate={{
+      opacity: 1,
+      y: 0
+    }} transition={{
+      delay: 0.3,
+      duration: 0.5
+    }} className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg p-4 border border-indigo-200 dark:border-indigo-800 shadow-md hover:shadow-lg transition-all duration-300">
         <div className="flex flex-col sm:flex-row items-center justify-between">
           <div className="flex items-center gap-3 mb-3 sm:mb-0">
             <div className="bg-indigo-100 dark:bg-indigo-800 p-2 rounded-full">
@@ -70,10 +74,7 @@ const Home = () => {
               <p className="text-sm text-muted-foreground">Débloquez toutes les fonctionnalités et atteignez vos objectifs plus rapidement</p>
             </div>
           </div>
-          <Button 
-            onClick={() => navigate('/subscription-plans')}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
-          >
+          <Button onClick={() => navigate('/subscription-plans')} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
             <span className="flex items-center gap-2">
               Voir les plans
               <ArrowRight className="h-4 w-4" />
@@ -81,8 +82,6 @@ const Home = () => {
           </Button>
         </div>
       </motion.div>
-    </div>
-  );
+    </div>;
 };
-
 export default Home;
