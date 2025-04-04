@@ -31,36 +31,57 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
     ? programs 
     : programs.filter(program => program.difficulty === levelFilter);
 
-  // Créons des programmes de test si aucun n'existe pour éviter l'affichage vide
-  // Utilisez le niveau sélectionné pour créer un programme avec ce niveau
-  const createTestProgram = (difficulty: string) => {
-    return {
-      id: `test-program-${difficulty}`,
-      name: `Programme ${difficulty} de test`,
-      description: `Ce programme ${difficulty} est affiché quand aucun programme n'est disponible`,
-      sport_id: "test-sport",
-      position_id: "test-position",
-      difficulty: difficulty,
-      duration: difficulty === "amateur" ? 8 : difficulty === "semi-pro" ? 10 : 12,
-      sessionsPerWeek: difficulty === "amateur" ? 3 : difficulty === "semi-pro" ? 4 : 5,
-      exercises: [`Exercice ${difficulty} 1`, `Exercice ${difficulty} 2`, `Exercice ${difficulty} 3`]
+  // Si aucun programme disponible, utilisez les programmes de démonstration
+  // qui correspondent au filtre de niveau
+  let displayPrograms = filteredPrograms;
+  
+  if (filteredPrograms.length === 0) {
+    // Créer des programmes de démonstration pour le niveau sélectionné
+    if (levelFilter === "all") {
+      displayPrograms = generateDemoProgramsForAllLevels();
+    } else {
+      displayPrograms = [generateDemoProgram(levelFilter)];
+    }
+  }
+
+  // Fonction pour générer un programme de démonstration pour un niveau spécifique
+  function generateDemoProgram(difficulty: string): SportProgram {
+    const difficultyDetails = {
+      "amateur": {
+        duration: 8,
+        sessionsPerWeek: 3,
+        description: "Programme adapté aux débutants avec des exercices fondamentaux"
+      },
+      "semi-pro": {
+        duration: 10,
+        sessionsPerWeek: 4,
+        description: "Programme intermédiaire avec des exercices plus avancés"
+      },
+      "pro": {
+        duration: 12,
+        sessionsPerWeek: 5,
+        description: "Programme intensif pour athlètes expérimentés"
+      }
     };
-  };
+    
+    const details = difficultyDetails[difficulty as keyof typeof difficultyDetails];
+    
+    return {
+      id: `demo-program-${difficulty}`,
+      name: `Programme ${difficulty}`,
+      description: details.description,
+      sport_id: "demo-sport",
+      position_id: "demo-position",
+      difficulty: difficulty,
+      duration: details.duration,
+      sessionsPerWeek: details.sessionsPerWeek,
+      exercises: Array(3).fill(0).map((_, i) => `Exercice ${difficulty} ${i+1}`)
+    };
+  }
 
-  // Créer un programme test qui correspond au filtre sélectionné
-  const displayPrograms = filteredPrograms.length > 0 
-    ? filteredPrograms 
-    : levelFilter === "all" 
-      ? [createTestProgram("amateur"), createTestProgram("semi-pro"), createTestProgram("pro")] 
-      : [createTestProgram(levelFilter)];
-
-  if (filteredPrograms.length === 0 && displayPrograms.length === 0) {
-    return (
-      <EmptyState
-        title={t("programs.noDataAvailable")}
-        description={t("programs.noProgramsAvailable")}
-      />
-    );
+  // Fonction pour générer des programmes de démonstration pour tous les niveaux
+  function generateDemoProgramsForAllLevels(): SportProgram[] {
+    return ["amateur", "semi-pro", "pro"].map(difficulty => generateDemoProgram(difficulty));
   }
 
   return (

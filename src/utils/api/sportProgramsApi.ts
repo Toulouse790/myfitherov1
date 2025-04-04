@@ -1,6 +1,6 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
+import { allSportPrograms } from "@/data/sportPrograms";
 
 export interface Sport {
   id: string;
@@ -33,6 +33,19 @@ export const fetchSports = async (): Promise<{ data: Sport[] | null; error: any 
       .order('name');
       
     debugLogger.log("sportProgramsApi", "Sports chargés: " + (data?.length || 0));
+    
+    if (!data || data.length === 0) {
+      const demoSports = [
+        { id: 'football', name: 'Football' },
+        { id: 'basketball', name: 'Basketball' },
+        { id: 'volleyball', name: 'Volleyball' },
+        { id: 'tennis', name: 'Tennis' },
+        { id: 'natation', name: 'Natation' },
+        { id: 'running', name: 'Course à pied' }
+      ];
+      return { data: demoSports, error: null };
+    }
+    
     return { data, error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors du chargement des sports:", error);
@@ -51,6 +64,48 @@ export const fetchPositions = async (sportId: string): Promise<{ data: SportPosi
       .order('name');
       
     debugLogger.log("sportProgramsApi", "Positions chargées pour le sport " + sportId + ": " + (data?.length || 0));
+    
+    if (!data || data.length === 0) {
+      let demoPositions: SportPosition[] = [];
+      
+      switch (sportId) {
+        case 'football':
+          demoPositions = [
+            { id: 'gardien', name: 'Gardien', sport_id: sportId },
+            { id: 'défenseur', name: 'Défenseur', sport_id: sportId },
+            { id: 'milieu', name: 'Milieu', sport_id: sportId },
+            { id: 'attaquant', name: 'Attaquant', sport_id: sportId }
+          ];
+          break;
+        case 'basketball':
+          demoPositions = [
+            { id: 'meneur', name: 'Meneur', sport_id: sportId },
+            { id: 'ailier', name: 'Ailier', sport_id: sportId },
+            { id: 'pivot', name: 'Pivot', sport_id: sportId }
+          ];
+          break;
+        case 'volleyball':
+          demoPositions = [
+            { id: 'passeur', name: 'Passeur', sport_id: sportId },
+            { id: 'attaquant', name: 'Attaquant', sport_id: sportId },
+            { id: 'libero', name: 'Libéro', sport_id: sportId }
+          ];
+          break;
+        case 'natation':
+          demoPositions = [
+            { id: 'sprint', name: 'Sprint', sport_id: sportId },
+            { id: 'endurance', name: 'Endurance', sport_id: sportId }
+          ];
+          break;
+        default:
+          demoPositions = [
+            { id: 'general', name: 'Général', sport_id: sportId }
+          ];
+      }
+      
+      return { data: demoPositions, error: null };
+    }
+    
     return { data, error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors du chargement des positions:", error);
@@ -79,65 +134,83 @@ export const fetchPrograms = async (
     
     debugLogger.log("sportProgramsApi", "Programmes chargés: " + (data?.length || 0));
 
-    // Si des données sont retournées mais avec tous les mêmes niveaux, ajoutons des exemples pour tous les niveaux
-    if (data && data.length > 0) {
-      let hasAmateur = false;
-      let hasSemiPro = false;
-      let hasPro = false;
-
-      // Vérifier les niveaux existants
-      data.forEach(program => {
-        if (program.difficulty === 'amateur') hasAmateur = true;
-        if (program.difficulty === 'semi-pro') hasSemiPro = true;
-        if (program.difficulty === 'pro') hasPro = true;
+    if (!data || data.length === 0) {
+      const filteredPrograms = allSportPrograms.filter(program => {
+        let matches = program.sport_id === sportId;
+        if (positionId) {
+          matches = matches && program.position_id === positionId;
+        }
+        return matches;
       });
+      
+      return { data: filteredPrograms, error: null };
+    }
 
-      // Si tous les programmes sont du même niveau, créons des exemples pour les autres niveaux
-      const samplePrograms = [];
+    let hasAmateur = false;
+    let hasSemiPro = false;
+    let hasPro = false;
+
+    data.forEach(program => {
+      if (program.difficulty === 'amateur') hasAmateur = true;
+      if (program.difficulty === 'semi-pro') hasSemiPro = true;
+      if (program.difficulty === 'pro') hasPro = true;
+    });
+
+    const additionalPrograms = [];
+    
+    if (!hasAmateur || !hasSemiPro || !hasPro) {
+      const template = data[0];
       
       if (!hasAmateur) {
-        samplePrograms.push({
-          ...data[0],
-          id: `${data[0].id}-amateur`,
-          name: `${data[0].name} - Amateur`,
+        additionalPrograms.push({
+          ...template,
+          id: `${template.id}-amateur`,
+          name: `${template.name} - Amateur`,
           difficulty: 'amateur',
-          description: `Version adaptée pour débutants de ${data[0].name}`,
+          description: `Version adaptée pour débutants de ${template.name}`,
           duration: 8,
           sessionsPerWeek: 2
         });
       }
       
       if (!hasSemiPro) {
-        samplePrograms.push({
-          ...data[0],
-          id: `${data[0].id}-semi-pro`,
-          name: `${data[0].name} - Semi-Pro`,
+        additionalPrograms.push({
+          ...template,
+          id: `${template.id}-semi-pro`,
+          name: `${template.name} - Semi-Pro`,
           difficulty: 'semi-pro',
-          description: `Version intermédiaire de ${data[0].name}`,
+          description: `Version intermédiaire de ${template.name}`,
           duration: 10,
           sessionsPerWeek: 3
         });
       }
       
       if (!hasPro) {
-        samplePrograms.push({
-          ...data[0],
-          id: `${data[0].id}-pro`,
-          name: `${data[0].name} - Pro`,
+        additionalPrograms.push({
+          ...template,
+          id: `${template.id}-pro`,
+          name: `${template.name} - Pro`,
           difficulty: 'pro',
-          description: `Version avancée de ${data[0].name} pour athlètes expérimentés`,
+          description: `Version avancée de ${template.name} pour athlètes expérimentés`,
           duration: 12,
           sessionsPerWeek: 4
         });
       }
-
-      return { data: [...data, ...samplePrograms], error };
     }
     
-    return { data, error };
+    return { data: [...data, ...additionalPrograms], error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors du chargement des programmes:", error);
-    return { data: null, error };
+    
+    const filteredPrograms = allSportPrograms.filter(program => {
+      let matches = program.sport_id === sportId;
+      if (positionId) {
+        matches = matches && program.position_id === positionId;
+      }
+      return matches;
+    });
+    
+    return { data: filteredPrograms, error: null };
   }
 };
 
@@ -146,7 +219,6 @@ export const fetchActivePrograms = async (): Promise<{ data: SportProgram[] | nu
     const { data: user } = await supabase.auth.getUser();
     if (!user || !user.user) throw new Error("Utilisateur non connecté");
     
-    // Récupérer les sessions d'entraînement actives liées à des programmes
     const { data: sessions, error } = await supabase
       .from('workout_sessions')
       .select('program_id')
@@ -160,7 +232,6 @@ export const fetchActivePrograms = async (): Promise<{ data: SportProgram[] | nu
       return { data: [], error: null };
     }
     
-    // Récupérer les détails des programmes actifs
     const programIds = [...new Set(sessions.map(s => s.program_id))];
     
     const { data: programs, error: programsError } = await supabase
