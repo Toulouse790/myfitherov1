@@ -256,7 +256,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     
     debugLogger.log("sportProgramsApi", "Création d'une session d'entraînement à partir du programme:", program.name);
     
-    // Correction : Ne pas utiliser le champ program_id qui n'existe pas dans la table
+    // Correction : La méthode select() n'accepte pas d'arguments supplémentaires
     const { data, error } = await supabase
       .from('workout_sessions')
       .insert([
@@ -275,7 +275,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           }
         }
       ])
-      .select();  // Correction : Removed extra arguments here
+      .select();
       
     debugLogger.log("sportProgramsApi", "Résultat de la création de session:", data ? "Succès" : "Échec", error);
     
@@ -321,7 +321,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           streak_type: 'workout',
           last_activity_date: today,
           current_streak: 1  // Le trigger handle_streak_update s'occupera d'incrémenter si nécessaire
-        }], { onConflict: 'user_id' });
+        }], { onConflict: 'user_id, streak_type' });
         
       if (streakError) {
         debugLogger.error("sportProgramsApi", "Erreur lors de la mise à jour du streak:", streakError);
