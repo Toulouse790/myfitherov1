@@ -12,5 +12,22 @@ export const programs = {
   levelSemiPro: "Semi-professionnel",
   levelPro: "Professionnel",
   filterByLevel: "Filtrer par niveau",
-  allLevels: "Tous les niveaux"
+  allLevels: "Tous les niveaux",
+  weeks: "semaines",
+  sessionsPerWeek: "séances/semaine",
+  startProgram: "Commencer",
+  showMore: "Voir plus",
+  showLess: "Voir moins",
+  programObjectives: "Exercices inclus",
+  andMoreExercises: "{count} autres exercices",
+  currentProgress: "Programme en cours",
+  weeklyProgress: "Progression hebdomadaire",
+  sessionProgress: "Sessions complétées",
+  weekOf: "Semaine {current}/{total}",
+  startDate: "Début",
+  estimatedEndDate: "Fin estimée",
+  nextSession: "Démarrer la prochaine séance",
+  sessions: "séances",
+  programStarted: "Programme commencé",
+  programStartedDescription: "Le programme {name} a été ajouté à votre planning d'entraînement"
 };

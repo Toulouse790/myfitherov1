@@ -10,13 +10,15 @@ import {
   fetchSports, 
   fetchPositions, 
   fetchPrograms, 
-  createWorkoutFromProgram 
+  createWorkoutFromProgram,
+  fetchActivePrograms
 } from "@/utils/api/sportProgramsApi";
 
 export const useSportPrograms = () => {
   const [sports, setSports] = useState<Sport[]>([]);
   const [positions, setPositions] = useState<SportPosition[]>([]);
   const [programs, setPrograms] = useState<SportProgram[]>([]);
+  const [activePrograms, setActivePrograms] = useState<SportProgram[]>([]);
   const [selectedSport, setSelectedSport] = useState<string>("");
   const [selectedPosition, setSelectedPosition] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +31,23 @@ export const useSportPrograms = () => {
   const refreshData = () => {
     setRefreshKey(prevKey => prevKey + 1);
   };
+
+  // Charger les programmes actifs de l'utilisateur
+  useEffect(() => {
+    const loadActivePrograms = async () => {
+      try {
+        const { data, error } = await fetchActivePrograms();
+        
+        if (error) throw error;
+        
+        setActivePrograms(data || []);
+      } catch (error) {
+        console.error("Erreur lors du chargement des programmes actifs:", error);
+      }
+    };
+    
+    loadActivePrograms();
+  }, [refreshKey]);
 
   // Charger les sports
   useEffect(() => {
@@ -130,8 +149,16 @@ export const useSportPrograms = () => {
       if (error) throw error;
       
       if (session) {
+        // Mettre à jour les programmes actifs
+        setActivePrograms(prev => [...prev, program]);
+        
         // Naviguer vers la session d'entraînement
         navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+        
+        toast({
+          title: t("programs.programStarted"),
+          description: t("programs.programStartedDescription", { name: program.name }),
+        });
       }
     } catch (error) {
       console.error("Erreur lors de la création de la session:", error);
@@ -150,6 +177,7 @@ export const useSportPrograms = () => {
     selectedSport,
     selectedPosition,
     isLoading,
+    activePrograms,
     setSelectedSport,
     setSelectedPosition,
     handleProgramSelect,

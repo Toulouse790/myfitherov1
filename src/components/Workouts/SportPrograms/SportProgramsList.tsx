@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import { SportProgramFilters } from "./components/SportProgramFilters";
 import { SportProgramGrid } from "./components/SportProgramGrid";
+import { ProgramProgress } from "./components/ProgramProgress";
 import { useSportPrograms } from "./hooks/useSportPrograms";
 import { debugLogger } from "@/utils/debug-logger";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Info } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SportProgram } from "@/utils/api/sportProgramsApi";
 
 export const SportProgramsList = () => {
   const { t } = useLanguage();
@@ -21,7 +23,8 @@ export const SportProgramsList = () => {
     setSelectedSport,
     setSelectedPosition,
     handleProgramSelect,
-    refreshData
+    refreshData,
+    activePrograms
   } = useSportPrograms();
   
   const [selectedLevel, setSelectedLevel] = useState("all");
@@ -74,6 +77,17 @@ export const SportProgramsList = () => {
           {t("common.refresh")}
         </Button>
       </div>
+      
+      {/* Afficher les programmes actifs de l'utilisateur */}
+      {activePrograms.map((program: SportProgram) => (
+        <ProgramProgress 
+          key={program.id}
+          programId={program.id}
+          programName={program.name}
+          totalDuration={program.duration}
+          sessionsPerWeek={program.sessionsPerWeek || 3}
+        />
+      ))}
       
       {selectedSport && positions.length === 0 && (
         <Alert variant="default" className="bg-muted/20 border-muted">

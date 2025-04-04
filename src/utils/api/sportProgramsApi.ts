@@ -21,6 +21,7 @@ export interface SportProgram {
   position_id: string;
   difficulty: string; // amateur, semi-pro ou pro
   duration: number;
+  sessionsPerWeek: number;
   exercises: any[];
 }
 
@@ -100,7 +101,9 @@ export const fetchPrograms = async (
           id: `${data[0].id}-amateur`,
           name: `${data[0].name} - Amateur`,
           difficulty: 'amateur',
-          description: `Version adaptée pour débutants de ${data[0].name}`
+          description: `Version adaptée pour débutants de ${data[0].name}`,
+          duration: 8,
+          sessionsPerWeek: 2
         });
       }
       
@@ -110,7 +113,9 @@ export const fetchPrograms = async (
           id: `${data[0].id}-semi-pro`,
           name: `${data[0].name} - Semi-Pro`,
           difficulty: 'semi-pro',
-          description: `Version intermédiaire de ${data[0].name}`
+          description: `Version intermédiaire de ${data[0].name}`,
+          duration: 10,
+          sessionsPerWeek: 3
         });
       }
       
@@ -120,7 +125,9 @@ export const fetchPrograms = async (
           id: `${data[0].id}-pro`,
           name: `${data[0].name} - Pro`,
           difficulty: 'pro',
-          description: `Version avancée de ${data[0].name} pour athlètes expérimentés`
+          description: `Version avancée de ${data[0].name} pour athlètes expérimentés`,
+          duration: 12,
+          sessionsPerWeek: 4
         });
       }
 
@@ -130,6 +137,42 @@ export const fetchPrograms = async (
     return { data, error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors du chargement des programmes:", error);
+    return { data: null, error };
+  }
+};
+
+export const fetchActivePrograms = async (): Promise<{ data: SportProgram[] | null; error: any }> => {
+  try {
+    const { data: user } = await supabase.auth.getUser();
+    if (!user || !user.user) throw new Error("Utilisateur non connecté");
+    
+    // Récupérer les sessions d'entraînement actives liées à des programmes
+    const { data: sessions, error } = await supabase
+      .from('workout_sessions')
+      .select('program_id')
+      .eq('user_id', user.user.id)
+      .not('program_id', 'is', null)
+      .order('created_at', { ascending: false });
+      
+    if (error) throw error;
+    
+    if (!sessions || sessions.length === 0) {
+      return { data: [], error: null };
+    }
+    
+    // Récupérer les détails des programmes actifs
+    const programIds = [...new Set(sessions.map(s => s.program_id))];
+    
+    const { data: programs, error: programsError } = await supabase
+      .from('sport_programs')
+      .select('*')
+      .in('id', programIds);
+      
+    if (programsError) throw programsError;
+    
+    return { data: programs || [], error: null };
+  } catch (error) {
+    debugLogger.error("sportProgramsApi", "Erreur lors du chargement des programmes actifs:", error);
     return { data: null, error };
   }
 };
@@ -147,7 +190,8 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           exercises: program.exercises.map(ex => ex.name || ex),
           status: 'in_progress',
           workout_type: 'sport_specific',
-          total_duration_minutes: program.duration || 45
+          total_duration_minutes: program.duration || 45,
+          program_id: program.id
         }
       ])
       .select()
