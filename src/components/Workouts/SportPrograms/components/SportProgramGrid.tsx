@@ -19,7 +19,6 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
   // Fonction pour gérer la génération d'un programme
   const handleGenerateProgram = (program: SportProgram) => {
     // Ici, vous pourriez appeler une API pour générer un programme personnalisé
-    // Pour l'instant, nous affichons simplement une notification
     toast({
       title: t("programs.programGenerated"),
       description: t("programs.programGeneratedDescription", { name: program.name }),

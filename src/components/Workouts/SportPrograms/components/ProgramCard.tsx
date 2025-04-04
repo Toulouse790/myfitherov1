@@ -93,11 +93,11 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
         </Button>
         
         <div className="flex gap-2">
-          {/* Bouton de génération toujours visible */}
+          {/* Bouton de génération (désactivé si onGenerate n'est pas fourni) */}
           <Button 
             size="sm" 
             variant="outline" 
-            onClick={onGenerate || (() => {})} 
+            onClick={onGenerate} 
             className="gap-1"
             disabled={!onGenerate}
           >
