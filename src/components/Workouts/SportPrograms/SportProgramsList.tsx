@@ -3,33 +3,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { WorkoutCard } from "@/components/Dashboard/WorkoutSuggestions/WorkoutCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { debugLogger } from "@/utils/debug-logger";
-
-interface Sport {
-  id: string;
-  name: string;
-}
-
-interface SportPosition {
-  id: string;
-  name: string;
-  sport_id: string;
-}
-
-interface SportProgram {
-  id: string;
-  name: string;
-  description: string;
-  sport_id: string;
-  position_id: string;
-  difficulty: string;
-  duration: number;
-  exercises: any[];
-}
+import { Sport, SportPosition, SportProgram, fetchSports, fetchPositions, fetchPrograms, createWorkoutFromProgram } from "@/utils/api/sportProgramsApi";
 
 export const SportProgramsList = () => {
   const [sports, setSports] = useState<Sport[]>([]);
@@ -44,17 +22,14 @@ export const SportProgramsList = () => {
 
   // Charger les sports
   useEffect(() => {
-    const fetchSports = async () => {
+    const loadSports = async () => {
       try {
         setIsLoading(true);
-        const { data, error } = await supabase
-          .from('sports')
-          .select('id, name')
-          .order('name');
-          
+        const { data, error } = await fetchSports();
+        
         if (error) throw error;
         
-        debugLogger.log("SportProgramsList", "Sports chargés:", data?.length);
+        debugLogger.log("SportProgramsList", "Sports chargés: " + (data?.length || 0));
         setSports(data || []);
         if (data && data.length > 0) {
           setSelectedSport(data[0].id);
@@ -71,25 +46,21 @@ export const SportProgramsList = () => {
       }
     };
     
-    fetchSports();
+    loadSports();
   }, [toast, t]);
   
   // Charger les positions quand un sport est sélectionné
   useEffect(() => {
-    const fetchPositions = async () => {
+    const loadPositions = async () => {
       if (!selectedSport) return;
       
       try {
         setIsLoading(true);
-        const { data, error } = await supabase
-          .from('sport_positions')
-          .select('id, name, sport_id')
-          .eq('sport_id', selectedSport)
-          .order('name');
-          
+        const { data, error } = await fetchPositions(selectedSport);
+        
         if (error) throw error;
         
-        debugLogger.log("SportProgramsList", "Positions chargées pour le sport", selectedSport, ":", data?.length);
+        debugLogger.log("SportProgramsList", "Positions chargées pour le sport " + selectedSport + ": " + (data?.length || 0));
         setPositions(data || []);
         setSelectedPosition(data && data.length > 0 ? data[0].id : "");
       } catch (error) {
@@ -105,32 +76,22 @@ export const SportProgramsList = () => {
     };
     
     if (selectedSport) {
-      fetchPositions();
+      loadPositions();
     }
   }, [selectedSport, toast, t]);
   
   // Charger les programmes quand un sport et une position sont sélectionnés
   useEffect(() => {
-    const fetchPrograms = async () => {
+    const loadPrograms = async () => {
       if (!selectedSport) return;
       
       try {
         setIsLoading(true);
-        let query = supabase.from('sport_programs').select('*');
-        
-        if (selectedSport) {
-          query = query.eq('sport_id', selectedSport);
-        }
-        
-        if (selectedPosition) {
-          query = query.eq('position_id', selectedPosition);
-        }
-        
-        const { data, error } = await query.order('name');
+        const { data, error } = await fetchPrograms(selectedSport, selectedPosition);
         
         if (error) throw error;
         
-        debugLogger.log("SportProgramsList", "Programmes chargés:", data?.length);
+        debugLogger.log("SportProgramsList", "Programmes chargés: " + (data?.length || 0));
         setPrograms(data || []);
       } catch (error) {
         console.error("Erreur lors du chargement des programmes:", error);
@@ -145,27 +106,14 @@ export const SportProgramsList = () => {
     };
     
     if (selectedSport) {
-      fetchPrograms();
+      loadPrograms();
     }
   }, [selectedSport, selectedPosition, toast, t]);
   
   // Gérer la sélection d'un programme
   const handleProgramSelect = async (program: SportProgram) => {
     try {
-      // Créer une nouvelle session d'entraînement avec les exercices de ce programme
-      const { data: session, error } = await supabase
-        .from('workout_sessions')
-        .insert([
-          {
-            user_id: (await supabase.auth.getUser()).data.user?.id,
-            exercises: program.exercises.map(ex => ex.name || ex),
-            status: 'in_progress',
-            workout_type: 'sport_specific',
-            total_duration_minutes: program.duration || 45
-          }
-        ])
-        .select()
-        .single();
+      const { data: session, error } = await createWorkoutFromProgram(program);
         
       if (error) throw error;
       

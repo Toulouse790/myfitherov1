@@ -31,7 +31,7 @@ export const fetchSports = async (): Promise<{ data: Sport[] | null; error: any 
       .select('id, name')
       .order('name');
       
-    debugLogger.log("sportProgramsApi", "Sports chargés:", data?.length);
+    debugLogger.log("sportProgramsApi", "Sports chargés: " + (data?.length || 0));
     return { data, error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors du chargement des sports:", error);
@@ -49,7 +49,7 @@ export const fetchPositions = async (sportId: string): Promise<{ data: SportPosi
       .eq('sport_id', sportId)
       .order('name');
       
-    debugLogger.log("sportProgramsApi", "Positions chargées pour le sport", sportId, ":", data?.length);
+    debugLogger.log("sportProgramsApi", "Positions chargées pour le sport " + sportId + ": " + (data?.length || 0));
     return { data, error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors du chargement des positions:", error);
@@ -76,7 +76,7 @@ export const fetchPrograms = async (
     
     const { data, error } = await query.order('name');
     
-    debugLogger.log("sportProgramsApi", "Programmes chargés:", data?.length);
+    debugLogger.log("sportProgramsApi", "Programmes chargés: " + (data?.length || 0));
     return { data, error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors du chargement des programmes:", error);
