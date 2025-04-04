@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 import { SportProgram } from "./programs";
@@ -26,7 +27,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           }
         }
       ])
-      .select();
+      .select(); // Correction ici: suppression des arguments superflus
       
     debugLogger.log("workoutSessions", "Résultat de la création de session:", data ? "Succès" : "Échec", error);
     
