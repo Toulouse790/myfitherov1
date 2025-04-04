@@ -1,10 +1,10 @@
 
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 import { ProgramCard } from "./ProgramCard";
+import { EmptyState } from "@/components/ui/empty-state";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { SportProgram } from "@/utils/api/sportProgramsApi";
-import { AlertCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
 
 interface SportProgramGridProps {
   programs: SportProgram[];
@@ -14,56 +14,44 @@ interface SportProgramGridProps {
 
 export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: SportProgramGridProps) => {
   const { t } = useLanguage();
-  
-  // Filtrer par niveau si un niveau est sélectionné
-  const filteredPrograms = levelFilter === 'all' 
-    ? programs 
-    : programs.filter(p => p.difficulty === levelFilter);
-  
-  const recommendedPrograms = filteredPrograms.filter(p => p.difficulty === 'moderate');
+  const { toast } = useToast();
 
-  const renderProgramsList = (programsList: SportProgram[], emptyMessage: string) => {
-    if (programsList.length > 0) {
-      return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {programsList.map(program => (
-            <ProgramCard
-              key={program.id}
-              program={program}
-              onSelect={() => onSelectProgram(program)}
-            />
-          ))}
-        </div>
-      );
-    }
+  // Fonction pour gérer la génération d'un programme
+  const handleGenerateProgram = (program: SportProgram) => {
+    // Ici, vous pourriez appeler une API pour générer un programme personnalisé
+    // Pour l'instant, nous affichons simplement une notification
+    toast({
+      title: t("programs.programGenerated"),
+      description: t("programs.programGeneratedDescription", { name: program.name }),
+    });
     
-    return (
-      <div className="col-span-full text-center py-6">
-        <Alert variant="default" className="bg-muted/40 border-muted">
-          <AlertCircle className="h-5 w-5 text-muted-foreground" />
-          <AlertTitle className="text-foreground">{t("programs.noDataAvailable")}</AlertTitle>
-          <AlertDescription className="text-muted-foreground">
-            {emptyMessage}
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
+    // Vous pourriez également rediriger l'utilisateur ou effectuer d'autres actions
   };
 
+  // Filtrer les programmes en fonction du niveau sélectionné
+  const filteredPrograms = levelFilter === "all" 
+    ? programs 
+    : programs.filter(program => program.difficulty === levelFilter);
+
+  if (filteredPrograms.length === 0) {
+    return (
+      <EmptyState
+        title={t("programs.noDataAvailable")}
+        description={t("programs.noProgramsAvailable")}
+      />
+    );
+  }
+
   return (
-    <Tabs defaultValue="all">
-      <TabsList className="grid grid-cols-2">
-        <TabsTrigger value="all">{t("programs.all")}</TabsTrigger>
-        <TabsTrigger value="recommended">{t("programs.recommended")}</TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value="all" className="pt-4">
-        {renderProgramsList(filteredPrograms, t("programs.noProgramsAvailable"))}
-      </TabsContent>
-      
-      <TabsContent value="recommended" className="pt-4">
-        {renderProgramsList(recommendedPrograms, t("programs.noRecommendedPrograms"))}
-      </TabsContent>
-    </Tabs>
+    <div className="grid gap-4 sm:grid-cols-2">
+      {filteredPrograms.map(program => (
+        <ProgramCard 
+          key={program.id}
+          program={program}
+          onSelect={() => onSelectProgram(program)}
+          onGenerate={() => handleGenerateProgram(program)}
+        />
+      ))}
+    </div>
   );
 };

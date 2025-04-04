@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 interface ProgramCardProps {
   program: SportProgram;
   onSelect: () => void;
-  onGenerate?: () => void; // Nouvelle prop pour la génération du programme
+  onGenerate?: () => void; // Prop pour la génération du programme
 }
 
 export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps) => {
@@ -93,18 +93,19 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
         </Button>
         
         <div className="flex gap-2">
-          {onGenerate && (
-            <Button 
-              size="sm" 
-              variant="outline" 
-              onClick={onGenerate} 
-              className="gap-1"
-            >
-              <Zap className="h-4 w-4" />
-              {t("programs.generateProgram")}
-            </Button>
-          )}
+          {/* Bouton de génération toujours visible */}
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={onGenerate || (() => {})} 
+            className="gap-1"
+            disabled={!onGenerate}
+          >
+            <Zap className="h-4 w-4" />
+            {t("programs.generateProgram")}
+          </Button>
           
+          {/* Bouton de démarrage toujours visible */}
           <Button size="sm" onClick={onSelect} className="gap-1">
             <Dumbbell className="h-4 w-4" />
             {t("programs.startProgram")}
