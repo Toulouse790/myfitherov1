@@ -12,13 +12,13 @@ import { QuestionnaireCompleteHandler } from "@/components/Profile/Questionnaire
 import AppSettings from "@/pages/AppSettings";
 import { workoutRoutes } from "./workoutRoutes";
 import { adminRoutes } from "./adminRoutes";
+import { dashboardRoutes } from "./dashboardRoutes";
 
 const SignInPage = lazy(() => import("@/pages/SignIn"));
 const SignUpPage = lazy(() => import("@/pages/SignUp"));
 
 const Index = lazy(() => import("@/pages/Index"));
 const Profile = lazy(() => import("@/pages/Profile"));
-// Utiliser la bonne importation pour la page Workouts
 const Workouts = lazy(() => import("@/pages/workouts/index"));
 const PersonalInfo = lazy(() => import("@/pages/PersonalInfo"));
 const Subscription = lazy(() => import("@/pages/Subscription"));
@@ -31,13 +31,6 @@ const Sleep = lazy(() => import("@/pages/Sleep"));
 const Stats = lazy(() => import("@/pages/Stats"));
 const Cardio = lazy(() => import("@/pages/Cardio"));
 
-const DashboardOverview = lazy(() => import("@/pages/Dashboard/Overview"));
-const DashboardStreaks = lazy(() => import("@/pages/Dashboard/Streaks"));
-const WeeklyGoals = lazy(() => import("@/pages/Goals/Weekly"));
-const MonthlyGoals = lazy(() => import("@/pages/Goals/Monthly"));
-const WeeklyReport = lazy(() => import("@/pages/Stats/WeeklyReport"));
-const AchievementsHistory = lazy(() => import("@/pages/Achievements/History"));
-
 const Loading = () => (
   <div className="flex items-center justify-center h-screen">
     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -48,10 +41,6 @@ const withSuspense = (Component: React.LazyExoticComponent<any>) => (
   <Suspense fallback={<Loading />}>
     <Component />
   </Suspense>
-);
-
-const AppSettingsWithSuspense = (
-  <AppSettings />
 );
 
 // Définir un composant d'erreur avec des enfants pour l'ErrorBoundary
@@ -106,7 +95,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: "app-settings",
-                element: AppSettingsWithSuspense
+                element: AppSettings
               },
               {
                 path: "subscription",
@@ -124,7 +113,6 @@ export const router = createBrowserRouter([
                 path: "notifications",
                 element: withSuspense(Notifications)
               },
-              // Ajoutons la route workouts ici également en tant que route principale
               {
                 path: "workouts",
                 element: withSuspense(Workouts)
@@ -145,30 +133,8 @@ export const router = createBrowserRouter([
                 path: "cardio",
                 element: withSuspense(Cardio)
               },
-              {
-                path: "dashboard/overview",
-                element: withSuspense(DashboardOverview)
-              },
-              {
-                path: "dashboard/streaks",
-                element: withSuspense(DashboardStreaks)
-              },
-              {
-                path: "goals/weekly",
-                element: withSuspense(WeeklyGoals)
-              },
-              {
-                path: "goals/monthly",
-                element: withSuspense(MonthlyGoals)
-              },
-              {
-                path: "stats/weekly-report",
-                element: withSuspense(WeeklyReport)
-              },
-              {
-                path: "achievements/history",
-                element: withSuspense(AchievementsHistory)
-              }
+              // Inclure les routes du dashboard ici
+              ...dashboardRoutes,
             ]
           }
         ]

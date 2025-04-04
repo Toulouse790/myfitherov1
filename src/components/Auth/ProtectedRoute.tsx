@@ -1,8 +1,8 @@
 
 import { useEffect, ReactNode } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { debugLogger } from "@/utils/debug-logger";
+import { useAuth } from "@/hooks/use-auth";
 
 interface ProtectedRouteProps {
   children?: ReactNode;
