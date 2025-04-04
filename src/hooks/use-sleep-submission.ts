@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -91,7 +90,6 @@ export const useSleepSubmission = ({
         end_time: endTime.toISOString(),
         total_duration_minutes: totalMinutes,
         quality_metrics: qualityMetrics,
-        environmental_data: environmentalData,
         sleep_score: Math.min(Math.max(sleepScore, 0), 100), // Limiter entre 0-100
         is_nap: isNap
       };
