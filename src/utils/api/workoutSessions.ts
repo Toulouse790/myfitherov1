@@ -27,7 +27,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           }
         }
       ])
-      .select();
+      .select(); // Correction: pas d'arguments dans select()
       
     debugLogger.log("workoutSessions", "Résultat de la création de session:", data ? "Succès" : "Échec", error);
     
