@@ -20,9 +20,15 @@ export const useSportPrograms = () => {
   const [selectedSport, setSelectedSport] = useState<string>("");
   const [selectedPosition, setSelectedPosition] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0); // Clé pour forcer le rechargement
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Fonction pour forcer le rechargement des données
+  const refreshData = () => {
+    setRefreshKey(prevKey => prevKey + 1);
+  };
 
   // Charger les sports
   useEffect(() => {
@@ -34,6 +40,8 @@ export const useSportPrograms = () => {
         if (error) throw error;
         
         setSports(data || []);
+        console.log("Sports chargés:", data?.length, data?.map(s => s.name).join(', '));
+        
         if (data && data.length > 0) {
           setSelectedSport(data[0].id);
         }
@@ -50,7 +58,7 @@ export const useSportPrograms = () => {
     };
     
     loadSports();
-  }, [toast, t]);
+  }, [toast, t, refreshKey]); // Ajout de refreshKey comme dépendance
   
   // Charger les positions quand un sport est sélectionné
   useEffect(() => {
@@ -64,6 +72,8 @@ export const useSportPrograms = () => {
         if (error) throw error;
         
         setPositions(data || []);
+        console.log("Positions chargées pour", selectedSport, ":", data?.length, data?.map(p => p.name).join(', '));
+        
         setSelectedPosition(data && data.length > 0 ? data[0].id : "");
       } catch (error) {
         console.error("Erreur lors du chargement des positions:", error);
@@ -94,6 +104,7 @@ export const useSportPrograms = () => {
         if (error) throw error;
         
         setPrograms(data || []);
+        console.log("Programmes chargés:", data?.length);
       } catch (error) {
         console.error("Erreur lors du chargement des programmes:", error);
         toast({
@@ -141,6 +152,7 @@ export const useSportPrograms = () => {
     isLoading,
     setSelectedSport,
     setSelectedPosition,
-    handleProgramSelect
+    handleProgramSelect,
+    refreshData // Exposer la fonction pour rafraîchir les données
   };
 };

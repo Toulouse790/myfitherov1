@@ -1,9 +1,11 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SportProgramFilters } from "./components/SportProgramFilters";
 import { SportProgramGrid } from "./components/SportProgramGrid";
 import { useSportPrograms } from "./hooks/useSportPrograms";
 import { debugLogger } from "@/utils/debug-logger";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
 export const SportProgramsList = () => {
   const { 
@@ -15,7 +17,8 @@ export const SportProgramsList = () => {
     isLoading,
     setSelectedSport,
     setSelectedPosition,
-    handleProgramSelect
+    handleProgramSelect,
+    refreshData
   } = useSportPrograms();
   
   // Logging pour débogage
@@ -40,12 +43,33 @@ export const SportProgramsList = () => {
     return (
       <div className="p-8 text-center">
         <p className="text-muted-foreground">Aucun sport disponible</p>
+        <Button 
+          onClick={refreshData}
+          variant="outline"
+          className="mt-4 flex items-center gap-2"
+        >
+          <RefreshCw size={16} />
+          Rafraîchir les données
+        </Button>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-medium">Sports disponibles: {sports.length}</h2>
+        <Button 
+          onClick={refreshData}
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2"
+        >
+          <RefreshCw size={16} />
+          Rafraîchir
+        </Button>
+      </div>
+      
       <SportProgramFilters 
         sports={sports}
         positions={positions}
