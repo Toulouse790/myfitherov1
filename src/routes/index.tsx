@@ -95,7 +95,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: "app-settings",
-                element: AppSettings
+                element: <AppSettings />
               },
               {
                 path: "subscription",
