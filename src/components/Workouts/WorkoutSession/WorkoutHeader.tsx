@@ -16,7 +16,7 @@ import {
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 
-interface SessionHeaderProps {
+interface WorkoutHeaderProps {
   sessionName: string;
   sessionDuration: number;
   formatDuration: (seconds: number) => string;
@@ -24,13 +24,13 @@ interface SessionHeaderProps {
   onFinishWorkout?: () => Promise<void>;
 }
 
-export const SessionHeader = ({
+export const WorkoutHeader = ({
   sessionName,
   sessionDuration,
   formatDuration,
   totalProgress,
   onFinishWorkout
-}: SessionHeaderProps) => {
+}: WorkoutHeaderProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
 
