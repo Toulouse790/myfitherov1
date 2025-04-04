@@ -46,22 +46,24 @@ function App() {
           <Route path="/signup" element={<Suspense fallback={<div>Chargement...</div>}><SignUp /></Suspense>} />
           
           {/* Routes protégées */}
-          <Route element={<ProtectedRoute><RootLayout /></ProtectedRoute>}>
-            <Route path="/" element={<Suspense fallback={<div>Chargement...</div>}><Home /></Suspense>} />
-            <Route path="/profile" element={<Suspense fallback={<div>Chargement...</div>}><Profile /></Suspense>} />
-            <Route path="/workouts/*" element={<Suspense fallback={<div>Chargement...</div>}><Workouts /></Suspense>} />
-            <Route path="/sport-programs" element={<Suspense fallback={<div>Chargement...</div>}><SportPrograms /></Suspense>} />
-            <Route path="/cardio" element={<Suspense fallback={<div>Chargement...</div>}><Cardio /></Suspense>} />
-            <Route path="/nutrition" element={<Suspense fallback={<div>Chargement...</div>}><Nutrition /></Suspense>} />
-            <Route path="/stats" element={<Suspense fallback={<div>Chargement...</div>}><Stats /></Suspense>} />
-            <Route path="/sleep" element={<Suspense fallback={<div>Chargement...</div>}><Sleep /></Suspense>} />
-            <Route path="/training-preferences" element={<Suspense fallback={<div>Chargement...</div>}><TrainingPreferences /></Suspense>} />
-            <Route path="/workouts/generate" element={<Suspense fallback={<div>Chargement...</div>}><WorkoutGenerate /></Suspense>} />
-            <Route path="/workouts/:sessionId" element={<Suspense fallback={<div>Chargement...</div>}><UnifiedWorkoutDetail /></Suspense>} />
-            <Route path="/workouts/exercise/next-workout" element={<Suspense fallback={<div>Chargement...</div>}><NextWorkoutDetail /></Suspense>} />
-            <Route path="/workouts/library" element={<Suspense fallback={<div>Chargement...</div>}><ExerciseLibrary /></Suspense>} />
-            <Route path="/subscription-plans" element={<Suspense fallback={<div>Chargement...</div>}><SubscriptionPlans /></Suspense>} />
-            <Route path="/suggestions" element={<Suspense fallback={<div>Chargement...</div>}><Suggestions /></Suspense>} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<RootLayout />}>
+              <Route path="/" element={<Suspense fallback={<div>Chargement...</div>}><Home /></Suspense>} />
+              <Route path="/profile" element={<Suspense fallback={<div>Chargement...</div>}><Profile /></Suspense>} />
+              <Route path="/workouts/*" element={<Suspense fallback={<div>Chargement...</div>}><Workouts /></Suspense>} />
+              <Route path="/sport-programs" element={<Suspense fallback={<div>Chargement...</div>}><SportPrograms /></Suspense>} />
+              <Route path="/cardio" element={<Suspense fallback={<div>Chargement...</div>}><Cardio /></Suspense>} />
+              <Route path="/nutrition" element={<Suspense fallback={<div>Chargement...</div>}><Nutrition /></Suspense>} />
+              <Route path="/stats" element={<Suspense fallback={<div>Chargement...</div>}><Stats /></Suspense>} />
+              <Route path="/sleep" element={<Suspense fallback={<div>Chargement...</div>}><Sleep /></Suspense>} />
+              <Route path="/training-preferences" element={<Suspense fallback={<div>Chargement...</div>}><TrainingPreferences /></Suspense>} />
+              <Route path="/workouts/generate" element={<Suspense fallback={<div>Chargement...</div>}><WorkoutGenerate /></Suspense>} />
+              <Route path="/workouts/:sessionId" element={<Suspense fallback={<div>Chargement...</div>}><UnifiedWorkoutDetail /></Suspense>} />
+              <Route path="/workouts/exercise/next-workout" element={<Suspense fallback={<div>Chargement...</div>}><NextWorkoutDetail /></Suspense>} />
+              <Route path="/workouts/library" element={<Suspense fallback={<div>Chargement...</div>}><ExerciseLibrary /></Suspense>} />
+              <Route path="/subscription-plans" element={<Suspense fallback={<div>Chargement...</div>}><SubscriptionPlans /></Suspense>} />
+              <Route path="/suggestions" element={<Suspense fallback={<div>Chargement...</div>}><Suggestions /></Suspense>} />
+            </Route>
           </Route>
         </Routes>
       </Router>

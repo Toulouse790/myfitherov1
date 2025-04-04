@@ -1,10 +1,14 @@
 
-import { useEffect } from "react";
+import { useEffect, ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { debugLogger } from "@/utils/debug-logger";
 
-export const ProtectedRoute = () => {
+interface ProtectedRouteProps {
+  children?: ReactNode;
+}
+
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -35,5 +39,5 @@ export const ProtectedRoute = () => {
 
   // Rendre les routes enfants si authentifié
   debugLogger.log("ProtectedRoute", "Utilisateur authentifié, accès autorisé");
-  return <Outlet />;
+  return children ? <>{children}</> : <Outlet />;
 };
