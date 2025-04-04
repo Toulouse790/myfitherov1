@@ -4,16 +4,17 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Calendar, Clock, Dumbbell, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, Clock, Dumbbell, ChevronDown, ChevronUp, Zap } from "lucide-react";
 import { SportProgram } from "@/utils/api/sportProgramsApi";
 import { cn } from "@/lib/utils";
 
 interface ProgramCardProps {
   program: SportProgram;
   onSelect: () => void;
+  onGenerate?: () => void; // Nouvelle prop pour la génération du programme
 }
 
-export const ProgramCard = ({ program, onSelect }: ProgramCardProps) => {
+export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps) => {
   const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
 
@@ -91,10 +92,24 @@ export const ProgramCard = ({ program, onSelect }: ProgramCardProps) => {
           )}
         </Button>
         
-        <Button size="sm" onClick={onSelect} className="gap-1">
-          <Dumbbell className="h-4 w-4" />
-          {t("programs.startProgram")}
-        </Button>
+        <div className="flex gap-2">
+          {onGenerate && (
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={onGenerate} 
+              className="gap-1"
+            >
+              <Zap className="h-4 w-4" />
+              {t("programs.generateProgram")}
+            </Button>
+          )}
+          
+          <Button size="sm" onClick={onSelect} className="gap-1">
+            <Dumbbell className="h-4 w-4" />
+            {t("programs.startProgram")}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

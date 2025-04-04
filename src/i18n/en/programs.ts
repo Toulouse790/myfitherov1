@@ -16,6 +16,7 @@ export const programs = {
   weeks: "weeks",
   sessionsPerWeek: "sessions/week",
   startProgram: "Start",
+  generateProgram: "Generate",
   showMore: "Show more",
   showLess: "Show less",
   programObjectives: "Included exercises",
@@ -29,5 +30,7 @@ export const programs = {
   nextSession: "Start next session",
   sessions: "sessions",
   programStarted: "Program started",
-  programStartedDescription: "The {name} program has been added to your training schedule"
+  programStartedDescription: "The {name} program has been added to your training schedule",
+  programGenerated: "Program generated",
+  programGeneratedDescription: "The {name} program has been successfully generated"
 };
