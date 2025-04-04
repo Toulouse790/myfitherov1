@@ -1,3 +1,4 @@
+
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
@@ -53,6 +54,11 @@ const AppSettingsWithSuspense = (
   <AppSettings />
 );
 
+// Définir un composant d'erreur avec des enfants pour l'ErrorBoundary
+const ErrorPage = () => (
+  <div>Une erreur est survenue</div>
+);
+
 export const router = createBrowserRouter([
   {
     path: "/signin",
@@ -74,7 +80,8 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
-    errorElement: <ErrorBoundary />,
+    // Correction: Fournir un enfant à ErrorBoundary
+    errorElement: <ErrorBoundary><ErrorPage /></ErrorBoundary>,
     children: [
       {
         element: <ProtectedRoute />,
