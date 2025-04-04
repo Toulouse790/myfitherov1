@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CardioTimer } from "./CardioTimer";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const CardioSession = () => {
   const { sessionId } = useParams();
@@ -11,6 +13,7 @@ export const CardioSession = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const [exerciseName, setExerciseName] = useState<string>("");
+  const { t } = useLanguage();
 
   useEffect(() => {
     const loadSession = async () => {
@@ -30,15 +33,15 @@ export const CardioSession = () => {
       } catch (error) {
         console.error('Error loading session:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de charger la session",
+          title: t("common.error"),
+          description: t("workouts.unableToLoadSessionDetails"),
           variant: "destructive",
         });
       }
     };
 
     loadSession();
-  }, [sessionId, toast]);
+  }, [sessionId, toast, t]);
 
   const handleComplete = async () => {
     if (!sessionId || !user) return;
@@ -53,23 +56,23 @@ export const CardioSession = () => {
         .eq('id', sessionId);
 
       toast({
-        title: "Session terminée !",
-        description: "Votre session cardio a été enregistrée avec succès.",
+        title: t("workouts.sessionCompleted"),
+        description: t("workouts.sessionSavedSuccessfully"),
       });
       
       navigate('/workouts');
     } catch (error) {
       console.error('Error completing session:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de terminer la session",
+        title: t("common.error"),
+        description: t("workouts.unableToCompleteSession"),
         variant: "destructive",
       });
     }
   };
 
   if (!exerciseName) {
-    return <div>Chargement...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   return (

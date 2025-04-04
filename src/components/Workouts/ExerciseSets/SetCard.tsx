@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RestTimer } from "./RestTimer";
 import { SetHeader } from "./SetCard/SetHeader";
 import { SetControls } from "./SetCard/SetControls";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SetCardProps {
   setId: number;
@@ -38,6 +40,7 @@ export const SetCard = ({
   const [lastUsedWeight, setLastUsedWeight] = useState<number | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleComplete = async () => {
     if (!user) return;
@@ -73,17 +76,17 @@ export const SetCard = ({
       onSetComplete();
 
       toast({
-        title: "Série complétée !",
+        title: t("workouts.setCompleted"),
         description: isNewRecord 
-          ? `Nouveau record personnel : ${weight}kg ! 🎉` 
-          : `Série validée avec ${weight}kg`,
+          ? t("workouts.newPersonalRecord", { weight: weight }) 
+          : t("workouts.setValidated", { weight: weight }),
       });
 
     } catch (error) {
       console.error('Error saving weight:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder le poids",
+        title: t("common.error"),
+        description: t("workouts.errors.saveWeightFailed"),
         variant: "destructive",
       });
     }
@@ -119,11 +122,11 @@ export const SetCard = ({
         >
           {completed ? (
             <span className="flex items-center gap-2">
-              Série complétée
+              {t("workouts.setCompleted")}
               <Flame className="h-4 w-4" />
             </span>
           ) : (
-            "Valider la série"
+            t("workouts.validateSet")
           )}
         </Button>
       </div>

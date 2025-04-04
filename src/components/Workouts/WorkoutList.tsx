@@ -5,6 +5,7 @@ import { WorkoutData } from "./types/workout";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface WorkoutListProps {
   workouts: WorkoutData[];
@@ -14,6 +15,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   // Filtrer les doublons potentiels par ID
   const uniqueWorkouts = Array.from(
@@ -23,8 +25,8 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
   const handleWorkoutClick = async (workout: WorkoutData) => {
     if (!user) {
       toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour créer une séance",
+        title: t("common.error"),
+        description: t("workouts.errors.loginRequired"),
         variant: "destructive",
       });
       return;
@@ -49,8 +51,8 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
       if (error) {
         console.error('Erreur lors de la création de la session:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de créer la session d'entraînement",
+          title: t("common.error"),
+          description: t("workouts.errors.sessionCreationFailed"),
           variant: "destructive",
         });
         return;
@@ -64,8 +66,8 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
     } catch (error) {
       console.error('Error creating workout session:', error);
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la création de la séance",
+        title: t("common.error"),
+        description: t("workouts.errors.sessionCreationError"),
         variant: "destructive",
       });
     }
@@ -74,7 +76,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
   if (uniqueWorkouts.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground animate-fade-in">
-        Aucune séance ne correspond à vos critères.
+        {t("workouts.noMatchingWorkouts")}
       </div>
     );
   }
