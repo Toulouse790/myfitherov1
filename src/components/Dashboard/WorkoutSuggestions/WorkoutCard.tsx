@@ -49,7 +49,7 @@ export const WorkoutCard = ({
 
   // Render appropriate icon based on workout title or type
   const getIcon = () => {
-    if (title.toLowerCase().includes("favorite") || title.toLowerCase().includes("favori")) {
+    if (title.toLowerCase().includes(t("workouts.favorite").toLowerCase()) || title.toLowerCase().includes("favori")) {
       return <Bookmark className="h-5 w-5 text-primary" />;
     }
     return <Dumbbell className="h-5 w-5 text-primary" />;
