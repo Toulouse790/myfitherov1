@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, StopCircle } from "lucide-react";
 import { debugLogger } from "@/utils/debug-logger";
 import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 import { useSessionActions } from "@/hooks/workout/use-session-actions";
@@ -15,6 +15,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { WorkoutHeader } from "./WorkoutDetail/WorkoutHeader";
 import { ExerciseList } from "./WorkoutDetail/ExerciseList";
 import { WorkoutActions } from "./WorkoutDetail/WorkoutActions";
+import { Button } from "@/components/ui/button";
 
 export const UnifiedWorkoutDetail = () => {
   const { sessionId } = useParams();
@@ -33,6 +34,7 @@ export const UnifiedWorkoutDetail = () => {
     totalWeight: 0,
     totalCalories: 0
   });
+  const [sessionStartTime] = useState(Date.now());
 
   const { handleConfirmEndWorkout } = useSessionActions();
 
@@ -79,12 +81,20 @@ export const UnifiedWorkoutDetail = () => {
 
     fetchSessionData();
 
+    // Timer pour suivre la durée de la session
     const interval = setInterval(() => {
       setSessionDuration(prev => prev + 1);
     }, 1000);
 
     return () => clearInterval(interval);
   }, [sessionId, navigate, user]);
+
+  // Formatage du temps en minutes:secondes
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleExerciseComplete = async (index: number) => {
     if (index < exercises.length - 1) {
@@ -108,7 +118,7 @@ export const UnifiedWorkoutDetail = () => {
     setWorkoutStats({
       duration: totalDurationMinutes,
       totalWeight: Math.floor(Math.random() * 1000) + 500,
-      totalCalories: Math.floor(Math.random() * 300) + 100
+      totalCalories: Math.floor(totalDurationMinutes * 10) // Estimation simple des calories
     });
     
     setShowSummary(true);
@@ -116,6 +126,23 @@ export const UnifiedWorkoutDetail = () => {
 
   const handleConfirmEnd = async (difficulty: string, duration: number, muscleGroups: string[]) => {
     try {
+      // Calculer la durée réelle en minutes
+      const actualDuration = Math.floor((Date.now() - sessionStartTime) / 60000);
+      
+      // Mettre à jour la session avec les informations finales
+      const { error } = await supabase
+        .from('workout_sessions')
+        .update({
+          status: 'completed',
+          total_duration_minutes: actualDuration,
+          perceived_difficulty: difficulty,
+          completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', sessionId);
+      
+      if (error) throw error;
+      
       await handleConfirmEndWorkout(difficulty, duration, muscleGroups);
       
       toast({
@@ -134,6 +161,11 @@ export const UnifiedWorkoutDetail = () => {
     }
   };
 
+  // Bouton d'urgence pour arrêter l'entraînement
+  const handleStopWorkout = () => {
+    handleFinishWorkout();
+  };
+
   if (isLoading) {
     return (
       <div className="container max-w-4xl mx-auto px-4 py-8 flex items-center justify-center">
@@ -145,6 +177,18 @@ export const UnifiedWorkoutDetail = () => {
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
       <WorkoutHeader sessionDuration={sessionDuration} />
+      
+      {/* Bouton d'arrêt de l'entraînement - Toujours visible */}
+      <div className="sticky top-2 z-50 flex justify-end">
+        <Button 
+          variant="destructive" 
+          onClick={handleStopWorkout}
+          className="flex items-center gap-2 shadow-lg"
+        >
+          <StopCircle className="h-5 w-5" />
+          {t("workouts.stopWorkout") || "Arrêter l'entraînement"}
+        </Button>
+      </div>
 
       {showExerciseDetail ? (
         <ExerciseDetail 
