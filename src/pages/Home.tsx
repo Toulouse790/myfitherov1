@@ -28,7 +28,10 @@ const Home = () => {
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6 md:space-y-8 pb-20">
       <WelcomeHeader />
       
-      {/* Programme d'entraînement recommandé - Déplacé en haut pour plus de visibilité */}
+      {/* Actions rapides - Déplacées tout en haut pour un accès immédiat */}
+      <ActionButtons />
+      
+      {/* Programme d'entraînement recommandé */}
       <Card className="p-6 space-y-4 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10">
         <div className="flex items-center gap-3">
           <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
@@ -38,9 +41,6 @@ const Home = () => {
         </div>
         <WorkoutSuggestions showAllSuggestions={false} />
       </Card>
-      
-      {/* Actions rapides */}
-      <ActionButtons />
       
       {/* Résumé et stats - Groupés pour une meilleure organisation */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
