@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 import { allSportPrograms } from "@/data/sportPrograms";
@@ -256,7 +255,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     
     debugLogger.log("sportProgramsApi", "Création d'une session d'entraînement à partir du programme:", program.name);
     
-    // Correction : La méthode select() n'accepte pas d'arguments supplémentaires
     const { data, error } = await supabase
       .from('workout_sessions')
       .insert([
@@ -266,7 +264,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           status: 'in_progress',
           workout_type: 'sport_specific',
           total_duration_minutes: program.duration * 60 || 45,
-          // Utiliser des métadonnées supplémentaires pour stocker les informations du programme
           metadata: {
             program_name: program.name,
             program_difficulty: program.difficulty,
@@ -279,12 +276,10 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
       
     debugLogger.log("sportProgramsApi", "Résultat de la création de session:", data ? "Succès" : "Échec", error);
     
-    // Maintenant, assurons-nous que les tables liées soient mises à jour
     if (data && data.length > 0) {
       const sessionId = data[0].id;
       const userId = user.user.id;
       
-      // Vérifier si un enregistrement user_progression existe déjà pour cet utilisateur
       const { data: existingProgression, error: checkError } = await supabase
         .from('user_progression')
         .select('id')
@@ -295,7 +290,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         debugLogger.error("sportProgramsApi", "Erreur lors de la vérification de progression:", checkError);
       }
       
-      // Initialiser ou mettre à jour l'enregistrement de progression de l'utilisateur
       const { error: progressionError } = await supabase
         .from('user_progression')
         .upsert([{
@@ -309,7 +303,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         debugLogger.error("sportProgramsApi", "Erreur lors de la mise à jour de la progression:", progressionError);
       }
       
-      // Initialiser ou mettre à jour les préférences utilisateur s'ils n'existent pas
       const { error: prefError } = await supabase
         .from('user_preferences')
         .upsert([{
@@ -321,61 +314,53 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         debugLogger.error("sportProgramsApi", "Erreur lors de la mise à jour des préférences:", prefError);
       }
       
-      // Initialiser ou mettre à jour l'enregistrement de streak
-      const today = new Date().toISOString().split('T')[0];
       const { error: streakError } = await supabase
         .from('user_streaks')
         .upsert([{
           user_id: userId,
           streak_type: 'workout',
-          last_activity_date: today,
-          current_streak: 1  // Le trigger handle_streak_update s'occupera d'incrémenter si nécessaire
+          last_activity_date: new Date().toISOString().split('T')[0],
+          current_streak: 1
         }], { onConflict: 'user_id, streak_type' });
         
       if (streakError) {
         debugLogger.error("sportProgramsApi", "Erreur lors de la mise à jour du streak:", streakError);
       }
       
-      // Créer un enregistrement de statistiques d'entraînement
       const { error: statsError } = await supabase
         .from('training_stats')
         .insert([{
           user_id: userId,
           session_id: sessionId,
           session_duration_minutes: program.duration,
-          calories_burned: Math.round(program.duration * 10), // Estimation simple
-          muscle_groups_worked: ['jambes', 'bras', 'core']  // À ajuster en fonction du programme
+          calories_burned: Math.round(program.duration * 10),
+          muscle_groups_worked: ['jambes', 'bras', 'core']
         }]);
         
       if (statsError) {
         debugLogger.error("sportProgramsApi", "Erreur lors de la création des statistiques d'entraînement:", statsError);
       }
 
-      // Vérifions l'état des tables après l'insertion
       debugLogger.log("sportProgramsApi", "Vérification des tables après création de session pour l'utilisateur:", userId);
       
-      // Vérifier user_progression
       const { data: progressionData } = await supabase
         .from('user_progression')
         .select('*')
         .eq('user_id', userId);
       debugLogger.log("sportProgramsApi", "État de user_progression:", progressionData);
       
-      // Vérifier user_streaks
       const { data: streaksData } = await supabase
         .from('user_streaks')
         .select('*')
         .eq('user_id', userId);
       debugLogger.log("sportProgramsApi", "État de user_streaks:", streaksData);
       
-      // Vérifier user_preferences
       const { data: preferencesData } = await supabase
         .from('user_preferences')
         .select('*')
         .eq('user_id', userId);
       debugLogger.log("sportProgramsApi", "État de user_preferences:", preferencesData);
       
-      // Vérifier training_stats
       const { data: statsData } = await supabase
         .from('training_stats')
         .select('*')
