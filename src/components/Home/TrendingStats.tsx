@@ -1,16 +1,20 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useHomeActions } from "@/hooks/use-home-actions";
-import { ChartBar } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { ChartBar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const TrendingStats = () => {
-  const { handleStats } = useHomeActions();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleStatsClick = () => {
+    navigate('/stats');
+  };
   
   const { data, isLoading } = useQuery({
     queryKey: ['weekly-streak', user?.id],
@@ -63,7 +67,7 @@ export const TrendingStats = () => {
 
   return (
     <Card 
-      onClick={handleStats}
+      onClick={handleStatsClick}
       className="w-full h-full p-4 sm:p-6 hover:bg-accent transition-colors cursor-pointer border-2 border-transparent hover:border-primary/20 flex flex-col items-center justify-center"
       data-testid="stats-button"
     >
