@@ -19,13 +19,16 @@ export const BottomNav = () => {
         <div className="flex justify-between items-center">
           {navItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const isActive = location.pathname === item.path || 
+                            (item.path !== "/" && location.pathname.startsWith(item.path));
             return (
               <Link
                 key={index}
                 to={item.path}
                 className={`flex flex-col items-center gap-0.5 py-2 px-1 sm:px-3 rounded-lg transition-colors ${
-                  isActive ? 'text-primary' : 'text-muted-foreground'
+                  isActive 
+                  ? 'text-primary bg-gray-100 dark:bg-gray-800' 
+                  : 'text-muted-foreground'
                 }`}
               >
                 <Icon className="bottom-nav-icon" />
