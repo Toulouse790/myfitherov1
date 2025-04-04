@@ -10,8 +10,9 @@ export const RootLayout = () => {
   const location = useLocation();
   const [showScrollTop, setShowScrollTop] = useState(false);
   
-  // Ne pas afficher la barre de navigation sur les pages admin et pendant une séance
-  const isWorkoutSession = location.pathname.includes("/workouts/");
+  // Ne pas afficher la barre de navigation pendant une séance active (session ou start)
+  const isWorkoutSession = location.pathname.includes("/workouts/session/") || 
+                          location.pathname.includes("/workouts/start/");
   const showBottomNav = !location.pathname.includes("admin") && !isWorkoutSession;
 
   useEffect(() => {
