@@ -1,5 +1,5 @@
 
-import { Bookmark, Dumbbell, Clock, Star } from "lucide-react";
+import { Bookmark, Dumbbell, Clock } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -57,14 +57,13 @@ export const WorkoutCard = ({
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow duration-200">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-0">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold">{title}</CardTitle>
           {getIcon()}
         </div>
-        <p className="text-sm text-muted-foreground">{description}</p>
       </CardHeader>
-      <CardContent className="p-3 pt-0 pb-0 space-y-3">
+      <CardContent className="py-2">
         {duration && (
           <div className="flex items-center text-sm">
             <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
@@ -73,24 +72,12 @@ export const WorkoutCard = ({
         )}
         
         {difficulty && (
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className={`${getDifficultyColor(difficulty)} text-xs`}>
-              {getDifficultyTranslation(difficulty)}
-            </Badge>
-          </div>
-        )}
-        
-        {muscleGroups && muscleGroups.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {muscleGroups.map((group, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                {t(`muscleGroups.${group}`, { fallback: group })}
-              </Badge>
-            ))}
-          </div>
+          <Badge variant="outline" className={`${getDifficultyColor(difficulty)} text-xs`}>
+            {getDifficultyTranslation(difficulty)}
+          </Badge>
         )}
       </CardContent>
-      <CardFooter className="p-3 pt-3">
+      <CardFooter className="pt-0 pb-3">
         <Button 
           onClick={onSelect} 
           className="w-full"
