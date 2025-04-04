@@ -17,7 +17,6 @@ import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
 const Home = () => {
-  const { handleStats } = useHomeActions();
   const { user } = useAuth();
   const navigate = useNavigate();
   

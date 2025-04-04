@@ -11,22 +11,6 @@ export const useHomeActions = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleStats = () => {
-    debugLogger.log("useHomeActions", "Navigation vers la page de statistiques");
-    
-    if (!user) {
-      toast({
-        title: "Connexion requise",
-        description: "Vous devez être connecté pour accéder à vos statistiques",
-        variant: "destructive",
-      });
-      navigate('/signin', { state: { from: '/stats' } });
-      return;
-    }
-    
-    navigate('/stats');
-  };
-
   const handleCreateSession = () => {
     if (!user) {
       toast({
@@ -86,7 +70,6 @@ export const useHomeActions = () => {
   return {
     handleCreateSession,
     handleAIGeneration,
-    handleStats,
     handleTrainingSuggestions,
     handleMealSuggestions,
     handleSleepTracking,

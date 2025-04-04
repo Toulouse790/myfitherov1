@@ -1,5 +1,5 @@
 
-import { Activity, Dumbbell, Plus, Utensils, Moon, ChartBar } from "lucide-react";
+import { Activity, Dumbbell, Plus, Utensils, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHomeActions } from "@/hooks/use-home-actions";
 
@@ -7,7 +7,6 @@ export const ActionButtons = () => {
   const { 
     handleCreateSession, 
     handleAIGeneration, 
-    handleStats,
     handleTrainingSuggestions,
     handleMealSuggestions,
     handleSleepTracking,
@@ -68,16 +67,6 @@ export const ActionButtons = () => {
         >
           <Activity className="w-6 h-6 mb-2" />
           <span className="text-sm">Suggestions</span>
-        </Button>
-
-        <Button
-          onClick={handleStats}
-          variant="secondary"
-          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-secondary/90 transition-all duration-300"
-          size="lg"
-        >
-          <ChartBar className="w-6 h-6 mb-2" />
-          <span className="text-sm">Statistiques</span>
         </Button>
       </div>
     </div>
