@@ -19,12 +19,16 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | null>(null);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Correction ici: ajout du paramètre 'window.navigator.language.split('-')[0] === 'fr' ? "fr" : "en"' pour la valeur par défaut
-  const [language, setLanguage] = useLocalStorage<Language>("language", 
-    window.navigator.language.split('-')[0] === 'fr' ? "fr" : 
-    window.navigator.language.split('-')[0] === 'es' ? "es" : 
-    window.navigator.language.split('-')[0] === 'de' ? "de" : "en"
-  );
+  // Détection automatique de la langue du navigateur et utilisation de cette langue comme valeur par défaut
+  const getBrowserLanguage = (): Language => {
+    const browserLang = window.navigator.language.split('-')[0];
+    if (browserLang === 'fr') return 'fr';
+    if (browserLang === 'es') return 'es';
+    if (browserLang === 'de') return 'de';
+    return 'en'; // Langue par défaut si aucune correspondance
+  };
+
+  const [language, setLanguage] = useLocalStorage<Language>("language", getBrowserLanguage());
 
   const translations = {
     fr,
