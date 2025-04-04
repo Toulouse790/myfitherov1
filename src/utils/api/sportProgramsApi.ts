@@ -256,7 +256,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     
     debugLogger.log("sportProgramsApi", "Création d'une session d'entraînement à partir du programme:", program.name);
     
-    // Correction : Suppression du champ program_id qui n'existe pas dans la table
+    // Correction : Ne pas utiliser le champ program_id qui n'existe pas dans la table
     const { data, error } = await supabase
       .from('workout_sessions')
       .insert([
@@ -266,8 +266,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           status: 'in_progress',
           workout_type: 'sport_specific',
           total_duration_minutes: program.duration * 60 || 45,
-          // Ne pas utiliser program_id car il n'existe pas dans la table
-          // Utiliser des métadonnées supplémentaires pour stocker les informations du programme
+          // Utiliser des métadonnées supplémentaires pour storer les informations du programme
           metadata: {
             program_name: program.name,
             program_difficulty: program.difficulty,
