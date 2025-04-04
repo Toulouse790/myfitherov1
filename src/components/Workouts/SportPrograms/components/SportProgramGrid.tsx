@@ -32,21 +32,29 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
     : programs.filter(program => program.difficulty === levelFilter);
 
   // Créons des programmes de test si aucun n'existe pour éviter l'affichage vide
-  const displayPrograms = filteredPrograms.length > 0 ? filteredPrograms : [
-    {
-      id: "test-program-1",
-      name: "Programme d'entraînement test",
-      description: "Ce programme est affiché quand aucun programme n'est disponible",
+  // Utilisez le niveau sélectionné pour créer un programme avec ce niveau
+  const createTestProgram = (difficulty: string) => {
+    return {
+      id: `test-program-${difficulty}`,
+      name: `Programme ${difficulty} de test`,
+      description: `Ce programme ${difficulty} est affiché quand aucun programme n'est disponible`,
       sport_id: "test-sport",
       position_id: "test-position",
-      difficulty: "amateur",
-      duration: 8,
-      sessionsPerWeek: 3,
-      exercises: ["Exercice 1", "Exercice 2", "Exercice 3"]
-    }
-  ];
+      difficulty: difficulty,
+      duration: difficulty === "amateur" ? 8 : difficulty === "semi-pro" ? 10 : 12,
+      sessionsPerWeek: difficulty === "amateur" ? 3 : difficulty === "semi-pro" ? 4 : 5,
+      exercises: [`Exercice ${difficulty} 1`, `Exercice ${difficulty} 2`, `Exercice ${difficulty} 3`]
+    };
+  };
 
-  if (filteredPrograms.length === 0 && !displayPrograms[0]) {
+  // Créer un programme test qui correspond au filtre sélectionné
+  const displayPrograms = filteredPrograms.length > 0 
+    ? filteredPrograms 
+    : levelFilter === "all" 
+      ? [createTestProgram("amateur"), createTestProgram("semi-pro"), createTestProgram("pro")] 
+      : [createTestProgram(levelFilter)];
+
+  if (filteredPrograms.length === 0 && displayPrograms.length === 0) {
     return (
       <EmptyState
         title={t("programs.noDataAvailable")}
