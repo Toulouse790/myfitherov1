@@ -11,7 +11,7 @@ import { debugLogger } from './utils/debug-logger'
 
 // Activer le mode debug pour faciliter le débogage
 debugLogger.enableDebugMode();
-debugLogger.log("Application", "Initialisation de l'application");
+debugLogger.log("Application", "Initialisation de l'application avec le routeur centralisé");
 
 // Créer une instance de QueryClient
 const queryClient = new QueryClient({
