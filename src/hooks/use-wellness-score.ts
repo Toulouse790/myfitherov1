@@ -3,14 +3,22 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { 
-  calculateSleepScore,
+  calculateSleepScore, 
   calculateNutritionScore, 
-  calculateActivityScore,
-  findCorrelations,
-  WellnessCorrelation
+  calculateActivityScore, 
+  findCorrelations 
 } from "@/utils/wellness";
 import { SleepSession } from "@/types/sleep";
 import { FoodItem } from "@/types/nutrition";
+
+interface WorkoutSession {
+  id?: string;
+  user_id?: string;
+  created_at?: string;
+  total_duration_minutes?: number;
+  exercises?: string[];
+  perceived_difficulty?: 'easy' | 'moderate' | 'hard';
+}
 
 interface WellnessScoreResult {
   score: number;
@@ -20,14 +28,10 @@ interface WellnessScoreResult {
   sleepContribution: number;
   nutritionContribution: number;
   activityContribution: number;
-  correlations: WellnessCorrelation[];
+  correlations: any[];
   lastUpdated: string;
 }
 
-/**
- * Hook pour calculer le score de bien-être global de l'utilisateur
- * basé sur les données de sommeil, nutrition et activité physique
- */
 export function useWellnessScore() {
   const { user } = useAuth();
   
@@ -67,8 +71,8 @@ export function useWellnessScore() {
           .order('created_at', { ascending: false });
           
         // Calcul des scores individuels
-        const sleepScore = calculateSleepScore(sleepData as SleepSession[] || []);
-        const nutritionScore = calculateNutritionScore(nutritionData as FoodItem[] || []);
+        const sleepScore = calculateSleepScore(sleepData || []);
+        const nutritionScore = calculateNutritionScore(nutritionData || []);
         const activityScore = calculateActivityScore(workoutData || []);
         
         // Calcul du score global avec pondération
@@ -84,9 +88,9 @@ export function useWellnessScore() {
         
         // Recherche de corrélations entre les trois piliers
         const correlations = findCorrelations(
-          sleepData as SleepSession[] || [], 
-          nutritionData as FoodItem[] || [], 
-          workoutData || []
+          (sleepData || []) as SleepSession[], 
+          (nutritionData || []) as FoodItem[], 
+          (workoutData || []) as WorkoutSession[]
         );
         
         return {
