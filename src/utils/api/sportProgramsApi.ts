@@ -256,7 +256,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     
     debugLogger.log("sportProgramsApi", "Création d'une session d'entraînement à partir du programme:", program.name);
     
-    // Correction de l'appel à select() - suppression des arguments en trop
+    // Correction de l'erreur TS2554 - appel à select() sans arguments supplémentaires
     const { data, error } = await supabase
       .from('workout_sessions')
       .insert([
@@ -327,11 +327,14 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         }
       } else if (existingProgression) {
         // Si l'utilisateur existe, mettre à jour les points
+        const workoutPoints = (existingProgression.workout_points || 0) + 10;
+        const totalPoints = (existingProgression.total_points || 0) + 10;
+        
         const { error: progressionError } = await supabase
           .from('user_progression')
           .update({
-            workout_points: (existingProgression.workout_points || 0) + 10,
-            total_points: (existingProgression.total_points || 0) + 10,
+            workout_points: workoutPoints,
+            total_points: totalPoints,
             updated_at: new Date().toISOString()
           })
           .eq('user_id', userId);
