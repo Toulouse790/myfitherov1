@@ -6,6 +6,7 @@ import WorkoutGenerate from "@/pages/WorkoutGenerate";
 import StartWorkout from "@/pages/workouts/start/[id]";
 import WorkoutSessionPage from "@/pages/workouts/session/[id]";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
+import SportPrograms from "@/pages/SportPrograms";
 
 export const workoutRoutes = [
   {
@@ -15,6 +16,10 @@ export const workoutRoutes = [
   {
     path: "workouts/generate",
     element: <RequireQuestionnaire><WorkoutGenerate /></RequireQuestionnaire>,
+  },
+  {
+    path: "sport-programs",
+    element: <RequireQuestionnaire><SportPrograms /></RequireQuestionnaire>,
   },
   // L'ordre des routes est important - les routes les plus spécifiques d'abord
   {
