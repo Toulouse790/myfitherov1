@@ -5,6 +5,7 @@ import { fr } from "@/i18n/fr";
 import { en } from "@/i18n/en";
 import { es } from "@/i18n/es";
 import { de } from "@/i18n/de";
+import { debugLogger } from "@/utils/debug-logger";
 
 type Language = "fr" | "en" | "es" | "de";
 type Translations = typeof fr;
@@ -12,7 +13,7 @@ type Translations = typeof fr;
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string, params?: Record<string, string | number>) => string;
+  t: (key: string, params?: { fallback?: string } & Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
@@ -27,30 +28,58 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     de,
   };
 
-  const t = (key: string, params?: Record<string, string | number>) => {
-    const keys = key.split(".");
-    let current: any = translations[language];
-    
-    for (const k of keys) {
-      if (current[k] === undefined) {
-        console.warn(`Translation missing for key: ${key} in language: ${language}`);
-        return key;
+  const t = (key: string, params?: { fallback?: string } & Record<string, string | number>) => {
+    try {
+      const keys = key.split(".");
+      let current: any = translations[language];
+      
+      for (const k of keys) {
+        if (current[k] === undefined) {
+          debugLogger.warn(`Translation missing for key: ${key} in language: ${language}`);
+          
+          // Essayez de trouver la clé dans une autre langue si la fallback n'est pas spécifiée
+          if (!params?.fallback) {
+            // Tenter d'utiliser l'anglais comme langue de secours
+            if (language !== 'en') {
+              let enCurrent = translations.en;
+              let enFound = true;
+              for (const enKey of keys) {
+                if (enCurrent[enKey] === undefined) {
+                  enFound = false;
+                  break;
+                }
+                enCurrent = enCurrent[enKey];
+              }
+              if (enFound && typeof enCurrent === 'string') {
+                return enCurrent;
+              }
+            }
+          }
+          
+          return params?.fallback || key;
+        }
+        current = current[k];
       }
-      current = current[k];
+      
+      if (typeof current === "string" && params) {
+        return Object.entries(params).reduce((acc, [paramKey, value]) => {
+          if (paramKey !== "fallback") {
+            return acc.replace(`{${paramKey}}`, String(value));
+          }
+          return acc;
+        }, current);
+      }
+      
+      return current;
+    } catch (error) {
+      debugLogger.error("Translation error", error);
+      return params?.fallback || key;
     }
-    
-    if (typeof current === "string" && params) {
-      return Object.entries(params).reduce((acc, [key, value]) => {
-        return acc.replace(`{${key}}`, String(value));
-      }, current);
-    }
-    
-    return current;
   };
 
   useEffect(() => {
     document.documentElement.lang = language;
-    console.log("Language changed to:", language);
+    debugLogger.log("Language", `Language changed to: ${language}`);
   }, [language]);
 
   return (
