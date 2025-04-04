@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { WorkoutCard } from "@/components/Dashboard/WorkoutSuggestions/WorkoutCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface Sport {
   id: string;
@@ -45,6 +46,7 @@ export const SportProgramsList = () => {
   useEffect(() => {
     const fetchSports = async () => {
       try {
+        setIsLoading(true);
         const { data, error } = await supabase
           .from('sports')
           .select('id, name')
@@ -52,6 +54,7 @@ export const SportProgramsList = () => {
           
         if (error) throw error;
         
+        debugLogger.log("SportProgramsList", "Sports chargés:", data?.length);
         setSports(data || []);
         if (data && data.length > 0) {
           setSelectedSport(data[0].id);
@@ -63,6 +66,8 @@ export const SportProgramsList = () => {
           description: t("sports.loadError"),
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
     
@@ -75,6 +80,7 @@ export const SportProgramsList = () => {
       if (!selectedSport) return;
       
       try {
+        setIsLoading(true);
         const { data, error } = await supabase
           .from('sport_positions')
           .select('id, name, sport_id')
@@ -83,12 +89,9 @@ export const SportProgramsList = () => {
           
         if (error) throw error;
         
+        debugLogger.log("SportProgramsList", "Positions chargées pour le sport", selectedSport, ":", data?.length);
         setPositions(data || []);
-        if (data && data.length > 0) {
-          setSelectedPosition(data[0].id);
-        } else {
-          setSelectedPosition("");
-        }
+        setSelectedPosition(data && data.length > 0 ? data[0].id : "");
       } catch (error) {
         console.error("Erreur lors du chargement des positions:", error);
         toast({
@@ -96,18 +99,23 @@ export const SportProgramsList = () => {
           description: t("positions.loadError"),
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
     
-    fetchPositions();
+    if (selectedSport) {
+      fetchPositions();
+    }
   }, [selectedSport, toast, t]);
   
   // Charger les programmes quand un sport et une position sont sélectionnés
   useEffect(() => {
     const fetchPrograms = async () => {
-      setIsLoading(true);
+      if (!selectedSport) return;
       
       try {
+        setIsLoading(true);
         let query = supabase.from('sport_programs').select('*');
         
         if (selectedSport) {
@@ -122,6 +130,7 @@ export const SportProgramsList = () => {
         
         if (error) throw error;
         
+        debugLogger.log("SportProgramsList", "Programmes chargés:", data?.length);
         setPrograms(data || []);
       } catch (error) {
         console.error("Erreur lors du chargement des programmes:", error);
@@ -213,23 +222,26 @@ export const SportProgramsList = () => {
           </Select>
         </div>
         
-        {positions.length > 0 && (
-          <div>
-            <label className="block text-sm font-medium mb-1">{t("positions.selectPosition")}</label>
-            <Select value={selectedPosition} onValueChange={setSelectedPosition}>
-              <SelectTrigger>
-                <SelectValue placeholder={t("positions.selectPosition")} />
-              </SelectTrigger>
-              <SelectContent>
-                {positions.map(position => (
-                  <SelectItem key={position.id} value={position.id}>
-                    {position.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("positions.selectPosition")}</label>
+          <Select value={selectedPosition} onValueChange={setSelectedPosition} disabled={positions.length === 0}>
+            <SelectTrigger>
+              <SelectValue placeholder={positions.length === 0 ? t("positions.noPositionsAvailable") : t("positions.selectPosition")} />
+            </SelectTrigger>
+            <SelectContent>
+              {positions.map(position => (
+                <SelectItem key={position.id} value={position.id}>
+                  {position.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {positions.length === 0 && selectedSport && !isLoading && (
+            <p className="text-xs text-muted-foreground mt-1">
+              {t("positions.noPositionsAvailable")}
+            </p>
+          )}
+        </div>
       </div>
       
       {/* Liste des programmes */}

@@ -1,4 +1,6 @@
-
+import { sports } from "./sports";
+import { positions } from "./positions";
+import { programs } from "./programs";
 import { common } from "./common";
 import { settings, theme } from "./settings";
 import { workouts } from "./workouts";
@@ -11,6 +13,9 @@ import { sleep } from "./sleep";
 import { muscleGroups } from "./muscleGroups";
 
 export const fr = {
+  sports,
+  positions,
+  programs,
   common,
   settings,
   theme,
