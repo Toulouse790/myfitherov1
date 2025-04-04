@@ -1,5 +1,5 @@
 
-import { Activity, Dumbbell, Plus, Utensils, Moon } from "lucide-react";
+import { Activity, Dumbbell, Plus, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHomeActions } from "@/hooks/use-home-actions";
 
@@ -7,9 +7,7 @@ export const ActionButtons = () => {
   const { 
     handleCreateSession, 
     handleAIGeneration, 
-    handleTrainingSuggestions,
     handleMealSuggestions,
-    handleSleepTracking,
     isLoading 
   } = useHomeActions();
 
@@ -39,16 +37,6 @@ export const ActionButtons = () => {
         </Button>
 
         <Button
-          onClick={handleSleepTracking}
-          variant="outline"
-          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-primary/10 transition-all duration-300"
-          size="lg"
-        >
-          <Moon className="w-6 h-6 mb-2" />
-          <span className="text-sm">Suivre mon sommeil</span>
-        </Button>
-
-        <Button
           onClick={handleAIGeneration}
           variant="secondary"
           className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-secondary/90 transition-all duration-300"
@@ -57,16 +45,6 @@ export const ActionButtons = () => {
         >
           <Plus className="w-6 h-6 mb-2" />
           <span className="text-sm">Générer avec l'IA</span>
-        </Button>
-
-        <Button
-          onClick={handleTrainingSuggestions}
-          variant="secondary"
-          className="h-auto py-3 px-4 flex flex-col items-center justify-center text-center hover:bg-secondary/90 transition-all duration-300"
-          size="lg"
-        >
-          <Activity className="w-6 h-6 mb-2" />
-          <span className="text-sm">Suggestions</span>
         </Button>
       </div>
     </div>

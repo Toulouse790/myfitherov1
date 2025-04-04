@@ -45,34 +45,14 @@ export const useHomeActions = () => {
     }, 1500);
   };
 
-  const handleTrainingSuggestions = () => {
-    navigate('/workouts');
-  };
-
   const handleMealSuggestions = () => {
     navigate('/nutrition');
-  };
-  
-  const handleSleepTracking = () => {
-    if (!user) {
-      toast({
-        title: "Connexion requise",
-        description: "Vous devez être connecté pour accéder au suivi du sommeil",
-        variant: "destructive",
-      });
-      navigate('/signin', { state: { from: '/sleep' } });
-      return;
-    }
-    
-    navigate('/sleep');
   };
 
   return {
     handleCreateSession,
     handleAIGeneration,
-    handleTrainingSuggestions,
     handleMealSuggestions,
-    handleSleepTracking,
     isLoading
   };
 };
