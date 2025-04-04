@@ -1,5 +1,4 @@
 
-import { PopularMealSuggestions } from "@/components/Nutrition/MealSuggestions/PopularMealSuggestions";
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { UserProgressionWidget } from "@/components/UserProgression/UserProgressionWidget";
 import { ActionButtons } from "@/components/Home/ActionButtons";
@@ -79,9 +78,6 @@ const Home = () => {
         </div>
         <WorkoutSuggestions showAllSuggestions={false} />
       </Card>
-      
-      {/* Suggestions de repas populaires */}
-      <PopularMealSuggestions />
     </div>
   );
 };
