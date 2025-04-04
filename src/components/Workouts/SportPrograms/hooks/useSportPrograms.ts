@@ -13,6 +13,7 @@ import {
   createWorkoutFromProgram,
   fetchActivePrograms
 } from "@/utils/api/sportProgramsApi";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const useSportPrograms = () => {
   const [sports, setSports] = useState<Sport[]>([]);
@@ -144,29 +145,43 @@ export const useSportPrograms = () => {
   // Gérer la sélection d'un programme
   const handleProgramSelect = async (program: SportProgram) => {
     try {
+      debugLogger.log("useSportPrograms", "Sélection du programme:", program.name);
+      setIsLoading(true);
+      
       const { data: session, error } = await createWorkoutFromProgram(program);
-        
-      if (error) throw error;
+      
+      if (error) {
+        debugLogger.error("useSportPrograms", "Erreur lors de la création de la session:", error);
+        throw error;
+      }
       
       if (session) {
         // Mettre à jour les programmes actifs
         setActivePrograms(prev => [...prev, program]);
         
-        // Naviguer vers la session d'entraînement
-        navigate(`/workouts/exercise/next-workout?session=${session.id}`);
-        
+        // Afficher une notification de succès
         toast({
-          title: t("programs.programStarted"),
-          description: t("programs.programStartedDescription", { name: program.name }),
+          title: t("programs.programStarted") || "Programme démarré",
+          description: t("programs.programStartedDescription", { name: program.name }) || 
+                       `Le programme ${program.name} a été démarré avec succès`,
         });
+        
+        // Naviguer vers la page d'entraînement
+        debugLogger.log("useSportPrograms", "Redirection vers la session d'entraînement:", session.id);
+        navigate(`/workouts/session/${session.id}`);
+      } else {
+        throw new Error("Session non créée");
       }
     } catch (error) {
       console.error("Erreur lors de la création de la session:", error);
       toast({
-        title: t("common.error"),
-        description: t("workouts.errors.sessionCreationFailed"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.sessionCreationFailed") || 
+                     "Impossible de créer la session d'entraînement. Veuillez réessayer.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -181,6 +196,6 @@ export const useSportPrograms = () => {
     setSelectedSport,
     setSelectedPosition,
     handleProgramSelect,
-    refreshData // Exposer la fonction pour rafraîchir les données
+    refreshData
   };
 };

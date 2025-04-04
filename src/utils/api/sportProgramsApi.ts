@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 import { allSportPrograms } from "@/data/sportPrograms";
@@ -253,23 +254,35 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     const { data: user } = await supabase.auth.getUser();
     if (!user || !user.user) throw new Error("Utilisateur non connecté");
     
+    debugLogger.log("sportProgramsApi", "Création d'une session d'entraînement à partir du programme:", program.name);
+    
+    // Correction : Suppression du champ program_id qui n'existe pas dans la table
     const { data, error } = await supabase
       .from('workout_sessions')
       .insert([
         {
           user_id: user.user.id,
-          exercises: program.exercises.map(ex => ex.name || ex),
+          exercises: program.exercises.map(ex => typeof ex === 'string' ? ex : ex.name || ex),
           status: 'in_progress',
           workout_type: 'sport_specific',
-          total_duration_minutes: program.duration || 45,
-          program_id: program.id
+          total_duration_minutes: program.duration * 60 || 45,
+          // Ne pas utiliser program_id car il n'existe pas dans la table
+          // Utiliser des métadonnées supplémentaires pour stocker les informations du programme
+          metadata: {
+            program_name: program.name,
+            program_difficulty: program.difficulty,
+            sport_id: program.sport_id,
+            position_id: program.position_id
+          }
         }
       ])
       .select()
       .single();
       
+    debugLogger.log("sportProgramsApi", "Résultat de la création de session:", data ? "Succès" : "Échec", error);
     return { data, error };
   } catch (error) {
+    debugLogger.error("sportProgramsApi", "Erreur lors de la création de la session:", error);
     return { data: null, error };
   }
 };

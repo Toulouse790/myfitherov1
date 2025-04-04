@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SportProgram } from "@/utils/api/sportProgramsApi";
 import { useToast } from "@/hooks/use-toast";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface SportProgramGridProps {
   programs: SportProgram[];
@@ -18,12 +19,18 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
 
   // Fonction pour gérer la génération d'un programme
   const handleGenerateProgram = (program: SportProgram) => {
+    debugLogger.log("SportProgramGrid", "Génération du programme:", program.name);
+    
     toast({
       title: t("programs.programGenerated"),
       description: t("programs.programGeneratedDescription", { name: program.name }),
     });
-    
-    // Vous pourriez également rediriger l'utilisateur ou effectuer d'autres actions
+  };
+
+  // Fonction pour gérer le lancement d'un programme
+  const handleStartProgram = (program: SportProgram) => {
+    debugLogger.log("SportProgramGrid", "Démarrage du programme:", program.name);
+    onSelectProgram(program);
   };
 
   // Filtrer les programmes en fonction du niveau sélectionné
@@ -90,10 +97,19 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
         <ProgramCard 
           key={program.id}
           program={program}
-          onSelect={() => onSelectProgram(program)}
+          onSelect={() => handleStartProgram(program)}
           onGenerate={() => handleGenerateProgram(program)}
         />
       ))}
+      
+      {displayPrograms.length === 0 && (
+        <div className="col-span-2">
+          <EmptyState
+            title={t("programs.noPrograms")}
+            description={t("programs.noProgramsDescription")}
+          />
+        </div>
+      )}
     </div>
   );
 };
