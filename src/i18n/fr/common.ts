@@ -76,5 +76,6 @@ export const common = {
   days: "jours",
   weeks: "semaines",
   months: "mois",
-  years: "années"
+  years: "années",
+  view: "Voir"
 };

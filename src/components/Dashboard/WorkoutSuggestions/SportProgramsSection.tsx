@@ -28,14 +28,14 @@ export const SportProgramsSection = () => {
       </div>
       <div className="border rounded-md p-4 bg-muted/10">
         <p className="text-sm text-muted-foreground mb-3">
-          {t('workouts.sportSpecificDescription') || "Entraînements adaptés à votre sport et votre position"}
+          {t('workouts.sportSpecificDescription')}
         </p>
         <Button 
           variant="default" 
           className="w-full"
           onClick={handleNavigateToSportsPrograms}
         >
-          {t('common.view') || "Voir"}
+          {t('common.view')}
         </Button>
       </div>
     </div>
