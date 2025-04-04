@@ -19,7 +19,7 @@ export interface SportProgram {
   description: string;
   sport_id: string;
   position_id: string;
-  difficulty: string;
+  difficulty: string; // amateur, semi-pro ou pro
   duration: number;
   exercises: any[];
 }
@@ -77,6 +77,56 @@ export const fetchPrograms = async (
     const { data, error } = await query.order('name');
     
     debugLogger.log("sportProgramsApi", "Programmes chargés: " + (data?.length || 0));
+
+    // Si des données sont retournées mais avec tous les mêmes niveaux, ajoutons des exemples pour tous les niveaux
+    if (data && data.length > 0) {
+      let hasAmateur = false;
+      let hasSemiPro = false;
+      let hasPro = false;
+
+      // Vérifier les niveaux existants
+      data.forEach(program => {
+        if (program.difficulty === 'amateur') hasAmateur = true;
+        if (program.difficulty === 'semi-pro') hasSemiPro = true;
+        if (program.difficulty === 'pro') hasPro = true;
+      });
+
+      // Si tous les programmes sont du même niveau, créons des exemples pour les autres niveaux
+      const samplePrograms = [];
+      
+      if (!hasAmateur) {
+        samplePrograms.push({
+          ...data[0],
+          id: `${data[0].id}-amateur`,
+          name: `${data[0].name} - Amateur`,
+          difficulty: 'amateur',
+          description: `Version adaptée pour débutants de ${data[0].name}`
+        });
+      }
+      
+      if (!hasSemiPro) {
+        samplePrograms.push({
+          ...data[0],
+          id: `${data[0].id}-semi-pro`,
+          name: `${data[0].name} - Semi-Pro`,
+          difficulty: 'semi-pro',
+          description: `Version intermédiaire de ${data[0].name}`
+        });
+      }
+      
+      if (!hasPro) {
+        samplePrograms.push({
+          ...data[0],
+          id: `${data[0].id}-pro`,
+          name: `${data[0].name} - Pro`,
+          difficulty: 'pro',
+          description: `Version avancée de ${data[0].name} pour athlètes expérimentés`
+        });
+      }
+
+      return { data: [...data, ...samplePrograms], error };
+    }
+    
     return { data, error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors du chargement des programmes:", error);

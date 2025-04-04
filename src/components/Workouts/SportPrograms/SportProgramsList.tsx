@@ -24,6 +24,8 @@ export const SportProgramsList = () => {
     refreshData
   } = useSportPrograms();
   
+  const [selectedLevel, setSelectedLevel] = useState("all");
+  
   // Logging pour débogage
   useEffect(() => {
     if (selectedSport) {
@@ -87,14 +89,17 @@ export const SportProgramsList = () => {
         positions={positions}
         selectedSport={selectedSport}
         selectedPosition={selectedPosition}
+        selectedLevel={selectedLevel}
         setSelectedSport={setSelectedSport}
         setSelectedPosition={setSelectedPosition}
+        setSelectedLevel={setSelectedLevel}
         isLoading={isLoading}
       />
       
       <SportProgramGrid 
         programs={programs} 
         onSelectProgram={handleProgramSelect} 
+        levelFilter={selectedLevel}
       />
     </div>
   );

@@ -9,12 +9,18 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 interface SportProgramGridProps {
   programs: SportProgram[];
   onSelectProgram: (program: SportProgram) => void;
+  levelFilter: string;
 }
 
-export const SportProgramGrid = ({ programs, onSelectProgram }: SportProgramGridProps) => {
+export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: SportProgramGridProps) => {
   const { t } = useLanguage();
   
-  const recommendedPrograms = programs.filter(p => p.difficulty === 'moderate');
+  // Filtrer par niveau si un niveau est sélectionné
+  const filteredPrograms = levelFilter === 'all' 
+    ? programs 
+    : programs.filter(p => p.difficulty === levelFilter);
+  
+  const recommendedPrograms = filteredPrograms.filter(p => p.difficulty === 'moderate');
 
   const renderProgramsList = (programsList: SportProgram[], emptyMessage: string) => {
     if (programsList.length > 0) {
@@ -52,7 +58,7 @@ export const SportProgramGrid = ({ programs, onSelectProgram }: SportProgramGrid
       </TabsList>
       
       <TabsContent value="all" className="pt-4">
-        {renderProgramsList(programs, t("programs.noProgramsAvailable"))}
+        {renderProgramsList(filteredPrograms, t("programs.noProgramsAvailable"))}
       </TabsContent>
       
       <TabsContent value="recommended" className="pt-4">

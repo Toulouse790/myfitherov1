@@ -7,5 +7,10 @@ export const programs = {
   noProgramsAvailable: "Aucun programme disponible pour ce sport et ce poste. De nouveaux programmes seront ajoutés prochainement.",
   noRecommendedPrograms: "Aucun programme recommandé disponible pour ce sport et ce poste.",
   loadError: "Impossible de charger les programmes sportifs",
-  noDataAvailable: "Données non disponibles"
+  noDataAvailable: "Données non disponibles",
+  levelAmateur: "Amateur",
+  levelSemiPro: "Semi-professionnel",
+  levelPro: "Professionnel",
+  filterByLevel: "Filtrer par niveau",
+  allLevels: "Tous les niveaux"
 };
