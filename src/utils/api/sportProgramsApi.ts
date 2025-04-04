@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 import { allSportPrograms } from "@/data/sportPrograms";
@@ -256,7 +255,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     
     debugLogger.log("sportProgramsApi", "Création d'une session d'entraînement à partir du programme:", program.name);
     
-    // Correction de l'erreur TS2554 - appel à select() sans arguments supplémentaires
     const { data, error } = await supabase
       .from('workout_sessions')
       .insert([
@@ -282,7 +280,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
       const sessionId = data[0].id;
       const userId = user.user.id;
       
-      // Vérifier et mettre à jour le profil utilisateur
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -295,16 +292,14 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         debugLogger.log("sportProgramsApi", "Profil trouvé:", profileData);
       }
       
-      // Vérifier si l'utilisateur existe dans user_progression avant d'essayer de le mettre à jour
       const { data: existingProgression, error: checkError } = await supabase
         .from('user_progression')
-        .select('*') // Sélectionner toutes les colonnes pour avoir accès à workout_points et total_points
+        .select('*')
         .eq('user_id', userId)
         .single();
         
       if (checkError) {
         if (checkError.code === 'PGRST116') {
-          // Si l'utilisateur n'existe pas dans user_progression, le créer
           debugLogger.log("sportProgramsApi", "Utilisateur non trouvé dans user_progression, création d'un nouveau profil");
           
           const { error: insertError } = await supabase
@@ -326,7 +321,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           debugLogger.error("sportProgramsApi", "Erreur lors de la vérification de progression:", checkError);
         }
       } else if (existingProgression) {
-        // Si l'utilisateur existe, mettre à jour les points
         const workoutPoints = (existingProgression.workout_points || 0) + 10;
         const totalPoints = (existingProgression.total_points || 0) + 10;
         
@@ -344,7 +338,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         }
       }
       
-      // Vérifier et créer/mettre à jour user_preferences si nécessaire
       const { data: existingPrefs, error: prefCheckError } = await supabase
         .from('user_preferences')
         .select('*')
@@ -353,7 +346,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         
       if (prefCheckError) {
         if (prefCheckError.code === 'PGRST116') {
-          // Si l'utilisateur n'existe pas dans user_preferences, le créer
           debugLogger.log("sportProgramsApi", "Utilisateur non trouvé dans user_preferences, création d'un nouveau profil de préférences");
           
           const { error: insertPrefError } = await supabase
@@ -371,7 +363,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           debugLogger.error("sportProgramsApi", "Erreur lors de la vérification des préférences:", prefCheckError);
         }
       } else {
-        // Si l'utilisateur existe, mettre à jour les préférences
         const { error: prefError } = await supabase
           .from('user_preferences')
           .update({
@@ -384,7 +375,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         }
       }
       
-      // Vérifier et créer/mettre à jour user_streaks si nécessaire
       const { data: existingStreak, error: streakCheckError } = await supabase
         .from('user_streaks')
         .select('*')
@@ -394,7 +384,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         
       if (streakCheckError) {
         if (streakCheckError.code === 'PGRST116') {
-          // Si l'utilisateur n'a pas de streak, en créer un
           debugLogger.log("sportProgramsApi", "Streak non trouvé pour l'utilisateur, création d'un nouveau streak");
           
           const { error: insertStreakError } = await supabase
@@ -415,7 +404,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           debugLogger.error("sportProgramsApi", "Erreur lors de la vérification du streak:", streakCheckError);
         }
       } else {
-        // Si le streak existe, le mettre à jour
         const { error: streakError } = await supabase
           .from('user_streaks')
           .update({
@@ -430,7 +418,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         }
       }
       
-      // Créer les statistiques d'entraînement
       const { error: statsError } = await supabase
         .from('training_stats')
         .insert([{
@@ -447,7 +434,6 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         debugLogger.error("sportProgramsApi", "Erreur lors de la création des statistiques d'entraînement:", statsError);
       }
 
-      // Vérification des tables après création de session
       debugLogger.log("sportProgramsApi", "Vérification des tables après création de session pour l'utilisateur:", userId);
       
       const { data: progressionData } = await supabase
