@@ -72,12 +72,12 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
         )}
       </CardContent>
       
-      <CardFooter className="flex justify-between pt-2">
+      <CardFooter className="flex flex-col pt-2">
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={toggleExpand} 
-          className="text-xs gap-1 p-0 h-auto"
+          className="text-xs gap-1 p-0 h-auto self-start"
         >
           {expanded ? (
             <>
@@ -92,12 +92,12 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
           )}
         </Button>
         
-        <div className="flex gap-2">
-          {/* Bouton de génération (désactivé si onGenerate n'est pas fourni) */}
+        <div className="flex justify-end gap-2 w-full mt-2">
+          {/* Affichage inconditionnel des deux boutons */}
           <Button 
             size="sm" 
             variant="outline" 
-            onClick={onGenerate} 
+            onClick={onGenerate}
             className="gap-1"
             disabled={!onGenerate}
           >
@@ -105,7 +105,6 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
             {t("programs.generateProgram")}
           </Button>
           
-          {/* Bouton de démarrage toujours visible */}
           <Button size="sm" onClick={onSelect} className="gap-1">
             <Dumbbell className="h-4 w-4" />
             {t("programs.startProgram")}
