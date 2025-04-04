@@ -6,6 +6,11 @@ import { router } from './routes'
 import './styles/index.css'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { debugLogger } from './utils/debug-logger'
+
+// Activer le mode debug pour faciliter le débogage
+debugLogger.enableDebugMode();
+debugLogger.log("Application", "Initialisation de l'application");
 
 // Créer une instance de QueryClient
 const queryClient = new QueryClient({

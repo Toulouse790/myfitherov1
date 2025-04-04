@@ -10,7 +10,7 @@ export default function Index() {
   const { user, loading } = useAuth();
 
   useEffect(() => {
-    debugLogger.log("Index", "État de l'authentification:", { user: !!user, loading });
+    debugLogger.log("Index", "État de l'authentification: " + (!!user ? "connecté" : "non connecté") + ", chargement: " + loading);
     
     if (!loading && !user) {
       // Si l'utilisateur n'est pas connecté, rediriger vers l'inscription

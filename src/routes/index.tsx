@@ -18,7 +18,7 @@ const SignUpPage = lazy(() => import("@/pages/SignUp"));
 
 const Index = lazy(() => import("@/pages/Index"));
 const Profile = lazy(() => import("@/pages/Profile"));
-// Correction: utiliser le bon chemin pour Workouts pour éviter le conflit
+// Utiliser la bonne importation pour la page Workouts
 const Workouts = lazy(() => import("@/pages/workouts/index"));
 const PersonalInfo = lazy(() => import("@/pages/PersonalInfo"));
 const Subscription = lazy(() => import("@/pages/Subscription"));
@@ -80,7 +80,6 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
-    // Correction: Fournir un enfant à ErrorBoundary
     errorElement: <ErrorBoundary><ErrorPage /></ErrorBoundary>,
     children: [
       {
@@ -125,8 +124,11 @@ export const router = createBrowserRouter([
                 path: "notifications",
                 element: withSuspense(Notifications)
               },
-              // Retiré l'entrée ici pour éviter le conflit avec les routes dans workoutRoutes
-              // La page principale workouts sera gérée par les workoutRoutes
+              // Ajoutons la route workouts ici également en tant que route principale
+              {
+                path: "workouts",
+                element: withSuspense(Workouts)
+              },
               {
                 path: "nutrition",
                 element: withSuspense(Nutrition)
