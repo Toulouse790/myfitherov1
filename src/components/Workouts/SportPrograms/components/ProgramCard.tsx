@@ -26,6 +26,9 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
 
   const toggleExpand = () => setExpanded(!expanded);
 
+  // S'assurer que nous avons toujours une fonction onGenerate, même si elle est vide
+  const handleGenerate = onGenerate || (() => console.log("Génération non implémentée"));
+
   return (
     <Card className="overflow-hidden hover:shadow-md transition-all">
       <CardHeader className="pb-3">
@@ -72,7 +75,7 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
         )}
       </CardContent>
       
-      <CardFooter className="flex flex-col pt-2">
+      <CardFooter className="pt-2 flex flex-col">
         <Button 
           variant="ghost" 
           size="sm" 
@@ -92,20 +95,23 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
           )}
         </Button>
         
-        <div className="flex justify-end gap-2 w-full mt-2">
-          {/* Affichage inconditionnel des deux boutons */}
+        <div className="flex justify-end gap-2 w-full mt-3">
           <Button 
             size="sm" 
             variant="outline" 
-            onClick={onGenerate}
-            className="gap-1"
+            onClick={handleGenerate}
+            className="gap-1 whitespace-nowrap"
             disabled={!onGenerate}
           >
             <Zap className="h-4 w-4" />
             {t("programs.generateProgram")}
           </Button>
           
-          <Button size="sm" onClick={onSelect} className="gap-1">
+          <Button 
+            size="sm" 
+            onClick={onSelect} 
+            className="gap-1 whitespace-nowrap"
+          >
             <Dumbbell className="h-4 w-4" />
             {t("programs.startProgram")}
           </Button>
