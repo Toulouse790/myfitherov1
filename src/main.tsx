@@ -8,6 +8,7 @@ import { LanguageProvider } from './contexts/LanguageContext'
 import { AuthProvider } from './contexts/AuthContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { debugLogger } from './utils/debug-logger'
+import { ThemeProvider } from './components/Theme/ThemeProvider'
 
 // Activer le mode debug pour faciliter le débogage
 debugLogger.enableDebugMode();
@@ -27,9 +28,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <LanguageProvider>
-          <RouterProvider router={router} />
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <RouterProvider router={router} />
+          </LanguageProvider>
+        </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>,

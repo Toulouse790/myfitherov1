@@ -1,136 +1,123 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useTheme } from "@/components/Theme/useTheme";
-import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Clock, Moon, ActivitySquare, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSleepTracking } from "@/hooks/use-sleep-tracking";
+import { useMemo } from "react";
+import { calculateSleepScore } from "@/utils/wellness/sleep-score-calculator";
 
 export const SleepScore = () => {
-  const { theme } = useTheme();
   const { t } = useLanguage();
-  const [sleepScore, setSleepScore] = useState(87);
-  const [sleepData, setSleepData] = useState({
-    duration: "7h 24min",
-    quality: "good",
-    deepSleep: "2h 15min",
-    remSleep: "1h 40min",
-    lightSleep: "3h 29min",
-    awakeTime: "0h 10min",
-  });
-
+  const { sleepSessions, sleepStats } = useSleepTracking();
+  
+  // Calculer le score de sommeil basé sur les données récentes
+  const sleepScore = useMemo(() => {
+    if (sleepSessions && sleepSessions.length > 0) {
+      return calculateSleepScore(sleepSessions);
+    } else if (sleepStats && sleepStats.average_score) {
+      return sleepStats.average_score;
+    }
+    return 75; // Score par défaut si aucune donnée n'est disponible
+  }, [sleepSessions, sleepStats]);
+  
+  // Déterminer la couleur en fonction du score
+  const scoreColor = useMemo(() => {
+    if (sleepScore >= 80) return "#4ade80"; // Vert
+    if (sleepScore >= 60) return "#facc15"; // Jaune
+    return "#f87171"; // Rouge
+  }, [sleepScore]);
+  
   // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
+  const scoreVariants = {
+    hidden: { scale: 0.8, opacity: 0 },
     visible: { 
+      scale: 1, 
       opacity: 1,
-      transition: { 
-        staggerChildren: 0.1
-      }
+      transition: { type: "spring", stiffness: 100, delay: 0.2 }
     }
   };
   
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+  const textVariants = {
+    hidden: { y: -20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.3 }
+    }
+  };
+  
+  const itemVariant = {
+    hidden: { y: -10, opacity: 0 },
     visible: { y: 0, opacity: 1 }
   };
 
-  const textColor = theme === "dark" ? "#fff" : "#1E3A8A";
-  const pathColor = "#3B82F6"; // blue-500
-  const trailColor = theme === "dark" ? "#1E293B" : "#EFF6FF"; // slate-800 or blue-50
-
   return (
     <Card className="overflow-hidden border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10 shadow-md hover:shadow-lg transition-all duration-300">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-400 text-white">
-        <CardTitle className="flex items-center justify-between">
-          <span>{t("sleep.sleepScore")}</span>
-          <Badge variant="secondary" className="bg-white/20 hover:bg-white/30">
-            <Clock className="h-3 w-3 mr-1" />
-            {t("sleep.lastNight")}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
       <CardContent className="p-6">
-        <motion.div 
-          className="grid gap-8 md:grid-cols-2"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div 
-            className="flex flex-col items-center justify-center"
-            variants={itemVariants}
+        <div className="flex flex-col items-center justify-center text-center space-y-4">
+          <motion.h2 
+            className="text-2xl font-semibold text-blue-600"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
           >
-            <div className="w-36 h-36 md:w-44 md:h-44">
-              <CircularProgressbar
-                value={sleepScore}
-                text={`${sleepScore}`}
-                strokeWidth={12}
-                styles={buildStyles({
-                  textSize: '22px',
-                  textColor: textColor,
-                  pathColor: pathColor,
-                  trailColor: trailColor,
-                })}
-              />
-            </div>
-            <p className="mt-2 text-center text-muted-foreground">
-              {t("sleep.score")} <span className="font-medium text-blue-600 dark:text-blue-400">{t("sleep.excellent").toLowerCase()}</span>
-            </p>
-          </motion.div>
-
+            {t("sleep.sleepScore")}
+          </motion.h2>
+          
           <motion.div 
-            className="space-y-3"
-            variants={containerVariants}
+            className="w-36 h-36 md:w-44 md:h-44"
+            variants={scoreVariants}
+            initial="hidden"
+            animate="visible"
           >
-            <motion.div 
-              variants={itemVariants}
-              className="flex items-center gap-3 border-l-4 border-blue-500 pl-3 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-r-md"
-            >
-              <Clock className="h-4 w-4 text-blue-500" />
-              <div>
-                <p className="text-sm text-muted-foreground">{t("sleep.totalDuration")}</p>
-                <p className="font-medium">{sleepData.duration}</p>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              variants={itemVariants}
-              className="flex items-center gap-3 border-l-4 border-indigo-500 pl-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-r-md"
-            >
-              <Moon className="h-4 w-4 text-indigo-500" />
-              <div>
-                <p className="text-sm text-muted-foreground">{t("sleep.deepSleep")}</p>
-                <p className="font-medium">{sleepData.deepSleep}</p>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              variants={itemVariants}
-              className="flex items-center gap-3 border-l-4 border-purple-500 pl-3 py-1 bg-purple-50 dark:bg-purple-900/20 rounded-r-md"
-            >
-              <ActivitySquare className="h-4 w-4 text-purple-500" />
-              <div>
-                <p className="text-sm text-muted-foreground">{t("sleep.remSleep")}</p>
-                <p className="font-medium">{sleepData.remSleep}</p>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              variants={itemVariants}
-              className="flex items-center gap-3 border-l-4 border-cyan-500 pl-3 py-1 bg-cyan-50 dark:bg-cyan-900/20 rounded-r-md"
-            >
-              <Zap className="h-4 w-4 text-cyan-500" />
-              <div>
-                <p className="text-sm text-muted-foreground">{t("sleep.quality")}</p>
-                <p className="font-medium">{t(`sleep.${sleepData.quality}`)}</p>
-              </div>
-            </motion.div>
+            <CircularProgressbar
+              value={sleepScore}
+              text={`${Math.round(sleepScore)}`}
+              strokeWidth={10}
+              styles={buildStyles({
+                textSize: '28px',
+                textColor: 'var(--colors-primary)',
+                pathColor: scoreColor,
+                trailColor: 'rgba(190, 205, 233, 0.3)',
+                pathTransitionDuration: 1.5
+              })}
+            />
           </motion.div>
-        </motion.div>
+          
+          <motion.div 
+            className="space-y-3 w-full"
+            variants={textVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {sleepStats && (
+              <div className="grid grid-cols-2 gap-3">
+                <motion.div 
+                  variants={itemVariant} 
+                  className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg"
+                >
+                  <p className="text-xs text-muted-foreground">{t("sleep.sleepDuration")}</p>
+                  <p className="text-lg font-medium text-blue-600">
+                    {Math.floor(sleepStats.average_duration / 60)}h{" "}
+                    {sleepStats.average_duration % 60}m
+                  </p>
+                </motion.div>
+                
+                <motion.div 
+                  variants={itemVariant} 
+                  className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg"
+                >
+                  <p className="text-xs text-muted-foreground">{t("sleep.consistency")}</p>
+                  <p className="text-lg font-medium text-blue-600">
+                    {sleepStats.consistency_score}/10
+                  </p>
+                </motion.div>
+              </div>
+            )}
+          </motion.div>
+        </div>
       </CardContent>
     </Card>
   );
