@@ -52,6 +52,7 @@ export const WorkoutSession = () => {
           sessionDuration={sessionDuration}
           formatDuration={formatDuration}
           totalProgress={totalProgress}
+          onFinishWorkout={handleCompleteWorkout}
         />
         
         {/* Afficher soit les détails de l'exercice, soit la liste des exercices */}
@@ -78,11 +79,11 @@ export const WorkoutSession = () => {
               exerciseProgress={exerciseProgress}
               onExerciseSelect={handleExerciseSelect}
             />
+            
+            {/* Bouton pour terminer la séance */}
+            <FinishWorkoutButton onCompleteWorkout={handleCompleteWorkout} />
           </>
         )}
-        
-        {/* Bouton pour terminer la séance */}
-        <FinishWorkoutButton onCompleteWorkout={handleCompleteWorkout} />
       </div>
     </div>
   );
