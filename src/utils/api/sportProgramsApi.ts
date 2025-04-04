@@ -256,7 +256,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     
     debugLogger.log("sportProgramsApi", "Création d'une session d'entraînement à partir du programme:", program.name);
     
-    // Corriger l'appel à select() - en retirant les arguments supplémentaires
+    // Correction de l'appel à select() - en supprimant les arguments supplémentaires
     const { data, error } = await supabase
       .from('workout_sessions')
       .insert([
@@ -285,7 +285,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
       // Vérifier si l'utilisateur existe dans user_progression avant d'essayer de le mettre à jour
       const { data: existingProgression, error: checkError } = await supabase
         .from('user_progression')
-        .select('id')
+        .select('*') // Sélectionner toutes les colonnes pour avoir accès à workout_points et total_points
         .eq('user_id', userId)
         .single();
         
@@ -301,7 +301,9 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
               workout_points: 10,
               nutrition_points: 0,
               sleep_points: 0,
-              total_points: 10
+              total_points: 10,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
             }]);
           
           if (insertError) {
@@ -310,13 +312,13 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         } else {
           debugLogger.error("sportProgramsApi", "Erreur lors de la vérification de progression:", checkError);
         }
-      } else {
+      } else if (existingProgression) {
         // Si l'utilisateur existe, mettre à jour les points
         const { error: progressionError } = await supabase
           .from('user_progression')
           .update({
-            workout_points: existingProgression.workout_points ? existingProgression.workout_points + 10 : 10,
-            total_points: existingProgression.total_points ? existingProgression.total_points + 10 : 10,
+            workout_points: (existingProgression.workout_points || 0) + 10,
+            total_points: (existingProgression.total_points || 0) + 10,
             updated_at: new Date().toISOString()
           })
           .eq('user_id', userId);
@@ -386,7 +388,8 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
               streak_type: 'workout',
               last_activity_date: new Date().toISOString().split('T')[0],
               current_streak: 1,
-              longest_streak: 1
+              longest_streak: 1,
+              created_at: new Date().toISOString()
             }]);
           
           if (insertStreakError) {
