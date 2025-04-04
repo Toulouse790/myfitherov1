@@ -985,6 +985,45 @@ export type Database = {
           },
         ]
       }
+      food_database: {
+        Row: {
+          calories: number
+          carbs: number
+          categories: string[]
+          common_allergens: string[]
+          created_at: string
+          fats: number
+          id: string
+          name: string
+          proteins: number
+          updated_at: string
+        }
+        Insert: {
+          calories: number
+          carbs: number
+          categories?: string[]
+          common_allergens?: string[]
+          created_at?: string
+          fats: number
+          id?: string
+          name: string
+          proteins: number
+          updated_at?: string
+        }
+        Update: {
+          calories?: number
+          carbs?: number
+          categories?: string[]
+          common_allergens?: string[]
+          created_at?: string
+          fats?: number
+          id?: string
+          name?: string
+          proteins?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       food_journal_entries: {
         Row: {
           calories: number
@@ -3395,6 +3434,36 @@ export type Database = {
           tags: string[] | null
         }[]
       }
+      gtrgm_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: {
+          "": unknown
+        }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
       halfvec_avg: {
         Args: {
           "": number[]
@@ -3539,6 +3608,22 @@ export type Database = {
       reset_daily_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      set_limit: {
+        Args: {
+          "": number
+        }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: {
+          "": string
+        }
+        Returns: string[]
       }
       soundex: {
         Args: {
