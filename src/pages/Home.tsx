@@ -28,17 +28,32 @@ const Home = () => {
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6 md:space-y-8 pb-20">
       <WelcomeHeader />
       
+      {/* Programme d'entraînement recommandé - Déplacé en haut pour plus de visibilité */}
+      <Card className="p-6 space-y-4 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
+            <Zap className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+          </div>
+          <h2 className="text-xl font-bold">Programme d'entraînement recommandé</h2>
+        </div>
+        <WorkoutSuggestions showAllSuggestions={false} />
+      </Card>
+      
+      {/* Actions rapides */}
+      <ActionButtons />
+      
+      {/* Résumé et stats - Groupés pour une meilleure organisation */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
         <div className="col-span-1 md:col-span-2">
           <TodaySummary />
         </div>
-        
         <TrendingStats />
       </div>
       
-      <ActionButtons />
-
-      {/* Bannière Premium */}
+      {/* Afficher l'offre spéciale */}
+      <SpecialOfferCountdown targetDate={targetDate} />
+      
+      {/* Bannière Premium - Déplacée vers le bas car moins prioritaire */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,20 +81,6 @@ const Home = () => {
           </Button>
         </div>
       </motion.div>
-      
-      {/* Afficher l'offre spéciale */}
-      <SpecialOfferCountdown targetDate={targetDate} />
-      
-      {/* Programme d'entraînement recommandé */}
-      <Card className="p-6 space-y-4 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10">
-        <div className="flex items-center gap-3">
-          <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
-            <Zap className="h-5 w-5 text-blue-600 dark:text-blue-300" />
-          </div>
-          <h2 className="text-xl font-bold">Programme d'entraînement recommandé</h2>
-        </div>
-        <WorkoutSuggestions showAllSuggestions={false} />
-      </Card>
     </div>
   );
 };
