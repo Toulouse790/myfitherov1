@@ -7,8 +7,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface WorkoutCardProps {
   title: string;
-  description: string;
-  sessionId: string;
+  description?: string;
+  sessionId?: string;
+  programId?: string;
   duration?: number | null;
   difficulty?: string | null;
   muscleGroups?: string[];
@@ -20,6 +21,7 @@ export const WorkoutCard = ({
   title,
   description,
   sessionId,
+  programId,
   duration,
   difficulty,
   muscleGroups,

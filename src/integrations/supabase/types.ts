@@ -2343,6 +2343,67 @@ export type Database = {
           },
         ]
       }
+      sport_programs: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          difficulty: string
+          duration: number
+          exercises: Json
+          id: string
+          name: string
+          position_id: string | null
+          sport_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          difficulty: string
+          duration: number
+          exercises?: Json
+          id?: string
+          name: string
+          position_id?: string | null
+          sport_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string
+          duration?: number
+          exercises?: Json
+          id?: string
+          name?: string
+          position_id?: string | null
+          sport_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sport_programs_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions_sportives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sport_programs_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "sport_positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sport_programs_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sport_specific_workouts: {
         Row: {
           created_at: string | null

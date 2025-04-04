@@ -9,7 +9,7 @@ export const SportProgramsSection = () => {
   const { t } = useLanguage();
 
   const handleNavigateToSportsPrograms = () => {
-    navigate('/workouts');
+    navigate('/sport-programs');
   };
 
   return (
