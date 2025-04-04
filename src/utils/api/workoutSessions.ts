@@ -7,7 +7,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     const { data: user } = await supabase.auth.getUser();
     if (!user || !user.user) throw new Error("Utilisateur non connecté");
     
-    debugLogger.log("workoutSessions", "Création d'une session d'entraînement à partir du programme:", program.name);
+    debugLogger.log("workoutSessions", "Création d'une session d'entraînement à partir du programme: " + program.name);
     
     const { data, error } = await supabase
       .from('workout_sessions')
@@ -28,7 +28,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
       ])
       .select();
       
-    debugLogger.log("workoutSessions", "Résultat de la création de session:", data ? "Succès" : "Échec", error);
+    debugLogger.log("workoutSessions", "Résultat de la création de session: " + (data ? "Succès" : "Échec") + (error ? (" - " + JSON.stringify(error)) : ""));
     
     if (data && data.length > 0) {
       await updateUserData(user.user.id, data[0].id);
@@ -36,13 +36,13 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     
     return { data: data && data.length > 0 ? data[0] : null, error };
   } catch (error) {
-    debugLogger.error("workoutSessions", "Erreur lors de la création de la session:", error);
+    debugLogger.error("workoutSessions", "Erreur lors de la création de la session: " + JSON.stringify(error));
     return { data: null, error };
   }
 };
 
 async function updateUserData(userId: string, sessionId: string) {
-  debugLogger.log("workoutSessions", "Début de la mise à jour des données utilisateur pour UserId:", userId, "SessionId:", sessionId);
+  debugLogger.log("workoutSessions", "Début de la mise à jour des données utilisateur pour UserId: " + userId + ", SessionId: " + sessionId);
   
   try {
     await updateUserProfile(userId);
@@ -54,7 +54,7 @@ async function updateUserData(userId: string, sessionId: string) {
     // Vérification des tables après création de session
     await verifyUserTables(userId, sessionId);
   } catch (error) {
-    debugLogger.error("workoutSessions", "Erreur lors de la mise à jour des données utilisateur:", error);
+    debugLogger.error("workoutSessions", "Erreur lors de la mise à jour des données utilisateur: " + JSON.stringify(error));
   }
 }
 
@@ -66,9 +66,9 @@ async function updateUserProfile(userId: string) {
     .single();
     
   if (profileError) {
-    debugLogger.error("workoutSessions", "Erreur lors de la récupération du profil:", profileError);
+    debugLogger.error("workoutSessions", "Erreur lors de la récupération du profil: " + JSON.stringify(profileError));
   } else {
-    debugLogger.log("workoutSessions", "Profil trouvé:", profileData);
+    debugLogger.log("workoutSessions", "Profil trouvé: " + JSON.stringify(profileData));
   }
 }
 
@@ -96,10 +96,10 @@ async function updateUserProgression(userId: string) {
         }]);
       
       if (insertError) {
-        debugLogger.error("workoutSessions", "Erreur lors de la création du profil de progression:", insertError);
+        debugLogger.error("workoutSessions", "Erreur lors de la création du profil de progression: " + JSON.stringify(insertError));
       }
     } else {
-      debugLogger.error("workoutSessions", "Erreur lors de la vérification de progression:", checkError);
+      debugLogger.error("workoutSessions", "Erreur lors de la vérification de progression: " + JSON.stringify(checkError));
     }
   } else if (existingProgression) {
     const workoutPoints = (existingProgression.workout_points || 0) + 10;
@@ -115,7 +115,7 @@ async function updateUserProgression(userId: string) {
       .eq('user_id', userId);
     
     if (progressionError) {
-      debugLogger.error("workoutSessions", "Erreur lors de la mise à jour de la progression:", progressionError);
+      debugLogger.error("workoutSessions", "Erreur lors de la mise à jour de la progression: " + JSON.stringify(progressionError));
     }
   }
 }
@@ -140,10 +140,10 @@ async function updateUserPreferences(userId: string) {
         }]);
       
       if (insertPrefError) {
-        debugLogger.error("workoutSessions", "Erreur lors de la création des préférences:", insertPrefError);
+        debugLogger.error("workoutSessions", "Erreur lors de la création des préférences: " + JSON.stringify(insertPrefError));
       }
     } else {
-      debugLogger.error("workoutSessions", "Erreur lors de la vérification des préférences:", prefCheckError);
+      debugLogger.error("workoutSessions", "Erreur lors de la vérification des préférences: " + JSON.stringify(prefCheckError));
     }
   } else {
     const { error: prefError } = await supabase
@@ -154,7 +154,7 @@ async function updateUserPreferences(userId: string) {
       .eq('user_id', userId);
       
     if (prefError) {
-      debugLogger.error("workoutSessions", "Erreur lors de la mise à jour des préférences:", prefError);
+      debugLogger.error("workoutSessions", "Erreur lors de la mise à jour des préférences: " + JSON.stringify(prefError));
     }
   }
 }
@@ -183,10 +183,10 @@ async function updateUserStreaks(userId: string) {
         }]);
       
       if (insertStreakError) {
-        debugLogger.error("workoutSessions", "Erreur lors de la création du streak:", insertStreakError);
+        debugLogger.error("workoutSessions", "Erreur lors de la création du streak: " + JSON.stringify(insertStreakError));
       }
     } else {
-      debugLogger.error("workoutSessions", "Erreur lors de la vérification du streak:", streakCheckError);
+      debugLogger.error("workoutSessions", "Erreur lors de la vérification du streak: " + JSON.stringify(streakCheckError));
     }
   } else {
     const { error: streakError } = await supabase
@@ -199,13 +199,13 @@ async function updateUserStreaks(userId: string) {
       .eq('streak_type', 'workout');
       
     if (streakError) {
-      debugLogger.error("workoutSessions", "Erreur lors de la mise à jour du streak:", streakError);
+      debugLogger.error("workoutSessions", "Erreur lors de la mise à jour du streak: " + JSON.stringify(streakError));
     }
   }
 }
 
 async function createTrainingStats(userId: string, sessionId: string) {
-  debugLogger.log("workoutSessions", "Début de création des statistiques d'entraînement pour UserId:", userId, "SessionId:", sessionId);
+  debugLogger.log("workoutSessions", "Début de création des statistiques d'entraînement pour UserId: " + userId + ", SessionId: " + sessionId);
   
   try {
     const { data, error: statsError } = await supabase
@@ -221,39 +221,39 @@ async function createTrainingStats(userId: string, sessionId: string) {
       }]);
       
     if (statsError) {
-      debugLogger.error("workoutSessions", "Erreur lors de la création des statistiques d'entraînement:", statsError);
+      debugLogger.error("workoutSessions", "Erreur lors de la création des statistiques d'entraînement: " + JSON.stringify(statsError));
     } else {
-      debugLogger.log("workoutSessions", "Statistiques d'entraînement créées avec succès:", data);
+      debugLogger.log("workoutSessions", "Statistiques d'entraînement créées avec succès: " + JSON.stringify(data));
     }
   } catch (error) {
-    debugLogger.error("workoutSessions", "Exception lors de la création des statistiques d'entraînement:", error);
+    debugLogger.error("workoutSessions", "Exception lors de la création des statistiques d'entraînement: " + JSON.stringify(error));
   }
 }
 
 async function verifyUserTables(userId: string, sessionId: string) {
-  debugLogger.log("workoutSessions", "Vérification des tables après création de session pour l'utilisateur:", userId);
+  debugLogger.log("workoutSessions", "Vérification des tables après création de session pour l'utilisateur: " + userId);
   
   const { data: progressionData } = await supabase
     .from('user_progression')
     .select('*')
     .eq('user_id', userId);
-  debugLogger.log("workoutSessions", "État de user_progression:", progressionData);
+  debugLogger.log("workoutSessions", "État de user_progression: " + JSON.stringify(progressionData));
   
   const { data: streaksData } = await supabase
     .from('user_streaks')
     .select('*')
     .eq('user_id', userId);
-  debugLogger.log("workoutSessions", "État de user_streaks:", streaksData);
+  debugLogger.log("workoutSessions", "État de user_streaks: " + JSON.stringify(streaksData));
   
   const { data: preferencesData } = await supabase
     .from('user_preferences')
     .select('*')
     .eq('user_id', userId);
-  debugLogger.log("workoutSessions", "État de user_preferences:", preferencesData);
+  debugLogger.log("workoutSessions", "État de user_preferences: " + JSON.stringify(preferencesData));
   
   const { data: statsData } = await supabase
     .from('training_stats')
     .select('*')
     .eq('session_id', sessionId);
-  debugLogger.log("workoutSessions", "État de training_stats pour la session:", statsData);
+  debugLogger.log("workoutSessions", "État de training_stats pour la session: " + JSON.stringify(statsData));
 }
