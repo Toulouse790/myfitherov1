@@ -256,7 +256,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     
     debugLogger.log("sportProgramsApi", "Création d'une session d'entraînement à partir du programme:", program.name);
     
-    // Correction de l'appel à select() - en supprimant les arguments supplémentaires
+    // Correction de l'appel à select() - suppression des arguments en trop
     const { data, error } = await supabase
       .from('workout_sessions')
       .insert([
@@ -281,6 +281,19 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
     if (data && data.length > 0) {
       const sessionId = data[0].id;
       const userId = user.user.id;
+      
+      // Vérifier et mettre à jour le profil utilisateur
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+        
+      if (profileError) {
+        debugLogger.error("sportProgramsApi", "Erreur lors de la récupération du profil:", profileError);
+      } else {
+        debugLogger.log("sportProgramsApi", "Profil trouvé:", profileData);
+      }
       
       // Vérifier si l'utilisateur existe dans user_progression avant d'essayer de le mettre à jour
       const { data: existingProgression, error: checkError } = await supabase
@@ -403,7 +416,8 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
         const { error: streakError } = await supabase
           .from('user_streaks')
           .update({
-            last_activity_date: new Date().toISOString().split('T')[0]
+            last_activity_date: new Date().toISOString().split('T')[0],
+            updated_at: new Date().toISOString()
           })
           .eq('user_id', userId)
           .eq('streak_type', 'workout');
