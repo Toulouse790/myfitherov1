@@ -2,70 +2,65 @@
 import { SleepSession } from "@/types/sleep";
 import { FoodItem } from "@/types/nutrition";
 
-/**
- * Interface représentant une session d'entraînement
- */
 interface WorkoutSession {
   id?: string;
   user_id?: string;
   created_at?: string;
   total_duration_minutes?: number;
   exercises?: string[];
+  perceived_difficulty?: 'easy' | 'moderate' | 'hard';
 }
 
-/**
- * Interface représentant une corrélation trouvée
- */
-export interface WellnessCorrelation {
-  id: string;
-  title: string;
+interface Correlation {
+  type: string;
   description: string;
-  confidence: number;
-  type: 'positive' | 'negative' | 'neutral';
+  strength: number; // 0-1
+  data: any;
 }
 
 /**
- * Trouve des corrélations entre les données de sommeil, nutrition et entraînement
+ * Trouve des corrélations potentielles entre les différentes données de bien-être
  * 
- * @param sleepData Données de sommeil des 7 derniers jours
- * @param nutritionData Données nutritionnelles des 7 derniers jours
- * @param workoutData Données d'entraînement des 7 derniers jours
- * @returns Liste des corrélations trouvées
+ * @param sleepData Données de sommeil
+ * @param nutritionData Données nutritionnelles
+ * @param workoutData Données d'entraînement
+ * @returns Tableau de corrélations trouvées
  */
 export function findCorrelations(
   sleepData: SleepSession[], 
   nutritionData: FoodItem[], 
   workoutData: WorkoutSession[]
-): WellnessCorrelation[] {
-  const correlations: WellnessCorrelation[] = [];
+): Correlation[] {
+  const correlations: Correlation[] = [];
   
-  // Exemple de corrélation: Qualité du sommeil vs apport en protéines
-  if (sleepData.length > 0 && nutritionData.length > 0) {
-    // Analyse de corrélation
-    // ...
-    
-    correlations.push({
-      id: 'sleep-protein',
-      title: 'Sommeil et protéines',
-      description: 'Un apport plus élevé en protéines semble être associé à une meilleure qualité de sommeil.',
-      confidence: 75,
-      type: 'positive'
-    });
+  // Simplification: nous retournons quelques corrélations simples basées sur des heuristiques
+  
+  // Vérifier si l'utilisateur s'entraîne après une bonne nuit de sommeil
+  const goodSleepDays = new Set(
+    sleepData
+      .filter(session => (session.sleep_score || 0) > 70)
+      .map(session => new Date(session.created_at || '').toDateString())
+  );
+  
+  const workoutAfterGoodSleepDays = workoutData
+    .filter(session => {
+      const sessionDate = new Date(session.created_at || '').toDateString();
+      return goodSleepDays.has(sessionDate);
+    }).length;
+  
+  if (workoutAfterGoodSleepDays > 0 && goodSleepDays.size > 0) {
+    const correlation = workoutAfterGoodSleepDays / goodSleepDays.size;
+    if (correlation > 0.5) {
+      correlations.push({
+        type: 'sleep-workout',
+        description: 'Tendance à s\'entraîner après une bonne nuit de sommeil',
+        strength: correlation,
+        data: { workoutAfterGoodSleepDays, goodSleepDays: goodSleepDays.size }
+      });
+    }
   }
   
-  // Exemple de corrélation: Entraînement et sommeil
-  if (workoutData.length > 0 && sleepData.length > 0) {
-    // Analyse de corrélation
-    // ...
-    
-    correlations.push({
-      id: 'workout-sleep',
-      title: 'Entraînement et sommeil',
-      description: 'Les jours avec des entraînements intenses sont suivis de nuits de sommeil plus profondes.',
-      confidence: 82,
-      type: 'positive'
-    });
-  }
+  // Autres corrélations simplifiées...
   
   return correlations;
 }

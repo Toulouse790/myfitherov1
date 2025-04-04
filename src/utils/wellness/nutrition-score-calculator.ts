@@ -2,9 +2,9 @@
 import { FoodItem } from "@/types/nutrition";
 
 /**
- * Calcule le score nutritionnel en fonction des données alimentaires récentes
+ * Calcule le score nutritionnel en fonction des entrées du journal alimentaire
  * 
- * @param nutritionData Données alimentaires des 7 derniers jours
+ * @param nutritionData Données nutritionnelles des 7 derniers jours
  * @returns Score nutritionnel entre 0 et 100
  */
 export function calculateNutritionScore(nutritionData: FoodItem[]): number {
@@ -13,39 +13,46 @@ export function calculateNutritionScore(nutritionData: FoodItem[]): number {
   // Logique de calcul du score nutritionnel
   let balanceScore = 0;
   let consistencyScore = 0;
-  let diversityScore = 0;
+  let qualityScore = 0;
   
-  // Évaluer l'équilibre des macros
-  const entries = nutritionData.length;
-  const daysWithEntries = new Set(nutritionData.map(entry => new Date(entry.id).toDateString())).size;
+  // Évaluer l'équilibre macronutriments
+  const totalProteins = nutritionData.reduce((sum, item) => sum + (item.proteins || 0), 0);
+  const totalCarbs = nutritionData.reduce((sum, item) => sum + (item.carbs || 0), 0);
+  const totalFats = nutritionData.reduce((sum, item) => sum + (item.fats || 0), 0);
+  const totalCalories = nutritionData.reduce((sum, item) => sum + (item.calories || 0), 0);
   
-  // Calculer les moyennes de macronutriments
-  const totalProteins = nutritionData.reduce((sum, entry) => sum + (entry.proteins || 0), 0);
-  const totalCarbs = nutritionData.reduce((sum, entry) => sum + (entry.calories || 0), 0); // Approximation pour les carbs
-  const totalFats = nutritionData.reduce((sum, entry) => sum + (0), 0); // Pas de données de gras, approximation
-  
-  // Vérifier l'équilibre des macros (ratio protéines/glucides/lipides idéal approx. 30/40/30)
+  // Calculer les pourcentages de macronutriments
   const totalMacros = totalProteins + totalCarbs + totalFats;
+  
   if (totalMacros > 0) {
-    const proteinRatio = totalProteins / totalMacros;
-    const carbRatio = totalCarbs / totalMacros;
-    const fatRatio = totalFats / totalMacros;
+    const proteinPercent = (totalProteins / totalMacros) * 100;
+    const carbsPercent = (totalCarbs / totalMacros) * 100;
+    const fatsPercent = (totalFats / totalMacros) * 100;
     
-    // Calculer l'écart par rapport aux ratios idéaux
-    const proteinDiff = Math.abs(proteinRatio - 0.3);
-    const carbDiff = Math.abs(carbRatio - 0.4);
-    const fatDiff = Math.abs(fatRatio - 0.3);
+    // Idéal: 30% protéines, 40% glucides, 30% lipides (simplifié)
+    const proteinBalance = Math.abs(proteinPercent - 30);
+    const carbsBalance = Math.abs(carbsPercent - 40);
+    const fatsBalance = Math.abs(fatsPercent - 30);
     
-    balanceScore = 50 * (1 - ((proteinDiff + carbDiff + fatDiff) / 1.2));
+    // Plus la valeur est basse, plus on est équilibré
+    const balanceDeviation = (proteinBalance + carbsBalance + fatsBalance) / 3;
+    balanceScore = Math.max(0, 40 - balanceDeviation);
+  } else {
+    balanceScore = 20; // Score par défaut
   }
   
-  // Évaluer la consistance des repas
-  consistencyScore = Math.min(25, (daysWithEntries / 7) * 25);
+  // Évaluer la cohérence des repas (présence régulière d'entrées)
+  const uniqueDays = new Set(
+    nutritionData.map(item => new Date(item.created_at || '').toDateString())
+  );
+  consistencyScore = Math.min(30, (uniqueDays.size / 7) * 30);
   
-  // Évaluer la diversité des aliments
-  const mealTypes = new Set(nutritionData.map(entry => entry.unit)).size;
-  diversityScore = Math.min(25, (mealTypes / 5) * 25); // 5 repas possibles
+  // Évaluer la qualité (simplifié)
+  const avgCaloriesPerDay = totalCalories / (uniqueDays.size || 1);
+  const recommendedCalories = 2000; // Valeur moyenne simplifiée
+  const calorieDeviation = Math.abs(avgCaloriesPerDay - recommendedCalories);
+  qualityScore = Math.max(0, 30 - (calorieDeviation / 100));
   
-  const calculatedScore = balanceScore + consistencyScore + diversityScore;
+  const calculatedScore = balanceScore + consistencyScore + qualityScore;
   return Math.min(100, Math.max(0, calculatedScore));
 }

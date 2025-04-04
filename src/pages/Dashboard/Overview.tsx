@@ -1,15 +1,20 @@
+
 import { Header } from "@/components/Layout/Header";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
+import { useWellnessScore } from "@/hooks/use-wellness-score";
+import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
+import { DashboardStats } from "@/components/Dashboard/DashboardStats";
 
 export default function DashboardOverview() {
   const { user } = useAuth();
+  const { data: wellnessScore, isLoading: isLoadingWellness } = useWellnessScore();
 
   const { data: stats, isLoading } = useQuery({
-    queryKey: ['dashboard-overview'],
+    queryKey: ['dashboard-overview', user?.id],
     queryFn: async () => {
       if (!user) return null;
 
@@ -22,13 +27,14 @@ export default function DashboardOverview() {
       return {
         streaks: streaks.data || [],
         goals: goals.data || [],
-        achievements: achievements.data || []
+        achievements: achievements.data || [],
+        wellnessScore: wellnessScore
       };
     },
-    enabled: !!user
+    enabled: !!user && !!wellnessScore
   });
 
-  if (isLoading) {
+  if (isLoading || isLoadingWellness) {
     return (
       <Header>
         <div className="flex items-center justify-center min-h-screen">
@@ -58,6 +64,14 @@ export default function DashboardOverview() {
             <h2 className="text-xl font-semibold mb-4">Succès</h2>
             <p>{stats?.achievements.length || 0} succès débloqués</p>
           </Card>
+        </div>
+        
+        <div className="mt-8">
+          <DashboardStats />
+        </div>
+        
+        <div className="mt-8">
+          <TrendMetrics />
         </div>
       </div>
     </Header>
