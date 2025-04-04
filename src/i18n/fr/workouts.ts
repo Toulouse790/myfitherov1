@@ -35,9 +35,5 @@ export const workouts = {
   restBeforeNextSet: "Reposez-vous avant la prochaine série",
   startSession: "Commencer",
   startSessionLoading: "Chargement...",
-  regenerate: "Régénérer",
-  errors: {
-    sessionFinalize: "Erreur lors de la finalisation de la séance",
-    sessionFinalizeDescription: "Impossible de finaliser la séance d'entraînement"
-  }
+  regenerate: "Régénérer"
 };
