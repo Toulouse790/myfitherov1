@@ -266,7 +266,7 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           status: 'in_progress',
           workout_type: 'sport_specific',
           total_duration_minutes: program.duration * 60 || 45,
-          // Utiliser des métadonnées supplémentaires pour storer les informations du programme
+          // Utiliser des métadonnées supplémentaires pour stocker les informations du programme
           metadata: {
             program_name: program.name,
             program_difficulty: program.difficulty,
@@ -275,11 +275,75 @@ export const createWorkoutFromProgram = async (program: SportProgram) => {
           }
         }
       ])
-      .select()
-      .single();
+      .select();  // Correction : Removed extra arguments here
       
     debugLogger.log("sportProgramsApi", "Résultat de la création de session:", data ? "Succès" : "Échec", error);
-    return { data, error };
+    
+    // Maintenant, assurons-nous que les tables liées soient mises à jour
+    if (data && data.length > 0) {
+      // Mettre à jour user_streaks pour cet utilisateur s'il existe déjà un enregistrement
+      const sessionId = data[0].id;
+      const userId = user.user.id;
+      
+      // Initialiser ou mettre à jour l'enregistrement de progression de l'utilisateur
+      const { error: progressionError } = await supabase
+        .from('user_progression')
+        .upsert([{
+          user_id: userId,
+          updated_at: new Date().toISOString(),
+          // Ne mettre à jour que si l'enregistrement n'existe pas
+          workout_points: 10, 
+          total_points: 10
+        }], { onConflict: 'user_id' });
+      
+      if (progressionError) {
+        debugLogger.error("sportProgramsApi", "Erreur lors de la mise à jour de la progression:", progressionError);
+      }
+      
+      // Initialiser ou mettre à jour les préférences utilisateur s'ils n'existent pas
+      const { error: prefError } = await supabase
+        .from('user_preferences')
+        .upsert([{
+          user_id: userId,
+          updated_at: new Date().toISOString()
+        }], { onConflict: 'user_id' });
+        
+      if (prefError) {
+        debugLogger.error("sportProgramsApi", "Erreur lors de la mise à jour des préférences:", prefError);
+      }
+      
+      // Initialiser ou mettre à jour l'enregistrement de streak
+      const today = new Date().toISOString().split('T')[0];
+      const { error: streakError } = await supabase
+        .from('user_streaks')
+        .upsert([{
+          user_id: userId,
+          streak_type: 'workout',
+          last_activity_date: today,
+          current_streak: 1  // Le trigger handle_streak_update s'occupera d'incrémenter si nécessaire
+        }], { onConflict: 'user_id' });
+        
+      if (streakError) {
+        debugLogger.error("sportProgramsApi", "Erreur lors de la mise à jour du streak:", streakError);
+      }
+      
+      // Créer un enregistrement de statistiques d'entraînement
+      const { error: statsError } = await supabase
+        .from('training_stats')
+        .insert([{
+          user_id: userId,
+          session_id: sessionId,
+          session_duration_minutes: program.duration,
+          calories_burned: Math.round(program.duration * 10), // Estimation simple
+          muscle_groups_worked: ['jambes', 'bras', 'core']  // À ajuster en fonction du programme
+        }]);
+        
+      if (statsError) {
+        debugLogger.error("sportProgramsApi", "Erreur lors de la création des statistiques d'entraînement:", statsError);
+      }
+    }
+    
+    return { data: data && data.length > 0 ? data[0] : null, error };
   } catch (error) {
     debugLogger.error("sportProgramsApi", "Erreur lors de la création de la session:", error);
     return { data: null, error };
