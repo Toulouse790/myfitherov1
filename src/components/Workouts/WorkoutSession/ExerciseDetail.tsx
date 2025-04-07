@@ -9,8 +9,8 @@ import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { WorkoutDifficulty } from "../WorkoutDifficulty";
-import { ExerciseNotes } from "../ExerciseNotes";
+import { WorkoutDifficulty } from "@/components/Workouts/WorkoutDifficulty";
+import { ExerciseNotes } from "@/components/Workouts/ExerciseNotes";
 import { debugLogger } from "@/utils/debug-logger";
 
 interface ExerciseDetailProps {
