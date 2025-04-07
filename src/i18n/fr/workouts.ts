@@ -26,6 +26,7 @@ export const workouts = {
   
   // Informations d'exercice
   duration: "Durée",
+  durationMinutes: "{duration} minutes",
   exercises: "exercices",
   progress: "Progression",
   currentExercise: "Exercice en cours",
@@ -66,5 +67,29 @@ export const workouts = {
   validateSetLabel: "Valider la série",
   restingLabel: "Repos en cours",
   newPersonalRecord: "Nouveau record personnel: {weight}kg",
-  setValidated: "Série validée: {weight}kg"
+  setValidated: "Série validée: {weight}kg",
+  
+  // Titres et descriptions
+  title: "Entraînements",
+  trackProgressDescription: "Suivez votre progression et atteignez vos objectifs",
+  favorite: "Favori",
+  createNewSession: "Créez une nouvelle séance d'entraînement",
+  newWorkout: "Nouvel entraînement",
+  sportSpecific: "Spécifique au sport",
+  sportSpecificDescription: "Programmes adaptés à votre sport",
+  latestPerformances: "Dernières performances",
+  viewProgress: "Voir la progression",
+  sportPrograms: "Programmes sportifs",
+  generateWorkout: "Générer un entraînement",
+  
+  // Autres
+  kcal: "kcal",
+  trainingOf: "Entraînement du",
+  durationMinutes: "{duration} min",
+  startWorkoutError: "Impossible de démarrer l'entraînement",
+  emptyWorkoutError: "Entraînement vide",
+  noExercisesInTemplate: "Aucun exercice dans ce modèle",
+  backToWorkouts: "Retour aux entraînements",
+  sessionEmpty: "Cette séance ne contient aucun exercice",
+  startSessionErrorDescription: "Impossible de démarrer la séance d'entraînement"
 };
