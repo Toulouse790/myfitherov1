@@ -21,7 +21,7 @@ export const useUserProfileData = () => {
       console.log("Fetching profile for user ID:", user.id);
       
       // Fetch profile data
-      const { data: profileData, error: profileError } = await supabase
+      let { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -93,7 +93,7 @@ export const useUserProfileData = () => {
       }
 
       // Fetch progression data (points & level)
-      const { data: progressionData, error: progressionError } = await supabase
+      let { data: progressionData, error: progressionError } = await supabase
         .from('user_progression')
         .select('*')
         .eq('user_id', user.id)
