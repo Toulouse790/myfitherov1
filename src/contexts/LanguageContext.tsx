@@ -45,7 +45,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       
       for (const k of keys) {
         if (current[k] === undefined) {
-          // Correction ici : ajouter un titre et un message au debugLogger.warn
+          // Si la clé n'est pas trouvée dans la langue actuelle, enregistrer un avertissement
           debugLogger.warn("Translation missing", `Key: ${key} in language: ${language}`);
           
           // Essayez de trouver la clé dans une autre langue si la fallback n'est pas spécifiée
@@ -62,7 +62,30 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 enCurrent = enCurrent[enKey];
               }
               if (enFound && typeof enCurrent === 'string') {
+                // Marquer visiblement les traductions automatiquement remplacées en mode développement
+                if (process.env.NODE_ENV === 'development') {
+                  debugLogger.log("Using English fallback", `Key: ${key}`);
+                }
                 return enCurrent;
+              }
+            }
+            
+            // Si toujours pas trouvé, essayer avec le français pour les applications principalement françaises
+            if (language !== 'fr') {
+              let frCurrent = translations.fr;
+              let frFound = true;
+              for (const frKey of keys) {
+                if (frCurrent[frKey] === undefined) {
+                  frFound = false;
+                  break;
+                }
+                frCurrent = frCurrent[frKey];
+              }
+              if (frFound && typeof frCurrent === 'string') {
+                if (process.env.NODE_ENV === 'development') {
+                  debugLogger.log("Using French fallback", `Key: ${key}`);
+                }
+                return frCurrent;
               }
             }
           }
