@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 import { SportProgram } from "./programs";
@@ -45,11 +46,22 @@ async function updateUserData(userId: string, sessionId: string) {
   debugLogger.log("workoutSessions", "Début de la mise à jour des données utilisateur pour UserId: " + userId + ", SessionId: " + sessionId);
   
   try {
-    await updateUserProfile(userId);
-    await updateUserProgression(userId);
-    await updateUserPreferences(userId);
-    await updateUserStreaks(userId);
-    await createTrainingStats(userId, sessionId);
+    // Vérification si l'utilisateur existe dans user_progression
+    const { data: existingProgression, error: checkError } = await supabase
+      .from('user_progression')
+      .select('*')
+      .eq('user_id', userId);
+      
+    debugLogger.log("workoutSessions", "Vérification de progression existante: " + JSON.stringify({ existingData: existingProgression, error: checkError }));
+
+    // S'assurer que toutes les tables associées sont correctement mises à jour
+    await Promise.all([
+      updateUserProfile(userId),
+      updateUserProgression(userId),
+      updateUserPreferences(userId),
+      updateUserStreaks(userId),
+      createTrainingStats(userId, sessionId)
+    ]);
     
     // Vérification des tables après création de session
     await verifyUserTables(userId, sessionId);
@@ -67,6 +79,27 @@ async function updateUserProfile(userId: string) {
     
   if (profileError) {
     debugLogger.error("workoutSessions", "Erreur lors de la récupération du profil: " + JSON.stringify(profileError));
+    
+    // Si le profil n'existe pas, on essaie de le créer
+    if (profileError.code === 'PGRST116') {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData && userData.user) {
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert([{
+            id: userId,
+            username: userData.user.email?.split('@')[0] || `user_${Date.now()}`,
+            updated_at: new Date().toISOString(),
+            created_at: new Date().toISOString()
+          }]);
+        
+        if (insertError) {
+          debugLogger.error("workoutSessions", "Erreur lors de la création du profil: " + JSON.stringify(insertError));
+        } else {
+          debugLogger.log("workoutSessions", "Profil créé avec succès pour userId: " + userId);
+        }
+      }
+    }
   } else {
     debugLogger.log("workoutSessions", "Profil trouvé: " + JSON.stringify(profileData));
   }
@@ -76,34 +109,34 @@ async function updateUserProgression(userId: string) {
   const { data: existingProgression, error: checkError } = await supabase
     .from('user_progression')
     .select('*')
-    .eq('user_id', userId)
-    .single();
+    .eq('user_id', userId);
     
-  if (checkError) {
-    if (checkError.code === 'PGRST116') {
-      debugLogger.log("workoutSessions", "Utilisateur non trouvé dans user_progression, création d'un nouveau profil");
-      
-      const { error: insertError } = await supabase
-        .from('user_progression')
-        .insert([{
-          user_id: userId,
-          workout_points: 10,
-          nutrition_points: 0,
-          sleep_points: 0,
-          total_points: 10,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }]);
-      
-      if (insertError) {
-        debugLogger.error("workoutSessions", "Erreur lors de la création du profil de progression: " + JSON.stringify(insertError));
-      }
+  debugLogger.log("workoutSessions", "Vérification progression utilisateur: " + JSON.stringify({ data: existingProgression, error: checkError }));
+    
+  if (!existingProgression || existingProgression.length === 0) {
+    debugLogger.log("workoutSessions", "Utilisateur non trouvé dans user_progression, création d'un nouveau profil");
+    
+    const { error: insertError } = await supabase
+      .from('user_progression')
+      .insert([{
+        user_id: userId,
+        workout_points: 10,
+        nutrition_points: 0,
+        sleep_points: 0,
+        total_points: 10,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }]);
+    
+    if (insertError) {
+      debugLogger.error("workoutSessions", "Erreur lors de la création du profil de progression: " + JSON.stringify(insertError));
     } else {
-      debugLogger.error("workoutSessions", "Erreur lors de la vérification de progression: " + JSON.stringify(checkError));
+      debugLogger.log("workoutSessions", "Profil de progression créé avec succès");
     }
-  } else if (existingProgression) {
-    const workoutPoints = (existingProgression.workout_points || 0) + 10;
-    const totalPoints = (existingProgression.total_points || 0) + 10;
+  } else {
+    const existingData = existingProgression[0];
+    const workoutPoints = (existingData.workout_points || 0) + 10;
+    const totalPoints = (existingData.total_points || 0) + 10;
     
     const { error: progressionError } = await supabase
       .from('user_progression')
@@ -116,6 +149,8 @@ async function updateUserProgression(userId: string) {
     
     if (progressionError) {
       debugLogger.error("workoutSessions", "Erreur lors de la mise à jour de la progression: " + JSON.stringify(progressionError));
+    } else {
+      debugLogger.log("workoutSessions", "Progression mise à jour avec succès");
     }
   }
 }
@@ -124,26 +159,25 @@ async function updateUserPreferences(userId: string) {
   const { data: existingPrefs, error: prefCheckError } = await supabase
     .from('user_preferences')
     .select('*')
-    .eq('user_id', userId)
-    .single();
+    .eq('user_id', userId);
     
-  if (prefCheckError) {
-    if (prefCheckError.code === 'PGRST116') {
-      debugLogger.log("workoutSessions", "Utilisateur non trouvé dans user_preferences, création d'un nouveau profil de préférences");
-      
-      const { error: insertPrefError } = await supabase
-        .from('user_preferences')
-        .insert([{
-          user_id: userId,
-          updated_at: new Date().toISOString(),
-          created_at: new Date().toISOString()
-        }]);
-      
-      if (insertPrefError) {
-        debugLogger.error("workoutSessions", "Erreur lors de la création des préférences: " + JSON.stringify(insertPrefError));
-      }
+  debugLogger.log("workoutSessions", "Vérification préférences utilisateur: " + JSON.stringify({ data: existingPrefs, error: prefCheckError }));
+    
+  if (!existingPrefs || existingPrefs.length === 0) {
+    debugLogger.log("workoutSessions", "Utilisateur non trouvé dans user_preferences, création d'un nouveau profil de préférences");
+    
+    const { error: insertPrefError } = await supabase
+      .from('user_preferences')
+      .insert([{
+        user_id: userId,
+        updated_at: new Date().toISOString(),
+        created_at: new Date().toISOString()
+      }]);
+    
+    if (insertPrefError) {
+      debugLogger.error("workoutSessions", "Erreur lors de la création des préférences: " + JSON.stringify(insertPrefError));
     } else {
-      debugLogger.error("workoutSessions", "Erreur lors de la vérification des préférences: " + JSON.stringify(prefCheckError));
+      debugLogger.log("workoutSessions", "Préférences créées avec succès");
     }
   } else {
     const { error: prefError } = await supabase
@@ -155,6 +189,8 @@ async function updateUserPreferences(userId: string) {
       
     if (prefError) {
       debugLogger.error("workoutSessions", "Erreur lors de la mise à jour des préférences: " + JSON.stringify(prefError));
+    } else {
+      debugLogger.log("workoutSessions", "Préférences mises à jour avec succès");
     }
   }
 }
@@ -164,29 +200,28 @@ async function updateUserStreaks(userId: string) {
     .from('user_streaks')
     .select('*')
     .eq('user_id', userId)
-    .eq('streak_type', 'workout')
-    .single();
+    .eq('streak_type', 'workout');
     
-  if (streakCheckError) {
-    if (streakCheckError.code === 'PGRST116') {
-      debugLogger.log("workoutSessions", "Streak non trouvé pour l'utilisateur, création d'un nouveau streak");
-      
-      const { error: insertStreakError } = await supabase
-        .from('user_streaks')
-        .insert([{
-          user_id: userId,
-          streak_type: 'workout',
-          last_activity_date: new Date().toISOString().split('T')[0],
-          current_streak: 1,
-          longest_streak: 1,
-          created_at: new Date().toISOString()
-        }]);
-      
-      if (insertStreakError) {
-        debugLogger.error("workoutSessions", "Erreur lors de la création du streak: " + JSON.stringify(insertStreakError));
-      }
+  debugLogger.log("workoutSessions", "Vérification streaks utilisateur: " + JSON.stringify({ data: existingStreak, error: streakCheckError }));
+    
+  if (!existingStreak || existingStreak.length === 0) {
+    debugLogger.log("workoutSessions", "Streak non trouvé pour l'utilisateur, création d'un nouveau streak");
+    
+    const { error: insertStreakError } = await supabase
+      .from('user_streaks')
+      .insert([{
+        user_id: userId,
+        streak_type: 'workout',
+        last_activity_date: new Date().toISOString().split('T')[0],
+        current_streak: 1,
+        longest_streak: 1,
+        created_at: new Date().toISOString()
+      }]);
+    
+    if (insertStreakError) {
+      debugLogger.error("workoutSessions", "Erreur lors de la création du streak: " + JSON.stringify(insertStreakError));
     } else {
-      debugLogger.error("workoutSessions", "Erreur lors de la vérification du streak: " + JSON.stringify(streakCheckError));
+      debugLogger.log("workoutSessions", "Streak créé avec succès");
     }
   } else {
     const { error: streakError } = await supabase
@@ -200,6 +235,8 @@ async function updateUserStreaks(userId: string) {
       
     if (streakError) {
       debugLogger.error("workoutSessions", "Erreur lors de la mise à jour du streak: " + JSON.stringify(streakError));
+    } else {
+      debugLogger.log("workoutSessions", "Streak mis à jour avec succès");
     }
   }
 }
@@ -208,22 +245,35 @@ async function createTrainingStats(userId: string, sessionId: string) {
   debugLogger.log("workoutSessions", "Début de création des statistiques d'entraînement pour UserId: " + userId + ", SessionId: " + sessionId);
   
   try {
-    const { data, error: statsError } = await supabase
+    // Vérification si des stats existent déjà pour cette session
+    const { data: existingStats, error: checkError } = await supabase
       .from('training_stats')
-      .insert([{
-        user_id: userId,
-        session_id: sessionId,
-        session_duration_minutes: 45, // Valeur par défaut
-        calories_burned: 450, // Estimation moyenne
-        muscle_groups_worked: ['jambes', 'bras', 'core'],
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }]);
+      .select('*')
+      .eq('session_id', sessionId);
       
-    if (statsError) {
-      debugLogger.error("workoutSessions", "Erreur lors de la création des statistiques d'entraînement: " + JSON.stringify(statsError));
+    debugLogger.log("workoutSessions", "Vérification stats existantes: " + JSON.stringify({ existingStats, error: checkError }));
+    
+    // Si pas de stats, on en crée
+    if (!existingStats || existingStats.length === 0) {
+      const { data, error: statsError } = await supabase
+        .from('training_stats')
+        .insert([{
+          user_id: userId,
+          session_id: sessionId,
+          session_duration_minutes: 45, // Valeur par défaut
+          calories_burned: 450, // Estimation moyenne
+          muscle_groups_worked: ['jambes', 'bras', 'core'],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }]);
+        
+      if (statsError) {
+        debugLogger.error("workoutSessions", "Erreur lors de la création des statistiques d'entraînement: " + JSON.stringify(statsError));
+      } else {
+        debugLogger.log("workoutSessions", "Statistiques d'entraînement créées avec succès: " + JSON.stringify(data));
+      }
     } else {
-      debugLogger.log("workoutSessions", "Statistiques d'entraînement créées avec succès: " + JSON.stringify(data));
+      debugLogger.log("workoutSessions", "Les statistiques d'entraînement existent déjà pour cette session");
     }
   } catch (error) {
     debugLogger.error("workoutSessions", "Exception lors de la création des statistiques d'entraînement: " + JSON.stringify(error));
