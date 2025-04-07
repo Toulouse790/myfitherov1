@@ -6,9 +6,10 @@ import { Progress } from "@/components/ui/progress";
 
 interface ProfileStatsProps {
   stats: UserProfile['stats'];
+  detailed?: boolean;
 }
 
-export const ProfileStats = ({ stats }: ProfileStatsProps) => {
+export const ProfileStats = ({ stats, detailed = false }: ProfileStatsProps) => {
   // Calculate progress to next level (simplified)
   const nextLevelPoints = (stats.level + 1) * 100;
   const currentProgress = (stats.points / nextLevelPoints) * 100;
@@ -47,6 +48,24 @@ export const ProfileStats = ({ stats }: ProfileStatsProps) => {
             <p className="text-sm text-muted-foreground">Jours consécutifs</p>
           </div>
         </div>
+
+        {detailed && (
+          <div className="mt-6 pt-6 border-t">
+            <h4 className="text-md font-medium mb-4">Statistiques détaillées</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground">Temps total d'entraînement</p>
+                <p className="text-xl font-bold">{stats.totalWorkoutMinutes} min</p>
+              </div>
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground">Moyenne par entraînement</p>
+                <p className="text-xl font-bold">
+                  {stats.workoutsCompleted > 0 ? Math.round(stats.totalWorkoutMinutes / stats.workoutsCompleted) : 0} min
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );
