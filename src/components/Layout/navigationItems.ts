@@ -1,3 +1,4 @@
+
 import { Home, Dumbbell, User, Pizza, Moon, ChartBar, FolderOpen } from "lucide-react";
 
 export const navigationItems = [

@@ -1,7 +1,6 @@
 
 import { User2, Dumbbell, Bell, Crown, Settings } from "lucide-react";
 import { ProfileNavItem } from "./ProfileNavItem";
-import { UserProfile } from "@/types/user";
 
 interface ProfileNavigationProps {
   isPremium: boolean;
@@ -28,15 +27,8 @@ export const ProfileNavigation = ({ isPremium }: ProfileNavigationProps) => {
       
       <ProfileNavItem
         icon={<Bell className="w-6 h-6 text-primary" />}
-        title="Notifications"
-        description="Gérez vos préférences de notifications"
-        path="/notifications"
-      />
-
-      <ProfileNavItem
-        icon={<Settings className="w-6 h-6 text-primary" />}
-        title="Paramètres de l'application"
-        description="Langue, thème et confidentialité"
+        title="Notifications et préférences"
+        description="Gérez vos paramètres d'application"
         path="/app-settings"
       />
 

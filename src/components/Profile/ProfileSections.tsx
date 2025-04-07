@@ -6,9 +6,11 @@ import { UserInfo } from "./Sections/UserInfo";
 import { ProfileCompletion } from "./Sections/ProfileCompletion";
 import { ProfileNavigation } from "./Sections/Navigation/ProfileNavigation";
 import { AccountActions } from "./Sections/AccountActions";
-import { Separator } from "@/components/ui/separator";
 import { MeasurementsSection } from "./Sections/MeasurementsSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileSectionsProps {
   profile: UserProfile;
@@ -16,12 +18,13 @@ interface ProfileSectionsProps {
 }
 
 export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProps) => {
+  const navigate = useNavigate();
+  
   return (
     <div className="space-y-6">
       <Tabs defaultValue="overview">
-        <TabsList className="grid grid-cols-3 mb-4">
+        <TabsList className="grid grid-cols-2 mb-4">
           <TabsTrigger value="overview">Aperçu</TabsTrigger>
-          <TabsTrigger value="stats">Statistiques</TabsTrigger>
           <TabsTrigger value="settings">Paramètres</TabsTrigger>
         </TabsList>
         
@@ -36,11 +39,20 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
           <ProfileCompletion profile={profile} />
           
           <MeasurementsSection />
-        </TabsContent>
-        
-        <TabsContent value="stats" className="space-y-6">
-          <ProfileStats stats={profile.stats} detailed />
-          {/* Composant futur pour afficher plus de statistiques */}
+          
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Statistiques détaillées</h3>
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/stats')}
+                className="flex items-center text-primary"
+              >
+                Voir toutes les statistiques <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+            <p className="text-muted-foreground mt-1">Accédez à vos performances et à votre progression</p>
+          </Card>
         </TabsContent>
         
         <TabsContent value="settings" className="space-y-6">
