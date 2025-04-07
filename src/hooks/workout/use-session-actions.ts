@@ -1,164 +1,78 @@
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { debugLogger } from "@/utils/debug-logger";
 
 export const useSessionActions = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
-  const createWorkoutSession = async (type: string, customExercises?: string[]) => {
+  const createWorkoutSession = async (exercises: string[] = ["Squats", "Développé couché", "Soulevé de terre"]) => {
+    if (!user) {
+      toast({
+        title: t("common.error") || "Erreur",
+        description: t("auth.signInRequired") || "Vous devez être connecté pour créer une séance d'entraînement",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      if (!user) {
-        debugLogger.warn("useSessionActions", "Tentative de création de séance sans authentification");
-        toast({
-          title: "Connexion requise",
-          description: "Vous devez être connecté pour créer une séance",
-          variant: "destructive",
-        });
-        navigate('/signin', { state: { from: '/workouts' } });
-        return;
-      }
+      setIsLoading(true);
+      
+      debugLogger.log("useSessionActions", "Création d'une nouvelle séance d'entraînement", {
+        userId: user.id,
+        exerciseCount: exercises.length
+      });
 
-      // First check if profile exists
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError || !profile) {
-        // Create profile if it doesn't exist
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert([{ id: user.id }]);
-
-        if (insertError) {
-          throw insertError;
-        }
-      }
-
-      if (type === 'favorites') {
-        navigate('/workouts');
-        return;
-      }
-
-      // Définir les exercices selon le type
-      let defaultExercises: string[];
-      let workoutType: string;
-      let targetDuration: number;
-
-      if (type === 'custom' && customExercises && customExercises.length > 0) {
-        defaultExercises = customExercises;
-        workoutType = 'strength';
-        targetDuration = customExercises.length <= 3 ? 30 : 45;
-        debugLogger.log("useSessionActions", "Création d'une séance avec exercices personnalisés:", customExercises);
-      } else if (type === 'cardio') {
-        defaultExercises = [
-          "Course à pied",
-          "Vélo stationnaire",
-          "Rameur"
-        ];
-        workoutType = 'cardio';
-        targetDuration = 30;
-      } else if (type === 'hiit') {
-        defaultExercises = [
-          "Burpees",
-          "Mountain climbers",
-          "Jumping jacks"
-        ];
-        workoutType = 'hiit';
-        targetDuration = 30;
-      } else {
-        // Pour le quick workout, on limite à 3 exercices pour respecter les 20-30 minutes
-        defaultExercises = type === 'quick' ? [
-          "Extensions triceps",
-          "Développé couché",
-          "Squat"
-        ] : [
-          "Extensions triceps",
-          "Développé couché", 
-          "Squat",
-          "Soulevé de terre",
-          "Développé militaire"
-        ];
-        workoutType = 'strength';
-        targetDuration = type === 'quick' ? 25 : 45;
-      }
-
-      const workoutData = {
-        user_id: user.id,
-        workout_type: workoutType,
-        status: 'in_progress',
-        target_duration_minutes: targetDuration,
-        exercises: defaultExercises,
-      };
-
-      const { data: workoutSession, error } = await supabase
+      const { data, error } = await supabase
         .from('workout_sessions')
-        .insert(workoutData)
+        .insert([
+          {
+            user_id: user.id,
+            exercises: exercises,
+            status: 'in_progress',
+            workout_type: 'strength',
+            started_at: new Date().toISOString()
+          }
+        ])
         .select()
         .single();
 
-      if (error) {
-        debugLogger.error("useSessionActions", "Erreur Supabase:", error);
-        throw error;
-      }
-
-      if (workoutSession) {
-        debugLogger.log("useSessionActions", "Session d'entraînement créée:", workoutSession);
-        navigate(`/workouts/${workoutSession.id}`);
-      }
-    } catch (error) {
-      debugLogger.error("useSessionActions", "Erreur lors de la création de l'entraînement:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de créer la séance",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleConfirmEndWorkout = async (difficulty: string, duration: number, muscleGroups: string[]) => {
-    try {
-      const pathParts = window.location.pathname.split('/');
-      const sessionId = pathParts[pathParts.length - 1];
-      
-      if (!sessionId || !user) return;
-
-      const { error } = await supabase
-        .from('workout_sessions')
-        .update({
-          status: 'completed',
-          total_duration_minutes: Math.floor(duration / 60),
-          difficulty_level: difficulty
-        })
-        .eq('id', sessionId)
-        .eq('user_id', user.id);
-
       if (error) throw error;
 
+      debugLogger.log("useSessionActions", "Session créée avec succès:", data);
+
       toast({
-        title: "Félicitations !",
-        description: "Votre séance d'entraînement a été enregistrée",
+        title: t("workouts.sessionCreated") || "Séance créée",
+        description: t("workouts.readyToStart") || "Votre séance est prête à commencer",
       });
 
-      navigate('/workouts');
+      // Rediriger vers la nouvelle séance
+      if (data?.id) {
+        navigate(`/workout/${data.id}`);
+      }
     } catch (error) {
-      debugLogger.error("useSessionActions", "Erreur lors de la finalisation de l'entraînement:", error);
+      console.error("Erreur lors de la création de la séance:", error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'enregistrer la séance",
+        title: t("common.error") || "Erreur",
+        description: t("workouts.sessionCreateFailed") || "Impossible de créer la séance d'entraînement",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return {
     createWorkoutSession,
-    handleConfirmEndWorkout
+    isLoading,
   };
 };
