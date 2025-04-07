@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -256,7 +255,7 @@ export const WorkoutFlowManager = () => {
                 positionName={positionName}
               />
             )}
-            <GeneratedWorkoutPreview exercises={selectedExercises} />
+            <GeneratedWorkoutPreview workout={{ exercises: selectedExercises }} />
           </motion.div>
         );
       case 5:

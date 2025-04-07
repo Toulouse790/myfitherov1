@@ -184,7 +184,7 @@ export const ExerciseDetail = ({
         <div className="space-y-4 md:space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
             <div className="space-y-2">
-              <p className="text-sm font-medium">{t("workouts.weight") || "Poids"} (kg)</p>
+              <p className="text-sm font-medium">{t("workouts.weight") || "Poids"} {t("workouts.weightUnit") || "(kg)"}</p>
               <div className="flex items-center">
                 <Button
                   variant="outline"

@@ -142,5 +142,15 @@ export const workouts = {
   // Nouvelles traductions pour l'interface utilisateur
   personalisedSession: "Votre séance personnalisée",
   sets: "séries",
-  reps: "répétitions"
+  reps: "répétitions",
+  weight: "Poids",
+  weightUnit: "(kg)",
+  numberOfSets: "Nombre de séries",
+  completeExercise: "Terminer l'exercice",
+  completedSets: "Séries complétées",
+  set: "Série",
+  caloriesBurned: "calories brûlées",
+  skipRest: "Passer le repos",
+  restTime: "Temps de repos",
+  calories: "kcal"
 };
