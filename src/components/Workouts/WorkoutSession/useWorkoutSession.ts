@@ -4,7 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
-import { WorkoutSummaryDialog } from "../WorkoutSummary";
 
 export const useWorkoutSession = () => {
   const { sessionId } = useParams();
