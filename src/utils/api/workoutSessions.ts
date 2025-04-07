@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { debugLogger } from "@/utils/debug-logger";
 import { SportProgram } from "./programs";
@@ -325,7 +324,7 @@ async function createTrainingStats(userId: string, sessionId: string): Promise<{
     
     // Si pas de stats, on en crée
     if (!existingStats || existingStats.length === 0) {
-      const { data, error: statsError } = await supabase
+      const { data: createdStats, error: statsError } = await supabase
         .from('training_stats')
         .insert([{
           user_id: userId,
@@ -342,12 +341,12 @@ async function createTrainingStats(userId: string, sessionId: string): Promise<{
         debugLogger.error("workoutSessions", "Erreur lors de la création des statistiques d'entraînement: " + JSON.stringify(statsError));
         return { success: false, error: statsError };
       } else {
-        debugLogger.log("workoutSessions", "Statistiques d'entraînement créées avec succès: " + JSON.stringify(data));
-        return { success: true, data };
+        debugLogger.log("workoutSessions", "Statistiques d'entraînement créées avec succès: " + JSON.stringify(createdStats));
+        return { success: true };
       }
     } else {
       debugLogger.log("workoutSessions", "Les statistiques d'entraînement existent déjà pour cette session");
-      return { success: true, data: existingStats };
+      return { success: true };
     }
   } catch (error) {
     debugLogger.error("workoutSessions", "Exception lors de la création des statistiques d'entraînement: " + JSON.stringify(error));
