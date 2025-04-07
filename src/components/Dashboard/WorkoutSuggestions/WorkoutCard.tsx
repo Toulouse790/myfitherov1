@@ -16,9 +16,12 @@ interface WorkoutCardProps {
   duration?: number;
   muscleGroups?: string[];
   level?: 'débutant' | 'intermédiaire' | 'avancé';
+  difficulty?: string;
+  sessionId?: string;
   exercises?: string[];
   onClick?: () => void;
   onStartWorkout?: () => Promise<void>;
+  onSelect?: () => void;
   className?: string;
   isLoading?: boolean;
 }
@@ -30,9 +33,12 @@ export const WorkoutCard = ({
   duration = 30,
   muscleGroups = [],
   level = 'intermédiaire',
+  difficulty,
+  sessionId,
   exercises = [],
   onClick,
   onStartWorkout,
+  onSelect,
   className,
   isLoading = false
 }: WorkoutCardProps) => {
@@ -62,8 +68,16 @@ export const WorkoutCard = ({
       } finally {
         setIsStarting(false);
       }
+    } else if (sessionId) {
+      // Naviguer vers la session d'entraînement si sessionId est fourni
+      navigate(`/workout-session/${sessionId}`);
+    } else if (onSelect) {
+      onSelect();
     }
   };
+
+  // Déterminer le niveau à afficher (utiliser difficulty ou level)
+  const displayLevel = difficulty || level;
 
   return (
     <Card 
@@ -97,9 +111,9 @@ export const WorkoutCard = ({
               </div>
             )}
             
-            {level && (
+            {displayLevel && (
               <Badge variant="outline" className="font-normal">
-                {level}
+                {displayLevel}
               </Badge>
             )}
           </div>
