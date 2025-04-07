@@ -43,6 +43,18 @@ export const common = {
   yesterday: "Hier",
   tomorrow: "Demain",
   now: "Maintenant",
+  min: "min",
+  sec: "sec",
+  hour: "heure",
+  hours: "heures",
+  day: "jour",
+  days: "jours",
+  week: "semaine",
+  weeks: "semaines",
+  month: "mois",
+  months: "mois",
+  year: "année",
+  years: "années",
   
   // Navigation
   home: "Accueil",

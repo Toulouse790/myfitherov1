@@ -69,7 +69,7 @@ export const WorkoutCard = ({
         {duration && (
           <div className="flex items-center text-sm">
             <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
-            <span>{t("workouts.durationMinutes", { duration })}</span>
+            <span>{duration} {t("common.min")}</span>
           </div>
         )}
         

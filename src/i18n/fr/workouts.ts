@@ -58,9 +58,14 @@ export const workouts = {
   
   // Messages d'erreur
   errors: {
+    sessionCreate: "Erreur lors de la création de la séance",
+    sessionCreateDescription: "Impossible de créer une séance d'entraînement",
     sessionFinalize: "Erreur lors de la finalisation de la séance",
     sessionFinalizeDescription: "Impossible de finaliser la séance d'entraînement",
-    saveWeightFailed: "Impossible d'enregistrer les poids"
+    saveWeightFailed: "Impossible d'enregistrer les poids",
+    sessionUpdate: "Erreur lors de la mise à jour de la séance",
+    sessionUpdateDescription: "Impossible de mettre à jour la séance",
+    activeSessionCheck: "Erreur lors de la vérification des sessions actives"
   },
   
   // États et messages divers
@@ -132,6 +137,6 @@ export const workouts = {
   restDayRecommended: "Jour de repos recommandé",
   trainedRecently: "Groupe musculaire récemment entraîné",
   tryNewWorkout: "Essayez un nouvel entraînement",
-  recommendedForRecovery: "Recommandé pour votre récupération"
+  recommendedForRecovery: "Recommandé pour votre récupération",
+  durationMinutes: "{duration} min"
 };
-
