@@ -3,7 +3,7 @@ export interface IDebugLogger {
   log: (context: string, message: string, data?: any) => void;
   warn: (context: string, message: string, data?: any) => void;
   error: (context: string, message: string, data?: any) => void;
-  enableDebugMode?: () => void;
+  enableDebugMode: () => void;  // Changé de optionnel à obligatoire
 }
 
 class DebugLogger implements IDebugLogger {
