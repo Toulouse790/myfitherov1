@@ -56,22 +56,48 @@ export const useWorkoutSession = () => {
 
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      
+      // Vérifier d'abord si la session existe
+      const { data: sessionData, error: sessionError } = await supabase
         .from('workout_sessions')
         .select('*')
         .eq('id', sessionId)
         .single();
 
-      if (error) throw error;
+      if (sessionError) {
+        debugLogger.error("WorkoutSession", "Erreur lors de la récupération de la session:", sessionError);
+        throw sessionError;
+      }
       
-      debugLogger.log("WorkoutSession", "Données de session chargées:", data);
+      // Si la session existe mais n'a pas d'exercices ou le tableau est vide
+      if (!sessionData.exercises || sessionData.exercises.length === 0) {
+        debugLogger.log("WorkoutSession", "La session n'a pas d'exercices définis:", sessionData);
+        
+        // Définir des exercices par défaut
+        const defaultExercises = ["Squats", "Pompes", "Abdominaux"];
+        
+        // Mettre à jour la session avec des exercices par défaut
+        const { error: updateError } = await supabase
+          .from('workout_sessions')
+          .update({ exercises: defaultExercises })
+          .eq('id', sessionId);
+          
+        if (updateError) {
+          debugLogger.error("WorkoutSession", "Erreur lors de la mise à jour des exercices par défaut:", updateError);
+        } else {
+          sessionData.exercises = defaultExercises;
+          debugLogger.log("WorkoutSession", "Exercices par défaut ajoutés à la session");
+        }
+      }
+      
+      debugLogger.log("WorkoutSession", "Données de session chargées:", sessionData);
 
-      setSession(data);
+      setSession(sessionData);
       
       // Initialiser le suivi de progression pour chaque exercice
-      if (data.exercises && data.exercises.length > 0) {
+      if (sessionData.exercises && sessionData.exercises.length > 0) {
         const progress: Record<string, {completed: boolean, sets: number, totalSets: number}> = {};
-        data.exercises.forEach((ex: string) => {
+        sessionData.exercises.forEach((ex: string) => {
           progress[ex] = {
             completed: false,
             sets: 0,
@@ -80,6 +106,31 @@ export const useWorkoutSession = () => {
         });
         setExerciseProgress(progress);
       }
+
+      // Vérifier si l'utilisateur a des statistiques d'entraînement
+      if (sessionData.user_id) {
+        const { data: statsData, error: statsError } = await supabase
+          .from('training_stats')
+          .select('*')
+          .eq('session_id', sessionId)
+          .maybeSingle();
+        
+        if (statsError) {
+          debugLogger.error("WorkoutSession", "Erreur lors de la récupération des statistiques:", statsError);
+        } else if (!statsData) {
+          debugLogger.log("WorkoutSession", "Pas de statistiques trouvées, création d'une entrée initiale");
+          
+          // Créer une entrée initiale dans training_stats
+          await supabase
+            .from('training_stats')
+            .insert([{
+              session_id: sessionId,
+              user_id: sessionData.user_id,
+              created_at: new Date().toISOString()
+            }]);
+        }
+      }
+
     } catch (error) {
       console.error('Erreur lors du chargement de la séance:', error);
       toast({
@@ -87,6 +138,9 @@ export const useWorkoutSession = () => {
         description: "Impossible de charger la séance d'entraînement",
         variant: "destructive",
       });
+      
+      // Rediriger vers la page des entraînements en cas d'erreur critique
+      navigate('/workouts');
     } finally {
       setLoading(false);
     }
@@ -167,6 +221,19 @@ export const useWorkoutSession = () => {
     if (!sessionId) return;
     
     try {
+      // Récupérer l'utilisateur actuel
+      const { data: authData } = await supabase.auth.getUser();
+      const userId = authData?.user?.id;
+      
+      if (!userId) {
+        toast({
+          title: "Erreur",
+          description: "Utilisateur non authentifié",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       // Calculer quelques statistiques pour la séance
       const totalExercises = session?.exercises?.length || 0;
       const completedExercises = Object.values(exerciseProgress).filter(ex => ex.completed).length;
@@ -177,6 +244,51 @@ export const useWorkoutSession = () => {
       // Calculer les calories brûlées (estimation simple)
       const caloriesBurned = Math.round(durationMinutes * 10);
       
+      // Vérifier si la session a un user_id, sinon l'ajouter
+      if (!session.user_id) {
+        const { error: updateUserError } = await supabase
+          .from('workout_sessions')
+          .update({ user_id: userId })
+          .eq('id', sessionId);
+          
+        if (updateUserError) {
+          debugLogger.error("WorkoutSession", "Erreur lors de l'ajout de l'ID utilisateur à la séance:", updateUserError);
+        }
+      }
+      
+      // Mise à jour des statistiques d'entraînement
+      const { data: statsData, error: statsError } = await supabase
+        .from('training_stats')
+        .select('*')
+        .eq('session_id', sessionId)
+        .maybeSingle();
+        
+      if (!statsData) {
+        // Créer une nouvelle entrée si elle n'existe pas
+        await supabase
+          .from('training_stats')
+          .insert([{
+            session_id: sessionId,
+            user_id: userId || session.user_id,
+            calories_burned: caloriesBurned,
+            session_duration_minutes: durationMinutes,
+            perceived_difficulty: 'moderate',
+            muscle_groups_worked: session?.exercises || []
+          }]);
+      } else {
+        // Mettre à jour l'entrée existante
+        await supabase
+          .from('training_stats')
+          .update({
+            calories_burned: caloriesBurned,
+            session_duration_minutes: durationMinutes,
+            perceived_difficulty: 'moderate',
+            muscle_groups_worked: session?.exercises || []
+          })
+          .eq('id', statsData.id);
+      }
+      
+      // Marquer la séance comme terminée
       await supabase
         .from('workout_sessions')
         .update({
