@@ -66,12 +66,11 @@ export const SportProgramsList = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-medium">{t("sports.availableSports", {count: sports.length})}</h2>
         <Button 
           onClick={refreshData}
           variant="outline"
           size="sm"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 ml-auto"
         >
           <RefreshCw size={16} />
           {t("common.refresh")}
