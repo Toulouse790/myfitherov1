@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,7 +80,6 @@ export const UnifiedWorkoutDetail = () => {
 
     fetchSessionData();
 
-    // Timer pour suivre la durée de la session
     const interval = setInterval(() => {
       setSessionDuration(prev => prev + 1);
     }, 1000);
@@ -89,7 +87,6 @@ export const UnifiedWorkoutDetail = () => {
     return () => clearInterval(interval);
   }, [sessionId, navigate, user]);
 
-  // Formatage du temps en minutes:secondes
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -113,12 +110,21 @@ export const UnifiedWorkoutDetail = () => {
   };
 
   const handleFinishWorkout = async () => {
-    const totalDurationMinutes = Math.floor(sessionDuration / 60);
+    const totalDurationMinutes = Math.floor((Date.now() - sessionStartTime) / 60000);
+    
+    const estimatedTotalWeight = exercises.length * 200;
+    
+    const estimatedCalories = Math.floor(totalDurationMinutes * 9);
     
     setWorkoutStats({
       duration: totalDurationMinutes,
-      totalWeight: Math.floor(Math.random() * 1000) + 500,
-      totalCalories: Math.floor(totalDurationMinutes * 10) // Estimation simple des calories
+      totalWeight: estimatedTotalWeight,
+      totalCalories: estimatedCalories
+    });
+    
+    debugLogger.log("UnifiedWorkoutDetail", "Statistiques de fin de séance:", {
+      duration: totalDurationMinutes, 
+      calories: estimatedCalories
     });
     
     setShowSummary(true);
@@ -126,10 +132,8 @@ export const UnifiedWorkoutDetail = () => {
 
   const handleConfirmEnd = async (difficulty: string, duration: number, muscleGroups: string[]) => {
     try {
-      // Calculer la durée réelle en minutes
       const actualDuration = Math.floor((Date.now() - sessionStartTime) / 60000);
       
-      // Mettre à jour la session avec les informations finales
       const { error } = await supabase
         .from('workout_sessions')
         .update({
@@ -161,7 +165,6 @@ export const UnifiedWorkoutDetail = () => {
     }
   };
 
-  // Bouton d'urgence pour arrêter l'entraînement
   const handleStopWorkout = () => {
     handleFinishWorkout();
   };
@@ -178,7 +181,6 @@ export const UnifiedWorkoutDetail = () => {
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
       <WorkoutHeader sessionDuration={sessionDuration} />
       
-      {/* Bouton d'arrêt de l'entraînement - Toujours visible */}
       <div className="sticky top-2 z-50 flex justify-end">
         <Button 
           variant="destructive" 

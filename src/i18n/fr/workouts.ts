@@ -101,6 +101,7 @@ export const workouts = {
   sessionEmpty: "Cette séance ne contient aucun exercice",
   startSessionErrorDescription: "Impossible de démarrer la séance d'entraînement",
   todayDate: "Aujourd'hui",
+  exerciseLibrary: "Bibliothèque d'exercices",
   
   // Bibliothèque d'entraînements
   libraryDescription: "Parcourez nos programmes d'entraînement",
