@@ -37,7 +37,6 @@ export const common = {
   notFound: "Non trouvé",
   noResults: "Aucun résultat",
   noData: "Aucune donnée",
-  required: "Requis",
   
   // Temps
   today: "Aujourd'hui",
