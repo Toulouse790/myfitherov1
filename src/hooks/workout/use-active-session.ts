@@ -30,7 +30,8 @@ export const useActiveSession = () => {
         .eq('status', 'in_progress');
       
       if (error) {
-        debugLogger.error("workouts.errors.activeSessionCheck", error);
+        // Correction du problème de type: passer error.message comme chaîne et l'objet error comme données
+        debugLogger.error("workouts.errors.activeSessionCheck", error.message, error);
         return null;
       }
 
