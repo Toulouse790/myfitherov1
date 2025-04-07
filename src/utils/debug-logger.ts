@@ -1,34 +1,51 @@
 
-export interface IDebugLogger {
-  log: (context: string, message: string, data?: any) => void;
-  warn: (context: string, message: string, data?: any) => void;
-  error: (context: string, message: string, data?: any) => void;
-  enableDebugMode: () => void;  // Cette méthode doit être implémentée
-}
+/**
+ * Utilitaire de logging amélioré pour faciliter le débogage
+ */
 
-class DebugLogger implements IDebugLogger {
-  private isDebugMode = false;
+const DEBUG_MODE = process.env.NODE_ENV === 'development' || localStorage.getItem('debug-mode') === 'true';
 
-  enableDebugMode(): void {
-    this.isDebugMode = true;
-    console.info('Mode debug activé');
+export const debugLogger = {
+  log: (context: string, message: string, data?: any) => {
+    if (DEBUG_MODE) {
+      console.log(`[${context}] ${message}`, data !== undefined ? data : '');
+    }
+  },
+  
+  warn: (context: string, message: string, data?: any) => {
+    if (DEBUG_MODE) {
+      console.warn(`[${context}] ⚠️ ${message}`, data !== undefined ? data : '');
+    }
+  },
+  
+  error: (context: string, message: string, error?: any) => {
+    // Les erreurs sont toujours loggées, même en production
+    console.error(`[${context}] 🔴 ${message}`, error || '');
+    
+    // En mode debug, afficher plus de détails
+    if (DEBUG_MODE && error) {
+      if (error.stack) {
+        console.error(`Stack trace:`, error.stack);
+      }
+    }
+  },
+  
+  group: (context: string, title: string, logFn: () => void) => {
+    if (DEBUG_MODE) {
+      console.group(`[${context}] ${title}`);
+      logFn();
+      console.groupEnd();
+    }
+  },
+  
+  // Ajout d'une méthode pour activer le mode debug en production si nécessaire
+  enableDebugMode: () => {
+    localStorage.setItem('debug-mode', 'true');
+    console.log('Mode debug activé');
+  },
+  
+  disableDebugMode: () => {
+    localStorage.removeItem('debug-mode');
+    console.log('Mode debug désactivé');
   }
-
-  log(context: string, message: string, data: any = {}): void {
-    if (!this.isDebugMode) return;
-    console.info(`[${context}] ${message}`, data);
-  }
-
-  warn(context: string, message: string, data: any = {}): void {
-    if (!this.isDebugMode) return;
-    console.warn(`[${context}] ${message}`, data);
-  }
-
-  error(context: string, message: string, data: any = {}): void {
-    if (!this.isDebugMode) return;
-    console.error(`[${context}] ${message}`, data);
-  }
-}
-
-// Instance singleton
-export const debugLogger: IDebugLogger = new DebugLogger();
+};
