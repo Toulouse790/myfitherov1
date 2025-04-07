@@ -2,7 +2,7 @@
 import { fetchSports, Sport } from './sports';
 import { fetchPositions, SportPosition } from './positions';
 import { fetchPrograms, fetchActivePrograms, SportProgram } from './programs';
-import { createWorkoutFromProgram } from './workoutSessions';
+import { createWorkoutFromProgram } from './workout-sessions';
 
 // Exporter les interfaces comme types
 export type { Sport, SportPosition, SportProgram };
