@@ -36,7 +36,8 @@ export const WorkoutSuggestions = ({ showAllSuggestions = true }: WorkoutSuggest
         onSelectWorkout={handleSelectWorkout} 
       />
       
-      <SportProgramsSection />
+      {/* Réduit en importance */}
+      {showAllSuggestions && <SportProgramsSection />}
       
       <GenerateWorkoutDialog
         isOpen={isGenerateOpen}
