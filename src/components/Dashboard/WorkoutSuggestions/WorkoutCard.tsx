@@ -151,7 +151,7 @@ export const WorkoutCard = ({
               </div>
             ))
           ) : (
-            <div className="p-3 text-sm text-muted-foreground">{t('workouts.noExercises')}</div>
+            <div className="p-3 text-sm text-muted-foreground">Aucun exercice disponible</div>
           )}
         </div>
 
@@ -164,12 +164,12 @@ export const WorkoutCard = ({
             {isStarting ? (
               <>
                 <div className="animate-spin mr-2 h-4 w-4 border-2 border-t-transparent border-white rounded-full" />
-                {t('workouts.startingSession')}
+                Démarrage en cours...
               </>
             ) : (
               <>
                 <Dumbbell className="mr-2 h-4 w-4" />
-                {t('workouts.startSession')}
+                Commencer la séance
               </>
             )}
           </Button>
