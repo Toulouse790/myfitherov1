@@ -38,7 +38,6 @@ export const debugLogger = {
     }
   },
   
-  // Ajout d'une méthode pour activer le mode debug en production si nécessaire
   enableDebugMode: () => {
     localStorage.setItem('debug-mode', 'true');
     console.log('Mode debug activé');
