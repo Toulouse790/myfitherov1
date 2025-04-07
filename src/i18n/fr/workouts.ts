@@ -26,7 +26,7 @@ export const workouts = {
   
   // Informations d'exercice
   duration: "Durée",
-  durationMinutes: "{duration} minutes",
+  durationMinutes: "{duration} min",
   exercises: "exercices",
   progress: "Progression",
   currentExercise: "Exercice en cours",
@@ -85,7 +85,6 @@ export const workouts = {
   // Autres
   kcal: "kcal",
   trainingOf: "Entraînement du",
-  durationMinutes: "{duration} min",
   startWorkoutError: "Impossible de démarrer l'entraînement",
   emptyWorkoutError: "Entraînement vide",
   noExercisesInTemplate: "Aucun exercice dans ce modèle",
