@@ -1,3 +1,4 @@
+
 import { sports } from "./sports";
 import { positions } from "./positions";
 import { programs } from "./programs";
@@ -11,6 +12,11 @@ import { nutrition } from "./nutrition";
 import { difficulty } from "./difficulty";
 import { sleep } from "./sleep";
 import { muscleGroups } from "./muscleGroups";
+import { analytics } from "./analytics";
+import { premium } from "./premium";
+import { community } from "./community";
+import { wearables } from "./wearables";
+import { locations } from "./categories";
 
 export const fr = {
   sports,
@@ -26,5 +32,10 @@ export const fr = {
   nutrition,
   difficulty,
   sleep,
-  muscleGroups
+  muscleGroups,
+  analytics,
+  premium,
+  community,
+  wearables,
+  locations
 };

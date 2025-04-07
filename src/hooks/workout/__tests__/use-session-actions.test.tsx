@@ -51,6 +51,13 @@ vi.mock('@/utils/debug-logger', () => ({
   }
 }));
 
+vi.mock('@/contexts/LanguageContext', () => ({
+  useLanguage: () => ({
+    t: (key: string) => key,
+    language: 'fr'
+  })
+}));
+
 // Mock window.location
 const originalLocation = window.location;
 beforeEach(() => {
