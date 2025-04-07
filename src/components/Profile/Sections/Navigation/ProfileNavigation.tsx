@@ -1,5 +1,5 @@
 
-import { User2, Dumbbell, Bell, Crown, Settings } from "lucide-react";
+import { User2, Dumbbell, Bell, Crown, Settings, Scale } from "lucide-react";
 import { ProfileNavItem } from "./ProfileNavItem";
 
 interface ProfileNavigationProps {
@@ -30,6 +30,20 @@ export const ProfileNavigation = ({ isPremium }: ProfileNavigationProps) => {
         title="Notifications et préférences"
         description="Gérez vos paramètres d'application"
         path="/app-settings"
+      />
+
+      <ProfileNavItem
+        icon={<Scale className="w-6 h-6 text-primary" />}
+        title="Mesures corporelles"
+        description="Suivez vos mesures dans le temps"
+        path="/measurements"
+      />
+
+      <ProfileNavItem
+        icon={<Settings className="w-6 h-6 text-primary" />}
+        title="Paramètres généraux"
+        description="Langue, thème et confidentialité"
+        path="/settings"
       />
 
       <ProfileNavItem
