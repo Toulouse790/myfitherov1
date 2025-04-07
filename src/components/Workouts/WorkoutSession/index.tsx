@@ -9,6 +9,7 @@ import { EmptySessionView } from "./EmptySessionView";
 import { SessionHeader } from "./SessionHeader";
 import { CurrentExerciseCard } from "./CurrentExerciseCard";
 import { FinishWorkoutButton } from "./FinishWorkoutButton";
+import { WorkoutSummaryDialog } from "../NextWorkoutDetail/WorkoutSummaryDialog";
 
 export const WorkoutSession = () => {
   const { t } = useLanguage();
@@ -23,7 +24,11 @@ export const WorkoutSession = () => {
     handleExerciseSelect,
     handleExerciseComplete,
     handleCompleteWorkout,
-    setShowExerciseDetail
+    setShowExerciseDetail,
+    showSummaryDialog,
+    setShowSummaryDialog,
+    workoutStats,
+    handleFinishWorkout
   } = useWorkoutSession();
 
   if (loading) {
@@ -84,6 +89,14 @@ export const WorkoutSession = () => {
             <FinishWorkoutButton onCompleteWorkout={handleCompleteWorkout} />
           </>
         )}
+
+        {/* Dialog de résumé de l'entraînement */}
+        <WorkoutSummaryDialog
+          open={showSummaryDialog} 
+          onOpenChange={setShowSummaryDialog}
+          stats={workoutStats}
+          onConfirm={handleFinishWorkout}
+        />
       </div>
     </div>
   );

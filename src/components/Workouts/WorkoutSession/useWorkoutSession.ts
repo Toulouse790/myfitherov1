@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
+import { WorkoutSummaryDialog } from "../WorkoutSummary";
 
 export const useWorkoutSession = () => {
   const { sessionId } = useParams();
@@ -20,6 +21,12 @@ export const useWorkoutSession = () => {
   const [showExerciseDetail, setShowExerciseDetail] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [startTime] = useState(Date.now());
+  const [showSummaryDialog, setShowSummaryDialog] = useState(false);
+  const [workoutStats, setWorkoutStats] = useState({
+    duration: 0,
+    totalCalories: 0,
+    totalWeight: 0
+  });
   
   // Timer pour la durée de la séance
   useEffect(() => {
@@ -138,6 +145,39 @@ export const useWorkoutSession = () => {
       // Calculer les calories brûlées (estimation simple)
       const caloriesBurned = Math.round(durationMinutes * 10);
       
+      // Mettre à jour les statistiques
+      setWorkoutStats({
+        duration: durationMinutes,
+        totalCalories: caloriesBurned,
+        totalWeight: 0 // On pourrait calculer le poids total soulevé si on avait cette info
+      });
+      
+      // Afficher le dialogue de résumé
+      setShowSummaryDialog(true);
+    } catch (error) {
+      console.error('Erreur lors de la préparation du résumé:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de préparer le résumé de la séance",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const handleFinishWorkout = async () => {
+    if (!sessionId) return;
+    
+    try {
+      // Calculer quelques statistiques pour la séance
+      const totalExercises = session?.exercises?.length || 0;
+      const completedExercises = Object.values(exerciseProgress).filter(ex => ex.completed).length;
+      
+      // Conversion de la durée en minutes
+      const durationMinutes = Math.ceil(sessionDuration / 60);
+      
+      // Calculer les calories brûlées (estimation simple)
+      const caloriesBurned = Math.round(durationMinutes * 10);
+      
       await supabase
         .from('workout_sessions')
         .update({
@@ -177,6 +217,10 @@ export const useWorkoutSession = () => {
     handleExerciseSelect,
     handleExerciseComplete,
     handleCompleteWorkout,
-    setShowExerciseDetail
+    setShowExerciseDetail,
+    showSummaryDialog,
+    setShowSummaryDialog,
+    workoutStats,
+    handleFinishWorkout
   };
 };
