@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { WorkoutDifficulty } from "../WorkoutDifficulty";
 import { ExerciseNotes } from "../ExerciseNotes";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface ExerciseDetailProps {
   exerciseName: string;
@@ -35,7 +37,11 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack, initialSets =
     // Calcul simple des calories (à ajuster selon vos besoins)
     const calculatedCalories = Math.round(weight * reps * sets * 0.1);
     setCalories(calculatedCalories);
-  }, [weight, reps, sets]);
+    
+    debugLogger.log("ExerciseDetail", 
+      `Exercice: ${exerciseName}, Calories: ${calculatedCalories}, Poids: ${weight}, Répétitions: ${reps}, Séries: ${sets}`
+    );
+  }, [weight, reps, sets, exerciseName]);
 
   const handleComplete = () => {
     setIsCompleted(true);
@@ -44,6 +50,14 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack, initialSets =
       title: t("workouts.exerciseCompleted") || "Exercice terminé",
       description: t("workouts.wellDone") || "Bien joué !",
     });
+    
+    debugLogger.log("ExerciseDetail", `Exercice ${exerciseName} terminé avec ${sets} séries`);
+  };
+
+  // Fonction de gestion pour le Checkbox avec type correct
+  const handleCheckboxChange = (checked: boolean) => {
+    setIsCompleted(checked);
+    debugLogger.log("ExerciseDetail", `État d'achèvement changé à: ${checked}`);
   };
 
   return (
@@ -95,7 +109,7 @@ export const ExerciseDetail = ({ exerciseName, onComplete, onBack, initialSets =
           <Checkbox
             id="completed"
             checked={isCompleted}
-            onCheckedChange={setIsCompleted}
+            onCheckedChange={handleCheckboxChange}
           />
           <Label htmlFor="completed">{t("workouts.completed") || "Terminé"}</Label>
         </div>
