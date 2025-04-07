@@ -10,8 +10,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FoodJournal } from "@/components/Nutrition/FoodJournal";
 import { Button } from "@/components/ui/button";
-import { PieChart, BarChart, Utensils } from "lucide-react";
+import { PieChart, BarChart, Utensils, BookOpen } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PopularMealSuggestions } from "@/components/Nutrition/MealSuggestions/PopularMealSuggestions";
 
 const Nutrition = () => {
   const { user, loading } = useAuth();
@@ -86,6 +87,15 @@ const Nutrition = () => {
             <BarChart className="h-4 w-4" />
             <span className="hidden sm:inline">{t("nutrition.tracking")}</span>
           </Button>
+          <Button 
+            variant={activeTab === "suggestions" ? "default" : "outline"} 
+            size="sm"
+            onClick={() => handleTabClick("suggestions")}
+            className="flex items-center gap-1"
+          >
+            <BookOpen className="h-4 w-4" />
+            <span className="hidden sm:inline">Suggestions</span>
+          </Button>
         </div>
       </div>
 
@@ -111,10 +121,10 @@ const Nutrition = () => {
               {t("nutrition.weeklyTracking")}
             </TabsTrigger>
             <TabsTrigger 
-              value="journal" 
+              value="suggestions" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              {t("nutrition.foodJournal")}
+              Suggestions
             </TabsTrigger>
           </TabsList>
         </div>
@@ -145,9 +155,9 @@ const Nutrition = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="journal" className="space-y-4 mt-2">
+        <TabsContent value="suggestions" className="space-y-4 mt-2">
           <div className="w-full min-w-0">
-            <FoodJournal />
+            <PopularMealSuggestions />
           </div>
         </TabsContent>
       </Tabs>

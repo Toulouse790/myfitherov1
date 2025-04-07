@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Clock, ChefHat, Users, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,7 @@ interface MealSuggestionCardProps {
   rating?: number;
   tags?: string[];
   imageUrl?: string;
+  actionButton?: React.ReactNode;
 }
 
 export const MealSuggestionCard = ({
@@ -23,7 +25,8 @@ export const MealSuggestionCard = ({
   servings,
   rating,
   tags,
-  imageUrl
+  imageUrl,
+  actionButton
 }: MealSuggestionCardProps) => {
   const difficultyColor = {
     easy: "bg-green-100 text-green-800",
@@ -72,12 +75,21 @@ export const MealSuggestionCard = ({
             <ChefHat className="w-4 h-4" />
             {calories} kcal
           </div>
+          <div className="flex items-center gap-2">
+            <span className="font-medium">P:</span> {proteins}g
+          </div>
         </div>
 
         {rating && (
           <div className="flex items-center gap-1">
             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
             <span className="text-sm font-medium">{rating.toFixed(1)}</span>
+          </div>
+        )}
+
+        {actionButton && (
+          <div className="mt-2">
+            {actionButton}
           </div>
         )}
       </div>
