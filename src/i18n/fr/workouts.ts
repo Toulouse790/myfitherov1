@@ -81,6 +81,7 @@ export const workouts = {
   viewProgress: "Voir la progression",
   sportPrograms: "Programmes sportifs",
   generateWorkout: "Générer un entraînement",
+  teamSports: "Sports d'équipe",
   
   // Autres
   kcal: "kcal",
