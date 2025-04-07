@@ -36,7 +36,7 @@ export const ActionButtons = () => {
           disabled={isLoading}
         >
           <Plus className="w-6 h-6 mb-2" />
-          <span className="text-sm">{t("workouts.generateWorkout")}</span>
+          <span className="text-sm">{t("workouts.generateWorkoutTitle")}</span>
         </Button>
       </div>
     </div>
