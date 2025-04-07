@@ -1,12 +1,13 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Dumbbell, Moon, ChartBar, User } from "lucide-react";
+import { LayoutDashboard, Dumbbell, Moon, ChartBar, User, Apple } from "lucide-react";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Accueil", path: "/" },
   { icon: Dumbbell, label: "Workouts", path: "/workouts" },
   { icon: Moon, label: "Sommeil", path: "/sleep" },
   { icon: ChartBar, label: "Stats", path: "/stats" },
+  { icon: Apple, label: "Nutrition", path: "/nutrition" },
   { icon: User, label: "Profil", path: "/profile" }
 ];
 
