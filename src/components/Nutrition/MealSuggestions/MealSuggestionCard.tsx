@@ -1,7 +1,8 @@
 
 import { Card } from "@/components/ui/card";
-import { Clock, ChefHat, Users, Star } from "lucide-react";
+import { Clock, ChefHat, Users, Star, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface MealSuggestionCardProps {
   name: string;
@@ -14,6 +15,8 @@ interface MealSuggestionCardProps {
   tags?: string[];
   imageUrl?: string;
   actionButton?: React.ReactNode;
+  carbs?: number;
+  fats?: number;
 }
 
 export const MealSuggestionCard = ({
@@ -26,7 +29,9 @@ export const MealSuggestionCard = ({
   rating,
   tags,
   imageUrl,
-  actionButton
+  actionButton,
+  carbs,
+  fats
 }: MealSuggestionCardProps) => {
   const difficultyColor = {
     easy: "bg-green-100 text-green-800",
@@ -49,6 +54,12 @@ export const MealSuggestionCard = ({
             {difficulty}
           </Badge>
         </div>
+        {rating && (
+          <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/50 text-white px-2 py-1 rounded">
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+            <span className="text-sm font-medium">{rating.toFixed(1)}</span>
+          </div>
+        )}
       </div>
       
       <div className="p-4 space-y-4">
@@ -71,21 +82,29 @@ export const MealSuggestionCard = ({
             <Users className="w-4 h-4" />
             {servings} pers.
           </div>
-          <div className="flex items-center gap-2">
-            <ChefHat className="w-4 h-4" />
-            {calories} kcal
-          </div>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-2 cursor-help">
+                  <ChefHat className="w-4 h-4" />
+                  {calories} kcal
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-xs">
+                  <p>Protéines: {proteins}g</p>
+                  {carbs !== undefined && <p>Glucides: {carbs}g</p>}
+                  {fats !== undefined && <p>Lipides: {fats}g</p>}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
           <div className="flex items-center gap-2">
             <span className="font-medium">P:</span> {proteins}g
           </div>
         </div>
-
-        {rating && (
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-medium">{rating.toFixed(1)}</span>
-          </div>
-        )}
 
         {actionButton && (
           <div className="mt-2">
