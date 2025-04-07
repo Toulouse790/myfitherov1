@@ -11,10 +11,15 @@ export const useUserProfileData = () => {
   const { user } = useAuth();
 
   const fetchProfile = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     
     setLoading(true);
     try {
+      console.log("Fetching profile for user ID:", user.id);
+      
       // Fetch profile data
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
@@ -22,7 +27,33 @@ export const useUserProfileData = () => {
         .eq('id', user.id)
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("Profile fetch error:", profileError);
+        // Si le profil n'existe pas, on tente de le créer
+        if (profileError.code === 'PGRST116') {
+          console.log("Profile not found, creating a new one");
+          const { data: newProfileData, error: createProfileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              username: user.email?.split('@')[0] || user.id.slice(0, 8),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .select('*')
+            .single();
+            
+          if (createProfileError) {
+            throw createProfileError;
+          }
+          
+          console.log("New profile created:", newProfileData);
+          // Utiliser les données du nouveau profil
+          profileData = newProfileData;
+        } else {
+          throw profileError;
+        }
+      }
 
       // Fetch questionnaire data to ensure we have the most up-to-date information
       const { data: questionnaireData, error: questionnaireError } = await supabase
@@ -32,6 +63,10 @@ export const useUserProfileData = () => {
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
+
+      if (questionnaireError && questionnaireError.code !== 'PGRST116') {
+        console.log("No questionnaire data found, this is ok for new users");
+      }
 
       // Combine questionnaire data with profile if available
       const combinedProfileData = {
@@ -64,8 +99,32 @@ export const useUserProfileData = () => {
         .eq('user_id', user.id)
         .single();
 
-      if (progressionError && progressionError.code !== 'PGRST116') {
-        console.error('Error fetching progression data:', progressionError);
+      if (progressionError) {
+        if (progressionError.code === 'PGRST116') {
+          console.log("No progression data found, creating default progression");
+          const { data: newProgressionData, error: createProgressionError } = await supabase
+            .from('user_progression')
+            .insert({
+              user_id: user.id,
+              total_points: 0,
+              current_level: 1,
+              next_level_threshold: 100,
+              workout_points: 0,
+              nutrition_points: 0,
+              sleep_points: 0
+            })
+            .select('*')
+            .single();
+            
+          if (createProgressionError) {
+            console.error("Error creating progression data:", createProgressionError);
+          } else {
+            console.log("New progression data created:", newProgressionData);
+            progressionData = newProgressionData;
+          }
+        } else {
+          console.error('Error fetching progression data:', progressionError);
+        }
       }
 
       const isPremium = subscriptionData?.subscription_type === 'premium' && 
@@ -73,7 +132,7 @@ export const useUserProfileData = () => {
                        (subscriptionData?.end_date ? new Date(subscriptionData.end_date) > new Date() : true);
 
       if (profileData) {
-        setProfile({
+        const userProfile: UserProfile = {
           id: profileData.id,
           username: profileData.username || '',
           email: user.email || '',
@@ -105,7 +164,10 @@ export const useUserProfileData = () => {
           },
           achievements: [],
           isPremium: isPremium
-        });
+        };
+        
+        console.log("User profile constructed:", userProfile);
+        setProfile(userProfile);
       }
       setError(null);
     } catch (err) {
