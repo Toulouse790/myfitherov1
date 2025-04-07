@@ -1,9 +1,11 @@
+
 import { useEffect, useRef } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { Button } from "@/components/ui/button";
 import { Scan } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
@@ -13,6 +15,7 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const codeReaderRef = useRef<BrowserMultiFormatReader>();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     codeReaderRef.current = new BrowserMultiFormatReader();
@@ -39,8 +42,8 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
       
       if (devices.length === 0) {
         toast({
-          title: "Erreur",
-          description: "Aucune caméra détectée",
+          title: t("common.error"),
+          description: t("nutrition.noCameraDetected"),
           variant: "destructive",
         });
         return;
@@ -62,8 +65,8 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
               }
               codeReaderRef.current = undefined;
               toast({
-                title: "Code-barres scanné",
-                description: "Le produit a été trouvé",
+                title: t("nutrition.scanComplete"),
+                description: t("nutrition.productFound"),
               });
             }
           }
@@ -71,8 +74,8 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
       }
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible d'accéder à la caméra",
+        title: t("common.error"),
+        description: t("nutrition.cameraAccessError"),
         variant: "destructive",
       });
     }
@@ -87,12 +90,12 @@ export const BarcodeScanner = ({ onScan }: BarcodeScannerProps) => {
           className="w-full gap-2 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-sm py-2"
         >
           <Scan className="w-4 h-4" />
-          Scanner un code-barres
+          {t("nutrition.scanBarcode")}
         </Button>
       </div>
       <video
         ref={videoRef}
-        className="w-full h-32 bg-gray-100"
+        className="w-full h-48 bg-gray-100"
       />
     </Card>
   );

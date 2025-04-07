@@ -111,4 +111,22 @@ describe('useBarcodeScan', () => {
     
     expect(result).toBeNull();
   });
+  
+  it('should handle network errors when scanning', async () => {
+    // Mock authenticated user
+    vi.mocked(supabase.auth.getUser).mockResolvedValue({
+      data: { user: { id: 'user-123' } },
+      error: null
+    } as any);
+    
+    // Mock network error
+    vi.mocked(supabase.from).mockImplementation(() => {
+      throw new Error('Network error');
+    });
+    
+    const { handleBarcodeScan } = useBarcodeScan();
+    const result = await handleBarcodeScan('1234567890');
+    
+    expect(result).toBeNull();
+  });
 });

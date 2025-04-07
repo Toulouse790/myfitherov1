@@ -29,6 +29,16 @@ export const common = {
   months: "mois",
   year: "année",
   years: "années",
-  refresh: "Rafraîchir",
-  view: "Voir"
+  code: "Code",
+  scan: "Scanner",
+  camera: "Caméra",
+  barcode: "Code-barres",
+  product: "Produit",
+  progress: "Progression",
+  welcome: "Bienvenue",
+  home: "Accueil",
+  profile: "Profil",
+  settings: "Paramètres",
+  help: "Aide",
+  about: "À propos"
 };
