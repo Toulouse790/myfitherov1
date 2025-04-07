@@ -1,51 +1,34 @@
 
-/**
- * Utilitaire de logging amélioré pour faciliter le débogage
- */
+// Créer un fichier s'il n'existe pas déjà
+type LogLevel = 'debug' | 'log' | 'warn' | 'error';
 
-const DEBUG_MODE = process.env.NODE_ENV === 'development' || localStorage.getItem('debug-mode') === 'true';
+interface IDebugLogger {
+  debug: (module: string, message: string, data?: any) => void;
+  log: (module: string, message: string, data?: any) => void;
+  warn: (module: string, message: string, data?: any) => void;
+  error: (module: string, message: string, data?: any) => void;
+}
 
-export const debugLogger = {
-  log: (context: string, message: string, data?: any) => {
-    if (DEBUG_MODE) {
-      console.log(`[${context}] ${message}`, data !== undefined ? data : '');
+const formatMessage = (module: string, message: string) => {
+  return `[${module}] ${message}`;
+};
+
+export const debugLogger: IDebugLogger = {
+  debug: (module: string, message: string, data?: any) => {
+    if (typeof window !== 'undefined' && window.localStorage?.getItem('debug') === 'true') {
+      console.debug(formatMessage(module, message), data || '');
     }
   },
   
-  warn: (context: string, message: string, data?: any) => {
-    if (DEBUG_MODE) {
-      console.warn(`[${context}] ⚠️ ${message}`, data !== undefined ? data : '');
-    }
+  log: (module: string, message: string, data?: any) => {
+    console.log(formatMessage(module, message), data || '');
   },
   
-  error: (context: string, message: string, error?: any) => {
-    // Les erreurs sont toujours loggées, même en production
-    console.error(`[${context}] 🔴 ${message}`, error || '');
-    
-    // En mode debug, afficher plus de détails
-    if (DEBUG_MODE && error) {
-      if (error.stack) {
-        console.error(`Stack trace:`, error.stack);
-      }
-    }
+  warn: (module: string, message: string, data?: any) => {
+    console.warn(formatMessage(module, message), data || '');
   },
   
-  group: (context: string, title: string, logFn: () => void) => {
-    if (DEBUG_MODE) {
-      console.group(`[${context}] ${title}`);
-      logFn();
-      console.groupEnd();
-    }
-  },
-  
-  // Ajout d'une méthode pour activer le mode debug en production si nécessaire
-  enableDebugMode: () => {
-    localStorage.setItem('debug-mode', 'true');
-    console.log('Mode debug activé');
-  },
-  
-  disableDebugMode: () => {
-    localStorage.removeItem('debug-mode');
-    console.log('Mode debug désactivé');
+  error: (module: string, message: string, data?: any) => {
+    console.error(formatMessage(module, message), data || '');
   }
 };

@@ -28,7 +28,7 @@ export async function verifyUserTables(userId: string, sessionId: string) {
           await updateUserProfile(userId);
         }
       } else {
-        debugLogger.log("workoutSessions", `Table ${table.name} - OK - ${JSON.stringify(data)}`);
+        debugLogger.log("workoutSessions", `Table ${table.name} - OK - ${data.length} entrées trouvées`);
       }
     } catch (error) {
       debugLogger.error("workoutSessions", `Exception lors de la vérification de ${table.name}: ${JSON.stringify(error)}`);
