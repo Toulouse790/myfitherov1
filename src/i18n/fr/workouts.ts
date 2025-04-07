@@ -138,5 +138,9 @@ export const workouts = {
   trainedRecently: "Groupe musculaire récemment entraîné",
   tryNewWorkout: "Essayez un nouvel entraînement",
   recommendedForRecovery: "Recommandé pour votre récupération",
-  durationMinutes: "{duration} min"
+  
+  // Nouvelles traductions pour l'interface utilisateur
+  personalisedSession: "Votre séance personnalisée",
+  sets: "séries",
+  reps: "répétitions"
 };
