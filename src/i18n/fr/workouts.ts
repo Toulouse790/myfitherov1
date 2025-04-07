@@ -51,6 +51,11 @@ export const workouts = {
   generateWorkoutDescription: "Nous allons générer un entraînement personnalisé selon vos préférences",
   generateSession: "Générer une séance",
   generationLoading: "Génération en cours...",
+  generator: "Générateur d'entraînement intelligent",
+  generatorDescription: "Créez un entraînement personnalisé et scientifiquement optimisé",
+  generating: "Génération en cours...",
+  generateWorkout: "Générer un entraînement",
+  intensity: "Intensité",
   
   // Messages d'erreur
   errors: {
@@ -91,5 +96,33 @@ export const workouts = {
   noExercisesInTemplate: "Aucun exercice dans ce modèle",
   backToWorkouts: "Retour aux entraînements",
   sessionEmpty: "Cette séance ne contient aucun exercice",
-  startSessionErrorDescription: "Impossible de démarrer la séance d'entraînement"
+  startSessionErrorDescription: "Impossible de démarrer la séance d'entraînement",
+  todayDate: "Aujourd'hui",
+  
+  // Bibliothèque d'entraînements
+  libraryDescription: "Parcourez nos programmes d'entraînement",
+  searchPlaceholder: "Rechercher un entraînement",
+  filters: "Filtres",
+  toggleFilters: "Afficher/Masquer les filtres",
+  createWorkout: "Créer un entraînement",
+  muscleGroups: "Groupes musculaires",
+  noWorkoutsForMuscleGroup: "Aucun entraînement trouvé pour ce groupe musculaire",
+  noWorkoutsFound: "Aucun entraînement trouvé",
+  createFirstWorkout: "Créer votre premier entraînement",
+  
+  // Niveaux de difficulté
+  difficulty: {
+    easy: "Facile",
+    beginner: "Débutant",
+    moderate: "Modéré",
+    intermediate: "Intermédiaire",
+    challenging: "Difficile",
+    advanced: "Avancé",
+    intense: "Intense",
+    adaptive: "Adaptatif"
+  },
+  
+  // Erreurs de génération
+  generationError: "Erreur lors de la génération",
+  generationErrorDescription: "Impossible de générer les recommandations d'entraînement"
 };

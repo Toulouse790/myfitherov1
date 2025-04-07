@@ -64,7 +64,51 @@ export const useWorkoutSuggestions = () => {
     enabled: !!user,
   });
 
-  // Mélanger et prioriser les suggestions en fonction de l'historique d'entraînement
+  // Récupérer le profil utilisateur pour personnaliser davantage les suggestions
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('experience_level, main_objective, available_equipment')
+          .eq('id', user.id)
+          .single();
+          
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        return null;
+      }
+    },
+    enabled: !!user,
+  });
+
+  // Récupérer les données de récupération musculaire pour éviter la surcharge
+  const { data: muscleRecoveryData } = useQuery({
+    queryKey: ['muscle-recovery', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      try {
+        const { data, error } = await supabase
+          .from('muscle_recovery')
+          .select('muscle_group, recovery_status, last_trained_at')
+          .eq('user_id', user.id)
+          .order('last_trained_at', { ascending: false });
+          
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching muscle recovery data:', error);
+        return [];
+      }
+    },
+    enabled: !!user,
+  });
+
+  // Mélanger et prioriser les suggestions en fonction de l'historique d'entraînement et du profil utilisateur
   useEffect(() => {
     // Si nous avons des suggestions de la base de données, utilisez-les, sinon utilisez les suggestions par défaut
     let combinedSuggestions: WorkoutSuggestion[] = [];
@@ -96,6 +140,78 @@ export const useWorkoutSuggestions = () => {
     } else {
       // Fallback vers les suggestions par défaut
       combinedSuggestions = [...defaultSuggestions];
+    }
+    
+    // Filtrer les suggestions en fonction du profil utilisateur
+    if (userProfile) {
+      // Filtrer par niveau d'expérience
+      if (userProfile.experience_level) {
+        combinedSuggestions = combinedSuggestions.filter(suggestion => {
+          if (!suggestion.difficulty) return true;
+          
+          // Correspondance des niveaux de difficulté avec l'expérience
+          const difficultyMapping: Record<string, string[]> = {
+            'beginner': ['easy', 'beginner', 'facile', 'débutant'],
+            'intermediate': ['moderate', 'intermediate', 'modéré', 'intermédiaire'],
+            'advanced': ['challenging', 'advanced', 'difficile', 'avancé', 'intense']
+          };
+          
+          // Vérifier si la difficulté correspond au niveau d'expérience
+          return !suggestion.difficulty || 
+                 difficultyMapping[userProfile.experience_level]?.includes(suggestion.difficulty.toLowerCase());
+        });
+      }
+      
+      // Filtrer par équipement disponible
+      if (userProfile.available_equipment && userProfile.available_equipment.length > 0) {
+        // Pour l'instant, nous n'avons pas d'informations d'équipement dans les suggestions
+        // Cette partie peut être développée quand les données d'équipement seront disponibles
+      }
+      
+      // Adapter en fonction de l'objectif principal
+      if (userProfile.main_objective) {
+        // Prioriser les types d'entraînement qui correspondent à l'objectif
+        const objectiveMapping: Record<string, string[]> = {
+          'muscle_gain': ['strength', 'hypertrophy'],
+          'weight_loss': ['cardio', 'hiit', 'circuit'],
+          'endurance': ['cardio', 'endurance'],
+          'general_fitness': ['full_body', 'functional'],
+          'sport_specific': ['sport_specific', 'athletic']
+        };
+        
+        // Priorité plus élevée pour les entraînements correspondant à l'objectif
+        const targetTypes = objectiveMapping[userProfile.main_objective] || [];
+        if (targetTypes.length > 0) {
+          combinedSuggestions.sort((a, b) => {
+            const aMatchesObjective = targetTypes.includes(a.type);
+            const bMatchesObjective = targetTypes.includes(b.type);
+            
+            if (aMatchesObjective && !bMatchesObjective) return -1;
+            if (!aMatchesObjective && bMatchesObjective) return 1;
+            return 0;
+          });
+        }
+      }
+    }
+    
+    // Éviter les groupes musculaires récemment entraînés
+    if (muscleRecoveryData && muscleRecoveryData.length > 0) {
+      // Identifier les groupes musculaires qui ont besoin de récupération
+      const recoveringMuscleGroups = muscleRecoveryData
+        .filter(m => m.recovery_status === 'recovering')
+        .map(m => m.muscle_group);
+      
+      if (recoveringMuscleGroups.length > 0) {
+        // Déplacer les suggestions ciblant ces groupes musculaires vers le bas
+        combinedSuggestions.sort((a, b) => {
+          const aTargetsRecovering = a.muscleGroups?.some(mg => recoveringMuscleGroups.includes(mg));
+          const bTargetsRecovering = b.muscleGroups?.some(mg => recoveringMuscleGroups.includes(mg));
+          
+          if (aTargetsRecovering && !bTargetsRecovering) return 1;
+          if (!aTargetsRecovering && bTargetsRecovering) return -1;
+          return 0;
+        });
+      }
     }
     
     // Personnaliser l'ordre en fonction de l'historique d'entraînement
@@ -146,7 +262,7 @@ export const useWorkoutSuggestions = () => {
     }
     
     setLocalSuggestions(combinedSuggestions);
-  }, [dbSuggestions, workoutHistory]);
+  }, [dbSuggestions, workoutHistory, userProfile, muscleRecoveryData]);
 
   return {
     localSuggestions,
