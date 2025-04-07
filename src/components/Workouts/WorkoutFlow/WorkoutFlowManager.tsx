@@ -168,7 +168,8 @@ export const WorkoutFlowManager = () => {
 
     if (selectedExercises.length > 0) {
       debugLogger.log("WorkoutFlowManager", "Démarrage d'entraînement avec exercices:", selectedExercises);
-      await createWorkoutSession(trainingType === 'sport' ? 'sport_specific' : 'custom', selectedExercises);
+      // Correctif : ici nous passons seulement le tableau d'exercices
+      await createWorkoutSession(selectedExercises);
     } else {
       debugLogger.error("WorkoutFlowManager", "Tentative de démarrer un entraînement sans exercices sélectionnés");
       toast({

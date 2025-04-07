@@ -71,8 +71,52 @@ export const useSessionActions = () => {
     }
   };
 
+  const handleConfirmEndWorkout = async (difficulty: string, duration: number, muscleGroups: string[]) => {
+    if (!user) return;
+    
+    try {
+      setIsLoading(true);
+      
+      debugLogger.log("useSessionActions", "Finalisation de la séance d'entraînement", {
+        difficulty,
+        duration,
+        muscleGroups
+      });
+      
+      // Insérer les statistiques d'entraînement
+      const { error } = await supabase
+        .from('training_stats')
+        .insert({
+          user_id: user.id,
+          perceived_difficulty: difficulty,
+          session_duration_minutes: duration,
+          muscle_groups_worked: muscleGroups,
+          created_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+      
+      toast({
+        title: t("workouts.sessionCompleted") || "Séance terminée",
+        description: t("workouts.statsRecorded") || "Vos statistiques ont été enregistrées",
+      });
+      
+      navigate('/');
+    } catch (error) {
+      console.error("Erreur lors de la finalisation de la séance:", error);
+      toast({
+        title: t("common.error") || "Erreur",
+        description: t("workouts.finalizationFailed") || "Impossible de finaliser votre séance",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     createWorkoutSession,
+    handleConfirmEndWorkout,
     isLoading,
   };
 };

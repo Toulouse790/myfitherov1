@@ -30,7 +30,7 @@ export const useActiveSession = () => {
         .eq('status', 'in_progress');
       
       if (error) {
-        debugLogger.error(t("workouts.errors.activeSessionCheck"), error);
+        debugLogger.error("workouts.errors.activeSessionCheck", error);
         return null;
       }
 

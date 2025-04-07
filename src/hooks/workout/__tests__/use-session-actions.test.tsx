@@ -76,7 +76,7 @@ describe('useSessionActions', () => {
     const { result } = renderHook(() => useSessionActions());
     
     await act(async () => {
-      await result.current.createWorkoutSession('strength');
+      await result.current.createWorkoutSession(["Squats", "Push-ups"]);
     });
     
     // Verify Supabase calls
