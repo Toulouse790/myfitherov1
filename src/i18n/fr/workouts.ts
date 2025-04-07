@@ -35,5 +35,9 @@ export const workouts = {
   restBeforeNextSet: "Reposez-vous avant la prochaine série",
   startSession: "Commencer",
   startSessionLoading: "Chargement...",
-  regenerate: "Régénérer"
+  regenerate: "Régénérer",
+  // Ajout des traductions manquantes
+  generateWorkoutTitle: "Générer un entraînement",
+  generateWorkoutDescription: "Nous allons générer un entraînement personnalisé selon vos préférences",
+  generateSession: "Générer une séance"
 };
