@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Sport, 
   SportPosition, 
@@ -14,6 +15,7 @@ import {
   fetchActivePrograms
 } from "@/utils/api/sportProgramsApi";
 import { debugLogger } from "@/utils/debug-logger";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const useSportPrograms = () => {
   const [sports, setSports] = useState<Sport[]>([]);
@@ -27,11 +29,52 @@ export const useSportPrograms = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-
+  const { user } = useAuth();
+  
   // Fonction pour forcer le rechargement des données
   const refreshData = () => {
     setRefreshKey(prevKey => prevKey + 1);
   };
+
+  // Récupérer les préférences de l'utilisateur depuis le questionnaire
+  useEffect(() => {
+    const loadUserPreferences = async () => {
+      if (!user) return;
+      
+      try {
+        setIsLoading(true);
+        
+        const { data, error } = await supabase
+          .from('questionnaire_responses')
+          .select('sport_id, position_id')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (error) {
+          console.error("Erreur lors de la récupération des préférences sportives:", error);
+          return;
+        }
+        
+        if (data) {
+          if (data.sport_id) {
+            setSelectedSport(data.sport_id);
+            debugLogger.log("useSportPrograms", "Sport préféré de l'utilisateur chargé:", data.sport_id);
+          }
+          
+          if (data.position_id) {
+            setSelectedPosition(data.position_id);
+            debugLogger.log("useSportPrograms", "Position préférée de l'utilisateur chargée:", data.position_id);
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des préférences:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadUserPreferences();
+  }, [user, refreshKey]);
 
   // Charger les programmes actifs de l'utilisateur
   useEffect(() => {
@@ -62,7 +105,7 @@ export const useSportPrograms = () => {
         setSports(data || []);
         console.log("Sports chargés:", data?.length, data?.map(s => s.name).join(', '));
         
-        if (data && data.length > 0) {
+        if (data && data.length > 0 && !selectedSport) {
           setSelectedSport(data[0].id);
         }
       } catch (error) {
@@ -78,7 +121,7 @@ export const useSportPrograms = () => {
     };
     
     loadSports();
-  }, [toast, t, refreshKey]); // Ajout de refreshKey comme dépendance
+  }, [toast, t, refreshKey, selectedSport]); // Ajout de refreshKey comme dépendance
   
   // Charger les positions quand un sport est sélectionné
   useEffect(() => {
@@ -94,7 +137,11 @@ export const useSportPrograms = () => {
         setPositions(data || []);
         console.log("Positions chargées pour", selectedSport, ":", data?.length, data?.map(p => p.name).join(', '));
         
-        setSelectedPosition(data && data.length > 0 ? data[0].id : "");
+        // Ne définir la position par défaut que si aucune position n'est déjà sélectionnée
+        // ou si la position sélectionnée n'est pas compatible avec le sport sélectionné
+        if ((!selectedPosition || !data?.some(p => p.id === selectedPosition)) && data && data.length > 0) {
+          setSelectedPosition(data[0].id);
+        }
       } catch (error) {
         console.error("Erreur lors du chargement des positions:", error);
         toast({
@@ -110,7 +157,7 @@ export const useSportPrograms = () => {
     if (selectedSport) {
       loadPositions();
     }
-  }, [selectedSport, toast, t]);
+  }, [selectedSport, toast, t, selectedPosition]);
   
   // Charger les programmes quand un sport et une position sont sélectionnés
   useEffect(() => {
