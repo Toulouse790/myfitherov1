@@ -16,9 +16,9 @@ export function HomeTab() {
       <div className="grid sm:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>{t("workouts.startWorkout")}</CardTitle>
+            <CardTitle>Démarrer une séance</CardTitle>
             <CardDescription>
-              {t("workouts.createNewSession")}
+              Créer une nouvelle séance personnalisée
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center py-4">
@@ -30,16 +30,16 @@ export function HomeTab() {
               className="w-full"
             >
               <PlusCircle className="h-4 w-4 mr-2" />
-              {t("workouts.newWorkout")}
+              Nouvelle séance
             </Button>
           </CardFooter>
         </Card>
         
         <Card>
           <CardHeader>
-            <CardTitle>{t("workouts.sportSpecific")}</CardTitle>
+            <CardTitle>Sport spécifique</CardTitle>
             <CardDescription>
-              {t("workouts.sportSpecificDescription")}
+              Programmes adaptés à votre discipline sportive
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center py-4">
@@ -51,16 +51,16 @@ export function HomeTab() {
               className="w-full"
             >
               <Footprints className="h-4 w-4 mr-2" />
-              {t("workouts.sportPrograms")}
+              Programmes sportifs
             </Button>
           </CardFooter>
         </Card>
         
         <Card>
           <CardHeader>
-            <CardTitle>{t("workouts.latestPerformances")}</CardTitle>
+            <CardTitle>Performances récentes</CardTitle>
             <CardDescription>
-              {t("workouts.trackProgressDescription")}
+              Suivez votre évolution et vos progrès
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center py-4">
@@ -73,7 +73,7 @@ export function HomeTab() {
               className="w-full"
             >
               <LineChart className="h-4 w-4 mr-2" />
-              {t("workouts.viewProgress")}
+              Voir mes progrès
             </Button>
           </CardFooter>
         </Card>

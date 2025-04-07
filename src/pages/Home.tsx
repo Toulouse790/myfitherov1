@@ -1,3 +1,4 @@
+
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { UserProgressionWidget } from "@/components/UserProgression/UserProgressionWidget";
 import { ActionButtons } from "@/components/Home/ActionButtons";
@@ -30,13 +31,13 @@ const Home = () => {
       {/* Actions rapides - Déplacées tout en haut pour un accès immédiat */}
       <ActionButtons />
       
-      {/* Programme d'entraînement recommandé */}
+      {/* Programme recommandé */}
       <Card className="p-6 space-y-4 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10">
         <div className="flex items-center gap-3">
           <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
             <Zap className="h-5 w-5 text-blue-600 dark:text-blue-300" />
           </div>
-          <h2 className="text-xl font-bold">Recommandé</h2>
+          <h2 className="text-xl font-bold">Recommandé pour vous</h2>
         </div>
         <WorkoutSuggestions showAllSuggestions={false} />
       </Card>
@@ -49,7 +50,7 @@ const Home = () => {
         <TrendingStats />
       </div>
       
-      {/* Programmes sportifs - Déplacés plus bas avec moins de visibilité */}
+      {/* Programmes sportifs */}
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">{t("workouts.sportPrograms")}</h3>
         <Button 
@@ -79,7 +80,7 @@ const Home = () => {
       {/* Afficher l'offre spéciale */}
       <SpecialOfferCountdown targetDate={targetDate} />
       
-      {/* Bannière Premium - Déplacée vers le bas car moins prioritaire */}
+      {/* Bannière Premium */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

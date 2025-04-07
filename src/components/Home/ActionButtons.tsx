@@ -25,7 +25,7 @@ export const ActionButtons = () => {
           size="lg"
         >
           <Dumbbell className="w-6 h-6 mb-2" />
-          <span className="text-sm">{t("workouts.startWorkout")}</span>
+          <span className="text-sm">Commencer une séance</span>
         </Button>
 
         <Button
@@ -36,7 +36,7 @@ export const ActionButtons = () => {
           disabled={isLoading}
         >
           <Plus className="w-6 h-6 mb-2" />
-          <span className="text-sm">{t("workouts.generateWorkoutTitle")}</span>
+          <span className="text-sm">Générer un programme</span>
         </Button>
       </div>
     </div>
