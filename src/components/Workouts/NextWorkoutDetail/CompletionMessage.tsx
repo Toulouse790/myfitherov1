@@ -10,9 +10,6 @@ export const CompletionMessage = () => {
         </div>
       </div>
       <h3 className="text-xl font-semibold">Félicitations !</h3>
-      <p className="text-muted-foreground">
-        Vous avez terminé votre séance d'entraînement.
-      </p>
       <p className="font-medium">
         Continuez comme ça pour atteindre vos objectifs !
       </p>
