@@ -44,22 +44,18 @@ export const WorkoutFlowManager = () => {
 
   const handleExerciseSelection = (exercises: string[]) => {
     setSelectedExercises(exercises);
-    // Log pour déboguer
     debugLogger.log("WorkoutFlowManager", "Exercices sélectionnés:", exercises);
   };
 
   const handleMuscleGroupSelection = (muscleId: string) => {
     setSelectedMuscleGroup(muscleId);
-    // Assurer que nous passons bien à l'étape de sélection d'exercices
     setCurrentStep(3);
-    // Log pour déboguer
     debugLogger.log("WorkoutFlowManager", "Groupe musculaire sélectionné:", muscleId);
   };
 
   const handleTrainingTypeSelection = (type: "muscle" | "sport") => {
     setTrainingType(type);
     setCurrentStep(2);
-    // Log pour déboguer
     debugLogger.log("WorkoutFlowManager", "Type d'entraînement sélectionné:", type);
   };
 
@@ -67,7 +63,6 @@ export const WorkoutFlowManager = () => {
     setSelectedSportId(sportId);
     setSelectedPositionId(positionId);
     
-    // Récupérer les noms du sport et de la position
     try {
       const { data: sportData } = await supabase
         .from('sports')
@@ -90,7 +85,6 @@ export const WorkoutFlowManager = () => {
       console.error("Erreur lors de la récupération des détails sport/position:", error);
     }
     
-    // Une fois le sport et le poste sélectionnés, passer à la sélection des exercices
     if (sportExercises && sportExercises.length > 0) {
       setSelectedExercises(sportExercises);
       debugLogger.log("WorkoutFlowManager", "Exercices de sport chargés automatiquement:", sportExercises);
@@ -98,7 +92,6 @@ export const WorkoutFlowManager = () => {
       debugLogger.warn("WorkoutFlowManager", "Aucun exercice trouvé pour le sport et la position sélectionnés");
     }
     
-    // Passer directement au récapitulatif pour les exercices par sport
     setCurrentStep(4);
   };
 
@@ -167,7 +160,6 @@ export const WorkoutFlowManager = () => {
 
     if (selectedExercises.length > 0) {
       debugLogger.log("WorkoutFlowManager", "Démarrage d'entraînement avec exercices:", selectedExercises);
-      // Correctif : ici nous passons seulement le tableau d'exercices
       await createWorkoutSession(selectedExercises);
     } else {
       debugLogger.error("WorkoutFlowManager", "Tentative de démarrer un entraînement sans exercices sélectionnés");
@@ -272,17 +264,12 @@ export const WorkoutFlowManager = () => {
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-8">
-      {/* Progress Steps */}
       <StepIndicator steps={workoutSteps} currentStep={currentStep} />
-
-      {/* Main Content */}
       <Card className="p-6">
         <AnimatePresence mode="wait">
           {renderStepContent()}
         </AnimatePresence>
       </Card>
-
-      {/* Navigation Buttons */}
       <NavigationButtons 
         currentStep={currentStep}
         totalSteps={workoutSteps.length}
