@@ -3,7 +3,7 @@ export interface IDebugLogger {
   log: (context: string, message: string, data?: any) => void;
   warn: (context: string, message: string, data?: any) => void;
   error: (context: string, message: string, data?: any) => void;
-  enableDebugMode: () => void;  // Changé de optionnel à obligatoire
+  enableDebugMode: () => void;  // Assurons-nous que cette méthode est bien déclarée dans l'interface
 }
 
 class DebugLogger implements IDebugLogger {
@@ -30,4 +30,7 @@ class DebugLogger implements IDebugLogger {
   }
 }
 
-export const debugLogger: IDebugLogger = new DebugLogger();
+// Créer une instance singleton pour être utilisée dans toute l'application
+const debugLogger: IDebugLogger = new DebugLogger();
+
+export { debugLogger };
