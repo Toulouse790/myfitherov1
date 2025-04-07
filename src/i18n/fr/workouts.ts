@@ -54,7 +54,6 @@ export const workouts = {
   generator: "Générateur d'entraînement intelligent",
   generatorDescription: "Créez un entraînement personnalisé et scientifiquement optimisé",
   generating: "Génération en cours...",
-  generateWorkout: "Générer un entraînement",
   intensity: "Intensité",
   
   // Messages d'erreur
@@ -85,7 +84,6 @@ export const workouts = {
   latestPerformances: "Dernières performances",
   viewProgress: "Voir la progression",
   sportPrograms: "Programmes sportifs",
-  generateWorkout: "Générer un entraînement",
   teamSports: "Sports d'équipe",
   
   // Autres
@@ -124,5 +122,16 @@ export const workouts = {
   
   // Erreurs de génération
   generationError: "Erreur lors de la génération",
-  generationErrorDescription: "Impossible de générer les recommandations d'entraînement"
+  generationErrorDescription: "Impossible de générer les recommandations d'entraînement",
+  
+  // Recommandations personnalisées
+  personalizedRecommendations: "Recommandations personnalisées",
+  basedOnYourProfile: "Basé sur votre profil et votre historique",
+  matchesYourLevel: "Correspond à votre niveau",
+  perfectForYourGoals: "Parfait pour vos objectifs",
+  restDayRecommended: "Jour de repos recommandé",
+  trainedRecently: "Groupe musculaire récemment entraîné",
+  tryNewWorkout: "Essayez un nouvel entraînement",
+  recommendedForRecovery: "Recommandé pour votre récupération"
 };
+
