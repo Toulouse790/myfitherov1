@@ -1,7 +1,7 @@
 
-import { UserProfile } from "@/components/Profile/UserProfile";
 import { Header } from "@/components/Layout/Header";
 import { motion } from "framer-motion";
+import ProfilePage from "@/components/Profile";
 
 const Profile = () => {
   return (
@@ -14,7 +14,7 @@ const Profile = () => {
         className="container mx-auto px-4 py-6 pb-24"
       >
         <h1 className="text-2xl font-bold mb-6">Mon Profil</h1>
-        <UserProfile />
+        <ProfilePage />
       </motion.div>
     </>
   );
