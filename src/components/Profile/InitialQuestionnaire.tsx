@@ -8,7 +8,7 @@ import { TrainingLocationStep } from "./QuestionnaireSteps/TrainingLocationStep"
 import { DietTypeStep } from "./QuestionnaireSteps/DietTypeStep";
 import { PersonalInfoStep } from "./QuestionnaireSteps/PersonalInfoStep";
 import { GenderStep } from "./QuestionnaireSteps/GenderStep";
-import { useQuestionnaireLogic } from "./QuestionnaireSteps/QuestionnaireLogic";
+import { useQuestionnaireLogic } from "@/hooks/use-questionnaire-logic";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";

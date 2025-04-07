@@ -128,66 +128,50 @@ export const QuestionnaireLogic: React.FC<QuestionnaireLogicProps> = ({
       case 1:
         return (
           <GenderStep
-            onNext={handleNext}
-            updateValue={updateValue}
-            values={values}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+            gender={values.gender}
+            onGenderChange={(value) => updateValue("gender", value)}
           />
         );
       case 2:
         return (
           <PersonalInfoStep
-            onNext={handleNext}
-            onBack={handleBack}
-            updateValue={updateValue}
-            values={values}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+            age={values.age}
+            weight={values.weight}
+            height={values.height}
+            onAgeChange={(value) => updateValue("age", value)}
+            onWeightChange={(value) => updateValue("weight", value)}
+            onHeightChange={(value) => updateValue("height", value)}
+            validationMessage={null}
           />
         );
       case 3:
         return (
           <ObjectiveStep
-            onNext={handleNext}
-            onBack={handleBack}
-            updateValue={updateValue}
-            values={values}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+            objective={values.objective}
+            onObjectiveChange={(value) => updateValue("objective", value)}
           />
         );
       case 4:
         return (
           <TrainingFrequencyStep
-            onNext={handleNext}
-            onBack={handleBack}
-            updateValue={updateValue}
-            values={values}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+            workoutsPerWeek={values.training_frequency}
+            onWorkoutsPerWeekChange={(value) => updateValue("training_frequency", value)}
+            workoutDuration={values.workout_duration}
+            onWorkoutDurationChange={(value) => updateValue("workout_duration", value)}
           />
         );
       case 5:
         return (
           <ActivityLevelStep
-            onNext={handleNext}
-            onBack={handleBack}
-            updateValue={updateValue}
-            values={values}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+            activityLevel={values.experience_level}
+            onActivityLevelChange={(value) => updateValue("experience_level", value)}
           />
         );
       case 6:
         return (
           <TrainingLocationStep
-            onNext={handleNext}
-            onBack={handleBack}
-            updateValue={updateValue}
-            values={values}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+            trainingLocation={values.available_equipment}
+            onTrainingLocationChange={(value) => updateValue("available_equipment", value)}
           />
         );
       case 7:
@@ -204,12 +188,8 @@ export const QuestionnaireLogic: React.FC<QuestionnaireLogicProps> = ({
       case 8:
         return (
           <DietTypeStep
-            onNext={handleNext}
-            onBack={handleBack}
-            updateValue={updateValue}
-            values={values}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+            dietType={values.diet_type}
+            onDietTypeChange={(value) => updateValue("diet_type", value)}
           />
         );
       default:
