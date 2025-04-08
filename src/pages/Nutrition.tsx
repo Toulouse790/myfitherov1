@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { PieChart, BarChart, Utensils, BookOpen } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PopularMealSuggestions } from "@/components/Nutrition/MealSuggestions/PopularMealSuggestions";
+import { VerifyDbConnection } from "@/components/Nutrition/MealSuggestions/VerifyDbConnection";
 
 const Nutrition = () => {
   const { user, loading } = useAuth();
@@ -20,6 +21,7 @@ const Nutrition = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const { t } = useLanguage();
+  const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -57,7 +59,17 @@ const Nutrition = () => {
   return (
     <div className="container mx-auto px-2 sm:px-4 pb-24 animate-fade-up max-w-full sm:max-w-[95%] lg:max-w-[1280px]">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{t("nutrition.title")}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{t("nutrition.title")}</h1>
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            className="h-8 w-8 p-0" 
+            onClick={() => setShowDebug(!showDebug)}
+          >
+            🪲
+          </Button>
+        </div>
         
         <div className="flex space-x-2">
           <Button 
@@ -98,6 +110,12 @@ const Nutrition = () => {
           </Button>
         </div>
       </div>
+
+      {showDebug && (
+        <div className="mb-6">
+          <VerifyDbConnection />
+        </div>
+      )}
 
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="space-y-3">
         <div className="w-full overflow-x-auto pb-1 -mx-2 px-2 hidden">

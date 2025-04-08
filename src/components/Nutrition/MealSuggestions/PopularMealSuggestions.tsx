@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { VerifyDbConnection } from "./VerifyDbConnection";
 
 export const PopularMealSuggestions = () => {
   const { toast } = useToast();
@@ -28,8 +29,9 @@ export const PopularMealSuggestions = () => {
   const { data: suggestions, isLoading, error } = useQuery({
     queryKey: ['popular-meal-suggestions', filters],
     queryFn: async () => {
+      console.log("Fetching meal suggestions with filters:", filters);
       let query = supabase
-        .from('popular_meal_suggestions')
+        .from('meal_suggestions')
         .select('*');
       
       // Filtrer par type de régime si des filtres sont sélectionnés
@@ -48,6 +50,8 @@ export const PopularMealSuggestions = () => {
         console.error("Erreur lors du chargement des suggestions:", error);
         throw error;
       }
+      
+      console.log("Suggestions loaded:", data?.length || 0);
       return data;
     }
   });
@@ -88,20 +92,14 @@ export const PopularMealSuggestions = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-[400px] bg-muted rounded-lg" />
-        ))}
-      </div>
-    );
-  }
-
   if (error) {
     return (
-      <div className="p-4 text-center text-red-500">
-        Une erreur est survenue lors du chargement des suggestions.
+      <div className="space-y-6">
+        <div className="p-4 text-center text-red-500 bg-red-50 border border-red-200 rounded">
+          Une erreur est survenue lors du chargement des suggestions.
+          <pre className="mt-2 text-xs bg-white p-2 rounded">{String(error)}</pre>
+        </div>
+        <VerifyDbConnection />
       </div>
     );
   }
@@ -190,9 +188,15 @@ export const PopularMealSuggestions = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {suggestions?.length ? (
-          suggestions.map((suggestion) => (
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-[400px] bg-muted rounded-lg" />
+          ))}
+        </div>
+      ) : suggestions?.length ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {suggestions.map((suggestion) => (
             <MealSuggestionCard
               key={suggestion.id}
               name={suggestion.name}
@@ -218,13 +222,18 @@ export const PopularMealSuggestions = () => {
                 </Button>
               }
             />
-          ))
-        ) : (
-          <div className="col-span-full text-center p-8">
+          ))}
+        </div>
+      ) : (
+        <div>
+          <div className="col-span-full text-center p-8 border rounded-lg bg-gray-50">
             Aucune suggestion ne correspond à vos critères. Essayez de modifier les filtres.
           </div>
-        )}
-      </div>
+          <div className="mt-8">
+            <VerifyDbConnection />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
