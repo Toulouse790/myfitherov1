@@ -13,6 +13,7 @@ export const nutrition = {
   mealAddedSuccess: "Le repas a été ajouté avec succès",
   errorAddingMeal: "Impossible d'ajouter le repas",
   suggestedMeal: "Repas suggéré",
+  suggestions: "Suggestions",
   mealTypes: {
     breakfast: "Petit déjeuner",
     morning_snack: "Collation matinale",

@@ -55,6 +55,7 @@ export const common = {
   months: "mois",
   year: "année",
   years: "années",
+  minutes: "minutes",
   
   // Navigation
   home: "Accueil",
