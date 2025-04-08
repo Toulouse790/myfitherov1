@@ -151,7 +151,7 @@ export const WorkoutCard = ({
               </div>
             ))
           ) : (
-            <div className="p-3 text-sm text-muted-foreground">Aucun exercice disponible</div>
+            <div className="p-3 text-sm text-muted-foreground">{t('workouts.noExercisesAvailable', { fallback: "Aucun exercice disponible" })}</div>
           )}
         </div>
 
@@ -164,12 +164,12 @@ export const WorkoutCard = ({
             {isStarting ? (
               <>
                 <div className="animate-spin mr-2 h-4 w-4 border-2 border-t-transparent border-white rounded-full" />
-                Démarrage en cours...
+                {t('workouts.startingSession', { fallback: "Démarrage en cours..." })}
               </>
             ) : (
               <>
                 <Dumbbell className="mr-2 h-4 w-4" />
-                Commencer la séance
+                {t('workouts.startSession', { fallback: "Commencer la séance" })}
               </>
             )}
           </Button>
@@ -178,3 +178,4 @@ export const WorkoutCard = ({
     </Card>
   );
 };
+
