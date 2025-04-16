@@ -1,3 +1,6 @@
+
+import React from 'react'
+
 interface ExerciseInfoProps {
   name: string;
   muscleGroup: string;
