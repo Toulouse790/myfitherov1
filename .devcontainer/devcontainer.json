@@ -1,0 +1,7 @@
+{
+  "tasks": {
+    "test": "npm install && npm run test",
+    "launch": "npm run dev",
+    "build": "npm install && npm run build"
+  }
+}

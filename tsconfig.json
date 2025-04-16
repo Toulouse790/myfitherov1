@@ -5,10 +5,10 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "jsx": "react-jsx", // Pour React 17+ (ou utilisez "react" pour les versions antérieures)
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
     "noImplicitAny": false,
     "noUnusedParameters": false,
     "skipLibCheck": true,
