@@ -39,6 +39,42 @@ export const ExplorerTab = ({ isLoading, sports, positions }: ExplorerTabProps) 
     Math.max(filteredSports.length, filteredPositions.length) / itemsPerPage
   );
 
+  const checkForDuplicates = (items: any[], key: string) => {
+    const seen = new Set();
+    const duplicates = new Set();
+    items.forEach(item => {
+      if (seen.has(item[key])) {
+        duplicates.add(item[key]);
+      } else {
+        seen.add(item[key]);
+      }
+    });
+    return duplicates;
+  };
+
+  const duplicateSportNames = checkForDuplicates(sports, "name");
+  const duplicatePositionNames = checkForDuplicates(positions, "name");
+
+  const checkForMissingData = (items: any[], keys: string[]) => {
+    return items.filter(item => keys.some(key => !item[key]));
+  };
+
+  const missingSportData = checkForMissingData(sports, ["name", "type", "category"]);
+  const missingPositionData = checkForMissingData(positions, ["name", "sport_id"]);
+
+  const validateConsistency = (items: any[], key: string) => {
+    const inconsistencies = new Set();
+    items.forEach(item => {
+      if (item[key] && item[key].toLowerCase() !== item[key]) {
+        inconsistencies.add(item[key]);
+      }
+    });
+    return inconsistencies;
+  };
+
+  const inconsistentSportTypes = validateConsistency(sports, "type");
+  const inconsistentSportCategories = validateConsistency(sports, "category");
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -122,6 +158,17 @@ export const ExplorerTab = ({ isLoading, sports, positions }: ExplorerTabProps) 
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+      <div>
+        <h4>Validation des données</h4>
+        <ul>
+          <li>Sports avec noms en double: {Array.from(duplicateSportNames).join(", ") || "Aucun"}</li>
+          <li>Positions avec noms en double: {Array.from(duplicatePositionNames).join(", ") || "Aucun"}</li>
+          <li>Sports avec données manquantes: {missingSportData.length}</li>
+          <li>Positions avec données manquantes: {missingPositionData.length}</li>
+          <li>Types de sports inconsistants: {Array.from(inconsistentSportTypes).join(", ") || "Aucun"}</li>
+          <li>Catégories de sports inconsistantes: {Array.from(inconsistentSportCategories).join(", ") || "Aucun"}</li>
+        </ul>
+      </div>
     </div>
   );
 };
