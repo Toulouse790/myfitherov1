@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,10 +9,12 @@ import { VerificationTab } from "./tabs/VerificationTab";
 import { ExplorerTab } from "./tabs/ExplorerTab";
 import { DiscrepanciesTab } from "./tabs/DiscrepanciesTab";
 import { EditSportTab } from "./tabs/EditSportTab";
+import { useNotificationManager } from "@/hooks/use-notification-manager";
 
 export const SportPositionValidator = () => {
   const [activeTab, setActiveTab] = useState("verification");
-  const { toast } = useToast();
+  const { notify } = useNotificationManager();
+  
   const {
     isLoading,
     isValidating,
@@ -30,8 +31,31 @@ export const SportPositionValidator = () => {
   } = useSportPositionValidator();
 
   useEffect(() => {
-    loadData();
+    loadData().catch(error => {
+      notify(
+        "Erreur", 
+        "Impossible de charger les données de validation", 
+        "error"
+      );
+    });
   }, []);
+
+  const handleRefresh = () => {
+    loadData().then(() => {
+      notify(
+        "Données rechargées", 
+        "Les données de sports et positions ont été actualisées", 
+        "success",
+        { duration: 2000 }
+      );
+    }).catch(error => {
+      notify(
+        "Erreur", 
+        "Impossible de recharger les données", 
+        "error"
+      );
+    });
+  };
 
   return (
     <Card className="w-full">
@@ -81,7 +105,7 @@ export const SportPositionValidator = () => {
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button 
-          onClick={loadData} 
+          onClick={handleRefresh} 
           disabled={isValidating || isLoading}
           variant={validationResult?.valid ? "outline" : "default"}
         >

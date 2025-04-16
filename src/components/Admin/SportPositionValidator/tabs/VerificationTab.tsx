@@ -1,6 +1,9 @@
+
+import { useState } from "react";
 import { Loader2, AlertTriangle, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useNotificationManager } from "@/hooks/use-notification-manager";
 
 interface VerificationTabProps {
   isValidating: boolean;
@@ -21,6 +24,10 @@ export const VerificationTab = ({
   handleFix,
   handleFixRugby
 }: VerificationTabProps) => {
+  const [isFixing, setIsFixing] = useState(false);
+  const [isFixingRugby, setIsFixingRugby] = useState(false);
+  const { notify } = useNotificationManager();
+
   if (isValidating) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -32,6 +39,55 @@ export const VerificationTab = ({
   if (!validationResult) {
     return null;
   }
+
+  const handleFixClick = async () => {
+    if (!selectedSportId) {
+      notify(
+        "Sélection requise", 
+        "Veuillez sélectionner un sport par défaut", 
+        "error"
+      );
+      return;
+    }
+
+    try {
+      setIsFixing(true);
+      await handleFix();
+      notify(
+        "Correction terminée", 
+        "Les associations sport-position ont été corrigées avec succès", 
+        "success"
+      );
+    } catch (error) {
+      notify(
+        "Erreur", 
+        "Une erreur est survenue lors de la correction des associations", 
+        "error"
+      );
+    } finally {
+      setIsFixing(false);
+    }
+  };
+
+  const handleFixRugbyClick = async () => {
+    try {
+      setIsFixingRugby(true);
+      await handleFixRugby();
+      notify(
+        "Correction Rugby terminée", 
+        "Les positions de Rugby ont été corrigées avec succès", 
+        "success"
+      );
+    } catch (error) {
+      notify(
+        "Erreur", 
+        "Une erreur est survenue lors de la correction des positions Rugby", 
+        "error"
+      );
+    } finally {
+      setIsFixingRugby(false);
+    }
+  };
 
   return (
     <div className="mb-6 p-4 rounded-md border bg-card">
@@ -57,7 +113,7 @@ export const VerificationTab = ({
               <li className="text-sm text-muted-foreground italic">
                 Et {validationResult.invalidPositions.length - 5} autres...
               </li>
-            ))}
+            )}
           </ul>
 
           <div className="mt-4 space-y-4">
@@ -79,21 +135,40 @@ export const VerificationTab = ({
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button 
-                onClick={handleFix} 
-                disabled={!selectedSportId}
+                onClick={handleFixClick} 
+                disabled={!selectedSportId || isFixing}
                 className="w-full"
               >
-                <Loader2 className="mr-2 h-4 w-4 animate-spin opacity-0" />
-                Corriger les associations
+                {isFixing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Correction en cours...
+                  </>
+                ) : (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin opacity-0" />
+                    Corriger les associations
+                  </>
+                )}
               </Button>
               
               <Button 
-                onClick={handleFixRugby} 
+                onClick={handleFixRugbyClick} 
                 className="w-full"
                 variant="secondary"
+                disabled={isFixingRugby}
               >
-                <Loader2 className="mr-2 h-4 w-4 animate-spin opacity-0" />
-                Corriger le problème Rugby/Rugby à XV
+                {isFixingRugby ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Correction en cours...
+                  </>
+                ) : (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin opacity-0" />
+                    Corriger le problème Rugby/Rugby à XV
+                  </>
+                )}
               </Button>
             </div>
           </div>

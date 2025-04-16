@@ -1,10 +1,13 @@
+
 import { useState } from "react";
 import { Loader2, Search } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Pagination } from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
+import { useNotificationManager } from "@/hooks/use-notification-manager";
+import { PaginationItem } from "@/components/ui/pagination";
 
 interface ExplorerTabProps {
   isLoading: boolean;
@@ -16,6 +19,7 @@ export const ExplorerTab = ({ isLoading, sports, positions }: ExplorerTabProps) 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const { notify } = useNotificationManager();
 
   const filteredSports = sports.filter((sport) =>
     sport.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -34,6 +38,20 @@ export const ExplorerTab = ({ isLoading, sports, positions }: ExplorerTabProps) 
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const totalPages = Math.ceil(
+    Math.max(filteredSports.length, filteredPositions.length) / itemsPerPage
+  );
+
+  const handleCopySportId = (id: string) => {
+    navigator.clipboard.writeText(id);
+    notify("ID copié", "L'identifiant du sport a été copié dans le presse-papier", "success", { duration: 1500 });
+  };
+
+  const handleCopyPositionId = (id: string) => {
+    navigator.clipboard.writeText(id);
+    notify("ID copié", "L'identifiant de la position a été copié dans le presse-papier", "success", { duration: 1500 });
+  };
 
   if (isLoading) {
     return (
@@ -61,11 +79,10 @@ export const ExplorerTab = ({ isLoading, sports, positions }: ExplorerTabProps) 
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <SportsList sports={paginatedSports} />
+            <SportsList sports={paginatedSports} onCopyId={handleCopySportId} />
             <Pagination
               currentPage={currentPage}
-              totalItems={filteredSports.length}
-              itemsPerPage={itemsPerPage}
+              totalPages={totalPages}
               onPageChange={setCurrentPage}
             />
           </AccordionContent>
@@ -77,11 +94,10 @@ export const ExplorerTab = ({ isLoading, sports, positions }: ExplorerTabProps) 
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <PositionsList positions={paginatedPositions} />
+            <PositionsList positions={paginatedPositions} onCopyId={handleCopyPositionId} />
             <Pagination
               currentPage={currentPage}
-              totalItems={filteredPositions.length}
-              itemsPerPage={itemsPerPage}
+              totalPages={totalPages}
               onPageChange={setCurrentPage}
             />
           </AccordionContent>
@@ -91,7 +107,7 @@ export const ExplorerTab = ({ isLoading, sports, positions }: ExplorerTabProps) 
   );
 };
 
-const SportsList = ({ sports }: { sports: any[] }) => (
+const SportsList = ({ sports, onCopyId }: { sports: any[], onCopyId: (id: string) => void }) => (
   <Table>
     <TableHeader>
       <TableRow>
@@ -104,7 +120,16 @@ const SportsList = ({ sports }: { sports: any[] }) => (
     <TableBody>
       {sports.map((sport) => (
         <TableRow key={sport.id}>
-          <TableCell className="font-mono text-xs">{sport.id}</TableCell>
+          <TableCell className="font-mono text-xs">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="font-mono p-0 h-auto text-xs"
+              onClick={() => onCopyId(sport.id)}
+            >
+              {sport.id}
+            </Button>
+          </TableCell>
           <TableCell>{sport.name}</TableCell>
           <TableCell>{sport.type}</TableCell>
           <TableCell>{sport.category}</TableCell>
@@ -114,7 +139,7 @@ const SportsList = ({ sports }: { sports: any[] }) => (
   </Table>
 );
 
-const PositionsList = ({ positions }: { positions: any[] }) => (
+const PositionsList = ({ positions, onCopyId }: { positions: any[], onCopyId: (id: string) => void }) => (
   <Table>
     <TableHeader>
       <TableRow>
@@ -127,16 +152,104 @@ const PositionsList = ({ positions }: { positions: any[] }) => (
     <TableBody>
       {positions.map((position) => (
         <TableRow key={position.id}>
-          <TableCell className="font-mono text-xs">{position.id}</TableCell>
+          <TableCell className="font-mono text-xs">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="font-mono p-0 h-auto text-xs"
+              onClick={() => onCopyId(position.id)}
+            >
+              {position.id}
+            </Button>
+          </TableCell>
           <TableCell>{position.name}</TableCell>
           <TableCell>
             {position.sports?.name || (
               <Badge variant="destructive">Sport non trouvé</Badge>
             )}
           </TableCell>
-          <TableCell className="font-mono text-xs">{position.sport_id}</TableCell>
+          <TableCell className="font-mono text-xs">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="font-mono p-0 h-auto text-xs"
+              onClick={() => onCopyId(position.sport_id || "")}
+            >
+              {position.sport_id}
+            </Button>
+          </TableCell>
         </TableRow>
       ))}
     </TableBody>
   </Table>
 );
+
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) => {
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      onPageChange(page);
+    }
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex justify-center items-center mt-4 space-x-1">
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={() => goToPage(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-2"
+      >
+        Précédent
+      </Button>
+      
+      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+        const pageNum = i + 1;
+        return (
+          <Button 
+            key={pageNum}
+            variant={currentPage === pageNum ? "default" : "outline"} 
+            size="sm"
+            onClick={() => goToPage(pageNum)}
+            className="w-8 h-8 p-0"
+          >
+            {pageNum}
+          </Button>
+        );
+      })}
+      
+      {totalPages > 5 && (
+        <>
+          <span className="px-1">...</span>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => goToPage(totalPages)}
+            className="w-8 h-8 p-0"
+          >
+            {totalPages}
+          </Button>
+        </>
+      )}
+      
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={() => goToPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-2"
+      >
+        Suivant
+      </Button>
+    </div>
+  );
+};
+
