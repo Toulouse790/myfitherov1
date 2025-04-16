@@ -57,7 +57,7 @@ export const VerificationTab = ({
               <li className="text-sm text-muted-foreground italic">
                 Et {validationResult.invalidPositions.length - 5} autres...
               </li>
-            )}
+            ))}
           </ul>
 
           <div className="mt-4 space-y-4">
