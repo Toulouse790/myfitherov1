@@ -7,12 +7,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useActiveSession } from "./workout/use-active-session";
 import { useSessionTimer } from "./workout/use-session-timer";
 import { useWorkoutOperations } from "./workout/use-workout-operations";
+import { useNotificationManager } from "@/hooks/use-notification-manager";
 
 export const useWorkoutSession = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { notify } = useNotificationManager();
   
   // Use the specialized hooks
   const { isLoading: isSessionLoading, activeSession, setActiveSession, checkActiveSession } = useActiveSession();
@@ -61,22 +63,22 @@ export const useWorkoutSession = () => {
         additionalData
       });
       
-      // Update the session to mark it as completed
+      // Mise à jour des champs sans utiliser 'completed_at' qui manque dans la table
       const data = await updateWorkoutSession(activeSession.id, {
         status: 'completed',
         total_duration_minutes: durationMinutes,
         perceived_difficulty: additionalData.perceived_difficulty || 'moderate',
-        calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8), // Simple estimation
-        completed_at: new Date().toISOString()
+        calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8) // Simple estimation
       });
 
       if (data) {
         setActiveSession(null);
         
-        toast({
-          title: t("workouts.completeWorkout"),
-          description: `${t("workouts.totalDuration")}: ${durationMinutes} ${t("workouts.minutes")}`,
-        });
+        notify(
+          t("workouts.completeWorkout"),
+          `${t("workouts.totalDuration")}: ${durationMinutes} ${t("workouts.minutes")}`,
+          "success"
+        );
         
         // Redirect to the summary page
         navigate(`/workouts/summary/${data.id}`);
@@ -88,11 +90,11 @@ export const useWorkoutSession = () => {
       return null;
     } catch (error) {
       console.error(t("workouts.errors.sessionFinalize"), error);
-      toast({
-        title: t("common.error"),
-        description: t("workouts.errors.sessionFinalizeDescription"),
-        variant: "destructive",
-      });
+      notify(
+        t("common.error"),
+        t("workouts.errors.sessionFinalizeDescription"),
+        "error"
+      );
       return null;
     }
   };

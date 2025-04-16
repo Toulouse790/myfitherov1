@@ -4,11 +4,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
+import { useNotificationManager } from "@/hooks/use-notification-manager";
 
 export const useWorkoutSession = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { notify } = useNotificationManager();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
@@ -209,11 +211,11 @@ export const useWorkoutSession = () => {
       setShowSummaryDialog(true);
     } catch (error) {
       console.error('Erreur lors de la préparation du résumé:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de préparer le résumé de la séance",
-        variant: "destructive",
-      });
+      notify(
+        "Erreur",
+        "Impossible de préparer le résumé de la séance",
+        "error"
+      );
     }
   };
   
@@ -226,11 +228,11 @@ export const useWorkoutSession = () => {
       const userId = authData?.user?.id;
       
       if (!userId) {
-        toast({
-          title: "Erreur",
-          description: "Utilisateur non authentifié",
-          variant: "destructive",
-        });
+        notify(
+          "Erreur",
+          "Utilisateur non authentifié",
+          "error"
+        );
         return;
       }
       
@@ -288,32 +290,32 @@ export const useWorkoutSession = () => {
           .eq('id', statsData.id);
       }
       
-      // Marquer la séance comme terminée
+      // Marquer la séance comme terminée sans utiliser 'completed_at'
       await supabase
         .from('workout_sessions')
         .update({
           status: 'completed',
           total_duration_minutes: durationMinutes,
           calories_burned: caloriesBurned,
-          perceived_difficulty: 'moderate',
-          completed_at: new Date().toISOString()
+          perceived_difficulty: 'moderate'
         })
         .eq('id', sessionId);
 
-      toast({
-        title: "Séance terminée",
-        description: `Durée: ${durationMinutes}min, Calories: ${caloriesBurned}`,
-      });
+      notify(
+        "Séance terminée",
+        `Durée: ${durationMinutes}min, Calories: ${caloriesBurned}`,
+        "success"
+      );
       
       // Rediriger vers la page des entraînements
       navigate('/workouts');
     } catch (error) {
       console.error('Erreur lors de la finalisation de la séance:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de finaliser la séance",
-        variant: "destructive",
-      });
+      notify(
+        "Erreur",
+        "Impossible de finaliser la séance",
+        "error"
+      );
     }
   };
 
