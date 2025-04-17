@@ -1,7 +1,7 @@
 
 import { Card } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { Activity, Dumbbell, Scale, Flame } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Activity, Dumbbell, Scale, Flame, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format, startOfWeek, startOfMonth, startOfYear } from "date-fns";
@@ -9,9 +9,39 @@ import { fr } from "date-fns/locale";
 import { calculateExerciseCalories } from "@/utils/calorieCalculation";
 import { useAuth } from "@/hooks/use-auth";
 import { debugLogger } from "@/utils/debug-logger";
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export const DetailedStats = () => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // État pour suivre le temps écoulé depuis le dernier chargement
+  const [lastLoadTime, setLastLoadTime] = useState<Date | null>(null);
+
+  useEffect(() => {
+    // Mettre à jour lastLoadTime lorsque le composant est monté
+    setLastLoadTime(new Date());
+  }, []);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    // Invalider la requête pour forcer un rechargement
+    queryClient.invalidateQueries({ queryKey: ['exercise-stats'] });
+    setLastLoadTime(new Date());
+    
+    // Simuler un délai pour l'animation de chargement
+    setTimeout(() => {
+      setIsRefreshing(false);
+      toast({
+        title: "Statistiques rafraîchies",
+        description: "Les données ont été rechargées avec succès",
+      });
+    }, 1000);
+  };
 
   const { data: exerciseStats, isLoading, error } = useQuery({
     queryKey: ['exercise-stats'],
@@ -30,23 +60,13 @@ export const DetailedStats = () => {
 
       // Récupérer le poids de l'utilisateur pour le calcul des calories
       const { data: userProfile } = await supabase
-        .from('muscle_measurements')
-        .select('weight_kg')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      const { data: userQuestionnaire } = await supabase
-        .from('questionnaire_responses')
-        .select('gender')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
+        .from('profiles')
+        .select('weight_kg, gender')
+        .eq('id', user.id)
         .single();
 
       const weightKg = userProfile?.weight_kg || 75;
-      const gender = (userQuestionnaire?.gender || 'male') as 'male' | 'female';
+      const gender = (userProfile?.gender || 'male') as 'male' | 'female';
 
       debugLogger.log("DetailedStats", `User weight: ${weightKg}kg, gender: ${gender}`);
 
@@ -78,6 +98,7 @@ export const DetailedStats = () => {
           .from('workout_sessions')
           .select('*')
           .eq('user_id', user.id)
+          .eq('status', 'completed')
           .order('created_at', { ascending: false })
           .limit(100);
           
@@ -104,15 +125,15 @@ export const DetailedStats = () => {
         if (data.length > 0) {
           const totalWeight = data.reduce((acc, stat) => acc + (stat.total_weight_lifted || 0), 0);
           const totalDuration = data.reduce((acc, stat) => {
-            const sessionDuration = stat.workout_sessions?.total_duration_minutes || 0;
+            const sessionDuration = stat.workout_sessions?.total_duration_minutes || stat.session_duration_minutes || 0;
             return acc + sessionDuration;
           }, 0);
 
           const totalCalories = data.reduce((acc, stat) => {
-            const intensity = stat.workout_sessions?.perceived_difficulty === 'hard' ? 'high' : 
-                           stat.workout_sessions?.perceived_difficulty === 'easy' ? 'low' : 'moderate';
-            const duration = stat.workout_sessions?.total_duration_minutes || 0;
-            const calories = calculateExerciseCalories(
+            const intensity = stat.perceived_difficulty === 'hard' ? 'high' : 
+                           stat.perceived_difficulty === 'easy' ? 'low' : 'moderate';
+            const duration = stat.workout_sessions?.total_duration_minutes || stat.session_duration_minutes || 0;
+            const calories = stat.calories_burned || calculateExerciseCalories(
               weightKg,
               duration,
               intensity,
@@ -126,14 +147,14 @@ export const DetailedStats = () => {
         // Sinon on utilise les sessions récupérées directement
         else if (sessionsOnly.length > 0) {
           const totalDuration = sessionsOnly.reduce((acc, session) => acc + (session.total_duration_minutes || 0), 0);
-          const totalWeight = 0; // Pas de poids disponible sans training_stats
+          const totalWeight = sessionsOnly.reduce((acc, session) => acc + (session.total_weight_lifted || 0), 0);
           
           // Utilisez une intensité modérée par défaut
           const totalCalories = sessionsOnly.reduce((acc, session) => {
             const intensity = session.perceived_difficulty === 'hard' ? 'high' : 
                            session.perceived_difficulty === 'easy' ? 'low' : 'moderate';
             const duration = session.total_duration_minutes || 0;
-            const calories = calculateExerciseCalories(
+            const calories = session.calories_burned || calculateExerciseCalories(
               weightKg,
               duration,
               intensity,
@@ -150,13 +171,13 @@ export const DetailedStats = () => {
 
       // Préparation des données de statistiques
       const processedStats = stats?.map(stat => {
-        const intensity = stat.workout_sessions?.perceived_difficulty === 'hard' ? 'high' : 
-                      stat.workout_sessions?.perceived_difficulty === 'easy' ? 'low' : 'moderate';
-        const duration = stat.workout_sessions?.total_duration_minutes || 0;
+        const intensity = stat.perceived_difficulty === 'hard' ? 'high' : 
+                      stat.perceived_difficulty === 'easy' ? 'low' : 'moderate';
+        const duration = stat.workout_sessions?.total_duration_minutes || stat.session_duration_minutes || 0;
         return {
           ...stat,
           session_duration_minutes: duration,
-          calories: calculateExerciseCalories(
+          calories: stat.calories_burned || calculateExerciseCalories(
             weightKg,
             duration,
             intensity,
@@ -173,9 +194,9 @@ export const DetailedStats = () => {
         return {
           id: session.id,
           created_at: session.created_at,
-          total_weight_lifted: 0, // Information non disponible
+          total_weight_lifted: session.total_weight_lifted || 0,
           session_duration_minutes: duration,
-          calories: calculateExerciseCalories(
+          calories: session.calories_burned || calculateExerciseCalories(
             weightKg,
             duration,
             intensity,
@@ -193,7 +214,9 @@ export const DetailedStats = () => {
         yearly: calculateTotals(yearlyStats, yearlySessionsOnly)
       };
     },
-    enabled: !!user?.id
+    enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true
   });
 
   if (isLoading) {
@@ -218,10 +241,19 @@ export const DetailedStats = () => {
     debugLogger.error("DetailedStats", "Error in DetailedStats:", error);
     return (
       <div className="text-center py-8 text-destructive">
-        Une erreur est survenue lors du chargement des statistiques d'entraînement.
+        <p>Une erreur est survenue lors du chargement des statistiques d'entraînement.</p>
         <div className="mt-2 text-sm text-muted-foreground">
           Détail: {(error as Error)?.message || "Erreur inconnue"}
         </div>
+        <Button 
+          onClick={handleRefresh} 
+          variant="outline" 
+          className="mt-4"
+          disabled={isRefreshing}
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Réessayer
+        </Button>
       </div>
     );
   }
@@ -234,16 +266,30 @@ export const DetailedStats = () => {
     );
   }
 
-  if (!exerciseStats?.stats.length) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        Aucune donnée d'entraînement disponible. Commencez à vous entraîner pour voir vos statistiques!
-      </div>
-    );
-  }
+  const hasNoData = !exerciseStats?.stats.length;
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-semibold">Statistiques détaillées</h2>
+        <Button 
+          onClick={handleRefresh} 
+          variant="outline" 
+          size="sm" 
+          className="ml-auto"
+          disabled={isRefreshing}
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Actualiser
+        </Button>
+      </div>
+      
+      {lastLoadTime && (
+        <div className="text-xs text-muted-foreground text-right">
+          Dernière mise à jour: {format(lastLoadTime, 'dd/MM/yyyy à HH:mm')}
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -252,11 +298,11 @@ export const DetailedStats = () => {
           </h3>
           <div className="space-y-2">
             <div className="text-2xl font-bold">
-              {Math.round(exerciseStats.weekly.weight).toLocaleString()} kg
+              {Math.round(exerciseStats?.weekly.weight || 0).toLocaleString()} kg
             </div>
             <div className="text-sm text-muted-foreground flex items-center gap-2">
               <Flame className="w-4 h-4" />
-              {Math.round(exerciseStats.weekly.calories).toLocaleString()} kcal
+              {Math.round(exerciseStats?.weekly.calories || 0).toLocaleString()} kcal
             </div>
           </div>
         </Card>
@@ -268,11 +314,11 @@ export const DetailedStats = () => {
           </h3>
           <div className="space-y-2">
             <div className="text-2xl font-bold">
-              {Math.round(exerciseStats.monthly.weight).toLocaleString()} kg
+              {Math.round(exerciseStats?.monthly.weight || 0).toLocaleString()} kg
             </div>
             <div className="text-sm text-muted-foreground flex items-center gap-2">
               <Flame className="w-4 h-4" />
-              {Math.round(exerciseStats.monthly.calories).toLocaleString()} kcal
+              {Math.round(exerciseStats?.monthly.calories || 0).toLocaleString()} kcal
             </div>
           </div>
         </Card>
@@ -284,11 +330,11 @@ export const DetailedStats = () => {
           </h3>
           <div className="space-y-2">
             <div className="text-2xl font-bold">
-              {Math.round(exerciseStats.yearly.weight).toLocaleString()} kg
+              {Math.round(exerciseStats?.yearly.weight || 0).toLocaleString()} kg
             </div>
             <div className="text-sm text-muted-foreground flex items-center gap-2">
               <Flame className="w-4 h-4" />
-              {Math.round(exerciseStats.yearly.calories).toLocaleString()} kcal
+              {Math.round(exerciseStats?.yearly.calories || 0).toLocaleString()} kcal
             </div>
           </div>
         </Card>
@@ -296,30 +342,37 @@ export const DetailedStats = () => {
 
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">Historique des séances</h3>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Durée (min)</TableHead>
-                <TableHead>Poids total (kg)</TableHead>
-                <TableHead>Calories</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {exerciseStats.stats.slice(0, 10).map((stat: any) => (
-                <TableRow key={stat.id}>
-                  <TableCell>
-                    {format(new Date(stat.created_at), 'dd/MM/yyyy')}
-                  </TableCell>
-                  <TableCell>{stat.session_duration_minutes || 0}</TableCell>
-                  <TableCell>{Math.round(stat.total_weight_lifted || 0)}</TableCell>
-                  <TableCell>{Math.round(stat.calories || 0)}</TableCell>
+        {hasNoData ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <p>Aucune donnée d'entraînement disponible.</p>
+            <p className="mt-2">Commencez à vous entraîner pour voir vos statistiques!</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Durée (min)</TableHead>
+                  <TableHead>Poids total (kg)</TableHead>
+                  <TableHead>Calories</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {exerciseStats?.stats.slice(0, 10).map((stat: any) => (
+                  <TableRow key={stat.id}>
+                    <TableCell>
+                      {format(new Date(stat.created_at), 'dd/MM/yyyy')}
+                    </TableCell>
+                    <TableCell>{stat.session_duration_minutes || 0}</TableCell>
+                    <TableCell>{Math.round(stat.total_weight_lifted || 0)}</TableCell>
+                    <TableCell>{Math.round(stat.calories || 0)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </Card>
     </div>
   );

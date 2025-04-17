@@ -54,6 +54,8 @@ export const WorkoutSummaryDialog = ({
   }, [stats.totalCalories, stats.duration]);
 
   const handleConfirm = async () => {
+    if (submitting) return; // Éviter les soumissions multiples
+    
     try {
       setSubmitting(true);
       debugLogger.log("WorkoutSummaryDialog", "Confirmation de fin d'entraînement avec:", {
@@ -63,13 +65,14 @@ export const WorkoutSummaryDialog = ({
         calculatedCalories
       });
       
-      // Passer les bonnes valeurs, y compris les calories calculées
+      // Passer les bonnes valeurs, y compris les calories calculées et le poids total
       await onConfirm(difficulty, stats.duration, muscleGroups);
       
-      // Ne pas fermer automatiquement - laissons la navigation se faire correctement
+      // Ne pas fermer automatiquement - laisser la fonction appelante gérer la redirection
     } catch (error) {
       debugLogger.error("WorkoutSummaryDialog", "Erreur lors de la confirmation de fin d'entraînement:", error);
       setSubmitting(false);
+      // Ne pas fermer le dialogue en cas d'erreur pour permettre à l'utilisateur de réessayer
     }
   };
 

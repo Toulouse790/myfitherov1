@@ -25,6 +25,7 @@ export const useWorkoutSession = () => {
 
   // État pour suivre le processus de finalisation
   const [isFinishing, setIsFinishing] = useState(false);
+  const [totalWeight, setTotalWeight] = useState(0);
 
   // Combine loading states
   const isLoading = isSessionLoading || isOperationLoading;
@@ -41,12 +42,44 @@ export const useWorkoutSession = () => {
       startTimer(elapsedSeconds);
       
       debugLogger.log("useWorkoutSession", "Session active trouvée:", activeSession);
+      
+      // Récupérer le poids total soulevé pour cette session
+      fetchTotalWeight(activeSession.id);
     }
     
     return () => {
       stopTimer();
     };
   }, [activeSession]);
+
+  // Récupération du poids total soulevé pour la session
+  const fetchTotalWeight = async (sessionId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('exercise_sets')
+        .select('weight, reps')
+        .eq('session_id', sessionId);
+        
+      if (error) {
+        debugLogger.error("useWorkoutSession", "Erreur lors de la récupération des séries d'exercices:", error);
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        // Calculer le poids total soulevé
+        const total = data.reduce((sum, set) => {
+          const weight = set.weight || 0;
+          const reps = set.reps || 0;
+          return sum + (weight * reps);
+        }, 0);
+        
+        setTotalWeight(total);
+        debugLogger.log("useWorkoutSession", "Poids total calculé:", total);
+      }
+    } catch (error) {
+      debugLogger.error("useWorkoutSession", "Exception lors du calcul du poids total:", error);
+    }
+  };
 
   // Gérer les erreurs opérationnelles
   useEffect(() => {
@@ -90,91 +123,43 @@ export const useWorkoutSession = () => {
       
       const durationMinutes = Math.floor(sessionTime / 60);
       const caloriesBurned = additionalData.calories_burned || Math.round(durationMinutes * 8);
+      const difficulty = additionalData.perceived_difficulty || 'moderate';
       
       debugLogger.log("useWorkoutSession", "Finalisation de la session d'entraînement:", {
         sessionId: activeSession.id,
         duration: durationMinutes,
-        difficulty: additionalData.perceived_difficulty,
-        calories: caloriesBurned
+        difficulty,
+        calories: caloriesBurned,
+        totalWeight
       });
       
       // Mise à jour des champs de la session
       const updateData = {
         status: 'completed',
         total_duration_minutes: durationMinutes,
-        perceived_difficulty: additionalData.perceived_difficulty || 'moderate',
+        perceived_difficulty: difficulty,
         calories_burned: caloriesBurned,
+        total_weight_lifted: totalWeight,
         updated_at: new Date().toISOString()
       };
       
       debugLogger.log("useWorkoutSession", "Données de mise à jour:", updateData);
       
-      // Mise à jour de la session
+      // Mise à jour de la session avec les statistiques complètes
       const sessionData = await updateWorkoutSession(activeSession.id, updateData);
 
       if (!sessionData) {
         throw new Error("La mise à jour de la session a échoué");
       }
       
-      // Ajout/mise à jour des statistiques d'entraînement
-      const { data: existingStats, error: checkError } = await supabase
-        .from('training_stats')
-        .select('*')
-        .eq('session_id', activeSession.id)
-        .maybeSingle();
-      
-      if (checkError) {
-        debugLogger.error("useWorkoutSession", "Erreur lors de la vérification des stats existantes:", checkError);
-      }
-      
-      // Préparation des données pour les statistiques
-      const statsData = {
-        user_id: user.id,
-        session_id: activeSession.id,
-        perceived_difficulty: additionalData.perceived_difficulty || 'moderate',
-        session_duration_minutes: durationMinutes,
-        calories_burned: caloriesBurned,
-        muscle_groups_worked: activeSession.exercises || [],
-        created_at: new Date().toISOString()
-      };
-      
-      // Si des statistiques existent déjà, les mettre à jour, sinon les créer
-      let statsResult;
-      if (existingStats) {
-        const { data, error } = await supabase
-          .from('training_stats')
-          .update(statsData)
-          .eq('id', existingStats.id)
-          .select();
-        
-        if (error) {
-          debugLogger.error("useWorkoutSession", "Erreur lors de la mise à jour des statistiques:", error);
-          throw error;
-        }
-        statsResult = data;
-      } else {
-        const { data, error } = await supabase
-          .from('training_stats')
-          .insert(statsData)
-          .select();
-        
-        if (error) {
-          debugLogger.error("useWorkoutSession", "Erreur lors de la création des statistiques:", error);
-          throw error;
-        }
-        statsResult = data;
-      }
-      
-      debugLogger.log("useWorkoutSession", "Statistiques enregistrées:", statsResult);
-      
       // Mettre à null après une réponse réussie de Supabase
       setActiveSession(null);
       
-      notify(
-        t("workouts.completeWorkout") || "Entraînement terminé",
-        `${t("workouts.totalDuration") || "Durée totale"}: ${durationMinutes} ${t("workouts.minutes") || "minutes"}`,
-        "success"
-      );
+      toast({
+        title: t("workouts.completeWorkout") || "Entraînement terminé",
+        description: `${t("workouts.totalDuration") || "Durée totale"}: ${durationMinutes} ${t("workouts.minutes") || "minutes"}`,
+        variant: "success"
+      });
       
       // Redirect to the summary page
       navigate(`/workouts/summary/${activeSession.id}`);
@@ -200,6 +185,7 @@ export const useWorkoutSession = () => {
     sessionTime,
     formatTime,
     startWorkout,
-    finishWorkout
+    finishWorkout,
+    totalWeight
   };
 };

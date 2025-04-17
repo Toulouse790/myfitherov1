@@ -12,6 +12,7 @@ export interface WorkoutSession {
   perceived_difficulty?: 'easy' | 'moderate' | 'hard';
   type?: string;
   workout_type?: string;
+  total_weight_lifted?: number;
 }
 
 export type WorkoutSessionUpdate = Partial<Omit<WorkoutSession, 'id' | 'user_id' | 'created_at'>>;
