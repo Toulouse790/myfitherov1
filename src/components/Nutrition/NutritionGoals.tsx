@@ -42,11 +42,13 @@ export const NutritionGoals = () => {
           .single();
 
         if (questionnaire) {
+          console.log("Données du questionnaire:", questionnaire);
           setProfileData({
             ...profile,
             questionnaire
           });
         } else {
+          console.log("Pas de données de questionnaire trouvées");
           setProfileData(profile);
         }
       } catch (error) {
@@ -73,18 +75,25 @@ export const NutritionGoals = () => {
 
     // Sinon, calculer les objectifs basés sur le profil si disponible
     if (profileData) {
-      const weight = profileData.weight_kg || 70;
-      const height = profileData.height_cm || 170;
+      const weight = profileData.weight_kg || (profileData.questionnaire?.weight ? Number(profileData.questionnaire.weight) : 70);
+      const height = profileData.height_cm || (profileData.questionnaire?.height ? Number(profileData.questionnaire.height) : 170);
       const age = profileData.age || 30;
-      const gender = profileData.gender || 'male';
+      const gender = profileData.gender || (profileData.questionnaire?.gender || 'male');
       const objective = profileData.main_objective || (profileData.questionnaire?.objective || 'maintenance');
       const activityLevel = profileData.experience_level || (profileData.questionnaire?.experience_level || 'moderately_active');
+
+      console.log("Calcul des besoins caloriques avec:", {
+        weight, height, age, gender, objective, activityLevel
+      });
 
       // Calculer les besoins caloriques quotidiens
       const bmr = calculateBMR(weight, height, age, gender);
       const activityMultiplier = getActivityMultiplier(activityLevel);
       const objectiveMultiplier = getObjectiveMultiplier(objective);
       const dailyCalories = Math.round(bmr * activityMultiplier * objectiveMultiplier);
+
+      console.log("BMR calculé:", bmr);
+      console.log("Après multiplicateurs:", dailyCalories);
 
       // Calculer les macros
       let proteinMultiplier = 2;
