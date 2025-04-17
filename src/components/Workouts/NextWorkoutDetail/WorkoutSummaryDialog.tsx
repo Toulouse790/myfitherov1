@@ -33,44 +33,58 @@ export const WorkoutSummaryDialog = ({
   onConfirm,
 }: WorkoutSummaryDialogProps) => {
   const { t } = useLanguage();
-  const [calculatedCalories, setCalculatedCalories] = useState(stats.totalCalories);
+  const [calculatedCalories, setCalculatedCalories] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [difficulty, setDifficulty] = useState<string>("moderate");
   const [muscleGroups] = useState<string[]>(["chest", "shoulders"]);
   
   // Recalculer les calories basées sur la durée si aucune valeur n'est fournie
   useEffect(() => {
-    if (stats.totalCalories === 0 && stats.duration > 0) {
-      // Validation de la durée
-      const validDuration = stats.duration > 0 && stats.duration < 1440 ? stats.duration : 30;
+    // Validation de la durée
+    const validDuration = Math.max(1, Math.min(stats.duration || 0, 300)); // Limité entre 1 et 300 minutes
+    const validWeight = Math.max(0, Math.min(stats.totalWeight || 0, 50000)); // Limité à 50 tonnes max
+    
+    if (stats.totalCalories <= 0) {
+      // Estimation des calories basée sur la durée et le poids
+      // Formule simple: durée × 7-10 calories par minute, ajustée par le poids soulevé
+      const baseCalories = validDuration * 9; // Base: 9 calories par minute
+      const weightFactor = Math.max(1, Math.log10(validWeight + 1) / 2); // Facteur basé sur le poids total (logarithmique)
       
-      // Estimation simple: environ 8-10 calories par minute d'exercice de musculation
-      const estimatedCalories = Math.round(validDuration * 9);
-      setCalculatedCalories(estimatedCalories);
+      const estimatedCalories = Math.round(baseCalories * weightFactor);
+      
       debugLogger.log("WorkoutSummaryDialog", "Calcul des calories estimées:", {
         duration: validDuration,
+        totalWeight: validWeight,
+        weightFactor,
         estimatedCalories
       });
+      
+      setCalculatedCalories(estimatedCalories);
     } else {
       setCalculatedCalories(stats.totalCalories);
     }
-  }, [stats.totalCalories, stats.duration]);
+  }, [stats.totalCalories, stats.duration, stats.totalWeight]);
 
   // Validation des données avant confirmation
   const validateAndSubmit = () => {
-    let validDuration = stats.duration;
+    // Validation de la durée
+    let validDuration = Math.max(1, Math.min(stats.duration || 30, 300)); // Entre 1-300 minutes
     
-    // Vérifications de sécurité pour éviter les données aberrantes
-    if (validDuration <= 0 || validDuration > 1440) { // Plus de 24h = erreur
+    if (validDuration <= 0) {
       debugLogger.warn("WorkoutSummaryDialog", "Durée invalide détectée, utilisation d'une valeur par défaut", {
         originalDuration: stats.duration
       });
       validDuration = 30; // 30 minutes par défaut
     }
     
+    // S'assurer que les calories ont une valeur valide
     let validCalories = calculatedCalories;
-    if (validCalories <= 0 || validCalories > 3000) { // Plus de 3000 calories = improbable
-      validCalories = Math.round(validDuration * 9); // Ré-estimation
+    if (validCalories <= 0 || validCalories > 3000) {
+      validCalories = Math.round(validDuration * 9); // Ré-estimation basique
+      debugLogger.warn("WorkoutSummaryDialog", "Calories invalides détectées, ré-estimation", {
+        originalCalories: calculatedCalories,
+        newEstimate: validCalories
+      });
     }
     
     handleConfirm();
@@ -85,17 +99,17 @@ export const WorkoutSummaryDialog = ({
         difficulty,
         duration: stats.duration,
         muscleGroups,
-        calculatedCalories
+        calculatedCalories,
+        totalWeight: stats.totalWeight
       });
       
       // Passer les bonnes valeurs, y compris les calories calculées et le poids total
       await onConfirm(difficulty, stats.duration, muscleGroups);
       
-      // Ne pas fermer automatiquement - laisser la fonction appelante gérer la redirection
+      // La fonction appelante gérera la redirection
     } catch (error) {
       debugLogger.error("WorkoutSummaryDialog", "Erreur lors de la confirmation de fin d'entraînement:", error);
       setSubmitting(false);
-      // Ne pas fermer le dialogue en cas d'erreur pour permettre à l'utilisateur de réessayer
     }
   };
 

@@ -21,17 +21,30 @@ export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessio
   // Validation du temps formatté pour éviter des valeurs aberrantes
   const getDisplayTime = () => {
     try {
+      if (!formattedTime || formattedTime === "NaN:NaN") {
+        debugLogger.warn("ActiveSessionCard", "Temps formatté invalide", { formattedTime });
+        return "00:00";
+      }
+      
       // Vérifier si le temps formatté est valide
-      if (!formattedTime || formattedTime.includes(":")) {
+      if (formattedTime.includes(":")) {
         const parts = formattedTime.split(":");
+        if (parts.length !== 2) return "00:00";
+        
         const minutes = parseInt(parts[0], 10);
+        const seconds = parseInt(parts[1], 10);
+        
+        // Validation des composants
+        if (isNaN(minutes) || isNaN(seconds)) return "00:00";
         
         // Si le nombre de minutes est anormalement élevé, afficher une valeur par défaut
-        if (minutes > 1000) {
+        if (minutes > 1000 || seconds > 59) {
           debugLogger.warn("ActiveSessionCard", "Temps formatté anormal détecté", { formattedTime });
           return "00:00";
         }
-        return formattedTime;
+        
+        // Si valide, reformater pour garantir le padding avec zéros
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       }
       return "00:00";
     } catch (error) {
