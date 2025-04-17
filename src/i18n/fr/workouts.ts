@@ -99,10 +99,15 @@ export const workouts = {
   noExercisesAvailable: "Aucun exercice disponible",
   calories: "Calories",
   weightUnit: "kg",
+  exercises: "Exercices",
+  newPersonalRecord: "Nouveau record personnel : {weight}kg",
+  setValidated: "Série validée avec {weight}kg",
+  confirmation: "Êtes-vous sûr de vouloir terminer cette séance d'entraînement ?",
   errors: {
     sessionFinalize: "Erreur lors de la finalisation de la session",
     sessionFinalizeDescription: "Impossible de finaliser la session d'entraînement",
-    sessionFetch: "Erreur lors de la récupération de la session"
+    sessionFetch: "Erreur lors de la récupération de la session",
+    saveWeightFailed: "Impossible d'enregistrer le poids"
   },
   sessionCreated: "Séance créée",
   readyToStart: "Votre séance est prête à commencer",

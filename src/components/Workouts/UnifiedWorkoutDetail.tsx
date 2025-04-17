@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +27,7 @@ export const UnifiedWorkoutDetail = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [showExerciseDetail, setShowExerciseDetail] = useState(false);
   const [workoutStats, setWorkoutStats] = useState({
@@ -102,7 +104,7 @@ export const UnifiedWorkoutDetail = () => {
   const handleExerciseClick = (index: number) => {
     setCurrentExerciseIndex(index);
     setShowExerciseDetail(true);
-    console.log("Exercice sélectionné:", exercises[index], "Index:", index);
+    debugLogger.log("UnifiedWorkoutDetail", "Exercice sélectionné:", exercises[index], "Index:", index);
   };
 
   const handleBackToList = () => {
@@ -132,7 +134,15 @@ export const UnifiedWorkoutDetail = () => {
 
   const handleConfirmEnd = async (difficulty: string, duration: number, muscleGroups: string[]) => {
     try {
+      setIsSubmitting(true);
       const actualDuration = Math.floor((Date.now() - sessionStartTime) / 60000);
+      
+      debugLogger.log("UnifiedWorkoutDetail", "Mise à jour finale de la session", {
+        sessionId,
+        status: 'completed',
+        actualDuration,
+        difficulty
+      });
       
       const { error } = await supabase
         .from('workout_sessions')
@@ -145,7 +155,10 @@ export const UnifiedWorkoutDetail = () => {
         })
         .eq('id', sessionId);
       
-      if (error) throw error;
+      if (error) {
+        debugLogger.error("UnifiedWorkoutDetail", "Erreur lors de la mise à jour de la session:", error);
+        throw error;
+      }
       
       await handleConfirmEndWorkout(difficulty, duration, muscleGroups);
       
@@ -156,12 +169,14 @@ export const UnifiedWorkoutDetail = () => {
 
       navigate('/workouts');
     } catch (error) {
-      console.error('Error completing workout:', error);
+      debugLogger.error("UnifiedWorkoutDetail", "Erreur lors de la finalisation:", error);
       toast({
         title: t("common.error") || "Erreur",
-        description: "Impossible de terminer la séance",
+        description: t("workouts.errors.sessionFinalizeDescription") || "Impossible de terminer la séance",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

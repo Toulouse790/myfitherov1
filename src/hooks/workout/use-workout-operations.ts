@@ -58,6 +58,7 @@ export const useWorkoutOperations = () => {
       // Si le statut est 'completed', ajouter completed_at s'il n'est pas déjà défini
       if (updates.status === 'completed' && !updates.completed_at) {
         updatesWithTimestamp.completed_at = new Date().toISOString();
+        debugLogger.log("WorkoutOperations", "Ajout automatique du completed_at:", updatesWithTimestamp.completed_at);
       }
       
       const { data, error } = await supabase
@@ -73,6 +74,7 @@ export const useWorkoutOperations = () => {
         throw error;
       }
 
+      debugLogger.log("WorkoutOperations", "Session mise à jour avec succès:", data);
       return data;
     }
   });
@@ -102,6 +104,7 @@ export const useWorkoutOperations = () => {
 
   return {
     isLoading: startWorkoutMutation.isPending || updateWorkoutMutation.isPending,
+    error: startWorkoutMutation.error || updateWorkoutMutation.error,
     startWorkout,
     updateWorkoutSession
   };

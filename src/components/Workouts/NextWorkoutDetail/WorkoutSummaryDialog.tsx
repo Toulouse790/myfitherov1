@@ -12,6 +12,7 @@ import { CompletionMessage } from "./CompletionMessage";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { debugLogger } from "@/utils/debug-logger";
+import { Loader2 } from "lucide-react";
 
 interface WorkoutSummaryDialogProps {
   open: boolean;
@@ -33,6 +34,8 @@ export const WorkoutSummaryDialog = ({
   const { t } = useLanguage();
   const [calculatedCalories, setCalculatedCalories] = useState(stats.totalCalories);
   const [submitting, setSubmitting] = useState(false);
+  const [difficulty] = useState<string>("moderate");
+  const [muscleGroups] = useState<string[]>(["chest", "shoulders"]);
   
   // Recalculer les calories basées sur la durée si aucune valeur n'est fournie
   useEffect(() => {
@@ -40,6 +43,10 @@ export const WorkoutSummaryDialog = ({
       // Estimation simple: environ 8-10 calories par minute d'exercice de musculation
       const estimatedCalories = Math.round(stats.duration * 9);
       setCalculatedCalories(estimatedCalories);
+      debugLogger.log("WorkoutSummaryDialog", "Calcul des calories estimées:", {
+        duration: stats.duration,
+        estimatedCalories
+      });
     } else {
       setCalculatedCalories(stats.totalCalories);
     }
@@ -49,12 +56,12 @@ export const WorkoutSummaryDialog = ({
     try {
       setSubmitting(true);
       debugLogger.log("WorkoutSummaryDialog", "Confirmation de fin d'entraînement avec:", {
-        difficulty: "medium",
+        difficulty,
         duration: stats.duration,
-        muscleGroups: ["chest", "shoulders"],
+        muscleGroups
       });
       
-      await onConfirm("medium", stats.duration, ["chest", "shoulders"]);
+      await onConfirm(difficulty, stats.duration, muscleGroups);
     } catch (error) {
       debugLogger.error("WorkoutSummaryDialog", "Erreur lors de la confirmation de fin d'entraînement:", error);
     } finally {
@@ -63,10 +70,14 @@ export const WorkoutSummaryDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      // Empêcher la fermeture pendant la soumission
+      if (submitting && !isOpen) return;
+      onOpenChange(isOpen);
+    }}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t("workouts.sessionCompleted") || "Résumé de la séance"}</DialogTitle>
+          <DialogTitle>{t("workouts.sessionCompleted") || "Séance terminée"}</DialogTitle>
         </DialogHeader>
         
         <WorkoutStats 
@@ -83,10 +94,10 @@ export const WorkoutSummaryDialog = ({
             disabled={submitting}
           >
             {submitting ? (
-              <>
-                <span className="mr-2">Finalisation...</span>
-                <span className="animate-spin">⭘</span>
-              </>
+              <div className="flex items-center justify-center">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span>{t("common.finalizing") || "Finalisation..."}</span>
+              </div>
             ) : (
               t("workouts.completeWorkout") || "Terminer la séance"
             )}

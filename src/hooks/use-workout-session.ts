@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -20,7 +20,10 @@ export const useWorkoutSession = () => {
   // Use the specialized hooks
   const { isLoading: isSessionLoading, activeSession, setActiveSession, checkActiveSession } = useActiveSession();
   const { sessionTime, formatTime, startTimer, stopTimer } = useSessionTimer();
-  const { isLoading: isOperationLoading, startWorkout, updateWorkoutSession } = useWorkoutOperations();
+  const { isLoading: isOperationLoading, error: operationError, startWorkout, updateWorkoutSession } = useWorkoutOperations();
+
+  // État pour suivre le processus de finalisation
+  const [isFinishing, setIsFinishing] = useState(false);
 
   // Combine loading states
   const isLoading = isSessionLoading || isOperationLoading;
@@ -44,6 +47,18 @@ export const useWorkoutSession = () => {
     };
   }, [activeSession]);
 
+  // Gérer les erreurs opérationnelles
+  useEffect(() => {
+    if (operationError) {
+      debugLogger.error("useWorkoutSession", "Erreur d'opération:", operationError);
+      notify(
+        t("common.error") || "Erreur",
+        t("workouts.errors.sessionFinalizeDescription") || "Impossible de finaliser la session",
+        "error"
+      );
+    }
+  }, [operationError]);
+
   const finishWorkout = async (additionalData: {
     perceived_difficulty?: 'easy' | 'moderate' | 'hard';
     calories_burned?: number;
@@ -59,6 +74,7 @@ export const useWorkoutSession = () => {
     }
     
     try {
+      setIsFinishing(true);
       stopTimer();
       
       const durationMinutes = Math.floor(sessionTime / 60);
@@ -109,6 +125,8 @@ export const useWorkoutSession = () => {
         "error"
       );
       return null;
+    } finally {
+      setIsFinishing(false);
     }
   };
 
@@ -118,6 +136,7 @@ export const useWorkoutSession = () => {
     sessionTime,
     formatTime,
     startWorkout,
-    finishWorkout
+    finishWorkout,
+    isFinishing
   };
 };

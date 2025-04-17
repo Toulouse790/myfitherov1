@@ -21,7 +21,7 @@ export const useSessionActions = () => {
         description: t("auth.signInRequired") || "Vous devez être connecté pour créer une séance d'entraînement",
         variant: "destructive",
       });
-      return;
+      return null;
     }
 
     try {
@@ -40,13 +40,18 @@ export const useSessionActions = () => {
             exercises: exercises,
             status: 'in_progress',
             workout_type: 'strength',
-            started_at: new Date().toISOString()
+            started_at: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           }
         ])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        debugLogger.error("useSessionActions", "Erreur lors de la création de la séance:", error);
+        throw error;
+      }
 
       debugLogger.log("useSessionActions", "Session créée avec succès:", data);
 
@@ -58,14 +63,18 @@ export const useSessionActions = () => {
       // Rediriger vers la nouvelle séance
       if (data?.id) {
         navigate(`/workout/${data.id}`);
+        return data;
       }
+      
+      return null;
     } catch (error) {
-      console.error("Erreur lors de la création de la séance:", error);
+      debugLogger.error("useSessionActions", "Erreur lors de la création de la séance:", error);
       toast({
         title: t("common.error") || "Erreur",
         description: t("workouts.sessionCreateFailed") || "Impossible de créer la séance d'entraînement",
         variant: "destructive",
       });
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -94,21 +103,26 @@ export const useSessionActions = () => {
           created_at: new Date().toISOString()
         });
 
-      if (error) throw error;
+      if (error) {
+        debugLogger.error("useSessionActions", "Erreur lors de l'insertion des stats:", error);
+        throw error;
+      }
       
       toast({
         title: t("workouts.sessionCompleted") || "Séance terminée",
         description: t("workouts.statsRecorded") || "Vos statistiques ont été enregistrées",
       });
       
-      navigate('/');
+      navigate('/workouts');
+      return true;
     } catch (error) {
-      console.error("Erreur lors de la finalisation de la séance:", error);
+      debugLogger.error("useSessionActions", "Erreur lors de la finalisation de la séance:", error);
       toast({
         title: t("common.error") || "Erreur",
         description: t("workouts.finalizationFailed") || "Impossible de finaliser votre séance",
         variant: "destructive",
       });
+      return false;
     } finally {
       setIsLoading(false);
     }

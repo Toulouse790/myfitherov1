@@ -9,6 +9,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { debugLogger } from "@/utils/debug-logger";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
+import { WorkoutSummaryDialog } from "./NextWorkoutDetail/WorkoutSummaryDialog";
 
 export const WorkoutSession = () => {
   const { id: sessionId } = useParams();
@@ -17,8 +20,18 @@ export const WorkoutSession = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [showDetail, setShowDetail] = useState(false);
+  const [sessionDuration, setSessionDuration] = useState(0);
+  const [startTime] = useState<number>(Date.now());
+  const [showSummary, setShowSummary] = useState(false);
+  const [workoutStats, setWorkoutStats] = useState({
+    duration: 0,
+    totalWeight: 0,
+    totalCalories: 0
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
   
   // État pour suivre la progression de chaque exercice
   const [exerciseProgress, setExerciseProgress] = useState<Record<string, {
@@ -26,6 +39,16 @@ export const WorkoutSession = () => {
     sets: number;
     totalSets: number;
   }>>({});
+
+  // Timer pour la durée de la séance
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      setSessionDuration(elapsed);
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, [startTime]);
 
   // Charger les exercices de la séance d'entraînement
   useEffect(() => {
@@ -41,12 +64,12 @@ export const WorkoutSession = () => {
         setIsLoading(true);
         const { data, error } = await supabase
           .from('workout_sessions')
-          .select('exercises')
+          .select('exercises, status, created_at')
           .eq('id', sessionId)
           .single();
         
         if (error) {
-          debugLogger.log("WorkoutSession", "Erreur lors du chargement de la session:", error);
+          debugLogger.error("WorkoutSession", "Erreur lors du chargement de la session:", error);
           throw error;
         }
         
@@ -69,8 +92,8 @@ export const WorkoutSession = () => {
       } catch (error) {
         console.error('Erreur lors du chargement de la séance:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de charger les exercices de la séance",
+          title: t("common.error") || "Erreur",
+          description: t("workouts.unableToLoadSessionDetails") || "Impossible de charger les exercices de la séance",
           variant: "destructive",
         });
       } finally {
@@ -79,7 +102,7 @@ export const WorkoutSession = () => {
     };
     
     fetchSessionData();
-  }, [sessionId, toast]);
+  }, [sessionId, toast, t]);
 
   // Gestion du changement d'exercice actuel
   const handleExerciseSelect = (index: number) => {
@@ -111,6 +134,97 @@ export const WorkoutSession = () => {
   const handleBackToList = () => {
     setShowDetail(false);
   };
+  
+  // Préparation à la fin de l'entraînement
+  const handleFinishWorkout = () => {
+    const durationMinutes = Math.floor(sessionDuration / 60);
+    const totalWeight = Object.values(exerciseProgress).reduce((sum, ex) => sum + (ex.sets * 20), 0);
+    const totalCalories = Math.floor(durationMinutes * 9);
+    
+    setWorkoutStats({
+      duration: durationMinutes,
+      totalWeight,
+      totalCalories
+    });
+    
+    setShowSummary(true);
+  };
+  
+  // Confirmation de fin d'entraînement
+  const handleConfirmEnd = async (difficulty: string, duration: number, muscleGroups: string[]) => {
+    if (!sessionId || !user) {
+      toast({
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.sessionFinalizeDescription") || "Impossible de finaliser la séance",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      debugLogger.log("WorkoutSession", "Finalisation de la session:", {
+        sessionId, 
+        difficulty, 
+        duration,
+        muscleGroups
+      });
+      
+      const { error: updateError } = await supabase
+        .from('workout_sessions')
+        .update({
+          status: 'completed',
+          total_duration_minutes: duration,
+          perceived_difficulty: difficulty,
+          completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', sessionId);
+      
+      if (updateError) {
+        debugLogger.error("WorkoutSession", "Erreur lors de la mise à jour du statut:", updateError);
+        throw updateError;
+      }
+      
+      // Ajouter les statistiques d'entraînement
+      const { error: statsError } = await supabase
+        .from('training_stats')
+        .insert({
+          user_id: user.id,
+          session_id: sessionId,
+          perceived_difficulty: difficulty,
+          session_duration_minutes: duration,
+          muscle_groups_worked: muscleGroups,
+          calories_burned: workoutStats.totalCalories,
+          total_weight_lifted: workoutStats.totalWeight,
+          created_at: new Date().toISOString()
+        });
+      
+      if (statsError) {
+        debugLogger.error("WorkoutSession", "Erreur lors de l'ajout des statistiques:", statsError);
+        throw statsError;
+      }
+      
+      debugLogger.log("WorkoutSession", "Session finalisée avec succès");
+      
+      toast({
+        title: t("workouts.sessionCompleted") || "Séance terminée !",
+        description: t("workouts.allExercisesCompleted") || "Félicitations! Tous les exercices ont été complétés.",
+      });
+      
+      // Rediriger vers la page des entraînements
+      navigate('/workouts');
+    } catch (error) {
+      debugLogger.error("WorkoutSession", "Erreur lors de la finalisation:", error);
+      toast({
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.sessionFinalizeDescription") || "Impossible de finaliser la séance",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -120,15 +234,39 @@ export const WorkoutSession = () => {
     );
   }
 
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="space-y-6 pb-20">
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-bold">{t("workouts.workoutSession")}</h1>
+        <div className="text-sm text-muted-foreground">
+          {t("workouts.duration")}: {formatTime(sessionDuration)}
+        </div>
+      </div>
+      
       {!showDetail ? (
-        <ExerciseList 
-          exercises={exercises}
-          currentExerciseIndex={currentExerciseIndex}
-          exerciseProgress={exerciseProgress}
-          onExerciseSelect={handleExerciseSelect}
-        />
+        <div className="space-y-4">
+          <ExerciseList 
+            exercises={exercises}
+            currentExerciseIndex={currentExerciseIndex}
+            exerciseProgress={exerciseProgress}
+            onExerciseSelect={handleExerciseSelect}
+          />
+          
+          <div className="flex justify-center">
+            <Button 
+              onClick={handleFinishWorkout} 
+              className="w-full sm:w-auto"
+            >
+              {t("workouts.finishWorkout")}
+            </Button>
+          </div>
+        </div>
       ) : (
         <ExerciseDetail 
           exerciseName={exercises[currentExerciseIndex]}
@@ -137,6 +275,13 @@ export const WorkoutSession = () => {
           initialSets={exerciseProgress[exercises[currentExerciseIndex]]?.totalSets || 3}
         />
       )}
+      
+      <WorkoutSummaryDialog
+        open={showSummary}
+        onOpenChange={setShowSummary}
+        stats={workoutStats}
+        onConfirm={handleConfirmEnd}
+      />
     </div>
   );
 };
