@@ -50,6 +50,12 @@ class DebugLogger {
   public enable(enabled: boolean): void {
     this.enabled = enabled;
     this.saveConfig();
+    
+    if (enabled) {
+      console.log('Mode debug activé');
+    } else {
+      console.log('Mode debug désactivé');
+    }
   }
 
   // Méthode pour activer le mode debug (compatibilité avec le code existant)

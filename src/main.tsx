@@ -11,15 +11,17 @@ import { debugLogger } from './utils/debug-logger'
 import { ThemeProvider } from './components/Theme/ThemeProvider'
 
 // Activer le mode debug pour faciliter le débogage
-debugLogger.enableDebugMode();
+// On utilise maintenant la nouvelle méthode enable plutôt que enableDebugMode
+debugLogger.enable(true);
 debugLogger.log("Application", "Initialisation de l'application avec le routeur centralisé");
 
-// Créer une instance de QueryClient
+// Créer une instance de QueryClient avec une configuration optimisée
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 1,
+      refetchOnWindowFocus: false, // Désactive le rafraîchissement automatique lors du focus de la fenêtre
     },
   },
 })

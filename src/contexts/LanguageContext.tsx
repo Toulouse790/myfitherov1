@@ -1,16 +1,22 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { debugLogger } from '@/utils/debug-logger';
+import { fr } from '@/i18n/fr';
+import { en } from '@/i18n/en';
+import { es } from '@/i18n/es';
+import { de } from '@/i18n/de';
 
-type Language = 'fr' | 'en';
+type Language = 'fr' | 'en' | 'es' | 'de';
 
 interface Translations {
-  [key: string]: string;
+  [key: string]: any;
 }
 
 interface LanguageContextProps {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, options?: { fallback?: string }) => string;
+  getNestedTranslation: (key: string) => any;
 }
 
 interface LanguageProviderProps {
@@ -20,132 +26,122 @@ interface LanguageProviderProps {
 // Créer le contexte
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
 
-// Translations
+// Translations complètes
 const translations: Record<Language, Translations> = {
-  fr: {
-    // Commun
-    'common.error': 'Erreur',
-    'common.success': 'Succès',
-    'common.cancel': 'Annuler',
-    'common.confirm': 'Confirmer',
-    'common.goBack': 'Retour',
-    'common.save': 'Enregistrer',
-    'common.delete': 'Supprimer',
-    'common.edit': 'Modifier',
-    'common.add': 'Ajouter',
-    
-    // Authentification
-    'auth.signInRequired': 'Vous devez être connecté pour finaliser une session',
-    
-    // Entraînements
-    'workouts.trainingSession': 'Séance d\'entraînement',
-    'workouts.set': 'Série',
-    'workouts.sets': 'séries',
-    'workouts.setsCompleted': 'séries complétées',
-    'workouts.sessionNotFound': 'Session non trouvée',
-    'workouts.sessionNotFoundDescription': 'La session d\'entraînement demandée n\'existe pas ou n\'est plus disponible.',
-    'workouts.completeWorkout': 'Terminer l\'entraînement',
-    'workouts.completed': 'Terminé',
-    'workouts.progress': 'Progression',
-    'workouts.weight': 'Poids',
-    'workouts.weightUnit': 'kg',
-    'workouts.reps': 'Répétitions',
-    'workouts.numberOfSets': 'Nombre de séries',
-    'workouts.validateSet': 'Valider la série',
-    'workouts.completeExercise': 'Terminer l\'exercice',
-    'workouts.completedSets': 'Séries complétées',
-    'workouts.restTime': 'Temps de repos',
-    'workouts.skipRest': 'Passer le repos',
-    'workouts.setCompleted': 'Série terminée',
-    'workouts.caloriesBurned': 'calories brûlées',
-    'workouts.restBeforeNextSet': 'Reposez-vous avant la prochaine série.',
-    'workouts.exerciseCompleted': 'Exercice terminé',
-    'workouts.allSetsCompleted': 'Toutes les séries sont terminées',
-    'workouts.sessionSummary': 'Résumé de la séance',
-    'workouts.duration': 'Durée',
-    'workouts.minutes': 'min',
-    'workouts.exercisesCompleted': 'Exercices terminés',
-    'workouts.noActiveSession': 'Aucune session active trouvée',
-    'workouts.weightUpdatedSuccessfully': 'Poids mis à jour avec succès',
-    'workouts.repsUpdatedSuccessfully': 'Répétitions mises à jour avec succès',
-    
-    // Erreurs liées aux entraînements
-    'workouts.errors.sessionCreationFailed': 'Impossible de créer la session d\'entraînement. Veuillez réessayer.',
-    'workouts.errors.sessionFinalizeDescription': 'Impossible de finaliser la session',
-    'workouts.errors.userNotAuthenticated': 'Utilisateur non authentifié',
-    'workouts.errors.invalidWeightValue': 'Valeur de poids invalide',
-    'workouts.errors.weightUpdateFailed': 'Impossible de mettre à jour le poids',
-    'workouts.errors.invalidRepsValue': 'Valeur de répétitions invalide',
-    'workouts.errors.repsUpdateFailed': 'Impossible de mettre à jour les répétitions'
-  },
-  en: {
-    // Common
-    'common.error': 'Error',
-    'common.success': 'Success',
-    'common.cancel': 'Cancel',
-    'common.confirm': 'Confirm',
-    'common.goBack': 'Go Back',
-    'common.save': 'Save',
-    'common.delete': 'Delete',
-    'common.edit': 'Edit',
-    'common.add': 'Add',
-    
-    // Authentication
-    'auth.signInRequired': 'You must be logged in to finalize a session',
-    
-    // Workouts
-    'workouts.trainingSession': 'Training Session',
-    'workouts.set': 'Set',
-    'workouts.sets': 'sets',
-    'workouts.setsCompleted': 'sets completed',
-    'workouts.sessionNotFound': 'Session Not Found',
-    'workouts.sessionNotFoundDescription': 'The requested training session does not exist or is no longer available.',
-    'workouts.completeWorkout': 'Complete Workout',
-    'workouts.completed': 'Completed',
-    'workouts.progress': 'Progress',
-    'workouts.weight': 'Weight',
-    'workouts.weightUnit': 'kg',
-    'workouts.reps': 'Reps',
-    'workouts.numberOfSets': 'Number of Sets',
-    'workouts.validateSet': 'Validate Set',
-    'workouts.completeExercise': 'Complete Exercise',
-    'workouts.completedSets': 'Completed Sets',
-    'workouts.restTime': 'Rest Time',
-    'workouts.skipRest': 'Skip Rest',
-    'workouts.setCompleted': 'Set Completed',
-    'workouts.caloriesBurned': 'calories burned',
-    'workouts.restBeforeNextSet': 'Rest before the next set.',
-    'workouts.exerciseCompleted': 'Exercise Completed',
-    'workouts.allSetsCompleted': 'All sets are completed',
-    'workouts.sessionSummary': 'Session Summary',
-    'workouts.duration': 'Duration',
-    'workouts.minutes': 'min',
-    'workouts.exercisesCompleted': 'Exercises Completed',
-    'workouts.noActiveSession': 'No active session found',
-    'workouts.weightUpdatedSuccessfully': 'Weight updated successfully',
-    'workouts.repsUpdatedSuccessfully': 'Reps updated successfully',
-    
-    // Workout errors
-    'workouts.errors.sessionCreationFailed': 'Failed to create training session. Please try again.',
-    'workouts.errors.sessionFinalizeDescription': 'Failed to finalize session',
-    'workouts.errors.userNotAuthenticated': 'User not authenticated',
-    'workouts.errors.invalidWeightValue': 'Invalid weight value',
-    'workouts.errors.weightUpdateFailed': 'Failed to update weight',
-    'workouts.errors.invalidRepsValue': 'Invalid reps value',
-    'workouts.errors.repsUpdateFailed': 'Failed to update reps'
+  fr,
+  en,
+  es,
+  de
+};
+
+// Fonction pour accéder à une clé de traduction imbriquée
+const getNestedValue = (obj: any, path: string) => {
+  const keys = path.split('.');
+  let result = obj;
+  
+  for (const key of keys) {
+    if (result === undefined || result === null) return undefined;
+    result = result[key];
   }
+  
+  return result;
 };
 
 // Provider
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguage] = useState<Language>('fr');
 
-  const translate = (key: string): string => {
-    return translations[language][key] || key;
+  // Détection de la langue du navigateur et chargement des préférences
+  useEffect(() => {
+    try {
+      // Essayer de charger depuis localStorage
+      const savedLanguage = localStorage.getItem('userLanguage');
+      
+      if (savedLanguage && ['fr', 'en', 'es', 'de'].includes(savedLanguage)) {
+        setLanguage(savedLanguage as Language);
+        debugLogger.log('LanguageContext', `Langue chargée depuis localStorage: ${savedLanguage}`);
+        return;
+      }
+      
+      // Sinon, utiliser la langue du navigateur
+      const browserLang = navigator.language.split('-')[0];
+      const supportedLangs: Language[] = ['fr', 'en', 'es', 'de'];
+      
+      // Vérifier si la langue du navigateur est supportée
+      const detectedLang = supportedLangs.includes(browserLang as Language) 
+        ? browserLang as Language 
+        : 'fr';
+      
+      setLanguage(detectedLang);
+      debugLogger.log('LanguageContext', `Langue détectée du navigateur: ${detectedLang}`);
+      
+      // Enregistrer la préférence
+      localStorage.setItem('userLanguage', detectedLang);
+    } catch (error) {
+      debugLogger.error('LanguageContext', "Erreur lors de la détection de langue", error);
+      // Fallback sur français en cas d'erreur
+      setLanguage('fr');
+    }
+  }, []);
+
+  // Sauvegarder la préférence de langue lorsqu'elle change
+  useEffect(() => {
+    try {
+      localStorage.setItem('userLanguage', language);
+      debugLogger.log('LanguageContext', `Langue sauvegardée: ${language}`);
+    } catch (error) {
+      debugLogger.error('LanguageContext', "Erreur lors de la sauvegarde de la langue", error);
+    }
+  }, [language]);
+
+  // Fonction de traduction améliorée
+  const translate = (key: string, options?: { fallback?: string }): string => {
+    try {
+      const value = getNestedValue(translations[language], key);
+      
+      // Si la traduction existe, la retourner
+      if (value !== undefined && typeof value === 'string') {
+        return value;
+      }
+      
+      // Sinon, utiliser le fallback ou la clé
+      if (options?.fallback) {
+        return options.fallback;
+      }
+      
+      // Si aucune traduction trouvée, essayer en anglais comme backup
+      if (language !== 'en') {
+        const enValue = getNestedValue(translations['en'], key);
+        if (enValue !== undefined && typeof enValue === 'string') {
+          return enValue;
+        }
+      }
+      
+      // Dernier recours: retourner la clé
+      return key;
+    } catch (error) {
+      debugLogger.error('LanguageContext', `Erreur de traduction pour la clé: ${key}`, error);
+      return options?.fallback || key;
+    }
+  };
+
+  // Fonction pour obtenir une section de traduction complète (pour les objets imbriqués)
+  const getNestedTranslation = (key: string): any => {
+    try {
+      return getNestedValue(translations[language], key) || getNestedValue(translations['en'], key) || {};
+    } catch (error) {
+      debugLogger.error('LanguageContext', `Erreur lors de l'accès aux traductions imbriquées: ${key}`, error);
+      return {};
+    }
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t: translate }}>
+    <LanguageContext.Provider value={{ 
+      language, 
+      setLanguage, 
+      t: translate,
+      getNestedTranslation
+    }}>
       {children}
     </LanguageContext.Provider>
   );
