@@ -108,7 +108,9 @@ export const workouts = {
     sessionFinalize: "Erreur lors de la finalisation de la session",
     sessionFinalizeDescription: "Impossible de finaliser la session d'entraînement",
     sessionFetch: "Erreur lors de la récupération de la session",
-    saveWeightFailed: "Impossible d'enregistrer le poids"
+    saveWeightFailed: "Impossible d'enregistrer le poids",
+    connectionFailed: "Échec de connexion à la base de données",
+    unknownError: "Erreur inconnue lors de la connexion"
   },
   sessionCreated: "Séance créée",
   readyToStart: "Votre séance est prête à commencer",
@@ -167,5 +169,13 @@ export const workouts = {
   active_session: "Séance active",
   training_session: "Séance d'entraînement",
   exercise_library: "Bibliothèque d'exercices",
-  addSet: "Ajouter une série"
+  addSet: "Ajouter une série",
+  connectionVerification: "Vérification de la connexion...",
+  connectionError: "Problème de connexion",
+  verifyingConnection: "Vérification de la connexion à la base de données...",
+  connectionProblem: "Impossible de se connecter à la base de données",
+  trainingOf: "Entraînement du",
+  kcal: "kcal",
+  workoutInfo: "Info séance",
+  continueWorkout: "Continuer l'entraînement"
 };

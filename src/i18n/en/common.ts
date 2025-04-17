@@ -28,5 +28,8 @@ export const common = {
   month: "month",
   months: "months",
   year: "year",
-  years: "years"
+  years: "years",
+  start: "Start",
+  stop: "Stop",
+  retry: "Retry"
 };

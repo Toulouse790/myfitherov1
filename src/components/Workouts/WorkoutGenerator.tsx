@@ -34,8 +34,8 @@ export function WorkoutGenerator() {
       } catch (error) {
         console.error("Erreur lors de la navigation:", error);
         toast({
-          title: t("common.error", { fallback: "Erreur" }),
-          description: t("workouts.startSessionErrorDescription", { fallback: "Impossible de générer l'entraînement. Veuillez réessayer." }),
+          title: t("common.error"),
+          description: t("workouts.startSessionErrorDescription"),
           variant: "destructive",
         });
         setIsGenerating(false);
@@ -49,16 +49,16 @@ export function WorkoutGenerator() {
     <div className="space-y-6">
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-xl sm:text-2xl">{t("workouts.generator", { fallback: "Générateur d'entraînement" })}</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl">{t("workouts.generator")}</CardTitle>
           <CardDescription className="text-sm sm:text-base">
-            {t("workouts.generatorDescription", { fallback: "Créez un programme adapté à vos objectifs et contraintes" })}
+            {t("workouts.generatorDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="text-xs sm:text-sm font-medium">
-                {t("workouts.duration", { fallback: "Durée" })}: {duration[0]} {t("workouts.min", { fallback: "min" })}
+                {t("workouts.duration")}: {duration[0]} {t("workouts.min")}
               </label>
               <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </div>
@@ -75,7 +75,7 @@ export function WorkoutGenerator() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="text-xs sm:text-sm font-medium">
-                {t("workouts.intensity", { fallback: "Intensité" })}: {intensity[0]}%
+                {t("workouts.intensity")}: {intensity[0]}%
               </label>
               <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </div>
@@ -92,7 +92,7 @@ export function WorkoutGenerator() {
           <div className="grid grid-cols-2 gap-3 sm:gap-4 my-3 sm:my-4">
             <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
               <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
-              <span className="text-xs sm:text-sm font-medium truncate">{t("workouts.todayDate", { fallback: "Aujourd'hui" })}</span>
+              <span className="text-xs sm:text-sm font-medium truncate">{t("workouts.todayDate")}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
               <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
@@ -109,12 +109,12 @@ export function WorkoutGenerator() {
             {isGenerating ? (
               <>
                 <div className="h-3 w-3 sm:h-4 sm:w-4 border-2 border-current border-t-transparent animate-spin mr-2" />
-                <span className="text-xs sm:text-sm truncate">{t("workouts.generationLoading", { fallback: "Génération en cours..." })}</span>
+                <span className="text-xs sm:text-sm truncate">{t("workouts.generationLoading")}</span>
               </>
             ) : (
               <>
                 <Dumbbell className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="text-xs sm:text-sm truncate">{t("workouts.generateWorkout", { fallback: "Générer un entraînement" })}</span>
+                <span className="text-xs sm:text-sm truncate">{t("workouts.generateWorkout")}</span>
               </>
             )}
           </Button>

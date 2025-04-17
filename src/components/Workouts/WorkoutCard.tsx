@@ -56,4 +56,3 @@ export const WorkoutCard = ({ workout }: WorkoutCardProps) => {
     </Card>
   );
 };
-

@@ -31,7 +31,7 @@ export const workouts = {
   startSessionLoading: "Starting...",
   generateWorkout: "Generate Workout",
   sessionGenerated: "Session Generated",
-  exerciseLibrary: "Exercises",
+  exerciseLibrary: "Exercise Library",
   allMuscleGroups: "All Muscle Groups",
   searchExercises: "Search Exercises",
   startWithSelected: "Start with Selection",
@@ -149,5 +149,22 @@ export const workouts = {
   stop_workout: "Stop workout",
   active_session: "Active session",
   training_session: "Training session",
-  exercise_library: "Exercise library"
+  exercise_library: "Exercise library",
+  errors: {
+    sessionFinalize: "Error finalizing session",
+    sessionFinalizeDescription: "Unable to finalize workout session",
+    sessionFetch: "Error fetching session",
+    saveWeightFailed: "Unable to save weight",
+    connectionFailed: "Failed to connect to database",
+    unknownError: "Unknown error during connection"
+  },
+  connectionVerification: "Verifying connection...",
+  connectionError: "Connection issue",
+  verifyingConnection: "Verifying connection to database...",
+  connectionProblem: "Unable to connect to database",
+  completeWorkout: "Complete workout",
+  trainingOf: "Training of",
+  kcal: "kcal",
+  workoutInfo: "Workout info",
+  continueWorkout: "Continue workout"
 };

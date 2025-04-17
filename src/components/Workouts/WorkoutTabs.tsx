@@ -22,19 +22,19 @@ export function WorkoutTabs({ activeTab, setActiveTab }: WorkoutTabsProps) {
           value="home" 
           className={`text-[10px] xs:text-xs sm:text-sm truncate ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
-          {t("workouts.startWorkout", { fallback: "Commencer l'entraînement" })}
+          {t("workouts.startWorkout")}
         </TabsTrigger>
         <TabsTrigger 
           value="library" 
           className={`text-[10px] xs:text-xs sm:text-sm truncate ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
-          {t("workouts.exercise_library", { fallback: "Bibliothèque d'exercices" })}
+          {t("workouts.exercise_library")}
         </TabsTrigger>
         <TabsTrigger 
           value="history" 
           className={`text-[10px] xs:text-xs sm:text-sm truncate ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
-          {t("workouts.history", { fallback: "Historique" })}
+          {t("workouts.history")}
         </TabsTrigger>
       </TabsList>
       

@@ -25,7 +25,7 @@ export const VerifyConnection = () => {
       } else {
         debugLogger.error('VerifyConnection', 'Erreur de connexion à Supabase', error);
         setConnectionStatus('error');
-        setErrorMessage(error?.message || t('workouts.errors.connectionFailed', { fallback: "Échec de connexion à la base de données" }));
+        setErrorMessage(error?.message || t('workouts.errors.connectionFailed'));
       }
     } catch (error) {
       debugLogger.error('VerifyConnection', 'Exception lors de la vérification de connexion', error);
@@ -33,7 +33,7 @@ export const VerifyConnection = () => {
       setErrorMessage(
         error instanceof Error 
           ? error.message 
-          : t('workouts.errors.unknownError', { fallback: "Erreur inconnue lors de la connexion" })
+          : t('workouts.errors.unknownError')
       );
     }
   };
@@ -50,18 +50,18 @@ export const VerifyConnection = () => {
     <Alert variant={connectionStatus === 'checking' ? 'default' : 'destructive'} className="mb-4">
       <AlertTitle>
         {connectionStatus === 'checking' 
-          ? t('workouts.connectionVerification', { fallback: "Vérification de la connexion..." })
-          : t('workouts.connectionError', { fallback: "Problème de connexion" })}
+          ? t('workouts.connectionVerification')
+          : t('workouts.connectionError')}
       </AlertTitle>
       <AlertDescription className="flex flex-col gap-2">
         <div>
           {connectionStatus === 'checking' 
-            ? t('workouts.verifyingConnection', { fallback: "Vérification de la connexion à la base de données..." })
-            : errorMessage || t('workouts.connectionProblem', { fallback: "Impossible de se connecter à la base de données" })}
+            ? t('workouts.verifyingConnection')
+            : errorMessage || t('workouts.connectionProblem')}
         </div>
         {connectionStatus === 'error' && (
           <Button size="sm" variant="outline" onClick={checkConnection} className="self-start mt-2">
-            {t('common.retry', { fallback: "Réessayer" })}
+            {t('common.retry')}
           </Button>
         )}
       </AlertDescription>

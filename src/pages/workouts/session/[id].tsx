@@ -21,7 +21,7 @@ export default function WorkoutSessionPage() {
       <div className="container max-w-4xl mx-auto p-4">
         <VerifyConnection />
         <h1 className="text-2xl font-bold mb-4">
-          {t('workouts.training_session', { fallback: "Séance d'entraînement" })}
+          {t("workouts.training_session")}
         </h1>
         <WorkoutSession sessionId={id} />
       </div>
