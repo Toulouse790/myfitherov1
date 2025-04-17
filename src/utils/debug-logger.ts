@@ -52,6 +52,20 @@ class DebugLogger {
     this.saveConfig();
   }
 
+  // Méthode pour activer le mode debug (compatibilité avec le code existant)
+  public enableDebugMode(): void {
+    this.enabled = true;
+    this.logLevels = {
+      debug: true,
+      log: true,
+      info: true,
+      warn: true,
+      error: true
+    };
+    this.saveConfig();
+    console.log('Mode debug activé');
+  }
+
   // Activer/désactiver un niveau de log spécifique
   public setLogLevel(level: LogLevel, enabled: boolean): void {
     this.logLevels[level] = enabled;
