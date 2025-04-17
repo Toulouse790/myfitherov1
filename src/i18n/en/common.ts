@@ -95,6 +95,7 @@ export const common = {
   mobileApp: "Mobile app",
   webApp: "Web app",
   downloadApp: "Download app",
+  exercises: "Exercises",
   notifications: {
     enable: "Enable notifications",
     disable: "Disable notifications",
@@ -162,5 +163,8 @@ export const common = {
   },
   previousMonth: "Previous month",
   nextMonth: "Next month",
-  dateFormat: "MM/dd/yyyy"
+  dateFormat: "MM/dd/yyyy",
+  currentMonth: "Current month",
+  april: "April",
+  year: "Year"
 };

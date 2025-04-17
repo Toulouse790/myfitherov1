@@ -33,19 +33,19 @@ export function WorkoutHistory() {
   };
 
   const formatMonthYear = (date: Date) => {
-    return new Date(date).toLocaleDateString(t('common.locale', { fallback: 'fr-FR' }), { 
+    return date.toLocaleDateString(t('common.locale', { fallback: 'fr-FR' }), { 
       month: 'long', 
       year: 'numeric' 
     });
   };
 
-  // Données d'historique d'entraînement plus réalistes
+  // Données d'historique d'entraînement avec des dates actuelles (2025)
   const mockWorkouts: WorkoutHistoryItem[] = [
-    { id: 1, date: '2023-07-22', name: t('workouts.upperBodyTraining'), duration: 45, calories: 320 },
-    { id: 2, date: '2023-07-20', name: t('workouts.cardioHIIT'), duration: 30, calories: 280 },
-    { id: 3, date: '2023-07-17', name: t('workouts.legDay'), duration: 50, calories: 350 },
-    { id: 4, date: '2023-07-15', name: t('workouts.fullBodyWorkout'), duration: 60, calories: 400 },
-    { id: 5, date: '2023-07-10', name: t('workouts.coreTraining'), duration: 25, calories: 220 }
+    { id: 1, date: '2025-04-15', name: t('workouts.upperBodyTraining'), duration: 45, calories: 320 },
+    { id: 2, date: '2025-04-12', name: t('workouts.cardioHIIT'), duration: 30, calories: 280 },
+    { id: 3, date: '2025-04-10', name: t('workouts.legDay'), duration: 50, calories: 350 },
+    { id: 4, date: '2025-04-05', name: t('workouts.fullBodyWorkout'), duration: 60, calories: 400 },
+    { id: 5, date: '2025-04-01', name: t('workouts.coreTraining'), duration: 25, calories: 220 }
   ];
 
   // Animation variants
@@ -65,7 +65,8 @@ export function WorkoutHistory() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(t('common.locale', { fallback: 'fr-FR' }));
+    const date = new Date(dateString);
+    return date.toLocaleDateString(t('common.locale', { fallback: 'fr-FR' }));
   };
 
   return (

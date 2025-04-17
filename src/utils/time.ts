@@ -1,3 +1,4 @@
+
 export const formatWorkoutTime = (totalSeconds: number) => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -8,12 +9,12 @@ export const formatWorkoutTime = (totalSeconds: number) => {
     .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
-export const formatDate = (dateString: string | undefined): string => {
+export const formatDate = (dateString: string | undefined, locale: string = 'fr-FR'): string => {
   if (!dateString) return 'Non défini';
   
   try {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('fr-FR', {
+    return new Intl.DateTimeFormat(locale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
@@ -22,4 +23,24 @@ export const formatDate = (dateString: string | undefined): string => {
     console.error('Error formatting date:', error);
     return 'Date invalide';
   }
+};
+
+export const getCurrentYear = (): number => {
+  return new Date().getFullYear();
+};
+
+export const getCurrentMonth = (): number => {
+  return new Date().getMonth(); // 0-indexed (0 = January, 11 = December)
+};
+
+export const getCurrentMonthName = (locale: string = 'fr-FR'): string => {
+  const date = new Date();
+  return date.toLocaleDateString(locale, { month: 'long' });
+};
+
+export const formatMonthYear = (date: Date, locale: string = 'fr-FR'): string => {
+  return date.toLocaleDateString(locale, { 
+    month: 'long', 
+    year: 'numeric' 
+  });
 };

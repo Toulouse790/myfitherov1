@@ -27,15 +27,16 @@ export function HistoryTab() {
     show: { opacity: 1, y: 0 }
   };
 
-  // Sample workout history data
+  // Sample workout history data with current dates (2025)
   const workoutHistory = [
-    { id: 1, date: "2023-07-22", type: t("workouts.upperBodyTraining"), duration: 45, exercises: 5, calories: 320 },
-    { id: 2, date: "2023-07-20", type: t("workouts.cardioHIIT"), duration: 30, exercises: 6, calories: 280 },
-    { id: 3, date: "2023-07-17", type: t("workouts.legDay"), duration: 50, exercises: 5, calories: 350 },
+    { id: 1, date: "2025-04-15", type: t("workouts.upperBodyTraining"), duration: 45, exercises: 5, calories: 320 },
+    { id: 2, date: "2025-04-12", type: t("workouts.cardioHIIT"), duration: 30, exercises: 6, calories: 280 },
+    { id: 3, date: "2025-04-10", type: t("workouts.legDay"), duration: 50, exercises: 5, calories: 350 },
   ];
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(t('common.locale', { fallback: 'fr-FR' }));
+    const date = new Date(dateString);
+    return date.toLocaleDateString(t('common.locale', { fallback: 'fr-FR' }));
   };
 
   return (
@@ -52,7 +53,7 @@ export function HistoryTab() {
             {t("workouts.workoutHistory")}
           </CardTitle>
           <CardDescription>
-            {t("workouts.recentWorkouts")}
+            {t("workouts.historyDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
