@@ -34,23 +34,36 @@ export const useWorkoutSession = () => {
   useEffect(() => {
     if (activeSession) {
       // Calculate the elapsed time since the session started
-      const startTime = new Date(activeSession.created_at).getTime();
-      const currentTime = new Date().getTime();
-      const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
-      
-      // Start the timer with the calculated elapsed time
-      startTimer(elapsedSeconds);
-      
-      debugLogger.log("useWorkoutSession", "Session active trouvée:", activeSession);
-      
-      // Récupérer le poids total soulevé pour cette session
-      fetchTotalWeight(activeSession.id);
+      try {
+        const startTime = new Date(activeSession.created_at).getTime();
+        const currentTime = new Date().getTime();
+        const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+        
+        // Validation pour éviter des temps aberrants
+        if (elapsedSeconds < 0 || elapsedSeconds > 86400) { // Plus de 24h = probablement une erreur
+          debugLogger.warn("useWorkoutSession", "Temps écoulé anormal détecté, réinitialisation à 0", { 
+            elapsedSeconds, 
+            created_at: activeSession.created_at 
+          });
+          startTimer(0);
+        } else {
+          startTimer(elapsedSeconds);
+        }
+        
+        debugLogger.log("useWorkoutSession", "Session active trouvée:", activeSession);
+        
+        // Récupérer le poids total soulevé pour cette session
+        fetchTotalWeight(activeSession.id);
+      } catch (error) {
+        debugLogger.error("useWorkoutSession", "Erreur lors du calcul du temps écoulé:", error);
+        startTimer(0);
+      }
     }
     
     return () => {
       stopTimer();
     };
-  }, [activeSession]);
+  }, [activeSession, startTimer, stopTimer]);
 
   // Récupération du poids total soulevé pour la session
   const fetchTotalWeight = async (sessionId: string) => {
@@ -91,7 +104,7 @@ export const useWorkoutSession = () => {
         "error"
       );
     }
-  }, [operationError]);
+  }, [operationError, notify, t]);
 
   const finishWorkout = async (additionalData: {
     perceived_difficulty?: 'easy' | 'moderate' | 'hard';
@@ -121,7 +134,28 @@ export const useWorkoutSession = () => {
       setIsFinishing(true);
       stopTimer();
       
-      const durationMinutes = Math.floor(sessionTime / 60);
+      // Validation de la durée - prévention des valeurs aberrantes
+      let durationMinutes = 0;
+      if (sessionTime > 0 && sessionTime < 86400) { // Moins de 24h
+        durationMinutes = Math.floor(sessionTime / 60);
+      } else {
+        // Si la durée est anormale, estimer à partir de created_at
+        try {
+          const startTime = new Date(activeSession.created_at).getTime();
+          const currentTime = new Date().getTime();
+          const elapsed = Math.floor((currentTime - startTime) / 1000);
+          if (elapsed > 0 && elapsed < 86400) {
+            durationMinutes = Math.floor(elapsed / 60);
+          } else {
+            // Fallback à une valeur raisonnable si tout échoue
+            durationMinutes = 30;
+          }
+        } catch (error) {
+          durationMinutes = 30; // Valeur par défaut
+          debugLogger.error("useWorkoutSession", "Erreur lors du calcul alternatif de la durée:", error);
+        }
+      }
+      
       const caloriesBurned = additionalData.calories_burned || Math.round(durationMinutes * 8);
       const difficulty = additionalData.perceived_difficulty || 'moderate';
       
@@ -145,11 +179,77 @@ export const useWorkoutSession = () => {
       
       debugLogger.log("useWorkoutSession", "Données de mise à jour:", updateData);
       
+      // Vérifier si la session existe toujours
+      const { data: sessionCheck, error: checkError } = await supabase
+        .from('workout_sessions')
+        .select('id')
+        .eq('id', activeSession.id)
+        .maybeSingle();
+        
+      if (checkError) {
+        debugLogger.error("useWorkoutSession", "Erreur lors de la vérification de la session:", checkError);
+        throw new Error("Erreur de vérification de la session");
+      }
+      
+      if (!sessionCheck) {
+        debugLogger.error("useWorkoutSession", "La session n'existe plus dans la base de données");
+        throw new Error("La session n'existe plus");
+      }
+      
       // Mise à jour de la session avec les statistiques complètes
       const sessionData = await updateWorkoutSession(activeSession.id, updateData);
 
       if (!sessionData) {
         throw new Error("La mise à jour de la session a échoué");
+      }
+      
+      // Mise à jour ou création des statistiques d'entraînement
+      try {
+        // Vérifier si des statistiques existent déjà
+        const { data: existingStats, error: statsCheckError } = await supabase
+          .from('training_stats')
+          .select('id')
+          .eq('session_id', activeSession.id)
+          .maybeSingle();
+        
+        if (statsCheckError && statsCheckError.code !== 'PGRST116') {
+          debugLogger.error("useWorkoutSession", "Erreur lors de la vérification des statistiques:", statsCheckError);
+        }
+        
+        const statsData = {
+          user_id: user.id,
+          session_id: activeSession.id,
+          session_duration_minutes: durationMinutes,
+          calories_burned: caloriesBurned,
+          perceived_difficulty: difficulty,
+          total_weight_lifted: totalWeight,
+          muscle_groups_worked: activeSession.exercises || [],
+          rest_time_seconds: 90 // Valeur par défaut
+        };
+        
+        if (existingStats) {
+          // Mettre à jour les statistiques existantes
+          const { error: updateStatsError } = await supabase
+            .from('training_stats')
+            .update(statsData)
+            .eq('id', existingStats.id);
+            
+          if (updateStatsError) {
+            debugLogger.error("useWorkoutSession", "Erreur lors de la mise à jour des statistiques:", updateStatsError);
+          }
+        } else {
+          // Créer une nouvelle entrée de statistiques
+          const { error: insertStatsError } = await supabase
+            .from('training_stats')
+            .insert([statsData]);
+            
+          if (insertStatsError) {
+            debugLogger.error("useWorkoutSession", "Erreur lors de l'insertion des statistiques:", insertStatsError);
+          }
+        }
+      } catch (statsError) {
+        debugLogger.error("useWorkoutSession", "Erreur lors de la gestion des statistiques:", statsError);
+        // Ne pas bloquer le flux principal si les statistiques échouent
       }
       
       // Mettre à null après une réponse réussie de Supabase

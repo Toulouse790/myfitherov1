@@ -35,23 +35,46 @@ export const WorkoutSummaryDialog = ({
   const { t } = useLanguage();
   const [calculatedCalories, setCalculatedCalories] = useState(stats.totalCalories);
   const [submitting, setSubmitting] = useState(false);
-  const [difficulty] = useState<string>("moderate");
+  const [difficulty, setDifficulty] = useState<string>("moderate");
   const [muscleGroups] = useState<string[]>(["chest", "shoulders"]);
   
   // Recalculer les calories basées sur la durée si aucune valeur n'est fournie
   useEffect(() => {
     if (stats.totalCalories === 0 && stats.duration > 0) {
+      // Validation de la durée
+      const validDuration = stats.duration > 0 && stats.duration < 1440 ? stats.duration : 30;
+      
       // Estimation simple: environ 8-10 calories par minute d'exercice de musculation
-      const estimatedCalories = Math.round(stats.duration * 9);
+      const estimatedCalories = Math.round(validDuration * 9);
       setCalculatedCalories(estimatedCalories);
       debugLogger.log("WorkoutSummaryDialog", "Calcul des calories estimées:", {
-        duration: stats.duration,
+        duration: validDuration,
         estimatedCalories
       });
     } else {
       setCalculatedCalories(stats.totalCalories);
     }
   }, [stats.totalCalories, stats.duration]);
+
+  // Validation des données avant confirmation
+  const validateAndSubmit = () => {
+    let validDuration = stats.duration;
+    
+    // Vérifications de sécurité pour éviter les données aberrantes
+    if (validDuration <= 0 || validDuration > 1440) { // Plus de 24h = erreur
+      debugLogger.warn("WorkoutSummaryDialog", "Durée invalide détectée, utilisation d'une valeur par défaut", {
+        originalDuration: stats.duration
+      });
+      validDuration = 30; // 30 minutes par défaut
+    }
+    
+    let validCalories = calculatedCalories;
+    if (validCalories <= 0 || validCalories > 3000) { // Plus de 3000 calories = improbable
+      validCalories = Math.round(validDuration * 9); // Ré-estimation
+    }
+    
+    handleConfirm();
+  };
 
   const handleConfirm = async () => {
     if (submitting) return; // Éviter les soumissions multiples
@@ -96,10 +119,43 @@ export const WorkoutSummaryDialog = ({
           totalCalories={calculatedCalories || 0} 
         />
         <CompletionMessage />
+        
+        <div className="mt-4 mb-2">
+          <h4 className="text-sm font-medium mb-2">Difficulté ressentie:</h4>
+          <div className="flex space-x-2">
+            <Button 
+              type="button" 
+              size="sm"
+              variant={difficulty === 'easy' ? 'default' : 'outline'}
+              onClick={() => setDifficulty('easy')}
+              className="flex-1"
+            >
+              Facile
+            </Button>
+            <Button 
+              type="button" 
+              size="sm"
+              variant={difficulty === 'moderate' ? 'default' : 'outline'}
+              onClick={() => setDifficulty('moderate')}
+              className="flex-1"
+            >
+              Modéré
+            </Button>
+            <Button 
+              type="button" 
+              size="sm"
+              variant={difficulty === 'hard' ? 'default' : 'outline'}
+              onClick={() => setDifficulty('hard')}
+              className="flex-1"
+            >
+              Difficile
+            </Button>
+          </div>
+        </div>
 
         <DialogFooter>
           <Button 
-            onClick={handleConfirm} 
+            onClick={validateAndSubmit} 
             className="w-full"
             disabled={submitting}
           >

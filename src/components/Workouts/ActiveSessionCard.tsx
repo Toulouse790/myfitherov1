@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Timer, Flame, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface ActiveSessionCardProps {
   activeSession: any;
@@ -16,6 +17,28 @@ export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessio
   const { t } = useLanguage();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  
+  // Validation du temps formatté pour éviter des valeurs aberrantes
+  const getDisplayTime = () => {
+    try {
+      // Vérifier si le temps formatté est valide
+      if (!formattedTime || formattedTime.includes(":")) {
+        const parts = formattedTime.split(":");
+        const minutes = parseInt(parts[0], 10);
+        
+        // Si le nombre de minutes est anormalement élevé, afficher une valeur par défaut
+        if (minutes > 1000) {
+          debugLogger.warn("ActiveSessionCard", "Temps formatté anormal détecté", { formattedTime });
+          return "00:00";
+        }
+        return formattedTime;
+      }
+      return "00:00";
+    } catch (error) {
+      debugLogger.error("ActiveSessionCard", "Erreur lors du formatage du temps", error);
+      return "00:00";
+    }
+  };
 
   return (
     <motion.div
@@ -32,16 +55,18 @@ export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessio
             </h2>
             <div className="flex items-center gap-1 sm:gap-2">
               <Timer className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" />
-              <span className="font-mono text-[10px] sm:text-xs md:text-sm">{formattedTime}</span>
+              <span className="font-mono text-[10px] sm:text-xs md:text-sm">{getDisplayTime()}</span>
             </div>
           </div>
         </div>
         <CardContent className="p-2 sm:p-3 md:p-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-3 md:gap-4">
             <div>
-              <h3 className="font-semibold text-sm sm:text-base md:text-lg mb-0.5 sm:mb-1">{activeSession.name}</h3>
+              <h3 className="font-semibold text-sm sm:text-base md:text-lg mb-0.5 sm:mb-1">
+                {activeSession.name || "Séance d'entraînement"}
+              </h3>
               <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">
-                {activeSession.exercises.length} {t("workouts.exerciseLibrary").toLowerCase()}
+                {activeSession.exercises?.length || 0} {t("workouts.exerciseLibrary").toLowerCase()}
               </p>
             </div>
             <Button

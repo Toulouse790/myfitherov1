@@ -22,8 +22,8 @@ export interface SportTrainingRecommendation {
   secondaryExercises: string[];
   performanceMetrics: Record<string, number>;
   nutritionGuidelines: {
-    proteinIntake: number; // g/kg de poids corporel
-    carbohydrateIntake: number; // g/kg de poids corporel
+    proteinIntake: number;
+    carbohydrateIntake: number;
     hydrationNeeds: string;
   };
   sleepRecommendations: {
