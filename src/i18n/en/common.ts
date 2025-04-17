@@ -31,5 +31,6 @@ export const common = {
   years: "years",
   start: "Start",
   stop: "Stop",
-  retry: "Retry"
+  retry: "Retry",
+  goBack: "Go Back"
 };

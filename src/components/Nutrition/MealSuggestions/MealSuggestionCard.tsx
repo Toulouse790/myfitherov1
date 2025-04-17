@@ -1,117 +1,94 @@
 
-import { Card } from "@/components/ui/card";
-import { Clock, ChefHat, Users, Star, Info } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Plus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-interface MealSuggestionCardProps {
+interface MealSuggestion {
+  id: string;
   name: string;
+  description: string;
   calories: number;
   proteins: number;
-  cookingTime: number;
-  difficulty: string;
-  servings: number;
-  rating?: number;
-  tags?: string[];
-  imageUrl?: string;
-  actionButton?: React.ReactNode;
-  carbs?: number;
-  fats?: number;
+  carbs: number;
+  fats: number;
+  image_url?: string;
+  meal_type: string;
 }
 
-export const MealSuggestionCard = ({
-  name,
-  calories,
-  proteins,
-  cookingTime,
-  difficulty,
-  servings,
-  rating,
-  tags,
-  imageUrl,
-  actionButton,
-  carbs,
-  fats
-}: MealSuggestionCardProps) => {
-  const difficultyColor = {
-    easy: "bg-green-100 text-green-800",
-    medium: "bg-yellow-100 text-yellow-800",
-    hard: "bg-red-100 text-red-800"
-  }[difficulty] || "bg-gray-100 text-gray-800";
+interface MealSuggestionCardProps {
+  suggestion: MealSuggestion;
+}
 
-  const defaultImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c";
+export const MealSuggestionCard = ({ suggestion }: MealSuggestionCardProps) => {
+  const { toast } = useToast();
+  const { t } = useLanguage();
+
+  const handleAddToMealPlan = () => {
+    // Cette fonctionnalité sera implémentée plus tard
+    toast({
+      title: t("common.success"),
+      description: t("nutrition.addedToMealPlan", { fallback: "Ajouté au plan de repas" }),
+    });
+  };
+
+  const handleAddToFoodJournal = () => {
+    // Cette fonctionnalité sera implémentée plus tard
+    toast({
+      title: t("common.success"),
+      description: t("nutrition.addedToFoodJournal", { fallback: "Ajouté au journal alimentaire" }),
+    });
+  };
 
   return (
-    <Card className="overflow-hidden group hover:shadow-lg transition-shadow">
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={imageUrl || defaultImage}
-          alt={name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+    <Card className="overflow-hidden h-full flex flex-col">
+      {suggestion.image_url && (
+        <div 
+          className="aspect-video w-full bg-cover bg-center" 
+          style={{ backgroundImage: `url(${suggestion.image_url})` }}
         />
-        <div className="absolute top-2 right-2">
-          <Badge variant="secondary" className={difficultyColor}>
-            {difficulty}
-          </Badge>
-        </div>
-        {rating && (
-          <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/50 text-white px-2 py-1 rounded">
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-medium">{rating.toFixed(1)}</span>
+      )}
+      <CardContent className="p-4 flex-grow">
+        <h3 className="font-semibold mb-1 line-clamp-1">{suggestion.name}</h3>
+        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+          {suggestion.description || t("nutrition.noDescription", { fallback: "Pas de description disponible" })}
+        </p>
+        <div className="grid grid-cols-3 gap-2 text-xs text-center">
+          <div className="bg-primary/10 p-2 rounded-md">
+            <p className="font-medium">{suggestion.calories}</p>
+            <p className="text-muted-foreground">{t("nutrition.calories")}</p>
           </div>
-        )}
-      </div>
-      
-      <div className="p-4 space-y-4">
-        <h3 className="font-semibold text-lg">{name}</h3>
-        
-        <div className="flex flex-wrap gap-2">
-          {tags?.map((tag) => (
-            <Badge key={tag} variant="outline">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            {cookingTime} min
+          <div className="bg-primary/10 p-2 rounded-md">
+            <p className="font-medium">{suggestion.proteins}g</p>
+            <p className="text-muted-foreground">{t("nutrition.proteins")}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4" />
-            {servings} pers.
-          </div>
-          
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-2 cursor-help">
-                  <ChefHat className="w-4 h-4" />
-                  {calories} kcal
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="text-xs">
-                  <p>Protéines: {proteins}g</p>
-                  {carbs !== undefined && <p>Glucides: {carbs}g</p>}
-                  {fats !== undefined && <p>Lipides: {fats}g</p>}
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <div className="flex items-center gap-2">
-            <span className="font-medium">P:</span> {proteins}g
+          <div className="bg-primary/10 p-2 rounded-md">
+            <p className="font-medium">{suggestion.carbs}g</p>
+            <p className="text-muted-foreground">{t("nutrition.carbs")}</p>
           </div>
         </div>
-
-        {actionButton && (
-          <div className="mt-2">
-            {actionButton}
-          </div>
-        )}
-      </div>
+      </CardContent>
+      <CardFooter className="p-4 pt-0 flex justify-between gap-2 mt-auto">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="flex-1"
+          onClick={handleAddToMealPlan}
+        >
+          <Plus className="h-3.5 w-3.5 mr-1" />
+          {t("nutrition.mealPlan", { fallback: "Plan" })}
+        </Button>
+        <Button 
+          variant="default" 
+          size="sm" 
+          className="flex-1"
+          onClick={handleAddToFoodJournal}
+        >
+          <Plus className="h-3.5 w-3.5 mr-1" />
+          {t("nutrition.addMeal", { fallback: "Ajouter" })}
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

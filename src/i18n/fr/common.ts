@@ -24,6 +24,7 @@ export const common = {
   pause: "Pause",
   resume: "Reprendre",
   view: "Voir",
+  goBack: "Retour",
   
   // États
   loading: "Chargement...",
@@ -89,5 +90,9 @@ export const common = {
   
   // Confirmation
   areYouSure: "Êtes-vous sûr ?",
-  thisActionCannot: "Cette action ne peut pas être annulée"
+  thisActionCannot: "Cette action ne peut pas être annulée",
+  
+  // Ajouts nécessaires
+  retry: "Réessayer",
+  selected: "Sélectionné"
 };

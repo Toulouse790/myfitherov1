@@ -106,7 +106,7 @@ const Nutrition = () => {
             className="flex items-center gap-1"
           >
             <BookOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("nutrition.suggestions", { fallback: "Suggestions" })}</span>
+            <span className="hidden sm:inline">{t("nutrition.suggestions")}</span>
           </Button>
         </div>
       </div>
@@ -142,7 +142,7 @@ const Nutrition = () => {
               value="suggestions" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              {t("nutrition.suggestions", { fallback: "Suggestions" })}
+              {t("nutrition.suggestions")}
             </TabsTrigger>
           </TabsList>
         </div>

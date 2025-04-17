@@ -57,8 +57,8 @@ export const DailyMeals = () => {
         if (mealInfo && mealEntries.length === 0) {
           if (currentHour === hours && currentMinutes === 0) {
             toast({
-              title: "Rappel de repas",
-              description: `N'oubliez pas de valider votre ${mealTypes[mealType]} !`,
+              title: t("nutrition.mealReminder", { fallback: "Rappel de repas" }),
+              description: t("nutrition.dontForgetMeal", { fallback: `N'oubliez pas de valider votre ${t(`nutrition.mealTypes.${mealType}`)} !` }),
               duration: 10000,
             });
           }
@@ -70,7 +70,7 @@ export const DailyMeals = () => {
     checkMealValidations();
 
     return () => clearInterval(interval);
-  }, [mealPlan, entriesByMealType, toast]);
+  }, [mealPlan, entriesByMealType, toast, t]);
 
   const handleCheatMealDialogChange = (open: boolean) => {
     console.log("CheatMeal dialog state changed:", open);
