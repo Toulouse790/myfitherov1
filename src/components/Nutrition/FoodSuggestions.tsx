@@ -7,6 +7,7 @@ import { Utensils, Info } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FoodEntry } from "@/types/food";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FoodSuggestionsProps {
   onSelectFood: (food: FoodEntry) => void;
@@ -15,59 +16,88 @@ interface FoodSuggestionsProps {
 export const FoodSuggestions = ({ onSelectFood }: FoodSuggestionsProps) => {
   const { dailyTargets, mealPlan, consumedNutrients } = useDailyTargets();
   const [selectedMealType, setSelectedMealType] = useState<string | null>(null);
+  const { t } = useLanguage();
   
   // Calculer les calories restantes pour la journée
   const remainingCalories = dailyTargets.calories - consumedNutrients.calories;
+  const remainingProteins = dailyTargets.proteins - consumedNutrients.proteins;
+  const remainingCarbs = dailyTargets.carbs - consumedNutrients.carbs;
+  const remainingFats = dailyTargets.fats - consumedNutrients.fats;
   
   // Liste des types de repas disponibles
   const mealTypes = [
-    { id: "breakfast", label: "Petit déjeuner" },
-    { id: "morning_snack", label: "Collation matin" },
-    { id: "lunch", label: "Déjeuner" },
-    { id: "afternoon_snack", label: "Goûter" },
-    { id: "dinner", label: "Dîner" }
+    { id: "breakfast", label: t("nutrition.mealTypes.breakfast", { fallback: "Petit déjeuner" }) },
+    { id: "morning_snack", label: t("nutrition.mealTypes.morning_snack", { fallback: "Collation matin" }) },
+    { id: "lunch", label: t("nutrition.mealTypes.lunch", { fallback: "Déjeuner" }) },
+    { id: "afternoon_snack", label: t("nutrition.mealTypes.afternoon_snack", { fallback: "Goûter" }) },
+    { id: "dinner", label: t("nutrition.mealTypes.dinner", { fallback: "Dîner" }) }
   ];
   
-  // Suggestions de repas basées sur les calories restantes
-  const suggestions: FoodEntry[] = [
-    {
-      id: "suggestion-1",
-      name: "Bol de quinoa au poulet",
-      calories: Math.round(remainingCalories * 0.3),
-      proteins: Math.round(dailyTargets.proteins * 0.2),
-      carbs: Math.round(dailyTargets.carbs * 0.3),
-      fats: Math.round(dailyTargets.fats * 0.25),
-      mealType: selectedMealType || undefined,
-      description: "Bol de quinoa, poulet grillé, légumes de saison"
-    },
-    {
-      id: "suggestion-2",
-      name: "Salade grecque",
-      calories: Math.round(remainingCalories * 0.25),
-      proteins: Math.round(dailyTargets.proteins * 0.15),
-      carbs: Math.round(dailyTargets.carbs * 0.1),
-      fats: Math.round(dailyTargets.fats * 0.2),
-      mealType: selectedMealType || undefined,
-      description: "Tomates, concombre, feta, olives, huile d'olive"
-    },
-    {
-      id: "suggestion-3",
-      name: "Wrap au saumon",
-      calories: Math.round(remainingCalories * 0.35),
-      proteins: Math.round(dailyTargets.proteins * 0.25),
-      carbs: Math.round(dailyTargets.carbs * 0.2),
-      fats: Math.round(dailyTargets.fats * 0.3),
-      mealType: selectedMealType || undefined,
-      description: "Wrap complet, saumon fumé, avocat, salade"
+  // Obtenir le ratio de distribution selon le type de repas
+  const getMealRatio = (mealType: string | null) => {
+    switch(mealType) {
+      case 'breakfast': return 0.25; // 25% des calories
+      case 'lunch': return 0.35; // 35% des calories
+      case 'dinner': return 0.30; // 30% des calories
+      case 'morning_snack': return 0.05; // 5% des calories
+      case 'afternoon_snack': return 0.05; // 5% des calories
+      default: return 0.25; // Proportion par défaut (petit repas)
     }
-  ];
+  };
+  
+  // Fonction pour générer des suggestions cohérentes avec les besoins
+  const generateSuggestions = (): FoodEntry[] => {
+    const mealRatio = getMealRatio(selectedMealType);
+    
+    // Si on manque de calories restantes, on propose des repas légers
+    const targetCalories = Math.max(remainingCalories * mealRatio, 150);
+    const targetProteins = Math.max(remainingProteins * mealRatio, 10);
+    const targetCarbs = Math.max(remainingCarbs * mealRatio, 15);
+    const targetFats = Math.max(remainingFats * mealRatio, 5);
+    
+    // Varier les proportions pour obtenir différentes suggestions
+    return [
+      {
+        id: "suggestion-1",
+        name: "Bol de quinoa au poulet",
+        calories: Math.round(targetCalories),
+        proteins: Math.round(targetProteins),
+        carbs: Math.round(targetCarbs * 1.2),
+        fats: Math.round(targetFats * 0.8),
+        mealType: selectedMealType || undefined,
+        description: "Bol de quinoa, poulet grillé, légumes de saison"
+      },
+      {
+        id: "suggestion-2",
+        name: "Salade grecque",
+        calories: Math.round(targetCalories * 0.9),
+        proteins: Math.round(targetProteins * 0.8),
+        carbs: Math.round(targetCarbs * 0.6),
+        fats: Math.round(targetFats * 1.3),
+        mealType: selectedMealType || undefined,
+        description: "Tomates, concombre, feta, olives, huile d'olive"
+      },
+      {
+        id: "suggestion-3",
+        name: "Wrap au saumon",
+        calories: Math.round(targetCalories * 1.1),
+        proteins: Math.round(targetProteins * 1.2),
+        carbs: Math.round(targetCarbs * 0.9),
+        fats: Math.round(targetFats * 1.1),
+        mealType: selectedMealType || undefined,
+        description: "Wrap complet, saumon fumé, avocat, salade"
+      }
+    ];
+  };
+  
+  const suggestions = generateSuggestions();
   
   return (
     <Card className="mt-4">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between text-lg">
           <div className="flex items-center gap-2">
-            <span>Suggestions adaptées</span>
+            <span>{t("nutrition.suggestedMeal", { fallback: "Suggestions adaptées" })}</span>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -76,13 +106,13 @@ export const FoodSuggestions = ({ onSelectFood }: FoodSuggestionsProps) => {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Suggestions basées sur vos objectifs caloriques restants: {remainingCalories} kcal</p>
+                  <p>{t("nutrition.remainingCaloriesInfo", { fallback: "Suggestions basées sur vos objectifs caloriques restants" })}: {remainingCalories} kcal</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
           <Badge variant="outline" className="font-normal">
-            {remainingCalories} kcal restantes
+            {remainingCalories} {t("nutrition.remaining", { fallback: "kcal restantes" })}
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -105,7 +135,7 @@ export const FoodSuggestions = ({ onSelectFood }: FoodSuggestionsProps) => {
                 className="cursor-pointer"
                 onClick={() => setSelectedMealType(null)}
               >
-                Réinitialiser
+                {t("common.reset", { fallback: "Réinitialiser" })}
               </Badge>
             )}
           </div>
@@ -118,9 +148,9 @@ export const FoodSuggestions = ({ onSelectFood }: FoodSuggestionsProps) => {
                   <p className="text-sm text-muted-foreground mb-3">{suggestion.description}</p>
                   <div className="flex flex-wrap gap-x-2 text-xs text-muted-foreground mb-3">
                     <span>{suggestion.calories} kcal</span>
-                    <span>{suggestion.proteins}g protéines</span>
-                    {suggestion.carbs > 0 && <span>{suggestion.carbs}g glucides</span>}
-                    {suggestion.fats > 0 && <span>{suggestion.fats}g lipides</span>}
+                    <span>{suggestion.proteins}g {t("nutrition.proteins", { fallback: "protéines" })}</span>
+                    {suggestion.carbs > 0 && <span>{suggestion.carbs}g {t("nutrition.carbs", { fallback: "glucides" })}</span>}
+                    {suggestion.fats > 0 && <span>{suggestion.fats}g {t("nutrition.fats", { fallback: "lipides" })}</span>}
                   </div>
                   <Button 
                     size="sm" 
@@ -128,7 +158,7 @@ export const FoodSuggestions = ({ onSelectFood }: FoodSuggestionsProps) => {
                     onClick={() => onSelectFood(suggestion)}
                   >
                     <Utensils className="mr-2 h-4 w-4" />
-                    Ajouter
+                    {t("nutrition.addMeal", { fallback: "Ajouter" })}
                   </Button>
                 </CardContent>
               </Card>

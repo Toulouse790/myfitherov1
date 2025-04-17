@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check, ShoppingBag, X } from "lucide-react";
@@ -5,6 +6,8 @@ import { MealContentProps } from "./types";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useDailyTargets } from "@/hooks/use-daily-targets";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const MealContent = ({ 
   mealEntries, 
@@ -12,6 +15,9 @@ export const MealContent = ({
   onMealStatus,
   mealType 
 }: MealContentProps) => {
+  const { dailyTargets } = useDailyTargets();
+  const { t } = useLanguage();
+  
   const { data: mealPlan } = useQuery({
     queryKey: ['meal-plan'],
     queryFn: async () => {
@@ -57,6 +63,36 @@ export const MealContent = ({
   const targetProteins = currentMeal?.proteins || 0;
   const proteinDiff = totalProteins - targetProteins;
 
+  // Déterminer la proportion de ce repas dans le total quotidien
+  const getMealRatio = () => {
+    switch(mealType) {
+      case 'breakfast':
+        return 0.25; // 25% des calories au petit-déjeuner
+      case 'lunch':
+        return 0.35; // 35% des calories au déjeuner
+      case 'dinner':
+        return 0.30; // 30% des calories au dîner
+      case 'morning_snack':
+      case 'afternoon_snack':
+        return 0.05; // 5% des calories par collation
+      default:
+        return 0.25;
+    }
+  };
+
+  // Calculer les objectifs adaptés pour ce repas précis
+  const calculateMealTargets = () => {
+    if (!dailyTargets) return { calories: 0, proteins: 0 };
+    
+    const ratio = getMealRatio();
+    return {
+      calories: Math.round(dailyTargets.calories * ratio),
+      proteins: Math.round(dailyTargets.proteins * ratio)
+    };
+  };
+
+  const mealTargets = calculateMealTargets();
+
   return (
     <div className="p-4 bg-background/50 rounded-lg space-y-4">
       {/* Existing entries */}
@@ -68,7 +104,7 @@ export const MealContent = ({
                 <div>
                   <h4 className="font-medium">{entry.name}</h4>
                   <p className="text-sm text-muted-foreground">
-                    {entry.calories} kcal | {entry.proteins}g protéines
+                    {entry.calories} kcal | {entry.proteins}g {t("nutrition.proteins")}
                   </p>
                   {entry.components && entry.components.length > 0 && (
                     <div className="mt-1 text-sm text-muted-foreground">
@@ -92,15 +128,15 @@ export const MealContent = ({
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="font-medium">{currentMeal.name}</h4>
+                    <h4 className="font-medium">{currentMeal.name || t("nutrition.suggestedMeal")}</h4>
                     {proteinDiff >= 0 && (
                       <span className="text-xs text-green-500">
-                        Objectif protéines atteint (+{proteinDiff}g)
+                        {t("nutrition.proteinGoalMet", { fallback: "Objectif protéines atteint" })} (+{proteinDiff}g)
                       </span>
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {currentMeal.calories} kcal | Objectif: {targetProteins}g protéines
+                    {mealTargets.calories || currentMeal.calories || 0} kcal | {t("nutrition.target")}: {mealTargets.proteins || targetProteins || 0}g {t("nutrition.proteins")}
                   </p>
                   {/* Detailed portions */}
                   {currentMeal.quantities && currentMeal.quantities.length > 0 && (
@@ -120,7 +156,7 @@ export const MealContent = ({
                 <div className="mt-3 border-t pt-3">
                   <div className="flex items-center gap-2 mb-2">
                     <ShoppingBag className="h-4 w-4 text-muted-foreground" />
-                    <h5 className="font-medium text-sm">Liste de courses</h5>
+                    <h5 className="font-medium text-sm">{t("nutrition.shoppingList", { fallback: "Liste de courses" })}</h5>
                   </div>
                   <ScrollArea className="h-[100px] w-full">
                     <ul className="space-y-1">
@@ -143,7 +179,7 @@ export const MealContent = ({
 
               {mealPlan && (
                 <p className="text-xs text-muted-foreground mt-2">
-                  Jour {currentDay} sur {mealPlan.plan_data.length}
+                  {t("nutrition.dayCount", { fallback: `Jour ${currentDay} sur ${mealPlan.plan_data.length}` })}
                 </p>
               )}
             </div>
@@ -158,7 +194,7 @@ export const MealContent = ({
                 onClick={() => onMealStatus('taken')}
               >
                 <Check className="h-4 w-4 mr-2" />
-                Valider
+                {t("common.validate", { fallback: "Valider" })}
               </Button>
               <Button
                 variant="outline"
@@ -167,7 +203,7 @@ export const MealContent = ({
                 onClick={() => onMealStatus('skipped')}
               >
                 <X className="h-4 w-4 mr-2" />
-                Non pris
+                {t("nutrition.notTaken", { fallback: "Non pris" })}
               </Button>
             </div>
           )}
