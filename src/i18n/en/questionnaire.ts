@@ -43,5 +43,6 @@ export const questionnaire = {
     vegetarian: "Vegetarian",
     vegan: "Vegan",
     pescetarian: "Pescetarian"
-  }
+  },
+  finish: "Finish"
 };

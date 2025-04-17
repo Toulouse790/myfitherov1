@@ -98,6 +98,8 @@ export const common = {
   exercises: "Exercises",
   minutes: "minutes",
   view: "View",
+  finish: "Finish",
+  back: "Back",
   notifications: {
     enable: "Enable notifications",
     disable: "Disable notifications",
@@ -168,5 +170,6 @@ export const common = {
   dateFormat: "MM/dd/yyyy",
   currentMonth: "Current month",
   april: "April",
-  year: "Year"
+  year: "Year",
+  step: "Step {step} of {total}"
 };

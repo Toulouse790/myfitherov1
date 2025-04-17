@@ -183,7 +183,7 @@ export const SportSelectionStep: React.FC<SportSelectionStepProps> = ({
         </div>
         
         <div className="text-center text-sm text-muted-foreground mt-4">
-          {t("questionnaire.step", { step: currentStep, total: totalSteps })}
+          {t("common.step", { step: currentStep, total: totalSteps })}
         </div>
       </CardContent>
     </Card>

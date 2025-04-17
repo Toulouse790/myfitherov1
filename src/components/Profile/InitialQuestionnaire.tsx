@@ -130,7 +130,7 @@ export const InitialQuestionnaire = () => {
               {t("common.previous")}
             </Button>
             <div className="text-sm text-muted-foreground">
-              {t("questionnaire.step", { step, total: 7 })}
+              {t("common.step", { step, total: 7 })}
             </div>
             <Button
               onClick={handleNext}
