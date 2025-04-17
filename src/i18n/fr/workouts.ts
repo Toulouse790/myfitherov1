@@ -97,9 +97,16 @@ export const workouts = {
   noActiveSession: "Aucune session active trouvée",
   minutes: "minutes",
   noExercisesAvailable: "Aucun exercice disponible",
+  calories: "Calories",
+  weightUnit: "kg",
   errors: {
     sessionFinalize: "Erreur lors de la finalisation de la session",
     sessionFinalizeDescription: "Impossible de finaliser la session d'entraînement",
     sessionFetch: "Erreur lors de la récupération de la session"
-  }
+  },
+  sessionCreated: "Séance créée",
+  readyToStart: "Votre séance est prête à commencer",
+  sessionCreateFailed: "Impossible de créer la séance d'entraînement",
+  statsRecorded: "Vos statistiques ont été enregistrées",
+  finalizationFailed: "Impossible de finaliser votre séance"
 };

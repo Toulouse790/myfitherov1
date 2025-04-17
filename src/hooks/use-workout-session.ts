@@ -8,6 +8,7 @@ import { useActiveSession } from "./workout/use-active-session";
 import { useSessionTimer } from "./workout/use-session-timer";
 import { useWorkoutOperations } from "./workout/use-workout-operations";
 import { useNotificationManager } from "@/hooks/use-notification-manager";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const useWorkoutSession = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export const useWorkoutSession = () => {
       // Start the timer with the calculated elapsed time
       startTimer();
       
-      console.log("Session active trouvée:", activeSession);
+      debugLogger.log("useWorkoutSession", "Session active trouvée:", activeSession);
     }
     
     return () => {
@@ -48,7 +49,7 @@ export const useWorkoutSession = () => {
     calories_burned?: number;
   } = {}) => {
     if (!activeSession) {
-      console.log("Aucune session active trouvée lors de la tentative de terminer l'entraînement");
+      debugLogger.log("useWorkoutSession", "Aucune session active trouvée lors de la tentative de terminer l'entraînement");
       notify(
         t("common.error") || "Erreur",
         t("workouts.noActiveSession") || "Aucune session active trouvée",
@@ -57,12 +58,12 @@ export const useWorkoutSession = () => {
       return null;
     }
     
-    stopTimer();
-    
     try {
+      stopTimer();
+      
       const durationMinutes = Math.floor(sessionTime / 60);
       
-      console.log("Finalisation de la session d'entraînement:", {
+      debugLogger.log("useWorkoutSession", "Finalisation de la session d'entraînement:", {
         sessionId: activeSession.id,
         duration: durationMinutes,
         additionalData
@@ -73,10 +74,12 @@ export const useWorkoutSession = () => {
         status: 'completed',
         total_duration_minutes: durationMinutes,
         perceived_difficulty: additionalData.perceived_difficulty || 'moderate',
-        calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8)
+        calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8),
+        completed_at: new Date().toISOString()
       });
 
       if (data) {
+        // Mettre à null après une réponse réussie de Supabase
         setActiveSession(null);
         
         notify(
@@ -91,7 +94,7 @@ export const useWorkoutSession = () => {
         return data;
       }
       
-      console.log("Aucune donnée retournée après la mise à jour de la session");
+      debugLogger.log("useWorkoutSession", "Aucune donnée retournée après la mise à jour de la session");
       notify(
         t("common.error") || "Erreur",
         t("workouts.errors.sessionFinalizeDescription") || "Impossible de finaliser la session",
@@ -99,7 +102,7 @@ export const useWorkoutSession = () => {
       );
       return null;
     } catch (error) {
-      console.error(t("workouts.errors.sessionFinalize") || "Erreur lors de la finalisation de la session", error);
+      debugLogger.error("useWorkoutSession", "Erreur lors de la finalisation de la session", error);
       notify(
         t("common.error") || "Erreur",
         t("workouts.errors.sessionFinalizeDescription") || "Impossible de finaliser la session",

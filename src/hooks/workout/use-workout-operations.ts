@@ -49,11 +49,16 @@ export const useWorkoutOperations = () => {
       
       debugLogger.log("WorkoutOperations", "Mise à jour de la session d'entraînement:", { id, updates });
       
-      // Toujours inclure updated_at avec la date actuelle
+      // S'assurer que tous les timestamps nécessaires sont inclus
       const updatesWithTimestamp = {
         ...updates,
         updated_at: new Date().toISOString()
       };
+      
+      // Si le statut est 'completed', ajouter completed_at s'il n'est pas déjà défini
+      if (updates.status === 'completed' && !updates.completed_at) {
+        updatesWithTimestamp.completed_at = new Date().toISOString();
+      }
       
       const { data, error } = await supabase
         .from("workout_sessions")
@@ -85,6 +90,7 @@ export const useWorkoutOperations = () => {
 
   const updateWorkoutSession = async (id: string, updates: WorkoutSessionUpdate) => {
     try {
+      debugLogger.log("WorkoutOperations", "Début de mise à jour de la session:", { id, updates });
       const data = await updateWorkoutMutation.mutateAsync({ id, updates });
       debugLogger.log("WorkoutOperations", "Session d'entraînement mise à jour avec succès:", data);
       return data;
