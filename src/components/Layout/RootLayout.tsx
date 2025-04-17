@@ -29,17 +29,17 @@ export const RootLayout = () => {
   };
 
   return (
-    <div className={`min-h-screen ${showBottomNav ? 'pb-14 sm:pb-16' : ''}`}>
+    <div className={`min-h-screen ${showBottomNav ? 'pb-12 sm:pb-14 md:pb-16' : ''}`}>
       <Outlet />
       {showBottomNav && <BottomNav />}
       {showScrollTop && (
         <Button
           variant="secondary"
           size="icon"
-          className="fixed bottom-16 sm:bottom-20 right-4 rounded-full shadow-lg z-50 w-8 h-8 sm:w-10 sm:h-10 bg-primary hover:bg-primary/90"
+          className="fixed bottom-14 sm:bottom-16 md:bottom-20 right-2 sm:right-3 md:right-4 rounded-full shadow-lg z-50 w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-primary hover:bg-primary/90"
           onClick={scrollToTop}
         >
-          <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
+          <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 text-primary-foreground" />
         </Button>
       )}
       <Toaster />

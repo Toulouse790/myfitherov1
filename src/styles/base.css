@@ -15,76 +15,86 @@
 
   /* Typography - Responsive Text Sizes */
   h1 {
-    @apply text-2xl font-bold tracking-tight;
-    font-size: 1.5rem;
-  }
-  @media (min-width: 640px) { h1 { font-size: 1.875rem; } }
-  @media (min-width: 768px) { h1 { font-size: 2.25rem; } }
-  
-  h2 {
-    @apply text-xl font-semibold tracking-tight;
+    @apply font-bold tracking-tight;
     font-size: 1.25rem;
   }
-  @media (min-width: 640px) { h2 { font-size: 1.5rem; } }
-  @media (min-width: 768px) { h2 { font-size: 1.875rem; } }
+  @media (min-width: 640px) { h1 { font-size: 1.5rem; } }
+  @media (min-width: 768px) { h1 { font-size: 1.875rem; } }
+  @media (min-width: 1024px) { h1 { font-size: 2.25rem; } }
   
-  h3 {
-    @apply text-lg font-medium tracking-tight;
+  h2 {
+    @apply font-semibold tracking-tight;
     font-size: 1.125rem;
   }
-  @media (min-width: 640px) { h3 { font-size: 1.25rem; } }
-  @media (min-width: 768px) { h3 { font-size: 1.5rem; } }
+  @media (min-width: 640px) { h2 { font-size: 1.25rem; } }
+  @media (min-width: 768px) { h2 { font-size: 1.5rem; } }
+  @media (min-width: 1024px) { h2 { font-size: 1.875rem; } }
   
-  h4, h5, h6 {
-    @apply text-base font-medium tracking-tight;
+  h3 {
+    @apply font-medium tracking-tight;
     font-size: 1rem;
   }
-  @media (min-width: 640px) { h4, h5, h6 { font-size: 1.125rem; } }
-  @media (min-width: 768px) { h4, h5, h6 { font-size: 1.25rem; } }
+  @media (min-width: 640px) { h3 { font-size: 1.125rem; } }
+  @media (min-width: 768px) { h3 { font-size: 1.25rem; } }
+  @media (min-width: 1024px) { h3 { font-size: 1.5rem; } }
+  
+  h4, h5, h6 {
+    @apply font-medium tracking-tight;
+    font-size: 0.875rem;
+  }
+  @media (min-width: 640px) { h4, h5, h6 { font-size: 1rem; } }
+  @media (min-width: 768px) { h4, h5, h6 { font-size: 1.125rem; } }
+  @media (min-width: 1024px) { h4, h5, h6 { font-size: 1.25rem; } }
   
   p {
-    @apply text-sm;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
-  @media (min-width: 640px) { p { font-size: 1rem; } }
-  @media (min-width: 768px) { p { font-size: 1.125rem; } }
+  @media (min-width: 640px) { p { font-size: 0.875rem; } }
+  @media (min-width: 768px) { p { font-size: 1rem; } }
+  @media (min-width: 1024px) { p { font-size: 1.125rem; } }
   
   label, input, button {
-    @apply text-sm;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
-  @media (min-width: 640px) { label, input, button { font-size: 1rem; } }
+  @media (min-width: 640px) { label, input, button { font-size: 0.875rem; } }
+  @media (min-width: 768px) { label, input, button { font-size: 1rem; } }
   
   /* Responsive text classes without circular dependencies */
   .text-xs {
-    font-size: 0.75rem;
+    font-size: 0.625rem;
   }
-  @media (min-width: 640px) { .text-xs { font-size: 0.875rem; } }
+  @media (min-width: 640px) { .text-xs { font-size: 0.75rem; } }
+  @media (min-width: 768px) { .text-xs { font-size: 0.875rem; } }
   
   .text-sm {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
-  @media (min-width: 640px) { .text-sm { font-size: 1rem; } }
+  @media (min-width: 640px) { .text-sm { font-size: 0.875rem; } }
+  @media (min-width: 768px) { .text-sm { font-size: 1rem; } }
   
   .text-base {
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
-  @media (min-width: 640px) { .text-base { font-size: 1.125rem; } }
+  @media (min-width: 640px) { .text-base { font-size: 1rem; } }
+  @media (min-width: 768px) { .text-base { font-size: 1.125rem; } }
   
   .text-lg {
-    font-size: 1.125rem;
+    font-size: 1rem;
   }
-  @media (min-width: 640px) { .text-lg { font-size: 1.25rem; } }
+  @media (min-width: 640px) { .text-lg { font-size: 1.125rem; } }
+  @media (min-width: 768px) { .text-lg { font-size: 1.25rem; } }
   
   .text-xl {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
   }
-  @media (min-width: 640px) { .text-xl { font-size: 1.5rem; } }
+  @media (min-width: 640px) { .text-xl { font-size: 1.25rem; } }
+  @media (min-width: 768px) { .text-xl { font-size: 1.5rem; } }
   
   .text-2xl {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
-  @media (min-width: 640px) { .text-2xl { font-size: 1.75rem; } }
+  @media (min-width: 640px) { .text-2xl { font-size: 1.5rem; } }
+  @media (min-width: 768px) { .text-2xl { font-size: 1.75rem; } }
   
   /* Responsive spacing */
   .pb-safe {
@@ -93,9 +103,10 @@
   
   /* Improve touch targets on mobile */
   button, a {
-    @apply min-h-9;
+    @apply min-h-8;
   }
-  @media (min-width: 640px) { button, a { min-height: 2.5rem; } }
+  @media (min-width: 640px) { button, a { min-height: 2rem; } }
+  @media (min-width: 768px) { button, a { min-height: 2.5rem; } }
   
   /* Smooth scrolling */
   html {
