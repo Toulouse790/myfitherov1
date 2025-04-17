@@ -147,6 +147,12 @@ export const WorkoutSession = () => {
       totalCalories
     });
     
+    debugLogger.log("WorkoutSession", "Préparation à la finalisation, statistiques calculées:", {
+      duration: durationMinutes,
+      totalWeight,
+      totalCalories
+    });
+    
     setShowSummary(true);
   };
   
@@ -167,7 +173,9 @@ export const WorkoutSession = () => {
         sessionId, 
         difficulty, 
         duration,
-        muscleGroups
+        muscleGroups,
+        totalWeight: workoutStats.totalWeight,
+        caloriesBurned: workoutStats.totalCalories
       });
       
       // Mise à jour du statut de la session
@@ -177,6 +185,7 @@ export const WorkoutSession = () => {
           status: 'completed',
           total_duration_minutes: duration,
           perceived_difficulty: difficulty,
+          calories_burned: workoutStats.totalCalories,
           updated_at: new Date().toISOString()
         })
         .eq('id', sessionId);
@@ -186,34 +195,112 @@ export const WorkoutSession = () => {
         throw updateError;
       }
       
-      // Ajout des statistiques d'entraînement
-      const { error: statsError } = await supabase
+      // Vérification si des statistiques existent déjà
+      const { data: existingStats, error: statsCheckError } = await supabase
         .from('training_stats')
-        .insert({
-          user_id: user.id,
-          session_id: sessionId,
-          perceived_difficulty: difficulty,
-          session_duration_minutes: duration,
-          muscle_groups_worked: muscleGroups,
-          calories_burned: workoutStats.totalCalories,
-          total_weight_lifted: workoutStats.totalWeight,
-          created_at: new Date().toISOString()
-        });
+        .select('*')
+        .eq('session_id', sessionId)
+        .maybeSingle();
       
-      if (statsError) {
-        debugLogger.error("WorkoutSession", "Erreur lors de l'ajout des statistiques:", statsError);
-        throw statsError;
+      if (statsCheckError) {
+        debugLogger.error("WorkoutSession", "Erreur lors de la vérification des statistiques:", statsCheckError);
       }
       
-      debugLogger.log("WorkoutSession", "Session finalisée avec succès");
+      // Préparation des données pour les statistiques
+      const statsData = {
+        user_id: user.id,
+        session_id: sessionId,
+        perceived_difficulty: difficulty,
+        session_duration_minutes: duration,
+        muscle_groups_worked: muscleGroups,
+        calories_burned: workoutStats.totalCalories,
+        total_weight_lifted: workoutStats.totalWeight,
+        created_at: new Date().toISOString()
+      };
+      
+      let statsResult;
+      // Si des statistiques existent déjà, les mettre à jour, sinon les créer
+      if (existingStats) {
+        const { data, error: statsUpdateError } = await supabase
+          .from('training_stats')
+          .update(statsData)
+          .eq('id', existingStats.id)
+          .select();
+        
+        if (statsUpdateError) {
+          debugLogger.error("WorkoutSession", "Erreur lors de la mise à jour des statistiques:", statsUpdateError);
+          throw statsUpdateError;
+        }
+        statsResult = data;
+      } else {
+        const { data, error: statsInsertError } = await supabase
+          .from('training_stats')
+          .insert(statsData)
+          .select();
+        
+        if (statsInsertError) {
+          debugLogger.error("WorkoutSession", "Erreur lors de l'ajout des statistiques:", statsInsertError);
+          throw statsInsertError;
+        }
+        statsResult = data;
+      }
+      
+      debugLogger.log("WorkoutSession", "Session finalisée avec succès, statistiques:", statsResult);
+      
+      // Mettre à jour le streak de l'utilisateur
+      try {
+        const { data: streakData, error: streakError } = await supabase
+          .from('user_streaks')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('streak_type', 'workout')
+          .single();
+        
+        if (streakError && streakError.code !== 'PGRST116') {
+          // PGRST116 = not found, which is expected if no streak exists yet
+          debugLogger.error("WorkoutSession", "Erreur lors de la récupération du streak:", streakError);
+        }
+        
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (streakData) {
+          // Mise à jour du streak existant
+          await supabase
+            .from('user_streaks')
+            .update({
+              current_streak: streakData.current_streak + 1,
+              last_activity_date: today
+            })
+            .eq('id', streakData.id);
+        } else {
+          // Création d'un nouveau streak
+          await supabase
+            .from('user_streaks')
+            .insert({
+              user_id: user.id,
+              streak_type: 'workout',
+              current_streak: 1,
+              longest_streak: 1,
+              last_activity_date: today
+            });
+        }
+        
+        debugLogger.log("WorkoutSession", "Streak mis à jour avec succès");
+      } catch (streakUpdateError) {
+        debugLogger.error("WorkoutSession", "Erreur lors de la mise à jour du streak:", streakUpdateError);
+        // Ne pas bloquer le flux principal si le streak ne se met pas à jour
+      }
       
       toast({
         title: t("workouts.sessionCompleted") || "Séance terminée !",
         description: t("workouts.allExercisesCompleted") || "Félicitations! Tous les exercices ont été complétés.",
       });
       
-      // Rediriger vers la page des entraînements
-      navigate('/workouts');
+      // Fermer la fenêtre de résumé
+      setShowSummary(false);
+      
+      // Rediriger vers la page des statistiques
+      navigate(`/workouts/summary/${sessionId}`);
     } catch (error) {
       debugLogger.error("WorkoutSession", "Erreur lors de la finalisation:", error);
       toast({

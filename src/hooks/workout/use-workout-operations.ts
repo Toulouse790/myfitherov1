@@ -5,10 +5,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { debugLogger } from "@/utils/debug-logger";
 import { WorkoutSessionUpdate } from "@/types/workout-session";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/hooks/use-toast";
 
 export const useWorkoutOperations = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { toast } = useToast();
   
   // Mutation pour commencer un nouvel entraînement
   const startWorkoutMutation = useMutation({
@@ -17,7 +19,10 @@ export const useWorkoutOperations = () => {
         throw new Error("User not authenticated");
       }
       
-      debugLogger.log("WorkoutOperations", "Création d'une nouvelle session d'entraînement");
+      debugLogger.log("WorkoutOperations", "Création d'une nouvelle session d'entraînement", {
+        userId: user.id,
+        exercises
+      });
       
       const { data, error } = await supabase
         .from("workout_sessions")
@@ -36,6 +41,7 @@ export const useWorkoutOperations = () => {
         throw error;
       }
 
+      debugLogger.log("WorkoutOperations", "Session créée avec succès:", data);
       return data;
     }
   });
@@ -55,6 +61,7 @@ export const useWorkoutOperations = () => {
         updated_at: new Date().toISOString()
       };
       
+      // Log détaillé des données envoyées à Supabase
       debugLogger.log("WorkoutOperations", "Données finales pour la mise à jour:", updatesWithTimestamp);
       
       const { data, error } = await supabase
@@ -67,6 +74,14 @@ export const useWorkoutOperations = () => {
 
       if (error) {
         debugLogger.error("WorkoutOperations", "Erreur lors de la mise à jour de la session:", error);
+        
+        // Notifier l'utilisateur de l'erreur
+        toast({
+          title: t("common.error") || "Erreur",
+          description: t("workouts.errors.sessionUpdateFailed") || "Impossible de mettre à jour la session d'entraînement",
+          variant: "destructive",
+        });
+        
         throw error;
       }
 
@@ -77,6 +92,7 @@ export const useWorkoutOperations = () => {
 
   const startWorkout = async (exercises: string[]) => {
     try {
+      debugLogger.log("WorkoutOperations", "Démarrage de la session avec exercises:", exercises);
       const data = await startWorkoutMutation.mutateAsync(exercises);
       debugLogger.log("WorkoutOperations", "Session d'entraînement créée avec succès:", data);
       return data;

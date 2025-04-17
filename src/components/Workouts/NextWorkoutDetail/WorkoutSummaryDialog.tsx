@@ -59,13 +59,16 @@ export const WorkoutSummaryDialog = ({
       debugLogger.log("WorkoutSummaryDialog", "Confirmation de fin d'entraînement avec:", {
         difficulty,
         duration: stats.duration,
-        muscleGroups
+        muscleGroups,
+        calculatedCalories
       });
       
+      // Passer les bonnes valeurs, y compris les calories calculées
       await onConfirm(difficulty, stats.duration, muscleGroups);
+      
+      // Ne pas fermer automatiquement - laissons la navigation se faire correctement
     } catch (error) {
       debugLogger.error("WorkoutSummaryDialog", "Erreur lors de la confirmation de fin d'entraînement:", error);
-    } finally {
       setSubmitting(false);
     }
   };
@@ -76,7 +79,7 @@ export const WorkoutSummaryDialog = ({
       if (submitting && !isOpen) return;
       onOpenChange(isOpen);
     }}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t("workouts.sessionCompleted") || "Séance terminée"}</DialogTitle>
           <DialogDescription>
