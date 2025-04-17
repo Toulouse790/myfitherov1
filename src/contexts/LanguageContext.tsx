@@ -70,7 +70,15 @@ const translations: Translations = {
     'workouts.errors.weightUpdateFailed': 'Impossible de mettre à jour le poids.',
     'workouts.errors.repsUpdateFailed': 'Impossible de mettre à jour les répétitions.',
     'workouts.errors.sessionFinalizeDescription': 'Impossible de terminer la séance',
-    'workouts.errors.saveWeightFailed': 'Impossible de sauvegarder le poids',
+    'workouts.errors.saveWeightFailed': 'Impossible d\'enregistrer le poids',
+    'workouts.errors.userNotAuthenticated': 'Utilisateur non authentifié',
+    'workouts.errors.invalidWeightValue': 'Valeur de poids invalide',
+    'workouts.errors.invalidRepsValue': 'Valeur de répétitions invalide',
+    'workouts.weightUpdatedSuccessfully': 'Poids mis à jour avec succès',
+    'workouts.repsUpdatedSuccessfully': 'Répétitions mises à jour avec succès',
+    'workouts.exercises': 'Exercices',
+    'workouts.validerLaSerie': 'Valider la série',
+    'workouts.completeWorkout': 'Terminer l\'entraînement',
   },
   en: {
     // Navigation elements
@@ -130,6 +138,14 @@ const translations: Translations = {
     'workouts.errors.repsUpdateFailed': 'Unable to update repetitions.',
     'workouts.errors.sessionFinalizeDescription': 'Unable to complete the session',
     'workouts.errors.saveWeightFailed': 'Unable to save weight',
+    'workouts.errors.userNotAuthenticated': 'User not authenticated',
+    'workouts.errors.invalidWeightValue': 'Invalid weight value',
+    'workouts.errors.invalidRepsValue': 'Invalid repetition value',
+    'workouts.weightUpdatedSuccessfully': 'Weight updated successfully',
+    'workouts.repsUpdatedSuccessfully': 'Repetitions updated successfully',
+    'workouts.exercises': 'Exercises',
+    'workouts.validerLaSerie': 'Validate set',
+    'workouts.completeWorkout': 'Complete workout',
   }
 };
 
@@ -165,7 +181,8 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
 
   // Fonction de traduction
   const t = (key: string, params?: Record<string, string | number>): string => {
-    const translation = translations[language]?.[key] || key;
+    const translationMap = translations[language] || {};
+    const translation = translationMap[key] || key;
     
     // Remplacer les paramètres s'ils existent
     if (params) {
