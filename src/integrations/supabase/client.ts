@@ -6,9 +6,11 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables');
-  throw new Error('Missing Supabase environment variables');
+  console.error('Variables d\'environnement Supabase manquantes');
+  throw new Error('Variables d\'environnement Supabase manquantes');
 }
+
+debugLogger.log("Supabase", "Initialisation du client Supabase avec URL:", supabaseUrl);
 
 export const supabase = createClient(
   supabaseUrl,
@@ -19,13 +21,17 @@ export const supabase = createClient(
       persistSession: true,
       detectSessionInUrl: true,
       storage: localStorage,
-      storageKey: 'myfithero-auth',
-      flowType: 'pkce'
+      storageKey: 'myfithero-auth'
     },
     global: {
       headers: {
         'Content-Type': 'application/json',
         'apikey': supabaseAnonKey
+      }
+    },
+    realtime: {
+      params: {
+        eventsPerSecond: 10
       }
     }
   }
@@ -33,18 +39,19 @@ export const supabase = createClient(
 
 // Amélioration du logging pour faciliter le débogage des problèmes d'authentification
 supabase.auth.onAuthStateChange((event, session) => {
-  debugLogger.log('Auth', `Auth state changed: ${event}`, { event, hasSession: !!session });
+  debugLogger.log('Auth', `Changement d'état d'authentification: ${event}`, { event, hasSession: !!session });
   
   if (event === 'SIGNED_OUT') {
-    debugLogger.log('Auth', 'User signed out, clearing auth data');
+    debugLogger.log('Auth', 'Utilisateur déconnecté, nettoyage des données d\'authentification');
     localStorage.removeItem('myfithero-auth');
   } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-    debugLogger.log('Auth', 'User signed in or token refreshed');
+    debugLogger.log('Auth', 'Utilisateur connecté ou token rafraîchi');
     if (session) {
+      debugLogger.log('Auth', 'Session stockée dans localStorage');
       localStorage.setItem('myfithero-auth', JSON.stringify(session));
     }
   } else if (event === 'USER_UPDATED') {
-    debugLogger.log('Auth', 'User profile updated');
+    debugLogger.log('Auth', 'Profil utilisateur mis à jour');
   }
 });
 
@@ -70,6 +77,7 @@ export const getAuthStatus = async () => {
 // Fonction pour tester la connexion à Supabase
 export const testSupabaseConnection = async () => {
   try {
+    debugLogger.log('Connexion', 'Test de connexion à Supabase...');
     const { data, error } = await supabase.from('profiles').select('count', { count: 'exact', head: true });
     
     if (error) {
@@ -84,4 +92,3 @@ export const testSupabaseConnection = async () => {
     return { success: false, error };
   }
 };
-

@@ -20,7 +20,7 @@ export const useExerciseWeights = (exerciseName: string) => {
         return null;
       }
 
-      debugLogger.log("useExerciseWeights", "Récupération du poids pour:", exerciseName);
+      debugLogger.log("useExerciseWeights", "Récupération du poids pour:", exerciseName, "UserId:", user.id);
       const { data, error } = await supabase
         .from('user_exercise_weights')
         .select('*')
@@ -37,6 +37,8 @@ export const useExerciseWeights = (exerciseName: string) => {
       return data || { weight: 20 };
     },
     enabled: !!user && !!exerciseName,
+    staleTime: 60000, // 1 minute
+    retry: 3,
   });
 
   const { mutate: updateWeight } = useMutation({
@@ -48,7 +50,7 @@ export const useExerciseWeights = (exerciseName: string) => {
         throw new Error(errorMessage);
       }
 
-      debugLogger.log("useExerciseWeights", "Mise à jour du poids pour:", exerciseName, "Nouveau poids:", weight);
+      debugLogger.log("useExerciseWeights", "Mise à jour du poids pour:", exerciseName, "Nouveau poids:", weight, "UserId:", user.id);
       
       try {
         // Vérification si l'entrée existe déjà
@@ -64,39 +66,45 @@ export const useExerciseWeights = (exerciseName: string) => {
           throw checkError;
         }
         
-        let operation;
+        let response;
         
         if (existingData) {
           // Mise à jour d'une entrée existante
-          operation = supabase
+          debugLogger.log("useExerciseWeights", "Mise à jour entrée existante id:", existingData.id);
+          response = await supabase
             .from('user_exercise_weights')
             .update({
               weight: weight,
               last_used_weight: weight,
-              last_used_at: new Date().toISOString()
+              last_used_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
             })
             .eq('id', existingData.id);
         } else {
           // Création d'une nouvelle entrée
-          operation = supabase
+          debugLogger.log("useExerciseWeights", "Création nouvelle entrée pour user:", user.id);
+          response = await supabase
             .from('user_exercise_weights')
             .insert({
               user_id: user.id,
               exercise_name: exerciseName,
               weight: weight,
               last_used_weight: weight,
-              last_used_at: new Date().toISOString()
+              last_used_at: new Date().toISOString(),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
             });
         }
         
-        const { data, error } = await operation;
+        const { error } = response;
         
         if (error) {
           debugLogger.error('useExerciseWeights', 'Erreur mise à jour du poids:', error);
           throw error;
         }
 
-        return data;
+        // Réussie!
+        return weight;
       } catch (error) {
         debugLogger.error('useExerciseWeights', 'Exception lors de la mise à jour du poids:', error);
         throw error;

@@ -1,21 +1,21 @@
 
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { ChevronDown, ChevronUp, Timer, CheckCircle, ArrowLeft, Plus, Minus } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { ChevronLeft, Dumbbell, Timer, Minus, Plus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/hooks/use-auth";
 import { useExerciseWeights } from "@/hooks/use-exercise-weights";
 import { useExerciseReps } from "@/hooks/use-exercise-reps";
-import { useAuth } from "@/hooks/use-auth";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { debugLogger } from "@/utils/debug-logger";
 
 interface ExerciseDetailProps {
   exerciseName: string;
-  onComplete: (exerciseName: string, totalSets?: number) => void;
+  onComplete: (exerciseName: string, sets: number) => void;
   onBack: () => void;
   initialSets?: number;
 }
@@ -27,306 +27,272 @@ export const ExerciseDetail = ({
   initialSets = 3
 }: ExerciseDetailProps) => {
   const { t } = useLanguage();
-  const { toast } = useToast();
   const { user } = useAuth();
-  const isMobile = useIsMobile();
+  const [sets, setSets] = useState(initialSets);
   const [currentSet, setCurrentSet] = useState(1);
-  const [totalSets, setTotalSets] = useState(initialSets);
+  const [restTime, setRestTime] = useState(90); // Temps de repos en secondes
   const [isResting, setIsResting] = useState(false);
-  const [restTime, setRestTime] = useState(90);
-  const [restInterval, setRestInterval] = useState<NodeJS.Timeout | null>(null);
-  const [completedSets, setCompletedSets] = useState<number[]>([]);
+  const [restTimeLeft, setRestTimeLeft] = useState(0);
+  const [setsCompleted, setSetsCompleted] = useState(0);
   
-  const { exerciseWeight, isLoading: isLoadingWeight, updateWeight } = useExerciseWeights(exerciseName);
+  // Utilisation du hook pour les poids
+  const { exerciseWeight, updateWeight } = useExerciseWeights(exerciseName);
+  const [weight, setWeight] = useState(20); // Valeur par défaut
+  
+  // Utilisation du hook pour les répétitions
   const { reps, updateReps } = useExerciseReps(exerciseName);
-  const [weight, setWeight] = useState(20);
   
+  // Récupérer le poids de l'exercice depuis le cache ou la base de données
   useEffect(() => {
     if (exerciseWeight) {
-      debugLogger.log("ExerciseDetail", "Poids récupéré:", exerciseWeight);
-      setWeight(exerciseWeight.weight || 20);
+      debugLogger.log("ExerciseDetail", "Poids récupéré:", exerciseWeight.weight);
+      setWeight(exerciseWeight.weight);
     }
   }, [exerciseWeight]);
-
-  const handleWeightChange = (newWeight: number) => {
-    try {
-      setWeight(newWeight);
-      if (user) {
-        debugLogger.log("ExerciseDetail", "Mise à jour du poids:", newWeight);
-        updateWeight(newWeight);
-      }
-    } catch (error) {
-      debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour du poids:", error);
-      toast({
-        title: t("common.error") || "Erreur",
-        description: t("workouts.errors.weightUpdateFailed") || "Impossible de mettre à jour le poids",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleRepsChange = (newReps: number) => {
-    try {
-      debugLogger.log("ExerciseDetail", "Mise à jour des répétitions:", newReps);
-      updateReps(newReps);
-    } catch (error) {
-      debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour des répétitions:", error);
-      toast({
-        title: t("common.error") || "Erreur",
-        description: t("workouts.errors.repsUpdateFailed") || "Impossible de mettre à jour les répétitions",
-        variant: "destructive",
-      });
-    }
-  };
-
+  
+  // Timer pour le temps de repos
   useEffect(() => {
-    return () => {
-      if (restInterval) clearInterval(restInterval);
-    };
-  }, [restInterval]);
-
-  const handleCompleteSet = () => {
-    if (currentSet <= totalSets) {
-      setCompletedSets([...completedSets, currentSet]);
-      
-      if (currentSet < totalSets) {
-        setIsResting(true);
-        
-        const interval = setInterval(() => {
-          setRestTime(prev => {
-            if (prev <= 1) {
-              clearInterval(interval);
-              setIsResting(false);
-              setCurrentSet(prev => prev + 1);
-              setRestTime(90);
-              return 90;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-        
-        setRestInterval(interval);
-        
-        // Calcul des calories brûlées pour cette série
-        const caloriesBurned = Math.round(reps * weight * 0.05);
-        
-        toast({
-          title: t("workouts.setCompleted") || "Série terminée",
-          description: `${caloriesBurned} ${t("workouts.caloriesBurned") || "calories brûlées"}. ${t("workouts.restBeforeNextSet") || "Reposez-vous avant la prochaine série."}`,
-        });
-      } else {
-        toast({
-          title: t("workouts.exerciseCompleted") || "Exercice terminé",
-          description: t("workouts.allSetsCompleted") || "Toutes les séries sont terminées",
-        });
-        
-        setTimeout(() => {
-          onComplete(exerciseName, totalSets);
-        }, 1500);
-      }
+    let timer: NodeJS.Timeout;
+    
+    if (isResting && restTimeLeft > 0) {
+      timer = setInterval(() => {
+        setRestTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (isResting && restTimeLeft === 0) {
+      setIsResting(false);
+    }
+    
+    return () => clearInterval(timer);
+  }, [isResting, restTimeLeft]);
+  
+  // Formater le temps de repos (mm:ss)
+  const formatRestTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+  
+  // Gérer le changement de poids
+  const handleWeightChange = (amount: number) => {
+    const newWeight = Math.max(0, weight + amount);
+    setWeight(newWeight);
+    // Ne pas mettre à jour immédiatement dans la BDD pour éviter trop de requêtes
+  };
+  
+  // Gérer le changement de répétitions
+  const handleRepsChange = (amount: number) => {
+    const newReps = Math.max(1, reps + amount);
+    updateReps(newReps);
+  };
+  
+  // Gérer le changement de temps de repos
+  const handleRestTimeChange = (amount: number) => {
+    const newRestTime = Math.max(0, restTime + amount);
+    setRestTime(newRestTime);
+  };
+  
+  // Valider une série
+  const handleSetComplete = () => {
+    // Mettre à jour le poids dans la base de données
+    updateWeight(weight);
+    
+    setSetsCompleted(prev => prev + 1);
+    
+    if (currentSet < sets) {
+      // Passer à la série suivante
+      setCurrentSet(prev => prev + 1);
+      setIsResting(true);
+      setRestTimeLeft(restTime);
+    } else {
+      // Toutes les séries sont complétées
+      onComplete(exerciseName, sets);
     }
   };
-
-  const skipRest = () => {
-    if (restInterval) clearInterval(restInterval);
+  
+  // Sauter le temps de repos
+  const handleSkipRest = () => {
     setIsResting(false);
-    setCurrentSet(prev => prev + 1);
-    setRestTime(90);
   };
-
-  const adjustRestTime = (seconds: number) => {
-    setRestTime(prev => Math.max(15, Math.min(180, prev + seconds)));
-  };
-
+  
   return (
-    <Card className="p-4 md:p-6 space-y-4 md:space-y-6">
-      <div className="flex items-center">
-        <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <h2 className="text-lg md:text-xl font-semibold truncate">{exerciseName}</h2>
-      </div>
-      
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <p className="font-medium">{t("workouts.progress") || "Progression"} :</p>
-          <p>
-            {t("workouts.set") || "Série"} {currentSet} / {totalSets}
-          </p>
+    <Card className="mb-6">
+      <CardHeader className="pb-3">
+        <div className="flex items-center">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onBack}
+            className="mr-2"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <CardTitle className="text-xl">{exerciseName}</CardTitle>
         </div>
-        
-        <Progress value={(completedSets.length / totalSets) * 100} />
-      </div>
-      
-      {isResting ? (
-        <div className="p-4 md:p-6 bg-secondary/10 rounded-lg space-y-4 text-center">
-          <Timer className="w-8 h-8 mx-auto text-primary animate-pulse" />
-          <h3 className="text-lg md:text-xl font-semibold">{t("workouts.restTime") || "Temps de repos"}</h3>
-          <p className="text-3xl md:text-4xl font-mono">{restTime}s</p>
+        <div className="flex justify-between items-center mt-2">
+          <Badge variant="outline" className="flex items-center gap-1">
+            <Dumbbell className="h-3 w-3" />
+            <span>{t("workouts.set") || "Série"} {currentSet}/{sets}</span>
+          </Badge>
           
-          <div className="flex justify-center items-center gap-4 my-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => adjustRestTime(-15)}
-              disabled={restTime <= 15}
-              className="h-10 w-10"
-              aria-label="Diminuer le temps de repos de 15 secondes"
-            >
-              <Minus className="h-5 w-5" />
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => adjustRestTime(15)}
-              disabled={restTime >= 180}
-              className="h-10 w-10"
-              aria-label="Augmenter le temps de repos de 15 secondes"
-            >
-              <Plus className="h-5 w-5" />
+          <Badge variant="outline" className="flex items-center gap-1">
+            <Timer className="h-3 w-3" />
+            <span>{setsCompleted} {t("workouts.completedSets") || "séries complétées"}</span>
+          </Badge>
+        </div>
+      </CardHeader>
+      
+      <CardContent>
+        {isResting ? (
+          <div className="space-y-4 text-center py-6">
+            <h3 className="text-xl font-bold">{t("workouts.restTime") || "Temps de repos"}</h3>
+            <div className="font-mono text-4xl">{formatRestTime(restTimeLeft)}</div>
+            <p className="text-muted-foreground">
+              {t("workouts.restBeforeNextSet") || "Reposez-vous avant la prochaine série."}
+            </p>
+            <Button onClick={handleSkipRest}>
+              {t("workouts.skipRest") || "Passer le repos"}
             </Button>
           </div>
-          
-          <Button 
-            variant="outline" 
-            onClick={skipRest} 
-            className="w-full"
-            size={isMobile ? "lg" : "default"}
-          >
-            {t("workouts.skipRest") || "Passer le repos"}
-          </Button>
-        </div>
-      ) : (
-        <div className="space-y-4 md:space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+        ) : (
+          <div className="space-y-6">
+            {/* Contrôle du poids */}
             <div className="space-y-2">
-              <p className="text-sm font-medium">{t("workouts.weight") || "Poids"} {t("workouts.weightUnit") || "kg"}</p>
+              <Label htmlFor="weight">{t("workouts.weight") || "Poids"} ({t("workouts.weightUnit") || "kg"})</Label>
               <div className="flex items-center">
-                <Button
-                  variant="outline"
+                <Button 
+                  variant="outline" 
                   size="icon"
-                  onClick={() => handleWeightChange(Math.max(0, weight - 2.5))}
-                  className="h-9 md:h-10 w-9 md:w-10"
-                  aria-label="Diminuer le poids"
+                  onClick={() => handleWeightChange(-2.5)}
                 >
-                  <ChevronDown className="h-4 w-4" />
+                  <Minus className="h-4 w-4" />
                 </Button>
-                <Input 
-                  type="number" 
-                  value={weight}
-                  onChange={(e) => handleWeightChange(Number(e.target.value))}
-                  className="mx-2 text-center h-9 md:h-10"
-                  min={0}
-                  step={2.5}
-                />
-                <Button
-                  variant="outline"
+                <div className="mx-4 text-center min-w-[60px]">
+                  <Input
+                    id="weight"
+                    type="number"
+                    value={weight}
+                    className="text-center"
+                    onChange={(e) => setWeight(Number(e.target.value))}
+                  />
+                </div>
+                <Button 
+                  variant="outline" 
                   size="icon"
-                  onClick={() => handleWeightChange(weight + 2.5)}
-                  className="h-9 md:h-10 w-9 md:w-10"
-                  aria-label="Augmenter le poids"
+                  onClick={() => handleWeightChange(2.5)}
                 >
-                  <ChevronUp className="h-4 w-4" />
+                  <Plus className="h-4 w-4" />
                 </Button>
               </div>
             </div>
             
+            {/* Contrôle des répétitions */}
             <div className="space-y-2">
-              <p className="text-sm font-medium">{t("workouts.reps") || "Répétitions"}</p>
+              <Label htmlFor="reps">{t("workouts.reps") || "Répétitions"}</Label>
               <div className="flex items-center">
-                <Button
-                  variant="outline"
+                <Button 
+                  variant="outline" 
                   size="icon"
-                  onClick={() => handleRepsChange(Math.max(1, reps - 1))}
-                  className="h-9 md:h-10 w-9 md:w-10"
-                  aria-label="Diminuer les répétitions"
+                  onClick={() => handleRepsChange(-1)}
                 >
-                  <ChevronDown className="h-4 w-4" />
+                  <Minus className="h-4 w-4" />
                 </Button>
-                <Input 
-                  type="number" 
-                  value={reps}
-                  onChange={(e) => handleRepsChange(Number(e.target.value))}
-                  className="mx-2 text-center h-9 md:h-10"
-                  min={1}
-                />
-                <Button
-                  variant="outline"
+                <div className="mx-4 text-center min-w-[60px]">
+                  <Input
+                    id="reps"
+                    type="number"
+                    value={reps}
+                    className="text-center"
+                    onChange={(e) => updateReps(Number(e.target.value))}
+                  />
+                </div>
+                <Button 
+                  variant="outline" 
                   size="icon"
-                  onClick={() => handleRepsChange(reps + 1)}
-                  className="h-9 md:h-10 w-9 md:w-10"
-                  aria-label="Augmenter les répétitions"
+                  onClick={() => handleRepsChange(1)}
                 >
-                  <ChevronUp className="h-4 w-4" />
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
+            {/* Contrôle du temps de repos */}
+            <div className="space-y-2">
+              <Label htmlFor="restTime">{t("workouts.restTime") || "Temps de repos"} (s)</Label>
+              <div className="flex items-center">
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={() => handleRestTimeChange(-15)}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <div className="mx-4 text-center min-w-[60px]">
+                  <Input
+                    id="restTime"
+                    type="number"
+                    value={restTime}
+                    className="text-center"
+                    onChange={(e) => setRestTime(Number(e.target.value))}
+                  />
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={() => handleRestTimeChange(15)}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
+            {/* Contrôle du nombre de séries */}
+            <div className="space-y-2">
+              <Label htmlFor="sets">{t("workouts.numberOfSets") || "Nombre de séries"}</Label>
+              <div className="flex items-center">
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={() => setSets(Math.max(1, sets - 1))}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <div className="mx-4 text-center min-w-[60px]">
+                  <Input
+                    id="sets"
+                    type="number"
+                    value={sets}
+                    className="text-center"
+                    onChange={(e) => setSets(Number(e.target.value))}
+                  />
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={() => setSets(sets + 1)}
+                >
+                  <Plus className="h-4 w-4" />
                 </Button>
               </div>
             </div>
           </div>
-          
-          <div className="space-y-2">
-            <p className="text-sm font-medium">{t("workouts.numberOfSets") || "Nombre de séries"}</p>
-            <div className="flex items-center">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setTotalSets(prev => Math.max(1, prev - 1))}
-                disabled={completedSets.length >= totalSets - 1}
-                className="h-9 md:h-10 w-9 md:w-10"
-                aria-label="Diminuer le nombre de séries"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              <Input 
-                type="number" 
-                value={totalSets}
-                onChange={(e) => {
-                  const newValue = Number(e.target.value);
-                  if (newValue >= completedSets.length) {
-                    setTotalSets(newValue);
-                  }
-                }}
-                className="mx-2 text-center h-9 md:h-10"
-                min={completedSets.length + 1}
-              />
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setTotalSets(prev => prev + 1)}
-                className="h-9 md:h-10 w-9 md:w-10"
-                aria-label="Augmenter le nombre de séries"
-              >
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          
+        )}
+      </CardContent>
+      
+      <Separator />
+      
+      <CardFooter className="pt-4">
+        {!isResting && (
           <Button 
-            className="w-full h-10 md:h-12 gap-2"
-            onClick={handleCompleteSet}
-            size={isMobile ? "lg" : "default"}
+            className="w-full" 
+            size="lg"
+            onClick={handleSetComplete}
           >
-            <CheckCircle className="h-5 w-5" />
-            {currentSet === totalSets 
-              ? (t("workouts.completeExercise") || "Terminer l'exercice")
-              : (t("workouts.validateSet") || "Valider la série")}
+            {currentSet < sets ? 
+              (t("workouts.validateSet") || "Valider la série") : 
+              (t("workouts.completeExercise") || "Terminer l'exercice")}
           </Button>
-        </div>
-      )}
-
-      {completedSets.length > 0 && !isResting && (
-        <div className="space-y-2 border-t pt-4">
-          <p className="text-sm font-medium">{t("workouts.completedSets") || "Séries complétées"}</p>
-          <div className="space-y-1">
-            {completedSets.map((setNum) => (
-              <div key={setNum} className="flex items-center justify-between text-sm">
-                <span>{t("workouts.set") || "Série"} {setNum}</span>
-                <span className="text-muted-foreground">{reps} x {weight}kg</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+        )}
+      </CardFooter>
     </Card>
   );
 };
