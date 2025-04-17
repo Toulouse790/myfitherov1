@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Timer, Dumbbell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ExerciseTypeViewProps {
   exerciseType: 'cardio' | 'strength';
@@ -12,6 +14,7 @@ interface ExerciseTypeViewProps {
 
 export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: ExerciseTypeViewProps) => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [duration, setDuration] = React.useState(0);
   const [isActive, setIsActive] = React.useState(false);
   const [intensity, setIntensity] = React.useState<'low' | 'moderate' | 'high'>('moderate');
@@ -57,9 +60,9 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
               value={intensity}
               onChange={(e) => setIntensity(e.target.value as 'low' | 'moderate' | 'high')}
             >
-              <option value="low">Faible intensité</option>
-              <option value="moderate">Intensité modérée</option>
-              <option value="high">Haute intensité</option>
+              <option value="low">{t("workouts.easy", { fallback: "Faible intensité" })}</option>
+              <option value="moderate">{t("workouts.medium", { fallback: "Intensité modérée" })}</option>
+              <option value="high">{t("workouts.hard", { fallback: "Haute intensité" })}</option>
             </select>
 
             <Button 
@@ -68,7 +71,7 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
               onClick={() => setIsActive(!isActive)}
             >
               <Timer className="mr-2 h-6 w-6" />
-              {isActive ? "Arrêter" : "Démarrer"}
+              {isActive ? t("common.stop", { fallback: "Arrêter" }) : t("common.start", { fallback: "Démarrer" })}
             </Button>
 
             {duration > 0 && !isActive && (
@@ -76,7 +79,7 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
                 className="w-full h-14 text-lg"
                 onClick={() => onComplete(exerciseName, exerciseName, intensity, "", Math.round(duration / 60 * 10))}
               >
-                Terminer la séance cardio
+                {t("workouts.completeExercise", { fallback: "Terminer la séance cardio" })}
               </Button>
             )}
           </div>
@@ -92,13 +95,13 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
           {sets.map((set, index) => (
             <div key={index} className="flex flex-col p-4 border rounded-lg space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-lg font-medium">Série {index + 1}</span>
-                {set.completed && <span className="text-primary">Complétée ✓</span>}
+                <span className="text-lg font-medium">{t("workouts.set", { fallback: "Série" })} {index + 1}</span>
+                {set.completed && <span className="text-primary">{t("workouts.completed", { fallback: "Complétée" })} ✓</span>}
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm text-muted-foreground">Poids (kg)</label>
+                  <label className="text-sm text-muted-foreground">{t("workouts.weight_kg", { fallback: "Poids (kg)" })}</label>
                   <input
                     type="number"
                     value={set.weight}
@@ -106,13 +109,13 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
                       i === index ? { ...s, weight: Number(e.target.value) } : s
                     ))}
                     className="w-full p-4 text-lg border rounded-lg"
-                    placeholder="Poids"
+                    placeholder={t("workouts.weight", { fallback: "Poids" })}
                     disabled={set.completed}
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm text-muted-foreground">Répétitions</label>
+                  <label className="text-sm text-muted-foreground">{t("workouts.workouts_reps", { fallback: "Répétitions" })}</label>
                   <input
                     type="number"
                     value={set.reps}
@@ -120,7 +123,7 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
                       i === index ? { ...s, reps: Number(e.target.value) } : s
                     ))}
                     className="w-full p-4 text-lg border rounded-lg"
-                    placeholder="Reps"
+                    placeholder={t("workouts.workouts_reps", { fallback: "Répétitions" })}
                     disabled={set.completed}
                   />
                 </div>
@@ -132,7 +135,7 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
                   onClick={() => handleSetComplete(index)}
                   disabled={restTimer !== null}
                 >
-                  Valider la série
+                  {t("workouts.validateSet", { fallback: "Valider la série" })}
                 </Button>
               )}
             </div>
@@ -142,7 +145,7 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
             <div className="fixed bottom-20 left-0 right-0 mx-auto w-max bg-primary text-primary-foreground px-8 py-4 rounded-full shadow-lg animate-pulse">
               <div className="flex items-center gap-2">
                 <Timer className="h-6 w-6" />
-                <span className="text-lg font-medium">Repos: {restTimer}s</span>
+                <span className="text-lg font-medium">{t("workouts.rest", { fallback: "Repos" })}: {restTimer}s</span>
               </div>
             </div>
           )}
@@ -153,7 +156,7 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
             onClick={handleAddSet}
           >
             <Dumbbell className="mr-2 h-6 w-6" />
-            Ajouter une série
+            {t("workouts.addSet", { fallback: "Ajouter une série" })}
           </Button>
 
           {sets.every(set => set.completed) && (
@@ -167,7 +170,7 @@ export const ExerciseTypeView = ({ exerciseType, exerciseName, onComplete }: Exe
                 sets.reduce((acc, set) => acc + (set.weight * set.reps * 0.2), 0)
               )}
             >
-              Terminer l'exercice
+              {t("workouts.completeExercise", { fallback: "Terminer l'exercice" })}
             </Button>
           )}
         </div>

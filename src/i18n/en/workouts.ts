@@ -136,5 +136,18 @@ export const workouts = {
   unableToLoadSessionDetails: "Unable to load session details",
   sessionCompleted: "Session completed",
   allExercisesCompleted: "All exercises have been completed",
-  addSet: "Add set"
+  addSet: "Add set",
+  stopSession: "Stop Session",
+  min: "min",
+  validateSerie: "Validate set",
+  series: "Series",
+  completed: "Completed",
+  weight_kg: "Weight (kg)",
+  workouts_reps: "Reps",
+  rest_time_seconds: "Rest time (s)",
+  number_of_series: "Number of series",
+  stop_workout: "Stop workout",
+  active_session: "Active session",
+  training_session: "Training session",
+  exercise_library: "Exercise library"
 };
