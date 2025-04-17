@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { calculateBMR, getActivityMultiplier, getObjectiveMultiplier } from "./nutrition/use-bmr-calculation";
@@ -14,12 +15,21 @@ export const useDailyTargets = () => {
         return null;
       }
 
+      // Récupérer le profil utilisateur
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      // Récupérer les préférences nutritionnelles
       const { data: preferences } = await supabase
         .from('user_nutrition_preferences')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
 
+      // Récupérer les réponses au questionnaire (pour les nouveaux utilisateurs)
       const { data: questionnaire } = await supabase
         .from('questionnaire_responses')
         .select('*')
@@ -28,6 +38,7 @@ export const useDailyTargets = () => {
         .limit(1)
         .maybeSingle();
 
+      // Récupérer les dernières mesures
       const { data: measurements } = await supabase
         .from('muscle_measurements')
         .select('*')
@@ -78,8 +89,9 @@ export const useDailyTargets = () => {
         .limit(1)
         .maybeSingle();
 
-      console.log("Fetched data:", { preferences, questionnaire, measurements, todayPlan, consumedNutrients });
+      console.log("Fetched data:", { profile, preferences, questionnaire, measurements, todayPlan, consumedNutrients });
       return {
+        profile,
         preferences,
         questionnaire,
         measurements,
@@ -93,29 +105,53 @@ export const useDailyTargets = () => {
 
   const calculateDailyTargets = (data: any) => {
     console.log("Calculating daily targets with data:", data);
-    if (!data?.questionnaire || !data?.measurements) {
+    if (!data?.profile && !data?.questionnaire && !data?.measurements) {
+      console.log("Données insuffisantes pour calculer les besoins nutritionnels");
       return {
-        calories: 2000,
-        proteins: 80,
-        carbs: 250,
-        fats: 65
+        calories: 0,
+        proteins: 0,
+        carbs: 0,
+        fats: 0
       };
     }
 
-    const weight = data.measurements.weight_kg || 70;
-    const height = data.measurements.height_cm || 170;
-    const age = 30;
-    const gender = data.questionnaire.gender || 'male';
+    // Priorité aux mesures récentes, puis au questionnaire, puis aux valeurs par défaut
+    const weight = data.measurements?.weight_kg || 
+                  (data.profile?.weight_kg) || 
+                  (data.questionnaire?.weight ? Number(data.questionnaire.weight) : 70);
+    
+    const height = data.measurements?.height_cm || 
+                  (data.profile?.height_cm) || 
+                  (data.questionnaire?.height ? Number(data.questionnaire.height) : 170);
+    
+    const age = data.profile?.age || 
+               (data.questionnaire?.age ? Number(data.questionnaire.age) : 30);
+    
+    const gender = data.profile?.gender || 
+                  (data.questionnaire?.gender || 'male');
+    
+    const objective = data.profile?.main_objective || 
+                     (data.questionnaire?.objective || 'maintenance');
+    
+    const activityLevel = data.profile?.experience_level || 
+                         (data.questionnaire?.experience_level || 'moderately_active');
+
+    console.log("Paramètres finaux pour le calcul des besoins:", {
+      weight, height, age, gender, objective, activityLevel
+    });
 
     const bmr = calculateBMR(weight, height, age, gender);
-    const activityMultiplier = getActivityMultiplier(data.questionnaire.experience_level);
-    const objectiveMultiplier = getObjectiveMultiplier(data.questionnaire.objective);
+    const activityMultiplier = getActivityMultiplier(activityLevel);
+    const objectiveMultiplier = getObjectiveMultiplier(objective);
     const dailyCalories = Math.round(bmr * activityMultiplier * objectiveMultiplier);
     
+    console.log("BMR calculé:", bmr);
+    console.log("Calories journalières calculées:", dailyCalories);
+    
     let proteinMultiplier = 2;
-    if (data.questionnaire.objective === 'weight_loss') {
+    if (objective === 'weight_loss') {
       proteinMultiplier = 2.2;
-    } else if (data.questionnaire.objective === 'muscle_gain') {
+    } else if (objective === 'muscle_gain') {
       proteinMultiplier = 2;
     }
     
