@@ -51,6 +51,7 @@ export const workouts = {
   completeSet: "Série terminée",
   completeWorkout: "Terminer l'entraînement",
   summaryTitle: "Résumé de l'entraînement",
+  summaryDescription: "Récapitulatif de votre séance",
   totalDuration: "Durée totale",
   totalCalories: "Calories brûlées",
   totalSets: "Séries complétées",

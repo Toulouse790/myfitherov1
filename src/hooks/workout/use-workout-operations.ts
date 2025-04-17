@@ -55,10 +55,11 @@ export const useWorkoutOperations = () => {
         updated_at: new Date().toISOString()
       };
       
-      // Si le statut est 'completed', ajouter completed_at s'il n'est pas déjà défini
-      if (updates.status === 'completed' && !updates.completed_at) {
-        updatesWithTimestamp.completed_at = new Date().toISOString();
-        debugLogger.log("WorkoutOperations", "Ajout automatique du completed_at:", updatesWithTimestamp.completed_at);
+      // Si le statut est 'completed', ajouter updated_at
+      if (updates.status === 'completed') {
+        // Ne pas utiliser completed_at qui n'existe pas dans le schéma
+        updatesWithTimestamp.updated_at = new Date().toISOString();
+        debugLogger.log("WorkoutOperations", "Ajout automatique du updated_at pour fin de séance:", updatesWithTimestamp.updated_at);
       }
       
       const { data, error } = await supabase

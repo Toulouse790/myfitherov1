@@ -144,13 +144,13 @@ export const UnifiedWorkoutDetail = () => {
         difficulty
       });
       
+      // Mise à jour de la session - Ne pas utiliser completed_at qui n'existe pas
       const { error } = await supabase
         .from('workout_sessions')
         .update({
           status: 'completed',
           total_duration_minutes: actualDuration,
           perceived_difficulty: difficulty,
-          completed_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
         .eq('id', sessionId);

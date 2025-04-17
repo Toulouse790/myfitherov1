@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { WorkoutStats } from "./WorkoutStats";
@@ -78,6 +79,9 @@ export const WorkoutSummaryDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t("workouts.sessionCompleted") || "Séance terminée"}</DialogTitle>
+          <DialogDescription>
+            {t("workouts.summaryDescription") || "Résumé de votre séance d'entraînement"}
+          </DialogDescription>
         </DialogHeader>
         
         <WorkoutStats 
