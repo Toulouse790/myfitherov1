@@ -172,5 +172,14 @@ export const workouts = {
   noWorkoutsForMuscleGroup: "No workouts found for this muscle group",
   libraryDescription: "Find exercises and create your custom workouts",
   searchPlaceholder: "Search exercises",
-  toggleFilters: "Show/hide filters"
+  toggleFilters: "Show/hide filters",
+  historyDescription: "View your past workout sessions",
+  previousMonth: "Previous month",
+  nextMonth: "Next month",
+  startFirstWorkout: "Start your first workout",
+  upperBodyTraining: "Upper Body Training",
+  cardioHIIT: "Cardio HIIT",
+  legDay: "Leg Day",
+  fullBodyWorkout: "Full Body Workout",
+  coreTraining: "Core Training"
 };

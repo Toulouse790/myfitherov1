@@ -183,5 +183,15 @@ export const workouts = {
   noWorkoutsForMuscleGroup: "Aucun entraînement trouvé pour ce groupe musculaire",
   libraryDescription: "Trouvez des exercices et créez vos entraînements personnalisés",
   searchPlaceholder: "Rechercher des exercices",
-  toggleFilters: "Afficher/masquer les filtres"
+  toggleFilters: "Afficher/masquer les filtres",
+  historyDescription: "Consultez vos séances d'entraînement passées",
+  previousMonth: "Mois précédent",
+  nextMonth: "Mois suivant",
+  startFirstWorkout: "Commencer votre premier entraînement",
+  upperBodyTraining: "Entraînement du haut du corps",
+  cardioHIIT: "Cardio HIIT",
+  legDay: "Jour des jambes",
+  fullBodyWorkout: "Entraînement complet du corps",
+  coreTraining: "Renforcement abdominal",
+  historyDescription: "Consultez l'historique de vos entraînements"
 };

@@ -93,5 +93,16 @@ export const workouts = {
   unableToLoadSessionDetails: "No se pudieron cargar los detalles de la sesión",
   sessionCompleted: "Sesión completada",
   allExercisesCompleted: "Todos los ejercicios han sido completados",
-  addSet: "Añadir serie"
+  addSet: "Añadir serie",
+  historyDescription: "Consulta tus sesiones de entrenamiento pasadas",
+  previousMonth: "Mes anterior",
+  nextMonth: "Mes siguiente",
+  startFirstWorkout: "Comienza tu primer entrenamiento",
+  upperBodyTraining: "Entrenamiento de tren superior",
+  cardioHIIT: "Cardio HIIT",
+  legDay: "Día de piernas",
+  fullBodyWorkout: "Entrenamiento de cuerpo completo",
+  coreTraining: "Entrenamiento de core",
+  kcal: "kcal",
+  min: "min"
 };

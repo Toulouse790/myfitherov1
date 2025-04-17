@@ -3,11 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Calendar, Clock, Dumbbell, ChevronRight } from "lucide-react";
+import { Calendar, Clock, Dumbbell, ChevronRight, Flame } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export function HistoryTab() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   
   // Animation variants
   const container = {
@@ -27,10 +29,14 @@ export function HistoryTab() {
 
   // Sample workout history data
   const workoutHistory = [
-    { id: 1, date: "2023-06-15", type: "Chest & Triceps", duration: 45, exercises: 5 },
-    { id: 2, date: "2023-06-12", type: "Legs", duration: 60, exercises: 6 },
-    { id: 3, date: "2023-06-10", type: "Back & Biceps", duration: 50, exercises: 5 },
+    { id: 1, date: "2023-07-22", type: t("workouts.upperBodyTraining"), duration: 45, exercises: 5, calories: 320 },
+    { id: 2, date: "2023-07-20", type: t("workouts.cardioHIIT"), duration: 30, exercises: 6, calories: 280 },
+    { id: 3, date: "2023-07-17", type: t("workouts.legDay"), duration: 50, exercises: 5, calories: 350 },
   ];
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString(t('common.locale', { fallback: 'fr-FR' }));
+  };
 
   return (
     <motion.div 
@@ -62,14 +68,22 @@ export function HistoryTab() {
                             <Dumbbell className="h-4 w-4 text-primary" />
                             <h3 className="font-semibold">{workout.type}</h3>
                           </div>
-                          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              <span>{formatDate(workout.date)}</span>
+                            </div>
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              <span>{workout.duration} {t("common.min")}</span>
+                              <span>{workout.duration} {t("workouts.min")}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Flame className="h-3 w-3 text-orange-500" />
+                              <span>{workout.calories} {t("workouts.kcal")}</span>
                             </div>
                             <div>
                               <Badge variant="outline" className="text-xs">
-                                {workout.exercises} {t("workouts.exerciseLibrary").toLowerCase()}
+                                {workout.exercises} {t("workouts.exercises").toLowerCase()}
                               </Badge>
                             </div>
                           </div>
@@ -88,7 +102,11 @@ export function HistoryTab() {
           )}
           
           <div className="mt-6 text-center">
-            <Button variant="outline" className="w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              className="w-full sm:w-auto"
+              onClick={() => navigate('/workouts/history')}
+            >
               {t("workouts.viewFullHistory")}
             </Button>
           </div>

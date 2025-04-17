@@ -93,5 +93,16 @@ export const workouts = {
   unableToLoadSessionDetails: "Details der Einheit konnten nicht geladen werden",
   sessionCompleted: "Einheit abgeschlossen",
   allExercisesCompleted: "Alle Übungen wurden abgeschlossen",
-  addSet: "Satz hinzufügen"
+  addSet: "Satz hinzufügen",
+  historyDescription: "Sehen Sie Ihre vergangenen Trainingseinheiten",
+  previousMonth: "Vorheriger Monat",
+  nextMonth: "Nächster Monat",
+  startFirstWorkout: "Starten Sie Ihr erstes Training",
+  upperBodyTraining: "Oberkörpertraining",
+  cardioHIIT: "Cardio HIIT",
+  legDay: "Beintag",
+  fullBodyWorkout: "Ganzkörpertraining",
+  coreTraining: "Rumpftraining",
+  kcal: "kcal",
+  min: "min"
 };
