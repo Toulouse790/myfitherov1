@@ -177,5 +177,11 @@ export const workouts = {
   trainingOf: "Entraînement du",
   kcal: "kcal",
   workoutInfo: "Info séance",
-  continueWorkout: "Continuer l'entraînement"
+  continueWorkout: "Continuer l'entraînement",
+  filters: "Filtres",
+  createFirstWorkout: "Créer votre premier entraînement",
+  noWorkoutsForMuscleGroup: "Aucun entraînement trouvé pour ce groupe musculaire",
+  libraryDescription: "Trouvez des exercices et créez vos entraînements personnalisés",
+  searchPlaceholder: "Rechercher des exercices",
+  toggleFilters: "Afficher/masquer les filtres"
 };

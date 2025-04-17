@@ -52,12 +52,12 @@ export function WorkoutLibrary() {
             <div>
               <CardTitle>{t("workouts.library")}</CardTitle>
               <CardDescription>
-                {t("workouts.libraryDescription")}
+                {t("workouts.exerciseLibrary")}
               </CardDescription>
             </div>
             <Button onClick={handleCreateWorkout} className="hidden sm:flex">
               <Plus className="mr-2 h-4 w-4" />
-              {t("workouts.createWorkout")}
+              {t("workouts.createNewSession")}
             </Button>
           </div>
         </CardHeader>
@@ -67,7 +67,7 @@ export function WorkoutLibrary() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder={t("workouts.searchPlaceholder")}
+                placeholder={t("workouts.searchExercises")}
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -77,14 +77,14 @@ export function WorkoutLibrary() {
               variant="outline" 
               onClick={() => setShowFilters(!showFilters)}
               className={isMobile ? "w-full sm:w-auto h-10" : ""}
-              aria-label={t("workouts.toggleFilters")}
+              aria-label={t("common.filter")}
             >
               <Filter className="h-4 w-4 mr-2" />
-              <span className="truncate">{t("workouts.filters")}</span>
+              <span className="truncate">{t("common.filter")}</span>
             </Button>
             <Button onClick={handleCreateWorkout} className="sm:hidden w-full">
               <Plus className="mr-2 h-4 w-4" />
-              {t("workouts.createWorkout")}
+              {t("workouts.createNewSession")}
             </Button>
           </div>
 
@@ -114,7 +114,7 @@ export function WorkoutLibrary() {
               <p className="text-muted-foreground">
                 {selectedMuscleGroup 
                   ? t("workouts.noWorkoutsForMuscleGroup") 
-                  : t("workouts.noWorkoutsFound")}
+                  : t("workouts.noExercisesFound")}
               </p>
               <Button 
                 variant="outline" 

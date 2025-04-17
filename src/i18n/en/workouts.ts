@@ -166,5 +166,11 @@ export const workouts = {
   trainingOf: "Training of",
   kcal: "kcal",
   workoutInfo: "Workout info",
-  continueWorkout: "Continue workout"
+  continueWorkout: "Continue workout",
+  filters: "Filters",
+  createFirstWorkout: "Create your first workout",
+  noWorkoutsForMuscleGroup: "No workouts found for this muscle group",
+  libraryDescription: "Find exercises and create your custom workouts",
+  searchPlaceholder: "Search exercises",
+  toggleFilters: "Show/hide filters"
 };
