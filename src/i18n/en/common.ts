@@ -96,6 +96,8 @@ export const common = {
   webApp: "Web app",
   downloadApp: "Download app",
   exercises: "Exercises",
+  minutes: "minutes",
+  view: "View",
   notifications: {
     enable: "Enable notifications",
     disable: "Disable notifications",

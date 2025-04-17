@@ -96,6 +96,8 @@ export const common = {
   webApp: "Application web",
   downloadApp: "Télécharger l'application",
   exercises: "Exercices",
+  minutes: "minutes",
+  view: "Voir",
   notifications: {
     enable: "Activer les notifications",
     disable: "Désactiver les notifications",
@@ -168,3 +170,4 @@ export const common = {
   april: "avril",
   year: "année"
 };
+
