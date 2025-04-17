@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { useExerciseWeights } from "@/hooks/use-exercise-weights";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface ExerciseDetailProps {
   exerciseName: string;
@@ -41,7 +42,7 @@ export const ExerciseDetail = ({
   
   useEffect(() => {
     if (exerciseWeight) {
-      console.log("Poids récupéré:", exerciseWeight);
+      debugLogger.log("ExerciseDetail", "Poids récupéré:", exerciseWeight);
       setWeight(exerciseWeight.weight || 20);
       setReps(exerciseWeight.reps || 12);
     }
@@ -50,16 +51,34 @@ export const ExerciseDetail = ({
   const handleWeightChange = (newWeight: number) => {
     setWeight(newWeight);
     if (user) {
-      console.log("Mise à jour du poids:", newWeight);
-      updateWeight(newWeight);
+      debugLogger.log("ExerciseDetail", "Mise à jour du poids:", newWeight);
+      try {
+        updateWeight(newWeight);
+      } catch (error) {
+        debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour du poids:", error);
+        toast({
+          title: t("common.error") || "Erreur",
+          description: t("workouts.errors.weightUpdateFailed") || "Impossible de mettre à jour le poids.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const handleRepsChange = (newReps: number) => {
     setReps(newReps);
     if (user) {
-      console.log("Mise à jour des répétitions:", newReps);
-      updateReps(newReps);
+      debugLogger.log("ExerciseDetail", "Mise à jour des répétitions:", newReps);
+      try {
+        updateReps(newReps);
+      } catch (error) {
+        debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour des répétitions:", error);
+        toast({
+          title: t("common.error") || "Erreur",
+          description: t("workouts.errors.repsUpdateFailed") || "Impossible de mettre à jour les répétitions.",
+          variant: "destructive",
+        });
+      }
     }
   };
 

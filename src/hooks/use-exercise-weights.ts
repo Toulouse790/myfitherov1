@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./use-toast";
 import { useAuth } from "./use-auth";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const useExerciseWeights = (exerciseName: string) => {
   const { user } = useAuth();
@@ -13,11 +14,11 @@ export const useExerciseWeights = (exerciseName: string) => {
     queryKey: ['exercise-weights', exerciseName, user?.id],
     queryFn: async () => {
       if (!user || !exerciseName) {
-        console.log("Pas d'utilisateur ou d'exercice");
+        debugLogger.log("useExerciseWeights", "Pas d'utilisateur ou d'exercice");
         return null;
       }
 
-      console.log("Récupération du poids pour:", exerciseName);
+      debugLogger.log("useExerciseWeights", "Récupération du poids pour:", exerciseName);
       const { data, error } = await supabase
         .from('user_exercise_weights')
         .select('*')
@@ -26,11 +27,11 @@ export const useExerciseWeights = (exerciseName: string) => {
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching exercise weight:', error);
+        debugLogger.error('useExerciseWeights', 'Erreur récupération du poids:', error);
         throw error;
       }
 
-      console.log("Données récupérées:", data);
+      debugLogger.log("useExerciseWeights", "Données récupérées:", data);
       return data || { weight: 20, reps: 12 };
     },
     enabled: !!user && !!exerciseName,
@@ -38,9 +39,15 @@ export const useExerciseWeights = (exerciseName: string) => {
 
   const { mutate: updateWeight } = useMutation({
     mutationFn: async (weight: number) => {
-      if (!user) throw new Error('User not authenticated');
+      if (!user) throw new Error('Utilisateur non authentifié');
 
-      console.log("Mise à jour du poids pour:", exerciseName, "Nouveau poids:", weight);
+      debugLogger.log("useExerciseWeights", "Mise à jour du poids pour:", exerciseName, "Nouveau poids:", weight);
+      
+      // Vérification que le poids est valide
+      if (typeof weight !== 'number' || isNaN(weight) || weight < 0) {
+        throw new Error('Valeur de poids invalide');
+      }
+      
       const { data, error } = await supabase
         .from('user_exercise_weights')
         .upsert({
@@ -55,7 +62,7 @@ export const useExerciseWeights = (exerciseName: string) => {
         .single();
 
       if (error) {
-        console.error('Error updating weight:', error);
+        debugLogger.error('useExerciseWeights', 'Erreur mise à jour du poids:', error);
         throw error;
       }
 
@@ -63,10 +70,14 @@ export const useExerciseWeights = (exerciseName: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['exercise-weights', exerciseName, user?.id] });
-      console.log("Poids mis à jour avec succès");
+      debugLogger.log("useExerciseWeights", "Poids mis à jour avec succès");
+      toast({
+        title: "Succès",
+        description: "Poids mis à jour avec succès",
+      });
     },
     onError: (error) => {
-      console.error('Mutation error:', error);
+      debugLogger.error('useExerciseWeights', 'Erreur mutation:', error);
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour le poids.",
@@ -77,9 +88,15 @@ export const useExerciseWeights = (exerciseName: string) => {
 
   const { mutate: updateReps } = useMutation({
     mutationFn: async (reps: number) => {
-      if (!user) throw new Error('User not authenticated');
+      if (!user) throw new Error('Utilisateur non authentifié');
 
-      console.log("Mise à jour des répétitions pour:", exerciseName, "Nouvelles répétitions:", reps);
+      debugLogger.log("useExerciseWeights", "Mise à jour des répétitions pour:", exerciseName, "Nouvelles répétitions:", reps);
+      
+      // Vérification que les répétitions sont valides
+      if (typeof reps !== 'number' || isNaN(reps) || reps <= 0) {
+        throw new Error('Valeur de répétitions invalide');
+      }
+      
       const { data, error } = await supabase
         .from('user_exercise_weights')
         .upsert({
@@ -93,7 +110,7 @@ export const useExerciseWeights = (exerciseName: string) => {
         .single();
 
       if (error) {
-        console.error('Error updating reps:', error);
+        debugLogger.error('useExerciseWeights', 'Erreur mise à jour des répétitions:', error);
         throw error;
       }
 
@@ -101,10 +118,14 @@ export const useExerciseWeights = (exerciseName: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['exercise-weights', exerciseName, user?.id] });
-      console.log("Répétitions mises à jour avec succès");
+      debugLogger.log("useExerciseWeights", "Répétitions mises à jour avec succès");
+      toast({
+        title: "Succès",
+        description: "Répétitions mises à jour avec succès",
+      });
     },
     onError: (error) => {
-      console.error('Mutation error:', error);
+      debugLogger.error('useExerciseWeights', 'Erreur mutation:', error);
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour les répétitions.",
