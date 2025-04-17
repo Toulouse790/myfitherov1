@@ -15,10 +15,11 @@ export const calculateExerciseCalories = (
   gender: 'male' | 'female'
 ): number => {
   // Valeurs MET (Metabolic Equivalent of Task) en fonction de l'intensité
+  // Pour l'entraînement de musculation et autres exercices de force
   const metValues = {
-    low: 3.0,      // Exercice léger
-    moderate: 5.0, // Exercice modéré
-    high: 6.0      // Exercice intense
+    low: 3.5,      // Exercice léger (musculation légère)
+    moderate: 5.0, // Exercice modéré (musculation moyenne)
+    high: 7.0      // Exercice intense (musculation intensive)
   };
   
   const met = metValues[intensity];
@@ -29,9 +30,9 @@ export const calculateExerciseCalories = (
   // Facteur EPOC (Excess Post-exercise Oxygen Consumption)
   // Représente la consommation d'oxygène accrue après l'entraînement
   const epocFactor = {
-    low: 1.06,     // +6% pour basse intensité
-    moderate: 1.10, // +10% pour intensité modérée 
-    high: 1.15     // +15% pour haute intensité
+    low: 1.08,     // +8% pour basse intensité
+    moderate: 1.15, // +15% pour intensité modérée 
+    high: 1.25     // +25% pour haute intensité
   }[intensity];
   
   // Si durée est 0, retourner 0 pour éviter les calculs inutiles
@@ -40,6 +41,38 @@ export const calculateExerciseCalories = (
   // Formule standard pour calculer les calories brûlées durant l'exercice
   // Calories = MET × Poids (kg) × Durée (heures) × 3.5 × Facteur genre × Facteur EPOC
   const calories = met * weightKg * (durationMinutes / 60) * 3.5 * genderFactor * epocFactor;
+  
+  return Math.floor(calories);
+};
+
+/**
+ * Calcule les calories brûlées spécifiquement lors d'un exercice de musculation
+ * en fonction du poids soulevé et des répétitions.
+ * 
+ * @param exerciseWeight Poids total soulevé (kg)
+ * @param sets Nombre de séries
+ * @param reps Nombre de répétitions par série
+ * @param intensity Intensité de l'exercice ('low', 'moderate', 'high')
+ * @returns Nombre de calories brûlées
+ */
+export const calculateStrengthTrainingCalories = (
+  exerciseWeight: number,
+  sets: number,
+  reps: number,
+  intensity: 'low' | 'moderate' | 'high' = 'moderate'
+): number => {
+  // Facteurs selon l'intensité
+  const intensityFactors = {
+    low: 0.025,
+    moderate: 0.035,
+    high: 0.045
+  };
+  
+  // Calories calculées = poids soulevé * nombre de répétitions * facteur d'intensité
+  // Avec un facteur multiplicatif pour le nombre de séries (diminution de l'efficacité avec la fatigue)
+  const setsFactor = 1 + (Math.log(sets) / Math.log(2) * 0.2); // Facteur logarithmique pour les séries
+  
+  const calories = exerciseWeight * reps * intensityFactors[intensity] * setsFactor;
   
   return Math.floor(calories);
 };

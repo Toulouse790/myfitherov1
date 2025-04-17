@@ -7,6 +7,7 @@ import { Timer, ChevronUp, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { useRestTimer } from "@/hooks/use-rest-timer";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface WorkoutInProgressProps {
   exercises: string[];
@@ -14,7 +15,7 @@ interface WorkoutInProgressProps {
   onExerciseClick: (index: number) => void;
   sessionId?: string | null;
   onRegenerateWorkout: () => void;
-  onExerciseComplete: (index: number) => void;
+  onExerciseComplete: (index: number, caloriesBurned: number, weightLifted: number) => void;
 }
 
 export const WorkoutInProgress = ({
@@ -25,6 +26,10 @@ export const WorkoutInProgress = ({
   const [currentSet, setCurrentSet] = useState(1);
   const [weight, setWeight] = useState(20);
   const [reps, setReps] = useState(12);
+  const [totalCalories, setTotalCalories] = useState(0);
+  const [totalWeight, setTotalWeight] = useState(0);
+  const [sets, setSets] = useState(4); // Total sets for the exercise
+  const [completedSets, setCompletedSets] = useState(0);
   const { toast } = useToast();
   
   // Utilisation correcte du hook useRestTimer
@@ -44,27 +49,67 @@ export const WorkoutInProgress = ({
 
   const currentExerciseName = currentExerciseIndex !== null ? exercises[currentExerciseIndex] : null;
 
+  // Calcul amélioré des calories basé sur l'effort réel
+  const calculateCalories = (reps: number, weight: number) => {
+    // Formule: 0.05 calories par répétition par kilo soulevé * facteur d'intensité
+    const intensityFactor = 1.2; // Intensité modérée
+    const calories = Math.round(0.05 * reps * weight * intensityFactor);
+    
+    debugLogger.log("WorkoutInProgress", "Calcul des calories pour une série:", {
+      reps,
+      weight,
+      intensityFactor,
+      caloriesCalculated: calories
+    });
+    
+    return calories;
+  };
+
   const handleSetComplete = () => {
-    if (currentSet < 4 && currentExerciseName) {
-      setCurrentSet(prev => prev + 1);
-      // Démarrer le timer de repos
-      startRestTimer();
+    if (currentSet <= sets && currentExerciseName) {
+      // Calculer les calories pour cette série
+      const setCalories = calculateCalories(reps, weight);
+      const setWeight = reps * weight;
       
-      const calories = Math.round(reps * weight * 0.15);
+      // Mettre à jour les totaux
+      setTotalCalories(prev => prev + setCalories);
+      setTotalWeight(prev => prev + setWeight);
+      setCompletedSets(prev => prev + 1);
       
-      toast({
-        title: "Série complétée !",
-        description: `${calories} calories brûlées. 90 secondes de repos.`,
-      });
-    } else {
-      toast({
-        title: "Exercice terminé !",
-        description: "Passez à l'exercice suivant.",
-      });
-      if (currentExerciseIndex !== null) {
-        onExerciseComplete(currentExerciseIndex);
+      if (currentSet < sets) {
+        setCurrentSet(prev => prev + 1);
+        // Démarrer le timer de repos
+        startRestTimer();
+        
+        toast({
+          title: "Série complétée !",
+          description: `${setCalories} calories brûlées. 90 secondes de repos.`,
+        });
+      } else {
+        // Exercise completed
+        toast({
+          title: "Exercice terminé !",
+          description: "Passez à l'exercice suivant.",
+        });
+        
+        debugLogger.log("WorkoutInProgress", "Exercice terminé:", {
+          exerciseName: currentExerciseName,
+          totalSets: sets,
+          totalCalories,
+          totalWeight,
+          completedSets: completedSets + 1
+        });
+        
+        if (currentExerciseIndex !== null) {
+          onExerciseComplete(currentExerciseIndex, totalCalories + setCalories, totalWeight + setWeight);
+        }
+        
+        // Reset for next exercise
+        setCurrentSet(1);
+        setTotalCalories(0);
+        setTotalWeight(0);
+        setCompletedSets(0);
       }
-      setCurrentSet(1);
     }
   };
 
@@ -92,7 +137,10 @@ export const WorkoutInProgress = ({
           <div>
             <h2 className="text-2xl font-bold">{exercises[currentExerciseIndex!]}</h2>
             <p className="text-muted-foreground">
-              Série {currentSet}/4 • {reps} répétitions
+              Série {currentSet}/{sets} • {reps} répétitions
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Calories accumulées: {totalCalories} • Poids total: {totalWeight}kg
             </p>
           </div>
 
@@ -167,7 +215,7 @@ export const WorkoutInProgress = ({
                 onClick={handleSetComplete}
                 disabled={isResting}
               >
-                {currentSet === 4 ? "Terminer l'exercice" : "Valider la série"}
+                {currentSet === sets ? "Terminer l'exercice" : "Valider la série"}
               </Button>
             )}
           </AnimatePresence>

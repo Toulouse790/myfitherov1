@@ -1,11 +1,12 @@
+
 import { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Plus, Timer } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { formatWorkoutTime } from "@/utils/time";
 import { useToast } from "@/hooks/use-toast";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface Set {
   id: number;
@@ -35,6 +36,7 @@ export const WorkoutExerciseDetail = () => {
   const [sets, setSets] = useState<Set[]>(initialSets || defaultState.sets);
   const [notes, setNotes] = useState("");
   const [restTimer, setRestTimer] = useState<number | null>(null);
+  const [totalCalories, setTotalCalories] = useState(0);
 
   const handleAddSet = () => {
     const newSet = {
@@ -63,16 +65,53 @@ export const WorkoutExerciseDetail = () => {
     }, 1000);
   };
 
+  // Calcul plus précis des calories en fonction du poids et des répétitions
+  const calculateCalories = (reps: number, weight: number) => {
+    // Formule améliorée: 0.05 * poids (kg) * reps * intensité (1.2)
+    // Cette formule est une approximation plus réaliste
+    const intensity = 1.2; // Intensité modérée
+    const calories = Math.round(0.05 * weight * reps * intensity);
+    
+    debugLogger.log("WorkoutExerciseDetail", "Calcul des calories:", {
+      reps, 
+      weight, 
+      intensity,
+      calculatedCalories: calories
+    });
+    
+    return calories;
+  };
+
   const handleSetComplete = (setId: number) => {
+    const completedSet = sets.find(set => set.id === setId);
+    
+    if (!completedSet) return;
+    
+    // Calculer les calories pour cette série
+    const setCalories = calculateCalories(completedSet.reps, completedSet.weight);
+    
+    // Mettre à jour le total des calories
+    setTotalCalories(prev => prev + setCalories);
+    
     setSets(sets.map(set => 
       set.id === setId ? { ...set, completed: true } : set
     ));
+    
     startRestTimer();
     
-    const calories = Math.round(sets[setId - 1].reps * sets[setId - 1].weight * 0.15);
     toast({
       title: "Série complétée !",
-      description: `${calories} calories brûlées. 90 secondes de repos.`,
+      description: `${setCalories} calories brûlées. 90 secondes de repos.`,
+    });
+    
+    // Enregistrer ces données pour la session
+    debugLogger.log("WorkoutExerciseDetail", "Série complétée:", {
+      exerciseName,
+      setId,
+      weight: completedSet.weight,
+      reps: completedSet.reps,
+      calories: setCalories,
+      totalCaloriesSoFar: totalCalories + setCalories
     });
   };
 
@@ -159,6 +198,16 @@ export const WorkoutExerciseDetail = () => {
               onChange={(e) => setNotes(e.target.value)}
               className="bg-white border text-gray-900 placeholder:text-gray-500"
             />
+          </div>
+          
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <h3 className="text-lg font-medium text-gray-900">Résumé</h3>
+            <p className="text-sm text-gray-600">
+              Sets complétés: {sets.filter(s => s.completed).length}/{sets.length}
+            </p>
+            <p className="text-sm text-gray-600">
+              Calories totales brûlées: {totalCalories}
+            </p>
           </div>
         </CardContent>
       </Card>

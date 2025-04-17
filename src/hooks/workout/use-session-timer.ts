@@ -17,7 +17,7 @@ export const useSessionTimer = () => {
     
     // Validation de la valeur initiale
     const validInitialSeconds = initialSeconds >= 0 && initialSeconds < 86400 
-      ? initialSeconds 
+      ? Math.floor(initialSeconds) // Assurer que c'est un entier 
       : 0;
       
     setSessionTime(validInitialSeconds);
@@ -27,27 +27,36 @@ export const useSessionTimer = () => {
     lastTickRef.current = Date.now();
     
     timerRef.current = setInterval(() => {
-      if (startTimeRef.current) {
-        const now = Date.now();
-        // Vérifier que le temps augmente normalement (protection contre les sauts d'horloge)
-        const timeSinceLastTick = now - lastTickRef.current;
-        
-        if (timeSinceLastTick > 0 && timeSinceLastTick < 10000) { // max 10s entre les ticks
-          const elapsed = Math.floor((now - startTimeRef.current) / 1000);
+      try {
+        if (startTimeRef.current) {
+          const now = Date.now();
+          // Vérifier que le temps augmente normalement (protection contre les sauts d'horloge)
+          const timeSinceLastTick = now - lastTickRef.current;
           
-          // Validation pour éviter des temps aberrants
-          if (elapsed >= 0 && elapsed < 86400) { // max 24h
-            setSessionTime(elapsed);
+          if (timeSinceLastTick > 0 && timeSinceLastTick < 10000) { // max 10s entre les ticks
+            const elapsed = Math.floor((now - startTimeRef.current) / 1000);
+            
+            // Validation pour éviter des temps aberrants
+            if (elapsed >= 0 && elapsed < 86400) { // max 24h
+              setSessionTime(elapsed);
+            } else {
+              // Si le temps est hors limites, réinitialiser la référence
+              debugLogger.warn("SessionTimer", "Temps écoulé anormal détecté, réinitialisation", { elapsed });
+              startTimeRef.current = now - (sessionTime * 1000);
+            }
+          } else {
+            // Réinitialiser le temps de référence si on détecte un saut
+            debugLogger.warn("SessionTimer", "Saut d'horloge détecté, réinitialisation de la référence", {
+              timeSinceLastTick
+            });
+            startTimeRef.current = now - (sessionTime * 1000);
           }
-        } else {
-          // Réinitialiser le temps de référence si on détecte un saut
-          debugLogger.warn("SessionTimer", "Saut d'horloge détecté, réinitialisation de la référence", {
-            timeSinceLastTick
-          });
-          startTimeRef.current = now - (sessionTime * 1000);
+          
+          lastTickRef.current = now;
         }
-        
-        lastTickRef.current = now;
+      } catch (error) {
+        // Protection contre les erreurs pour ne pas casser l'application
+        debugLogger.error("SessionTimer", "Erreur dans le timer", error);
       }
     }, 1000);
   }, []);
@@ -88,16 +97,25 @@ export const useSessionTimer = () => {
       seconds = seconds % 86400; // Limite à 24h max
     }
     
+    // Conversion en minutes:secondes
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
+    
+    // Formatage avec padding
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }, []);
+
+  // Ajout d'une méthode pour obtenir directement la durée en minutes
+  const getDurationMinutes = useCallback(() => {
+    return Math.ceil(sessionTime / 60);
+  }, [sessionTime]);
 
   return {
     sessionTime,
     formatTime,
     startTimer,
     stopTimer,
-    resetTimer
+    resetTimer,
+    getDurationMinutes
   };
 };

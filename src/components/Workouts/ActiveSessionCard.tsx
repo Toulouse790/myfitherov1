@@ -18,7 +18,7 @@ export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessio
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
-  // Validation du temps formatté pour éviter des valeurs aberrantes
+  // Validation et affichage du temps formatté
   const getDisplayTime = () => {
     try {
       if (!formattedTime || formattedTime === "NaN:NaN") {
@@ -53,6 +53,15 @@ export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessio
     }
   };
 
+  // Ajout de debugging pour comprendre les problèmes potentiels
+  const handleContinueSession = () => {
+    debugLogger.log("ActiveSessionCard", "Continuation de session:", {
+      sessionId: activeSession.id,
+      sessionExercises: activeSession.exercises
+    });
+    navigate(`/workouts/${activeSession.id}`);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -83,7 +92,7 @@ export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessio
               </p>
             </div>
             <Button
-              onClick={() => navigate(`/workouts/${activeSession.id}`)}
+              onClick={handleContinueSession}
               className="bg-primary hover:bg-primary/90 text-primary-foreground px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-md flex items-center gap-1 sm:gap-2 w-full sm:w-auto text-[10px] sm:text-xs md:text-sm"
             >
               <Play className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" />

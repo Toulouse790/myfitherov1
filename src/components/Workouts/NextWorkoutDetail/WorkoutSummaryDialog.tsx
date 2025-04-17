@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { debugLogger } from "@/utils/debug-logger";
 import { Loader2 } from "lucide-react";
+import { calculateExerciseCalories } from "@/utils/calorieCalculation";
 
 interface WorkoutSummaryDialogProps {
   open: boolean;
@@ -38,32 +39,44 @@ export const WorkoutSummaryDialog = ({
   const [difficulty, setDifficulty] = useState<string>("moderate");
   const [muscleGroups] = useState<string[]>(["chest", "shoulders"]);
   
-  // Recalculer les calories basées sur la durée si aucune valeur n'est fournie
+  // Recalculer les calories basées sur la durée et le poids soulevé
   useEffect(() => {
     // Validation de la durée
     const validDuration = Math.max(1, Math.min(stats.duration || 0, 300)); // Limité entre 1 et 300 minutes
     const validWeight = Math.max(0, Math.min(stats.totalWeight || 0, 50000)); // Limité à 50 tonnes max
     
-    if (stats.totalCalories <= 0) {
-      // Estimation des calories basée sur la durée et le poids
-      // Formule simple: durée × 7-10 calories par minute, ajustée par le poids soulevé
-      const baseCalories = validDuration * 9; // Base: 9 calories par minute
-      const weightFactor = Math.max(1, Math.log10(validWeight + 1) / 2); // Facteur basé sur le poids total (logarithmique)
-      
-      const estimatedCalories = Math.round(baseCalories * weightFactor);
-      
-      debugLogger.log("WorkoutSummaryDialog", "Calcul des calories estimées:", {
-        duration: validDuration,
-        totalWeight: validWeight,
-        weightFactor,
-        estimatedCalories
-      });
-      
-      setCalculatedCalories(estimatedCalories);
-    } else {
+    // Si des calories ont déjà été calculées pendant l'entraînement, les utiliser
+    if (stats.totalCalories > 0) {
       setCalculatedCalories(stats.totalCalories);
+      debugLogger.log("WorkoutSummaryDialog", "Utilisation des calories déjà calculées:", stats.totalCalories);
+      return;
     }
-  }, [stats.totalCalories, stats.duration, stats.totalWeight]);
+    
+    // Estimation plus précise des calories basée sur la durée et le poids
+    // Utilisation de la fonction de calcul de calories de l'utilitaire
+    const maleUserWeight = 75; // Poids moyen utilisé pour le calcul (à remplacer par le poids réel de l'utilisateur)
+    
+    const estimatedCalories = calculateExerciseCalories(
+      maleUserWeight,
+      validDuration,
+      difficulty === 'easy' ? 'low' : (difficulty === 'hard' ? 'high' : 'moderate'),
+      'male'
+    );
+    
+    // Ajustement en fonction du poids soulevé
+    const weightFactor = Math.max(1, Math.log10(validWeight + 1) / 3);
+    const adjustedCalories = Math.round(estimatedCalories * weightFactor);
+    
+    debugLogger.log("WorkoutSummaryDialog", "Calcul des calories estimées:", {
+      duration: validDuration,
+      totalWeight: validWeight,
+      weightFactor,
+      baseCalories: estimatedCalories,
+      adjustedCalories
+    });
+    
+    setCalculatedCalories(adjustedCalories);
+  }, [stats.totalCalories, stats.duration, stats.totalWeight, difficulty]);
 
   // Validation des données avant confirmation
   const validateAndSubmit = () => {
@@ -103,7 +116,7 @@ export const WorkoutSummaryDialog = ({
         totalWeight: stats.totalWeight
       });
       
-      // Passer les bonnes valeurs, y compris les calories calculées et le poids total
+      // Passer les valeurs, y compris les calories calculées
       await onConfirm(difficulty, stats.duration, muscleGroups);
       
       // La fonction appelante gérera la redirection
