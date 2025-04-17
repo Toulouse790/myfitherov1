@@ -86,13 +86,17 @@ export const useWorkoutSession = () => {
       });
       
       // Mise à jour des champs de la session
-      const data = await updateWorkoutSession(activeSession.id, {
+      const updateData = {
         status: 'completed',
         total_duration_minutes: durationMinutes,
         perceived_difficulty: additionalData.perceived_difficulty || 'moderate',
         calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8),
-        completed_at: new Date().toISOString()
-      });
+        updated_at: new Date().toISOString()
+      };
+      
+      debugLogger.log("useWorkoutSession", "Données de mise à jour:", updateData);
+      
+      const data = await updateWorkoutSession(activeSession.id, updateData);
 
       if (data) {
         // Mettre à null après une réponse réussie de Supabase

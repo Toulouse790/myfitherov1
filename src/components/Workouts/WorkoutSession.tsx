@@ -170,13 +170,13 @@ export const WorkoutSession = () => {
         muscleGroups
       });
       
+      // Mise à jour du statut de la session
       const { error: updateError } = await supabase
         .from('workout_sessions')
         .update({
           status: 'completed',
           total_duration_minutes: duration,
           perceived_difficulty: difficulty,
-          completed_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
         .eq('id', sessionId);
@@ -186,7 +186,7 @@ export const WorkoutSession = () => {
         throw updateError;
       }
       
-      // Ajouter les statistiques d'entraînement
+      // Ajout des statistiques d'entraînement
       const { error: statsError } = await supabase
         .from('training_stats')
         .insert({

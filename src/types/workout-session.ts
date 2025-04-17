@@ -10,7 +10,6 @@ export interface WorkoutSession {
   total_duration_minutes: number;
   calories_burned?: number;
   perceived_difficulty?: 'easy' | 'moderate' | 'hard';
-  completed_at?: string;
   type?: string;
   workout_type?: string;
 }
