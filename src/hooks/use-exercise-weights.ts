@@ -53,19 +53,46 @@ export const useExerciseWeights = (exerciseName: string) => {
       }
       
       try {
-        const { data, error } = await supabase
+        // Vérification si l'entrée existe déjà
+        const { data: existingData, error: checkError } = await supabase
           .from('user_exercise_weights')
-          .upsert({
-            user_id: user.id,
-            exercise_name: exerciseName,
-            weight: weight,
-            reps: exerciseWeight?.reps || 12,
-            last_used_weight: weight,
-            last_used_at: new Date().toISOString()
-          })
-          .select()
-          .single();
-
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('exercise_name', exerciseName)
+          .maybeSingle();
+          
+        if (checkError && checkError.code !== 'PGRST116') {
+          debugLogger.error('useExerciseWeights', 'Erreur lors de la vérification des données existantes:', checkError);
+          throw checkError;
+        }
+        
+        let operation;
+        
+        if (existingData) {
+          // Mise à jour d'une entrée existante
+          operation = supabase
+            .from('user_exercise_weights')
+            .update({
+              weight: weight,
+              last_used_weight: weight,
+              last_used_at: new Date().toISOString()
+            })
+            .eq('id', existingData.id);
+        } else {
+          // Création d'une nouvelle entrée
+          operation = supabase
+            .from('user_exercise_weights')
+            .insert({
+              user_id: user.id,
+              exercise_name: exerciseName,
+              weight: weight,
+              last_used_weight: weight,
+              last_used_at: new Date().toISOString()
+            });
+        }
+        
+        const { data, error } = await operation;
+        
         if (error) {
           debugLogger.error('useExerciseWeights', 'Erreur mise à jour du poids:', error);
           throw error;
@@ -109,18 +136,44 @@ export const useExerciseWeights = (exerciseName: string) => {
       }
       
       try {
-        const { data, error } = await supabase
+        // Vérification si l'entrée existe déjà
+        const { data: existingData, error: checkError } = await supabase
           .from('user_exercise_weights')
-          .upsert({
-            user_id: user.id,
-            exercise_name: exerciseName,
-            weight: exerciseWeight?.weight || 20,
-            reps: reps,
-            last_used_at: new Date().toISOString()
-          })
-          .select()
-          .single();
-
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('exercise_name', exerciseName)
+          .maybeSingle();
+          
+        if (checkError && checkError.code !== 'PGRST116') {
+          debugLogger.error('useExerciseWeights', 'Erreur lors de la vérification des données existantes:', checkError);
+          throw checkError;
+        }
+        
+        let operation;
+        
+        if (existingData) {
+          // Mise à jour d'une entrée existante
+          operation = supabase
+            .from('user_exercise_weights')
+            .update({
+              weight: exerciseWeight?.weight || 20,
+              last_used_at: new Date().toISOString()
+            })
+            .eq('id', existingData.id);
+        } else {
+          // Création d'une nouvelle entrée
+          operation = supabase
+            .from('user_exercise_weights')
+            .insert({
+              user_id: user.id,
+              exercise_name: exerciseName,
+              weight: exerciseWeight?.weight || 20,
+              last_used_at: new Date().toISOString()
+            });
+        }
+        
+        const { data, error } = await operation;
+        
         if (error) {
           debugLogger.error('useExerciseWeights', 'Erreur mise à jour des répétitions:', error);
           throw error;

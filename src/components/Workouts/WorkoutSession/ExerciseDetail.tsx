@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useExerciseWeights } from "@/hooks/use-exercise-weights";
+import { useExerciseReps } from "@/hooks/use-exercise-reps";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { debugLogger } from "@/utils/debug-logger";
@@ -36,49 +37,45 @@ export const ExerciseDetail = ({
   const [restInterval, setRestInterval] = useState<NodeJS.Timeout | null>(null);
   const [completedSets, setCompletedSets] = useState<number[]>([]);
   
-  const { exerciseWeight, isLoading: isLoadingWeight, updateWeight, updateReps } = useExerciseWeights(exerciseName);
+  const { exerciseWeight, isLoading: isLoadingWeight, updateWeight } = useExerciseWeights(exerciseName);
+  const { reps, updateReps } = useExerciseReps(exerciseName);
   const [weight, setWeight] = useState(20);
-  const [reps, setReps] = useState(12);
   
   useEffect(() => {
     if (exerciseWeight) {
       debugLogger.log("ExerciseDetail", "Poids récupéré:", exerciseWeight);
       setWeight(exerciseWeight.weight || 20);
-      setReps(exerciseWeight.reps || 12);
     }
   }, [exerciseWeight]);
 
   const handleWeightChange = (newWeight: number) => {
-    setWeight(newWeight);
-    if (user) {
-      debugLogger.log("ExerciseDetail", "Mise à jour du poids:", newWeight);
-      try {
+    try {
+      setWeight(newWeight);
+      if (user) {
+        debugLogger.log("ExerciseDetail", "Mise à jour du poids:", newWeight);
         updateWeight(newWeight);
-      } catch (error) {
-        debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour du poids:", error);
-        toast({
-          title: t("common.error"),
-          description: t("workouts.errors.weightUpdateFailed"),
-          variant: "destructive",
-        });
       }
+    } catch (error) {
+      debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour du poids:", error);
+      toast({
+        title: t("common.error"),
+        description: t("workouts.errors.weightUpdateFailed"),
+        variant: "destructive",
+      });
     }
   };
 
   const handleRepsChange = (newReps: number) => {
-    setReps(newReps);
-    if (user) {
+    try {
       debugLogger.log("ExerciseDetail", "Mise à jour des répétitions:", newReps);
-      try {
-        updateReps(newReps);
-      } catch (error) {
-        debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour des répétitions:", error);
-        toast({
-          title: t("common.error"),
-          description: t("workouts.errors.repsUpdateFailed"),
-          variant: "destructive",
-        });
-      }
+      updateReps(newReps);
+    } catch (error) {
+      debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour des répétitions:", error);
+      toast({
+        title: t("common.error"),
+        description: t("workouts.errors.repsUpdateFailed"),
+        variant: "destructive",
+      });
     }
   };
 
