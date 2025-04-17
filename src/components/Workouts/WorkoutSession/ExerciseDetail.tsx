@@ -58,8 +58,8 @@ export const ExerciseDetail = ({
     } catch (error) {
       debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour du poids:", error);
       toast({
-        title: t("common.error"),
-        description: t("workouts.errors.weightUpdateFailed"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.weightUpdateFailed") || "Impossible de mettre à jour le poids",
         variant: "destructive",
       });
     }
@@ -72,8 +72,8 @@ export const ExerciseDetail = ({
     } catch (error) {
       debugLogger.error("ExerciseDetail", "Erreur lors de la mise à jour des répétitions:", error);
       toast({
-        title: t("common.error"),
-        description: t("workouts.errors.repsUpdateFailed"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.repsUpdateFailed") || "Impossible de mettre à jour les répétitions",
         variant: "destructive",
       });
     }
@@ -111,13 +111,13 @@ export const ExerciseDetail = ({
         const caloriesBurned = Math.round(reps * weight * 0.05);
         
         toast({
-          title: t("workouts.setCompleted"),
-          description: `${caloriesBurned} ${t("workouts.caloriesBurned")}. ${t("workouts.restBeforeNextSet")}`,
+          title: t("workouts.setCompleted") || "Série terminée",
+          description: `${caloriesBurned} ${t("workouts.caloriesBurned") || "calories brûlées"}. ${t("workouts.restBeforeNextSet") || "Reposez-vous avant la prochaine série."}`,
         });
       } else {
         toast({
-          title: t("workouts.exerciseCompleted"),
-          description: t("workouts.allSetsCompleted"),
+          title: t("workouts.exerciseCompleted") || "Exercice terminé",
+          description: t("workouts.allSetsCompleted") || "Toutes les séries sont terminées",
         });
         
         setTimeout(() => {
@@ -149,9 +149,9 @@ export const ExerciseDetail = ({
       
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <p className="font-medium">{t("workouts.progress")}:</p>
+          <p className="font-medium">{t("workouts.progress") || "Progression"} :</p>
           <p>
-            {t("workouts.set")} {currentSet} / {totalSets}
+            {t("workouts.set") || "Série"} {currentSet} / {totalSets}
           </p>
         </div>
         
@@ -161,7 +161,7 @@ export const ExerciseDetail = ({
       {isResting ? (
         <div className="p-4 md:p-6 bg-secondary/10 rounded-lg space-y-4 text-center">
           <Timer className="w-8 h-8 mx-auto text-primary animate-pulse" />
-          <h3 className="text-lg md:text-xl font-semibold">{t("workouts.restTime")}</h3>
+          <h3 className="text-lg md:text-xl font-semibold">{t("workouts.restTime") || "Temps de repos"}</h3>
           <p className="text-3xl md:text-4xl font-mono">{restTime}s</p>
           
           <div className="flex justify-center items-center gap-4 my-4">
@@ -194,14 +194,14 @@ export const ExerciseDetail = ({
             className="w-full"
             size={isMobile ? "lg" : "default"}
           >
-            {t("workouts.skipRest")}
+            {t("workouts.skipRest") || "Passer le repos"}
           </Button>
         </div>
       ) : (
         <div className="space-y-4 md:space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
             <div className="space-y-2">
-              <p className="text-sm font-medium">{t("workouts.weight")} {t("workouts.weightUnit")}</p>
+              <p className="text-sm font-medium">{t("workouts.weight") || "Poids"} {t("workouts.weightUnit") || "kg"}</p>
               <div className="flex items-center">
                 <Button
                   variant="outline"
@@ -233,7 +233,7 @@ export const ExerciseDetail = ({
             </div>
             
             <div className="space-y-2">
-              <p className="text-sm font-medium">{t("workouts.reps")}</p>
+              <p className="text-sm font-medium">{t("workouts.reps") || "Répétitions"}</p>
               <div className="flex items-center">
                 <Button
                   variant="outline"
@@ -265,7 +265,7 @@ export const ExerciseDetail = ({
           </div>
           
           <div className="space-y-2">
-            <p className="text-sm font-medium">{t("workouts.numberOfSets")}</p>
+            <p className="text-sm font-medium">{t("workouts.numberOfSets") || "Nombre de séries"}</p>
             <div className="flex items-center">
               <Button
                 variant="outline"
@@ -308,19 +308,19 @@ export const ExerciseDetail = ({
           >
             <CheckCircle className="h-5 w-5" />
             {currentSet === totalSets 
-              ? t("workouts.completeExercise")
-              : t("workouts.validateSet")}
+              ? (t("workouts.completeExercise") || "Terminer l'exercice")
+              : (t("workouts.validateSet") || "Valider la série")}
           </Button>
         </div>
       )}
 
       {completedSets.length > 0 && !isResting && (
         <div className="space-y-2 border-t pt-4">
-          <p className="text-sm font-medium">{t("workouts.completedSets")}</p>
+          <p className="text-sm font-medium">{t("workouts.completedSets") || "Séries complétées"}</p>
           <div className="space-y-1">
             {completedSets.map((setNum) => (
               <div key={setNum} className="flex items-center justify-between text-sm">
-                <span>{t("workouts.set")} {setNum}</span>
+                <span>{t("workouts.set") || "Série"} {setNum}</span>
                 <span className="text-muted-foreground">{reps} x {weight}kg</span>
               </div>
             ))}

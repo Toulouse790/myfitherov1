@@ -34,7 +34,7 @@ export const useExerciseWeights = (exerciseName: string) => {
       }
 
       debugLogger.log("useExerciseWeights", "Données récupérées:", data);
-      return data || { weight: 20, reps: 12 };
+      return data || { weight: 20 };
     },
     enabled: !!user && !!exerciseName,
   });
@@ -42,15 +42,13 @@ export const useExerciseWeights = (exerciseName: string) => {
   const { mutate: updateWeight } = useMutation({
     mutationFn: async (weight: number) => {
       if (!user) throw new Error(t('workouts.errors.userNotAuthenticated') || 'Utilisateur non authentifié');
-
-      debugLogger.log("useExerciseWeights", "Mise à jour du poids pour:", exerciseName, "Nouveau poids:", weight);
-      
-      // Vérification que le poids est valide
       if (typeof weight !== 'number' || isNaN(weight) || weight < 0) {
         const errorMessage = t('workouts.errors.invalidWeightValue') || 'Valeur de poids invalide';
         debugLogger.error('useExerciseWeights', errorMessage);
         throw new Error(errorMessage);
       }
+
+      debugLogger.log("useExerciseWeights", "Mise à jour du poids pour:", exerciseName, "Nouveau poids:", weight);
       
       try {
         // Vérification si l'entrée existe déjà
@@ -108,96 +106,15 @@ export const useExerciseWeights = (exerciseName: string) => {
       queryClient.invalidateQueries({ queryKey: ['exercise-weights', exerciseName, user?.id] });
       debugLogger.log("useExerciseWeights", "Poids mis à jour avec succès");
       toast({
-        title: t("common.success"),
+        title: t("common.success") || "Succès",
         description: t("workouts.weightUpdatedSuccessfully") || "Poids mis à jour avec succès",
       });
     },
     onError: (error) => {
       debugLogger.error('useExerciseWeights', 'Erreur mutation:', error);
       toast({
-        title: t("common.error"),
+        title: t("common.error") || "Erreur",
         description: t("workouts.errors.weightUpdateFailed") || "Impossible de mettre à jour le poids.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const { mutate: updateReps } = useMutation({
-    mutationFn: async (reps: number) => {
-      if (!user) throw new Error(t('workouts.errors.userNotAuthenticated') || 'Utilisateur non authentifié');
-
-      debugLogger.log("useExerciseWeights", "Mise à jour des répétitions pour:", exerciseName, "Nouvelles répétitions:", reps);
-      
-      // Vérification que les répétitions sont valides
-      if (typeof reps !== 'number' || isNaN(reps) || reps <= 0) {
-        const errorMessage = t('workouts.errors.invalidRepsValue') || 'Valeur de répétitions invalide';
-        debugLogger.error('useExerciseWeights', errorMessage);
-        throw new Error(errorMessage);
-      }
-      
-      try {
-        // Vérification si l'entrée existe déjà
-        const { data: existingData, error: checkError } = await supabase
-          .from('user_exercise_weights')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('exercise_name', exerciseName)
-          .maybeSingle();
-          
-        if (checkError && checkError.code !== 'PGRST116') {
-          debugLogger.error('useExerciseWeights', 'Erreur lors de la vérification des données existantes:', checkError);
-          throw checkError;
-        }
-        
-        let operation;
-        
-        if (existingData) {
-          // Mise à jour d'une entrée existante
-          operation = supabase
-            .from('user_exercise_weights')
-            .update({
-              weight: exerciseWeight?.weight || 20,
-              last_used_at: new Date().toISOString()
-            })
-            .eq('id', existingData.id);
-        } else {
-          // Création d'une nouvelle entrée
-          operation = supabase
-            .from('user_exercise_weights')
-            .insert({
-              user_id: user.id,
-              exercise_name: exerciseName,
-              weight: exerciseWeight?.weight || 20,
-              last_used_at: new Date().toISOString()
-            });
-        }
-        
-        const { data, error } = await operation;
-        
-        if (error) {
-          debugLogger.error('useExerciseWeights', 'Erreur mise à jour des répétitions:', error);
-          throw error;
-        }
-
-        return data;
-      } catch (error) {
-        debugLogger.error('useExerciseWeights', 'Exception lors de la mise à jour des répétitions:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['exercise-weights', exerciseName, user?.id] });
-      debugLogger.log("useExerciseWeights", "Répétitions mises à jour avec succès");
-      toast({
-        title: t("common.success"),
-        description: t("workouts.repsUpdatedSuccessfully") || "Répétitions mises à jour avec succès",
-      });
-    },
-    onError: (error) => {
-      debugLogger.error('useExerciseWeights', 'Erreur mutation:', error);
-      toast({
-        title: t("common.error"),
-        description: t("workouts.errors.repsUpdateFailed") || "Impossible de mettre à jour les répétitions.",
         variant: "destructive",
       });
     },
@@ -206,7 +123,6 @@ export const useExerciseWeights = (exerciseName: string) => {
   return {
     exerciseWeight,
     isLoading,
-    updateWeight,
-    updateReps
+    updateWeight
   };
 };

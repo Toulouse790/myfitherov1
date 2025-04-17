@@ -36,7 +36,7 @@ export const useExerciseReps = (exerciseName: string) => {
       const errorMessage = t('workouts.errors.invalidRepsValue') || 'Valeur de répétitions invalide';
       debugLogger.error('useExerciseReps', errorMessage);
       toast({
-        title: t("common.error"),
+        title: t("common.error") || "Erreur",
         description: errorMessage,
         variant: "destructive",
       });
@@ -64,7 +64,7 @@ export const useExerciseReps = (exerciseName: string) => {
       localStorage.setItem('exercise-reps', JSON.stringify(repsData));
       
       toast({
-        title: t("common.success"),
+        title: t("common.success") || "Succès",
         description: t("workouts.repsUpdatedSuccessfully") || "Répétitions mises à jour avec succès",
       });
       
@@ -72,7 +72,7 @@ export const useExerciseReps = (exerciseName: string) => {
     } catch (error) {
       debugLogger.error("useExerciseReps", "Erreur lors de la mise à jour des répétitions:", error);
       toast({
-        title: t("common.error"),
+        title: t("common.error") || "Erreur",
         description: t("workouts.errors.repsUpdateFailed") || "Impossible de mettre à jour les répétitions",
         variant: "destructive",
       });

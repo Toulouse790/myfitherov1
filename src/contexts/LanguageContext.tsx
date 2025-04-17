@@ -1,201 +1,151 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-// Définir les langues disponibles
-export type Language = 'fr' | 'en';
+type Language = 'fr' | 'en';
 
-// Structure des traductions
 interface Translations {
-  [key: string]: {
-    [key: string]: string;
-  };
+  [key: string]: string;
 }
 
-// Traductions
-const translations: Translations = {
+interface LanguageContextProps {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
+}
+
+interface LanguageProviderProps {
+  children: React.ReactNode;
+}
+
+// Créer le contexte
+const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
+
+// Translations
+const translations: Record<Language, Translations> = {
   fr: {
-    // Éléments de navigation
-    'nav.home': 'Accueil',
-    'nav.workouts': 'Entraînements',
-    'nav.nutrition': 'Nutrition',
-    'nav.sleep': 'Sommeil',
-    'nav.profile': 'Profil',
-    
-    // Textes communs
-    'common.back': 'Retour',
-    'common.cancel': 'Annuler',
-    'common.confirm': 'Confirmer',
-    'common.save': 'Enregistrer',
-    'common.delete': 'Supprimer',
-    'common.loading': 'Chargement...',
+    // Commun
     'common.error': 'Erreur',
     'common.success': 'Succès',
+    'common.cancel': 'Annuler',
+    'common.confirm': 'Confirmer',
+    'common.goBack': 'Retour',
+    'common.save': 'Enregistrer',
+    'common.delete': 'Supprimer',
+    'common.edit': 'Modifier',
+    'common.add': 'Ajouter',
     
-    // Éléments d'entraînement
-    'workouts.title': 'Entraînements',
-    'workouts.activeSession': 'Session active',
-    'workouts.trackProgressDescription': 'Suivez vos progrès et améliorez vos performances',
-    'workouts.continueSession': 'Continuer',
-    'workouts.startSession': 'Commencer',
-    'workouts.home': 'Accueil',
-    'workouts.library': 'Bibliothèque',
-    'workouts.progress': 'Progression',
-    'workouts.stats': 'Statistiques',
-    'workouts.exerciseLibrary': 'exercices',
-    'workouts.addWorkout': 'Ajouter un entraînement',
-    'workouts.noWorkoutsYet': 'Pas encore d\'entraînements',
-    'workouts.createFirst': 'Créez votre premier entraînement',
+    // Authentification
+    'auth.signInRequired': 'Vous devez être connecté pour finaliser une session',
+    
+    // Entraînements
+    'workouts.trainingSession': 'Séance d\'entraînement',
     'workouts.set': 'Série',
-    'workouts.sets': 'Séries',
-    'workouts.reps': 'Répétitions',
+    'workouts.sets': 'séries',
+    'workouts.setsCompleted': 'séries complétées',
+    'workouts.sessionNotFound': 'Session non trouvée',
+    'workouts.sessionNotFoundDescription': 'La session d\'entraînement demandée n\'existe pas ou n\'est plus disponible.',
+    'workouts.completeWorkout': 'Terminer l\'entraînement',
+    'workouts.completed': 'Terminé',
+    'workouts.progress': 'Progression',
     'workouts.weight': 'Poids',
-    'workouts.weightUnit': '(kg)',
-    'workouts.rest': 'Repos',
+    'workouts.weightUnit': 'kg',
+    'workouts.reps': 'Répétitions',
+    'workouts.numberOfSets': 'Nombre de séries',
+    'workouts.validateSet': 'Valider la série',
+    'workouts.completeExercise': 'Terminer l\'exercice',
+    'workouts.completedSets': 'Séries complétées',
     'workouts.restTime': 'Temps de repos',
     'workouts.skipRest': 'Passer le repos',
-    'workouts.completeExercise': 'Terminer l\'exercice',
-    'workouts.validateSet': 'Valider la série',
-    'workouts.addSet': 'Ajouter une série',
-    'workouts.setCompleted': 'Série complétée',
-    'workouts.exerciseCompleted': 'Exercice terminé',
-    'workouts.allSetsCompleted': 'Toutes les séries ont été complétées',
+    'workouts.setCompleted': 'Série terminée',
     'workouts.caloriesBurned': 'calories brûlées',
-    'workouts.restBeforeNextSet': 'Repos avant la prochaine série',
-    'workouts.completedSets': 'Séries complétées',
-    'workouts.numberOfSets': 'Nombre de séries',
-    'workouts.progress': 'Progression',
-    'workouts.stopWorkout': 'Arrêter l\'entraînement',
-    'workouts.newPersonalRecord': 'Nouveau record personnel: {{weight}}kg!',
-    'workouts.setValidated': 'Série validée avec {{weight}}kg',
-    'workouts.errors.weightUpdateFailed': 'Impossible de mettre à jour le poids.',
-    'workouts.errors.repsUpdateFailed': 'Impossible de mettre à jour les répétitions.',
-    'workouts.errors.sessionFinalizeDescription': 'Impossible de terminer la séance',
-    'workouts.errors.saveWeightFailed': 'Impossible d\'enregistrer le poids',
-    'workouts.errors.userNotAuthenticated': 'Utilisateur non authentifié',
-    'workouts.errors.invalidWeightValue': 'Valeur de poids invalide',
-    'workouts.errors.invalidRepsValue': 'Valeur de répétitions invalide',
+    'workouts.restBeforeNextSet': 'Reposez-vous avant la prochaine série.',
+    'workouts.exerciseCompleted': 'Exercice terminé',
+    'workouts.allSetsCompleted': 'Toutes les séries sont terminées',
+    'workouts.sessionSummary': 'Résumé de la séance',
+    'workouts.duration': 'Durée',
+    'workouts.minutes': 'min',
+    'workouts.exercisesCompleted': 'Exercices terminés',
+    'workouts.noActiveSession': 'Aucune session active trouvée',
     'workouts.weightUpdatedSuccessfully': 'Poids mis à jour avec succès',
     'workouts.repsUpdatedSuccessfully': 'Répétitions mises à jour avec succès',
-    'workouts.exercises': 'Exercices',
-    'workouts.validerLaSerie': 'Valider la série',
-    'workouts.completeWorkout': 'Terminer l\'entraînement',
+    
+    // Erreurs liées aux entraînements
+    'workouts.errors.sessionCreationFailed': 'Impossible de créer la session d\'entraînement. Veuillez réessayer.',
+    'workouts.errors.sessionFinalizeDescription': 'Impossible de finaliser la session',
+    'workouts.errors.userNotAuthenticated': 'Utilisateur non authentifié',
+    'workouts.errors.invalidWeightValue': 'Valeur de poids invalide',
+    'workouts.errors.weightUpdateFailed': 'Impossible de mettre à jour le poids',
+    'workouts.errors.invalidRepsValue': 'Valeur de répétitions invalide',
+    'workouts.errors.repsUpdateFailed': 'Impossible de mettre à jour les répétitions'
   },
   en: {
-    // Navigation elements
-    'nav.home': 'Home',
-    'nav.workouts': 'Workouts',
-    'nav.nutrition': 'Nutrition',
-    'nav.sleep': 'Sleep',
-    'nav.profile': 'Profile',
-    
-    // Common texts
-    'common.back': 'Back',
-    'common.cancel': 'Cancel',
-    'common.confirm': 'Confirm',
-    'common.save': 'Save',
-    'common.delete': 'Delete',
-    'common.loading': 'Loading...',
+    // Common
     'common.error': 'Error',
     'common.success': 'Success',
+    'common.cancel': 'Cancel',
+    'common.confirm': 'Confirm',
+    'common.goBack': 'Go Back',
+    'common.save': 'Save',
+    'common.delete': 'Delete',
+    'common.edit': 'Edit',
+    'common.add': 'Add',
     
-    // Workout elements
-    'workouts.title': 'Workouts',
-    'workouts.activeSession': 'Active session',
-    'workouts.trackProgressDescription': 'Track your progress and improve your performance',
-    'workouts.continueSession': 'Continue',
-    'workouts.startSession': 'Start',
-    'workouts.home': 'Home',
-    'workouts.library': 'Library',
-    'workouts.progress': 'Progress',
-    'workouts.stats': 'Stats',
-    'workouts.exerciseLibrary': 'exercises',
-    'workouts.addWorkout': 'Add workout',
-    'workouts.noWorkoutsYet': 'No workouts yet',
-    'workouts.createFirst': 'Create your first workout',
+    // Authentication
+    'auth.signInRequired': 'You must be logged in to finalize a session',
+    
+    // Workouts
+    'workouts.trainingSession': 'Training Session',
     'workouts.set': 'Set',
-    'workouts.sets': 'Sets',
-    'workouts.reps': 'Reps',
-    'workouts.weight': 'Weight',
-    'workouts.weightUnit': '(kg)',
-    'workouts.rest': 'Rest',
-    'workouts.restTime': 'Rest time',
-    'workouts.skipRest': 'Skip rest',
-    'workouts.completeExercise': 'Complete exercise',
-    'workouts.validateSet': 'Validate set',
-    'workouts.addSet': 'Add set',
-    'workouts.setCompleted': 'Set completed',
-    'workouts.exerciseCompleted': 'Exercise completed',
-    'workouts.allSetsCompleted': 'All sets have been completed',
-    'workouts.caloriesBurned': 'calories burned',
-    'workouts.restBeforeNextSet': 'Rest before next set',
-    'workouts.completedSets': 'Completed sets',
-    'workouts.numberOfSets': 'Number of sets',
+    'workouts.sets': 'sets',
+    'workouts.setsCompleted': 'sets completed',
+    'workouts.sessionNotFound': 'Session Not Found',
+    'workouts.sessionNotFoundDescription': 'The requested training session does not exist or is no longer available.',
+    'workouts.completeWorkout': 'Complete Workout',
+    'workouts.completed': 'Completed',
     'workouts.progress': 'Progress',
-    'workouts.stopWorkout': 'Stop workout',
-    'workouts.newPersonalRecord': 'New personal record: {{weight}}kg!',
-    'workouts.setValidated': 'Set validated with {{weight}}kg',
-    'workouts.errors.weightUpdateFailed': 'Unable to update weight.',
-    'workouts.errors.repsUpdateFailed': 'Unable to update repetitions.',
-    'workouts.errors.sessionFinalizeDescription': 'Unable to complete the session',
-    'workouts.errors.saveWeightFailed': 'Unable to save weight',
+    'workouts.weight': 'Weight',
+    'workouts.weightUnit': 'kg',
+    'workouts.reps': 'Reps',
+    'workouts.numberOfSets': 'Number of Sets',
+    'workouts.validateSet': 'Validate Set',
+    'workouts.completeExercise': 'Complete Exercise',
+    'workouts.completedSets': 'Completed Sets',
+    'workouts.restTime': 'Rest Time',
+    'workouts.skipRest': 'Skip Rest',
+    'workouts.setCompleted': 'Set Completed',
+    'workouts.caloriesBurned': 'calories burned',
+    'workouts.restBeforeNextSet': 'Rest before the next set.',
+    'workouts.exerciseCompleted': 'Exercise Completed',
+    'workouts.allSetsCompleted': 'All sets are completed',
+    'workouts.sessionSummary': 'Session Summary',
+    'workouts.duration': 'Duration',
+    'workouts.minutes': 'min',
+    'workouts.exercisesCompleted': 'Exercises Completed',
+    'workouts.noActiveSession': 'No active session found',
+    'workouts.weightUpdatedSuccessfully': 'Weight updated successfully',
+    'workouts.repsUpdatedSuccessfully': 'Reps updated successfully',
+    
+    // Workout errors
+    'workouts.errors.sessionCreationFailed': 'Failed to create training session. Please try again.',
+    'workouts.errors.sessionFinalizeDescription': 'Failed to finalize session',
     'workouts.errors.userNotAuthenticated': 'User not authenticated',
     'workouts.errors.invalidWeightValue': 'Invalid weight value',
-    'workouts.errors.invalidRepsValue': 'Invalid repetition value',
-    'workouts.weightUpdatedSuccessfully': 'Weight updated successfully',
-    'workouts.repsUpdatedSuccessfully': 'Repetitions updated successfully',
-    'workouts.exercises': 'Exercises',
-    'workouts.validerLaSerie': 'Validate set',
-    'workouts.completeWorkout': 'Complete workout',
+    'workouts.errors.weightUpdateFailed': 'Failed to update weight',
+    'workouts.errors.invalidRepsValue': 'Invalid reps value',
+    'workouts.errors.repsUpdateFailed': 'Failed to update reps'
   }
 };
 
-// Contexte de langue
-interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string, params?: Record<string, string | number>) => string;
-}
-
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-// Provider du contexte
-interface LanguageProviderProps {
-  children: ReactNode;
-}
-
+// Provider
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguage] = useState<Language>('fr');
 
-  // Récupérer la langue sauvegardée lors du chargement initial
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage && (savedLanguage === 'fr' || savedLanguage === 'en')) {
-      setLanguage(savedLanguage);
-    }
-  }, []);
-
-  // Sauvegarder la langue lorsqu'elle change
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
-
-  // Fonction de traduction
-  const t = (key: string, params?: Record<string, string | number>): string => {
-    const translationMap = translations[language] || {};
-    const translation = translationMap[key] || key;
-    
-    // Remplacer les paramètres s'ils existent
-    if (params) {
-      return Object.entries(params).reduce((acc, [param, value]) => {
-        return acc.replace(new RegExp(`{{${param}}}`, 'g'), String(value));
-      }, translation);
-    }
-    
-    return translation;
+  const translate = (key: string): string => {
+    return translations[language][key] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t: translate }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -205,7 +155,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error('useLanguage doit être utilisé à l\'intérieur d\'un LanguageProvider');
   }
   return context;
 };
