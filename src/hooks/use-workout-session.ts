@@ -20,7 +20,7 @@ export const useWorkoutSession = () => {
   
   // Use the specialized hooks
   const { isLoading: isSessionLoading, activeSession, setActiveSession, checkActiveSession } = useActiveSession();
-  const { sessionTime, formatTime, startTimer, stopTimer } = useSessionTimer();
+  const { sessionTime, formatTime, startTimer, stopTimer, isRunning } = useSessionTimer();
   const { isLoading: isOperationLoading, error: operationError, startWorkout, updateWorkoutSession } = useWorkoutOperations();
 
   // État pour suivre le processus de finalisation
@@ -30,40 +30,15 @@ export const useWorkoutSession = () => {
   // Combine loading states
   const isLoading = isSessionLoading || isOperationLoading;
 
-  // Start timer when an active session is found
+  // Vérification de l'existence d'une session active, mais sans démarrer le timer
   useEffect(() => {
     if (activeSession) {
-      // Calculate the elapsed time since the session started
-      try {
-        const startTime = new Date(activeSession.created_at).getTime();
-        const currentTime = new Date().getTime();
-        const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
-        
-        // Validation pour éviter des temps aberrants
-        if (elapsedSeconds < 0 || elapsedSeconds > 86400) { // Plus de 24h = probablement une erreur
-          debugLogger.warn("useWorkoutSession", "Temps écoulé anormal détecté, réinitialisation à 0", { 
-            elapsedSeconds, 
-            created_at: activeSession.created_at 
-          });
-          startTimer(0);
-        } else {
-          startTimer(elapsedSeconds);
-        }
-        
-        debugLogger.log("useWorkoutSession", "Session active trouvée:", activeSession);
-        
-        // Récupérer le poids total soulevé pour cette session
-        fetchTotalWeight(activeSession.id);
-      } catch (error) {
-        debugLogger.error("useWorkoutSession", "Erreur lors du calcul du temps écoulé:", error);
-        startTimer(0);
-      }
+      debugLogger.log("useWorkoutSession", "Session active trouvée:", activeSession);
+      
+      // Récupérer le poids total soulevé pour cette session
+      fetchTotalWeight(activeSession.id);
     }
-    
-    return () => {
-      stopTimer();
-    };
-  }, [activeSession, startTimer, stopTimer]);
+  }, [activeSession]);
 
   // Récupération du poids total soulevé pour la session
   const fetchTotalWeight = async (sessionId: string) => {
@@ -284,6 +259,9 @@ export const useWorkoutSession = () => {
     activeSession,
     sessionTime,
     formatTime,
+    startTimer,
+    stopTimer,
+    isRunning,
     startWorkout,
     finishWorkout,
     totalWeight

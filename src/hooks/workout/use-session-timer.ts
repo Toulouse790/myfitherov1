@@ -7,6 +7,7 @@ export const useSessionTimer = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const lastTickRef = useRef<number>(Date.now());
+  const [isRunning, setIsRunning] = useState(false);
 
   const startTimer = useCallback((initialSeconds = 0) => {
     if (timerRef.current) {
@@ -25,6 +26,7 @@ export const useSessionTimer = () => {
     // Enregistrement précis du temps de départ
     startTimeRef.current = Date.now() - (validInitialSeconds * 1000);
     lastTickRef.current = Date.now();
+    setIsRunning(true);
     
     timerRef.current = setInterval(() => {
       try {
@@ -67,6 +69,7 @@ export const useSessionTimer = () => {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    setIsRunning(false);
   }, []);
 
   const resetTimer = useCallback(() => {
@@ -112,6 +115,7 @@ export const useSessionTimer = () => {
 
   return {
     sessionTime,
+    isRunning,
     formatTime,
     startTimer,
     stopTimer,

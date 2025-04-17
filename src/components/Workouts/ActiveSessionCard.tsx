@@ -11,9 +11,16 @@ import { debugLogger } from "@/utils/debug-logger";
 interface ActiveSessionCardProps {
   activeSession: any;
   formattedTime: string;
+  isRunning: boolean;
+  onStartSession: () => void;
 }
 
-export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessionCardProps) {
+export function ActiveSessionCard({ 
+  activeSession, 
+  formattedTime, 
+  isRunning,
+  onStartSession
+}: ActiveSessionCardProps) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -59,6 +66,8 @@ export function ActiveSessionCard({ activeSession, formattedTime }: ActiveSessio
       sessionId: activeSession.id,
       sessionExercises: activeSession.exercises
     });
+    
+    onStartSession();
     navigate(`/workouts/${activeSession.id}`);
   };
 

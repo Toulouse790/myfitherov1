@@ -11,13 +11,22 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { debugLogger } from "@/utils/debug-logger";
 
 export default function Workouts() {
-  const { activeSession, formatTime, sessionTime } = useWorkoutSession();
+  const { activeSession, formatTime, sessionTime, startTimer, isRunning } = useWorkoutSession();
   const [activeTab, setActiveTab] = useState("home");
   const { t } = useLanguage();
   const isMobile = useIsMobile();
 
   // Ajout de logging pour déboguer
-  debugLogger.log("WorkoutsPage", "Rendu de la page principale Workouts", {});
+  debugLogger.log("WorkoutsPage", "Rendu de la page principale Workouts", {
+    activeSession: !!activeSession,
+    isRunning,
+    sessionTime
+  });
+
+  const handleStartSession = () => {
+    startTimer(0);
+    debugLogger.log("WorkoutsPage", "Session démarrée manuellement");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
@@ -56,6 +65,8 @@ export default function Workouts() {
             <ActiveSessionCard 
               activeSession={activeSession} 
               formattedTime={formatTime(sessionTime)} 
+              isRunning={isRunning}
+              onStartSession={handleStartSession}
             />
           </motion.div>
         )}
