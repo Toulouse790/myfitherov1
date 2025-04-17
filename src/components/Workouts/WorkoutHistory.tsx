@@ -7,6 +7,8 @@ import { Calendar, ChevronLeft, ChevronRight, Clock, Dumbbell, History, Flame } 
 import { useAuth } from "@/hooks/use-auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 interface WorkoutHistoryItem {
   id: number;
@@ -21,6 +23,54 @@ export function WorkoutHistory() {
   const { user } = useAuth();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const isMobile = useIsMobile();
+  const [workouts, setWorkouts] = useState<WorkoutHistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWorkoutHistory = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('workout_sessions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        if (error) throw error;
+
+        // Si des données sont trouvées, les convertir au format WorkoutHistoryItem
+        if (data && data.length > 0) {
+          const mappedWorkouts = data.map((session, index) => ({
+            id: index + 1,
+            date: session.created_at,
+            name: session.workout_type === 'strength' 
+              ? t('workouts.upperBodyTraining') 
+              : session.workout_type === 'cardio' 
+                ? t('workouts.cardioHIIT') 
+                : t('workouts.fullBodyWorkout'),
+            duration: session.total_duration_minutes || 30,
+            calories: session.total_duration_minutes ? session.total_duration_minutes * 7 : 200
+          }));
+          setWorkouts(mappedWorkouts);
+        } else {
+          // Pas d'historique pour cet utilisateur
+          setWorkouts([]);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'historique d'entraînement :", error);
+        setWorkouts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWorkoutHistory();
+  }, [user, t]);
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     const newMonth = new Date(currentMonth);
@@ -38,15 +88,6 @@ export function WorkoutHistory() {
       year: 'numeric' 
     });
   };
-
-  // Données d'historique d'entraînement avec des dates actuelles (2025)
-  const mockWorkouts: WorkoutHistoryItem[] = [
-    { id: 1, date: '2025-04-15', name: t('workouts.upperBodyTraining'), duration: 45, calories: 320 },
-    { id: 2, date: '2025-04-12', name: t('workouts.cardioHIIT'), duration: 30, calories: 280 },
-    { id: 3, date: '2025-04-10', name: t('workouts.legDay'), duration: 50, calories: 350 },
-    { id: 4, date: '2025-04-05', name: t('workouts.fullBodyWorkout'), duration: 60, calories: 400 },
-    { id: 5, date: '2025-04-01', name: t('workouts.coreTraining'), duration: 25, calories: 220 }
-  ];
 
   // Animation variants
   const container = {
@@ -107,9 +148,14 @@ export function WorkoutHistory() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {mockWorkouts.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin h-8 w-8 mx-auto mb-4 border-2 border-primary border-t-transparent rounded-full"></div>
+              <p className="text-muted-foreground">{t("common.loading")}</p>
+            </div>
+          ) : workouts.length > 0 ? (
             <div className="space-y-4">
-              {mockWorkouts.map((workout) => (
+              {workouts.map((workout) => (
                 <motion.div 
                   key={workout.id}
                   variants={item}

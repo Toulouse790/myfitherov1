@@ -14,13 +14,6 @@ export const nutrition = {
   errorAddingMeal: "Impossible d'ajouter le repas",
   suggestedMeal: "Repas suggéré",
   suggestions: "Suggestions",
-  mealTypes: {
-    breakfast: "Petit déjeuner",
-    morning_snack: "Collation matinale",
-    lunch: "Déjeuner",
-    afternoon_snack: "Collation de l'après-midi",
-    dinner: "Dîner"
-  },
   goals: "Objectifs nutritionnels",
   dailyStats: "Statistiques quotidiennes",
   calories: "Calories",
@@ -31,6 +24,13 @@ export const nutrition = {
   consumed: "Consommé",
   target: "Cible",
   generatePlan: "Générer un plan alimentaire",
+  mealTypes: {
+    breakfast: "Petit déjeuner",
+    morning_snack: "Collation matinale",
+    lunch: "Déjeuner",
+    afternoon_snack: "Collation de l'après-midi",
+    dinner: "Dîner"
+  },
   dietary: {
     preferences: "Préférences alimentaires",
     restrictions: "Restrictions alimentaires",
@@ -61,5 +61,7 @@ export const nutrition = {
   customRecipes: "Recettes personnalisées",
   createRecipe: "Créer une recette",
   favoriteRecipes: "Recettes favorites",
-  saveRecipe: "Enregistrer la recette"
+  saveRecipe: "Enregistrer la recette",
+  mealReminder: "Rappel de repas",
+  dontForgetMeal: "N'oubliez pas de valider votre {mealType} !"
 };
