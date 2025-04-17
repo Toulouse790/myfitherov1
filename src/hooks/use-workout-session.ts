@@ -49,6 +49,11 @@ export const useWorkoutSession = () => {
   } = {}) => {
     if (!activeSession) {
       console.log("Aucune session active trouvée lors de la tentative de terminer l'entraînement");
+      notify(
+        t("common.error") || "Erreur",
+        t("workouts.noActiveSession") || "Aucune session active trouvée",
+        "error"
+      );
       return null;
     }
     
@@ -63,20 +68,20 @@ export const useWorkoutSession = () => {
         additionalData
       });
       
-      // Mise à jour des champs sans utiliser 'completed_at' qui manque dans la table
+      // Mise à jour des champs de la session
       const data = await updateWorkoutSession(activeSession.id, {
         status: 'completed',
         total_duration_minutes: durationMinutes,
         perceived_difficulty: additionalData.perceived_difficulty || 'moderate',
-        calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8) // Simple estimation
+        calories_burned: additionalData.calories_burned || Math.round(durationMinutes * 8)
       });
 
       if (data) {
         setActiveSession(null);
         
         notify(
-          t("workouts.completeWorkout"),
-          `${t("workouts.totalDuration")}: ${durationMinutes} ${t("workouts.minutes")}`,
+          t("workouts.completeWorkout") || "Entraînement terminé",
+          `${t("workouts.totalDuration") || "Durée totale"}: ${durationMinutes} ${t("workouts.minutes") || "minutes"}`,
           "success"
         );
         
@@ -87,12 +92,17 @@ export const useWorkoutSession = () => {
       }
       
       console.log("Aucune donnée retournée après la mise à jour de la session");
+      notify(
+        t("common.error") || "Erreur",
+        t("workouts.errors.sessionFinalizeDescription") || "Impossible de finaliser la session",
+        "error"
+      );
       return null;
     } catch (error) {
-      console.error(t("workouts.errors.sessionFinalize"), error);
+      console.error(t("workouts.errors.sessionFinalize") || "Erreur lors de la finalisation de la session", error);
       notify(
-        t("common.error"),
-        t("workouts.errors.sessionFinalizeDescription"),
+        t("common.error") || "Erreur",
+        t("workouts.errors.sessionFinalizeDescription") || "Impossible de finaliser la session",
         "error"
       );
       return null;

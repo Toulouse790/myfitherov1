@@ -5,11 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
 import { useNotificationManager } from "@/hooks/use-notification-manager";
+import { useAuth } from "@/hooks/use-auth";
 
 export const useWorkoutSession = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const { notify } = useNotificationManager();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
@@ -187,7 +189,14 @@ export const useWorkoutSession = () => {
   };
 
   const handleCompleteWorkout = async () => {
-    if (!sessionId) return;
+    if (!sessionId || !user) {
+      toast({
+        title: "Erreur",
+        description: "Session invalide ou utilisateur non connecté",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
       // Calculer quelques statistiques pour la séance
@@ -220,21 +229,17 @@ export const useWorkoutSession = () => {
   };
   
   const handleFinishWorkout = async () => {
-    if (!sessionId) return;
+    if (!sessionId || !user) {
+      notify(
+        "Erreur",
+        "Session invalide ou utilisateur non connecté",
+        "error"
+      );
+      return;
+    }
     
     try {
-      // Récupérer l'utilisateur actuel
-      const { data: authData } = await supabase.auth.getUser();
-      const userId = authData?.user?.id;
-      
-      if (!userId) {
-        notify(
-          "Erreur",
-          "Utilisateur non authentifié",
-          "error"
-        );
-        return;
-      }
+      debugLogger.log("WorkoutSession", "Début de finalisation de la séance:", { sessionId, userId: user.id });
       
       // Calculer quelques statistiques pour la séance
       const totalExercises = session?.exercises?.length || 0;
@@ -245,18 +250,6 @@ export const useWorkoutSession = () => {
       
       // Calculer les calories brûlées (estimation simple)
       const caloriesBurned = Math.round(durationMinutes * 10);
-      
-      // Vérifier si la session a un user_id, sinon l'ajouter
-      if (!session.user_id) {
-        const { error: updateUserError } = await supabase
-          .from('workout_sessions')
-          .update({ user_id: userId })
-          .eq('id', sessionId);
-          
-        if (updateUserError) {
-          debugLogger.error("WorkoutSession", "Erreur lors de l'ajout de l'ID utilisateur à la séance:", updateUserError);
-        }
-      }
       
       // Mise à jour des statistiques d'entraînement
       const { data: statsData, error: statsError } = await supabase
@@ -271,7 +264,7 @@ export const useWorkoutSession = () => {
           .from('training_stats')
           .insert([{
             session_id: sessionId,
-            user_id: userId || session.user_id,
+            user_id: user.id,
             calories_burned: caloriesBurned,
             session_duration_minutes: durationMinutes,
             perceived_difficulty: 'moderate',
@@ -290,16 +283,23 @@ export const useWorkoutSession = () => {
           .eq('id', statsData.id);
       }
       
-      // Marquer la séance comme terminée sans utiliser 'completed_at'
-      await supabase
+      // Marquer la séance comme terminée
+      const { data: updatedSession, error: updateError } = await supabase
         .from('workout_sessions')
         .update({
           status: 'completed',
           total_duration_minutes: durationMinutes,
           calories_burned: caloriesBurned,
-          perceived_difficulty: 'moderate'
+          perceived_difficulty: 'moderate',
+          updated_at: new Date().toISOString()
         })
-        .eq('id', sessionId);
+        .eq('id', sessionId)
+        .select();
+
+      if (updateError) {
+        debugLogger.error("WorkoutSession", "Erreur lors de la mise à jour de la session:", updateError);
+        throw updateError;
+      }
 
       notify(
         "Séance terminée",
@@ -307,8 +307,8 @@ export const useWorkoutSession = () => {
         "success"
       );
       
-      // Rediriger vers la page des entraînements
-      navigate('/workouts');
+      // Rediriger vers la page des entraînements ou la page de résumé
+      navigate(`/workouts/summary/${sessionId}`);
     } catch (error) {
       console.error('Erreur lors de la finalisation de la séance:', error);
       notify(

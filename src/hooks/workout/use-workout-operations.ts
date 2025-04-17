@@ -1,114 +1,101 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { WorkoutSession, WorkoutSessionUpdate } from "@/types/workout-session";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { debugLogger } from "@/utils/debug-logger";
+import { WorkoutSessionUpdate } from "@/types/workout-session";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useWorkoutOperations = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
-  const { toast } = useToast();
   const { t } = useLanguage();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const startWorkout = async (programId?: string, exercises?: string[]) => {
-    if (!user) {
-      toast({
-        title: t("auth.error") || "Erreur d'authentification",
-        description: t("auth.sessionExpired") || "Session expirée, veuillez vous reconnecter",
-        variant: "destructive",
-      });
-      navigate('/sign-in');
-      return null;
-    }
-
-    try {
-      setIsLoading(true);
-      debugLogger.log("useWorkoutOperations", "Démarrage de l'entraînement avec exercices:", exercises || []);
+  
+  // Mutation pour commencer un nouvel entraînement
+  const startWorkoutMutation = useMutation({
+    mutationFn: async (exercises: string[]) => {
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
       
-      // Créer une session d'entraînement avec les champs corrects
-      const sessionData = {
-        user_id: user.id,
-        exercises: exercises || [],
-        status: 'in_progress',
-        workout_type: 'strength',
-        target_duration_minutes: 45
-      };
-      
-      debugLogger.log("useWorkoutOperations", "Données de session à insérer:", sessionData);
+      debugLogger.log("WorkoutOperations", "Création d'une nouvelle session d'entraînement");
       
       const { data, error } = await supabase
-        .from('workout_sessions')
-        .insert([sessionData])
+        .from("workout_sessions")
+        .insert({
+          user_id: user.id,
+          exercises,
+          status: "in_progress",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
         .select()
         .single();
 
       if (error) {
-        console.error("Erreur création session:", error);
+        debugLogger.error("WorkoutOperations", "Erreur lors de la création de la session:", error);
         throw error;
       }
-      
-      debugLogger.log("useWorkoutOperations", "Session créée avec succès:", data);
-      
-      // S'assurer que le chemin est correct et commence par un slash
-      const redirectPath = `/workouts/session/${data.id}`;
-      debugLogger.log("useWorkoutOperations", "Session créée, redirection vers:", redirectPath);
-      
-      if (data) {
-        // Utiliser setTimeout pour assurer que la navigation se produit après le rendu
-        setTimeout(() => {
-          navigate(redirectPath);
-        }, 100);
-        return data;
+
+      return data;
+    }
+  });
+
+  // Mutation pour mettre à jour une session d'entraînement existante
+  const updateWorkoutMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: WorkoutSessionUpdate }) => {
+      if (!user) {
+        throw new Error("User not authenticated");
       }
       
-      return null;
-    } catch (error) {
-      console.error(t("workouts.errors.sessionCreate") || "Erreur lors de la création de la session", error);
-      toast({
-        title: t("common.error") || "Erreur",
-        description: t("workouts.errors.sessionCreateDescription") || "Impossible de créer une session d'entraînement",
-        variant: "destructive",
-      });
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateWorkoutSession = async (sessionId: string, updates: WorkoutSessionUpdate) => {
-    try {
-      setIsLoading(true);
+      debugLogger.log("WorkoutOperations", "Mise à jour de la session d'entraînement:", { id, updates });
+      
+      // Toujours inclure updated_at avec la date actuelle
+      const updatesWithTimestamp = {
+        ...updates,
+        updated_at: new Date().toISOString()
+      };
       
       const { data, error } = await supabase
-        .from('workout_sessions')
-        .update(updates)
-        .eq('id', sessionId)
+        .from("workout_sessions")
+        .update(updatesWithTimestamp)
+        .eq("id", id)
+        .eq("user_id", user.id)
         .select()
         .single();
 
-      if (error) throw error;
-      
+      if (error) {
+        debugLogger.error("WorkoutOperations", "Erreur lors de la mise à jour de la session:", error);
+        throw error;
+      }
+
+      return data;
+    }
+  });
+
+  const startWorkout = async (exercises: string[]) => {
+    try {
+      const data = await startWorkoutMutation.mutateAsync(exercises);
+      debugLogger.log("WorkoutOperations", "Session d'entraînement créée avec succès:", data);
       return data;
     } catch (error) {
-      console.error(t("workouts.errors.sessionUpdate") || "Erreur lors de la mise à jour de la session", error);
-      toast({
-        title: t("common.error") || "Erreur",
-        description: t("workouts.errors.sessionUpdateDescription") || "Impossible de mettre à jour la session",
-        variant: "destructive",
-      });
-      return null;
-    } finally {
-      setIsLoading(false);
+      debugLogger.error("WorkoutOperations", "Échec de la création de la session:", error);
+      throw error;
+    }
+  };
+
+  const updateWorkoutSession = async (id: string, updates: WorkoutSessionUpdate) => {
+    try {
+      const data = await updateWorkoutMutation.mutateAsync({ id, updates });
+      debugLogger.log("WorkoutOperations", "Session d'entraînement mise à jour avec succès:", data);
+      return data;
+    } catch (error) {
+      debugLogger.error("WorkoutOperations", "Échec de la mise à jour de la session:", error);
+      throw error;
     }
   };
 
   return {
-    isLoading,
+    isLoading: startWorkoutMutation.isPending || updateWorkoutMutation.isPending,
     startWorkout,
     updateWorkoutSession
   };
