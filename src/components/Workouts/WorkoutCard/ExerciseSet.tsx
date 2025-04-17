@@ -1,5 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Check, Timer } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ExerciseSetProps {
   setIndex: number;
@@ -18,11 +20,13 @@ export const ExerciseSet = ({
   restTimer,
   onComplete,
 }: ExerciseSetProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex flex-col gap-2 p-3 bg-card rounded-lg border transition-all duration-300 hover:border-primary/50">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">
-          Série {setIndex + 1} - {reps} répétitions
+          {t("workouts.set")} {setIndex + 1} - {reps} {t("workouts.reps")}
         </span>
         {restTimer !== null && isNext && (
           <div className="flex items-center gap-2 text-primary animate-pulse">
@@ -44,10 +48,10 @@ export const ExerciseSet = ({
         {isCompleted ? (
           <div className="flex items-center justify-center gap-2">
             <Check className="h-4 w-4" />
-            <span>Série complétée</span>
+            <span>{t("workouts.setCompleted")}</span>
           </div>
         ) : (
-          <span>Valider la série</span>
+          <span>{t("workouts.validateSet")}</span>
         )}
       </Button>
     </div>

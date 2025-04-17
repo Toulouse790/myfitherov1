@@ -65,7 +65,7 @@ export function HistoryTab() {
                           <div className="flex items-center gap-3 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              <span>{workout.duration} min</span>
+                              <span>{workout.duration} {t("common.min")}</span>
                             </div>
                             <div>
                               <Badge variant="outline" className="text-xs">

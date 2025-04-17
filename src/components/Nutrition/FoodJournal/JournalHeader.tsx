@@ -6,6 +6,7 @@ import { useState } from "react";
 import { FoodEntryForm } from "../FoodEntry/FoodEntryForm";
 import { useFoodInput } from "@/hooks/food-journal/use-food-input";
 import { BarcodeScanner } from "../BarcodeScanner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface JournalHeaderProps {
   onAddEntry: (mealType: string) => Promise<any>;
@@ -16,6 +17,7 @@ interface JournalHeaderProps {
 export const JournalHeader = ({ onAddEntry, onScanBarcode, isLoading }: JournalHeaderProps) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const { t } = useLanguage();
   const {
     newFood,
     calories,
@@ -38,7 +40,7 @@ export const JournalHeader = ({ onAddEntry, onScanBarcode, isLoading }: JournalH
 
   return (
     <div className="flex items-center justify-between">
-      <h3 className="text-lg font-semibold">Journal Alimentaire</h3>
+      <h3 className="text-lg font-semibold">{t("nutrition.foodJournal")}</h3>
       
       <div className="flex space-x-2">
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -50,12 +52,12 @@ export const JournalHeader = ({ onAddEntry, onScanBarcode, isLoading }: JournalH
               disabled={isLoading}
             >
               <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Ajouter un aliment</span>
+              <span className="hidden sm:inline">{t("nutrition.addFood")}</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Ajouter un aliment</DialogTitle>
+              <DialogTitle>{t("nutrition.addFood")}</DialogTitle>
             </DialogHeader>
             <FoodEntryForm 
               newFood={newFood}
@@ -93,12 +95,12 @@ export const JournalHeader = ({ onAddEntry, onScanBarcode, isLoading }: JournalH
               disabled={isLoading}
             >
               <Scan className="h-4 w-4" />
-              <span className="hidden sm:inline">Scanner</span>
+              <span className="hidden sm:inline">{t("nutrition.scan")}</span>
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Scanner un code barre</DialogTitle>
+              <DialogTitle>{t("nutrition.scanBarcode")}</DialogTitle>
             </DialogHeader>
             <BarcodeScanner 
               onScan={async (barcode) => {

@@ -32,5 +32,68 @@ export const common = {
   start: "Start",
   stop: "Stop",
   retry: "Retry",
-  goBack: "Go Back"
+  goBack: "Go Back",
+  
+  // Actions additionnelles
+  add: "Add",
+  remove: "Remove",
+  select: "Select",
+  clear: "Clear",
+  close: "Close",
+  continue: "Continue",
+  skip: "Skip",
+  finish: "Finish",
+  pause: "Pause",
+  resume: "Resume",
+  view: "View",
+  
+  // États additionnels
+  processing: "Processing...",
+  warning: "Warning",
+  info: "Information",
+  
+  // Messages
+  notFound: "Not found",
+  noResults: "No results",
+  noData: "No data",
+  
+  // Temps
+  today: "Today",
+  yesterday: "Yesterday",
+  tomorrow: "Tomorrow",
+  now: "Now",
+  minutes: "minutes",
+  
+  // Navigation
+  home: "Home",
+  profile: "Profile",
+  settings: "Settings",
+  help: "Help",
+  logout: "Logout",
+  login: "Login",
+  register: "Register",
+  
+  // Validation
+  required: "This field is required",
+  invalid: "Invalid format",
+  minLength: "Must contain at least {length} characters",
+  maxLength: "Must not exceed {length} characters",
+  passwordMatch: "Passwords do not match",
+  
+  // Autres
+  more: "More",
+  less: "Less",
+  none: "None",
+  other: "Other",
+  refresh: "Refresh",
+  
+  // Éléments d'interface
+  menu: "Menu",
+  dashboard: "Dashboard",
+  notifications: "Notifications",
+  preferences: "Preferences",
+  
+  // Confirmation
+  areYouSure: "Are you sure?",
+  thisActionCannot: "This action cannot be undone"
 };

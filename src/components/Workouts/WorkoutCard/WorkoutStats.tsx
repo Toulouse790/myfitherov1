@@ -1,6 +1,8 @@
+
 import { Clock, Dumbbell, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface WorkoutStatsProps {
   exerciseCount: number;
@@ -15,15 +17,17 @@ export const WorkoutStats = ({
   restDuration,
   onRestDurationChange,
 }: WorkoutStatsProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex flex-wrap gap-4">
       <div className="flex items-center gap-2">
         <Dumbbell className="h-4 w-4 text-primary" />
-        <span className="text-sm">{exerciseCount} exercices</span>
+        <span className="text-sm">{exerciseCount} {t("workouts.exercises")}</span>
       </div>
       <div className="flex items-center gap-2">
         <Flame className="h-4 w-4 text-primary" />
-        <span className="text-sm">{totalCalories} kcal</span>
+        <span className="text-sm">{totalCalories} {t("workouts.kcal")}</span>
       </div>
       <div className="flex items-center gap-2">
         <Clock className="h-4 w-4 text-primary" />
@@ -37,7 +41,7 @@ export const WorkoutStats = ({
           >
             <Minus className="h-3 w-3" />
           </Button>
-          <span className="text-sm min-w-[4rem] text-center">{restDuration}s repos</span>
+          <span className="text-sm min-w-[4rem] text-center">{restDuration}s {t("workouts.rest")}</span>
           <Button
             variant="outline"
             size="icon"

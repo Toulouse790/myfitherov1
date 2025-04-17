@@ -94,5 +94,8 @@ export const common = {
   
   // Ajouts nécessaires
   retry: "Réessayer",
-  selected: "Sélectionné"
+  selected: "Sélectionné",
+  submit: "Soumettre",
+  create: "Créer",
+  sort: "Trier"
 };
