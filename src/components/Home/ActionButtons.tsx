@@ -1,5 +1,4 @@
 
-import { Activity, Dumbbell, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHomeActions } from "@/hooks/use-home-actions";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -24,8 +23,7 @@ export const ActionButtons = () => {
           variant="default"
           size="lg"
         >
-          <Dumbbell className="w-6 h-6 mb-2" />
-          <span className="text-sm">Commencer une séance</span>
+          <span className="text-sm">{t("common.startSession")}</span>
         </Button>
 
         <Button
@@ -35,8 +33,7 @@ export const ActionButtons = () => {
           size="lg"
           disabled={isLoading}
         >
-          <Plus className="w-6 h-6 mb-2" />
-          <span className="text-sm">Générer un programme</span>
+          <span className="text-sm">{t("common.generateProgram")}</span>
         </Button>
       </div>
     </div>

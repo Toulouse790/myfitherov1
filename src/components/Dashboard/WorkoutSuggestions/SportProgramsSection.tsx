@@ -1,6 +1,5 @@
 
 import { Button } from "@/components/ui/button";
-import { Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -19,8 +18,7 @@ export const SportProgramsSection = () => {
         className="w-full flex items-center justify-center gap-2 py-2"
         onClick={handleNavigateToSportsPrograms}
       >
-        <Trophy size={16} />
-        <span>{t('workouts.sportPrograms')}</span>
+        {t('workouts.sportPrograms')}
       </Button>
     </div>
   );

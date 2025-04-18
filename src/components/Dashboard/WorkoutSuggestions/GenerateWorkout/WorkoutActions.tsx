@@ -1,6 +1,5 @@
 
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Play } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -22,8 +21,6 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
     try {
       setIsStarting(true);
       await onConfirm();
-      
-      // Toast de succès déjà géré dans useWorkoutOperations
     } catch (error) {
       console.error('Error starting workout:', error);
       debugLogger.log("WorkoutActions", "Erreur lors du démarrage de l'entraînement:", {error});
@@ -60,13 +57,10 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         className="flex-1"
         disabled={isStarting}
       >
-        <Play className="mr-2 h-4 w-4" />
         {isStarting ? (
-          <>
-            <span className="animate-pulse">
-              {t("workouts.startSessionLoading")}
-            </span>
-          </>
+          <span className="animate-pulse">
+            {t("workouts.startSessionLoading")}
+          </span>
         ) : (
           t("workouts.startSession")
         )}
@@ -77,7 +71,6 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         className="flex-1"
         disabled={isStarting || isRegenerating}
       >
-        <RefreshCw className={`mr-2 h-4 w-4 ${isRegenerating ? 'animate-spin' : ''}`} />
         {t("workouts.regenerate")}
       </Button>
     </div>
