@@ -1,17 +1,19 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, Dumbbell, Moon, User, Apple } from "lucide-react";
-
-const navItems = [
-  { icon: LayoutDashboard, label: "Accueil", path: "/" },
-  { icon: Dumbbell, label: "Workouts", path: "/workouts" },
-  { icon: Moon, label: "Sommeil", path: "/sleep" },
-  { icon: Apple, label: "Nutrition", path: "/nutrition" },
-  { icon: User, label: "Profil", path: "/profile" }
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const BottomNav = () => {
   const location = useLocation();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { icon: LayoutDashboard, label: t("common.home", { fallback: "Accueil" }), path: "/" },
+    { icon: Dumbbell, label: t("workouts.title", { fallback: "Entraînements" }), path: "/workouts" },
+    { icon: Moon, label: t("sleep.title", { fallback: "Sommeil" }), path: "/sleep" },
+    { icon: Apple, label: t("nutrition.title", { fallback: "Nutrition" }), path: "/nutrition" },
+    { icon: User, label: t("profile.title", { fallback: "Profil" }), path: "/profile" }
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-1 sm:px-2 md:px-4 bottom-nav z-50">
