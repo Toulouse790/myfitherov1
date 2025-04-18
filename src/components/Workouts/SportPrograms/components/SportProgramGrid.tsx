@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ProgramCard } from "./ProgramCard";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -18,45 +17,54 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
   const { toast } = useToast();
   const [generatingPrograms, setGeneratingPrograms] = useState<string[]>([]);
 
-  // Fonction pour gérer la génération d'un programme
   const handleGenerateProgram = (program: SportProgram) => {
-    debugLogger.log("SportProgramGrid", "Génération du programme:", program.name);
+    debugLogger.log("SportProgramGrid", `Génération du programme: ${program.name}`);
     
-    // Ajouter l'ID du programme en cours de génération
     setGeneratingPrograms(prev => [...prev, program.id]);
     
-    // Simuler une génération avec un délai pour montrer qu'il se passe quelque chose
     setTimeout(() => {
-      // Afficher le toast avec le message approprié traduit
-      toast({
-        title: t("programs.programGenerated"),
-        description: t("programs.programGeneratedDescription", { name: program.name }),
-      });
-      
-      // Retirer l'ID du programme de la liste des programmes en cours de génération
-      setGeneratingPrograms(prev => prev.filter(id => id !== program.id));
-      
-      debugLogger.log("SportProgramGrid", "Programme généré avec succès:", program.name);
+      try {
+        const generatedProgram = {
+          ...program,
+          generatedAt: new Date().toISOString()
+        };
+
+        toast({
+          title: t("programs.programGenerated"),
+          description: t("programs.programGeneratedDescription", { name: program.name }),
+        });
+        
+        onSelectProgram(generatedProgram);
+        
+        setGeneratingPrograms(prev => prev.filter(id => id !== program.id));
+        
+        debugLogger.log("SportProgramGrid", `Programme généré avec succès: ${program.name}`);
+      } catch (error) {
+        debugLogger.error("SportProgramGrid", "Erreur de génération", error);
+        
+        toast({
+          title: t("workouts.errors.sessionCreationFailed"),
+          description: t("workouts.errors.sessionCreationError"),
+          variant: "destructive",
+        });
+        
+        setGeneratingPrograms(prev => prev.filter(id => id !== program.id));
+      }
     }, 1500);
   };
 
-  // Fonction pour gérer le lancement d'un programme
   const handleStartProgram = (program: SportProgram) => {
     debugLogger.log("SportProgramGrid", "Démarrage du programme:", program.name);
     onSelectProgram(program);
   };
 
-  // Filtrer les programmes en fonction du niveau sélectionné
   const filteredPrograms = levelFilter === "all" 
     ? programs 
     : programs.filter(program => program.difficulty === levelFilter);
 
-  // Si aucun programme disponible, utilisez les programmes de démonstration
-  // qui correspondent au filtre de niveau
   let displayPrograms = filteredPrograms;
   
   if (filteredPrograms.length === 0) {
-    // Créer des programmes de démonstration pour le niveau sélectionné
     if (levelFilter === "all") {
       displayPrograms = generateDemoProgramsForAllLevels();
     } else {
@@ -64,7 +72,6 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
     }
   }
 
-  // Fonction pour générer un programme de démonstration pour un niveau spécifique
   function generateDemoProgram(difficulty: string): SportProgram {
     const difficultyDetails = {
       "amateur": {
@@ -99,7 +106,6 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
     };
   }
 
-  // Fonction pour générer des programmes de démonstration pour tous les niveaux
   function generateDemoProgramsForAllLevels(): SportProgram[] {
     return ["amateur", "semi-pro", "pro"].map(difficulty => generateDemoProgram(difficulty));
   }
