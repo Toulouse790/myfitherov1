@@ -9,6 +9,7 @@ import { RequireAdmin } from "@/components/Auth/RequireAdmin";
 import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
 import { debugLogger } from "@/utils/debug-logger";
 import { HomeDashboard } from "@/composants/Maison/HomeDashboard";
+import { withSuspense, Loading } from "@/utils/route-utils";
 
 import { authRoutes } from "./authRoutes";
 import { profileRoutes } from "./profileRoutes";
@@ -52,7 +53,7 @@ export const router = createBrowserRouter([
               // Route d'accueil
               {
                 path: "/",
-                element: withSuspense(HomeDashboard),
+                element: <HomeDashboard />,
               },
               
               // Groupes de routes
@@ -67,17 +68,3 @@ export const router = createBrowserRouter([
     ]
   }
 ]);
-
-function withSuspense(Component: React.LazyExoticComponent<any>) {
-  return (
-    <Suspense fallback={<Loading />}>
-      <Component />
-    </Suspense>
-  );
-}
-
-const Loading = () => (
-  <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-  </div>
-);
