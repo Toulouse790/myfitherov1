@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { RequireAuth } from "@/components/Auth/RequireAuth";
+import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
 import { EmptySessionView } from "@/components/Workouts/WorkoutSession/EmptySessionView";
 
 export default function WorkoutSessionPage() {
@@ -92,7 +92,7 @@ export default function WorkoutSessionPage() {
   }
   
   return (
-    <RequireAuth>
+    <RequireQuestionnaire>
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container max-w-4xl mx-auto p-4">
@@ -109,6 +109,6 @@ export default function WorkoutSessionPage() {
           )}
         </div>
       </div>
-    </RequireAuth>
+    </RequireQuestionnaire>
   );
 }
