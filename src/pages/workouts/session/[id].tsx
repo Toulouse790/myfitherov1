@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Layout/Header";
 import { WorkoutSession } from "@/components/Workouts/WorkoutSession";
 import { VerifyConnection } from "@/components/Workouts/VerifyConnection"; 
@@ -9,8 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
 import { EmptySessionView } from "@/components/Workouts/WorkoutSession/EmptySessionView";
 
@@ -32,7 +30,6 @@ export default function WorkoutSessionPage() {
       }
       
       try {
-        // Vérifier si la session existe et a des exercices
         const { data, error } = await supabase
           .from('workout_sessions')
           .select('id, exercises, status')
@@ -44,12 +41,10 @@ export default function WorkoutSessionPage() {
           console.error("Erreur lors de la vérification de la séance:", error);
           setSessionExists(false);
         } else {
-          // Vérifier si la séance a au moins un exercice
           const hasExercises = data.exercises && 
                               Array.isArray(data.exercises) && 
                               data.exercises.length > 0;
                               
-          // Une session est valide si elle a des exercices et n'est pas terminée
           setSessionExists(hasExercises && data.status !== 'completed');
         }
       } catch (error) {
@@ -63,7 +58,6 @@ export default function WorkoutSessionPage() {
     checkSessionExists();
   }, [id, user]);
 
-  // Redirection automatique si l'URL ne correspond pas au bon format
   if (window.location.pathname.startsWith('/workout-session/')) {
     const sessionId = window.location.pathname.split('/workout-session/')[1];
     debugLogger.log("WorkoutSessionPage", "Redirection depuis l'ancien format d'URL vers le nouveau", {
