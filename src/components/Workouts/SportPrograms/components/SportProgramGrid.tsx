@@ -21,10 +21,14 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
   const handleGenerateProgram = (program: SportProgram) => {
     debugLogger.log("SportProgramGrid", "Génération du programme:", program.name);
     
-    toast({
-      title: t("programs.programGenerated"),
-      description: t("programs.programGeneratedDescription", { name: program.name }),
-    });
+    // Simuler une génération avec un délai pour montrer qu'il se passe quelque chose
+    setTimeout(() => {
+      // Afficher le toast avec le message approprié traduit
+      toast({
+        title: t("programs.programGenerated"),
+        description: t("programs.programGeneratedDescription", { name: program.name }),
+      });
+    }, 1000);
   };
 
   // Fonction pour gérer le lancement d'un programme

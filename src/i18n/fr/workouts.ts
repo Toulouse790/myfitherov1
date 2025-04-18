@@ -1,3 +1,4 @@
+
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Commencer l'entraînement",
@@ -84,4 +85,9 @@ export const workouts = {
   sportSpecificDescription: "Programmes d'entraînement adaptés à votre sport et votre position",
   sportSpecific: "Programme sportif spécifique",
   programsForYourSport: "Programmes d'entraînement adaptés à votre sport et position",
+  errors: {
+    sessionCreationFailed: "Impossible de créer la session d'entraînement. Veuillez réessayer.",
+    loginRequired: "Vous devez être connecté pour effectuer cette action.",
+    sessionCreationError: "Une erreur est survenue lors de la création de la session."
+  }
 };

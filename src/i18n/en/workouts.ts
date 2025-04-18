@@ -1,3 +1,4 @@
+
 export const workouts = {
   title: "Workouts",
   startWorkout: "Start Workout",
@@ -84,4 +85,9 @@ export const workouts = {
   sportSpecific: "Sport-Specific Program",
   programsForYourSport: "Training programs tailored to your sport and position",
   sportSpecificDescription: "Training programs tailored to your sport and position",
+  errors: {
+    sessionCreationFailed: "Failed to create workout session. Please try again.",
+    loginRequired: "You need to be logged in to perform this action.",
+    sessionCreationError: "An error occurred while creating the session."
+  }
 };
