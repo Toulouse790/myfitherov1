@@ -18,14 +18,14 @@ export const ExerciseList = ({
   if (exercises.length === 0) {
     return (
       <div className="p-4 text-center">
-        <p className="text-muted-foreground">{t("workouts.noExercisesFound") || "Aucun exercice trouvé"}</p>
+        <p className="text-muted-foreground">{t("workouts.noExercisesFound")}</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-3">
-      <h2 className="text-xl font-bold">{t("workouts.exerciseLibrary") || "Exercices de la séance"}</h2>
+      <h2 className="text-xl font-bold">{t("workouts.exerciseLibrary")}</h2>
       
       {exercises.map((exercise, index) => (
         <motion.div 

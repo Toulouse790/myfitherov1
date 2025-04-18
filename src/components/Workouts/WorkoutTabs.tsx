@@ -28,7 +28,7 @@ export function WorkoutTabs({ activeTab, setActiveTab }: WorkoutTabsProps) {
           value="library" 
           className={`text-[10px] xs:text-xs sm:text-sm truncate ${isMobile ? 'py-1 px-0.5 sm:py-1.5 sm:px-1' : ''}`}
         >
-          {t("workouts.exercise_library")}
+          {t("workouts.library")}
         </TabsTrigger>
         <TabsTrigger 
           value="history" 

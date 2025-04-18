@@ -99,5 +99,18 @@ export const workouts = {
     loginRequired: "Vous devez être connecté pour effectuer cette action.",
     sessionCreationError: "Une erreur est survenue lors de la création de la session.",
     startSessionErrorDescription: "Impossible de démarrer la session d'entraînement. Veuillez réessayer."
-  }
+  },
+  // Nouvelles traductions pour les éléments manquants
+  library: "Bibliothèque",
+  exerciseLibrary: "Bibliothèque d'exercices",
+  createNewSession: "Créer une nouvelle séance",
+  searchExercises: "Rechercher des exercices",
+  noExercisesFound: "Aucun exercice trouvé",
+  noWorkoutsForMuscleGroup: "Aucun entraînement trouvé pour ce groupe musculaire",
+  startWithSelected: "Commencer avec les sélectionnés",
+  createFirstWorkout: "Créer votre premier entraînement",
+  trainingSession: "Séance d'entraînement",
+  filter: "Filtrer",
+  exerciseLibrary: "Exercices disponibles",
+  noExercisesFound: "Aucun exercice trouvé"
 };

@@ -77,10 +77,10 @@ export function WorkoutLibrary() {
               variant="outline" 
               onClick={() => setShowFilters(!showFilters)}
               className={isMobile ? "w-full sm:w-auto h-10" : ""}
-              aria-label={t("common.filter")}
+              aria-label={t("workouts.filter")}
             >
               <Filter className="h-4 w-4 mr-2" />
-              <span className="truncate">{t("common.filter")}</span>
+              <span className="truncate">{t("workouts.filter")}</span>
             </Button>
             <Button onClick={handleCreateWorkout} className="sm:hidden w-full">
               <Plus className="mr-2 h-4 w-4" />

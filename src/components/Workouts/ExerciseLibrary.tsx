@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,10 @@ import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { debugLogger } from "@/utils/debug-logger";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const ExerciseLibrary = () => {
+  const { t } = useLanguage();
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
   const [showSelection, setShowSelection] = useState(false);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>("");
@@ -27,8 +30,8 @@ export const ExerciseLibrary = () => {
   const handleStartWorkout = async () => {
     if (selectedExercises.length === 0) {
       toast({
-        title: "Aucun exercice sélectionné",
-        description: "Veuillez sélectionner au moins un exercice",
+        title: t("workouts.noExercisesFound"),
+        description: t("workouts.selectExercisesToStart", { fallback: "Veuillez sélectionner au moins un exercice" }),
         variant: "destructive",
       });
       return;
@@ -45,8 +48,8 @@ export const ExerciseLibrary = () => {
     } catch (error) {
       console.error('Erreur lors de la création de la séance:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de créer la séance",
+        title: t("workouts.errors.sessionCreationFailed"),
+        description: t("workouts.errors.sessionCreationError"),
         variant: "destructive",
       });
     }
@@ -61,8 +64,8 @@ export const ExerciseLibrary = () => {
     setShowSelection(false);
     if (selectedExercises.length > 0) {
       toast({
-        title: "Exercices ajoutés",
-        description: "Voulez-vous entraîner un autre groupe musculaire ?",
+        title: t("workouts.exercisesAdded", { fallback: "Exercices ajoutés" }),
+        description: t("workouts.wantToTrainOtherMuscle", { fallback: "Voulez-vous entraîner un autre groupe musculaire ?" }),
         action: (
           <div className="flex gap-2">
             <Button 
@@ -73,7 +76,7 @@ export const ExerciseLibrary = () => {
                 handleStartWorkout();
               }}
             >
-              Non, commencer
+              {t("common.no", { fallback: "Non" })}, {t("workouts.startWorkout", { fallback: "commencer" })}
             </Button>
             <Button 
               size="sm"
@@ -82,7 +85,7 @@ export const ExerciseLibrary = () => {
                 setShowSelection(true);
               }}
             >
-              Oui
+              {t("common.yes", { fallback: "Oui" })}
             </Button>
           </div>
         ),
@@ -100,7 +103,7 @@ export const ExerciseLibrary = () => {
             className="flex justify-end mb-6"
           >
             <Button onClick={handleStartWorkout} className="w-full sm:w-auto">
-              C'est parti ! ({selectedExercises.length} exercices)
+              {t("workouts.startWorkout", { fallback: "C'est parti !" })} ({selectedExercises.length} {t("workouts.exercises", { fallback: "exercices" })})
             </Button>
           </motion.div>
         )}
@@ -119,7 +122,7 @@ export const ExerciseLibrary = () => {
             className="space-y-6"
           >
             <h1 className="text-xl font-bold text-center mb-2">
-              Sélectionnez les groupes musculaires à travailler
+              {t("workouts.selectTargetMuscles", { fallback: "Sélectionnez les groupes musculaires à travailler" })}
             </h1>
             <MuscleGroupGrid onSelect={handleMuscleGroupSelect} />
           </motion.div>
@@ -128,7 +131,7 @@ export const ExerciseLibrary = () => {
         <Dialog open={showSummary} onOpenChange={setShowSummary}>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Récapitulatif de la séance</DialogTitle>
+              <DialogTitle>{t("workouts.workoutSummary", { fallback: "Récapitulatif de la séance" })}</DialogTitle>
             </DialogHeader>
             
             <div className="space-y-4 my-4">
@@ -137,7 +140,7 @@ export const ExerciseLibrary = () => {
                   <div className="space-y-2">
                     <h3 className="font-medium">{exercise}</h3>
                     <div className="text-sm text-muted-foreground">
-                      3 séries • 12 répétitions
+                      3 {t("workouts.set", { fallback: "séries" })} • 12 {t("common.repetitions", { fallback: "répétitions" })}
                     </div>
                   </div>
                 </Card>
@@ -146,10 +149,10 @@ export const ExerciseLibrary = () => {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowSummary(false)}>
-                Retour
+                {t("common.back", { fallback: "Retour" })}
               </Button>
               <Button onClick={handleStartWorkout}>
-                Commencer la séance
+                {t("workouts.startWorkout", { fallback: "Commencer la séance" })}
               </Button>
             </DialogFooter>
           </DialogContent>
