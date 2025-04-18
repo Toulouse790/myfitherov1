@@ -18,7 +18,6 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
 
-  // Filtrer les doublons potentiels par ID
   const uniqueWorkouts = Array.from(
     new Map(workouts.map(workout => [workout.id, workout])).values()
   );
@@ -34,7 +33,33 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
     }
 
     try {
-      debugLogger.log("WorkoutList", "Création de la session avec les exercices:", workout.exercises);
+      debugLogger.log("WorkoutList", "Récupération du profil utilisateur");
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('experience_level, main_objective')
+        .eq('id', user.id)
+        .single();
+
+      // Récupérer les exercices adaptés au niveau et à l'objectif de l'utilisateur
+      const { data: recommendedExercises } = await supabase
+        .from('unified_exercises')
+        .select('*')
+        .in('difficulty', profile?.experience_level === 'beginner' ? ['beginner'] : ['beginner', 'intermediate'])
+        .in('muscle_group', workout.muscleGroups)
+        .eq('est_publié', true)
+        .limit(6);
+
+      const exercisesToUse = recommendedExercises?.map(ex => ({
+        name: ex.name,
+        sets: profile?.experience_level === 'beginner' ? 3 : 4,
+        reps: profile?.experience_level === 'beginner' ? 12 : 10,
+        rest: profile?.experience_level === 'beginner' ? 90 : 60,
+        weight: 0,
+        notes: "",
+      })) || workout.exercises;
+
+      debugLogger.log("WorkoutList", "Création de la session avec les exercices recommandés:", exercisesToUse);
+      
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
@@ -42,8 +67,18 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
             user_id: user.id,
             type: 'strength', 
             status: 'in_progress',
-            exercises: workout.exercises.map(ex => ex.name),
-            workout_type: 'strength'
+            exercises: exercisesToUse.map(ex => ex.name),
+            workout_type: 'strength',
+            exercise_progress: exercisesToUse.reduce((acc, ex) => ({
+              ...acc,
+              [ex.name]: {
+                completed: false,
+                sets: ex.sets,
+                reps: ex.reps,
+                rest: ex.rest,
+                currentSet: 0
+              }
+            }), {})
           }
         ])
         .select()
@@ -62,8 +97,6 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
       debugLogger.log("WorkoutList", "Session créée avec succès:", session);
 
       if (session) {
-        // Assurer la cohérence du chemin de navigation
-        debugLogger.log("WorkoutList", "Navigation vers la session créée:", session.id);
         navigate(`/workouts/session/${session.id}`);
       }
     } catch (error) {
