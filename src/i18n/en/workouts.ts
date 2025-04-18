@@ -126,5 +126,25 @@ export const workouts = {
     statsSaveFailed: "Failed to save workout stats.",
     noDataReturned: "No data returned from server.",
     saveWeightFailed: "Unable to save weight information."
-  }
+  },
+  // New keys for EmptySessionView
+  sessionNotFound: "Session not found",
+  sessionEmptyDesc: "This workout session doesn't exist or doesn't contain any exercises.",
+  createWorkout: "Create workout",
+  backToWorkouts: "Back to workouts",
+  personalizedRecommendation: "Personalized recommendation",
+  confident: "confident",
+  intensity: {
+    low: "Low intensity",
+    moderate: "Moderate intensity",
+    high: "High intensity"
+  },
+  suggestion_chest: "Recommended chest workout",
+  suggestion_back: "Recommended back workout",
+  suggestion_shoulders: "Recommended shoulders workout",
+  suggestion_legs: "Recommended legs workout",
+  suggestion_biceps: "Recommended biceps workout",
+  suggestion_triceps: "Recommended triceps workout",
+  suggestion_abs: "Recommended abs workout",
+  startAdaptedSession: "Start adapted session"
 };

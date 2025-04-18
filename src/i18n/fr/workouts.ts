@@ -133,5 +133,25 @@ export const workouts = {
   completed: "Terminé",
   finishWorkout: "Terminer l'entraînement",
   sessionSaved: "Votre séance a été enregistrée avec succès",
-  savingError: "Erreur lors de l'enregistrement de la séance"
+  savingError: "Erreur lors de l'enregistrement de la séance",
+  // Nouvelles clés pour la page EmptySessionView
+  sessionNotFound: "Session introuvable",
+  sessionEmptyDesc: "Cette session d'entraînement n'existe pas ou ne contient aucun exercice.",
+  createWorkout: "Créer un entraînement",
+  backToWorkouts: "Retour aux entraînements",
+  personalizedRecommendation: "Recommandation personnalisée",
+  confident: "de confiance",
+  intensity: {
+    low: "Faible intensité",
+    moderate: "Intensité modérée",
+    high: "Haute intensité"
+  },
+  suggestion_chest: "Entraînement de pectoraux recommandé",
+  suggestion_back: "Entraînement de dos recommandé",
+  suggestion_shoulders: "Entraînement d'épaules recommandé",
+  suggestion_legs: "Entraînement de jambes recommandé",
+  suggestion_biceps: "Entraînement de biceps recommandé",
+  suggestion_triceps: "Entraînement de triceps recommandé",
+  suggestion_abs: "Entraînement d'abdominaux recommandé",
+  startAdaptedSession: "Démarrer la séance adaptée"
 };

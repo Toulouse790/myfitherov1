@@ -117,5 +117,25 @@ export const workouts = {
     loginRequired: "Sie müssen angemeldet sein, um diese Aktion auszuführen.",
     sessionCreationError: "Bei der Erstellung der Einheit ist ein Fehler aufgetreten.",
     startSessionErrorDescription: "Fehler beim Starten der Trainingseinheit. Bitte versuchen Sie es erneut."
-  }
+  },
+  // Neue Schlüssel für EmptySessionView
+  sessionNotFound: "Sitzung nicht gefunden",
+  sessionEmptyDesc: "Diese Trainingseinheit existiert nicht oder enthält keine Übungen.",
+  createWorkout: "Training erstellen",
+  backToWorkouts: "Zurück zu Trainings",
+  personalizedRecommendation: "Personalisierte Empfehlung",
+  confident: "Vertrauen",
+  intensity: {
+    low: "Niedrige Intensität",
+    moderate: "Mittlere Intensität",
+    high: "Hohe Intensität"
+  },
+  suggestion_chest: "Empfohlenes Brusttraining",
+  suggestion_back: "Empfohlenes Rückentraining",
+  suggestion_shoulders: "Empfohlenes Schultertraining",
+  suggestion_legs: "Empfohlenes Beintraining",
+  suggestion_biceps: "Empfohlenes Bizepstraining",
+  suggestion_triceps: "Empfohlenes Trizepstraining",
+  suggestion_abs: "Empfohlenes Bauchtraining",
+  startAdaptedSession: "Angepasste Sitzung starten"
 };

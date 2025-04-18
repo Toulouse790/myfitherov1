@@ -172,7 +172,7 @@ export const EmptySessionView = () => {
             </p>
             
             <div className="flex justify-between text-xs text-muted-foreground mb-4">
-              <span>{personalizedRecommendation.duration} min</span>
+              <span>{personalizedRecommendation.duration} {t("workouts.min")}</span>
               <span>{t(`workouts.intensity.${personalizedRecommendation.intensity}`)}</span>
               <span>{personalizedRecommendation.muscleGroups.join(', ')}</span>
             </div>

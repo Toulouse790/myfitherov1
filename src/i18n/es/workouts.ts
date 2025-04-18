@@ -126,5 +126,25 @@ export const workouts = {
     statsSaveFailed: "No se pudieron guardar las estadísticas de entrenamiento.",
     noDataReturned: "No se devolvieron datos del servidor.",
     saveWeightFailed: "No se pudo guardar la información de peso."
-  }
+  },
+  // Nuevas claves para EmptySessionView
+  sessionNotFound: "Sesión no encontrada",
+  sessionEmptyDesc: "Esta sesión de entrenamiento no existe o no contiene ejercicios.",
+  createWorkout: "Crear entrenamiento",
+  backToWorkouts: "Volver a entrenamientos",
+  personalizedRecommendation: "Recomendación personalizada",
+  confident: "de confianza",
+  intensity: {
+    low: "Intensidad baja",
+    moderate: "Intensidad moderada",
+    high: "Intensidad alta"
+  },
+  suggestion_chest: "Entrenamiento de pecho recomendado",
+  suggestion_back: "Entrenamiento de espalda recomendado",
+  suggestion_shoulders: "Entrenamiento de hombros recomendado",
+  suggestion_legs: "Entrenamiento de piernas recomendado",
+  suggestion_biceps: "Entrenamiento de bíceps recomendado",
+  suggestion_triceps: "Entrenamiento de tríceps recomendado",
+  suggestion_abs: "Entrenamiento de abdominales recomendado",
+  startAdaptedSession: "Iniciar sesión adaptada"
 };

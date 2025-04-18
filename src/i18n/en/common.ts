@@ -30,9 +30,10 @@ export const common = {
   year: "Year",
   years: "Years",
   close: "Close",
-  startSession: "Start Session",
+  startSession: "LET'S GO!",
   generateProgram: "Generate Program",
   completed: "Completed",
   confirm: "Confirm",
-  saving: "Saving..."
+  saving: "Saving...",
+  start: "Start"
 };

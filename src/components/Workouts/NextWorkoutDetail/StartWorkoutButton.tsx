@@ -22,7 +22,7 @@ export const StartWorkoutButton = ({ onClick }: StartWorkoutButtonProps) => {
         className="w-64 bg-gradient-to-r from-primary to-primary hover:opacity-90 transform transition-all duration-300 text-primary-foreground font-bold py-6 text-xl rounded-full shadow-lg hover:shadow-xl"
         onClick={handleClick}
       >
-        C'EST PARTI !
+        {t("common.startSession")}
       </Button>
     </div>
   );
