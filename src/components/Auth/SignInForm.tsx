@@ -13,6 +13,7 @@ import { EmailInput } from "./SignInForm/EmailInput";
 import { PasswordInput } from "./SignInForm/PasswordInput";
 import { SubmitButton } from "./SignInForm/SubmitButton";
 import { NavigationLinks } from "./SignInForm/NavigationLinks";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -20,6 +21,7 @@ export const SignInForm = () => {
   const { handleSignIn, isLoading } = useSignIn();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,10 +50,24 @@ export const SignInForm = () => {
       }
     } catch (error) {
       debugLogger.error("SignInForm", "Erreur de connexion:", error);
+      let errorMessage = "Email ou mot de passe incorrect.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes("Invalid login credentials")) {
+          errorMessage = "Email ou mot de passe incorrect. Vérifiez vos identifiants.";
+        } else if (error.message.includes("Email not confirmed")) {
+          errorMessage = "Votre email n'a pas été confirmé. Vérifiez votre boîte de réception.";
+        } else if (error.message.includes("Too many requests")) {
+          errorMessage = "Trop de tentatives. Veuillez réessayer plus tard.";
+        } else if (error.message.includes("User not found")) {
+          errorMessage = "Aucun compte n'existe avec cet email. Voulez-vous vous inscrire?";
+        }
+      }
+      
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
-        description: "Email ou mot de passe incorrect.",
+        description: errorMessage,
       });
     }
   };

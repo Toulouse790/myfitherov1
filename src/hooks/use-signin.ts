@@ -33,9 +33,22 @@ export const useSignIn = () => {
         
         // Messages d'erreur plus précis selon le type d'erreur
         if (signInError.message.includes("Invalid login credentials")) {
-          throw new Error("Email ou mot de passe incorrect");
+          // Vérifier si l'utilisateur existe
+          const { data: userExists } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', email)
+            .maybeSingle();
+            
+          if (!userExists) {
+            throw new Error("Aucun compte n'existe avec cet email. Voulez-vous vous inscrire?");
+          } else {
+            throw new Error("Mot de passe incorrect. Veuillez réessayer.");
+          }
         } else if (signInError.message.includes("Email not confirmed")) {
           throw new Error("Email non confirmé. Veuillez vérifier votre boîte mail");
+        } else if (signInError.message.includes("rate limited")) {
+          throw new Error("Trop de tentatives. Veuillez réessayer dans quelques minutes.");
         } else {
           throw signInError;
         }

@@ -1,28 +1,30 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+
+import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const NavigationLinks = () => {
-  const navigate = useNavigate();
+  const { t } = useLanguage();
   
   return (
-    <div className="text-center space-y-2">
-      <p className="text-sm text-muted-foreground">
-        Vous n'avez pas de compte ?{" "}
-        <Button
-          variant="link"
-          className="p-0 h-auto font-semibold hover:text-primary transition-colors"
-          onClick={() => navigate("/signup")}
-        >
-          Inscrivez-vous
-        </Button>
-      </p>
-      <Button
-        variant="link"
-        className="text-sm text-muted-foreground hover:text-primary transition-colors"
-        onClick={() => navigate("/forgot-password")}
+    <div className="w-full text-center space-y-2">
+      <Link 
+        to="/password-reset" 
+        className="text-sm text-primary hover:underline"
       >
-        Mot de passe oublié ?
-      </Button>
+        {t("auth.forgotPassword")}
+      </Link>
+      
+      <div className="pt-2 border-t border-border mt-2">
+        <p className="text-sm text-muted-foreground">
+          {t("auth.dontHaveAccount")} {" "}
+          <Link 
+            to="/signup" 
+            className="text-primary font-medium hover:underline"
+          >
+            {t("auth.signUp")}
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
