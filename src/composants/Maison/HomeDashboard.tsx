@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { WelcomeHeader } from "@/components/Home/WelcomeHeader";
 import { TodaySummary } from "@/components/Home/TodaySummary";
 import { TrendingStats } from "@/components/Home/TrendingStats";
-import { Dumbbell, Running } from "lucide-react";
+import { Dumbbell, Activity } from "lucide-react";
 
 export function HomeDashboard() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export function HomeDashboard() {
           className="h-24 text-lg font-bold"
           onClick={() => navigate('/cardio')}
         >
-          <Running className="w-6 h-6 mr-2" />
+          <Activity className="w-6 h-6 mr-2" />
           Nouvelle séance de cardio
         </Button>
       </div>
