@@ -1,12 +1,13 @@
 
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Clock, ArrowLeft, Calendar, Activity, BarChart, Zap } from "lucide-react";
+import { Clock, ArrowLeft, Calendar, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SessionHeaderProps {
   sessionName?: string;
@@ -28,59 +29,101 @@ export const SessionHeader = ({
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { user } = useAuth();
-  const [userInfo, setUserInfo] = useState<any>(null);
   const [estimatedCalories, setEstimatedCalories] = useState<number>(0);
+  const [isLoadingCalories, setIsLoadingCalories] = useState(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user) return;
+    const estimateCaloriesBurned = async () => {
+      if (!user || sessionDuration <= 0) {
+        setIsLoadingCalories(false);
+        return;
+      }
       
       try {
-        // Récupérer le profil utilisateur
+        setIsLoadingCalories(true);
+        
+        // Récupérer les données utilisateur nécessaires au calcul
         const { data: profileData } = await supabase
           .from('profiles')
           .select('weight_kg, gender, experience_level')
           .eq('id', user.id)
           .single();
           
-        if (profileData) {
-          setUserInfo(profileData);
+        if (!profileData) {
+          // Valeurs par défaut si pas de profil
+          calculateWithDefaults();
+          return;
+        }
           
-          // Calculer les calories estimées
-          const weight = profileData.weight_kg || 70;
-          const gender = profileData.gender || 'male';
-          const intensity = profileData.experience_level === 'beginner' ? 'low' : 
-                           (profileData.experience_level === 'advanced' ? 'high' : 'medium');
+        const weight = profileData.weight_kg || 70;
+        const gender = profileData.gender || 'male';
+        const intensity = getIntensityFromExperience(profileData.experience_level);
+        
+        try {
+          // Essaie d'utiliser la fonction RPC pour le calcul
+          const { data: caloriesData, error } = await supabase.rpc('calculate_exercise_calories', {
+            weight_kg: weight,
+            duration_minutes: Math.round(sessionDuration / 60),
+            intensity: intensity,
+            gender: gender
+          });
           
-          try {
-            // Tentative d'utilisation de la fonction RPC pour le calcul précis
-            const { data: caloriesData } = await supabase.rpc('calculate_exercise_calories', {
-              weight_kg: weight,
-              duration_minutes: Math.round(sessionDuration / 60),
-              intensity: intensity,
-              gender: gender
-            });
-            
-            if (caloriesData) {
-              setEstimatedCalories(caloriesData);
-            } else {
-              // Calcul approximatif si la fonction RPC échoue
-              const baseCals = Math.round(sessionDuration / 60) * 7 * (weight/70);
-              const genderFactor = gender === 'female' ? 0.9 : 1.0;
-              setEstimatedCalories(Math.round(baseCals * genderFactor));
-            }
-          } catch (error) {
-            // Calcul de secours
-            setEstimatedCalories(Math.round((sessionDuration / 60) * 8));
+          if (caloriesData && !error) {
+            setEstimatedCalories(caloriesData);
+          } else {
+            // Calcul approximatif si la fonction RPC échoue
+            calculateBasic(weight, gender, intensity);
           }
+        } catch (error) {
+          // Calcul de secours
+          calculateBasic(weight, gender, intensity);
         }
       } catch (error) {
-        console.error("Erreur lors de la récupération des données utilisateur:", error);
+        console.error("Erreur lors du calcul des calories:", error);
+        // Calcul de base en cas d'erreur
+        calculateWithDefaults();
+      } finally {
+        setIsLoadingCalories(false);
+      }
+    };
+    
+    const calculateBasic = (weight: number, gender: string, intensity: string) => {
+      // Facteurs basés sur l'intensité
+      const intensityFactor = 
+        intensity === 'high' ? 8 : 
+        intensity === 'low' ? 5 : 6;
+      
+      // Facteur de genre (ajustement métabolique)
+      const genderFactor = gender === 'female' ? 0.9 : 1.0;
+      
+      // Calcul simplifié: minutes × facteur d'intensité × poids relatif × genre
+      const calories = Math.round(
+        (sessionDuration / 60) * 
+        intensityFactor * 
+        (weight / 70) * 
+        genderFactor
+      );
+      
+      setEstimatedCalories(calories);
+    };
+    
+    const calculateWithDefaults = () => {
+      // Calcul simplifié avec valeurs par défaut
+      setEstimatedCalories(Math.round((sessionDuration / 60) * 7));
+    };
+    
+    const getIntensityFromExperience = (experience: string | null): string => {
+      switch (experience) {
+        case 'beginner': return 'low';
+        case 'advanced': return 'high';
+        default: return 'medium';
       }
     };
     
     if (sessionDuration > 0) {
-      fetchUserData();
+      estimateCaloriesBurned();
+    } else {
+      setIsLoadingCalories(false);
     }
   }, [user, sessionDuration]);
 
@@ -110,9 +153,13 @@ export const SessionHeader = ({
         </div>
         <div className="flex flex-col items-center justify-center p-3 bg-muted/20 rounded-lg">
           <Activity className="h-5 w-5 mb-1 text-primary" />
-          <span className="text-sm font-medium">
-            ~{estimatedCalories} kcal
-          </span>
+          {isLoadingCalories ? (
+            <Skeleton className="h-4 w-16 mt-1" />
+          ) : (
+            <span className="text-sm font-medium">
+              ~{estimatedCalories} kcal
+            </span>
+          )}
         </div>
       </div>
       

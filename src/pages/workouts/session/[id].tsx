@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { RequireAuth } from "@/components/Auth/RequireAuth";
+import { EmptySessionView } from "@/components/Workouts/WorkoutSession/EmptySessionView";
 
 export default function WorkoutSessionPage() {
   const { id } = useParams();
@@ -31,9 +32,10 @@ export default function WorkoutSessionPage() {
       }
       
       try {
+        // Vérifier si la session existe et a des exercices
         const { data, error } = await supabase
           .from('workout_sessions')
-          .select('id, exercises')
+          .select('id, exercises, status')
           .eq('id', id)
           .eq('user_id', user.id)
           .single();
@@ -43,8 +45,12 @@ export default function WorkoutSessionPage() {
           setSessionExists(false);
         } else {
           // Vérifier si la séance a au moins un exercice
-          const hasExercises = data.exercises && Array.isArray(data.exercises) && data.exercises.length > 0;
-          setSessionExists(hasExercises);
+          const hasExercises = data.exercises && 
+                              Array.isArray(data.exercises) && 
+                              data.exercises.length > 0;
+                              
+          // Une session est valide si elle a des exercices et n'est pas terminée
+          setSessionExists(hasExercises && data.status !== 'completed');
         }
       } catch (error) {
         console.error("Exception lors de la vérification de la séance:", error);
@@ -92,32 +98,7 @@ export default function WorkoutSessionPage() {
         <div className="container max-w-4xl mx-auto p-4">
           <VerifyConnection />
           {sessionExists === false ? (
-            <div className="pt-4">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mb-4"
-                onClick={() => window.history.back()}
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t("common.back") || "Retour"}
-              </Button>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="text-center">
-                    <p className="text-lg font-medium mb-2 text-destructive">
-                      {t("workouts.sessionNotFound") || "Séance non trouvée"}
-                    </p>
-                    <p className="text-muted-foreground mb-4">
-                      {t("workouts.sessionNotFoundDesc") || "Cette séance d'entraînement ne contient aucun exercice ou n'existe pas."}
-                    </p>
-                    <Button onClick={() => window.location.href = '/workouts'}>
-                      {t("workouts.backToWorkouts") || "Retour aux entraînements"}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <EmptySessionView />
           ) : (
             <>
               <h1 className="text-2xl font-bold mb-4">
