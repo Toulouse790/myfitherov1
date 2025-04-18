@@ -79,5 +79,7 @@ export const workouts = {
   allMuscleGroups: "All muscle groups",
   trainingOf: "Training of",
   exercises: "exercises",
-  kcal: "kcal"
+  kcal: "kcal",
+  sportPrograms: "Sport Programs",
+  sportSpecificDescription: "Training programs tailored to your sport and position",
 };

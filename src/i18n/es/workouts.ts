@@ -111,5 +111,7 @@ export const workouts = {
   allMuscleGroups: "Todos los grupos musculares",
   trainingOf: "Entrenamiento del",
   exercises: "ejercicios",
-  kcal: "kcal"
+  kcal: "kcal",
+  sportPrograms: "Programas deportivos",
+  sportSpecificDescription: "Programas de entrenamiento adaptados a tu deporte y posición",
 };
