@@ -20,8 +20,16 @@ export const GeneratedWorkoutPreview = ({ workout }: GeneratedWorkoutPreviewProp
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-center">{t("workouts.personalisedSession")}</h2>
-      <div className="grid gap-4">
+      <h2 className="text-xl font-bold text-center">{t("workouts.workoutSummary")}</h2>
+      
+      <div className="flex justify-between items-center mb-2">
+        <div className="text-sm text-muted-foreground">
+          {workout.estimatedDuration} {t("workouts.min")} • 
+          {workout.intensity}% {t("workouts.intensity")}
+        </div>
+      </div>
+      
+      <div className="grid gap-3">
         {workout.exercises.map((exercise, index) => (
           <Card key={index} className="p-4">
             <div className="flex items-center gap-3">

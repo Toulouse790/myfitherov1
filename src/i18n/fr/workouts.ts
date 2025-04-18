@@ -1,3 +1,4 @@
+
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Démarrer l'entraînement",
@@ -115,6 +116,10 @@ export const workouts = {
   newSession: "Nouvelle séance",
   createNewSession: "Créer une nouvelle séance",
   start: "Commencer",
+  sets: "séries",
+  reps: "répétitions",
+  personalisedSession: "Séance personnalisée",
+  noExercisesFound: "Aucun exercice trouvé",
   errors: {
     sessionCreationFailed: "Impossible de créer une session d'entraînement. Veuillez réessayer.",
     loginRequired: "Vous devez être connecté pour effectuer cette action.",

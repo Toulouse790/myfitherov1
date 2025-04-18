@@ -115,6 +115,10 @@ export const workouts = {
   statsUpdateError: "Unable to save statistics",
   setValidated: "Set validated with {weight}kg",
   newPersonalRecord: "New personal record: {weight}kg!",
+  sets: "sets",
+  reps: "reps",
+  personalisedSession: "Personalized Session",
+  noExercisesFound: "No exercises found",
   errors: {
     sessionCreationFailed: "Failed to create workout session. Please try again.",
     loginRequired: "You need to be logged in to perform this action.",

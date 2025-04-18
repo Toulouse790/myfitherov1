@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
@@ -9,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { debugLogger } from "@/utils/debug-logger";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Constantes pour les entraînements générés
 const generateWorkoutBasedOnInputs = (duration: number, intensity: number, type: string) => {
@@ -86,6 +88,10 @@ export const GenerateWorkoutDialog = ({
     }
   };
 
+  const handleRegenerate = () => {
+    setGeneratedWorkout(null);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md md:max-w-xl">
@@ -93,55 +99,80 @@ export const GenerateWorkoutDialog = ({
           <DialogTitle>{t("workouts.generateWorkoutTitle")}</DialogTitle>
         </DialogHeader>
         
-        {!generatedWorkout ? (
-          <div className="space-y-6 py-4">
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm font-medium">{t("workouts.duration")}</span>
-                <span className="text-sm">{duration} {t("workouts.min")}</span>
+        <ScrollArea className="h-[60vh] max-h-[500px] pr-3">
+          {!generatedWorkout ? (
+            <div className="space-y-6 py-4">
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm font-medium">{t("workouts.duration")}</span>
+                  <span className="text-sm">{duration} {t("workouts.min")}</span>
+                </div>
+                <Slider
+                  value={[duration]}
+                  min={10}
+                  max={90}
+                  step={5}
+                  onValueChange={(values) => setDuration(values[0])}
+                  className="py-4"
+                />
               </div>
-              <Slider
-                value={[duration]}
-                min={10}
-                max={90}
-                step={5}
-                onValueChange={(values) => setDuration(values[0])}
-                className="py-4"
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm font-medium">{t("workouts.intensity")}</span>
-                <span className="text-sm">{intensity}%</span>
+              
+              <Separator />
+              
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm font-medium">{t("workouts.intensity")}</span>
+                  <span className="text-sm">{intensity}%</span>
+                </div>
+                <Slider
+                  value={[intensity]}
+                  min={10}
+                  max={100}
+                  step={10}
+                  onValueChange={(values) => setIntensity(values[0])}
+                  className="py-4"
+                />
               </div>
-              <Slider
-                value={[intensity]}
-                min={10}
-                max={100}
-                step={10}
-                onValueChange={(values) => setIntensity(values[0])}
-                className="py-4"
-              />
+              
+              <LoadingButton
+                isLoading={isGenerating}
+                disabled={isGenerating}
+                onClick={handleGenerate}
+                className="w-full"
+              >
+                {t("workouts.generateWorkout")}
+              </LoadingButton>
             </div>
-            
-            <LoadingButton
-              isLoading={isGenerating}
-              disabled={isGenerating}
-              onClick={handleGenerate}
-            />
-          </div>
-        ) : (
-          <div>
-            {/* Contenu pour l'aperçu de l'entraînement généré */}
-          </div>
-        )}
+          ) : (
+            <div className="space-y-6 py-4">
+              <GeneratedWorkoutPreview workout={generatedWorkout} />
+              
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={handleRegenerate}
+                  className="flex-1"
+                >
+                  {t("workouts.regenerate")}
+                </Button>
+                
+                <Button 
+                  onClick={() => startWorkout(generatedWorkout)}
+                  disabled={isStartingWorkout}
+                  className="flex-1"
+                >
+                  {isStartingWorkout 
+                    ? t("workouts.startingSession") 
+                    : t("workouts.startSession")}
+                </Button>
+              </div>
+            </div>
+          )}
+        </ScrollArea>
         
-        <div className="text-center pt-2">
+        <DialogFooter className="flex justify-center">
           <p className="text-xs text-muted-foreground">{t("common.close")}</p>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
