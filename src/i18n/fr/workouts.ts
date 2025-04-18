@@ -142,7 +142,7 @@ export const workouts = {
   backToWorkouts: "Retour aux entraînements",
   personalizedRecommendation: "Recommandation personnalisée",
   confident: "de confiance",
-    intensity: {
+  intensity: {
     low: "Faible intensité",
     moderate: "Intensité modérée",
     high: "Haute intensité"
