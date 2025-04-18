@@ -1,6 +1,6 @@
-
 import { lazy } from "react";
 import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
+import { withSuspense } from "@/utils/route-utils";
 
 const DashboardOverview = lazy(() => import("@/pages/Dashboard/Overview"));
 const DashboardStreaks = lazy(() => import("@/pages/Dashboard/Streaks"));
@@ -35,17 +35,3 @@ export const dashboardRoutes = [
     element: <RequireQuestionnaire>{withSuspense(AchievementsHistory)}</RequireQuestionnaire>
   }
 ];
-
-function withSuspense(Component: React.LazyExoticComponent<any>) {
-  return (
-    <Suspense fallback={<Loading />}>
-      <Component />
-    </Suspense>
-  );
-}
-
-const Loading = () => (
-  <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-  </div>
-);

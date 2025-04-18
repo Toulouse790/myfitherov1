@@ -1,5 +1,5 @@
-
 import { lazy } from "react";
+import { withSuspense } from "@/utils/route-utils";
 
 const Nutrition = lazy(() => import("@/pages/Nutrition"));
 const Sleep = lazy(() => import("@/pages/Sleep"));
@@ -24,17 +24,3 @@ export const healthRoutes = [
     element: withSuspense(Cardio)
   }
 ];
-
-function withSuspense(Component: React.LazyExoticComponent<any>) {
-  return (
-    <Suspense fallback={<Loading />}>
-      <Component />
-    </Suspense>
-  );
-}
-
-const Loading = () => (
-  <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-  </div>
-);

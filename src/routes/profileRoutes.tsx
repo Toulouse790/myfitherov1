@@ -1,6 +1,6 @@
-
 import { lazy } from "react";
 import AppSettings from "@/pages/AppSettings";
+import { withSuspense } from "@/utils/route-utils";
 
 const Profile = lazy(() => import("@/pages/Profile"));
 const PersonalInfo = lazy(() => import("@/pages/PersonalInfo"));
@@ -39,17 +39,3 @@ export const profileRoutes = [
     element: withSuspense(Notifications)
   }
 ];
-
-function withSuspense(Component: React.LazyExoticComponent<any>) {
-  return (
-    <Suspense fallback={<Loading />}>
-      <Component />
-    </Suspense>
-  );
-}
-
-const Loading = () => (
-  <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-  </div>
-);

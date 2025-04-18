@@ -1,6 +1,6 @@
-
 import { lazy } from "react";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
+import { withSuspense } from "@/utils/route-utils";
 
 const Workouts = lazy(() => import("@/pages/workouts/index"));
 const WorkoutGenerate = lazy(() => import("@/pages/WorkoutGenerate"));
@@ -34,17 +34,3 @@ export const workoutRoutes = [
     element: withSuspense(SportPrograms)
   }
 ];
-
-function withSuspense(Component: React.LazyExoticComponent<any>) {
-  return (
-    <Suspense fallback={<Loading />}>
-      <Component />
-    </Suspense>
-  );
-}
-
-const Loading = () => (
-  <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-  </div>
-);
