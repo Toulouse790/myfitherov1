@@ -1,26 +1,41 @@
+
 import { Card } from "@/components/ui/card";
-import { ChevronDown } from "lucide-react";
-import type { MetricData } from "./types";
+import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
-  metric: MetricData;
-  onClick: () => void;
+  label: string;
+  value: string;
+  unit: string;
+  color: string;
+  icon: React.ReactElement;
+  onClick?: () => void;
 }
 
-export const MetricCard = ({ metric, onClick }: MetricCardProps) => {
+export const MetricCard = ({
+  label,
+  value,
+  unit,
+  color,
+  icon,
+  onClick
+}: MetricCardProps) => {
   return (
-    <Card 
-      className="bg-[#1E2330] p-3 cursor-pointer hover:bg-[#252B3B] transition-all duration-300"
+    <Card
+      className={cn(
+        "p-4 cursor-pointer transition-all hover:shadow-md",
+        "hover:scale-[1.02] hover:bg-accent/50"
+      )}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <span className={`text-lg font-bold ${metric.color}`}>
-            {metric.value}
-          </span>
-          <p className="text-xs text-gray-400">{metric.label}</p>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">{label}</span>
+          <div className={color}>{icon}</div>
         </div>
-        <ChevronDown className="w-4 h-4 text-gray-400" />
+        <div className="flex items-baseline gap-1">
+          <span className="text-2xl font-bold">{value}</span>
+          <span className="text-xs text-muted-foreground">{unit}</span>
+        </div>
       </div>
     </Card>
   );
