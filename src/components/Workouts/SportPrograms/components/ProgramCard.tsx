@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +10,7 @@ import { cn } from "@/lib/utils";
 interface ProgramCardProps {
   program: SportProgram;
   onSelect: () => void;
-  onGenerate?: () => void; // Prop pour la génération du programme
+  onGenerate?: () => void;
 }
 
 export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps) => {
@@ -26,7 +25,6 @@ export const ProgramCard = ({ program, onSelect, onGenerate }: ProgramCardProps)
 
   const toggleExpand = () => setExpanded(!expanded);
 
-  // S'assurer que nous avons toujours une fonction onGenerate, même si elle est vide
   const handleGenerate = onGenerate || (() => console.log("Génération non implémentée"));
 
   return (

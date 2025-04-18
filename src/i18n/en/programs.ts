@@ -1,4 +1,3 @@
-
 export const programs = {
   sportSpecificPrograms: "Sport-Specific Programs",
   sportSpecificDescription: "Training programs tailored to your sport and position",
