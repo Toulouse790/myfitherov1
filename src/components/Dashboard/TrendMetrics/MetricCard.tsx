@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { InfoIcon } from "lucide-react";
 import { MetricData } from "./types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface MetricCardProps {
   metric: MetricData;
@@ -14,6 +15,7 @@ export const MetricCard = ({
   metric,
   onClick
 }: MetricCardProps) => {
+  const { t } = useLanguage();
   const { label, value, unit, color, icon, description, importance = "primary" } = metric;
   
   return (

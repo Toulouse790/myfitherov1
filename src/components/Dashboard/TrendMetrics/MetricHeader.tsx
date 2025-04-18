@@ -7,6 +7,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface MetricHeaderProps {
   title: string;
@@ -15,6 +16,8 @@ interface MetricHeaderProps {
 }
 
 export const MetricHeader = ({ title, period, onPeriodChange }: MetricHeaderProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex items-center justify-between">
       <h2 className="text-lg font-semibold">{title}</h2>
@@ -27,13 +30,13 @@ export const MetricHeader = ({ title, period, onPeriodChange }: MetricHeaderProp
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => onPeriodChange(7)}>
-            7 derniers jours
+            {t("workouts.periodOptions.sevenDays", { fallback: "7 derniers jours" })}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onPeriodChange(14)}>
-            14 derniers jours
+            {t("workouts.periodOptions.fourteenDays", { fallback: "14 derniers jours" })}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onPeriodChange(30)}>
-            30 derniers jours
+            {t("workouts.periodOptions.thirtyDays", { fallback: "30 derniers jours" })}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

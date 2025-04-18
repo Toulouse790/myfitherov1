@@ -54,7 +54,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   // Détection de la langue du navigateur et chargement des préférences
   useEffect(() => {
     try {
-      // Essayer de charger depuis localStorage
+      // Récupérer depuis le localStorage
       const savedLanguage = localStorage.getItem('userLanguage');
       
       if (savedLanguage && ['fr', 'en', 'es', 'de'].includes(savedLanguage)) {
@@ -63,11 +63,11 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
         return;
       }
       
-      // Sinon, utiliser la langue du navigateur
+      // Détecter la langue du navigateur
       const browserLang = navigator.language.split('-')[0];
       const supportedLangs: Language[] = ['fr', 'en', 'es', 'de'];
       
-      // Vérifier si la langue du navigateur est supportée
+      // Utiliser la langue du navigateur si supportée, sinon français
       const detectedLang = supportedLangs.includes(browserLang as Language) 
         ? browserLang as Language 
         : 'fr';
@@ -75,7 +75,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       setLanguage(detectedLang);
       debugLogger.log('LanguageContext', `Langue détectée du navigateur: ${detectedLang}`);
       
-      // Enregistrer la préférence
+      // Sauvegarder la préférence
       localStorage.setItem('userLanguage', detectedLang);
     } catch (error) {
       debugLogger.error('LanguageContext', "Erreur lors de la détection de langue", error);

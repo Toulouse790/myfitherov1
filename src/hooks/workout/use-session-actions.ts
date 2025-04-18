@@ -62,7 +62,7 @@ export const useSessionActions = () => {
 
       // Rediriger vers la nouvelle séance
       if (data?.id) {
-        navigate(`/workout/${data.id}`);
+        navigate(`/workouts/session/${data.id}`);
         return data;
       }
       
