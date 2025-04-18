@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dumbbell, ChevronRight, Calendar, Clock } from 'lucide-react';
@@ -8,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { debugLogger } from '@/utils/debug-logger';
+import { useExerciseTranslation } from '@/hooks/use-exercise-translation';
 
 interface WorkoutCardProps {
   id?: string;
@@ -43,12 +43,14 @@ export const WorkoutCard = ({
   isLoading = false
 }: WorkoutCardProps) => {
   const { t } = useLanguage();
+  const { translateMuscleGroups } = useExerciseTranslation();
   const navigate = useNavigate();
   const [showExercises, setShowExercises] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
+  const translatedMuscleGroups = translateMuscleGroups(muscleGroups);
+
   const handleCardClick = () => {
-    // Afficher/masquer les exercices immédiatement
     setShowExercises(!showExercises);
     if (onClick) {
       onClick();
@@ -56,7 +58,7 @@ export const WorkoutCard = ({
   };
 
   const handleStartWorkout = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Empêcher la propagation au parent
+    e.stopPropagation();
     
     if (onStartWorkout) {
       try {
@@ -69,14 +71,12 @@ export const WorkoutCard = ({
         setIsStarting(false);
       }
     } else if (sessionId) {
-      // Naviguer vers la session d'entraînement si sessionId est fourni
       navigate(`/workout-session/${sessionId}`);
     } else if (onSelect) {
       onSelect();
     }
   };
 
-  // Déterminer le niveau à afficher (utiliser difficulty ou level)
   const displayLevel = difficulty || level;
 
   return (
@@ -124,10 +124,14 @@ export const WorkoutCard = ({
             </p>
           )}
 
-          {muscleGroups && muscleGroups.length > 0 && (
+          {translatedMuscleGroups && translatedMuscleGroups.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {muscleGroups.map((group, i) => (
-                <Badge key={i} variant="secondary" className="font-normal text-xs">
+              {translatedMuscleGroups.map((group, i) => (
+                <Badge 
+                  key={i} 
+                  variant="secondary" 
+                  className="font-normal text-xs"
+                >
                   {group}
                 </Badge>
               ))}
@@ -135,7 +139,6 @@ export const WorkoutCard = ({
           )}
         </div>
 
-        {/* Liste des exercices - toujours dans le DOM mais affichée conditionnellement */}
         <div 
           className={`bg-muted/40 divide-y transition-all duration-300 ${
             showExercises ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
@@ -178,4 +181,3 @@ export const WorkoutCard = ({
     </Card>
   );
 };
-
