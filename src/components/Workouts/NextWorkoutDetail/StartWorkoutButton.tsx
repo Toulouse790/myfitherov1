@@ -1,12 +1,15 @@
 
 import { Button } from "@/components/ui/button";
 import { debugLogger } from "@/utils/debug-logger";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface StartWorkoutButtonProps {
   onClick: () => void;
 }
 
 export const StartWorkoutButton = ({ onClick }: StartWorkoutButtonProps) => {
+  const { t } = useLanguage();
+  
   const handleClick = () => {
     debugLogger.log("StartWorkoutButton", "Bouton Commencer cliqué");
     debugLogger.log("StartWorkoutButton", "Démarrage de la navigation vers la page de session");

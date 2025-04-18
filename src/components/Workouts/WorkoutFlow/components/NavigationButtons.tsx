@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NavigationButtonsProps {
   currentStep: number;
@@ -16,6 +17,8 @@ export const NavigationButtons = ({
   onNext,
   isNextDisabled = false,
 }: NavigationButtonsProps) => {
+  const { t } = useLanguage();
+  
   if (currentStep === totalSteps) {
     return null;
   }
@@ -27,7 +30,7 @@ export const NavigationButtons = ({
           variant="outline"
           onClick={onBack}
         >
-          Retour
+          {t("common.back")}
         </Button>
       ) : (
         <div></div>
@@ -38,7 +41,7 @@ export const NavigationButtons = ({
         className="px-5 py-2"
         disabled={isNextDisabled}
       >
-        {currentStep === totalSteps - 1 ? "Lancer la séance" : "Suivant"}
+        {currentStep === totalSteps - 1 ? t("workouts.startSession") : t("common.next")}
       </Button>
     </div>
   );

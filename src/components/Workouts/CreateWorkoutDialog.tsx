@@ -9,10 +9,12 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const CreateWorkoutDialog = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleCreateWorkout = () => {
     setOpen(false);
@@ -23,16 +25,16 @@ export const CreateWorkoutDialog = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          Nouvelle séance
+          {t("workouts.newSession")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Créer une nouvelle séance</DialogTitle>
+          <DialogTitle>{t("workouts.createNewSession")}</DialogTitle>
         </DialogHeader>
         <div className="flex justify-end">
           <Button onClick={handleCreateWorkout}>
-            Commencer
+            {t("common.start")}
           </Button>
         </div>
       </DialogContent>

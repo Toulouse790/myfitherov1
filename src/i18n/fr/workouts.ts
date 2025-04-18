@@ -56,7 +56,7 @@ export const workouts = {
   medium: "Moyen (30-45 min)",
   long: "Long (45-60 min)",
   veryLong: "Très long (60+ min)",
-  selectEquipment: "Sélectionnez l'équipement",
+  selectEquipment: "Sélectionnez l'équipment",
   generateWorkout: "Générer un entraînement",
   recommendedWorkouts: "Entraînements recommandés",
   browseExerciseDatabase: "Explorer la base d'exercices",
@@ -115,6 +115,9 @@ export const workouts = {
   statsUpdateError: "Impossible de sauvegarder les statistiques",
   setValidated: "Série validée avec {weight}kg",
   newPersonalRecord: "Nouveau record personnel : {weight}kg !",
+  newSession: "Nouvelle séance",
+  createNewSession: "Créer une nouvelle séance",
+  start: "Commencer",
   errors: {
     sessionCreationFailed: "Impossible de créer une session d'entraînement. Veuillez réessayer.",
     loginRequired: "Vous devez être connecté pour effectuer cette action.",
@@ -126,5 +129,9 @@ export const workouts = {
     statsSaveFailed: "Échec de l'enregistrement des statistiques d'entraînement.",
     noDataReturned: "Aucune donnée retournée du serveur.",
     saveWeightFailed: "Impossible d'enregistrer les informations de poids."
-  }
+  },
+  completed: "Terminé",
+  finishWorkout: "Terminer l'entraînement",
+  sessionSaved: "Votre séance a été enregistrée avec succès",
+  savingError: "Erreur lors de l'enregistrement de la séance"
 };

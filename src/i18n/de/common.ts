@@ -28,5 +28,11 @@ export const common = {
   month: "Monat",
   months: "Monate",
   year: "Jahr",
-  years: "Jahre"
+  years: "Jahre",
+  close: "Schließen",
+  startSession: "Sitzung starten",
+  generateProgram: "Programm generieren",
+  completed: "Abgeschlossen",
+  confirm: "Bestätigen",
+  saving: "Speichern..."
 };
