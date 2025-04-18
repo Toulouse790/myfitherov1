@@ -1,323 +1,211 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { debugLogger } from "@/utils/debug-logger";
-import { useNotificationManager } from "@/hooks/use-notification-manager";
 import { useAuth } from "@/hooks/use-auth";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const useWorkoutSession = () => {
-  const { sessionId } = useParams();
+  const { id: sessionId } = useParams<{ id?: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
-  const { notify } = useNotificationManager();
+  
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
-  const [exerciseProgress, setExerciseProgress] = useState<Record<string, {
-    completed: boolean;
-    sets: number;
-    totalSets: number;
-  }>>({});
+  const [exerciseProgress, setExerciseProgress] = useState<Record<string, any>>({});
   const [showExerciseDetail, setShowExerciseDetail] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(0);
-  const [startTime] = useState(Date.now());
+  const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
   const [showSummaryDialog, setShowSummaryDialog] = useState(false);
   const [workoutStats, setWorkoutStats] = useState({
     duration: 0,
     totalCalories: 0,
-    totalWeight: 0
+    completedExercises: 0,
   });
-  
-  // Timer pour la durée de la séance
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSessionDuration(Math.floor((Date.now() - startTime) / 1000));
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }, [startTime]);
 
-  // Formatage de la durée (mm:ss)
+  // Fonction pour formater la durée (mm:ss)
   const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
+    const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-  
-  const fetchSessionData = async () => {
-    if (!sessionId) {
-      toast({
-        title: "Erreur",
-        description: "ID de séance manquant",
-        variant: "destructive",
-      });
-      navigate('/workouts');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      
-      // Vérifier d'abord si la session existe
-      const { data: sessionData, error: sessionError } = await supabase
-        .from('workout_sessions')
-        .select('*')
-        .eq('id', sessionId)
-        .single();
-
-      if (sessionError) {
-        debugLogger.error("WorkoutSession", "Erreur lors de la récupération de la session:", sessionError);
-        throw sessionError;
-      }
-      
-      // Si la session existe mais n'a pas d'exercices ou le tableau est vide
-      if (!sessionData.exercises || sessionData.exercises.length === 0) {
-        debugLogger.log("WorkoutSession", "La session n'a pas d'exercices définis:", sessionData);
-        
-        // Définir des exercices par défaut
-        const defaultExercises = ["Squats", "Pompes", "Abdominaux"];
-        
-        // Mettre à jour la session avec des exercices par défaut
-        const { error: updateError } = await supabase
-          .from('workout_sessions')
-          .update({ exercises: defaultExercises })
-          .eq('id', sessionId);
-          
-        if (updateError) {
-          debugLogger.error("WorkoutSession", "Erreur lors de la mise à jour des exercices par défaut:", updateError);
-        } else {
-          sessionData.exercises = defaultExercises;
-          debugLogger.log("WorkoutSession", "Exercices par défaut ajoutés à la session");
-        }
-      }
-      
-      debugLogger.log("WorkoutSession", "Données de session chargées:", sessionData);
-
-      setSession(sessionData);
-      
-      // Initialiser le suivi de progression pour chaque exercice
-      if (sessionData.exercises && sessionData.exercises.length > 0) {
-        const progress: Record<string, {completed: boolean, sets: number, totalSets: number}> = {};
-        sessionData.exercises.forEach((ex: string) => {
-          progress[ex] = {
-            completed: false,
-            sets: 0,
-            totalSets: 3
-          };
-        });
-        setExerciseProgress(progress);
-      }
-
-      // Vérifier si l'utilisateur a des statistiques d'entraînement
-      if (sessionData.user_id) {
-        const { data: statsData, error: statsError } = await supabase
-          .from('training_stats')
-          .select('*')
-          .eq('session_id', sessionId)
-          .maybeSingle();
-        
-        if (statsError) {
-          debugLogger.error("WorkoutSession", "Erreur lors de la récupération des statistiques:", statsError);
-        } else if (!statsData) {
-          debugLogger.log("WorkoutSession", "Pas de statistiques trouvées, création d'une entrée initiale");
-          
-          // Créer une entrée initiale dans training_stats
-          await supabase
-            .from('training_stats')
-            .insert([{
-              session_id: sessionId,
-              user_id: sessionData.user_id,
-              created_at: new Date().toISOString()
-            }]);
-        }
-      }
-
-    } catch (error) {
-      console.error('Erreur lors du chargement de la séance:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger la séance d'entraînement",
-        variant: "destructive",
-      });
-      
-      // Rediriger vers la page des entraînements en cas d'erreur critique
-      navigate('/workouts');
-    } finally {
-      setLoading(false);
-    }
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Charger les données de la session
   useEffect(() => {
-    fetchSessionData();
-  }, [sessionId, navigate, toast]);
+    const fetchSessionData = async () => {
+      if (!sessionId || !user) {
+        setLoading(false);
+        return;
+      }
 
+      try {
+        debugLogger.log("useWorkoutSession", "Chargement des données de la session:", sessionId);
+        const { data, error } = await supabase
+          .from('workout_sessions')
+          .select('*')
+          .eq('id', sessionId)
+          .eq('user_id', user.id)
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          debugLogger.log("useWorkoutSession", "Données de session chargées:", data);
+          setSession(data);
+          
+          // Initialiser le suivi de progression des exercices s'il n'existe pas déjà
+          if (data.exercise_progress && Object.keys(data.exercise_progress).length > 0) {
+            setExerciseProgress(data.exercise_progress);
+          } else if (data.exercises && data.exercises.length > 0) {
+            // Créer un objet de progression par défaut si nécessaire
+            const defaultProgress = data.exercises.reduce((acc, exercise) => {
+              acc[exercise] = {
+                completed: false,
+                sets: 3,
+                reps: 10,
+                rest: 60,
+                currentSet: 0,
+                totalSets: 3
+              };
+              return acc;
+            }, {});
+            
+            setExerciseProgress(defaultProgress);
+            
+            // Mettre à jour la session avec la progression par défaut
+            await supabase
+              .from('workout_sessions')
+              .update({ exercise_progress: defaultProgress })
+              .eq('id', sessionId);
+          }
+          
+          // Démarrer le chronomètre de la session si ce n'est pas déjà fait
+          if (!sessionStartTime) {
+            setSessionStartTime(Date.now());
+          }
+        }
+      } catch (error) {
+        debugLogger.error("useWorkoutSession", "Erreur lors du chargement de la session:", error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les données de la session",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSessionData();
+  }, [sessionId, user, toast, sessionStartTime]);
+
+  // Mettre à jour le chronomètre
+  useEffect(() => {
+    if (!sessionStartTime) return;
+
+    const timer = setInterval(() => {
+      const elapsedSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
+      setSessionDuration(elapsedSeconds);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [sessionStartTime]);
+
+  // Sélectionner un exercice
   const handleExerciseSelect = (index: number) => {
     setCurrentExerciseIndex(index);
     setShowExerciseDetail(true);
   };
 
-  const handleExerciseComplete = (exerciseName: string, totalSets: number) => {
-    // Marquer l'exercice comme terminé
-    setExerciseProgress(prev => ({
-      ...prev,
-      [exerciseName]: {
-        ...prev[exerciseName],
-        completed: true,
-        sets: totalSets,
-        totalSets
-      }
-    }));
-
-    setShowExerciseDetail(false);
-
-    // Passer automatiquement à l'exercice suivant s'il y en a un
-    if (session?.exercises && currentExerciseIndex < session.exercises.length - 1) {
-      setCurrentExerciseIndex(prev => prev + 1);
-      setTimeout(() => {
-        setShowExerciseDetail(true);
-      }, 500);
-    } else if (session?.exercises && currentExerciseIndex === session.exercises.length - 1) {
-      // Afficher un toast indiquant que tous les exercices sont terminés
+  // Marquer un exercice comme terminé
+  const handleExerciseComplete = useCallback(async (exerciseName: string) => {
+    try {
+      if (!session || !sessionId) return;
+      
+      // Mettre à jour la progression de l'exercice
+      const updatedProgress = {
+        ...exerciseProgress,
+        [exerciseName]: {
+          ...exerciseProgress[exerciseName],
+          completed: true
+        }
+      };
+      
+      setExerciseProgress(updatedProgress);
+      
+      // Mettre à jour dans la base de données
+      await supabase
+        .from('workout_sessions')
+        .update({ exercise_progress: updatedProgress })
+        .eq('id', sessionId);
+      
+      setShowExerciseDetail(false);
+      
       toast({
-        title: "Félicitations !",
-        description: "Vous avez terminé tous les exercices.",
+        title: "Exercice terminé !",
+        description: "Bien joué ! Passez à l'exercice suivant.",
       });
-    }
-  };
-
-  const handleCompleteWorkout = async () => {
-    if (!sessionId || !user) {
+      
+    } catch (error) {
+      debugLogger.error("useWorkoutSession", "Erreur lors de la mise à jour de la progression:", error);
       toast({
         title: "Erreur",
-        description: "Session invalide ou utilisateur non connecté",
+        description: "Impossible de mettre à jour la progression",
         variant: "destructive",
       });
-      return;
     }
+  }, [session, sessionId, exerciseProgress, toast]);
+
+  // Terminer l'entraînement
+  const handleCompleteWorkout = useCallback(() => {
+    // Calculer les statistiques de l'entraînement
+    const completedExercisesCount = Object.values(exerciseProgress).filter(ex => ex.completed).length;
+    const estimatedCalories = Math.round(sessionDuration / 60 * 7); // Estimation simple: ~7 calories par minute
+    
+    setWorkoutStats({
+      duration: Math.round(sessionDuration / 60), // en minutes
+      totalCalories: estimatedCalories,
+      completedExercises: completedExercisesCount
+    });
+    
+    setShowSummaryDialog(true);
+  }, [exerciseProgress, sessionDuration]);
+
+  // Finaliser et enregistrer l'entraînement
+  const handleFinishWorkout = useCallback(async () => {
+    if (!sessionId) return;
     
     try {
-      // Calculer quelques statistiques pour la séance
-      const totalExercises = session?.exercises?.length || 0;
-      const completedExercises = Object.values(exerciseProgress).filter(ex => ex.completed).length;
-      
-      // Conversion de la durée en minutes
-      const durationMinutes = Math.ceil(sessionDuration / 60);
-      
-      // Calculer les calories brûlées (estimation simple)
-      const caloriesBurned = Math.round(durationMinutes * 10);
-      
-      // Mettre à jour les statistiques
-      setWorkoutStats({
-        duration: durationMinutes,
-        totalCalories: caloriesBurned,
-        totalWeight: 0 // On pourrait calculer le poids total soulevé si on avait cette info
-      });
-      
-      // Afficher le dialogue de résumé
-      setShowSummaryDialog(true);
-    } catch (error) {
-      console.error('Erreur lors de la préparation du résumé:', error);
-      notify(
-        "Erreur",
-        "Impossible de préparer le résumé de la séance",
-        "error"
-      );
-    }
-  };
-  
-  const handleFinishWorkout = async () => {
-    if (!sessionId || !user) {
-      notify(
-        "Erreur",
-        "Session invalide ou utilisateur non connecté",
-        "error"
-      );
-      return;
-    }
-    
-    try {
-      debugLogger.log("WorkoutSession", "Début de finalisation de la séance:", { sessionId, userId: user.id });
-      
-      // Calculer quelques statistiques pour la séance
-      const totalExercises = session?.exercises?.length || 0;
-      const completedExercises = Object.values(exerciseProgress).filter(ex => ex.completed).length;
-      
-      // Conversion de la durée en minutes
-      const durationMinutes = Math.ceil(sessionDuration / 60);
-      
-      // Calculer les calories brûlées (estimation simple)
-      const caloriesBurned = Math.round(durationMinutes * 10);
-      
-      // Mise à jour des statistiques d'entraînement
-      const { data: statsData, error: statsError } = await supabase
-        .from('training_stats')
-        .select('*')
-        .eq('session_id', sessionId)
-        .maybeSingle();
-        
-      if (!statsData) {
-        // Créer une nouvelle entrée si elle n'existe pas
-        await supabase
-          .from('training_stats')
-          .insert([{
-            session_id: sessionId,
-            user_id: user.id,
-            calories_burned: caloriesBurned,
-            session_duration_minutes: durationMinutes,
-            perceived_difficulty: 'moderate',
-            muscle_groups_worked: session?.exercises || []
-          }]);
-      } else {
-        // Mettre à jour l'entrée existante
-        await supabase
-          .from('training_stats')
-          .update({
-            calories_burned: caloriesBurned,
-            session_duration_minutes: durationMinutes,
-            perceived_difficulty: 'moderate',
-            muscle_groups_worked: session?.exercises || []
-          })
-          .eq('id', statsData.id);
-      }
-      
-      // Marquer la séance comme terminée
-      const { data: updatedSession, error: updateError } = await supabase
+      await supabase
         .from('workout_sessions')
         .update({
           status: 'completed',
-          total_duration_minutes: durationMinutes,
-          calories_burned: caloriesBurned,
-          perceived_difficulty: 'moderate',
+          total_duration_minutes: Math.round(sessionDuration / 60),
+          exercise_progress: exerciseProgress,
           updated_at: new Date().toISOString()
         })
-        .eq('id', sessionId)
-        .select();
-
-      if (updateError) {
-        debugLogger.error("WorkoutSession", "Erreur lors de la mise à jour de la session:", updateError);
-        throw updateError;
-      }
-
-      notify(
-        "Séance terminée",
-        `Durée: ${durationMinutes}min, Calories: ${caloriesBurned}`,
-        "success"
-      );
+        .eq('id', sessionId);
       
-      // Rediriger vers la page des entraînements ou la page de résumé
-      navigate(`/workouts/summary/${sessionId}`);
+      toast({
+        title: "Entraînement terminé !",
+        description: `Bravo ! Vous avez brûlé environ ${workoutStats.totalCalories} calories en ${workoutStats.duration} minutes.`,
+      });
+      
+      navigate('/workouts');
     } catch (error) {
-      console.error('Erreur lors de la finalisation de la séance:', error);
-      notify(
-        "Erreur",
-        "Impossible de finaliser la séance",
-        "error"
-      );
+      debugLogger.error("useWorkoutSession", "Erreur lors de la finalisation de l'entraînement:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de finaliser l'entraînement",
+        variant: "destructive",
+      });
     }
-  };
+  }, [sessionId, sessionDuration, exerciseProgress, workoutStats, toast, navigate]);
 
   return {
     loading,

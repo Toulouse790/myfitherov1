@@ -49,6 +49,8 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
         .eq('est_publié', true)
         .limit(6);
 
+      debugLogger.log("WorkoutList", "Exercices recommandés:", recommendedExercises);
+      
       const exercisesToUse = recommendedExercises?.map(ex => ({
         name: ex.name,
         sets: profile?.experience_level === 'beginner' ? 3 : 4,
@@ -59,6 +61,10 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
       })) || workout.exercises;
 
       debugLogger.log("WorkoutList", "Création de la session avec les exercices recommandés:", exercisesToUse);
+      
+      // S'assurer que workout.id existe bien, sinon utiliser un UUID généré
+      const workoutId = workout.id || crypto.randomUUID();
+      debugLogger.log("WorkoutList", "ID d'entraînement utilisé:", workoutId);
       
       const { data: session, error } = await supabase
         .from('workout_sessions')
@@ -78,7 +84,13 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
                 rest: ex.rest,
                 currentSet: 0
               }
-            }), {})
+            }), {}),
+            // Ajouter des métadonnées pour lier la session au workout original
+            metadata: {
+              original_workout_id: workoutId,
+              workout_title: workout.title,
+              muscle_groups: workout.muscleGroups
+            }
           }
         ])
         .select()
