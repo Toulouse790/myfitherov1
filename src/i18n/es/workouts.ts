@@ -114,4 +114,6 @@ export const workouts = {
   kcal: "kcal",
   sportPrograms: "Programas deportivos",
   sportSpecificDescription: "Programas de entrenamiento adaptados a tu deporte y posición",
+  sportSpecific: "Programa deportivo específico",
+  programsForYourSport: "Programas de entrenamiento adaptados a tu deporte y posición",
 };
