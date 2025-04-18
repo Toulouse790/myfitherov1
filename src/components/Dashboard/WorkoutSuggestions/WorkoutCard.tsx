@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dumbbell, ChevronRight, Calendar, Clock } from 'lucide-react';
@@ -71,7 +72,9 @@ export const WorkoutCard = ({
         setIsStarting(false);
       }
     } else if (sessionId) {
-      navigate(`/workout-session/${sessionId}`);
+      // Correction du chemin de navigation pour qu'il corresponde à la structure attendue
+      debugLogger.log("WorkoutCard", "Navigation vers session avec ID:", sessionId);
+      navigate(`/workouts/session/${sessionId}`);
     } else if (onSelect) {
       onSelect();
     }

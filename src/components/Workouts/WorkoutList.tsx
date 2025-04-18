@@ -61,7 +61,8 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
       console.log("Session créée avec succès:", session);
 
       if (session) {
-        navigate(`/workouts/exercise/next-workout?session=${session.id}`);
+        // Correction du chemin de navigation pour qu'il corresponde à la structure attendue
+        navigate(`/workouts/session/${session.id}`);
       }
     } catch (error) {
       console.error('Error creating workout session:', error);
