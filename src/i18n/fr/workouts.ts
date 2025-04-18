@@ -1,3 +1,4 @@
+
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Commencer l'entraînement",
@@ -93,66 +94,32 @@ export const workouts = {
   trackProgressDescription: "Suivez vos progrès et améliorez vos performances",
   activeSession: "Session active",
   continueSession: "Continuer la session",
+  // Ajout des clés manquantes identifiées dans les captures d'écran
+  generateWorkoutTitle: "Générer un entraînement",
+  generateSession: "Générer une séance",
+  close: "Fermer",
   errors: {
     sessionCreationFailed: "Impossible de créer la session d'entraînement. Veuillez réessayer.",
     loginRequired: "Vous devez être connecté pour effectuer cette action.",
     sessionCreationError: "Une erreur est survenue lors de la création de la session.",
-    startSessionErrorDescription: "Impossible de démarrer la session d'entraînement. Veuillez réessayer."
+    startSessionErrorDescription: "Impossible de démarrer la session d'entraînement. Veuillez réessayer.",
+    setSaveFailed: "Impossible de sauvegarder la série d'exercice.",
+    statsInsertFailed: "Échec de l'insertion des statistiques d'entraînement.",
+    weightUpdateFailed: "Échec de la mise à jour du poids d'exercice.",
+    statsSaveFailed: "Impossible de sauvegarder les statistiques d'entraînement.",
+    noDataReturned: "Aucune donnée retournée par le serveur."
   },
-  forceScore: {
-    title: "Score de force",
-    subScores: {
-      strength: "Force",
-      regularity: "Régularité",
-      intensity: "Intensité",
-      progression: "Progression"
-    },
-    outOf: "sur",
-    compare: "Comparé à des profils similaires",
-    improve: "Points d'amélioration",
-    metrics: {
-      weightLifted: "Poids total soulevé",
-      sessionsCompleted: "Séances complétées",
-      averageIntensity: "Intensité moyenne",
-      progressionRate: "Taux de progression"
-    }
-  },
-  library: "Bibliothèque",
-  exerciseLibrary: "Bibliothèque d'exercices",
-  createNewSession: "Créer une nouvelle séance",
-  searchExercises: "Rechercher des exercices",
-  noExercisesFound: "Aucun exercice trouvé",
-  noWorkoutsForMuscleGroup: "Aucun entraînement trouvé pour ce groupe musculaire",
-  startWithSelected: "Commencer avec les sélectionnés",
-  createFirstWorkout: "Créer votre premier entraînement",
-  trainingSession: "Séance d'entraînement",
-  filter: "Filtrer",
-  exerciseLibrary: "Exercices disponibles",
-  sessionNotFound: "Session non trouvée",
-  sessionEmptyDesc: "Cette séance d'entraînement ne contient aucun exercice ou n'existe pas.",
-  createWorkout: "Créer un entraînement",
-  backToWorkouts: "Retour aux entraînements",
-  noExercisesFound: "Aucun exercice trouvé",
-  
-  personalizedRecommendation: "Recommandation personnalisée",
-  adaptiveWorkout: "Entraînement adaptatif",
-  confident: "de confiance",
-  startAdaptedSession: "Démarrer cette séance adaptée",
-  suggestion_chest: "Travail de la poitrine adapté à votre niveau",
-  suggestion_back: "Renforcement du dos recommandé aujourd'hui",
-  suggestion_legs: "Séance jambes basée sur votre progression",
-  suggestion_shoulders: "Développement des épaules personnalisé",
-  suggestion_biceps: "Travail ciblé des biceps",
-  suggestion_triceps: "Renforcement des triceps adapté",
-  suggestion_abs: "Séance abdominaux optimisée",
-  intensity: {
-    low: "Faible intensité",
-    moderate: "Intensité modérée", 
-    high: "Haute intensité"
-  },
-  progressiveOverload: "Charge progressive",
-  adaptingToYourProgress: "Programme évolutif basé sur vos performances",
-  restRecommendation: "Repos recommandé",
-  smartWorkoutPlanner: "Planificateur intelligent",
-  trackingProgress: "Suivi de progression"
+  // Ajout des clés pour les dialogues et boutons
+  regenerate: "Régénérer",
+  startSessionLoading: "Démarrage...",
+  restBeforeNextExercise: "Repos avant le prochain exercice",
+  caloriesBurned: "Vous avez brûlé {calories} calories",
+  sessionCompleted: "Séance terminée",
+  exerciseCompleted: "Exercice terminé",
+  moveToNextExercise: "Passez à l'exercice suivant",
+  sessionCompletedDetails: "Bravo ! Vous avez brûlé environ {calories} calories en {duration} minutes.",
+  statsRecorded: "Vos statistiques ont été enregistrées.",
+  authRequiredForSet: "Vous devez être connecté pour ajouter une série",
+  statsUpdateError: "Impossible de sauvegarder les statistiques",
+  generating: "Génération en cours..."
 };

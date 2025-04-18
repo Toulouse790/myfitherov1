@@ -28,8 +28,8 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
       console.error('Error starting workout:', error);
       debugLogger.log("WorkoutActions", "Erreur lors du démarrage de l'entraînement:", {error});
       toast({
-        title: t("common.error") || "Erreur",
-        description: t("workouts.startSessionErrorDescription") || "Impossible de démarrer la session d'entraînement",
+        title: t("common.error"),
+        description: t("workouts.errors.startSessionErrorDescription"),
         variant: "destructive",
       });
     } finally {
@@ -44,8 +44,8 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
     } catch (error) {
       console.error('Error regenerating workout:', error);
       toast({
-        title: t("common.error") || "Erreur",
-        description: "Impossible de régénérer l'entraînement",
+        title: t("common.error"),
+        description: t("workouts.errors.sessionCreationError"),
         variant: "destructive",
       });
     } finally {
@@ -64,11 +64,11 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         {isStarting ? (
           <>
             <span className="animate-pulse">
-              {t("workouts.startSessionLoading") || "Chargement..."}
+              {t("workouts.startSessionLoading")}
             </span>
           </>
         ) : (
-          t("workouts.startSession") || "Commencer"
+          t("workouts.startSession")
         )}
       </Button>
       <Button 
@@ -78,7 +78,7 @@ export const WorkoutActions = ({ onConfirm, onRegenerate }: WorkoutActionsProps)
         disabled={isStarting || isRegenerating}
       >
         <RefreshCw className={`mr-2 h-4 w-4 ${isRegenerating ? 'animate-spin' : ''}`} />
-        {t("workouts.regenerate") || "Régénérer"}
+        {t("workouts.regenerate")}
       </Button>
     </div>
   );

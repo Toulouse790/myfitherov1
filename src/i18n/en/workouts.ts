@@ -95,10 +95,31 @@ export const workouts = {
   trackProgressDescription: "Track your progress and improve your performance",
   activeSession: "Active session",
   continueSession: "Continue session",
+  // Added missing keys identified from screenshots
+  generateWorkoutTitle: "Generate Workout",
+  generateSession: "Generate Session",
+  close: "Close",
+  regenerate: "Regenerate",
+  startSessionLoading: "Starting...",
+  restBeforeNextExercise: "Rest before the next exercise",
+  caloriesBurned: "You burned {calories} calories",
+  sessionCompleted: "Session completed",
+  exerciseCompleted: "Exercise completed",
+  moveToNextExercise: "Move to the next exercise",
+  sessionCompletedDetails: "Great job! You burned about {calories} calories in {duration} minutes.",
+  statsRecorded: "Your stats have been recorded.",
+  authRequiredForSet: "You need to be logged in to add a set",
+  statsUpdateError: "Unable to save statistics",
+  generating: "Generating...",
   errors: {
     sessionCreationFailed: "Failed to create workout session. Please try again.",
     loginRequired: "You need to be logged in to perform this action.",
     sessionCreationError: "An error occurred while creating the session.",
-    startSessionErrorDescription: "Failed to start workout session. Please try again."
+    startSessionErrorDescription: "Failed to start workout session. Please try again.",
+    setSaveFailed: "Failed to save exercise set.",
+    statsInsertFailed: "Failed to insert training stats.",
+    weightUpdateFailed: "Failed to update exercise weight.",
+    statsSaveFailed: "Failed to save workout stats.",
+    noDataReturned: "No data returned from server."
   }
 };

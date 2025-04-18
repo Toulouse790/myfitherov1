@@ -119,7 +119,7 @@ export const GenerateWorkoutDialog = ({
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm font-medium">{t("workouts.duration")}</span>
-                <span className="text-sm">{duration} {t("common.min")}</span>
+                <span className="text-sm">{duration} {t("workouts.min")}</span>
               </div>
               <Slider
                 value={[duration]}
