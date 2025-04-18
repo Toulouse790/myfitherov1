@@ -18,7 +18,9 @@ const Sleep = () => {
       <div className="container mx-auto p-4 pb-24 space-y-6">
         <div className="flex items-center gap-3 mb-6">
           <Moon className="w-6 h-6 text-blue-500" />
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">{t("sleep.title")}</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+            {t("sleep.title")}
+          </h1>
         </div>
 
         <Tabs defaultValue="tracker" className="space-y-4">
