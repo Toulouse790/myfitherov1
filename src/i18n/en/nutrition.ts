@@ -8,6 +8,8 @@ export const nutrition = {
   foodJournal: "Food Journal",
   todaysMeals: "Today's Meals",
   addMeal: "Add Meal",
+  addFood: "Add Food",
+  scan: "Scan",
   cheatMeal: "Cheat Meal",
   mealAdded: "Meal Added",
   mealAddedSuccess: "Meal has been added successfully",

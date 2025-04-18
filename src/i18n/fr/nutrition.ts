@@ -8,6 +8,8 @@ export const nutrition = {
   foodJournal: "Journal alimentaire",
   todaysMeals: "Repas d'aujourd'hui",
   addMeal: "Ajouter un repas",
+  addFood: "Ajouter un aliment",
+  scan: "Scanner",
   cheatMeal: "Repas libre",
   mealAdded: "Repas ajouté",
   mealAddedSuccess: "Le repas a été ajouté avec succès",

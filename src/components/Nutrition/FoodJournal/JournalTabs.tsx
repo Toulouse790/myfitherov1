@@ -5,6 +5,7 @@ import { FoodEntryList } from "../FoodEntryList";
 import { FoodEntry } from "@/types/food";
 import { Apple, Coffee, Sandwich, Pizza, UtensilsCrossed, CalendarCheck } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface JournalTabsProps {
   entries: FoodEntry[];
@@ -19,14 +20,15 @@ export const JournalTabs = ({
 }: JournalTabsProps) => {
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState("all");
+  const { t } = useLanguage();
   
   const mealTypes = [
-    { value: "all", label: "Tous", icon: CalendarCheck },
-    { value: "breakfast", label: "Petit déj", icon: Coffee },
-    { value: "morning_snack", label: "Collation", icon: Apple },
-    { value: "lunch", label: "Déjeuner", icon: Sandwich },
-    { value: "afternoon_snack", label: "Goûter", icon: Apple },
-    { value: "dinner", label: "Dîner", icon: Pizza }
+    { value: "all", label: t("common.all", { fallback: "Tous" }), icon: CalendarCheck },
+    { value: "breakfast", label: t("nutrition.mealTypes.breakfast", { fallback: "Petit déj" }), icon: Coffee },
+    { value: "morning_snack", label: t("nutrition.mealTypes.morning_snack", { fallback: "Collation" }), icon: Apple },
+    { value: "lunch", label: t("nutrition.mealTypes.lunch", { fallback: "Déjeuner" }), icon: Sandwich },
+    { value: "afternoon_snack", label: t("nutrition.mealTypes.afternoon_snack", { fallback: "Goûter" }), icon: Apple },
+    { value: "dinner", label: t("nutrition.mealTypes.dinner", { fallback: "Dîner" }), icon: Pizza }
   ];
 
   // Filtrer les entrées en fonction de l'onglet actif

@@ -4,7 +4,7 @@ import { JournalHeader } from "./JournalHeader";
 import { JournalTabs } from "./JournalTabs";
 import { useFoodJournal } from "@/hooks/food-journal/use-food-journal";
 import { useToast } from "@/hooks/use-toast";
-import { FoodEntry } from "@/types/food";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const FoodJournal = () => {
   const { 
@@ -16,20 +16,21 @@ export const FoodJournal = () => {
   } = useFoodJournal();
   
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleScanBarcode = async (barcode: string) => {
     try {
       const result = await handleBarcodeScan(barcode);
       if (result) {
         toast({
-          title: "Produit trouvé",
-          description: `${result.name || 'Produit'} a été ajouté au journal`,
+          title: t("nutrition.productFound"),
+          description: t("nutrition.mealAddedSuccess"),
         });
         return true;
       } else {
         toast({
-          title: "Produit non trouvé",
-          description: "Essayez d'ajouter ce produit manuellement",
+          title: t("nutrition.productNotFound"),
+          description: t("nutrition.errorAddingMeal"),
           variant: "destructive",
         });
         return false;
@@ -37,8 +38,8 @@ export const FoodJournal = () => {
     } catch (error) {
       console.error("Error scanning barcode:", error);
       toast({
-        title: "Erreur de scan",
-        description: "Une erreur s'est produite lors du scan",
+        title: t("nutrition.scanningError"),
+        description: t("common.error"),
         variant: "destructive",
       });
       return false;

@@ -43,7 +43,7 @@ export const MealSection = ({
           const ingredientsList = generatedMeal.quantities
             .map(q => `${q.item}: ${q.amount}`)
             .join('\n');
-          mealEntry.notes = `${mealEntry.notes}\n\nIngrédients:\n${ingredientsList}`;
+          mealEntry.notes = `${mealEntry.notes}\n\n${t("nutrition.dietary.ingredients", { fallback: "Ingrédients" })}:\n${ingredientsList}`;
         }
 
         console.log("Inserting meal entry:", mealEntry);
@@ -58,19 +58,19 @@ export const MealSection = ({
         }
 
         if (!data || data.length === 0) {
-          throw new Error(t("nutrition.errors.noDataReturned", { fallback: "Aucune donnée retournée du serveur." }));
+          throw new Error(t("nutrition.errors.noDataReturned"));
         }
 
         await refetchEntries();
 
         toast({
-          title: t("nutrition.mealValidated", { fallback: "Repas validé" }),
-          description: t("nutrition.mealAddedToJournal", { fallback: "Le repas a été ajouté à votre journal et vos objectifs ont été mis à jour" }),
+          title: t("nutrition.mealValidated"),
+          description: t("nutrition.mealAddedToJournal"),
         });
       } else if (status === 'skipped') {
         toast({
-          title: t("nutrition.mealSkipped", { fallback: "Repas non pris" }),
-          description: t("nutrition.mealMarkedAsSkipped", { fallback: "Le repas a été marqué comme non pris" }),
+          title: t("nutrition.mealSkipped"),
+          description: t("nutrition.mealMarkedAsSkipped"),
         });
       }
 
@@ -79,7 +79,7 @@ export const MealSection = ({
       console.error('Error updating meal status:', error);
       toast({
         title: t("common.error"),
-        description: t("nutrition.errorUpdatingMealStatus", { fallback: "Impossible de mettre à jour le statut du repas" }),
+        description: t("nutrition.errorUpdatingMealStatus"),
         variant: "destructive",
       });
     }
