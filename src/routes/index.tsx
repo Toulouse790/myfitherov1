@@ -9,13 +9,15 @@ import { RequireAdmin } from "@/components/Auth/RequireAdmin";
 import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
 import { debugLogger } from "@/utils/debug-logger";
 import { HomeDashboard } from "@/composants/Maison/HomeDashboard";
-import { withSuspense, Loading } from "@/utils/route-utils";
 
 import { authRoutes } from "./authRoutes";
 import { profileRoutes } from "./profileRoutes";
 import { workoutRoutes } from "./workoutRoutes";
 import { healthRoutes } from "./healthRoutes";
 import { dashboardRoutes } from "./dashboardRoutes";
+
+// Importer les utilitaires depuis un fichier externe au lieu de les définir ici
+import { withSuspense, Loading } from "@/utils/route-utils";
 
 const Admin = lazy(() => import("@/pages/Admin"));
 
