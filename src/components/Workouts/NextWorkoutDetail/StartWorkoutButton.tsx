@@ -10,6 +10,7 @@ interface StartWorkoutButtonProps {
 export const StartWorkoutButton = ({ onClick }: StartWorkoutButtonProps) => {
   const handleClick = () => {
     debugLogger.log("StartWorkoutButton", "Bouton Commencer cliqué");
+    debugLogger.log("StartWorkoutButton", "Démarrage de la navigation vers la page de session");
     onClick();
   };
 

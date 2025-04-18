@@ -9,6 +9,7 @@ import { ChevronRight, Clock, DumbbellIcon } from "lucide-react";
 import { ExerciseDetail } from "./WorkoutSession/ExerciseDetail";
 import { useWorkoutSession } from "./WorkoutSession/useWorkoutSession";
 import { debugLogger } from "@/utils/debug-logger";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface WorkoutSessionProps {
   sessionId?: string;
@@ -17,6 +18,8 @@ interface WorkoutSessionProps {
 export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     loading,
     session,
@@ -34,6 +37,19 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
     workoutStats,
     handleFinishWorkout
   } = useWorkoutSession();
+
+  // Vérification et redirection pour les anciennes URL
+  useEffect(() => {
+    if (location.pathname.startsWith('/workout-session/') && sessionId) {
+      debugLogger.log("WorkoutSession", "Détection d'un ancien format d'URL, redirection:", {
+        from: location.pathname,
+        to: `/workouts/session/${sessionId}`
+      });
+      navigate(`/workouts/session/${sessionId}`, { replace: true });
+    }
+  }, [location, sessionId, navigate]);
+
+  debugLogger.log("WorkoutSession", "Rendu du composant avec sessionId:", sessionId);
 
   if (loading) {
     return (

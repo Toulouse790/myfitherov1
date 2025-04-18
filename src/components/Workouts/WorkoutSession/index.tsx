@@ -10,9 +10,14 @@ import { SessionHeader } from "./SessionHeader";
 import { CurrentExerciseCard } from "./CurrentExerciseCard";
 import { FinishWorkoutButton } from "./FinishWorkoutButton";
 import { WorkoutSummaryDialog } from "../NextWorkoutDetail/WorkoutSummaryDialog";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const WorkoutSession = () => {
   const { t } = useLanguage();
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     loading,
     session,
@@ -30,6 +35,18 @@ export const WorkoutSession = () => {
     workoutStats,
     handleFinishWorkout
   } = useWorkoutSession();
+
+  // Vérification et redirection pour les URL non conformes
+  useEffect(() => {
+    if (location.pathname.startsWith('/workout-session/')) {
+      const sessionId = location.pathname.split('/workout-session/')[1];
+      debugLogger.log("WorkoutSession/index", "Redirection depuis ancien format d'URL:", {
+        from: location.pathname,
+        to: `/workouts/session/${sessionId}`
+      });
+      navigate(`/workouts/session/${sessionId}`, { replace: true });
+    }
+  }, [location, navigate]);
 
   if (loading) {
     return <LoadingState />;

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface WorkoutListProps {
   workouts: WorkoutData[];
@@ -33,7 +34,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
     }
 
     try {
-      console.log("Création de la session avec les exercices:", workout.exercises);
+      debugLogger.log("WorkoutList", "Création de la session avec les exercices:", workout.exercises);
       const { data: session, error } = await supabase
         .from('workout_sessions')
         .insert([
@@ -49,7 +50,7 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
         .single();
 
       if (error) {
-        console.error('Erreur lors de la création de la session:', error);
+        debugLogger.error('WorkoutList', 'Erreur lors de la création de la session:', error);
         toast({
           title: t("common.error"),
           description: t("workouts.errors.sessionCreationFailed"),
@@ -58,14 +59,15 @@ export const WorkoutList = ({ workouts }: WorkoutListProps) => {
         return;
       }
 
-      console.log("Session créée avec succès:", session);
+      debugLogger.log("WorkoutList", "Session créée avec succès:", session);
 
       if (session) {
-        // Correction du chemin de navigation pour qu'il corresponde à la structure attendue
+        // Assurer la cohérence du chemin de navigation
+        debugLogger.log("WorkoutList", "Navigation vers la session créée:", session.id);
         navigate(`/workouts/session/${session.id}`);
       }
     } catch (error) {
-      console.error('Error creating workout session:', error);
+      debugLogger.error('WorkoutList', 'Error creating workout session:', error);
       toast({
         title: t("common.error"),
         description: t("workouts.errors.sessionCreationError"),

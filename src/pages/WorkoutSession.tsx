@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dumbbell, AlertCircle } from "lucide-react";
@@ -11,6 +11,7 @@ import { WorkoutHeader } from "@/components/Workouts/WorkoutSession/WorkoutHeade
 import { ExerciseNavigation } from "@/components/Workouts/WorkoutSession/ExerciseNavigation";
 import { ExerciseTimeline } from "@/components/Workouts/WorkoutSession/ExerciseTimeline";
 import { NextExercisePreview } from "@/components/Workouts/WorkoutSession/NextExercisePreview";
+import { debugLogger } from "@/utils/debug-logger";
 
 export default function WorkoutSession() {
   const { sessionId } = useParams();
@@ -20,6 +21,23 @@ export default function WorkoutSession() {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [estimatedCalories, setEstimatedCalories] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (window.location.pathname === '/workout-session' || window.location.pathname === '/workout-session/') {
+      debugLogger.log("WorkoutSession (page)", "Redirection depuis la racine de WorkoutSession vers workouts");
+      navigate('/workouts');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (window.location.pathname.startsWith('/workout-session/') && sessionId) {
+      debugLogger.log("WorkoutSession (page)", "Redirection depuis l'ancien format d'URL vers le nouveau", {
+        old: window.location.pathname,
+        new: `/workouts/session/${sessionId}`
+      });
+      navigate(`/workouts/session/${sessionId}`, { replace: true });
+    }
+  }, [sessionId, navigate]);
 
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -44,11 +62,11 @@ export default function WorkoutSession() {
         if (error) throw error;
 
         if (session?.exercises) {
-          console.log("Exercices chargés:", session.exercises);
+          debugLogger.log("WorkoutSession (page)", "Exercices chargés:", session.exercises);
           setExercises(session.exercises);
         }
       } catch (error) {
-        console.error('Error fetching session:', error);
+        debugLogger.error('WorkoutSession (page)', 'Error fetching session:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger la séance",
@@ -172,7 +190,6 @@ export default function WorkoutSession() {
           </Card>
         </motion.div>
 
-        {/* On n'affiche le prochain exercice que si ce n'est pas une séance cardio */}
         {currentExerciseIndex < exercises.length - 1 && exercises[0] !== "Course à pied" && 
          exercises[0] !== "Vélo stationnaire" && exercises[0] !== "Rameur" && exercises[0] !== "Corde à sauter" && (
           <NextExercisePreview nextExercise={exercises[currentExerciseIndex + 1]} />

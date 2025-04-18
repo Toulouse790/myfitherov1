@@ -72,8 +72,8 @@ export const WorkoutCard = ({
         setIsStarting(false);
       }
     } else if (sessionId) {
-      // Correction du chemin de navigation pour qu'il corresponde à la structure attendue
       debugLogger.log("WorkoutCard", "Navigation vers session avec ID:", sessionId);
+      // Utiliser strictement le format /workouts/session/{id} pour toutes les navigations
       navigate(`/workouts/session/${sessionId}`);
     } else if (onSelect) {
       onSelect();
