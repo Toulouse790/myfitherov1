@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -69,7 +69,7 @@ export const useWorkoutSession = () => {
           if (data.exercise_progress && Object.keys(data.exercise_progress).length > 0) {
             setExerciseProgress(data.exercise_progress);
           } else if (data.exercises && data.exercises.length > 0) {
-            const defaultProgress = data.exercises.reduce((acc, exercise) => {
+            const defaultProgress = data.exercises.reduce((acc: any, exercise: string) => {
               acc[exercise] = {
                 completed: false,
                 sets: 3,

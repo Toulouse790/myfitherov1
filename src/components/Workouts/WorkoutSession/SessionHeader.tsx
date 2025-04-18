@@ -1,77 +1,45 @@
 
-import { Clock } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { XCircle } from "lucide-react";
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
+import { Clock, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface SessionHeaderProps {
-  sessionName: string | null;
+  sessionName?: string;
   sessionDuration: number;
   formatDuration: (seconds: number) => string;
   totalProgress: number;
-  onFinishWorkout?: () => Promise<void>;
+  onFinishWorkout: () => void;
 }
 
-export const SessionHeader = ({ 
-  sessionName,
-  sessionDuration, 
-  formatDuration, 
+export const SessionHeader = ({
+  sessionName = "Séance d'entraînement",
+  sessionDuration,
+  formatDuration,
   totalProgress,
-  onFinishWorkout
+  onFinishWorkout,
 }: SessionHeaderProps) => {
-  const { t } = useLanguage();
-  
+  const navigate = useNavigate();
+
   return (
-    <div className="mb-6">
-      <div className="flex justify-between items-center mb-2">
-        <h1 className="text-2xl font-bold">
-          {sessionName || "Programme du jour"}
-        </h1>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center text-sm text-muted-foreground">
+    <div className="bg-card rounded-lg p-4 mb-6 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold">{sessionName}</h1>
+          <div className="flex items-center text-muted-foreground">
             <Clock className="h-4 w-4 mr-1" />
             <span>{formatDuration(sessionDuration)}</span>
           </div>
-          
-          {onFinishWorkout && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline" size="sm" className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600">
-                  <XCircle className="h-4 w-4 mr-1" />
-                  {t("workouts.finishWorkout")}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("workouts.finishWorkout")}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("common.confirmation") || "Êtes-vous sûr de vouloir terminer cet entraînement ?"}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-                  <AlertDialogAction onClick={onFinishWorkout}>{t("common.confirm")}</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
         </div>
+        
+        <Button variant="outline" size="sm" onClick={() => navigate('/workouts')}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour
+        </Button>
       </div>
       
       <div className="space-y-1">
-        <div className="flex justify-between text-sm mb-1">
+        <div className="flex justify-between text-sm">
           <span>Progression</span>
           <span>{totalProgress}%</span>
         </div>

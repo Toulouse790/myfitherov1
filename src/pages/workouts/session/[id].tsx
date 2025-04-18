@@ -31,9 +31,9 @@ export default function WorkoutSessionPage() {
       <div className="container max-w-4xl mx-auto p-4">
         <VerifyConnection />
         <h1 className="text-2xl font-bold mb-4">
-          {t("workouts.training_session")}
+          {t("workouts.training_session") || "Séance d'entraînement"}
         </h1>
-        <WorkoutSession sessionId={id} />
+        <WorkoutSession />
       </div>
     </div>
   );

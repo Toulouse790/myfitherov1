@@ -70,12 +70,12 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
         <CardContent className="pt-6">
           <div className="text-center py-8">
             <DumbbellIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold mb-2">{t("workouts.sessionNotFound") || "Session non trouvée"}</h2>
+            <h2 className="text-xl font-semibold mb-2">Session non trouvée</h2>
             <p className="text-muted-foreground mb-4">
-              {t("workouts.sessionNotFoundDescription") || "La session d'entraînement demandée n'existe pas ou n'est plus disponible."}
+              La session d'entraînement demandée n'existe pas ou n'est plus disponible.
             </p>
             <Button onClick={() => window.history.back()}>
-              {t("common.goBack") || "Retour"}
+              Retour
             </Button>
           </div>
         </CardContent>
@@ -97,7 +97,7 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t("workouts.trainingSession") || "Séance d'entraînement"}</h1>
+        <h1 className="text-2xl font-bold">Séance d'entraînement</h1>
         <div className="flex items-center text-lg font-mono">
           <Clock className="mr-2 h-5 w-5" />
           <span>{formatDuration(sessionDuration)}</span>
@@ -124,11 +124,11 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
                   <div className="text-sm text-muted-foreground">
                     {isCompleted ? (
                       <span className="text-green-600 dark:text-green-500">
-                        {t("workouts.completed") || "Terminé"} • {completedSets} {t("workouts.setsCompleted") || "séries complétées"}
+                        Terminé • {completedSets} séries complétées
                       </span>
                     ) : (
                       <span>
-                        {totalSets} {t("workouts.sets") || "séries"}
+                        {totalSets} séries
                       </span>
                     )}
                   </div>
@@ -146,28 +146,28 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
         variant="default"
         size="lg"
       >
-        {t("workouts.completeWorkout") || "Terminer l'entraînement"}
+        Terminer l'entraînement
       </Button>
 
       {showSummaryDialog && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardContent className="p-6">
-              <h2 className="text-xl font-bold mb-4">{t("workouts.sessionSummary") || "Résumé de la séance"}</h2>
+              <h2 className="text-xl font-bold mb-4">Résumé de la séance</h2>
               
               <div className="space-y-4">
                 <div className="flex justify-between py-2 border-b">
-                  <span>{t("workouts.duration") || "Durée"}:</span>
-                  <span className="font-medium">{workoutStats.duration} {t("workouts.minutes") || "min"}</span>
+                  <span>Durée:</span>
+                  <span className="font-medium">{workoutStats.duration} min</span>
                 </div>
                 
                 <div className="flex justify-between py-2 border-b">
-                  <span>{t("workouts.caloriesBurned") || "Calories brûlées"}:</span>
+                  <span>Calories brûlées:</span>
                   <span className="font-medium">{workoutStats.totalCalories} kcal</span>
                 </div>
                 
                 <div className="flex justify-between py-2 border-b">
-                  <span>{t("workouts.exercisesCompleted") || "Exercices terminés"}:</span>
+                  <span>Exercices terminés:</span>
                   <span className="font-medium">
                     {Object.values(exerciseProgress).filter(ex => ex.completed).length} / {session?.exercises?.length || 0}
                   </span>
@@ -180,13 +180,13 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
                   className="flex-1"
                   onClick={() => setShowSummaryDialog(false)}
                 >
-                  {t("common.cancel") || "Annuler"}
+                  Annuler
                 </Button>
                 <Button 
                   className="flex-1"
                   onClick={handleFinishWorkout}
                 >
-                  {t("common.confirm") || "Confirmer"}
+                  Confirmer
                 </Button>
               </div>
             </CardContent>

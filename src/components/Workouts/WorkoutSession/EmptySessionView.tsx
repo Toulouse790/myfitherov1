@@ -17,12 +17,12 @@ export const EmptySessionView = () => {
         <Card className="p-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <AlertCircle className="h-12 w-12 text-muted-foreground" />
-            <h2 className="text-xl font-semibold">{t("workouts.noExercisesFound")}</h2>
+            <h2 className="text-xl font-semibold">Session non trouvée</h2>
             <p className="text-muted-foreground">
-              {t("workouts.sessionEmpty")}
+              Cette séance d'entraînement ne contient aucun exercice ou n'existe pas.
             </p>
             <Button onClick={() => navigate('/workouts')}>
-              {t("workouts.backToWorkouts")}
+              Retour aux entraînements
             </Button>
           </div>
         </Card>

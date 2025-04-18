@@ -1,46 +1,53 @@
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Dumbbell } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { PlayCircle, CheckCircle } from "lucide-react";
 
 interface CurrentExerciseCardProps {
   currentExercise: string;
-  exerciseProgress: Record<string, {
-    totalSets: number;
-  }>;
+  exerciseProgress: Record<string, any>;
   onStartExercise: () => void;
 }
 
 export const CurrentExerciseCard = ({
   currentExercise,
   exerciseProgress,
-  onStartExercise
+  onStartExercise,
 }: CurrentExerciseCardProps) => {
-  const { t } = useLanguage();
-  
+  const isCompleted = exerciseProgress[currentExercise]?.completed;
+
   return (
-    <Card className="mb-6 overflow-hidden">
-      <div className="p-6">
-        <h2 className="text-xl font-semibold mb-4">{t("workouts.currentExercise")}</h2>
-        <div className="bg-secondary/10 p-4 rounded-lg flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <Dumbbell className="w-5 h-5 text-primary" />
+    <Card className="mb-6">
+      <CardContent className="p-4">
+        <h2 className="text-lg font-medium mb-4">Exercice actuel</h2>
+        
+        <div className="p-4 border border-border rounded-lg bg-muted/10">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h3 className="font-medium text-lg">{currentExercise}</h3>
+              <p className="text-sm text-muted-foreground">
+                {isCompleted 
+                  ? "Terminé" 
+                  : `${exerciseProgress[currentExercise]?.totalSets || 3} séries prévues`}
+              </p>
+            </div>
+            
+            <Button onClick={onStartExercise}>
+              {isCompleted ? (
+                <>
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Revoir
+                </>
+              ) : (
+                <>
+                  <PlayCircle className="mr-2 h-4 w-4" />
+                  Commencer
+                </>
+              )}
+            </Button>
           </div>
-          <div className="flex-1">
-            <p className="font-medium">{currentExercise}</p>
-            <p className="text-sm text-muted-foreground">
-              {exerciseProgress[currentExercise]?.totalSets || 3} {t("workouts.sets")}
-            </p>
-          </div>
-          <Button 
-            onClick={onStartExercise}
-            className="ml-auto"
-          >
-            {t("workouts.start")}
-          </Button>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };

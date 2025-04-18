@@ -58,7 +58,7 @@ export const WorkoutSession = () => {
   }
 
   // Calculer la progression globale
-  const completedExercises = Object.values(exerciseProgress).filter(ex => ex.completed).length;
+  const completedExercises = Object.values(exerciseProgress).filter((ex: any) => ex.completed).length;
   const totalProgress = Math.round((completedExercises / session.exercises.length) * 100);
   
   // L'exercice actuel
@@ -83,7 +83,7 @@ export const WorkoutSession = () => {
             exerciseName={currentExercise}
             onComplete={handleExerciseComplete}
             onBack={() => setShowExerciseDetail(false)}
-            initialSets={exerciseProgress[currentExercise]?.totalSets}
+            initialSets={exerciseProgress[currentExercise]?.totalSets || 3}
           />
         ) : (
           <>
