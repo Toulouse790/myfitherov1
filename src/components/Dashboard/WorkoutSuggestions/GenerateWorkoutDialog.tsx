@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
@@ -49,7 +48,7 @@ export interface GenerateWorkoutDialogProps {
 export const GenerateWorkoutDialog = ({
   isOpen,
   onClose,
-  initialDuration = 30,
+  initialDuration = 45,
   initialIntensity = 50,
   workoutType = ""
 }: GenerateWorkoutDialogProps) => {
@@ -87,28 +86,8 @@ export const GenerateWorkoutDialog = ({
     }
   };
 
-  const handleRegenerate = async () => {
-    setGeneratedWorkout(null);
-    await handleGenerate();
-  };
-
-  const handleStartWorkout = async () => {
-    if (!generatedWorkout || !generatedWorkout.exercises) return;
-    
-    try {
-      await startWorkout(undefined, generatedWorkout.exercises);
-    } catch (error) {
-      console.error('Erreur lors du démarrage de la séance:', error);
-    }
-  };
-
-  const handleClose = () => {
-    setGeneratedWorkout(null);
-    onClose();
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md md:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t("workouts.generateWorkoutTitle")}</DialogTitle>
@@ -155,13 +134,8 @@ export const GenerateWorkoutDialog = ({
             />
           </div>
         ) : (
-          <div className="space-y-6 py-4">
-            <GeneratedWorkoutPreview workout={generatedWorkout} />
-            
-            <WorkoutActions
-              onConfirm={handleStartWorkout}
-              onRegenerate={handleRegenerate}
-            />
+          <div>
+            {/* Contenu pour l'aperçu de l'entraînement généré */}
           </div>
         )}
         
