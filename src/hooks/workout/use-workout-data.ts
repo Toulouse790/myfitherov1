@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface WorkoutStats {
   totalWeight: number;
@@ -19,18 +21,17 @@ export const useWorkoutData = (sessionId: string | null) => {
   });
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
-  // Calculate calories based on exercise intensity
   const calculateCalories = (weight: number, reps: number): number => {
-    const MET = 5.0; // Metabolic Equivalent for moderate weight training
-    const duration = (reps * 3) / 60; // Assuming 3 seconds per rep
-    return Math.round((MET * 3.5 * 80 * duration) / 200); // 80kg default weight
+    const MET = 5.0;
+    const duration = (reps * 3) / 60;
+    return Math.round((MET * 3.5 * 80 * duration) / 200);
   };
 
-  // Update stats when a set is completed
   const updateStats = async (weight: number, reps: number, exerciseName: string) => {
     if (!user) {
-      console.error('No user found when trying to update stats');
+      debugLogger.error('useWorkoutData', 'No user found when trying to update stats');
       return;
     }
 
@@ -42,17 +43,14 @@ export const useWorkoutData = (sessionId: string | null) => {
         caloriesBurned: prev.caloriesBurned + calculateCalories(weight, reps),
       };
 
-      // Store in localStorage for persistence
       localStorage.setItem(`workout_stats_${sessionId}`, JSON.stringify(newStats));
-      
       return newStats;
     });
 
     if (sessionId && user) {
       try {
-        // Update training stats
         const duration = Math.floor(stats.totalSets * 3 / 60);
-        const { error: statsError } = await supabase
+        const { data: statsData, error: statsError } = await supabase
           .from('training_stats')
           .insert({
             user_id: user.id,
@@ -60,42 +58,54 @@ export const useWorkoutData = (sessionId: string | null) => {
             session_duration_minutes: duration,
             muscle_groups_worked: ['biceps'],
             energy_level: 8,
-            perceived_difficulty: 'easy', // Valid values: 'easy', 'moderate', 'hard'
-          });
+            perceived_difficulty: 'easy',
+          })
+          .select()
+          .single();
 
         if (statsError) {
-          console.error('Error inserting training stats:', statsError);
+          debugLogger.error('useWorkoutData', 'Error inserting training stats:', statsError);
           throw statsError;
         }
 
-        // Update user's weight for this exercise
-        const { error: weightError } = await supabase
+        if (!statsData) {
+          throw new Error(t("workouts.errors.statsInsertFailed"));
+        }
+
+        const { data: weightData, error: weightError } = await supabase
           .from('user_exercise_weights')
           .upsert({
             user_id: user.id,
             exercise_name: exerciseName,
-            weight: weight
+            weight: weight,
+            last_used_weight: weight,
+            last_used_at: new Date().toISOString(),
           }, {
             onConflict: 'user_id,exercise_name'
-          });
+          })
+          .select()
+          .single();
 
         if (weightError) {
-          console.error('Error updating exercise weight:', weightError);
+          debugLogger.error('useWorkoutData', 'Error updating exercise weight:', weightError);
           throw weightError;
         }
 
+        if (!weightData) {
+          throw new Error(t("workouts.errors.weightUpdateFailed"));
+        }
+
       } catch (error) {
-        console.error('Error saving workout stats:', error);
+        debugLogger.error('useWorkoutData', 'Error saving workout stats:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de sauvegarder les statistiques",
+          title: t("common.error"),
+          description: t("workouts.errors.statsSaveFailed"),
           variant: "destructive",
         });
       }
     }
   };
 
-  // Load saved stats from localStorage on mount
   useEffect(() => {
     if (sessionId) {
       const savedStats = localStorage.getItem(`workout_stats_${sessionId}`);

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface UseSetManagementProps {
   sessionId: string | null;
@@ -22,6 +24,7 @@ export const useSetManagement = ({
   const [repsPerSet, setRepsPerSet] = useState<{ [key: number]: number }>({});
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const handleAddSet = async () => {
     if (!user) {
@@ -62,8 +65,8 @@ export const useSetManagement = ({
   ) => {
     if (!sessionId || !user) {
       toast({
-        title: "Erreur",
-        description: "Vous devez être connecté et avoir une session active pour enregistrer une série",
+        title: t("common.error"),
+        description: t("auth.signInRequired"),
         variant: "destructive"
       });
       throw new Error("Session ID or user missing");
@@ -73,7 +76,13 @@ export const useSetManagement = ({
     const newSetsCount = currentSets + 1;
     
     try {
-      const { error } = await supabase
+      debugLogger.log("useSetManagement", "Saving set", {
+        exerciseName,
+        setNumber: newSetsCount,
+        sessionId
+      });
+
+      const { data, error } = await supabase
         .from('exercise_sets')
         .insert({
           session_id: sessionId,
@@ -85,9 +94,18 @@ export const useSetManagement = ({
           perceived_difficulty: difficulty,
           notes: notes,
           calories_burned: calories
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        debugLogger.error("useSetManagement", "Database error saving set:", error);
+        throw error;
+      }
+
+      if (!data) {
+        throw new Error(t("workouts.errors.noDataReturned"));
+      }
 
       setCompletedSets(prev => ({
         ...prev,
@@ -102,17 +120,24 @@ export const useSetManagement = ({
       if (newSetsCount === 3) {
         setIsExerciseTransition(true);
         toast({
-          title: "Exercice terminé !",
-          description: "Repos de 90 secondes avant le prochain exercice.",
+          title: t("workouts.exerciseCompleted"),
+          description: t("workouts.restBeforeNext"),
         });
       } else {
         toast({
-          title: "Série complétée !",
-          description: `${calories} calories brûlées. Repos de 90 secondes.`,
+          title: t("workouts.setCompleted"),
+          description: t("workouts.caloriesBurned", { 
+            params: { calories: calories }
+          }),
         });
       }
     } catch (error) {
-      console.error('Error saving set data:', error);
+      debugLogger.error('useSetManagement', 'Error saving set data:', error);
+      toast({
+        title: t("common.error"),
+        description: t("workouts.errors.setSaveFailed"),
+        variant: "destructive",
+      });
       throw error;
     }
   };
