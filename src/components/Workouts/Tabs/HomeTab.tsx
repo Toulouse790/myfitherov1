@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, Footprints, LineChart, PlusCircle, Trophy } from "lucide-react";
+import { Dumbbell, Clock, Footprints, LineChart, PlusCircle, Trophy, Sparkles } from "lucide-react";
 import { RecommendedPrograms } from "@/components/Workouts/RecommendedPrograms";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SportPrograms } from "@/components/Workouts/SportPrograms";
@@ -16,9 +16,9 @@ export function HomeTab() {
       <div className="grid sm:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>{t("workouts.startSession")}</CardTitle>
+            <CardTitle>{t("workouts.createSession")}</CardTitle>
             <CardDescription>
-              {t("workouts.createNewSession")}
+              {t("workouts.createCustomSession")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center py-4">
@@ -26,11 +26,33 @@ export function HomeTab() {
           </CardContent>
           <CardFooter>
             <Button
-              onClick={() => navigate('/workouts/generate')}
+              onClick={() => navigate('/workouts/create')}
               className="w-full"
             >
               <PlusCircle className="h-4 w-4 mr-2" />
-              {t("workouts.newSession")}
+              {t("workouts.createMySession")}
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("workouts.generateSession")}</CardTitle>
+            <CardDescription>
+              {t("workouts.aiGeneratedSession")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center py-4">
+            <Sparkles className="h-16 w-16 text-primary/60" />
+          </CardContent>
+          <CardFooter>
+            <Button
+              onClick={() => navigate('/workouts/generate')}
+              className="w-full" 
+              variant="default"
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              {t("workouts.generateMySession")}
             </Button>
           </CardFooter>
         </Card>

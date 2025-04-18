@@ -1,3 +1,4 @@
+
 export const filterExercisesByMuscleGroup = (exercises: any[], muscleId: string) => {
   return exercises.filter(ex => {
     if (muscleId === "fullBody") return true;

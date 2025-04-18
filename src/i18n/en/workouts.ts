@@ -1,4 +1,3 @@
-
 export const workouts = {
   title: "Workouts",
   startWorkout: "Start Workout",
@@ -131,7 +130,6 @@ export const workouts = {
     noDataReturned: "No data returned from server.",
     saveWeightFailed: "Unable to save weight information."
   },
-  // New keys for EmptySessionView
   sessionNotFound: "Session not found",
   sessionEmptyDesc: "This workout session doesn't exist or doesn't contain any exercises.",
   createWorkout: "Create workout",
@@ -150,5 +148,13 @@ export const workouts = {
   suggestion_biceps: "Recommended biceps workout",
   suggestion_triceps: "Recommended triceps workout",
   suggestion_abs: "Recommended abs workout",
-  startAdaptedSession: "Start adapted session"
+  startAdaptedSession: "Start adapted session",
+  createSession: "Create Workout",
+  createCustomSession: "Design your workout by selecting muscle groups",
+  createMySession: "Create my workout",
+  generateSession: "Generate Workout",
+  generateMySession: "Generate my workout",
+  aiGeneratedSession: "Let AI create the perfect workout for you",
+  selectMuscleGroupFirst: "Please select a muscle group first",
+  createSessionWithSelectedMuscles: "Create workout with selected muscles"
 };

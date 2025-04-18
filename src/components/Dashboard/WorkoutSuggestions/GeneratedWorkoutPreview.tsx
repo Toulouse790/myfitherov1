@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Dumbbell, Flame, Clock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
+import { ExerciseDisplay } from "@/components/Workouts/shared/ExerciseDisplay";
 
 export interface GeneratedWorkoutPreviewProps {
   workout: {
@@ -61,19 +62,12 @@ export const GeneratedWorkoutPreview = ({ workout }: GeneratedWorkoutPreviewProp
       
       <div className="grid gap-3">
         {workout.exercises.map((exercise, index) => (
-          <Card key={index} className="p-4 hover:bg-accent/5 transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Dumbbell className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-medium">{exercise}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {sets} {t("workouts.sets")} • {reps} {t("workouts.reps")}
-                </p>
-              </div>
-            </div>
-          </Card>
+          <ExerciseDisplay 
+            key={index}
+            name={exercise}
+            sets={sets}
+            reps={reps}
+          />
         ))}
       </div>
     </div>

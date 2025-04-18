@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Header } from "@/components/Layout/Header";
 import { GenerateWorkoutDialog } from "@/components/Dashboard/WorkoutSuggestions/GenerateWorkoutDialog";
 import { useNavigate, useLocation } from "react-router-dom";
