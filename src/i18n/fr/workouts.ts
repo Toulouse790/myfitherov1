@@ -1,4 +1,3 @@
-
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Commencer l'entraînement",
@@ -112,5 +111,9 @@ export const workouts = {
   trainingSession: "Séance d'entraînement",
   filter: "Filtrer",
   exerciseLibrary: "Exercices disponibles",
+  sessionNotFound: "Session non trouvée",
+  sessionEmptyDesc: "Cette séance d'entraînement ne contient aucun exercice ou n'existe pas.",
+  createWorkout: "Créer un entraînement",
+  backToWorkouts: "Retour aux entraînements",
   noExercisesFound: "Aucun exercice trouvé"
 };
