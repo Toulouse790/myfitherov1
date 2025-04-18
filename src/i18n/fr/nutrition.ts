@@ -1,8 +1,8 @@
 
 export const nutrition = {
   title: "Nutrition",
-  overview: "Vue d'ensemble",
-  mealPlan: "Plan alimentaire",
+  overview: "Aperçu",
+  mealPlan: "Plan de repas",
   tracking: "Suivi",
   weeklyTracking: "Suivi hebdomadaire",
   foodJournal: "Journal alimentaire",
@@ -15,20 +15,20 @@ export const nutrition = {
   suggestedMeal: "Repas suggéré",
   suggestions: "Suggestions",
   goals: "Objectifs nutritionnels",
-  dailyStats: "Statistiques quotidiennes",
+  dailyStats: "Statistiques journalières",
   calories: "Calories",
   proteins: "Protéines",
   carbs: "Glucides",
   fats: "Lipides",
   remaining: "Restant",
   consumed: "Consommé",
-  target: "Cible",
-  generatePlan: "Générer un plan alimentaire",
+  target: "Objectif",
+  generatePlan: "Générer un plan de repas",
   mealTypes: {
-    breakfast: "Petit déjeuner",
-    morning_snack: "Collation matinale",
+    breakfast: "Petit-déjeuner",
+    morning_snack: "Collation matinale", 
     lunch: "Déjeuner",
-    afternoon_snack: "Collation de l'après-midi",
+    afternoon_snack: "Collation après-midi",
     dinner: "Dîner"
   },
   dietary: {
@@ -45,15 +45,15 @@ export const nutrition = {
   scanningError: "Erreur de scan",
   cameraAccessError: "Impossible d'accéder à la caméra",
   noCameraDetected: "Aucune caméra détectée",
-  placeBarcodeInFront: "Placez le code-barres face à la caméra",
-  foodImageRecognition: "Reconnaissance d'image",
-  takePhoto: "Prendre une photo du plat",
+  placeBarcodeInFront: "Placez le code-barres devant la caméra",
+  foodImageRecognition: "Reconnaissance d'aliments",
+  takePhoto: "Prendre une photo de l'aliment",
   shoppingList: "Liste de courses",
   generateShoppingList: "Générer une liste de courses",
   addToShoppingList: "Ajouter à la liste",
-  mealDelivery: "Services de livraison de repas",
+  mealDelivery: "Livraison de repas",
   mealDeliveryIntegration: "Commander des ingrédients",
-  waterTracking: "Suivi de l'hydratation",
+  waterTracking: "Suivi de l'eau",
   addWater: "Ajouter de l'eau",
   waterGoal: "Objectif quotidien",
   aiRecommendations: "Recommandations IA",
@@ -63,5 +63,13 @@ export const nutrition = {
   favoriteRecipes: "Recettes favorites",
   saveRecipe: "Enregistrer la recette",
   mealReminder: "Rappel de repas",
-  dontForgetMeal: "N'oubliez pas de valider votre {mealType} !"
+  dontForgetMeal: "N'oubliez pas de valider votre {mealType} !",
+  mealValidated: "Repas validé",
+  mealAddedToJournal: "Le repas a été ajouté à votre journal et vos objectifs ont été mis à jour",
+  mealSkipped: "Repas non pris",
+  mealMarkedAsSkipped: "Le repas a été marqué comme non pris",
+  errorUpdatingMealStatus: "Impossible de mettre à jour le statut du repas",
+  errors: {
+    noDataReturned: "Aucune donnée retournée du serveur."
+  }
 };

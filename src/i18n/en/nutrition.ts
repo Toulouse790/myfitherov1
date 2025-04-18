@@ -63,5 +63,13 @@ export const nutrition = {
   favoriteRecipes: "Favorite Recipes",
   saveRecipe: "Save Recipe",
   mealReminder: "Meal Reminder",
-  dontForgetMeal: "Don't forget to log your {mealType}!"
+  dontForgetMeal: "Don't forget to log your {mealType}!",
+  mealValidated: "Meal validated",
+  mealAddedToJournal: "The meal has been added to your journal and your goals have been updated",
+  mealSkipped: "Meal skipped",
+  mealMarkedAsSkipped: "The meal has been marked as skipped",
+  errorUpdatingMealStatus: "Unable to update meal status",
+  errors: {
+    noDataReturned: "No data returned from server."
+  }
 };
