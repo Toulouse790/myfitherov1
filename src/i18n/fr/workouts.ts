@@ -82,7 +82,6 @@ export const workouts = {
   allMuscleGroups: "Tous les groupes musculaires",
   trainingOf: "Entraînement de",
   exercises: "exercices",
-  kcal: "kcal",
   sportPrograms: "Programmes sportifs",
   sportSpecific: "Programme sportif spécifique",
   programsForYourSport: "Programmes d'entraînement adaptés à votre sport et à votre position",
@@ -92,7 +91,7 @@ export const workouts = {
   duration: "Durée",
   intensity: "Intensité",
   todayDate: "Aujourd'hui",
-  generateWorkout: "Générer un entraînement",
+  generateSession: "Générer une session",
   generationLoading: "Génération en cours...",
   generateWorkoutTitle: "Générer un entraînement",
   generating: "Génération en cours...",
@@ -101,7 +100,6 @@ export const workouts = {
   trackProgressDescription: "Suivez votre progression et améliorez vos performances",
   activeSession: "Session active",
   continueSession: "Continuer la session",
-  generateSession: "Générer une session",
   close: "Fermer",
   restBeforeNextExercise: "Repos avant le prochain exercice",
   caloriesBurned: "Vous avez brûlé {calories} calories",
@@ -134,7 +132,6 @@ export const workouts = {
   finishWorkout: "Terminer l'entraînement",
   sessionSaved: "Votre séance a été enregistrée avec succès",
   savingError: "Erreur lors de l'enregistrement de la séance",
-  // Nouvelles clés pour la page EmptySessionView
   sessionNotFound: "Session introuvable",
   sessionEmptyDesc: "Cette session d'entraînement n'existe pas ou ne contient aucun exercice.",
   createWorkout: "Créer un entraînement",
@@ -153,5 +150,6 @@ export const workouts = {
   suggestion_biceps: "Entraînement de biceps recommandé",
   suggestion_triceps: "Entraînement de triceps recommandé",
   suggestion_abs: "Entraînement d'abdominaux recommandé",
-  startAdaptedSession: "Démarrer la séance adaptée"
+  startAdaptedSession: "Démarrer la séance adaptée",
+  library: "Bibliothèque"
 };
