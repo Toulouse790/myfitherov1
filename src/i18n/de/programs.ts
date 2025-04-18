@@ -1,3 +1,4 @@
+
 export const programs = {
   sportSpecificPrograms: "Sportartspezifische Programme",
   sportSpecificDescription: "Trainingsprogramme, die auf Ihre Sportart und Position zugeschnitten sind",
@@ -31,5 +32,7 @@ export const programs = {
   programStarted: "Programm gestartet",
   programStartedDescription: "Das Programm {name} wurde zu Ihrem Trainingsplan hinzugefügt",
   programGenerated: "Programm generiert",
-  programGeneratedDescription: "Das Programm {name} wurde erfolgreich generiert"
+  programGeneratedDescription: "Das Programm {name} wurde erfolgreich generiert",
+  noPrograms: "Keine Programme verfügbar",
+  noProgramsDescription: "Derzeit sind keine Programme verfügbar"
 };

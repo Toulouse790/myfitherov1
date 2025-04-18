@@ -32,5 +32,7 @@ export const programs = {
   programStarted: "Programme démarré",
   programStartedDescription: "Le programme {name} a été ajouté à votre planning d'entraînement",
   programGenerated: "Programme généré",
-  programGeneratedDescription: "Le programme {name} a été généré avec succès"
+  programGeneratedDescription: "Le programme {name} a été généré avec succès",
+  noPrograms: "Aucun programme disponible",
+  noProgramsDescription: "Aucun programme n'est disponible pour le moment"
 };

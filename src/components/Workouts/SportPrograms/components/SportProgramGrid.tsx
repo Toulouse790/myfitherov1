@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ProgramCard } from "./ProgramCard";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -55,6 +56,12 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
 
   const handleStartProgram = (program: SportProgram) => {
     debugLogger.log("SportProgramGrid", "Démarrage du programme:", program.name);
+    
+    toast({
+      title: t("programs.programStarted"),
+      description: t("programs.programStartedDescription", { name: program.name }),
+    });
+    
     onSelectProgram(program);
   };
 
