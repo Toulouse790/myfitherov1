@@ -17,8 +17,8 @@ export const useSessionActions = () => {
   const createWorkoutSession = async (exercises: string[] = ["Squats", "Développé couché", "Soulevé de terre"]) => {
     if (!user) {
       toast({
-        title: t("common.error") || "Erreur",
-        description: t("auth.signInRequired") || "Vous devez être connecté pour créer une séance d'entraînement",
+        title: t("common.error"),
+        description: t("auth.signInRequired"),
         variant: "destructive",
       });
       return null;
@@ -56,8 +56,8 @@ export const useSessionActions = () => {
       debugLogger.log("useSessionActions", "Session créée avec succès:", data);
 
       toast({
-        title: t("workouts.sessionCreated") || "Séance créée",
-        description: t("workouts.readyToStart") || "Votre séance est prête à commencer",
+        title: t("workouts.sessionCreated"),
+        description: t("workouts.readyToStart"),
       });
 
       // Rediriger vers la nouvelle séance
@@ -70,8 +70,8 @@ export const useSessionActions = () => {
     } catch (error) {
       debugLogger.error("useSessionActions", "Erreur lors de la création de la séance:", error);
       toast({
-        title: t("common.error") || "Erreur",
-        description: t("workouts.sessionCreateFailed") || "Impossible de créer la séance d'entraînement",
+        title: t("common.error"),
+        description: t("workouts.sessionCreateFailed"),
         variant: "destructive",
       });
       return null;
@@ -93,7 +93,7 @@ export const useSessionActions = () => {
       });
       
       // Insérer les statistiques d'entraînement
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('training_stats')
         .insert({
           user_id: user.id,
@@ -101,7 +101,9 @@ export const useSessionActions = () => {
           session_duration_minutes: duration,
           muscle_groups_worked: muscleGroups,
           created_at: new Date().toISOString()
-        });
+        })
+        .select()
+        .single();
 
       if (error) {
         debugLogger.error("useSessionActions", "Erreur lors de l'insertion des stats:", error);
@@ -109,8 +111,8 @@ export const useSessionActions = () => {
       }
       
       toast({
-        title: t("workouts.sessionCompleted") || "Séance terminée",
-        description: t("workouts.statsRecorded") || "Vos statistiques ont été enregistrées",
+        title: t("workouts.sessionCompleted"),
+        description: t("workouts.statsRecorded"),
       });
       
       navigate('/workouts');
@@ -118,8 +120,8 @@ export const useSessionActions = () => {
     } catch (error) {
       debugLogger.error("useSessionActions", "Erreur lors de la finalisation de la séance:", error);
       toast({
-        title: t("common.error") || "Erreur",
-        description: t("workouts.finalizationFailed") || "Impossible de finaliser votre séance",
+        title: t("common.error"),
+        description: t("workouts.finalizationFailed"),
         variant: "destructive",
       });
       return false;
