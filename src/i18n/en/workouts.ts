@@ -1,3 +1,4 @@
+
 export const workouts = {
   title: "Workouts",
   startWorkout: "Start Workout",
@@ -156,5 +157,6 @@ export const workouts = {
   generateMySession: "Generate my workout",
   aiGeneratedSession: "Let AI create the perfect workout for you",
   selectMuscleGroupFirst: "Please select a muscle group first",
-  createSessionWithSelectedMuscles: "Create workout with selected muscles"
+  createSessionWithSelectedMuscles: "Create workout with selected muscles",
+  sessionCreated: "Session created"
 };

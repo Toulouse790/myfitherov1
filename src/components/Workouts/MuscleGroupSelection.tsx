@@ -23,17 +23,20 @@ const MuscleGroupSelection = () => {
   const { t } = useLanguage();
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { exercises } = useExerciseSelection();
+  const { exercises, isLoading: exercisesLoading } = useExerciseSelection();
 
   const handleMuscleGroupSelect = (muscleId: string) => {
-    setSelectedMuscleGroup(muscleId);
+    setSelectedMuscleGroup(previousId => {
+      // Toggle selection if clicking the same group
+      return previousId === muscleId ? null : muscleId;
+    });
   };
 
   const handleCreateSession = async () => {
     if (!selectedMuscleGroup) {
       toast({
-        title: t("common.error"),
-        description: t("workouts.selectMuscleGroupFirst"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.selectMuscleGroupFirst") || "Veuillez sélectionner un groupe musculaire",
         variant: "destructive"
       });
       return;
@@ -41,8 +44,8 @@ const MuscleGroupSelection = () => {
 
     if (!user) {
       toast({
-        title: t("common.error"),
-        description: t("workouts.errors.loginRequired"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.loginRequired") || "Vous devez être connecté pour créer une séance",
         variant: "destructive"
       });
       return;
@@ -50,19 +53,29 @@ const MuscleGroupSelection = () => {
 
     try {
       setIsLoading(true);
+      debugLogger.log("MuscleGroupSelection", "Création d'une séance avec groupe musculaire:", selectedMuscleGroup);
       
-      // Filtrer les exercices selon le groupe musculaire sélectionné
-      const filteredExercises = filterExercisesByMuscleGroup(exercises, selectedMuscleGroup);
+      // Filtre les exercices selon le groupe musculaire sélectionné
+      const filteredExercises = Array.isArray(exercises) 
+        ? filterExercisesByMuscleGroup(exercises, selectedMuscleGroup)
+        : [];
       
       if (filteredExercises.length === 0) {
-        throw new Error("No exercises found for this muscle group");
+        throw new Error("Aucun exercice trouvé pour ce groupe musculaire");
       }
 
       // Sélectionner 4-6 exercices aléatoirement
-      const selectedExercises = filteredExercises
+      const randomExercises = filteredExercises
         .sort(() => 0.5 - Math.random())
-        .slice(0, Math.min(6, filteredExercises.length))
-        .map(ex => ex.name);
+        .slice(0, Math.min(6, filteredExercises.length));
+      
+      const selectedExerciseNames = randomExercises.map(ex => 
+        typeof ex === 'string' ? ex : (ex.name || '')
+      ).filter(Boolean);
+
+      if (selectedExerciseNames.length === 0) {
+        throw new Error("Erreur lors de la sélection des exercices");
+      }
 
       // Créer une nouvelle session
       const { data, error } = await supabase
@@ -71,23 +84,31 @@ const MuscleGroupSelection = () => {
           user_id: user.id,
           status: 'in_progress',
           workout_type: selectedMuscleGroup,
-          exercises: selectedExercises,
+          exercises: selectedExerciseNames,
           target_duration_minutes: 45,
           started_at: new Date().toISOString()
         })
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        debugLogger.error("MuscleGroupSelection", "Erreur lors de la création:", error);
+        throw error;
+      }
 
       // Rediriger vers la page de session
+      toast({
+        title: t("workouts.sessionCreated") || "Séance créée",
+        description: t("workouts.startingSession") || "Démarrage de votre séance...",
+      });
+      
       navigate(`/workouts/session/${data.id}`);
       
     } catch (error) {
-      debugLogger.error("MuscleGroupSelection", "Error creating workout session:", error);
+      debugLogger.error("MuscleGroupSelection", "Erreur création séance:", error);
       toast({
-        title: t("common.error"),
-        description: t("workouts.errors.sessionCreationFailed"),
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.sessionCreationFailed") || "Impossible de créer la séance",
         variant: "destructive"
       });
     } finally {
@@ -105,7 +126,7 @@ const MuscleGroupSelection = () => {
           className="space-y-6"
         >
           <h1 className="text-2xl font-bold text-center">
-            {t("workouts.createSession")}
+            {t("workouts.createSession") || "Créer une séance"}
           </h1>
           
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -130,10 +151,10 @@ const MuscleGroupSelection = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {t("common.loading")}
+                  {t("common.loading") || "Chargement..."}
                 </>
               ) : (
-                t("workouts.createSessionWithSelectedMuscles")
+                t("workouts.createSessionWithSelectedMuscles") || "Créer une séance avec les muscles sélectionnés"
               )}
             </Button>
           </div>

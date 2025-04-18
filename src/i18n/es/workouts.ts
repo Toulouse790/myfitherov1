@@ -115,6 +115,10 @@ export const workouts = {
   statsUpdateError: "No se pudieron guardar las estadísticas",
   setValidated: "Serie validada con {weight}kg",
   newPersonalRecord: "¡Nuevo récord personal: {weight}kg!",
+  sets: "series",
+  reps: "repeticiones",
+  personalisedSession: "Sesión personalizada",
+  noExercisesFound: "No se encontraron ejercicios",
   errors: {
     sessionCreationFailed: "No se pudo crear la sesión de entrenamiento. Inténtalo de nuevo.",
     loginRequired: "Debes iniciar sesión para realizar esta acción.",
@@ -127,7 +131,6 @@ export const workouts = {
     noDataReturned: "No se devolvieron datos del servidor.",
     saveWeightFailed: "No se pudo guardar la información de peso."
   },
-  // Nuevas claves para EmptySessionView
   sessionNotFound: "Sesión no encontrada",
   sessionEmptyDesc: "Esta sesión de entrenamiento no existe o no contiene ejercicios.",
   createWorkout: "Crear entrenamiento",
@@ -146,5 +149,14 @@ export const workouts = {
   suggestion_biceps: "Entrenamiento de bíceps recomendado",
   suggestion_triceps: "Entrenamiento de tríceps recomendado",
   suggestion_abs: "Entrenamiento de abdominales recomendado",
-  startAdaptedSession: "Iniciar sesión adaptada"
+  startAdaptedSession: "Iniciar sesión adaptada",
+  createSession: "Crear entrenamiento",
+  createCustomSession: "Diseña tu entrenamiento seleccionando grupos musculares",
+  createMySession: "Crear mi entrenamiento",
+  generateSession: "Generar entrenamiento",
+  generateMySession: "Generar mi entrenamiento",
+  aiGeneratedSession: "Deja que la IA cree el entrenamiento perfecto para ti",
+  selectMuscleGroupFirst: "Por favor, selecciona un grupo muscular primero",
+  createSessionWithSelectedMuscles: "Crear entrenamiento con músculos seleccionados",
+  sessionCreated: "Sesión creada"
 };

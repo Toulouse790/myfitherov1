@@ -8,6 +8,7 @@ const WorkoutGenerate = lazy(() => import("@/pages/WorkoutGenerate"));
 const WorkoutSession = lazy(() => import("@/components/Workouts/CleanWorkoutSession"));
 const SportPrograms = lazy(() => import("@/pages/SportPrograms"));
 const MuscleGroupSelection = lazy(() => import("@/components/Workouts/MuscleGroupSelection"));
+const WorkoutSessionPage = lazy(() => import("@/pages/workouts/session/[id]"));
 
 export const workoutRoutes = [
   {
@@ -24,7 +25,7 @@ export const workoutRoutes = [
   },
   {
     path: "workouts/session/:id",
-    element: withSuspense(WorkoutSession)
+    element: withSuspense(WorkoutSessionPage)
   },
   {
     path: "sport-programs",
