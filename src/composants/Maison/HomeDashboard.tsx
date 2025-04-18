@@ -6,10 +6,10 @@ import {
   TabsTrigger,
   TabsContent
 } from "@/components/ui/tabs";  
-import { WelcomeHeader } from "./WelcomeHeader";
-import { TodaySummary } from "./TodaySummary";
-import { TrendingStats } from "./TrendingStats";
-import { ActionButtons } from "./ActionButtons";
+import { WelcomeHeader } from "@/components/Home/WelcomeHeader";
+import { TodaySummary } from "@/components/Home/TodaySummary";
+import { TrendingStats } from "@/components/Home/TrendingStats";
+import { ActionButtons } from "@/components/Home/ActionButtons";
 
 export function HomeDashboard() {
   return (
