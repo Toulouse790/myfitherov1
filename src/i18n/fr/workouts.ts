@@ -1,3 +1,4 @@
+
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Commencer l'entraînement",
@@ -115,5 +116,28 @@ export const workouts = {
   sessionEmptyDesc: "Cette séance d'entraînement ne contient aucun exercice ou n'existe pas.",
   createWorkout: "Créer un entraînement",
   backToWorkouts: "Retour aux entraînements",
-  noExercisesFound: "Aucun exercice trouvé"
+  noExercisesFound: "Aucun exercice trouvé",
+  
+  // Nouvelles traductions pour le programme personnalisé évolutif
+  personalizedRecommendation: "Recommandation personnalisée",
+  adaptiveWorkout: "Entraînement adaptatif",
+  confident: "de confiance",
+  startAdaptedSession: "Démarrer cette séance adaptée",
+  suggestion_chest: "Travail de la poitrine adapté à votre niveau",
+  suggestion_back: "Renforcement du dos recommandé aujourd'hui",
+  suggestion_legs: "Séance jambes basée sur votre progression",
+  suggestion_shoulders: "Développement des épaules personnalisé",
+  suggestion_biceps: "Travail ciblé des biceps",
+  suggestion_triceps: "Renforcement des triceps adapté",
+  suggestion_abs: "Séance abdominaux optimisée",
+  intensity: {
+    low: "Faible intensité",
+    moderate: "Intensité modérée", 
+    high: "Haute intensité"
+  },
+  progressiveOverload: "Charge progressive",
+  adaptingToYourProgress: "Programme évolutif basé sur vos performances",
+  restRecommendation: "Repos recommandé",
+  smartWorkoutPlanner: "Planificateur intelligent",
+  trackingProgress: "Suivi de progression"
 };

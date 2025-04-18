@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Layout/Header";
 import { WorkoutSession } from "@/components/Workouts/WorkoutSession";
 import { VerifyConnection } from "@/components/Workouts/VerifyConnection"; 
