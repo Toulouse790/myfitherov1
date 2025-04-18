@@ -1,6 +1,5 @@
 
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
-import { UserProgressionWidget } from "@/components/UserProgression/UserProgressionWidget";
 import { ActionButtons } from "@/components/Home/ActionButtons";
 import { useHomeActions } from "@/hooks/use-home-actions";
 import { WelcomeHeader } from "@/components/Home/WelcomeHeader";
@@ -9,7 +8,7 @@ import { TrendingStats } from "@/components/Home/TrendingStats";
 import { useAuth } from "@/hooks/use-auth";
 import { SpecialOfferCountdown } from "@/components/Subscription/SpecialOfferCountdown";
 import { Button } from "@/components/ui/button";
-import { Crown, ArrowRight, Zap, Footprints } from "lucide-react";
+import { Crown, ArrowRight, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
@@ -47,34 +46,19 @@ const Home = () => {
         <div className="col-span-1 md:col-span-2">
           <TodaySummary />
         </div>
-        <TrendingStats />
-      </div>
-      
-      {/* Programmes sportifs */}
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">{t("workouts.sportPrograms")}</h3>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => navigate('/sport-programs')}
-          className="text-sm flex items-center gap-1"
-        >
-          <span>{t("common.view")}</span>
-          <ArrowRight size={14} />
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Button 
-          variant="outline" 
-          onClick={() => navigate('/sport-programs')}
-          className="h-auto py-5 flex gap-3 items-center justify-center"
-        >
-          <Footprints className="h-5 w-5 text-primary" />
-          <div className="text-left">
-            <div className="font-medium">{t("workouts.sportSpecific")}</div>
-            <div className="text-xs text-muted-foreground">{t("workouts.sportSpecificDescription")}</div>
-          </div>
-        </Button>
+        {/* Remplacé TrendingStats par un bouton pour rediriger vers Stats */}
+        <Card className="flex flex-col justify-center p-4">
+          <h3 className="text-lg font-medium mb-2">Vos statistiques</h3>
+          <p className="text-sm text-muted-foreground mb-4">Consultez vos performances et progression</p>
+          <Button 
+            onClick={() => navigate('/stats')} 
+            className="mt-auto"
+            variant="outline"
+          >
+            Voir toutes les statistiques
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        </Card>
       </div>
       
       {/* Afficher l'offre spéciale */}

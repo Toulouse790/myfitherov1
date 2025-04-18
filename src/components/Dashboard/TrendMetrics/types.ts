@@ -12,4 +12,6 @@ export interface MetricData {
     weekly: Array<{ date: string; value: number }>;
     monthly: Array<{ date: string; value: number }>;
   };
+  description?: string; // Ajout d'une description optionnelle pour le tooltip
+  importance?: "primary" | "secondary" | "tertiary"; // Pour hiérarchiser les métriques
 }

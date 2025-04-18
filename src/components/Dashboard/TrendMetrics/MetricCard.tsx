@@ -1,6 +1,8 @@
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { InfoIcon } from "lucide-react";
 
 interface MetricCardProps {
   label: string;
@@ -8,6 +10,7 @@ interface MetricCardProps {
   unit: string;
   color: string;
   icon: React.ReactElement;
+  description?: string;
   onClick?: () => void;
 }
 
@@ -17,6 +20,7 @@ export const MetricCard = ({
   unit,
   color,
   icon,
+  description,
   onClick
 }: MetricCardProps) => {
   return (
@@ -29,7 +33,21 @@ export const MetricCard = ({
     >
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">{label}</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm text-muted-foreground">{label}</span>
+            {description && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <InfoIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs text-xs">{description}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
           <div className={color}>{icon}</div>
         </div>
         <div className="flex items-baseline gap-1">

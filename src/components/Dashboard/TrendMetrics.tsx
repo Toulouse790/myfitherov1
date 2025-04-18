@@ -38,7 +38,7 @@ export const TrendMetrics = () => {
       <div className="space-y-3">
         <MetricHeader title="Tendances" period={`${days} derniers jours`} onPeriodChange={setDays} />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="animate-pulse">
               <div className="bg-card rounded-lg p-4 h-24">
                 <div className="h-2 bg-muted rounded w-16 mb-4"></div>
@@ -73,7 +73,9 @@ export const TrendMetrics = () => {
         color: "text-blue-500",
         unit: "kg",
         icon: <Dumbbell className="w-4 h-4" />,
-        history: { daily: [], weekly: [], monthly: [] }
+        history: { daily: [], weekly: [], monthly: [] },
+        importance: "primary",
+        description: "Poids total soulevé pendant la période"
       },
       {
         label: "Séances",
@@ -81,7 +83,9 @@ export const TrendMetrics = () => {
         color: "text-green-500",
         unit: "séances",
         icon: <Activity className="w-4 h-4" />,
-        history: { daily: [], weekly: [], monthly: [] }
+        history: { daily: [], weekly: [], monthly: [] },
+        importance: "primary",
+        description: "Nombre total de séances d'entraînement"
       },
       {
         label: "Durée moyenne",
@@ -89,7 +93,9 @@ export const TrendMetrics = () => {
         color: "text-orange-500",
         unit: "min",
         icon: <Timer className="w-4 h-4" />,
-        history: { daily: [], weekly: [], monthly: [] }
+        history: { daily: [], weekly: [], monthly: [] },
+        importance: "secondary",
+        description: "Durée moyenne par séance d'entraînement"
       },
       {
         label: "Calories brûlées",
@@ -97,41 +103,51 @@ export const TrendMetrics = () => {
         color: "text-red-500",
         unit: "kcal",
         icon: <Flame className="w-4 h-4" />,
-        history: { daily: [], weekly: [], monthly: [] }
-      },
-      {
-        label: "Intensité moy.",
-        value: Math.round(avgIntensity).toString(),
-        color: "text-purple-500",
-        unit: "kg/min",
-        icon: <ArrowUpRight className="w-4 h-4" />,
-        history: { daily: [], weekly: [], monthly: [] }
-      },
-      {
-        label: "Poids moy/séance",
-        value: avgWeightPerSession.toString(),
-        color: "text-cyan-500",
-        unit: "kg",
-        icon: <Barbell className="w-4 h-4" />,
-        history: { daily: [], weekly: [], monthly: [] }
-      },
-      {
-        label: "Performance",
-        value: Math.round((avgIntensity * totalSessions) / days).toString(),
-        color: "text-yellow-500",
-        unit: "points",
-        icon: <Medal className="w-4 h-4" />,
-        history: { daily: [], weekly: [], monthly: [] }
-      },
-      {
+        history: { daily: [], weekly: [], monthly: [] },
+        importance: "secondary",
+        description: "Estimation des calories brûlées pendant les séances"
+      }
+    ];
+
+    // Ajout conditionnel de métriques supplémentaires si totalSessions > 0
+    if (totalSessions > 0) {
+      metrics.push(
+        {
+          label: "Intensité moy.",
+          value: Math.round(avgIntensity).toString(),
+          color: "text-purple-500",
+          unit: "kg/min",
+          icon: <ArrowUpRight className="w-4 h-4" />,
+          history: { daily: [], weekly: [], monthly: [] },
+          importance: "tertiary",
+          description: "Rapport entre le poids soulevé et la durée de l'entraînement"
+        },
+        {
+          label: "Poids moy/séance",
+          value: avgWeightPerSession.toString(),
+          color: "text-cyan-500",
+          unit: "kg",
+          icon: <Barbell className="w-4 h-4" />,
+          history: { daily: [], weekly: [], monthly: [] },
+          importance: "tertiary",
+          description: "Poids moyen soulevé par séance"
+        }
+      );
+    }
+
+    // Ajout conditionnel des métriques d'objectif si days >= 7
+    if (days >= 7) {
+      metrics.push({
         label: "Objectif hebdo",
         value: `${Math.round((totalSessions / days) * 7)}`,
         color: "text-indigo-500",
         unit: "séances",
         icon: <Target className="w-4 h-4" />,
-        history: { daily: [], weekly: [], monthly: [] }
-      }
-    ];
+        history: { daily: [], weekly: [], monthly: [] },
+        importance: "tertiary",
+        description: "Projection du nombre de séances sur une semaine"
+      });
+    }
 
     return metrics;
   };

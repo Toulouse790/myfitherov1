@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { Header } from "@/components/Layout/Header";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -29,39 +30,27 @@ const Stats = () => {
           </div>
 
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="w-full grid grid-cols-3 mb-4">
+            <TabsList className="w-full grid grid-cols-2 mb-4">
               <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-              <TabsTrigger value="details">Détails</TabsTrigger>
-              <TabsTrigger value="progress">Progression</TabsTrigger>
+              <TabsTrigger value="details">Performances détaillées</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="space-y-6">
+              {/* Vue simplifiée avec cartes principales uniquement */}
               <DashboardStats />
+              <TrendMetrics />
             </TabsContent>
             
             <TabsContent value="details" className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <ForceScoreCard />
-                <TrendMetrics />
+                <Card>
+                  <CardContent className="pt-6">
+                    <h3 className="text-lg font-medium mb-4">Progression des entraînements</h3>
+                    <WorkoutSummary />
+                  </CardContent>
+                </Card>
               </div>
-              <WorkoutSummary />
-            </TabsContent>
-            
-            <TabsContent value="progress" className="space-y-6">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <h3 className="text-lg font-medium mb-4">Progression des entraînements</h3>
-                      <p className="text-muted-foreground mb-2">Suivez l'évolution de vos performances au fil du temps</p>
-                    </motion.div>
-                  </div>
-                </CardContent>
-              </Card>
             </TabsContent>
           </Tabs>
         </motion.div>
