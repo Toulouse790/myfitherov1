@@ -1,10 +1,9 @@
-
 import { motion } from "framer-motion";
 import { Header } from "@/components/Layout/Header";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardStats } from "@/components/Dashboard/DashboardStats";
-import { StrengthScore } from "@/components/Dashboard/StrengthScore";
+import { ForceScoreCard } from "@/components/Progress/ForceScore/ForceScoreCard";
 import { TrendMetrics } from "@/components/Dashboard/TrendMetrics";
 import { WorkoutSummary } from "@/components/Dashboard/WorkoutSummary";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,7 +41,7 @@ const Stats = () => {
             
             <TabsContent value="details" className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
-                <StrengthScore />
+                <ForceScoreCard />
                 <TrendMetrics />
               </div>
               <WorkoutSummary />

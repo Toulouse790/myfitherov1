@@ -1,4 +1,3 @@
-
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Commencer l'entraînement",
@@ -100,7 +99,24 @@ export const workouts = {
     sessionCreationError: "Une erreur est survenue lors de la création de la session.",
     startSessionErrorDescription: "Impossible de démarrer la session d'entraînement. Veuillez réessayer."
   },
-  // Nouvelles traductions pour les éléments manquants
+  forceScore: {
+    title: "Score de force",
+    subScores: {
+      strength: "Force",
+      regularity: "Régularité",
+      intensity: "Intensité",
+      progression: "Progression"
+    },
+    outOf: "sur",
+    compare: "Comparé à des profils similaires",
+    improve: "Points d'amélioration",
+    metrics: {
+      weightLifted: "Poids total soulevé",
+      sessionsCompleted: "Séances complétées",
+      averageIntensity: "Intensité moyenne",
+      progressionRate: "Taux de progression"
+    }
+  },
   library: "Bibliothèque",
   exerciseLibrary: "Bibliothèque d'exercices",
   createNewSession: "Créer une nouvelle séance",
@@ -118,7 +134,6 @@ export const workouts = {
   backToWorkouts: "Retour aux entraînements",
   noExercisesFound: "Aucun exercice trouvé",
   
-  // Nouvelles traductions pour le programme personnalisé évolutif
   personalizedRecommendation: "Recommandation personnalisée",
   adaptiveWorkout: "Entraînement adaptatif",
   confident: "de confiance",
