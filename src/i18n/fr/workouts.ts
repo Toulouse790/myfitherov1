@@ -80,14 +80,24 @@ export const workouts = {
   allMuscleGroups: "Tous les groupes musculaires",
   trainingOf: "Entraînement du",
   exercises: "exercices",
-  kcal: "kcal",
   sportPrograms: "Programmes sportifs",
   sportSpecificDescription: "Programmes d'entraînement adaptés à votre sport et votre position",
   sportSpecific: "Programme sportif spécifique",
   programsForYourSport: "Programmes d'entraînement adaptés à votre sport et position",
+  generator: "Générateur d'entraînement",
+  generatorDescription: "Créez un entraînement personnalisé en fonction de vos préférences",
+  duration: "Durée",
+  intensity: "Intensité",
+  todayDate: "Aujourd'hui",
+  generateWorkout: "Générer un entraînement",
+  generationLoading: "Génération en cours...",
+  trackProgressDescription: "Suivez vos progrès et améliorez vos performances",
+  activeSession: "Session active",
+  continueSession: "Continuer la session",
   errors: {
     sessionCreationFailed: "Impossible de créer la session d'entraînement. Veuillez réessayer.",
     loginRequired: "Vous devez être connecté pour effectuer cette action.",
-    sessionCreationError: "Une erreur est survenue lors de la création de la session."
+    sessionCreationError: "Une erreur est survenue lors de la création de la session.",
+    startSessionErrorDescription: "Impossible de démarrer la session d'entraînement. Veuillez réessayer."
   }
 };

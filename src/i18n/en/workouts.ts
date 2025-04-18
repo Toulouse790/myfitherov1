@@ -85,9 +85,20 @@ export const workouts = {
   sportSpecific: "Sport-Specific Program",
   programsForYourSport: "Training programs tailored to your sport and position",
   sportSpecificDescription: "Training programs tailored to your sport and position",
+  generator: "Workout Generator",
+  generatorDescription: "Create a customized workout based on your preferences",
+  duration: "Duration",
+  intensity: "Intensity",
+  todayDate: "Today",
+  generateWorkout: "Generate Workout",
+  generationLoading: "Generating...",
+  trackProgressDescription: "Track your progress and improve your performance",
+  activeSession: "Active session",
+  continueSession: "Continue session",
   errors: {
     sessionCreationFailed: "Failed to create workout session. Please try again.",
     loginRequired: "You need to be logged in to perform this action.",
-    sessionCreationError: "An error occurred while creating the session."
+    sessionCreationError: "An error occurred while creating the session.",
+    startSessionErrorDescription: "Failed to start workout session. Please try again."
   }
 };

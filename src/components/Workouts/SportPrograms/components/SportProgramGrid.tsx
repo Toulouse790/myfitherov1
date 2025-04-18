@@ -16,10 +16,14 @@ interface SportProgramGridProps {
 export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: SportProgramGridProps) => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const [generatingPrograms, setGeneratingPrograms] = useState<string[]>([]);
 
   // Fonction pour gérer la génération d'un programme
   const handleGenerateProgram = (program: SportProgram) => {
     debugLogger.log("SportProgramGrid", "Génération du programme:", program.name);
+    
+    // Ajouter l'ID du programme en cours de génération
+    setGeneratingPrograms(prev => [...prev, program.id]);
     
     // Simuler une génération avec un délai pour montrer qu'il se passe quelque chose
     setTimeout(() => {
@@ -28,7 +32,12 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
         title: t("programs.programGenerated"),
         description: t("programs.programGeneratedDescription", { name: program.name }),
       });
-    }, 1000);
+      
+      // Retirer l'ID du programme de la liste des programmes en cours de génération
+      setGeneratingPrograms(prev => prev.filter(id => id !== program.id));
+      
+      debugLogger.log("SportProgramGrid", "Programme généré avec succès:", program.name);
+    }, 1500);
   };
 
   // Fonction pour gérer le lancement d'un programme
@@ -103,6 +112,7 @@ export const SportProgramGrid = ({ programs, onSelectProgram, levelFilter }: Spo
           program={program}
           onSelect={() => handleStartProgram(program)}
           onGenerate={() => handleGenerateProgram(program)}
+          isGenerating={generatingPrograms.includes(program.id)}
         />
       ))}
       

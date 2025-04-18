@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { debugLogger } from "@/utils/debug-logger";
 
 export function WorkoutGenerator() {
   const { t } = useLanguage();
@@ -20,10 +21,12 @@ export function WorkoutGenerator() {
 
   const handleGenerate = () => {
     setIsGenerating(true);
+    debugLogger.log("WorkoutGenerator", "Début de la génération d'entraînement");
     
     // Simuler un délai de génération
     setTimeout(() => {
       try {
+        debugLogger.log("WorkoutGenerator", "Génération terminée, redirection");
         // Rediriger vers la page de génération d'entraînement avec la durée sélectionnée
         navigate('/workouts/generate', { 
           state: { 
@@ -34,8 +37,8 @@ export function WorkoutGenerator() {
       } catch (error) {
         console.error("Erreur lors de la navigation:", error);
         toast({
-          title: t("common.error"),
-          description: t("workouts.startSessionErrorDescription"),
+          title: t("workouts.errors.sessionCreationFailed"),
+          description: t("workouts.errors.sessionCreationError"),
           variant: "destructive",
         });
         setIsGenerating(false);
@@ -96,7 +99,7 @@ export function WorkoutGenerator() {
             </div>
             <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
               <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
-              <span className="text-xs sm:text-sm font-medium truncate">~{estimatedCalories} kcal</span>
+              <span className="text-xs sm:text-sm font-medium truncate">~{estimatedCalories} {t("workouts.kcal")}</span>
             </div>
           </div>
 

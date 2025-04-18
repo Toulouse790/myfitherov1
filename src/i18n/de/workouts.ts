@@ -1,3 +1,4 @@
+
 export const workouts = {
   title: "Trainingseinheiten",
   activeSession: "Aktives Training",
@@ -104,16 +105,17 @@ export const workouts = {
   kcal: "kcal",
   min: "min",
   startingSession: "Sitzung wird gestartet...",
-  startSession: "Sitzung starten",
-  set: "Satz",
-  noExercisesAvailable: "Keine Übungen verfügbar",
-  exerciseProgress: "Übung {current} von {total}",
-  allMuscleGroups: "Alle Muskelgruppen",
-  trainingOf: "Training vom",
-  exercises: "Übungen",
-  kcal: "kcal",
   sportPrograms: "Sportprogramme",
   sportSpecificDescription: "Trainingsprogramme, die auf Ihre Sportart und Position zugeschnitten sind",
   sportSpecific: "Sportspezifisches Programm",
   programsForYourSport: "Trainingsprogramme, die auf Ihre Sportart und Position zugeschnitten sind",
+  generator: "Trainingsgenerator",
+  generatorDescription: "Erstellen Sie ein personalisiertes Training basierend auf Ihren Präferenzen",
+  intensity: "Intensität",
+  errors: {
+    sessionCreationFailed: "Fehler beim Erstellen der Trainingseinheit. Bitte versuchen Sie es erneut.",
+    loginRequired: "Sie müssen angemeldet sein, um diese Aktion auszuführen.",
+    sessionCreationError: "Bei der Erstellung der Einheit ist ein Fehler aufgetreten.",
+    startSessionErrorDescription: "Fehler beim Starten der Trainingseinheit. Bitte versuchen Sie es erneut."
+  }
 };
