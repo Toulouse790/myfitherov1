@@ -1,4 +1,3 @@
-
 export const workouts = {
   title: "Entrenamientos",
   activeSession: "Entrenamiento activo",
@@ -68,7 +67,6 @@ export const workouts = {
   set: "Serie",
   finishWorkout: "Finalizar entrenamiento",
   currentExercise: "Ejercicio actual",
-  start: "Comenzar",
   sessionEmpty: "Esta sesión no contiene ejercicios.",
   backToWorkouts: "Volver a entrenamientos",
   noExercisesFound: "No se encontraron ejercicios",
@@ -104,5 +102,14 @@ export const workouts = {
   fullBodyWorkout: "Entrenamiento de cuerpo completo",
   coreTraining: "Entrenamiento de core",
   kcal: "kcal",
-  min: "min"
+  min: "min",
+  startingSession: "Iniciando sesión...",
+  startSession: "Iniciar sesión",
+  set: "Serie",
+  noExercisesAvailable: "No hay ejercicios disponibles",
+  exerciseProgress: "Ejercicio {current} de {total}",
+  allMuscleGroups: "Todos los grupos musculares",
+  trainingOf: "Entrenamiento del",
+  exercises: "ejercicios",
+  kcal: "kcal"
 };

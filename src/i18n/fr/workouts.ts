@@ -1,4 +1,3 @@
-
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Commencer l'entraînement",
@@ -71,5 +70,14 @@ export const workouts = {
     abs: "Abdominaux",
     fullBody: "Corps entier",
     cardio: "Cardio"
-  }
+  },
+  startingSession: "Démarrage en cours...",
+  startSession: "Commencer la séance",
+  set: "Série",
+  noExercisesAvailable: "Aucun exercice disponible",
+  exerciseProgress: "Exercice {current} sur {total}",
+  allMuscleGroups: "Tous les groupes musculaires",
+  trainingOf: "Entraînement du",
+  exercises: "exercices",
+  kcal: "kcal"
 };
