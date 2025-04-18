@@ -1,4 +1,3 @@
-
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/Layout/RootLayout";
@@ -13,6 +12,7 @@ import { RequireQuestionnaire } from "@/components/Auth/RequireQuestionnaire";
 import { RequireAdmin } from "@/components/Auth/RequireAdmin";
 import AppSettings from "@/pages/AppSettings";
 import { debugLogger } from "@/utils/debug-logger";
+import { HomeDashboard } from "@/composants/Maison/HomeDashboard";
 
 // Routes principales
 const SignInPage = lazy(() => import("@/pages/SignIn"));
@@ -117,7 +117,7 @@ export const router = createBrowserRouter([
               // Route d'accueil
               {
                 path: "/",
-                element: withSuspense(Index)
+                element: withSuspense(HomeDashboard)
               },
               
               // Routes de profil
