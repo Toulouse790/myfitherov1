@@ -35,8 +35,7 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
         description: t("nutrition.foodEntryRemoved"),
       });
       
-      // Recharger la liste des repas (cette fonction devrait être passée en prop)
-      // Pour l'instant, nous allons recharger la page après un court délai
+      // Recharger la liste des repas après une suppression réussie
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -65,6 +64,7 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
             size="sm" 
             className="gap-2"
             onClick={onAddFood}
+            type="button"
           >
             <Plus className="h-4 w-4" />
             {t("nutrition.addFood")}
@@ -91,6 +91,7 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
                 className="text-red-500 hover:text-red-700 hover:bg-red-50"
                 onClick={() => handleDeleteEntry(entry.id)}
                 disabled={isDeleting}
+                type="button"
               >
                 <Trash2 className="h-4 w-4" />
                 <span className="sr-only">{t("common.delete")}</span>
@@ -103,6 +104,7 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
               size="sm" 
               className="gap-2 w-full"
               onClick={onAddFood}
+              type="button"
             >
               <Plus className="h-4 w-4" />
               {t("nutrition.addAnotherFood")}
