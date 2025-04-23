@@ -126,6 +126,7 @@ export const GenerateWorkoutDialog = ({
       debugLogger.log("GenerateWorkoutDialog", "Démarrage de la session avec exercises:", 
         generatedWorkout.exercises);
       
+      // Créer un objet format approprié pour le hook startWorkout
       await startWorkout({
         exercises: generatedWorkout.exercises,
         duration: generatedWorkout.estimatedDuration,
@@ -134,11 +135,6 @@ export const GenerateWorkoutDialog = ({
       });
       
       debugLogger.log("GenerateWorkoutDialog", "Séance démarrée avec succès");
-      
-      toast({
-        title: t("workouts.startingSession") || "Démarrage de la séance",
-        description: t("workouts.sessionCreated") || "Votre séance a été créée avec succès"
-      });
       
       // La navigation est gérée dans le hook startWorkout
     } catch (error) {

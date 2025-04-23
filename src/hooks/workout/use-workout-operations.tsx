@@ -39,7 +39,7 @@ export function useWorkoutOperations() {
         throw new Error("Aucun exercice sélectionné pour la séance");
       }
 
-      // Créer l'objet de données avec uniquement les champs valides pour la table
+      // Créer l'objet de données simplifié pour éviter les erreurs d'insertion
       const sessionData = {
         user_id: user.id,
         exercises: workoutData.exercises,
@@ -47,7 +47,6 @@ export function useWorkoutOperations() {
         status: 'in_progress',
         started_at: new Date().toISOString(),
         target_duration_minutes: workoutData.duration || 45,
-        // Ne pas inclure total_weight_lifted car cela cause des erreurs
       };
 
       debugLogger.log("WorkoutOperations", "Envoi des données à Supabase:", sessionData);
@@ -61,6 +60,8 @@ export function useWorkoutOperations() {
 
       if (error) {
         debugLogger.error("WorkoutOperations", "Erreur Supabase:", error);
+        console.error("Erreur complète:", error);
+        
         toast({
           title: "Erreur",
           description: `Impossible de créer la séance: ${error.message}`,
