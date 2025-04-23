@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, AlertCircle } from "lucide-react";
+import { Dumbbell, AlertCircle, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +12,6 @@ import { WorkoutHeader } from "@/components/Workouts/WorkoutSession/WorkoutHeade
 import { ExerciseNavigation } from "@/components/Workouts/WorkoutSession/ExerciseNavigation";
 import { ExerciseTimeline } from "@/components/Workouts/WorkoutSession/ExerciseTimeline";
 import { NextExercisePreview } from "@/components/Workouts/WorkoutSession/NextExercisePreview";
-import { debugLogger } from "@/utils/debug-logger";
 
 export default function WorkoutSession() {
   const { sessionId } = useParams();
@@ -21,23 +21,7 @@ export default function WorkoutSession() {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [estimatedCalories, setEstimatedCalories] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (window.location.pathname === '/workout-session' || window.location.pathname === '/workout-session/') {
-      debugLogger.log("WorkoutSession (page)", "Redirection depuis la racine de WorkoutSession vers workouts");
-      navigate('/workouts');
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    if (window.location.pathname.startsWith('/workout-session/') && sessionId) {
-      debugLogger.log("WorkoutSession (page)", "Redirection depuis l'ancien format d'URL vers le nouveau", {
-        old: window.location.pathname,
-        new: `/workouts/session/${sessionId}`
-      });
-      navigate(`/workouts/session/${sessionId}`, { replace: true });
-    }
-  }, [sessionId, navigate]);
+  const [sessionNotFound, setSessionNotFound] = useState(false);
 
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -53,26 +37,32 @@ export default function WorkoutSession() {
 
       try {
         setIsLoading(true);
+        console.log("Chargement des données de la session:", sessionId);
+        
         const { data: session, error } = await supabase
           .from('workout_sessions')
           .select('exercises')
           .eq('id', sessionId)
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error("Erreur lors du chargement de la session:", error);
+          if (error.code === 'PGRST116') {
+            console.log("Session non trouvée");
+            setSessionNotFound(true);
+          }
+          throw error;
+        }
 
         if (session?.exercises) {
-          debugLogger.log("WorkoutSession (page)", "Exercices chargés:", session.exercises);
+          console.log("Exercices chargés:", session.exercises);
           setExercises(session.exercises);
+        } else {
+          console.log("Aucun exercice trouvé dans la session");
         }
       } catch (error) {
-        debugLogger.error('WorkoutSession (page)', 'Error fetching session:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger la séance",
-          variant: "destructive",
-        });
-        navigate('/workouts');
+        console.error('Erreur lors du chargement de la session:', error);
+        // Ne pas naviguer automatiquement pour que l'utilisateur puisse voir l'erreur
       } finally {
         setIsLoading(false);
       }
@@ -131,7 +121,37 @@ export default function WorkoutSession() {
     );
   }
 
-  if (exercises.length === 0) {
+  if (sessionNotFound) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container max-w-4xl mx-auto px-4 pt-40 pb-8 space-y-6">
+          <Card className="p-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <AlertCircle className="h-12 w-12 text-red-500" />
+              <h2 className="text-xl font-semibold">Session introuvable</h2>
+              <p className="text-muted-foreground">
+                La session d'entraînement avec l'ID {sessionId} n'existe pas dans notre base de données.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Vous pouvez créer une nouvelle session en générant un entraînement.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button onClick={() => navigate('/workouts')}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Retourner aux entraînements
+                </Button>
+                <Button onClick={() => navigate('/workouts/generate')} variant="outline">
+                  Générer un nouvel entraînement
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (!exercises.length) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container max-w-4xl mx-auto px-4 pt-40 pb-8 space-y-6">
@@ -142,8 +162,8 @@ export default function WorkoutSession() {
               <p className="text-muted-foreground">
                 Cette séance d'entraînement ne contient aucun exercice.
               </p>
-              <Button onClick={() => navigate('/workouts')}>
-                Retourner aux entraînements
+              <Button onClick={() => navigate('/workouts/generate')}>
+                Générer un nouvel entraînement
               </Button>
             </div>
           </Card>

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { debugLogger } from "@/utils/debug-logger";
 
 export interface WorkoutData {
   exercises: string[];
@@ -38,26 +37,25 @@ export function useWorkoutOperations() {
 
     try {
       setIsLoading(true);
-      debugLogger.log("WorkoutOperations", "Démarrage d'une séance avec:", workoutData);
+      console.log("Démarrage d'une séance avec:", JSON.stringify(workoutData));
 
       // Vérifier les exercices
       if (!workoutData.exercises || workoutData.exercises.length === 0) {
         throw new Error("Aucun exercice sélectionné pour la séance");
       }
       
-      // S'assurer que le type est valide (toujours strength pour garantir la compatibilité)
-      const workoutType = "strength";
-      
       // Structure pour la session
       const sessionData = {
         user_id: user.id,
         exercises: workoutData.exercises,
-        workout_type: workoutType,
+        workout_type: 'strength',
         status: 'in_progress',
         started_at: new Date().toISOString(),
         target_duration_minutes: workoutData.duration || 45,
         intensity_level: workoutData.intensity || 50
       };
+
+      console.log("Envoi des données à Supabase:", JSON.stringify(sessionData));
 
       // Requête Supabase
       const { data, error } = await supabase
@@ -67,7 +65,7 @@ export function useWorkoutOperations() {
         .single();
 
       if (error) {
-        debugLogger.error("WorkoutOperations", "Erreur Supabase:", error);
+        console.error("ERREUR SUPABASE:", error);
         throw new Error(`Impossible de créer la séance: ${error.message}`);
       }
 
@@ -75,7 +73,7 @@ export function useWorkoutOperations() {
         throw new Error("Aucun ID de séance retourné");
       }
 
-      debugLogger.log("WorkoutOperations", "Séance créée avec succès:", data);
+      console.log("Séance créée avec succès:", data);
       
       toast({
         title: "Séance créée",
@@ -87,7 +85,7 @@ export function useWorkoutOperations() {
       
       return data;
     } catch (error: any) {
-      debugLogger.error("WorkoutOperations", "Erreur lors de la création de la séance:", error);
+      console.error("Erreur lors de la création de la séance:", error);
       
       toast({
         title: "Erreur",

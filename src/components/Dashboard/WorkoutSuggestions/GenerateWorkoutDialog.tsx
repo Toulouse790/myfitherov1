@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useWorkoutOperations, WorkoutData } from "@/hooks/workout/use-workout-operations";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { debugLogger } from "@/utils/debug-logger";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
@@ -68,7 +67,7 @@ export const GenerateWorkoutDialog = ({
   const handleGenerate = async () => {
     try {
       setIsGenerating(true);
-      debugLogger.log("GenerateWorkoutDialog", "Génération d'un entraînement avec paramètres:", {
+      console.log("Génération d'un entraînement avec paramètres:", {
         duration,
         intensity
       });
@@ -78,7 +77,7 @@ export const GenerateWorkoutDialog = ({
       
       // Génération
       const workout = generateWorkoutBasedOnInputs(duration, intensity);
-      debugLogger.log("GenerateWorkoutDialog", "Entraînement généré:", workout);
+      console.log("Entraînement généré:", workout);
       setGeneratedWorkout(workout);
       
       toast({
@@ -115,7 +114,7 @@ export const GenerateWorkoutDialog = ({
     }
     
     try {
-      debugLogger.log("GenerateWorkoutDialog", "Démarrage de la session", {
+      console.log("Démarrage de la session avec:", {
         exercises: generatedWorkout.exercises,
         duration: generatedWorkout.estimatedDuration,
         intensity: generatedWorkout.intensity
@@ -125,8 +124,7 @@ export const GenerateWorkoutDialog = ({
       const workoutData: WorkoutData = {
         exercises: generatedWorkout.exercises,
         duration: generatedWorkout.estimatedDuration,
-        intensity: generatedWorkout.intensity,
-        type: "strength" // Type fixe
+        intensity: generatedWorkout.intensity
       };
       
       // Démarrer la séance
