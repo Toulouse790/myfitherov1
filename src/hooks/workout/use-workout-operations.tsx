@@ -34,18 +34,24 @@ export function useWorkoutOperations() {
       setIsLoading(true);
       debugLogger.log("WorkoutOperations", "Démarrage d'une séance avec:", workoutData);
 
-      // Créer un objet avec uniquement les champs qui existent dans la table
+      // Vérifier que les exercices sont bien définis
+      if (!workoutData.exercises || workoutData.exercises.length === 0) {
+        throw new Error("Aucun exercice sélectionné pour la séance");
+      }
+
+      // Créer l'objet de données avec uniquement les champs valides pour la table
       const sessionData = {
         user_id: user.id,
         exercises: workoutData.exercises,
         workout_type: workoutData.type || 'strength',
         status: 'in_progress',
         started_at: new Date().toISOString(),
-        // Ajouter une durée cible par défaut, mais ne pas inclure total_weight_lifted
         target_duration_minutes: workoutData.duration || 45
       };
 
-      // Requête Supabase
+      debugLogger.log("WorkoutOperations", "Envoi des données à Supabase:", sessionData);
+
+      // Requête Supabase avec gestion d'erreur explicite
       const { data, error } = await supabase
         .from('workout_sessions')
         .insert(sessionData)
@@ -54,7 +60,22 @@ export function useWorkoutOperations() {
 
       if (error) {
         debugLogger.error("WorkoutOperations", "Erreur Supabase:", error);
+        toast({
+          title: "Erreur",
+          description: `Impossible de créer la séance: ${error.message}`,
+          variant: "destructive",
+        });
         throw error;
+      }
+
+      if (!data || !data.id) {
+        debugLogger.error("WorkoutOperations", "Aucune donnée retournée par Supabase");
+        toast({
+          title: "Erreur",
+          description: "Problème lors de la création de la séance",
+          variant: "destructive",
+        });
+        throw new Error("Aucun ID de séance retourné");
       }
 
       debugLogger.log("WorkoutOperations", "Séance créée avec succès:", data);
@@ -64,16 +85,17 @@ export function useWorkoutOperations() {
         description: "Votre séance d'entraînement a été créée avec succès",
       });
       
-      // Naviguer vers la session
+      // Navigation vers la nouvelle session avec l'ID
+      debugLogger.log("WorkoutOperations", "Navigation vers:", `/workouts/session/${data.id}`);
       navigate(`/workouts/session/${data.id}`);
       
       return data;
-    } catch (error) {
+    } catch (error: any) {
       debugLogger.error("WorkoutOperations", "Erreur lors de la création de la séance:", error);
       
       toast({
         title: "Erreur",
-        description: "Impossible de créer la séance d'entraînement. Veuillez réessayer.",
+        description: "Impossible de démarrer la séance d'entraînement. Veuillez réessayer.",
         variant: "destructive",
       });
       

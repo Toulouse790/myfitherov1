@@ -88,6 +88,7 @@ export const GenerateWorkoutDialog = ({
       
       // Générer l'entraînement basé sur les entrées
       const workout = generateWorkoutBasedOnInputs(duration, intensity, workoutType);
+      debugLogger.log("GenerateWorkoutDialog", "Entraînement généré:", workout);
       setGeneratedWorkout(workout);
       
       toast({
@@ -95,7 +96,7 @@ export const GenerateWorkoutDialog = ({
         description: t("workouts.workoutSummary") || "Voici votre séance d'entraînement personnalisée"
       });
     } catch (error) {
-      console.error('Erreur lors de la génération:', error);
+      debugLogger.error("GenerateWorkoutDialog", "Erreur lors de la génération:", error);
       toast({
         title: t("common.error") || "Erreur",
         description: t("workouts.errors.sessionCreationFailed") || "Impossible de générer la séance",
@@ -112,7 +113,14 @@ export const GenerateWorkoutDialog = ({
   };
 
   const handleStartWorkout = async () => {
-    if (!generatedWorkout) return;
+    if (!generatedWorkout || !generatedWorkout.exercises || generatedWorkout.exercises.length === 0) {
+      toast({
+        title: "Erreur",
+        description: "Aucun exercice sélectionné pour la séance",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
       debugLogger.log("GenerateWorkoutDialog", "Démarrage de la session avec exercises:", {
@@ -129,6 +137,8 @@ export const GenerateWorkoutDialog = ({
         type: generatedWorkout.type
       });
       
+      debugLogger.log("GenerateWorkoutDialog", "Séance démarrée avec succès");
+      
       toast({
         title: t("workouts.startingSession") || "Démarrage de la séance",
         description: t("workouts.sessionCreated") || "Votre séance a été créée avec succès"
@@ -140,7 +150,7 @@ export const GenerateWorkoutDialog = ({
       toast({
         title: t("common.error") || "Erreur",
         description: t("workouts.errors.startSessionErrorDescription") || "Impossible de démarrer la séance",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
