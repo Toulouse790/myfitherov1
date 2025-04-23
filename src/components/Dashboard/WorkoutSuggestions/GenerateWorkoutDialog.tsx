@@ -1,10 +1,8 @@
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { LoadingButton } from "./GenerateWorkout/LoadingButton";
-import { WorkoutActions } from "./GenerateWorkout/WorkoutActions";
 import { useWorkoutOperations } from "@/hooks/workout/use-workout-operations";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -12,6 +10,7 @@ import { debugLogger } from "@/utils/debug-logger";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 // Constantes pour les entraînements générés
 const generateWorkoutBasedOnInputs = (duration: number, intensity: number, type: string) => {
@@ -108,14 +107,22 @@ export const GenerateWorkoutDialog = ({
     }
   };
 
-  const handleRegenerate = () => {
+  const handleRegenerate = async () => {
     setGeneratedWorkout(null);
+    handleGenerate();
   };
 
   const handleStartWorkout = async () => {
     if (!generatedWorkout) return;
     
     try {
+      debugLogger.log("WorkoutOperations", "Démarrage de la session avec exercises:", {
+        exercises: generatedWorkout.exercises,
+        duration: generatedWorkout.estimatedDuration,
+        intensity: generatedWorkout.intensity,
+        type: generatedWorkout.type
+      });
+      
       await startWorkout({
         exercises: generatedWorkout.exercises,
         duration: generatedWorkout.estimatedDuration,
@@ -179,14 +186,20 @@ export const GenerateWorkoutDialog = ({
                 />
               </div>
               
-              <LoadingButton
-                isLoading={isGenerating}
+              <Button
                 disabled={isGenerating}
                 onClick={handleGenerate}
                 className="w-full"
               >
-                {t("workouts.generateWorkout") || "Générer un entraînement"}
-              </LoadingButton>
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t("workouts.generationLoading") || "Génération en cours..."}
+                  </>
+                ) : (
+                  t("workouts.generateWorkout") || "Générer un entraînement"
+                )}
+              </Button>
             </div>
           ) : (
             <div className="space-y-6 py-4">
@@ -197,8 +210,16 @@ export const GenerateWorkoutDialog = ({
                   variant="outline" 
                   onClick={handleRegenerate}
                   className="flex-1"
+                  disabled={isGenerating}
                 >
-                  {t("workouts.regenerate") || "Régénérer"}
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t("workouts.regenerating") || "Régénération..."}
+                    </>
+                  ) : (
+                    t("workouts.regenerate") || "Régénérer"
+                  )}
                 </Button>
                 
                 <Button 
@@ -207,7 +228,12 @@ export const GenerateWorkoutDialog = ({
                   className="flex-1"
                 >
                   {isStartingWorkout 
-                    ? t("workouts.startingSession") || "Démarrage..." 
+                    ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t("workouts.startingSession") || "Démarrage..."} 
+                      </>
+                    )
                     : t("workouts.startSession") || "Commencer la séance"}
                 </Button>
               </div>

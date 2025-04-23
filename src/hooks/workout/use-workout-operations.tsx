@@ -32,29 +32,46 @@ export function useWorkoutOperations() {
 
     try {
       setIsLoading(true);
-      debugLogger.log("useWorkoutOperations", "Démarrage d'une séance avec:", workoutData);
+      debugLogger.log("WorkoutOperations", "Démarrage d'une séance avec:", workoutData);
 
+      // Créer un objet avec uniquement les champs qui existent dans la table
+      const sessionData = {
+        user_id: user.id,
+        exercises: workoutData.exercises,
+        workout_type: workoutData.type || 'strength',
+        target_duration_minutes: workoutData.duration || 45,
+        status: 'in_progress',
+        started_at: new Date().toISOString()
+      };
+
+      // Éviter d'utiliser un champ qui n'existe pas dans la table
       const { data, error } = await supabase
         .from('workout_sessions')
-        .insert({
-          user_id: user.id,
-          exercises: workoutData.exercises,
-          workout_type: workoutData.type || 'strength',
-          target_duration_minutes: workoutData.duration || 45,
-          status: 'in_progress',
-          started_at: new Date().toISOString()
-        })
+        .insert(sessionData)
         .select('id')
         .single();
 
       if (error) throw error;
 
-      debugLogger.log("useWorkoutOperations", "Séance créée avec succès:", data);
+      debugLogger.log("WorkoutOperations", "Séance créée avec succès:", data);
+      
+      toast({
+        title: "Séance créée",
+        description: "Votre séance d'entraînement a été créée avec succès",
+      });
+      
       navigate(`/workouts/session/${data.id}`);
       
       return data;
     } catch (error) {
-      debugLogger.error("useWorkoutOperations", "Erreur lors de la création de la séance:", error);
+      debugLogger.error("WorkoutOperations", "Erreur lors de la création de la séance:", error);
+      
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la séance d'entraînement. Veuillez réessayer.",
+        variant: "destructive",
+      });
+      
       throw error;
     } finally {
       setIsLoading(false);
