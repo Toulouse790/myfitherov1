@@ -32,38 +32,37 @@ export function useWorkoutOperations() {
 
     try {
       setIsLoading(true);
+      console.log("=== DÉMARRAGE SÉANCE ===");
+      console.log("WorkoutData reçue:", workoutData);
       debugLogger.log("WorkoutOperations", "Démarrage d'une séance avec:", workoutData);
-      console.log("WorkoutData reçue:", workoutData); // Log plus détaillé
 
       // Vérifier que les exercices sont bien définis
       if (!workoutData.exercises || workoutData.exercises.length === 0) {
         const errMsg = "Aucun exercice sélectionné pour la séance";
+        console.error(errMsg);
         debugLogger.error("WorkoutOperations", errMsg);
         toast({
           title: "Erreur",
           description: errMsg,
           variant: "destructive",
         });
-        throw new Error(errMsg);
+        return;
       }
 
-      // Structure minimale de données pour éviter les erreurs
+      // Structure simplifiée pour la session
       const sessionData = {
         user_id: user.id,
         exercises: workoutData.exercises,
         workout_type: workoutData.type || 'strength',
         status: 'in_progress',
-        started_at: new Date().toISOString()
+        started_at: new Date().toISOString(),
+        target_duration_minutes: workoutData.duration || 45
       };
 
-      if (workoutData.duration) {
-        sessionData['target_duration_minutes'] = workoutData.duration;
-      }
-
-      debugLogger.log("WorkoutOperations", "Envoi des données à Supabase:", sessionData);
       console.log("Données envoyées à Supabase:", sessionData);
+      debugLogger.log("WorkoutOperations", "Envoi des données à Supabase:", sessionData);
 
-      // Requête Supabase avec gestion d'erreur explicite
+      // Requête Supabase simplifiée
       const { data, error } = await supabase
         .from('workout_sessions')
         .insert(sessionData)
@@ -71,54 +70,57 @@ export function useWorkoutOperations() {
         .single();
 
       if (error) {
+        console.error("ERREUR SUPABASE:", error);
+        console.error("Code d'erreur:", error.code);
+        console.error("Message d'erreur:", error.message);
+        console.error("Détails:", error.details);
+        
         debugLogger.error("WorkoutOperations", "Erreur Supabase:", error);
-        console.error("Erreur Supabase complète:", error);
         
         toast({
-          title: "Erreur",
+          title: "Erreur de création",
           description: `Impossible de créer la séance: ${error.message}`,
           variant: "destructive",
         });
-        throw error;
+        return;
       }
 
       if (!data || !data.id) {
         const errMsg = "Aucun ID de séance retourné";
+        console.error(errMsg);
         debugLogger.error("WorkoutOperations", errMsg);
         toast({
           title: "Erreur",
           description: "Problème lors de la création de la séance",
           variant: "destructive",
         });
-        throw new Error(errMsg);
+        return;
       }
 
+      console.log("SUCCÈS: Séance créée avec ID:", data.id);
       debugLogger.log("WorkoutOperations", "Séance créée avec succès:", data);
-      console.log("Séance créée avec ID:", data.id);
       
       toast({
         title: "Séance créée",
         description: "Votre séance d'entraînement a été créée avec succès",
       });
       
-      // Navigation vers la nouvelle session avec l'ID
+      // Navigation vers la nouvelle session
       const sessionUrl = `/workouts/session/${data.id}`;
-      debugLogger.log("WorkoutOperations", "Navigation vers:", sessionUrl);
       console.log("Navigation vers:", sessionUrl);
+      debugLogger.log("WorkoutOperations", "Navigation vers:", sessionUrl);
       navigate(sessionUrl);
       
       return data;
     } catch (error: any) {
+      console.error("ERREUR CRITIQUE:", error);
       debugLogger.error("WorkoutOperations", "Erreur lors de la création de la séance:", error);
-      console.error("Erreur complète:", error);
       
       toast({
         title: "Erreur",
         description: error.message || "Impossible de démarrer la séance d'entraînement.",
         variant: "destructive",
       });
-      
-      throw error;
     } finally {
       setIsLoading(false);
     }

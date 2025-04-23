@@ -135,7 +135,9 @@ export const GenerateWorkoutDialog = ({
     }
     
     try {
+      console.log("=== DÉBUT DÉMARRAGE SÉANCE DEPUIS DIALOG ===");
       console.log("Démarrage de la session avec exercises:", generatedWorkout.exercises);
+      
       debugLogger.log("GenerateWorkoutDialog", "Démarrage de la session avec exercises:", 
         generatedWorkout.exercises);
       
