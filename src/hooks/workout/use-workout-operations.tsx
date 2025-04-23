@@ -33,7 +33,7 @@ export function useWorkoutOperations() {
     try {
       setIsLoading(true);
       console.log("=== DÉMARRAGE SÉANCE ===");
-      console.log("WorkoutData reçue:", workoutData);
+      console.log("WorkoutData reçue:", JSON.stringify(workoutData));
       debugLogger.log("WorkoutOperations", "Démarrage d'une séance avec:", workoutData);
 
       // Vérifier que les exercices sont bien définis
@@ -56,8 +56,10 @@ export function useWorkoutOperations() {
       const workoutType = workoutData.type && validWorkoutTypes.includes(workoutData.type) 
         ? workoutData.type 
         : 'strength';
+      
+      console.log("Type d'entraînement validé:", workoutType);
 
-      // Structure simplifiée pour la session
+      // Structure pour la session avec toutes les données requises
       const sessionData = {
         user_id: user.id,
         exercises: workoutData.exercises,
@@ -68,10 +70,10 @@ export function useWorkoutOperations() {
         intensity_level: workoutData.intensity || 50
       };
 
-      console.log("Données envoyées à Supabase:", sessionData);
+      console.log("Données formatées envoyées à Supabase:", JSON.stringify(sessionData));
       debugLogger.log("WorkoutOperations", "Envoi des données à Supabase:", sessionData);
 
-      // Requête Supabase simplifiée
+      // Requête Supabase
       const { data, error } = await supabase
         .from('workout_sessions')
         .insert(sessionData)
@@ -91,7 +93,7 @@ export function useWorkoutOperations() {
           description: `Impossible de créer la séance: ${error.message}`,
           variant: "destructive",
         });
-        return;
+        return null;
       }
 
       if (!data || !data.id) {
@@ -103,7 +105,7 @@ export function useWorkoutOperations() {
           description: "Problème lors de la création de la séance",
           variant: "destructive",
         });
-        return;
+        return null;
       }
 
       console.log("SUCCÈS: Séance créée avec ID:", data.id);
@@ -126,10 +128,11 @@ export function useWorkoutOperations() {
       debugLogger.error("WorkoutOperations", "Erreur lors de la création de la séance:", error);
       
       toast({
-        title: "Erreur",
+        title: "Erreur système",
         description: error.message || "Impossible de démarrer la séance d'entraînement.",
         variant: "destructive",
       });
+      return null;
     } finally {
       setIsLoading(false);
     }
