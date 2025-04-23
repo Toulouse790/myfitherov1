@@ -8,7 +8,7 @@ import { MealSection } from "./DailyMeals/MealSection";
 import { useDailyTargets } from "@/hooks/use-daily-targets";
 import { useFoodEntries } from "@/hooks/use-food-entries";
 import { CheatMealDialog } from "./DailyMeals/CheatMealDialog";
-import { FoodEntryForm } from "./FoodEntryForm";
+import { FoodEntryForm } from "./FoodEntry/FoodEntryForm";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
