@@ -9,6 +9,7 @@ export const nutrition = {
   todaysMeals: "Repas d'aujourd'hui",
   addMeal: "Ajouter un repas",
   addFood: "Ajouter un aliment",
+  addAnotherFood: "Ajouter un autre aliment",
   scan: "Scanner",
   cheatMeal: "Repas libre",
   mealAdded: "Repas ajouté",
@@ -38,6 +39,10 @@ export const nutrition = {
     restrictions: "Restrictions alimentaires",
     allergies: "Allergies"
   },
+  deletedSuccessfully: "Supprimé avec succès",
+  foodEntryRemoved: "L'entrée alimentaire a été supprimée",
+  errorDeletingEntry: "Erreur lors de la suppression de l'entrée",
+  noMealsAdded: "Aucun repas ajouté",
   barcodeScanner: "Scanner de code-barres",
   scanFood: "Scanner un aliment",
   scanBarcode: "Scanner un code-barres",
