@@ -123,12 +123,8 @@ export const GenerateWorkoutDialog = ({
     }
     
     try {
-      debugLogger.log("GenerateWorkoutDialog", "Démarrage de la session avec exercises:", {
-        exercises: generatedWorkout.exercises,
-        duration: generatedWorkout.estimatedDuration,
-        intensity: generatedWorkout.intensity,
-        type: generatedWorkout.type
-      });
+      debugLogger.log("GenerateWorkoutDialog", "Démarrage de la session avec exercises:", 
+        generatedWorkout.exercises);
       
       await startWorkout({
         exercises: generatedWorkout.exercises,

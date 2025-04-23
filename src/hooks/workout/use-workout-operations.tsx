@@ -47,7 +47,7 @@ export function useWorkoutOperations() {
         status: 'in_progress',
         started_at: new Date().toISOString(),
         target_duration_minutes: workoutData.duration || 45,
-        // IMPORTANT: Nous n'incluons PAS total_weight_lifted car il cause des problèmes
+        // Ne pas inclure total_weight_lifted car cela cause des erreurs
       };
 
       debugLogger.log("WorkoutOperations", "Envoi des données à Supabase:", sessionData);
