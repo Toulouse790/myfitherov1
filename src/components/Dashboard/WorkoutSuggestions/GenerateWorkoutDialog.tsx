@@ -19,7 +19,6 @@ const generateWorkoutBasedOnInputs = (duration: number, intensity: number, type:
     "Squats",
     "Pompes",
     "Fentes",
-    "Tractions",
     "Mountain climbers",
     "Crunchs",
     "Gainage",
@@ -85,7 +84,7 @@ export const GenerateWorkoutDialog = ({
       });
       
       // Simuler un délai de génération pour montrer un état de chargement
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Générer l'entraînement basé sur les entrées
       const workout = generateWorkoutBasedOnInputs(duration, intensity, workoutType);
@@ -116,7 +115,7 @@ export const GenerateWorkoutDialog = ({
     if (!generatedWorkout) return;
     
     try {
-      debugLogger.log("WorkoutOperations", "Démarrage de la session avec exercises:", {
+      debugLogger.log("GenerateWorkoutDialog", "Démarrage de la session avec exercises:", {
         exercises: generatedWorkout.exercises,
         duration: generatedWorkout.estimatedDuration,
         intensity: generatedWorkout.intensity,
@@ -134,6 +133,8 @@ export const GenerateWorkoutDialog = ({
         title: t("workouts.startingSession") || "Démarrage de la séance",
         description: t("workouts.sessionCreated") || "Votre séance a été créée avec succès"
       });
+      
+      // La navigation est gérée dans le hook startWorkout
     } catch (error) {
       console.error('Erreur lors du démarrage de la séance:', error);
       toast({
@@ -210,7 +211,7 @@ export const GenerateWorkoutDialog = ({
                   variant="outline" 
                   onClick={handleRegenerate}
                   className="flex-1"
-                  disabled={isGenerating}
+                  disabled={isGenerating || isStartingWorkout}
                 >
                   {isGenerating ? (
                     <>
@@ -227,14 +228,14 @@ export const GenerateWorkoutDialog = ({
                   disabled={isStartingWorkout}
                   className="flex-1"
                 >
-                  {isStartingWorkout 
-                    ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t("workouts.startingSession") || "Démarrage..."} 
-                      </>
-                    )
-                    : t("workouts.startSession") || "Commencer la séance"}
+                  {isStartingWorkout ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t("workouts.startingSession") || "Démarrage..."} 
+                    </>
+                  ) : (
+                    t("workouts.startSession") || "Commencer la séance"
+                  )}
                 </Button>
               </div>
             </div>

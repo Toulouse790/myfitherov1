@@ -39,19 +39,23 @@ export function useWorkoutOperations() {
         user_id: user.id,
         exercises: workoutData.exercises,
         workout_type: workoutData.type || 'strength',
-        target_duration_minutes: workoutData.duration || 45,
         status: 'in_progress',
-        started_at: new Date().toISOString()
+        started_at: new Date().toISOString(),
+        // Ajouter une durée cible par défaut, mais ne pas inclure total_weight_lifted
+        target_duration_minutes: workoutData.duration || 45
       };
 
-      // Éviter d'utiliser un champ qui n'existe pas dans la table
+      // Requête Supabase
       const { data, error } = await supabase
         .from('workout_sessions')
         .insert(sessionData)
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        debugLogger.error("WorkoutOperations", "Erreur Supabase:", error);
+        throw error;
+      }
 
       debugLogger.log("WorkoutOperations", "Séance créée avec succès:", data);
       
@@ -60,6 +64,7 @@ export function useWorkoutOperations() {
         description: "Votre séance d'entraînement a été créée avec succès",
       });
       
+      // Naviguer vers la session
       navigate(`/workouts/session/${data.id}`);
       
       return data;

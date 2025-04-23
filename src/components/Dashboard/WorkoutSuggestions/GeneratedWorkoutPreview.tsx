@@ -60,7 +60,7 @@ export const GeneratedWorkoutPreview = ({ workout }: GeneratedWorkoutPreviewProp
         </div>
         
         <Badge variant={intensity > 75 ? "destructive" : "outline"} className="flex items-center gap-1">
-          <Flame className="h-3 w-3 text-primary" />
+          <Flame className="h-3 w-3" />
           <span>{getIntensityLevel(intensity)}</span>
         </Badge>
       </div>
