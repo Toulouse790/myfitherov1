@@ -56,7 +56,7 @@ export const GenerateWorkoutDialog = ({
   onClose,
   initialDuration = 45,
   initialIntensity = 50,
-  workoutType = ""
+  workoutType = "strength"
 }: GenerateWorkoutDialogProps) => {
   const [duration, setDuration] = useState(initialDuration);
   const [intensity, setIntensity] = useState(initialIntensity);
@@ -146,7 +146,7 @@ export const GenerateWorkoutDialog = ({
         exercises: generatedWorkout.exercises,
         duration: generatedWorkout.estimatedDuration,
         intensity: generatedWorkout.intensity,
-        type: generatedWorkout.type
+        type: "strength" // Utiliser une valeur fixe valide
       };
       
       console.log("Données envoyées à startWorkout:", workoutData);

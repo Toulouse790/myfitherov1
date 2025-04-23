@@ -48,15 +48,24 @@ export function useWorkoutOperations() {
         });
         return;
       }
+      
+      // Valeurs autorisées pour workout_type dans la base de données
+      const validWorkoutTypes = ['strength', 'cardio', 'flexibility', 'hiit', 'sport_specific', 'general', 'custom'];
+      
+      // S'assurer que le type est valide, sinon utiliser 'strength' par défaut
+      const workoutType = workoutData.type && validWorkoutTypes.includes(workoutData.type) 
+        ? workoutData.type 
+        : 'strength';
 
       // Structure simplifiée pour la session
       const sessionData = {
         user_id: user.id,
         exercises: workoutData.exercises,
-        workout_type: workoutData.type || 'strength',
+        workout_type: workoutType,
         status: 'in_progress',
         started_at: new Date().toISOString(),
-        target_duration_minutes: workoutData.duration || 45
+        target_duration_minutes: workoutData.duration || 45,
+        intensity_level: workoutData.intensity || 50
       };
 
       console.log("Données envoyées à Supabase:", sessionData);
