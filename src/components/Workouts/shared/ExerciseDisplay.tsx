@@ -1,35 +1,29 @@
 
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Dumbbell } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ExerciseDisplayProps {
   name: string;
   sets?: number;
   reps?: number;
-  isCompleted?: boolean;
-  onClick?: () => void;
 }
 
-export const ExerciseDisplay = ({ name, sets = 3, reps = 12, isCompleted, onClick }: ExerciseDisplayProps) => {
-  const { t } = useLanguage();
-
+export function ExerciseDisplay({ name, sets = 3, reps = 10 }: ExerciseDisplayProps) {
   return (
-    <Card 
-      className={`p-4 hover:bg-accent/5 transition-colors ${onClick ? 'cursor-pointer' : ''}`}
-      onClick={onClick}
-    >
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-          <Dumbbell className={`w-5 h-5 ${isCompleted ? 'text-green-500' : 'text-primary'}`} />
+    <Card className="overflow-hidden">
+      <CardContent className="p-3">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Dumbbell className="h-4 w-4 text-primary" />
+            <span className="font-medium">{name}</span>
+          </div>
+          
+          <Badge variant="outline" className="text-xs">
+            {sets} × {reps}
+          </Badge>
         </div>
-        <div>
-          <h3 className="font-medium">{name}</h3>
-          <p className="text-sm text-muted-foreground">
-            {sets} {t("workouts.sets")} • {reps} {t("workouts.reps")}
-          </p>
-        </div>
-      </div>
+      </CardContent>
     </Card>
   );
-};
+}

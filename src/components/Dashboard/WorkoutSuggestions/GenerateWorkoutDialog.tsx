@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { debugLogger } from "@/utils/debug-logger";
 import { GeneratedWorkoutPreview } from "./GeneratedWorkoutPreview";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 
 // Constantes pour les entraînements générés
 const generateWorkoutBasedOnInputs = (duration: number, intensity: number, type: string) => {
@@ -22,14 +23,19 @@ const generateWorkoutBasedOnInputs = (duration: number, intensity: number, type:
     "Tractions",
     "Mountain climbers",
     "Crunchs",
-    "Gainage"
+    "Gainage",
+    "Dips",
+    "Élévations latérales",
+    "Rowing haltère"
   ];
 
   // Variation du nombre d'exercices en fonction de la durée
   const exerciseCount = Math.max(3, Math.min(7, Math.floor(duration / 10)));
   
   // Sélectionner un sous-ensemble d'exercices
-  const selectedExercises = exercises.slice(0, exerciseCount);
+  const selectedExercises = exercises
+    .sort(() => 0.5 - Math.random())
+    .slice(0, exerciseCount);
   
   return {
     exercises: selectedExercises,
@@ -59,12 +65,16 @@ export const GenerateWorkoutDialog = ({
   const [generatedWorkout, setGeneratedWorkout] = useState<any>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const { t } = useLanguage();
+  const { toast } = useToast();
   const { startWorkout, isLoading: isStartingWorkout } = useWorkoutOperations();
   
   useEffect(() => {
     if (initialDuration) setDuration(initialDuration);
     if (initialIntensity) setIntensity(initialIntensity);
-  }, [initialDuration, initialIntensity]);
+    debugLogger.log("GenerateWorkoutDialog", "Dialog initialized with params:", { 
+      initialDuration, initialIntensity, workoutType 
+    });
+  }, [initialDuration, initialIntensity, workoutType]);
 
   const handleGenerate = async () => {
     try {
@@ -81,8 +91,18 @@ export const GenerateWorkoutDialog = ({
       // Générer l'entraînement basé sur les entrées
       const workout = generateWorkoutBasedOnInputs(duration, intensity, workoutType);
       setGeneratedWorkout(workout);
+      
+      toast({
+        title: t("workouts.sessionCreated") || "Séance générée",
+        description: t("workouts.workoutSummary") || "Voici votre séance d'entraînement personnalisée"
+      });
     } catch (error) {
       console.error('Erreur lors de la génération:', error);
+      toast({
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.sessionCreationFailed") || "Impossible de générer la séance",
+        variant: "destructive"
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -92,11 +112,36 @@ export const GenerateWorkoutDialog = ({
     setGeneratedWorkout(null);
   };
 
+  const handleStartWorkout = async () => {
+    if (!generatedWorkout) return;
+    
+    try {
+      await startWorkout({
+        exercises: generatedWorkout.exercises,
+        duration: generatedWorkout.estimatedDuration,
+        intensity: generatedWorkout.intensity,
+        type: generatedWorkout.type
+      });
+      
+      toast({
+        title: t("workouts.startingSession") || "Démarrage de la séance",
+        description: t("workouts.sessionCreated") || "Votre séance a été créée avec succès"
+      });
+    } catch (error) {
+      console.error('Erreur lors du démarrage de la séance:', error);
+      toast({
+        title: t("common.error") || "Erreur",
+        description: t("workouts.errors.startSessionErrorDescription") || "Impossible de démarrer la séance",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md md:max-w-xl">
         <DialogHeader>
-          <DialogTitle>{t("workouts.generateWorkoutTitle")}</DialogTitle>
+          <DialogTitle>{t("workouts.generateWorkoutTitle") || "Générer un entraînement"}</DialogTitle>
         </DialogHeader>
         
         <ScrollArea className="h-[60vh] max-h-[500px] pr-3">
@@ -104,8 +149,8 @@ export const GenerateWorkoutDialog = ({
             <div className="space-y-6 py-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm font-medium">{t("workouts.duration")}</span>
-                  <span className="text-sm">{duration} {t("workouts.min")}</span>
+                  <span className="text-sm font-medium">{t("workouts.duration") || "Durée"}</span>
+                  <span className="text-sm">{duration} {t("workouts.min") || "min"}</span>
                 </div>
                 <Slider
                   value={[duration]}
@@ -121,7 +166,7 @@ export const GenerateWorkoutDialog = ({
               
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm font-medium">{t("workouts.intensity")}</span>
+                  <span className="text-sm font-medium">{t("workouts.intensity") || "Intensité"}</span>
                   <span className="text-sm">{intensity}%</span>
                 </div>
                 <Slider
@@ -140,7 +185,7 @@ export const GenerateWorkoutDialog = ({
                 onClick={handleGenerate}
                 className="w-full"
               >
-                {t("workouts.generateWorkout")}
+                {t("workouts.generateWorkout") || "Générer un entraînement"}
               </LoadingButton>
             </div>
           ) : (
@@ -153,26 +198,22 @@ export const GenerateWorkoutDialog = ({
                   onClick={handleRegenerate}
                   className="flex-1"
                 >
-                  {t("workouts.regenerate")}
+                  {t("workouts.regenerate") || "Régénérer"}
                 </Button>
                 
                 <Button 
-                  onClick={() => startWorkout(generatedWorkout)}
+                  onClick={handleStartWorkout}
                   disabled={isStartingWorkout}
                   className="flex-1"
                 >
                   {isStartingWorkout 
-                    ? t("workouts.startingSession") 
-                    : t("workouts.startSession")}
+                    ? t("workouts.startingSession") || "Démarrage..." 
+                    : t("workouts.startSession") || "Commencer la séance"}
                 </Button>
               </div>
             </div>
           )}
         </ScrollArea>
-        
-        <DialogFooter className="flex justify-center">
-          <p className="text-xs text-muted-foreground">{t("common.close")}</p>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
