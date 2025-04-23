@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { useWorkoutOperations } from "@/hooks/workout/use-workout-operations";
+import { useWorkoutOperations, WorkoutData } from "@/hooks/workout/use-workout-operations";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { debugLogger } from "@/utils/debug-logger";
@@ -142,7 +142,7 @@ export const GenerateWorkoutDialog = ({
         generatedWorkout.exercises);
       
       // S'assurer que les données sont correctement structurées
-      const workoutData = {
+      const workoutData: WorkoutData = {
         exercises: generatedWorkout.exercises,
         duration: generatedWorkout.estimatedDuration,
         intensity: generatedWorkout.intensity,
