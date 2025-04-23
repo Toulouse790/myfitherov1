@@ -33,23 +33,35 @@ export function useWorkoutOperations() {
     try {
       setIsLoading(true);
       debugLogger.log("WorkoutOperations", "Démarrage d'une séance avec:", workoutData);
+      console.log("WorkoutData reçue:", workoutData); // Log plus détaillé
 
       // Vérifier que les exercices sont bien définis
       if (!workoutData.exercises || workoutData.exercises.length === 0) {
-        throw new Error("Aucun exercice sélectionné pour la séance");
+        const errMsg = "Aucun exercice sélectionné pour la séance";
+        debugLogger.error("WorkoutOperations", errMsg);
+        toast({
+          title: "Erreur",
+          description: errMsg,
+          variant: "destructive",
+        });
+        throw new Error(errMsg);
       }
 
-      // Créer l'objet de données simplifié pour éviter les erreurs d'insertion
+      // Structure minimale de données pour éviter les erreurs
       const sessionData = {
         user_id: user.id,
         exercises: workoutData.exercises,
         workout_type: workoutData.type || 'strength',
         status: 'in_progress',
-        started_at: new Date().toISOString(),
-        target_duration_minutes: workoutData.duration || 45,
+        started_at: new Date().toISOString()
       };
 
+      if (workoutData.duration) {
+        sessionData['target_duration_minutes'] = workoutData.duration;
+      }
+
       debugLogger.log("WorkoutOperations", "Envoi des données à Supabase:", sessionData);
+      console.log("Données envoyées à Supabase:", sessionData);
 
       // Requête Supabase avec gestion d'erreur explicite
       const { data, error } = await supabase
@@ -60,7 +72,7 @@ export function useWorkoutOperations() {
 
       if (error) {
         debugLogger.error("WorkoutOperations", "Erreur Supabase:", error);
-        console.error("Erreur complète:", error);
+        console.error("Erreur Supabase complète:", error);
         
         toast({
           title: "Erreur",
@@ -71,16 +83,18 @@ export function useWorkoutOperations() {
       }
 
       if (!data || !data.id) {
-        debugLogger.error("WorkoutOperations", "Aucune donnée retournée par Supabase");
+        const errMsg = "Aucun ID de séance retourné";
+        debugLogger.error("WorkoutOperations", errMsg);
         toast({
           title: "Erreur",
           description: "Problème lors de la création de la séance",
           variant: "destructive",
         });
-        throw new Error("Aucun ID de séance retourné");
+        throw new Error(errMsg);
       }
 
       debugLogger.log("WorkoutOperations", "Séance créée avec succès:", data);
+      console.log("Séance créée avec ID:", data.id);
       
       toast({
         title: "Séance créée",
@@ -88,16 +102,19 @@ export function useWorkoutOperations() {
       });
       
       // Navigation vers la nouvelle session avec l'ID
-      debugLogger.log("WorkoutOperations", "Navigation vers:", `/workouts/session/${data.id}`);
-      navigate(`/workouts/session/${data.id}`);
+      const sessionUrl = `/workouts/session/${data.id}`;
+      debugLogger.log("WorkoutOperations", "Navigation vers:", sessionUrl);
+      console.log("Navigation vers:", sessionUrl);
+      navigate(sessionUrl);
       
       return data;
     } catch (error: any) {
       debugLogger.error("WorkoutOperations", "Erreur lors de la création de la séance:", error);
+      console.error("Erreur complète:", error);
       
       toast({
         title: "Erreur",
-        description: "Impossible de démarrer la séance d'entraînement. Veuillez réessayer.",
+        description: error.message || "Impossible de démarrer la séance d'entraînement.",
         variant: "destructive",
       });
       

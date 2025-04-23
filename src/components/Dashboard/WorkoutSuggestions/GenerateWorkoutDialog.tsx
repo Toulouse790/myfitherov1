@@ -69,6 +69,9 @@ export const GenerateWorkoutDialog = ({
   useEffect(() => {
     if (initialDuration) setDuration(initialDuration);
     if (initialIntensity) setIntensity(initialIntensity);
+    console.log("GenerateWorkoutDialog initialisé avec:", { 
+      initialDuration, initialIntensity, workoutType 
+    });
     debugLogger.log("GenerateWorkoutDialog", "Dialog initialized with params:", { 
       initialDuration, initialIntensity, workoutType 
     });
@@ -77,6 +80,12 @@ export const GenerateWorkoutDialog = ({
   const handleGenerate = async () => {
     try {
       setIsGenerating(true);
+      console.log("Génération d'un entraînement avec paramètres:", {
+        duration,
+        intensity,
+        workoutType
+      });
+      
       debugLogger.log("GenerateWorkoutDialog", "Génération d'un entraînement avec paramètres:", {
         duration,
         intensity,
@@ -88,6 +97,7 @@ export const GenerateWorkoutDialog = ({
       
       // Générer l'entraînement basé sur les entrées
       const workout = generateWorkoutBasedOnInputs(duration, intensity, workoutType);
+      console.log("Entraînement généré:", workout);
       debugLogger.log("GenerateWorkoutDialog", "Entraînement généré:", workout);
       setGeneratedWorkout(workout);
       
@@ -96,6 +106,7 @@ export const GenerateWorkoutDialog = ({
         description: t("workouts.workoutSummary") || "Voici votre séance d'entraînement personnalisée"
       });
     } catch (error) {
+      console.error("Erreur lors de la génération:", error);
       debugLogger.error("GenerateWorkoutDialog", "Erreur lors de la génération:", error);
       toast({
         title: t("common.error") || "Erreur",
@@ -114,6 +125,7 @@ export const GenerateWorkoutDialog = ({
 
   const handleStartWorkout = async () => {
     if (!generatedWorkout || !generatedWorkout.exercises || generatedWorkout.exercises.length === 0) {
+      console.error("Aucun exercice sélectionné pour la séance");
       toast({
         title: "Erreur",
         description: "Aucun exercice sélectionné pour la séance",
@@ -123,16 +135,22 @@ export const GenerateWorkoutDialog = ({
     }
     
     try {
+      console.log("Démarrage de la session avec exercises:", generatedWorkout.exercises);
       debugLogger.log("GenerateWorkoutDialog", "Démarrage de la session avec exercises:", 
         generatedWorkout.exercises);
       
-      // Créer un objet format approprié pour le hook startWorkout
-      await startWorkout({
+      // S'assurer que les données sont correctement structurées
+      const workoutData = {
         exercises: generatedWorkout.exercises,
         duration: generatedWorkout.estimatedDuration,
         intensity: generatedWorkout.intensity,
         type: generatedWorkout.type
-      });
+      };
+      
+      console.log("Données envoyées à startWorkout:", workoutData);
+      
+      // Appel de la fonction pour démarrer la séance
+      await startWorkout(workoutData);
       
       debugLogger.log("GenerateWorkoutDialog", "Séance démarrée avec succès");
       
