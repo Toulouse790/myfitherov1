@@ -3,7 +3,8 @@ import { lazy } from "react";
 import { UnifiedWorkoutDetail } from "@/components/Workouts/UnifiedWorkoutDetail";
 import { withSuspense } from "@/utils/route-utils";
 
-const Workouts = lazy(() => import("@/pages/workouts/index"));
+// Import de la nouvelle page simplifiée 
+const SimplifiedWorkoutPage = lazy(() => import("@/pages/workouts/SimplifiedIndex"));
 const WorkoutGenerate = lazy(() => import("@/pages/WorkoutGenerate"));
 const WorkoutSession = lazy(() => import("@/components/Workouts/CleanWorkoutSession"));
 const SportPrograms = lazy(() => import("@/pages/SportPrograms"));
@@ -13,7 +14,7 @@ const WorkoutSessionPage = lazy(() => import("@/pages/workouts/session/[id]"));
 export const workoutRoutes = [
   {
     path: "workouts",
-    element: withSuspense(Workouts)
+    element: withSuspense(SimplifiedWorkoutPage)
   },
   {
     path: "workouts/generate",

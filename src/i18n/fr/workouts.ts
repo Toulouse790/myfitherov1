@@ -1,4 +1,3 @@
-
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Démarrer l'entraînement",
@@ -155,5 +154,17 @@ export const workouts = {
   suggestion_triceps: "Entraînement de triceps recommandé",
   suggestion_abs: "Entraînement d'abdominaux recommandé",
   startAdaptedSession: "Démarrer la séance adaptée",
-  library: "Bibliothèque"
+  library: "Bibliothèque",
+  byMuscleGroup: "Par groupe musculaire",
+  bySport: "Par sport",
+  quickStartDescription: "Démarrez immédiatement un entraînement adapté à votre niveau",
+  selectDifficulty: "Sélectionnez votre niveau",
+  selectToSeeExercises: "Sélectionnez pour voir les exercices",
+  recentWorkouts: "Entraînements récents",
+  savedTemplates: "Modèles enregistrés",
+  recommendedForYou: "Recommandé pour vous",
+  saveAsTemplate: "Enregistrer comme modèle",
+  loadTemplate: "Charger un modèle",
+  continueSession: "Continuer la session",
+  quickAccessSection: "Accès rapide"
 };

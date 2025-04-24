@@ -1,13 +1,11 @@
 
 export const difficulty = {
-  easy: "Facile",
   beginner: "Débutant",
-  moderate: "Modéré",
-  medium: "Moyen",
   intermediate: "Intermédiaire",
-  challenging: "Difficile",
-  hard: "Très difficile",
-  intense: "Intense",
   advanced: "Avancé",
-  expert: "Expert"
+  easy: "Facile",
+  moderate: "Modéré",
+  hard: "Difficile",
+  quickStart: "Démarrage rapide",
+  selectDifficulty: "Sélectionnez votre niveau"
 };
