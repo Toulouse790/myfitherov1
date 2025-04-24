@@ -2,8 +2,11 @@
 import { Header } from "@/components/Layout/Header";
 import { motion } from "framer-motion";
 import ProfilePage from "@/components/Profile";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Profile = () => {
+  const { t } = useLanguage();
+  
   return (
     <>
       <Header />
@@ -13,7 +16,7 @@ const Profile = () => {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-6 pb-24"
       >
-        <h1 className="text-2xl font-bold mb-6">Mon Profil</h1>
+        <h1 className="text-2xl font-bold mb-6">{t("profile.title", { fallback: "Mon Profil" })}</h1>
         <ProfilePage />
       </motion.div>
     </>

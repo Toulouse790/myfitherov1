@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Layout/Header";
 import { CombinedWorkoutSelector } from "./CombinedWorkoutSelector";
@@ -14,7 +15,6 @@ import { useWorkoutOperations } from "@/hooks/workout/use-workout-operations";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
 import { useLanguageManagement } from "@/hooks/use-language-management";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export const SimplifiedWorkoutPage = () => {
   const {
@@ -95,12 +95,12 @@ export const SimplifiedWorkoutPage = () => {
         {currentView === 'selector' ? (
           <div className="space-y-8">
             <div className="text-center mb-8">
-              <div className="flex justify-end mb-4">
-                <LanguageSwitcher />
-              </div>
               <h1 className="text-3xl font-bold mb-2">
                 {t("workouts.title")}
               </h1>
+              <p className="text-muted-foreground">
+                {t("workouts.trackProgressDescription")}
+              </p>
             </div>
             
             <Tabs defaultValue="create" className="w-full">

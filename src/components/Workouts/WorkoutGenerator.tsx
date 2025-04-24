@@ -1,130 +1,74 @@
 
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Dumbbell, Calendar, Clock, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { debugLogger } from "@/utils/debug-logger";
-import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
+import { useState } from "react";
+import { Calendar, Clock, Activity } from "lucide-react";
 
-export function WorkoutGenerator() {
+export const WorkoutGenerator = () => {
   const { t } = useLanguage();
-  const { translateWorkoutElement } = useExerciseTranslation();
-  const [duration, setDuration] = useState([30]);
-  const [intensity, setIntensity] = useState([50]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
-  const { toast } = useToast();
+  const [duration, setDuration] = useState(30);
+  const [intensity, setIntensity] = useState(50);
 
   const handleGenerate = () => {
-    setIsGenerating(true);
-    debugLogger.log("WorkoutGenerator", "Début de la génération d'entraînement");
-    
-    // Simuler un délai de génération
-    setTimeout(() => {
-      try {
-        debugLogger.log("WorkoutGenerator", "Génération terminée, redirection");
-        // Rediriger vers la page de génération d'entraînement avec la durée sélectionnée
-        navigate('/workouts/generate', { 
-          state: { 
-            duration: duration[0],
-            intensity: intensity[0]
-          }
-        });
-      } catch (error) {
-        console.error("Erreur lors de la navigation:", error);
-        toast({
-          title: t("workouts.errors.sessionCreationFailed"),
-          description: t("workouts.errors.sessionCreationError"),
-          variant: "destructive",
-        });
-        setIsGenerating(false);
-      }
-    }, 1500);
+    console.log("Générer un entraînement avec:", { duration, intensity });
   };
 
-  const estimatedCalories = Math.round((duration[0] * intensity[0] * 0.1) + 150);
-
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-xl sm:text-2xl">{t("workouts.generator")}</CardTitle>
-          <CardDescription className="text-sm sm:text-base">
-            {t("workouts.generatorDescription")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-xs sm:text-sm font-medium">
-                {t("workouts.duration")}: {duration[0]} {t("workouts.min")}
-              </label>
-              <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-            </div>
-            <Slider
-              defaultValue={duration}
-              onValueChange={setDuration}
-              min={15}
-              max={90}
-              step={5}
-              className="w-full"
-            />
-          </div>
+    <div className="mt-8 border rounded-lg p-5 bg-card">
+      <h3 className="text-lg font-semibold mb-4">
+        {t("workouts.generateWorkoutTitle")}
+      </h3>
+      <p className="text-sm text-muted-foreground mb-6">
+        {t("workouts.aiGeneratedSession")}
+      </p>
 
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-xs sm:text-sm font-medium">
-                {t("workouts.intensity")}: {intensity[0]}%
-              </label>
-              <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-            </div>
-            <Slider
-              defaultValue={intensity}
-              onValueChange={setIntensity}
-              min={10}
-              max={100}
-              step={10}
-              className="w-full"
-            />
+      <div className="space-y-6 mb-6">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              {t("workouts.duration")}
+            </label>
+            <span className="text-sm font-medium">{duration} {t("workouts.min")}</span>
           </div>
+          <Slider
+            defaultValue={[30]}
+            min={15}
+            max={90}
+            step={5}
+            onValueChange={(value) => setDuration(value[0])}
+          />
+        </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 my-3 sm:my-4">
-            <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
-              <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
-              <span className="text-xs sm:text-sm font-medium truncate">{t("workouts.todayDate")}</span>
-            </div>
-            <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-muted/20 rounded-lg">
-              <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2 text-primary" />
-              <span className="text-xs sm:text-sm font-medium truncate">~{estimatedCalories} {t("workouts.kcal")}</span>
-            </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Activity className="w-4 h-4" />
+              {t("workouts.intensity")}
+            </label>
+            <span className="text-sm font-medium">{intensity}%</span>
           </div>
+          <Slider
+            defaultValue={[50]}
+            min={10}
+            max={100}
+            step={10}
+            onValueChange={(value) => setIntensity(value[0])}
+          />
+        </div>
 
-          <Button 
-            onClick={handleGenerate} 
-            disabled={isGenerating}
-            className="w-full h-auto py-2 sm:py-3"
-            size={isMobile ? "lg" : "default"}
-          >
-            {isGenerating ? (
-              <>
-                <div className="h-3 w-3 sm:h-4 sm:w-4 border-2 border-current border-t-transparent animate-spin mr-2" />
-                <span className="text-xs sm:text-sm truncate">{t("workouts.generationLoading")}</span>
-              </>
-            ) : (
-              <>
-                <Dumbbell className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="text-xs sm:text-sm truncate">{t("workouts.generateWorkout")}</span>
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <Calendar className="w-4 h-4" />
+          <span>{t("workouts.todayDate")}</span>
+        </div>
+      </div>
+
+      <div className="flex justify-center">
+        <Button onClick={handleGenerate} className="w-full md:w-auto">
+          {t("workouts.generateMySession")}
+        </Button>
+      </div>
     </div>
   );
-}
+};
