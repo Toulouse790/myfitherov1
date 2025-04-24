@@ -3,6 +3,21 @@ export const profile = {
   title: "Mon Profil",
   unavailable: "Profil non disponible",
   myInformation: "Mes informations",
+  birthDate: "Date de naissance",
+  gender: "Genre",
+  genders: {
+    male: "Homme",
+    female: "Femme",
+    other: "Autre"
+  },
+  height: "Taille",
+  weight: "Poids",
+  mainObjective: "Objectif principal",
+  objectives: {
+    weight_loss: "Perte de poids",
+    muscle_gain: "Prise de muscle",
+    maintenance: "Maintien"
+  },
   training: {
     title: "Préférences d'entraînement",
     objective: {
