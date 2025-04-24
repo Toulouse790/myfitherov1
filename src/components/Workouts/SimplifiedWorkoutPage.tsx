@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Layout/Header";
 import { CombinedWorkoutSelector } from "./CombinedWorkoutSelector";
 import { ExerciseSelection } from "./ExerciseSelection";
@@ -13,6 +14,9 @@ import { ArrowLeft, Dumbbell } from "lucide-react";
 import { useWorkoutOperations } from "@/hooks/workout/use-workout-operations";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
+import { useLanguageManagement } from "@/hooks/use-language-management";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+
 export const SimplifiedWorkoutPage = () => {
   const {
     t
@@ -28,24 +32,35 @@ export const SimplifiedWorkoutPage = () => {
   const {
     toast
   } = useToast();
+  
+  // Pour debug: Affichage de la langue actuelle dans la console
+  const { currentLanguage } = useLanguageManagement();
+  
+  useEffect(() => {
+    debugLogger.log("SimplifiedWorkoutPage", "Langue active:", currentLanguage);
+  }, [currentLanguage]);
+  
   const handleMuscleGroupSelect = (muscleId: string) => {
     setSelectedMuscleGroup(muscleId);
     setCurrentView('exercises');
     debugLogger.log("SimplifiedWorkoutPage", "Groupe musculaire sélectionné:", muscleId);
   };
+  
   const handleSportNavigate = () => {
     navigate('/sport-programs');
   };
+  
   const handleQuickStart = () => {
-    // Afficher le modal de démarrage rapide ou naviguer vers cette section
     document.getElementById('quick-start-section')?.scrollIntoView({
       behavior: 'smooth'
     });
   };
+  
   const handleExerciseSelectionChange = (exercises: string[]) => {
     setSelectedExercises(exercises);
     debugLogger.log("SimplifiedWorkoutPage", "Exercices sélectionnés:", exercises);
   };
+  
   const handleStartWorkout = async () => {
     if (selectedExercises.length === 0) {
       toast({
@@ -55,6 +70,7 @@ export const SimplifiedWorkoutPage = () => {
       });
       return;
     }
+    
     try {
       debugLogger.log("SimplifiedWorkoutPage", "Démarrage d'une séance avec:", selectedExercises);
       await startWorkout({
@@ -70,9 +86,11 @@ export const SimplifiedWorkoutPage = () => {
       });
     }
   };
+  
   const handleBackToSelector = () => {
     setCurrentView('selector');
   };
+
   return <div className="min-h-screen bg-background">
       <Header />
       <div className="container max-w-4xl mx-auto p-4 pt-16 pb-24">
@@ -81,7 +99,12 @@ export const SimplifiedWorkoutPage = () => {
               <h1 className="text-3xl font-bold mb-2">
                 {t("workouts.title")}
               </h1>
-              
+              <p className="text-muted-foreground">
+                {t("workouts.trackProgressDescription")}
+              </p>
+              <div className="flex justify-center mt-4">
+                <LanguageSwitcher />
+              </div>
             </div>
             
             <Tabs defaultValue="create" className="w-full">
