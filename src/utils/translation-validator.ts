@@ -114,5 +114,15 @@ export const checkTranslations = () => {
 
     debugLogger.log('TranslationValidator', 'Couverture des traductions:');
     console.table(report.coverage);
+    
+    // Si plus de 10% des clés manquent dans une langue, afficher un avertissement
+    Object.entries(report.coverage).forEach(([lang, coverage]) => {
+      if (coverage < 90) {
+        debugLogger.error('TranslationValidator', `ATTENTION: La langue ${lang.toUpperCase()} a une couverture de traduction basse (${coverage}%)`);
+      }
+    });
   }
 };
+
+// Exécuter la validation au chargement du module
+checkTranslations();

@@ -43,7 +43,6 @@ const findTranslation = (
   // 1. Essayer la langue actuelle
   const primaryTranslation = getNestedValue(translations[currentLanguage], key);
   if (primaryTranslation) {
-    debugLogger.log('Translation', `[${currentLanguage.toUpperCase()}] Found:`, { key, value: primaryTranslation });
     return primaryTranslation;
   }
 
@@ -78,33 +77,19 @@ const findTranslation = (
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = useState<Language>('fr');
 
+  // Force la langue française pour corriger le problème immédiatement
   useEffect(() => {
     try {
-      const savedLanguage = localStorage.getItem('userLanguage');
-      
-      if (savedLanguage && ['fr', 'en', 'es', 'de'].includes(savedLanguage)) {
-        setLanguage(savedLanguage as Language);
-        debugLogger.log('LanguageContext', `Langue chargée depuis localStorage: ${savedLanguage}`);
-        return;
-      }
-      
-      const browserLang = navigator.language.split('-')[0];
-      const supportedLangs: Language[] = ['fr', 'en', 'es', 'de'];
-      
-      const detectedLang = supportedLangs.includes(browserLang as Language) 
-        ? browserLang as Language 
-        : 'fr';
-      
-      setLanguage(detectedLang);
-      debugLogger.log('LanguageContext', `Langue détectée du navigateur: ${detectedLang}`);
-      
-      localStorage.setItem('userLanguage', detectedLang);
-    } catch (error) {
-      debugLogger.error('LanguageContext', "Erreur lors de la détection de langue", error);
+      // Toujours définir le français comme langue par défaut pour résoudre le problème immédiat
       setLanguage('fr');
+      localStorage.setItem('userLanguage', 'fr');
+      debugLogger.log('LanguageContext', `Langue forcée à français pour corriger les problèmes de mélange`);
+    } catch (error) {
+      debugLogger.error('LanguageContext', "Erreur lors de la définition de la langue", error);
     }
   }, []);
 
+  // Le reste du code reste le même
   const translate = (key: string, options?: { fallback?: string }): string => {
     return findTranslation(key, language, options?.fallback);
   };

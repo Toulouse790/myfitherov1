@@ -29,7 +29,7 @@ export const sleep = {
   sleepEntryDeleted: "Entrée de sommeil supprimée",
   noDataAvailable: "Aucune donnée disponible",
   
-  // Ajouter les nouvelles clés manquantes
+  // Ajout des nouvelles clés manquantes
   title: "Sommeil",
   tracking: "Suivi du sommeil",
   history: "Historique",
