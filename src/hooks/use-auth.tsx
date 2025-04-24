@@ -1,13 +1,15 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 import { debugLogger } from '@/utils/debug-logger';
+import { useToast } from '@/hooks/use-toast';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Vérifier l'état de l'authentification initiale
@@ -25,9 +27,9 @@ export const useAuth = () => {
           setUser(null);
           setSession(null);
         }
-        setLoading(false);
       } catch (error) {
         debugLogger.error("Auth", "Erreur lors de l'initialisation de l'authentification:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -47,8 +49,6 @@ export const useAuth = () => {
         setUser(newSession.user);
         debugLogger.log("Auth", "Utilisateur connecté ou token rafraîchi");
       }
-      
-      setLoading(false);
     });
 
     // Initialiser l'authentification
@@ -70,14 +70,29 @@ export const useAuth = () => {
       });
       
       if (error) throw error;
+
+      if (data.user) {
+        toast({
+          title: "Connexion réussie",
+          description: `Bienvenue ${data.user.email?.split('@')[0] || ''}!`,
+        });
+      }
+      
       return { data, error: null };
-    } catch (error) {
+    } catch (error: any) {
       debugLogger.error("Auth", "Erreur de connexion:", error);
+      
+      toast({
+        variant: "destructive",
+        title: "Erreur de connexion",
+        description: error.message || "Identifiants incorrects",
+      });
+      
       return { data: null, error };
     }
   };
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       debugLogger.log("Auth", "Tentative de déconnexion");
       const { error } = await supabase.auth.signOut();
@@ -87,13 +102,39 @@ export const useAuth = () => {
       debugLogger.error("Auth", "Erreur de déconnexion:", error);
       return { error };
     }
-  };
+  }, []);
+
+  const refreshSession = useCallback(async () => {
+    try {
+      debugLogger.log("Auth", "Rafraîchissement de la session");
+      const { data, error } = await supabase.auth.refreshSession();
+      
+      if (error) {
+        debugLogger.error("Auth", "Erreur lors du rafraîchissement de la session:", error);
+        return { success: false, error };
+      }
+      
+      if (data.session) {
+        setSession(data.session);
+        setUser(data.session.user);
+        debugLogger.log("Auth", "Session rafraîchie avec succès");
+        return { success: true, error: null };
+      } else {
+        debugLogger.warn("Auth", "Aucune session disponible après rafraîchissement");
+        return { success: false, error: new Error("Aucune session disponible") };
+      }
+    } catch (error) {
+      debugLogger.error("Auth", "Exception lors du rafraîchissement de la session:", error);
+      return { success: false, error };
+    }
+  }, []);
 
   return { 
     user,
     session,
     loading,
     signIn,
-    signOut
+    signOut,
+    refreshSession
   };
 };

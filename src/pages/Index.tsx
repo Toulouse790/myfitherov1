@@ -7,11 +7,19 @@ import Home from "./Home";
 import { VerifyConnection } from "@/components/Workouts/VerifyConnection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { AuthenticationStatus } from "@/components/Home/AuthenticationStatus";
+import { motion } from "framer-motion";
 
 export default function Index() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { t } = useLanguage();
+
+  useEffect(() => {
+    debugLogger.log("Index", "Initialisation de la page d'accueil", { 
+      isAuthenticated: !!user,
+      isLoading: loading
+    });
+  }, [user, loading]);
 
   if (loading) {
     return (
@@ -23,14 +31,52 @@ export default function Index() {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-4 space-y-6">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="container max-w-4xl mx-auto p-4 space-y-6"
+    >
       <AuthenticationStatus />
       {user && (
-        <>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <VerifyConnection />
           <Home />
-        </>
+        </motion.div>
       )}
-    </div>
+      
+      {!user && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-8 p-6 bg-muted/40 rounded-lg text-center"
+        >
+          <h2 className="text-xl font-semibold mb-4">Découvrez MyFitHero</h2>
+          <p className="mb-4">
+            L'application qui vous aide à atteindre vos objectifs fitness avec des programmes personnalisés,
+            un suivi de vos progrès et une communauté motivante.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+            <div className="p-4 bg-background rounded-lg shadow-sm">
+              <h3 className="font-medium mb-2">Programmes sur mesure</h3>
+              <p className="text-sm text-muted-foreground">Adaptés à votre niveau et vos objectifs</p>
+            </div>
+            <div className="p-4 bg-background rounded-lg shadow-sm">
+              <h3 className="font-medium mb-2">Suivi intelligent</h3>
+              <p className="text-sm text-muted-foreground">Visualisez vos progrès et votre évolution</p>
+            </div>
+            <div className="p-4 bg-background rounded-lg shadow-sm">
+              <h3 className="font-medium mb-2">Nutrition personnalisée</h3>
+              <p className="text-sm text-muted-foreground">Des conseils adaptés à votre activité</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
   );
 }
