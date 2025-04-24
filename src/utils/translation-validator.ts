@@ -6,6 +6,16 @@ import { de } from '@/i18n/de';
 import { debugLogger } from './debug-logger';
 
 type Language = 'fr' | 'en' | 'es' | 'de';
+type TranslationReport = {
+  missingKeys: Record<Language, string[]>;
+  inconsistentKeys: Array<{
+    key: string;
+    languages: Language[];
+    values: Record<Language, string>;
+  }>;
+  totalKeys: number;
+  coverage: Record<Language, number>;
+};
 
 const translations = { fr, en, es, de };
 
@@ -17,7 +27,7 @@ const getAllKeys = (obj: any, path: string = ''): string[] => {
     
     if (typeof obj[key] === 'object' && obj[key] !== null) {
       keys = [...keys, ...getAllKeys(obj[key], newPath)];
-    } else {
+    } else if (typeof obj[key] === 'string') {
       keys.push(newPath);
     }
   }
@@ -25,41 +35,84 @@ const getAllKeys = (obj: any, path: string = ''): string[] => {
   return keys;
 };
 
-const validateTranslations = () => {
+const validateTranslations = (): TranslationReport => {
   const allKeys = new Set<string>();
-  const missingKeys: Record<Language, string[]> = {
-    fr: [], en: [], es: [], de: []
+  const report: TranslationReport = {
+    missingKeys: { fr: [], en: [], es: [], de: [] },
+    inconsistentKeys: [],
+    totalKeys: 0,
+    coverage: { fr: 0, en: 0, es: 0, de: 0 }
   };
 
-  // Collecte de toutes les clés uniques
+  // Collecte de toutes les clés
   Object.values(translations).forEach(translation => {
     getAllKeys(translation).forEach(key => allKeys.add(key));
   });
 
-  // Vérification des clés manquantes pour chaque langue
+  report.totalKeys = allKeys.size;
+
+  // Vérification des traductions
   allKeys.forEach(key => {
+    const values: Record<Language, string | undefined> = {
+      fr: undefined,
+      en: undefined,
+      es: undefined,
+      de: undefined
+    };
+
+    let hasInconsistency = false;
+    const presentIn: Language[] = [];
+
     (Object.keys(translations) as Language[]).forEach(lang => {
       const value = key.split('.').reduce((obj, k) => obj?.[k], translations[lang]);
+      values[lang] = typeof value === 'string' ? value : undefined;
+
       if (value === undefined) {
-        missingKeys[lang].push(key);
-        debugLogger.warn('TranslationValidator', `Clé manquante dans ${lang}:`, key);
+        report.missingKeys[lang].push(key);
+      } else {
+        presentIn.push(lang);
+      }
+
+      if (value !== undefined && typeof value !== 'string') {
+        hasInconsistency = true;
       }
     });
+
+    if (hasInconsistency) {
+      report.inconsistentKeys.push({
+        key,
+        languages: presentIn,
+        values: values as Record<Language, string>
+      });
+    }
   });
 
-  return missingKeys;
+  // Calcul de la couverture
+  Object.keys(report.missingKeys).forEach(lang => {
+    const missing = report.missingKeys[lang as Language].length;
+    report.coverage[lang as Language] = Math.round(((report.totalKeys - missing) / report.totalKeys) * 100);
+  });
+
+  return report;
 };
 
 export const checkTranslations = () => {
   if (process.env.NODE_ENV === 'development') {
-    const missingKeys = validateTranslations();
-    const hasMissingKeys = Object.values(missingKeys).some(keys => keys.length > 0);
+    const report = validateTranslations();
     
-    if (hasMissingKeys) {
-      debugLogger.error('TranslationValidator', 'Clés de traduction manquantes détectées:', missingKeys);
-      console.table(missingKeys);
-    } else {
-      debugLogger.log('TranslationValidator', 'Toutes les traductions sont synchronisées');
+    debugLogger.log('TranslationValidator', 'Rapport de validation des traductions:', report);
+
+    if (Object.values(report.missingKeys).some(keys => keys.length > 0)) {
+      debugLogger.warn('TranslationValidator', 'Clés manquantes détectées:');
+      console.table(report.missingKeys);
     }
+
+    if (report.inconsistentKeys.length > 0) {
+      debugLogger.warn('TranslationValidator', 'Incohérences détectées:');
+      console.table(report.inconsistentKeys);
+    }
+
+    debugLogger.log('TranslationValidator', 'Couverture des traductions:');
+    console.table(report.coverage);
   }
 };

@@ -43,7 +43,7 @@ const findTranslation = (
   // 1. Essayer la langue actuelle
   const primaryTranslation = getNestedValue(translations[currentLanguage], key);
   if (primaryTranslation) {
-    debugLogger.log('Translation', `Found in ${currentLanguage}:`, { key, value: primaryTranslation });
+    debugLogger.log('Translation', `[${currentLanguage.toUpperCase()}] Found:`, { key, value: primaryTranslation });
     return primaryTranslation;
   }
 
@@ -51,7 +51,7 @@ const findTranslation = (
   if (currentLanguage !== 'fr') {
     const frenchTranslation = getNestedValue(translations.fr, key);
     if (frenchTranslation) {
-      debugLogger.warn('Translation', `Fallback to FR:`, { key, value: frenchTranslation });
+      debugLogger.warn('Translation', `[${currentLanguage.toUpperCase()}] Fallback to FR:`, { key, value: frenchTranslation });
       return frenchTranslation;
     }
   }
@@ -60,18 +60,18 @@ const findTranslation = (
   if (currentLanguage !== 'en') {
     const englishTranslation = getNestedValue(translations.en, key);
     if (englishTranslation) {
-      debugLogger.warn('Translation', `Fallback to EN:`, { key, value: englishTranslation });
+      debugLogger.warn('Translation', `[${currentLanguage.toUpperCase()}] Fallback to EN:`, { key, value: englishTranslation });
       return englishTranslation;
     }
   }
 
   // 4. Utiliser le fallback fourni ou la clé
   if (fallbackText) {
-    debugLogger.error('Translation', `Using provided fallback:`, { key, fallback: fallbackText });
+    debugLogger.error('Translation', `[${currentLanguage.toUpperCase()}] Using fallback:`, { key, fallback: fallbackText });
     return fallbackText;
   }
 
-  debugLogger.error('Translation', `No translation found:`, { key, language: currentLanguage });
+  debugLogger.error('Translation', `[${currentLanguage.toUpperCase()}] No translation found:`, { key });
   return key;
 };
 
