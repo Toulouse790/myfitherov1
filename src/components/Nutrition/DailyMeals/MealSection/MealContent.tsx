@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -35,7 +34,6 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
         description: t("nutrition.foodEntryRemoved"),
       });
       
-      // Recharger la liste des repas après une suppression réussie
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -59,16 +57,6 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
           <p className="text-muted-foreground mb-4">
             {t("nutrition.noMealsAdded")}
           </p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="gap-2"
-            onClick={onAddFood}
-            type="button"
-          >
-            <Plus className="h-4 w-4" />
-            {t("nutrition.addFood")}
-          </Button>
         </div>
       ) : (
         <div className="space-y-2">
