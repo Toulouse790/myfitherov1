@@ -9,6 +9,7 @@ const Subscription = lazy(() => import("@/pages/Subscription"));
 const SubscriptionPlans = lazy(() => import("@/pages/SubscriptionPlans"));
 const TrainingPreferences = lazy(() => import("@/pages/TrainingPreferences"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
+const Settings = lazy(() => import("@/pages/Settings"));
 
 export const profileRoutes = [
   {
@@ -22,6 +23,10 @@ export const profileRoutes = [
   {
     path: "app-settings",
     element: <AppSettings />
+  },
+  {
+    path: "settings",
+    element: withSuspense(Settings)
   },
   {
     path: "subscription",
