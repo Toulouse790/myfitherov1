@@ -1,7 +1,6 @@
-
 import { Card } from "@/components/ui/card";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Activity, Dumbbell, Scale, Flame, RefreshCw, AlertCircle } from "lucide-react";
+import { Activity, Dumbbell, Scale, Flame, RefreshCw, AlertCircle, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format, startOfWeek, startOfMonth, startOfYear, addMonths } from "date-fns";
@@ -12,6 +11,7 @@ import { debugLogger } from "@/utils/debug-logger";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 export const DetailedStats = () => {
   const { user } = useAuth();
@@ -19,31 +19,26 @@ export const DetailedStats = () => {
   const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // État pour suivre le temps écoulé depuis le dernier chargement
   const [lastLoadTime, setLastLoadTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    // Mettre à jour lastLoadTime lorsque le composant est monté
     setLastLoadTime(new Date());
     
-    // Invalidation périodique des données pour assurer leur fraîcheur
     const refreshInterval = setInterval(() => {
       queryClient.invalidateQueries({ queryKey: ['exercise-stats'] });
       setLastLoadTime(new Date());
-    }, 5 * 60 * 1000); // Rafraîchir toutes les 5 minutes
+    }, 5 * 60 * 1000);
     
     return () => clearInterval(refreshInterval);
   }, [queryClient]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    // Invalidation de la requête et des autres données associées
     queryClient.invalidateQueries({ queryKey: ['exercise-stats'] });
     queryClient.invalidateQueries({ queryKey: ['workout-sessions'] });
     queryClient.invalidateQueries({ queryKey: ['training-stats'] });
     setLastLoadTime(new Date());
     
-    // Afficher un toast pour confirmer le rafraîchissement
     setTimeout(() => {
       setIsRefreshing(false);
       toast({
@@ -73,7 +68,6 @@ export const DetailedStats = () => {
       const monthStart = startOfMonth(now);
       const yearStart = startOfYear(now);
 
-      // Récupérer le poids et le genre de l'utilisateur pour le calcul des calories
       const { data: userProfile, error: profileError } = await supabase
         .from('profiles')
         .select('weight_kg, gender')
@@ -89,7 +83,6 @@ export const DetailedStats = () => {
 
       debugLogger.log("DetailedStats", `User weight: ${weightKg}kg, gender: ${gender}`);
 
-      // Récupérer les statistiques d'entraînement
       const { data: trainingStats, error: statsError } = await supabase
         .from('training_stats')
         .select('*')
@@ -108,12 +101,10 @@ export const DetailedStats = () => {
 
       debugLogger.log("DetailedStats", `Found ${trainingStats?.length || 0} training stats`);
 
-      // Initialiser les totaux
       const weeklyTotals = { weight: 0, duration: 0, calories: 0 };
       const monthlyTotals = { weight: 0, duration: 0, calories: 0 };
       const yearlyTotals = { weight: 0, duration: 0, calories: 0 };
 
-      // Filtrer et calculer les totaux pour chaque période
       let weeklyStats = 0;
       let monthlyStats = 0;
       let yearlyStats = 0;
@@ -122,12 +113,10 @@ export const DetailedStats = () => {
         for (const stat of trainingStats) {
           const createdAt = new Date(stat.created_at);
           
-          // Assurer que les données sont valides
           const weight = typeof stat.total_weight_lifted === 'number' ? stat.total_weight_lifted : 0;
           const duration = typeof stat.session_duration_minutes === 'number' ? stat.session_duration_minutes : 0;
           const calories = typeof stat.calories_burned === 'number' ? stat.calories_burned : 0;
           
-          // Vérifier si la stat est dans les périodes respectives
           if (createdAt >= weekStart) {
             weeklyTotals.weight += weight;
             weeklyTotals.duration += duration;
@@ -169,7 +158,7 @@ export const DetailedStats = () => {
       };
     },
     refetchOnWindowFocus: false,
-    staleTime: 300000, // 5 minutes
+    staleTime: 300000,
   });
 
   if (isLoading) {
@@ -195,7 +184,6 @@ export const DetailedStats = () => {
     );
   }
 
-  // Vérifier si des données sont présentes
   const hasData = exerciseStats && 
     (exerciseStats.weekly.weight > 0 || 
      exerciseStats.weekly.duration > 0 ||
@@ -208,16 +196,24 @@ export const DetailedStats = () => {
     <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-semibold">Statistiques d'entraînement</h3>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="flex items-center gap-2"
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-        >
-          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          Actualiser
-        </Button>
+        <div className="flex gap-2">
+          <Link to="/goals/weekly">
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              Objectifs
+            </Button>
+          </Link>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-2"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Actualiser
+          </Button>
+        </div>
       </div>
 
       {!hasData ? (

@@ -13,6 +13,7 @@ import { profileRoutes } from "./profileRoutes";
 import { workoutRoutes } from "./workoutRoutes";
 import { healthRoutes } from "./healthRoutes";
 import { dashboardRoutes } from "./dashboardRoutes";
+import { goalsRoutes } from "./goalsRoutes";
 
 // Import utilities from external file
 import { withSuspense } from "@/utils/route-utils";
@@ -78,6 +79,7 @@ export const router = createBrowserRouter([
               ...workoutRoutes, 
               ...healthRoutes,
               ...dashboardRoutes,
+              ...goalsRoutes,
             ]
           }
         ]
