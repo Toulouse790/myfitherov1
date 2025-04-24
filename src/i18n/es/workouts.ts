@@ -1,4 +1,3 @@
-
 export const workouts = {
   title: "Entrenamientos",
   startWorkout: "Iniciar entrenamiento",
@@ -166,7 +165,6 @@ export const workouts = {
   sessionGeneratedDescription: "Aquí está tu sesión de entrenamiento personalizada",
   quickAccessSection: "Acceso rápido",
   selectExercisesToStart: "Por favor, selecciona ejercicios para comenzar",
-  // Nuevos elementos para vistas vacías
   startTest: "Iniciar una prueba",
   clickToStartTest: "Haz clic en el botón para iniciar una sesión de prueba",
   beginTest: "Comenzar prueba"
