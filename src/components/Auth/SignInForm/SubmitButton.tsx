@@ -1,21 +1,25 @@
-import { Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SubmitButtonProps {
   isLoading: boolean;
 }
 
 export const SubmitButton = ({ isLoading }: SubmitButtonProps) => {
+  const { t } = useLanguage();
+
   return (
-    <Button
-      type="submit"
-      className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary transition-all duration-300"
-      disabled={isLoading}
-    >
+    <Button type="submit" className="w-full" disabled={isLoading}>
       {isLoading ? (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-      ) : null}
-      Se connecter
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          {t("common.loading")}
+        </>
+      ) : (
+        t("auth.signIn")
+      )}
     </Button>
   );
 };

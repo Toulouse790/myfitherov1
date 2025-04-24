@@ -1,6 +1,7 @@
-import { Lock } from "lucide-react";
-import { Input } from "@/components/ui/input";
+
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PasswordInputProps {
   password: string;
@@ -8,26 +9,20 @@ interface PasswordInputProps {
 }
 
 export const PasswordInput = ({ password, onChange }: PasswordInputProps) => {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-2">
-      <Label htmlFor="password">Mot de passe</Label>
-      <div className="relative">
-        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => onChange(e.target.value)}
-          className="pl-10"
-          placeholder="••••••••"
-          required
-          minLength={6}
-          autoComplete="current-password"
-        />
-      </div>
-      <p className="text-xs text-muted-foreground">
-        Le mot de passe doit contenir au moins 6 caractères
-      </p>
+      <Label htmlFor="password">{t("auth.password")}</Label>
+      <Input
+        id="password"
+        type="password"
+        value={password}
+        onChange={(e) => onChange(e.target.value)}
+        required
+        placeholder="••••••••"
+        autoComplete="current-password"
+      />
     </div>
   );
 };

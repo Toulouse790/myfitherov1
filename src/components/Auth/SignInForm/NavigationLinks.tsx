@@ -4,27 +4,21 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export const NavigationLinks = () => {
   const { t } = useLanguage();
-  
+
   return (
-    <div className="w-full text-center space-y-2">
+    <div className="flex flex-col space-y-2 text-center text-sm">
       <Link 
-        to="/password-reset" 
-        className="text-sm text-primary hover:underline"
+        to="/reset-password"
+        className="text-primary hover:underline"
       >
         {t("auth.forgotPassword")}
       </Link>
-      
-      <div className="pt-2 border-t border-border mt-2">
-        <p className="text-sm text-muted-foreground">
-          {t("auth.dontHaveAccount")} {" "}
-          <Link 
-            to="/signup" 
-            className="text-primary font-medium hover:underline"
-          >
-            {t("auth.signUp")}
-          </Link>
-        </p>
-      </div>
+      <p className="text-muted-foreground">
+        {t("auth.dontHaveAccount")}{" "}
+        <Link to="/signup" className="text-primary hover:underline">
+          {t("auth.signUp")}
+        </Link>
+      </p>
     </div>
   );
 };

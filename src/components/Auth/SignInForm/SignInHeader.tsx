@@ -1,20 +1,18 @@
-import { Link } from "react-router-dom";
+
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const SignInHeader = () => {
+  const { t } = useLanguage();
+
   return (
-    <div className="space-y-2 text-center">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Connexion
-      </h1>
-      <p className="text-sm text-muted-foreground">
-        Entrez vos identifiants pour accéder à votre compte
-      </p>
-      <p className="text-sm">
-        Pas encore de compte ?{" "}
-        <Link to="/signup" className="text-primary hover:underline">
-          Créer un compte
-        </Link>
-      </p>
-    </div>
+    <CardHeader className="space-y-1">
+      <CardTitle className="text-2xl font-bold text-center">
+        {t("auth.signIn")}
+      </CardTitle>
+      <CardDescription className="text-center">
+        {t("auth.enterCredentials", { fallback: "Entrez vos identifiants pour accéder à votre compte" })}
+      </CardDescription>
+    </CardHeader>
   );
 };
