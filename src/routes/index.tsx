@@ -14,8 +14,8 @@ import { workoutRoutes } from "./workoutRoutes";
 import { healthRoutes } from "./healthRoutes";
 import { dashboardRoutes } from "./dashboardRoutes";
 
-// Importer les utilitaires depuis un fichier externe au lieu de les définir ici
-import { withSuspense, Loading } from "@/utils/route-utils";
+// Import utilities from external file
+import { withSuspense } from "@/utils/route-utils";
 
 const Admin = lazy(() => import("@/pages/Admin"));
 const Home = lazy(() => import("@/pages/Home"));
@@ -24,7 +24,7 @@ const Index = lazy(() => import("@/pages/Index"));
 debugLogger.log("Routes", "Initialisation des routes de l'application");
 
 export const router = createBrowserRouter([
-  // Routes d'authentification non protégées
+  // Routes d'authentification non protégées  
   ...authRoutes,
 
   // Route Admin
@@ -37,7 +37,14 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
-    errorElement: <ErrorBoundary><div>Une erreur est survenue</div></ErrorBoundary>,
+    errorElement: (
+      <ErrorBoundary>
+        <div className="flex flex-col items-center justify-center min-h-screen p-4">
+          <h2 className="text-xl font-semibold mb-2">Une erreur est survenue</h2>
+          <p className="text-muted-foreground">Veuillez réessayer plus tard</p>
+        </div>
+      </ErrorBoundary>
+    ),
     children: [
       {
         // Route initiale indexée 
@@ -51,13 +58,12 @@ export const router = createBrowserRouter([
           {
             element: <AuthenticatedLayout />,
             children: [
-              // Routes authentifiées
               {
                 path: "home",
                 element: withSuspense(Home),
               },
               ...profileRoutes,
-              ...workoutRoutes,
+              ...workoutRoutes, 
               ...healthRoutes,
               ...dashboardRoutes,
             ]
