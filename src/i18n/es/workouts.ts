@@ -129,7 +129,10 @@ export const workouts = {
     weightUpdateFailed: "No se pudo actualizar el peso del ejercicio.",
     statsSaveFailed: "No se pudieron guardar las estadísticas de entrenamiento.",
     noDataReturned: "No se devolvieron datos del servidor.",
-    saveWeightFailed: "No se pudo guardar la información de peso."
+    saveWeightFailed: "No se pudo guardar la información de peso.",
+    sessionGenerationError: "No se pudo generar la sesión de entrenamiento.",
+    noExercisesSelected: "No hay ejercicios seleccionados para esta sesión.",
+    sessionStartError: "No se pudo iniciar la sesión de entrenamiento."
   },
   sessionNotFound: "Sesión no encontrada",
   sessionEmptyDesc: "Esta sesión de entrenamiento no existe o no contiene ejercicios.",
@@ -158,5 +161,9 @@ export const workouts = {
   aiGeneratedSession: "Deja que la IA cree el entrenamiento perfecto para ti",
   selectMuscleGroupFirst: "Por favor, selecciona un grupo muscular primero",
   createSessionWithSelectedMuscles: "Crear entrenamiento con músculos seleccionados",
-  sessionCreated: "Sesión creada"
+  sessionCreated: "Sesión creada",
+  sessionGenerated: "Sesión generada",
+  sessionGeneratedDescription: "Aquí está tu sesión de entrenamiento personalizada",
+  quickAccessSection: "Acceso rápido",
+  selectExercisesToStart: "Por favor, selecciona ejercicios para comenzar"
 };

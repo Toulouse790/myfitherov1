@@ -31,6 +31,7 @@ export const workouts = {
   startSessionLoading: "Wird gestartet...",
   generateWorkout: "Training generieren",
   sessionGenerated: "Sitzung generiert",
+  sessionGeneratedDescription: "Hier ist Ihre maßgeschneiderte Trainingseinheit",
   exerciseLibrary: "Übungsbibliothek",
   allMuscleGroups: "Alle Muskelgruppen",
   searchExercises: "Übungen suchen",
@@ -112,11 +113,16 @@ export const workouts = {
   generator: "Trainingsgenerator",
   generatorDescription: "Erstellen Sie ein personalisiertes Training basierend auf Ihren Präferenzen",
   intensity: "Intensität",
+  generating: "Wird generiert...",
+  generateWorkoutTitle: "Training generieren",
   errors: {
     sessionCreationFailed: "Fehler beim Erstellen der Trainingseinheit. Bitte versuchen Sie es erneut.",
     loginRequired: "Sie müssen angemeldet sein, um diese Aktion auszuführen.",
     sessionCreationError: "Bei der Erstellung der Einheit ist ein Fehler aufgetreten.",
-    startSessionErrorDescription: "Fehler beim Starten der Trainingseinheit. Bitte versuchen Sie es erneut."
+    startSessionErrorDescription: "Fehler beim Starten der Trainingseinheit. Bitte versuchen Sie es erneut.",
+    sessionGenerationError: "Die Trainingseinheit konnte nicht generiert werden.",
+    noExercisesSelected: "Keine Übungen für diese Einheit ausgewählt.",
+    sessionStartError: "Die Trainingseinheit konnte nicht gestartet werden."
   },
   // Neue Schlüssel für EmptySessionView
   sessionNotFound: "Sitzung nicht gefunden",
@@ -137,5 +143,14 @@ export const workouts = {
   suggestion_biceps: "Empfohlenes Bizepstraining",
   suggestion_triceps: "Empfohlenes Trizepstraining",
   suggestion_abs: "Empfohlenes Bauchtraining",
-  startAdaptedSession: "Angepasste Sitzung starten"
+  startAdaptedSession: "Angepasste Sitzung starten",
+  createSession: "Training erstellen",
+  createCustomSession: "Erstellen Sie Ihr Training durch Auswahl von Muskelgruppen",
+  createMySession: "Mein Training erstellen",
+  generateMySession: "Mein Training generieren",
+  aiGeneratedSession: "Lassen Sie KI das perfekte Training für Sie erstellen",
+  selectMuscleGroupFirst: "Bitte wählen Sie zuerst eine Muskelgruppe aus",
+  createSessionWithSelectedMuscles: "Training mit ausgewählten Muskeln erstellen",
+  quickAccessSection: "Schnellzugriff",
+  selectExercisesToStart: "Bitte wählen Sie Übungen zum Starten"
 };

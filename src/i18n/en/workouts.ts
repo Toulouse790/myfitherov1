@@ -129,7 +129,10 @@ export const workouts = {
     weightUpdateFailed: "Failed to update exercise weight.",
     statsSaveFailed: "Failed to save workout stats.",
     noDataReturned: "No data returned from server.",
-    saveWeightFailed: "Unable to save weight information."
+    saveWeightFailed: "Unable to save weight information.",
+    sessionGenerationError: "Unable to generate workout session.",
+    noExercisesSelected: "No exercises selected for this session.",
+    sessionStartError: "Unable to start workout session."
   },
   sessionNotFound: "Session not found",
   sessionEmptyDesc: "This workout session doesn't exist or doesn't contain any exercises.",
@@ -158,5 +161,9 @@ export const workouts = {
   aiGeneratedSession: "Let AI create the perfect workout for you",
   selectMuscleGroupFirst: "Please select a muscle group first",
   createSessionWithSelectedMuscles: "Create workout with selected muscles",
-  sessionCreated: "Session created"
+  sessionCreated: "Session created",
+  sessionGenerated: "Session generated",
+  sessionGeneratedDescription: "Here is your customized workout session",
+  quickAccessSection: "Quick Access",
+  selectExercisesToStart: "Please select exercises to start"
 };

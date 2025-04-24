@@ -4,11 +4,13 @@ import { Header } from "@/components/Layout/Header";
 import { GenerateWorkoutDialog } from "@/components/Dashboard/WorkoutSuggestions/GenerateWorkoutDialog";
 import { useNavigate, useLocation } from "react-router-dom";
 import { debugLogger } from "@/utils/debug-logger";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function WorkoutGenerate() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isInitialized, setIsInitialized] = useState(false);
+  const { t } = useLanguage();
   
   // Récupérer les paramètres
   const state = location.state as { duration?: number; intensity?: number } | null;

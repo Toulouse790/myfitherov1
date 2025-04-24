@@ -1,3 +1,4 @@
+
 export const workouts = {
   title: "Entraînements",
   startWorkout: "Démarrer l'entraînement",
@@ -129,7 +130,10 @@ export const workouts = {
     weightUpdateFailed: "Échec de la mise à jour du poids de l'exercice.",
     statsSaveFailed: "Échec de l'enregistrement des statistiques d'entraînement.",
     noDataReturned: "Aucune donnée retournée du serveur.",
-    saveWeightFailed: "Impossible d'enregistrer les informations de poids."
+    saveWeightFailed: "Impossible d'enregistrer les informations de poids.",
+    sessionGenerationError: "Impossible de générer la séance.",
+    noExercisesSelected: "Aucun exercice sélectionné pour la séance.",
+    sessionStartError: "Impossible de démarrer la séance."
   },
   completed: "Terminé",
   finishWorkout: "Terminer l'entraînement",
@@ -166,5 +170,16 @@ export const workouts = {
   saveAsTemplate: "Enregistrer comme modèle",
   loadTemplate: "Charger un modèle",
   continueSession: "Continuer la session",
-  quickAccessSection: "Accès rapide"
+  quickAccessSection: "Accès rapide",
+  sessionGenerated: "Séance générée",
+  sessionGeneratedDescription: "Voici votre séance d'entraînement personnalisée",
+  generating: "Régénération...",
+  createSession: "Créer un entraînement",
+  createCustomSession: "Créez votre entraînement en sélectionnant des groupes musculaires",
+  createMySession: "Créer mon entraînement",
+  generateMySession: "Générer mon entraînement",
+  aiGeneratedSession: "Laissez l'IA créer l'entraînement parfait pour vous",
+  selectMuscleGroupFirst: "Veuillez d'abord sélectionner un groupe musculaire",
+  createSessionWithSelectedMuscles: "Créer un entraînement avec les muscles sélectionnés",
+  selectExercisesToStart: "Veuillez sélectionner des exercices pour démarrer"
 };

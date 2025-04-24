@@ -9,9 +9,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { debugLogger } from "@/utils/debug-logger";
+import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 
 export function WorkoutGenerator() {
   const { t } = useLanguage();
+  const { translateWorkoutElement } = useExerciseTranslation();
   const [duration, setDuration] = useState([30]);
   const [intensity, setIntensity] = useState([50]);
   const [isGenerating, setIsGenerating] = useState(false);
