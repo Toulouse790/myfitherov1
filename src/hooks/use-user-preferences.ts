@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
@@ -6,9 +7,12 @@ import { useToast } from "./use-toast";
 export interface UserPreferences {
   id: string;
   user_id: string;
-  measurement_unit: string;
+  theme: string;
+  language: string;
   notifications_enabled: boolean;
-  training_days: string[];
+  measurement_unit: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const useUserPreferences = () => {
@@ -31,6 +35,31 @@ export const useUserPreferences = () => {
 
       if (error) {
         console.error('[DEBUG] Error fetching preferences:', error);
+        
+        // Si l'erreur est "No rows found", créez les préférences par défaut
+        if (error.code === 'PGRST116') {
+          const defaultPreferences = {
+            user_id: user.id,
+            theme: 'system',
+            language: 'fr',
+            notifications_enabled: true,
+            measurement_unit: 'metric',
+          };
+          
+          const { data: newData, error: insertError } = await supabase
+            .from('user_preferences')
+            .insert(defaultPreferences)
+            .select()
+            .single();
+            
+          if (insertError) {
+            console.error('[DEBUG] Error creating default preferences:', insertError);
+            throw insertError;
+          }
+          
+          return newData;
+        }
+        
         throw error;
       }
 

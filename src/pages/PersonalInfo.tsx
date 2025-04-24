@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Layout/Header";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
@@ -5,10 +6,17 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { UserInfo } from "@/components/Profile/Sections/UserInfo";
+import { useAuth } from "@/hooks/use-auth";
 
 const PersonalInfo = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useAuth();
+
+  const handleProfileUpdate = () => {
+    console.log("Profile updated");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,7 +42,13 @@ const PersonalInfo = () => {
         </div>
 
         <Card className="p-6">
-          {/* Contenu à implémenter selon la demande */}
+          {user ? (
+            <UserInfo profile={{ id: user.id }} onUpdate={handleProfileUpdate} />
+          ) : (
+            <div className="text-center p-4">
+              <p className="text-muted-foreground">{t('common.loading', { fallback: 'Chargement...' })}</p>
+            </div>
+          )}
         </Card>
       </motion.div>
     </div>

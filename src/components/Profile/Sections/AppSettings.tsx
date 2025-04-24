@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/components/Theme/useTheme";
 import { debugLogger } from "@/utils/debug-logger";
+import { useUserPreferences } from "@/hooks/use-user-preferences";
 
 interface AppSettingsProps {
   language?: string;
@@ -17,11 +18,20 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
   const { language: contextLanguage, setLanguage: setContextLanguage, t } = useLanguage();
   const { theme } = useTheme();
   const [language, setLanguage] = useState<string>(initialLanguage || contextLanguage);
+  const { preferences, updatePreferences } = useUserPreferences();
 
   // Synchroniser l'état local avec le contexte au chargement
   useEffect(() => {
     setLanguage(contextLanguage);
   }, [contextLanguage]);
+
+  // Synchroniser avec les préférences de la base de données
+  useEffect(() => {
+    if (preferences?.language) {
+      setLanguage(preferences.language);
+      setContextLanguage(preferences.language as "fr" | "en" | "es" | "de");
+    }
+  }, [preferences, setContextLanguage]);
 
   const handleLanguageChange = (value: string) => {
     debugLogger.log('AppSettings', `Changement de langue vers: ${value}`);
@@ -36,7 +46,10 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
     setLanguage(value);
     setContextLanguage(value as "fr" | "en" | "es" | "de");
     
-    // Sauvegarder la préférence
+    // Sauvegarder dans la base de données
+    updatePreferences({ language: value });
+    
+    // Sauvegarder la préférence locale
     try {
       localStorage.setItem('userLanguage', value);
     } catch (error) {

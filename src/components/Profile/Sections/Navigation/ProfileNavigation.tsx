@@ -30,9 +30,9 @@ export const ProfileNavigation = ({ isPremium }: ProfileNavigationProps) => {
       
       <ProfileNavItem
         icon={<Bell className="w-6 h-6 text-primary" />}
-        title={t('profile.notificationsPreferences', { fallback: 'Notifications et préférences' })}
-        description={t('profile.manageAppSettings', { fallback: 'Gérez vos paramètres d\'application' })}
-        path="/app-settings"
+        title={t('profile.notifications.title', { fallback: 'Notifications' })}
+        description={t('profile.manageAppSettings', { fallback: 'Gérez vos paramètres de notifications' })}
+        path="/notifications"
       />
 
       <ProfileNavItem
@@ -44,7 +44,7 @@ export const ProfileNavigation = ({ isPremium }: ProfileNavigationProps) => {
 
       <ProfileNavItem
         icon={<Settings className="w-6 h-6 text-primary" />}
-        title={t('profile.generalSettings', { fallback: 'Paramètres généraux' })}
+        title={t('settings.title', { fallback: 'Paramètres généraux' })}
         description={t('profile.languageThemePrivacy', { fallback: 'Langue, thème et confidentialité' })}
         path="/settings"
       />

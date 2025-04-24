@@ -10,11 +10,19 @@ import { LanguageSelector } from "@/components/Language/LanguageSelector";
 import { ThemeSelector } from "@/components/Theme/ThemeSelector";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/components/Theme/useTheme";
+import { useUserPreferences } from "@/hooks/use-user-preferences";
+import { useEffect } from "react";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { theme } = useTheme();
+  const { preferences, isLoading } = useUserPreferences();
+
+  useEffect(() => {
+    // Log pour déboggage
+    console.log("Page Settings chargée", { preferences });
+  }, [preferences]);
 
   return (
     <div className="min-h-screen bg-background">
