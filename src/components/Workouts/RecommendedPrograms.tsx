@@ -7,12 +7,14 @@ import { useWorkoutRecommendations } from "@/hooks/use-workout-recommendations";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutSession } from "@/hooks/use-workout-session";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const RecommendedPrograms = () => {
   const { recommendations, isLoading } = useWorkoutRecommendations();
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
   const { startWorkout } = useWorkoutSession();
+  const { t } = useLanguage();
   
   const displayedRecommendations = expanded 
     ? recommendations 
@@ -112,8 +114,7 @@ export const RecommendedPrograms = () => {
                   program.difficulty === 'beginner' ? 'secondary' : 
                   program.difficulty === 'advanced' ? 'destructive' : 'default'
                 }>
-                  {program.difficulty === 'beginner' ? 'Débutant' : 
-                   program.difficulty === 'intermediate' ? 'Intermédiaire' : 'Avancé'}
+                  {t(`difficulty.${program.difficulty || 'intermediate'}`)}
                 </Badge>
               </div>
               <CardDescription>
@@ -155,7 +156,7 @@ export const RecommendedPrograms = () => {
           className="w-full"
           onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? "Voir moins" : `Voir ${recommendations.length - 2} programmes de plus`}
+          {expanded ? t('common.showLess') : t('common.showMore', { count: recommendations.length - 2 })}
         </Button>
       )}
     </div>

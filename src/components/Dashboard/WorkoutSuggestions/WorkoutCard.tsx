@@ -80,7 +80,15 @@ export const WorkoutCard = ({
     }
   };
 
-  const displayLevel = difficulty || level;
+  // Traduire la difficulté si elle existe
+  const getTranslatedDifficulty = (difficultyKey?: string) => {
+    if (!difficultyKey) return level;
+    
+    // Utiliser la clé de traduction "difficulty.[key]"
+    return t(`difficulty.${difficultyKey.toLowerCase()}`);
+  };
+
+  const displayLevel = difficulty ? getTranslatedDifficulty(difficulty) : getTranslatedDifficulty(level);
 
   return (
     <Card 

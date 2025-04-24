@@ -1,9 +1,10 @@
+
 export const sampleWorkouts = [
   {
     id: "1",
     title: "Full Body Débutant",
     muscleGroups: ["fullBody"],
-    difficulty: "beginner",
+    difficulty: "beginner", // Utilisera la traduction basée sur cette clé
     duration: 45,
     location: "gym",
     exercises: [
@@ -37,7 +38,7 @@ export const sampleWorkouts = [
     id: "2",
     title: "Push Day Intermédiaire",
     muscleGroups: ["chest", "shoulders", "triceps"],
-    difficulty: "intermediate",
+    difficulty: "intermediate", // Utilisera la traduction basée sur cette clé
     duration: 60,
     location: "gym",
     exercises: [

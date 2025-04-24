@@ -1,4 +1,6 @@
+
 import { Badge } from "@/components/ui/badge";
+import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 
 interface DifficultyBadgesProps {
   difficulties: string[];
@@ -11,6 +13,8 @@ export const DifficultyBadges = ({
   selectedDifficulties,
   onDifficultyChange,
 }: DifficultyBadgesProps) => {
+  const { translateDifficulty } = useExerciseTranslation();
+
   return (
     <div className="flex gap-2">
       {difficulties.map((difficulty) => (
@@ -24,7 +28,7 @@ export const DifficultyBadges = ({
           }`}
           onClick={() => onDifficultyChange?.(difficulty, !selectedDifficulties.includes(difficulty))}
         >
-          {difficulty}
+          {translateDifficulty(difficulty)}
         </Badge>
       ))}
     </div>

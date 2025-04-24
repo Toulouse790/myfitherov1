@@ -11,12 +11,11 @@ import { profile } from "./profile";
 import { nutrition } from "./nutrition";
 import { difficulty } from "./difficulty";
 import { sleep } from "./sleep";
-import { muscleGroups } from "./muscleGroups";
+import { muscleGroups, locations } from "./categories";
 import { analytics } from "./analytics";
 import { premium } from "./premium";
 import { community } from "./community";
 import { wearables } from "./wearables";
-import { locations } from "./categories";
 
 export const fr = {
   sports,
