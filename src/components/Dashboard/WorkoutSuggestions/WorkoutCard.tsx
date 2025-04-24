@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dumbbell, ChevronRight, Calendar, Clock } from 'lucide-react';
@@ -44,7 +43,7 @@ export const WorkoutCard = ({
   isLoading = false
 }: WorkoutCardProps) => {
   const { t } = useLanguage();
-  const { translateMuscleGroups } = useExerciseTranslation();
+  const { translateMuscleGroups, translateDifficulty } = useExerciseTranslation();
   const navigate = useNavigate();
   const [showExercises, setShowExercises] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
@@ -73,22 +72,13 @@ export const WorkoutCard = ({
       }
     } else if (sessionId) {
       debugLogger.log("WorkoutCard", "Navigation vers session avec ID:", sessionId);
-      // Utiliser strictement le format /workouts/session/{id} pour toutes les navigations
       navigate(`/workouts/session/${sessionId}`);
     } else if (onSelect) {
       onSelect();
     }
   };
 
-  // Traduire la difficulté si elle existe
-  const getTranslatedDifficulty = (difficultyKey?: string) => {
-    if (!difficultyKey) return level;
-    
-    // Utiliser la clé de traduction "difficulty.[key]"
-    return t(`difficulty.${difficultyKey.toLowerCase()}`);
-  };
-
-  const displayLevel = difficulty ? getTranslatedDifficulty(difficulty) : getTranslatedDifficulty(level);
+  const displayLevel = difficulty ? translateDifficulty(difficulty) : translateDifficulty(level);
 
   return (
     <Card 
