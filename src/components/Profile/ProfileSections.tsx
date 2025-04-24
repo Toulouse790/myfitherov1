@@ -22,6 +22,12 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
   const navigate = useNavigate();
   const { t } = useLanguage();
   
+  const handleNavigateToStats = () => {
+    navigate('/stats');
+    // Utiliser un console log pour débugger
+    console.log("Navigation vers /stats");
+  };
+  
   return (
     <div className="space-y-6">
       <Tabs defaultValue="overview">
@@ -47,7 +53,7 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
               <h3 className="text-lg font-semibold">{t("profile.stats.detailedTitle")}</h3>
               <Button 
                 variant="ghost" 
-                onClick={() => navigate('/stats')}
+                onClick={handleNavigateToStats}
                 className="flex items-center text-primary"
               >
                 {t("common.seeAll", { fallback: "Voir tout" })} <ChevronRight className="h-4 w-4 ml-1" />
