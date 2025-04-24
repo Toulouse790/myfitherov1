@@ -19,23 +19,11 @@ interface LanguageContextProps {
   getNestedTranslation: (key: string) => any;
 }
 
-interface LanguageProviderProps {
-  children: React.ReactNode;
-}
-
-// Créer le contexte
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
 
-// Translations complètes
-const translations: Record<Language, Translations> = {
-  fr,
-  en,
-  es,
-  de
-};
+const translations: Record<Language, Translations> = { fr, en, es, de };
 
-// Fonction pour accéder à une clé de traduction imbriquée
-const getNestedValue = (obj: any, path: string) => {
+const getNestedValue = (obj: any, path: string): string | undefined => {
   const keys = path.split('.');
   let result = obj;
   
@@ -44,17 +32,54 @@ const getNestedValue = (obj: any, path: string) => {
     result = result[key];
   }
   
-  return result;
+  return typeof result === 'string' ? result : undefined;
 };
 
-// Provider
-export const LanguageProvider = ({ children }: LanguageProviderProps) => {
+const findTranslation = (
+  key: string, 
+  currentLanguage: Language, 
+  fallbackText?: string
+): string => {
+  // 1. Essayer la langue actuelle
+  const primaryTranslation = getNestedValue(translations[currentLanguage], key);
+  if (primaryTranslation) {
+    debugLogger.log('Translation', `Found in ${currentLanguage}:`, { key, value: primaryTranslation });
+    return primaryTranslation;
+  }
+
+  // 2. Si pas en français, essayer le français
+  if (currentLanguage !== 'fr') {
+    const frenchTranslation = getNestedValue(translations.fr, key);
+    if (frenchTranslation) {
+      debugLogger.warn('Translation', `Fallback to FR:`, { key, value: frenchTranslation });
+      return frenchTranslation;
+    }
+  }
+
+  // 3. Si pas en anglais, essayer l'anglais
+  if (currentLanguage !== 'en') {
+    const englishTranslation = getNestedValue(translations.en, key);
+    if (englishTranslation) {
+      debugLogger.warn('Translation', `Fallback to EN:`, { key, value: englishTranslation });
+      return englishTranslation;
+    }
+  }
+
+  // 4. Utiliser le fallback fourni ou la clé
+  if (fallbackText) {
+    debugLogger.error('Translation', `Using provided fallback:`, { key, fallback: fallbackText });
+    return fallbackText;
+  }
+
+  debugLogger.error('Translation', `No translation found:`, { key, language: currentLanguage });
+  return key;
+};
+
+export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = useState<Language>('fr');
 
-  // Détection de la langue du navigateur et chargement des préférences
   useEffect(() => {
     try {
-      // Récupérer depuis le localStorage
       const savedLanguage = localStorage.getItem('userLanguage');
       
       if (savedLanguage && ['fr', 'en', 'es', 'de'].includes(savedLanguage)) {
@@ -63,11 +88,9 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
         return;
       }
       
-      // Détecter la langue du navigateur
       const browserLang = navigator.language.split('-')[0];
       const supportedLangs: Language[] = ['fr', 'en', 'es', 'de'];
       
-      // Utiliser la langue du navigateur si supportée, sinon français
       const detectedLang = supportedLangs.includes(browserLang as Language) 
         ? browserLang as Language 
         : 'fr';
@@ -75,60 +98,23 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       setLanguage(detectedLang);
       debugLogger.log('LanguageContext', `Langue détectée du navigateur: ${detectedLang}`);
       
-      // Sauvegarder la préférence
       localStorage.setItem('userLanguage', detectedLang);
     } catch (error) {
       debugLogger.error('LanguageContext', "Erreur lors de la détection de langue", error);
-      // Fallback sur français en cas d'erreur
       setLanguage('fr');
     }
   }, []);
 
-  // Sauvegarder la préférence de langue lorsqu'elle change
-  useEffect(() => {
-    try {
-      localStorage.setItem('userLanguage', language);
-      debugLogger.log('LanguageContext', `Langue sauvegardée: ${language}`);
-    } catch (error) {
-      debugLogger.error('LanguageContext', "Erreur lors de la sauvegarde de la langue", error);
-    }
-  }, [language]);
-
-  // Fonction de traduction améliorée
   const translate = (key: string, options?: { fallback?: string }): string => {
-    try {
-      const value = getNestedValue(translations[language], key);
-      
-      // Si la traduction existe, la retourner
-      if (value !== undefined && typeof value === 'string') {
-        return value;
-      }
-      
-      // Sinon, utiliser le fallback ou la clé
-      if (options?.fallback) {
-        return options.fallback;
-      }
-      
-      // Si aucune traduction trouvée, essayer en anglais comme backup
-      if (language !== 'en') {
-        const enValue = getNestedValue(translations['en'], key);
-        if (enValue !== undefined && typeof enValue === 'string') {
-          return enValue;
-        }
-      }
-      
-      // Dernier recours: retourner la clé
-      return key;
-    } catch (error) {
-      debugLogger.error('LanguageContext', `Erreur de traduction pour la clé: ${key}`, error);
-      return options?.fallback || key;
-    }
+    return findTranslation(key, language, options?.fallback);
   };
 
-  // Fonction pour obtenir une section de traduction complète (pour les objets imbriqués)
   const getNestedTranslation = (key: string): any => {
     try {
-      return getNestedValue(translations[language], key) || getNestedValue(translations['en'], key) || {};
+      return getNestedValue(translations[language], key) || 
+             getNestedValue(translations.fr, key) || 
+             getNestedValue(translations.en, key) || 
+             {};
     } catch (error) {
       debugLogger.error('LanguageContext', `Erreur lors de l'accès aux traductions imbriquées: ${key}`, error);
       return {};
@@ -147,7 +133,6 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   );
 };
 
-// Hook pour utiliser le contexte
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (context === undefined) {

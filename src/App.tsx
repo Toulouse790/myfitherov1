@@ -1,4 +1,3 @@
-
 import { Suspense } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { debugLogger } from "./utils/debug-logger";
@@ -7,7 +6,15 @@ import { debugLogger } from "./utils/debug-logger";
 // Le routage est maintenant centralisé dans src/routes/index.tsx
 // Voir le fichier main.tsx pour l'utilisation du routeur
 
-function App() {
+export default function App() {
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      import('./utils/translation-validator').then(({ checkTranslations }) => {
+        checkTranslations();
+      });
+    }
+  }, []);
+
   debugLogger.log("App", "Composant App rendu, mais n'est plus utilisé pour le routage");
   
   return (
@@ -20,5 +27,3 @@ function App() {
     </ErrorBoundary>
   );
 }
-
-export default App;
