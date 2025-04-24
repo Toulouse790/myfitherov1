@@ -19,20 +19,21 @@ interface ProfileSectionsProps {
 
 export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProps) => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   return (
     <div className="space-y-6">
       <Tabs defaultValue="overview">
         <TabsList className="grid grid-cols-2 mb-4">
-          <TabsTrigger value="overview">Aperçu</TabsTrigger>
-          <TabsTrigger value="settings">Paramètres</TabsTrigger>
+          <TabsTrigger value="overview">{t("profile.settings.overview")}</TabsTrigger>
+          <TabsTrigger value="settings">{t("profile.settings.settings")}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="overview" className="space-y-6">
           <ProfileStats stats={profile.stats} />
           
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Mes informations</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("profile.myInformation")}</h3>
             <UserInfo profile={profile} onUpdate={refreshProfile} />
           </Card>
           
@@ -42,16 +43,18 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
           
           <Card className="p-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Statistiques détaillées</h3>
+              <h3 className="text-lg font-semibold">{t("profile.stats.detailedTitle")}</h3>
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/stats')}
                 className="flex items-center text-primary"
               >
-                Voir toutes les statistiques <ChevronRight className="h-4 w-4 ml-1" />
+                {t("common.seeAll")} <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </div>
-            <p className="text-muted-foreground mt-1">Accédez à vos performances et à votre progression</p>
+            <p className="text-muted-foreground mt-1">
+              {t("profile.stats.description", { fallback: "Accédez à vos performances et à votre progression" })}
+            </p>
           </Card>
         </TabsContent>
         

@@ -1,4 +1,3 @@
-
 import { UserProfile } from "@/types/user";
 import { AvatarSection } from "./Sections/AvatarSection";
 import { UsernameSection } from "./Sections/UsernameSection";
@@ -7,6 +6,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
+import { useLanguage } from "@/hooks/use-language";
 
 interface ProfileHeaderProps {
   profile: UserProfile;
@@ -17,11 +17,10 @@ export const ProfileHeader = ({ profile, onProfileUpdate }: ProfileHeaderProps) 
   const [selectedAvatar, setSelectedAvatar] = useState(profile.avatar || "/placeholder.svg");
   const [username, setUsername] = useState(profile.username);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleProfileUpdate = async (updates: Partial<UserProfile>) => {
     try {
-      console.log("Updating profile with:", updates);
-
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -33,8 +32,8 @@ export const ProfileHeader = ({ profile, onProfileUpdate }: ProfileHeaderProps) 
       if (error) {
         console.error("Profile update error:", error);
         toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour le profil. Veuillez réessayer.",
+          title: t("common.error"),
+          description: t("profile.messages.updateError"),
           variant: "destructive",
         });
         return;
@@ -42,14 +41,14 @@ export const ProfileHeader = ({ profile, onProfileUpdate }: ProfileHeaderProps) 
 
       onProfileUpdate(updates);
       toast({
-        title: "Succès",
-        description: "Profil mis à jour avec succès",
+        title: t("common.success"),
+        description: t("profile.messages.updateSuccess"),
       });
     } catch (error) {
       console.error("Profile update error:", error);
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite. Veuillez réessayer.",
+        title: t("common.error"),
+        description: t("profile.messages.updateError"),
         variant: "destructive",
       });
     }

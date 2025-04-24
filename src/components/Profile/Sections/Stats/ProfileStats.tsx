@@ -24,9 +24,13 @@ export const ProfileStats = ({ stats, detailed = false }: ProfileStatsProps) => 
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Trophy className="w-5 h-5 text-yellow-500" />
-            <span className="font-medium">{t("profile.stats.level")} {stats.level}</span>
+            <span className="font-medium">
+              {t("profile.stats.level")} {stats.level}
+            </span>
           </div>
-          <span className="text-sm text-muted-foreground">{stats.points} / {nextLevelPoints} {t("profile.stats.points")}</span>
+          <span className="text-sm text-muted-foreground">
+            {stats.points} / {nextLevelPoints} {t("profile.stats.points")}
+          </span>
         </div>
         
         <Progress value={currentProgress} className="h-2 mb-6" />
@@ -56,13 +60,19 @@ export const ProfileStats = ({ stats, detailed = false }: ProfileStatsProps) => 
             <h4 className="text-md font-medium mb-4">{t("profile.stats.detailedTitle")}</h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">{t("profile.stats.totalWorkoutMinutes")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("profile.stats.totalWorkoutMinutes")}
+                </p>
                 <p className="text-xl font-bold">{stats.totalWorkoutMinutes} min</p>
               </div>
               <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">{t("profile.stats.averageWorkoutMinutes")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("profile.stats.averageWorkoutMinutes")}
+                </p>
                 <p className="text-xl font-bold">
-                  {stats.workoutsCompleted > 0 ? Math.round(stats.totalWorkoutMinutes / stats.workoutsCompleted) : 0} min
+                  {stats.workoutsCompleted > 0 
+                    ? Math.round(stats.totalWorkoutMinutes / stats.workoutsCompleted) 
+                    : 0} min
                 </p>
               </div>
             </div>
