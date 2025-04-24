@@ -6,9 +6,7 @@ import { RootLayout } from "@/components/Layout/RootLayout";
 import { AuthenticatedLayout } from "@/components/Layout/AuthenticatedLayout";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 import { RequireAdmin } from "@/components/Auth/RequireAdmin";
-import { InitialQuestionnaire } from "@/components/Profile/InitialQuestionnaire";
 import { debugLogger } from "@/utils/debug-logger";
-import { HomeDashboard } from "@/composants/Maison/HomeDashboard";
 
 import { authRoutes } from "./authRoutes";
 import { profileRoutes } from "./profileRoutes";
@@ -20,6 +18,8 @@ import { dashboardRoutes } from "./dashboardRoutes";
 import { withSuspense, Loading } from "@/utils/route-utils";
 
 const Admin = lazy(() => import("@/pages/Admin"));
+const Home = lazy(() => import("@/pages/Home"));
+const Index = lazy(() => import("@/pages/Index"));
 
 debugLogger.log("Routes", "Initialisation des routes de l'application");
 
@@ -40,25 +40,22 @@ export const router = createBrowserRouter([
     errorElement: <ErrorBoundary><div>Une erreur est survenue</div></ErrorBoundary>,
     children: [
       {
+        // Route initiale indexée 
+        index: true, 
+        element: withSuspense(Index)
+      },
+      {
+        // Routes protégées nécessitant une authentification
         element: <ProtectedRoute />,
         children: [
-          // Questionnaire initial
-          {
-            path: "initial-questionnaire",
-            element: <InitialQuestionnaire />,
-          },
-          
-          // Routes protégées qui nécessitent une authentification
           {
             element: <AuthenticatedLayout />,
             children: [
-              // Route d'accueil
+              // Routes authentifiées
               {
-                path: "/",
-                element: <HomeDashboard />,
+                path: "home",
+                element: withSuspense(Home),
               },
-              
-              // Groupes de routes
               ...profileRoutes,
               ...workoutRoutes,
               ...healthRoutes,

@@ -4,14 +4,16 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { authLogger } from "@/utils/auth-logger";
 import { useToast } from "@/hooks/use-toast";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, username?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
-  refreshAuth: () => Promise<void>;
+  refreshSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,27 +24,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const refreshAuth = useCallback(async () => {
+  const refreshSession = useCallback(async () => {
     try {
-      authLogger.info("Rafraîchissement de l'authentification...");
       const { data, error } = await supabase.auth.refreshSession();
       
       if (error) {
-        authLogger.error("Erreur lors du rafraîchissement de la session:", error);
+        authLogger.error("Session refresh error:", error);
         return;
       }
       
       if (data.session) {
-        authLogger.success("Session rafraîchie avec succès");
         setSession(data.session);
         setUser(data.session.user);
+        authLogger.success("Session refreshed successfully");
       } else {
-        authLogger.warn("Aucune session active après rafraîchissement");
         setSession(null);
         setUser(null);
+        authLogger.warn("No active session after refresh");
       }
     } catch (error) {
-      authLogger.error("Exception lors du rafraîchissement de l'authentification:", error);
+      authLogger.error("Exception during session refresh:", error);
     }
   }, []);
 
@@ -61,11 +62,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       return { error: null };
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
-        description: error.message,
+        description: error.message || "Erreur inattendue",
+      });
+      return { error };
+    }
+  };
+
+  const signUp = async (email: string, password: string, username?: string) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: username || email.split('@')[0]
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Inscription réussie",
+        description: "Vérifiez votre email pour confirmer votre compte",
+      });
+
+      return { error: null };
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erreur d'inscription",
+        description: error.message || "Erreur inattendue",
       });
       return { error };
     }
@@ -73,20 +104,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = useCallback(async () => {
     try {
-      authLogger.info("Déconnexion...");
       const { error } = await supabase.auth.signOut();
+      
       if (error) throw error;
       
       setUser(null);
       setSession(null);
-      authLogger.success("Déconnexion réussie");
       
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
       });
-    } catch (error) {
-      authLogger.error("Erreur lors de la déconnexion:", error);
+    } catch (error: any) {
+      authLogger.error("Logout error:", error);
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -96,45 +126,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [toast]);
 
   useEffect(() => {
-    // Configuration initiale de l'authentification
     const initializeAuth = async () => {
       try {
-        authLogger.info("Initialisation de l'authentification...");
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
           setSession(session);
           setUser(session.user);
-          authLogger.success("Session existante récupérée");
+          debugLogger.log("Authentication", "Session established", { userId: session.user.id });
         }
       } catch (error) {
-        authLogger.error("Erreur lors de l'initialisation:", error);
+        debugLogger.error("Authentication", "Initialization error", error);
       } finally {
         setLoading(false);
       }
     };
 
-    // Configurer l'écouteur d'événements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-      authLogger.info("Changement d'état d'authentification:", { event });
+      debugLogger.log("Authentication", "State changed", { event });
       
       if (newSession) {
         setSession(newSession);
         setUser(newSession.user);
-        authLogger.trace("Session mise à jour", {
-          userId: newSession.user.id,
-          event
-        });
       } else {
         setSession(null);
         setUser(null);
-        authLogger.debug("Session terminée");
       }
     });
 
     initializeAuth();
 
-    // Nettoyage
     return () => {
       subscription.unsubscribe();
     };
@@ -146,11 +167,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       session, 
       loading, 
       signIn, 
+      signUp, 
       signOut, 
-      refreshAuth 
+      refreshSession 
     }}>
       {children}
-    </AuthProvider>
+    </AuthContext.Provider>
   );
 };
 

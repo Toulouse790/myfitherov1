@@ -1,40 +1,35 @@
 
-import { useEffect, ReactNode } from "react";
+import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { debugLogger } from "@/utils/debug-logger";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface ProtectedRouteProps {
-  children?: ReactNode;
-}
-
-export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+export const ProtectedRoute = () => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
-    debugLogger.log("ProtectedRoute", "Vérification de l'authentification:", { 
+    debugLogger.log("ProtectedRoute", "Route protection check", { 
       isAuthenticated: !!user, 
       isLoading: loading,
-      path: location.pathname 
+      currentPath: location.pathname 
     });
   }, [user, loading, location]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
 
   if (!user) {
-    debugLogger.warn("ProtectedRoute", "Utilisateur non authentifié, redirection vers la connexion", {
+    debugLogger.warn("ProtectedRoute", "Non authentifié, redirection vers connexion", {
       from: location.pathname
     });
     return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
   }
 
-  debugLogger.log("ProtectedRoute", "Utilisateur authentifié, accès autorisé");
-  return children ? <>{children}</> : <Outlet />;
+  return <Outlet />;
 };
