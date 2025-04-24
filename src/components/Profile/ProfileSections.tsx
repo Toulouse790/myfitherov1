@@ -22,10 +22,9 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
   const navigate = useNavigate();
   const { t } = useLanguage();
   
-  // Fonction simplifiée pour naviguer directement vers /stats
+  // Fonction pour naviguer vers la page des statistiques
   const handleNavigateToStats = () => {
     console.log("Navigation vers la page des statistiques");
-    // On utilise directement la route absolue pour éviter les problèmes de navigation
     navigate('/stats', { replace: true });
   };
   
@@ -38,17 +37,19 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
         </TabsList>
         
         <TabsContent value="overview" className="space-y-6">
+          {/* Statistiques utilisateur - Uniquement dans l'onglet Aperçu */}
           <ProfileStats stats={profile.stats} />
           
+          {/* Informations utilisateur - Uniquement dans l'onglet Aperçu */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">{t("profile.myInformation")}</h3>
             <UserInfo profile={profile} onUpdate={refreshProfile} />
           </Card>
           
+          {/* Complétion du profil - Uniquement dans l'onglet Aperçu */}
           <ProfileCompletion profile={profile} />
           
-          <MeasurementsSection />
-          
+          {/* Carte pour accéder aux mesures corporelles - Uniquement dans l'onglet Aperçu */}
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">{t("profile.stats.detailedTitle")}</h3>
@@ -67,8 +68,10 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
         </TabsContent>
         
         <TabsContent value="settings" className="space-y-6">
+          {/* Navigation vers les pages de paramètres - Uniquement dans l'onglet Paramètres */}
           <ProfileNavigation isPremium={profile.isPremium} />
           
+          {/* Actions du compte - Uniquement dans l'onglet Paramètres */}
           <Card className="p-6">
             <AccountActions />
           </Card>
