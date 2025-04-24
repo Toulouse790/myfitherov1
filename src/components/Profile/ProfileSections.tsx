@@ -23,9 +23,8 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
   const { t } = useLanguage();
   
   const handleNavigateToStats = () => {
+    console.log("Tentative de navigation vers /stats");
     navigate('/stats');
-    // Utiliser un console log pour débugger
-    console.log("Navigation vers /stats");
   };
   
   return (

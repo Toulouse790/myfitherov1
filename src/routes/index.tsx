@@ -20,6 +20,7 @@ import { withSuspense } from "@/utils/route-utils";
 const Admin = lazy(() => import("@/pages/Admin"));
 const Home = lazy(() => import("@/pages/Home"));
 const Index = lazy(() => import("@/pages/Index"));
+const Stats = lazy(() => import("@/pages/Stats"));
 
 debugLogger.log("Routes", "Initialisation des routes de l'application");
 
@@ -61,6 +62,10 @@ export const router = createBrowserRouter([
               {
                 path: "home",
                 element: withSuspense(Home),
+              },
+              {
+                path: "stats", 
+                element: withSuspense(Stats)
               },
               ...profileRoutes,
               ...workoutRoutes, 
