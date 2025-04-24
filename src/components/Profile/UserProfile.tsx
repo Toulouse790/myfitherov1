@@ -1,35 +1,23 @@
 
-import { useState, useEffect } from "react";
-import { UserProfile as UserProfileType } from "@/types/user";
-import { ProfileHeader } from "./ProfileHeader";
-import { AccountActions } from "./Sections/AccountActions";
-import { useToast } from "@/hooks/use-toast";
-import { User2 } from "lucide-react";
+import { useEffect } from "react";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
-import { ProfileStats } from "./Sections/Stats/ProfileStats";
-import { ProfileCompletion } from "./Sections/ProfileCompletion";
-import { ProfileNavigation } from "./Sections/Navigation/ProfileNavigation";
-import { UserInfo } from "./Sections/UserInfo";
-import { Separator } from "@/components/ui/separator";
-import { LanguageSelector } from "@/components/Language/LanguageSelector";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useProfileData } from "@/hooks/use-profile-data";
+import { LoadingSkeleton } from "./Sections/LoadingSkeleton";
+import { EmptyProfile } from "./Sections/EmptyProfile";
+import { ProfileSections } from "./ProfileSections";
+import { ProfileHeader } from "./ProfileHeader";
 
 export const UserProfile = () => {
-  const [profile, setProfile] = useState<UserProfileType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { profile, loading, setLoading, setProfile, handleProfileUpdate } = useProfileData();
 
   const fetchProfile = async () => {
     if (!user) return;
     
     setLoading(true);
     try {
-      // Fetch profile data
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -38,8 +26,7 @@ export const UserProfile = () => {
 
       if (profileError) throw profileError;
 
-      // Fetch questionnaire data to ensure we have the most up-to-date information
-      const { data: questionnaireData, error: questionnaireError } = await supabase
+      const { data: questionnaireData } = await supabase
         .from('questionnaire_responses')
         .select('*')
         .eq('user_id', user.id)
@@ -47,40 +34,18 @@ export const UserProfile = () => {
         .limit(1)
         .single();
 
-      // Combine questionnaire data with profile if available
-      const combinedProfileData = {
-        ...profileData,
-        ...(questionnaireData && {
-          gender: questionnaireData.gender || profileData.gender,
-          height: questionnaireData.height || profileData.height_cm,
-          weight: questionnaireData.weight || profileData.weight_kg,
-          mainObjective: questionnaireData.objective || profileData.main_objective
-        })
-      };
-
-      // Fetch subscription status
-      const { data: subscriptionData, error: subscriptionError } = await supabase
+      const { data: subscriptionData } = await supabase
         .from('user_subscriptions')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'active')
         .single();
 
-      if (subscriptionError && subscriptionError.code !== 'PGRST116') {
-        // PGRST116 means no rows found, which is expected for free users
-        throw subscriptionError;
-      }
-
-      // Fetch progression data (points & level)
-      const { data: progressionData, error: progressionError } = await supabase
+      const { data: progressionData } = await supabase
         .from('user_progression')
         .select('*')
         .eq('user_id', user.id)
         .single();
-
-      if (progressionError && progressionError.code !== 'PGRST116') {
-        console.error('Error fetching progression data:', progressionError);
-      }
 
       const isPremium = subscriptionData?.subscription_type === 'premium' && 
                        subscriptionData?.status === 'active' &&
@@ -98,7 +63,7 @@ export const UserProfile = () => {
           weight: profileData.weight_kg,
           mainObjective: profileData.main_objective || "maintenance",
           goals: {
-            primary: combinedProfileData.mainObjective || "maintenance",
+            primary: questionnaireData?.objective || profileData.main_objective || "maintenance",
             weeklyWorkouts: questionnaireData?.training_frequency ? parseInt(questionnaireData.training_frequency) : 4,
             dailyCalories: 2500,
             sleepHours: 8
@@ -123,11 +88,6 @@ export const UserProfile = () => {
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
-      toast({
-        title: t("common.error", { fallback: "Erreur" }),
-        description: t("profile.unavailable", { fallback: "Impossible de charger le profil" }),
-        variant: "destructive",
-      });
     } finally {
       setLoading(false);
     }
@@ -135,48 +95,14 @@ export const UserProfile = () => {
 
   useEffect(() => {
     fetchProfile();
-  }, [user, toast]);
+  }, [user]);
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            <Skeleton className="w-16 h-16 rounded-full" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-40" />
-              <Skeleton className="h-3 w-24" />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-6">
-          <Skeleton className="h-4 w-32 mb-4" />
-          <div className="grid grid-cols-3 gap-4">
-            <Skeleton className="h-20" />
-            <Skeleton className="h-20" />
-            <Skeleton className="h-20" />
-          </div>
-        </Card>
-        <Card className="p-6">
-          <Skeleton className="h-4 w-48 mb-4" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full mt-2" />
-        </Card>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   if (!profile) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-center">
-          <User2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">
-            {t("profile.unavailable", { fallback: "Profil non disponible" })}
-          </p>
-        </div>
-      </div>
-    );
+    return <EmptyProfile />;
   }
 
   return (
@@ -189,37 +115,12 @@ export const UserProfile = () => {
       >
         <ProfileHeader 
           profile={profile} 
-          onProfileUpdate={(updatedProfile) => {
-            setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
-            fetchProfile();
-          }}
+          onProfileUpdate={handleProfileUpdate}
         />
-
-        <ProfileStats stats={profile.stats} />
-        
-        <Card className="p-6 overflow-hidden">
-          <h3 className="text-lg font-semibold mb-4">
-            {t("profile.myInformation", { fallback: "Mes informations" })}
-          </h3>
-          <UserInfo profile={profile} onUpdate={fetchProfile} />
-        </Card>
-        
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">
-            {t("settings.language", { fallback: "Langue" })}
-          </h3>
-          <LanguageSelector />
-        </Card>
-        
-        <ProfileCompletion profile={profile} />
-
-        <Separator className="my-6" />
-
-        <ProfileNavigation isPremium={profile.isPremium} />
-
-        <Card className="p-6">
-          <AccountActions />
-        </Card>
+        <ProfileSections 
+          profile={profile}
+          refreshProfile={fetchProfile}
+        />
       </motion.div>
     </div>
   );
