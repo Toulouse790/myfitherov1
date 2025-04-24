@@ -4,25 +4,31 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface ProfileNavItemProps {
-  href: string;
   icon: React.ReactNode;
-  label: string;
-  isPremium?: boolean;
+  title: string;
+  description: string;
+  path: string;
+  highlight?: boolean;
 }
 
-export const ProfileNavItem = ({ href, icon, label, isPremium }: ProfileNavItemProps) => {
+export const ProfileNavItem = ({ icon, title, description, path, highlight }: ProfileNavItemProps) => {
   return (
-    <Link to={href}>
-      <Button
-        variant="ghost"
-        className={cn(
-          "w-full justify-start gap-2",
-          isPremium && "text-yellow-500 hover:text-yellow-600"
-        )}
-      >
-        {icon}
-        <span>{label}</span>
-      </Button>
+    <Link to={path} className="block w-full">
+      <div className={cn(
+        "flex items-center p-3 rounded-lg transition-colors hover:bg-accent",
+        highlight && "border border-primary/20"
+      )}>
+        <div className="mr-3">
+          {icon}
+        </div>
+        <div>
+          <h4 className={cn(
+            "font-medium",
+            highlight && "text-primary font-semibold"
+          )}>{title}</h4>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+      </div>
     </Link>
   );
 };

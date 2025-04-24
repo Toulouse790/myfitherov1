@@ -23,7 +23,7 @@ const Settings = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="container max-w-4xl mx-auto px-4 py-6 space-y-6"
+        className="container max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24"
       >
         <div className="flex items-center gap-4 sticky top-14 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 py-3">
           <Button
@@ -101,7 +101,7 @@ const Settings = () => {
                 {t('settings.deleteAccount', { fallback: 'Supprimer le compte' })}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {t('settings.deleteAccount', { fallback: 'Supprimer définitivement votre compte' })}
+                {t('settings.deleteAccountDescription', { fallback: 'Supprimer définitivement votre compte' })}
               </p>
             </div>
             
