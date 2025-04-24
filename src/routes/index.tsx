@@ -33,6 +33,12 @@ export const router = createBrowserRouter([
     path: "/admin",
     element: <RequireAdmin>{withSuspense(Admin)}</RequireAdmin>,
   },
+  
+  // Route Stats accessible directement
+  {
+    path: "/stats",
+    element: <ProtectedRoute>{withSuspense(Stats)}</ProtectedRoute>,
+  },
 
   // Routes principales de l'application
   {
@@ -62,10 +68,6 @@ export const router = createBrowserRouter([
               {
                 path: "home",
                 element: withSuspense(Home),
-              },
-              {
-                path: "stats", 
-                element: withSuspense(Stats)
               },
               ...profileRoutes,
               ...workoutRoutes, 

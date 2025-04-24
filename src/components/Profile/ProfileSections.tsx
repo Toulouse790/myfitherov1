@@ -23,7 +23,8 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
   const { t } = useLanguage();
   
   const handleNavigateToStats = () => {
-    console.log("Tentative de navigation vers /stats");
+    console.log("Navigation vers la page des statistiques");
+    // Utiliser le chemin complet pour les routes protégées
     navigate('/stats');
   };
   
