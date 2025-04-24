@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Layout/Header";
 import { CombinedWorkoutSelector } from "./CombinedWorkoutSelector";
@@ -32,14 +31,12 @@ export const SimplifiedWorkoutPage = () => {
   const {
     toast
   } = useToast();
-  
-  // Pour debug: Affichage de la langue actuelle dans la console
   const { currentLanguage } = useLanguageManagement();
   
   useEffect(() => {
     debugLogger.log("SimplifiedWorkoutPage", "Langue active:", currentLanguage);
   }, [currentLanguage]);
-  
+
   const handleMuscleGroupSelect = (muscleId: string) => {
     setSelectedMuscleGroup(muscleId);
     setCurrentView('exercises');
@@ -91,20 +88,19 @@ export const SimplifiedWorkoutPage = () => {
     setCurrentView('selector');
   };
 
-  return <div className="min-h-screen bg-background">
+  return (
+    <div className="min-h-screen bg-background">
       <Header />
       <div className="container max-w-4xl mx-auto p-4 pt-16 pb-24">
-        {currentView === 'selector' ? <div className="space-y-8">
+        {currentView === 'selector' ? (
+          <div className="space-y-8">
             <div className="text-center mb-8">
+              <div className="flex justify-end mb-4">
+                <LanguageSwitcher />
+              </div>
               <h1 className="text-3xl font-bold mb-2">
                 {t("workouts.title")}
               </h1>
-              <p className="text-muted-foreground">
-                {t("workouts.trackProgressDescription")}
-              </p>
-              <div className="flex justify-center mt-4">
-                <LanguageSwitcher />
-              </div>
             </div>
             
             <Tabs defaultValue="create" className="w-full">
@@ -130,7 +126,9 @@ export const SimplifiedWorkoutPage = () => {
                 </div>
               </TabsContent>
             </Tabs>
-          </div> : currentView === 'exercises' ? <div className="space-y-4">
+          </div>
+        ) : currentView === 'exercises' ? (
+          <div className="space-y-4">
             <div className="flex items-center justify-between mb-4">
               <Button variant="ghost" size="sm" onClick={handleBackToSelector} className="flex items-center gap-2">
                 <ArrowLeft className="h-4 w-4" />
@@ -144,7 +142,9 @@ export const SimplifiedWorkoutPage = () => {
             </div>
             
             <ExerciseSelection selectedExercises={selectedExercises} onSelectionChange={handleExerciseSelectionChange} onClose={handleBackToSelector} muscleGroup={selectedMuscleGroup} />
-          </div> : null}
+          </div>
+        ) : null}
       </div>
-    </div>;
+    </div>
+  );
 };
