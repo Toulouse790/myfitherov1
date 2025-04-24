@@ -66,5 +66,17 @@ export const profile = {
     streakDays: "Jours consécutifs",
     points: "Points",
     level: "Niveau"
+  },
+  settings: {
+    language: "Langue",
+    theme: "Thème",
+    notifications: "Notifications",
+    units: "Unités de mesure"
+  },
+  actions: {
+    save: "Enregistrer",
+    cancel: "Annuler",
+    edit: "Modifier",
+    delete: "Supprimer"
   }
 };

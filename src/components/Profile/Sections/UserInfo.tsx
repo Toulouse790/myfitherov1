@@ -11,67 +11,26 @@ interface UserInfoProps {
 export const UserInfo = ({ profile, onUpdate }: UserInfoProps) => {
   const { t } = useLanguage();
   
+  const renderInfoField = (label: string, value: string | number | null | undefined) => {
+    if (!value) return null;
+    
+    return (
+      <div>
+        <label className="text-sm font-medium text-muted-foreground">{label}</label>
+        <p className="mt-1">{value}</p>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium text-muted-foreground">Email</label>
-          <p className="mt-1">{profile.email}</p>
-        </div>
-        
-        {profile.birthDate && (
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">
-              {t("profile.birthDate", { fallback: "Date de naissance" })}
-            </label>
-            <p className="mt-1">{new Date(profile.birthDate).toLocaleDateString()}</p>
-          </div>
-        )}
-        
-        {profile.gender && (
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">
-              {t("profile.gender", { fallback: "Genre" })}
-            </label>
-            <p className="mt-1">
-              {t(`profile.genders.${profile.gender}`, {
-                fallback: profile.gender === 'male' ? 'Homme' : 
-                         profile.gender === 'female' ? 'Femme' : 'Autre'
-              })}
-            </p>
-          </div>
-        )}
-        
-        {profile.height && (
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">
-              {t("profile.height", { fallback: "Taille" })}
-            </label>
-            <p className="mt-1">{profile.height} cm</p>
-          </div>
-        )}
-        
-        {profile.weight && (
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">
-              {t("profile.weight", { fallback: "Poids" })}
-            </label>
-            <p className="mt-1">{profile.weight} kg</p>
-          </div>
-        )}
-        
-        {profile.mainObjective && (
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">
-              {t("profile.mainObjective", { fallback: "Objectif principal" })}
-            </label>
-            <p className="mt-1">
-              {t(`profile.objectives.${profile.mainObjective}`, { 
-                fallback: profile.mainObjective 
-              })}
-            </p>
-          </div>
-        )}
+        {renderInfoField("Email", profile.email)}
+        {renderInfoField(t("profile.birthDate"), profile.birthDate && new Date(profile.birthDate).toLocaleDateString())}
+        {renderInfoField(t("profile.gender"), profile.gender && t(`profile.genders.${profile.gender}`))}
+        {renderInfoField(t("profile.height"), profile.height ? `${profile.height} cm` : null)}
+        {renderInfoField(t("profile.weight"), profile.weight ? `${profile.weight} kg` : null)}
+        {renderInfoField(t("profile.mainObjective"), profile.mainObjective && t(`profile.objectives.${profile.mainObjective}`))}
       </div>
     </div>
   );
