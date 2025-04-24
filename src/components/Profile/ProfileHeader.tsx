@@ -1,3 +1,4 @@
+
 import { UserProfile } from "@/types/user";
 import { AvatarSection } from "./Sections/AvatarSection";
 import { UsernameSection } from "./Sections/UsernameSection";
@@ -6,7 +7,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
-import { useLanguage } from "@/hooks/use-language";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProfileHeaderProps {
   profile: UserProfile;

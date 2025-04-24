@@ -1,10 +1,11 @@
+
 import { UserProfile } from "@/types/user";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, AlertCircle, User, Target, DumbbellIcon, Scale, Ruler } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useLanguage } from "@/hooks/useLanguage";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProfileCompletionProps {
   profile: UserProfile;
