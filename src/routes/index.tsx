@@ -35,13 +35,11 @@ export const router = createBrowserRouter([
     element: <RequireAdmin>{withSuspense(Admin)}</RequireAdmin>,
   },
   
-  // Route Stats accessible directement au niveau racine
+  // Routes Stats au niveau racine pour un accès direct
   {
     path: "/stats",
     element: <ProtectedRoute>{withSuspense(Stats)}</ProtectedRoute>,
   },
-
-  // Route pour le rapport hebdomadaire
   {
     path: "/stats/weekly",
     element: <ProtectedRoute>{withSuspense(WeeklyReport)}</ProtectedRoute>,

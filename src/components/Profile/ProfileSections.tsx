@@ -22,10 +22,11 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
   const navigate = useNavigate();
   const { t } = useLanguage();
   
+  // Fonction simplifiée pour naviguer directement vers /stats
   const handleNavigateToStats = () => {
     console.log("Navigation vers la page des statistiques");
-    // Navigation vers la route racine /stats pour éviter les problèmes
-    navigate('/stats');
+    // On utilise directement la route absolue pour éviter les problèmes de navigation
+    navigate('/stats', { replace: true });
   };
   
   return (
