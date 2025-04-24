@@ -165,5 +165,9 @@ export const workouts = {
   sessionGenerated: "Session generated",
   sessionGeneratedDescription: "Here is your customized workout session",
   quickAccessSection: "Quick Access",
-  selectExercisesToStart: "Please select exercises to start"
+  selectExercisesToStart: "Please select exercises to start",
+  // New items for empty views
+  startTest: "Start a test",
+  clickToStartTest: "Click the button below to start a test session",
+  beginTest: "Begin test"
 };

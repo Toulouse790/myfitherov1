@@ -152,5 +152,9 @@ export const workouts = {
   selectMuscleGroupFirst: "Bitte wählen Sie zuerst eine Muskelgruppe aus",
   createSessionWithSelectedMuscles: "Training mit ausgewählten Muskeln erstellen",
   quickAccessSection: "Schnellzugriff",
-  selectExercisesToStart: "Bitte wählen Sie Übungen zum Starten"
+  selectExercisesToStart: "Bitte wählen Sie Übungen zum Starten",
+  // Neue Items für leere Ansichten
+  startTest: "Einen Test starten",
+  clickToStartTest: "Klicken Sie auf die Schaltfläche unten, um eine Testsitzung zu starten",
+  beginTest: "Test beginnen"
 };

@@ -181,5 +181,9 @@ export const workouts = {
   aiGeneratedSession: "Laissez l'IA créer l'entraînement parfait pour vous",
   selectMuscleGroupFirst: "Veuillez d'abord sélectionner un groupe musculaire",
   createSessionWithSelectedMuscles: "Créer un entraînement avec les muscles sélectionnés",
-  selectExercisesToStart: "Veuillez sélectionner des exercices pour démarrer"
+  selectExercisesToStart: "Veuillez sélectionner des exercices pour démarrer",
+  // Nouveaux éléments pour les vues vides
+  startTest: "Démarrer un test",
+  clickToStartTest: "Cliquez sur le bouton ci-dessous pour commencer une session de test",
+  beginTest: "Commencer le test"
 };

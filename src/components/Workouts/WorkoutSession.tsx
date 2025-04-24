@@ -70,12 +70,12 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
         <CardContent className="pt-6">
           <div className="text-center py-8">
             <DumbbellIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Session non trouvée</h2>
+            <h2 className="text-xl font-semibold mb-2">{t("workouts.sessionNotFound")}</h2>
             <p className="text-muted-foreground mb-4">
-              La session d'entraînement demandée n'existe pas ou n'est plus disponible.
+              {t("workouts.sessionEmptyDesc")}
             </p>
             <Button onClick={() => window.history.back()}>
-              Retour
+              {t("common.back")}
             </Button>
           </div>
         </CardContent>
@@ -97,7 +97,7 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Séance d'entraînement</h1>
+        <h1 className="text-2xl font-bold">{t("workouts.workoutSession") || "Séance d'entraînement"}</h1>
         <div className="flex items-center text-lg font-mono">
           <Clock className="mr-2 h-5 w-5" />
           <span>{formatDuration(sessionDuration)}</span>
@@ -124,11 +124,11 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
                   <div className="text-sm text-muted-foreground">
                     {isCompleted ? (
                       <span className="text-green-600 dark:text-green-500">
-                        Terminé • {completedSets} séries complétées
+                        {t("workouts.completed")} • {completedSets} {t("workouts.sets")}
                       </span>
                     ) : (
                       <span>
-                        {totalSets} séries
+                        {totalSets} {t("workouts.sets")}
                       </span>
                     )}
                   </div>
@@ -146,28 +146,28 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
         variant="default"
         size="lg"
       >
-        Terminer l'entraînement
+        {t("workouts.finishWorkout")}
       </Button>
 
       {showSummaryDialog && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardContent className="p-6">
-              <h2 className="text-xl font-bold mb-4">Résumé de la séance</h2>
+              <h2 className="text-xl font-bold mb-4">{t("workouts.workoutSummary")}</h2>
               
               <div className="space-y-4">
                 <div className="flex justify-between py-2 border-b">
-                  <span>Durée:</span>
-                  <span className="font-medium">{workoutStats.duration} min</span>
+                  <span>{t("workouts.duration")}:</span>
+                  <span className="font-medium">{workoutStats.duration} {t("workouts.min")}</span>
                 </div>
                 
                 <div className="flex justify-between py-2 border-b">
-                  <span>Calories brûlées:</span>
-                  <span className="font-medium">{workoutStats.totalCalories} kcal</span>
+                  <span>{t("workouts.totalCalories")}:</span>
+                  <span className="font-medium">{workoutStats.totalCalories} {t("workouts.kcal")}</span>
                 </div>
                 
                 <div className="flex justify-between py-2 border-b">
-                  <span>Exercices terminés:</span>
+                  <span>{t("workouts.completeExercise")}:</span>
                   <span className="font-medium">
                     {Object.values(exerciseProgress).filter(ex => ex.completed).length} / {session?.exercises?.length || 0}
                   </span>
@@ -180,13 +180,13 @@ export const WorkoutSession = ({ sessionId }: WorkoutSessionProps) => {
                   className="flex-1"
                   onClick={() => setShowSummaryDialog(false)}
                 >
-                  Annuler
+                  {t("common.cancel")}
                 </Button>
                 <Button 
                   className="flex-1"
                   onClick={handleFinishWorkout}
                 >
-                  Confirmer
+                  {t("common.confirm")}
                 </Button>
               </div>
             </CardContent>

@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { calculateConfidenceScore } from "@/utils/ai-utils";
+import { useExerciseTranslation } from "@/hooks/use-exercise-translation";
 
 export const EmptySessionView = () => {
   const { t } = useLanguage();
@@ -16,6 +17,7 @@ export const EmptySessionView = () => {
   const [loading, setLoading] = useState(false);
   const [personalizedRecommendation, setPersonalizedRecommendation] = useState(null);
   const [confidenceScore, setConfidenceScore] = useState(0);
+  const { translateMuscleGroup } = useExerciseTranslation();
 
   useEffect(() => {
     // Récupérer les données historiques pour générer une recommandation personnalisée
@@ -85,7 +87,7 @@ export const EmptySessionView = () => {
           muscleGroups: suggestedMuscles,
           intensity: historicalData.recentWorkouts > 10 ? 'high' : 'moderate',
           duration: profile?.workout_duration || 45,
-          suggestion: t(`workouts.suggestion_${suggestedMuscles[0]}`) || `Entraînement ${suggestedMuscles[0]}`
+          suggestion: t(`workouts.suggestion_${suggestedMuscles[0]}`) || `${translateMuscleGroup(suggestedMuscles[0])} training`
         });
         
       } catch (error) {
@@ -96,7 +98,7 @@ export const EmptySessionView = () => {
     };
     
     fetchUserData();
-  }, [user, t]);
+  }, [user, t, translateMuscleGroup]);
 
   // Générer et démarrer une séance personnalisée
   const startPersonalizedSession = async () => {
@@ -174,7 +176,11 @@ export const EmptySessionView = () => {
             <div className="flex justify-between text-xs text-muted-foreground mb-4">
               <span>{personalizedRecommendation.duration} {t("workouts.min")}</span>
               <span>{t(`workouts.intensity.${personalizedRecommendation.intensity}`)}</span>
-              <span>{personalizedRecommendation.muscleGroups.join(', ')}</span>
+              <span>
+                {personalizedRecommendation.muscleGroups.map(group => 
+                  translateMuscleGroup(group)
+                ).join(', ')}
+              </span>
             </div>
             
             <Button 
