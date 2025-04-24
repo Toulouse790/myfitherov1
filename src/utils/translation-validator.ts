@@ -31,12 +31,12 @@ const validateTranslations = () => {
     fr: [], en: [], es: [], de: []
   };
 
-  // Collecter toutes les clés uniques
+  // Collecte de toutes les clés uniques
   Object.values(translations).forEach(translation => {
     getAllKeys(translation).forEach(key => allKeys.add(key));
   });
 
-  // Vérifier les clés manquantes pour chaque langue
+  // Vérification des clés manquantes pour chaque langue
   allKeys.forEach(key => {
     (Object.keys(translations) as Language[]).forEach(lang => {
       const value = key.split('.').reduce((obj, k) => obj?.[k], translations[lang]);
