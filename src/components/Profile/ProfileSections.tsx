@@ -50,7 +50,7 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
                 onClick={() => navigate('/stats')}
                 className="flex items-center text-primary"
               >
-                {t("common.seeAll")} <ChevronRight className="h-4 w-4 ml-1" />
+                {t("common.seeAll", { fallback: "Voir tout" })} <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </div>
             <p className="text-muted-foreground mt-1">

@@ -35,5 +35,6 @@ export const common = {
   completed: "Completado",
   confirm: "Confirmar",
   saving: "Guardando...",
-  start: "Comenzar"
+  start: "Comenzar",
+  seeAll: "Ver todo"
 };

@@ -66,27 +66,27 @@ const Stats = () => {
           {/* Statistiques générales en haut de la page */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             <StatCard 
-              title="Entraînements" 
+              title={t("workouts.stats.totalWorkouts", { fallback: "Entraînements" })} 
               value={userStats?.totalWorkouts || 0} 
               icon={<BarChart3 className="h-4 w-4" />} 
               color="text-blue-500"
             />
             <StatCard 
-              title="Durée totale" 
+              title={t("workouts.stats.totalDuration", { fallback: "Durée totale" })} 
               value={userStats?.totalDuration || 0} 
               unit="min" 
               icon={<Clock className="h-4 w-4" />} 
               color="text-green-500"
             />
             <StatCard 
-              title="Meilleure perf" 
+              title={t("workouts.stats.bestPerformance", { fallback: "Meilleure perf" })} 
               value={Math.round(userStats?.bestPerformance || 0)} 
               unit="kg" 
               icon={<Award className="h-4 w-4" />} 
               color="text-purple-500"
             />
             <StatCard 
-              title="Intensité moy." 
+              title={t("workouts.stats.averageIntensity", { fallback: "Intensité moy." })} 
               value={userStats?.averageIntensity.toFixed(1) || 0} 
               unit="/10" 
               icon={<ArrowUpDown className="h-4 w-4" />} 
@@ -96,9 +96,9 @@ const Stats = () => {
 
           <Tabs defaultValue="metrics" className="w-full">
             <TabsList className="w-full grid grid-cols-3 mb-4">
-              <TabsTrigger value="metrics">Métriques</TabsTrigger>
-              <TabsTrigger value="performance">Performance</TabsTrigger>
-              <TabsTrigger value="details">Historique</TabsTrigger>
+              <TabsTrigger value="metrics">{t("workouts.tabs.metrics", { fallback: "Métriques" })}</TabsTrigger>
+              <TabsTrigger value="performance">{t("workouts.tabs.performance", { fallback: "Performance" })}</TabsTrigger>
+              <TabsTrigger value="details">{t("workouts.tabs.history", { fallback: "Historique" })}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="metrics" className="space-y-6">
@@ -110,7 +110,7 @@ const Stats = () => {
                 <ForceScoreCard />
                 <Card>
                   <CardContent className="pt-6">
-                    <h3 className="text-lg font-medium mb-4">Progression des entraînements</h3>
+                    <h3 className="text-lg font-medium mb-4">{t("workouts.stats.progression", { fallback: "Progression des entraînements" })}</h3>
                     <DashboardStats />
                   </CardContent>
                 </Card>

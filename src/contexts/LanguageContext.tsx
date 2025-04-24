@@ -24,6 +24,8 @@ const LanguageContext = createContext<LanguageContextProps | undefined>(undefine
 const translations: Record<Language, Translations> = { fr, en, es, de };
 
 const getNestedValue = (obj: any, path: string): string | undefined => {
+  if (!obj || !path) return undefined;
+  
   const keys = path.split('.');
   let result = obj;
   
@@ -40,6 +42,9 @@ const findTranslation = (
   currentLanguage: Language, 
   fallbackText?: string
 ): string => {
+  // Si la clé est vide, retourner le fallback ou une chaîne vide
+  if (!key) return fallbackText || '';
+
   // 1. Essayer la langue actuelle
   const primaryTranslation = getNestedValue(translations[currentLanguage], key);
   if (primaryTranslation) {
@@ -65,41 +70,65 @@ const findTranslation = (
   }
 
   // 4. Utiliser le fallback fourni ou la clé
-  if (fallbackText) {
+  if (fallbackText !== undefined) {
     debugLogger.error('Translation', `[${currentLanguage.toUpperCase()}] Using fallback:`, { key, fallback: fallbackText });
     return fallbackText;
   }
 
   debugLogger.error('Translation', `[${currentLanguage.toUpperCase()}] No translation found:`, { key });
-  return key;
+  // Afficher la clé sous forme lisible plutôt que la clé brute
+  const lastPart = key.split('.').pop() || key;
+  const readable = lastPart.replace(/([A-Z])/g, ' $1')
+                           .replace(/^./, str => str.toUpperCase())
+                           .replace(/[_.]/g, ' ');
+  return readable;
 };
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = useState<Language>('fr');
 
-  // Force la langue française pour corriger le problème immédiatement
   useEffect(() => {
     try {
-      // Toujours définir le français comme langue par défaut pour résoudre le problème immédiat
-      setLanguage('fr');
-      localStorage.setItem('userLanguage', 'fr');
-      debugLogger.log('LanguageContext', `Langue forcée à français pour corriger les problèmes de mélange`);
+      // Récupérer la langue stockée ou utiliser le français comme langue par défaut
+      const storedLanguage = localStorage.getItem('userLanguage');
+      if (storedLanguage && ['fr', 'en', 'es', 'de'].includes(storedLanguage)) {
+        setLanguage(storedLanguage as Language);
+      } else {
+        // Si pas de langue stockée ou langue non valide, utiliser le français
+        setLanguage('fr');
+        localStorage.setItem('userLanguage', 'fr');
+      }
+      debugLogger.log('LanguageContext', `Langue initialisée: ${storedLanguage || 'fr'}`);
     } catch (error) {
       debugLogger.error('LanguageContext', "Erreur lors de la définition de la langue", error);
     }
   }, []);
 
-  // Le reste du code reste le même
   const translate = (key: string, options?: { fallback?: string }): string => {
+    if (!key) return options?.fallback || '';
     return findTranslation(key, language, options?.fallback);
   };
 
   const getNestedTranslation = (key: string): any => {
     try {
-      return getNestedValue(translations[language], key) || 
-             getNestedValue(translations.fr, key) || 
-             getNestedValue(translations.en, key) || 
-             {};
+      const keys = key.split('.');
+      let result = translations[language];
+      
+      for (const k of keys) {
+        if (!result || typeof result !== 'object') return {};
+        result = result[k];
+      }
+      
+      if (!result) {
+        // Fallback to French
+        result = translations.fr;
+        for (const k of keys) {
+          if (!result || typeof result !== 'object') return {};
+          result = result[k];
+        }
+      }
+      
+      return result || {};
     } catch (error) {
       debugLogger.error('LanguageContext', `Erreur lors de l'accès aux traductions imbriquées: ${key}`, error);
       return {};
