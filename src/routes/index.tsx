@@ -21,6 +21,7 @@ const Admin = lazy(() => import("@/pages/Admin"));
 const Home = lazy(() => import("@/pages/Home"));
 const Index = lazy(() => import("@/pages/Index"));
 const Stats = lazy(() => import("@/pages/Stats"));
+const WeeklyReport = lazy(() => import("@/pages/Stats/WeeklyReport"));
 
 debugLogger.log("Routes", "Initialisation des routes de l'application");
 
@@ -34,10 +35,16 @@ export const router = createBrowserRouter([
     element: <RequireAdmin>{withSuspense(Admin)}</RequireAdmin>,
   },
   
-  // Route Stats accessible directement
+  // Route Stats accessible directement au niveau racine
   {
     path: "/stats",
     element: <ProtectedRoute>{withSuspense(Stats)}</ProtectedRoute>,
+  },
+
+  // Route pour le rapport hebdomadaire
+  {
+    path: "/stats/weekly",
+    element: <ProtectedRoute>{withSuspense(WeeklyReport)}</ProtectedRoute>,
   },
 
   // Routes principales de l'application

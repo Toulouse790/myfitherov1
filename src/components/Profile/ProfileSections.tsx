@@ -24,7 +24,7 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
   
   const handleNavigateToStats = () => {
     console.log("Navigation vers la page des statistiques");
-    // Utiliser le chemin complet pour les routes protégées
+    // Navigation vers la route racine /stats pour éviter les problèmes
     navigate('/stats');
   };
   
