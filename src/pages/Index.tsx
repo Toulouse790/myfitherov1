@@ -37,7 +37,10 @@ export default function Index() {
       transition={{ duration: 0.5 }}
       className="container max-w-4xl mx-auto p-4 space-y-6"
     >
-      <AuthenticationStatus />
+      {/* Afficher AuthenticationStatus uniquement pour les utilisateurs non connectés */}
+      {!user && <AuthenticationStatus />}
+      
+      {/* Afficher le contenu principal de l'application pour les utilisateurs connectés */}
       {user && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -49,6 +52,7 @@ export default function Index() {
         </motion.div>
       )}
       
+      {/* Contenu pour les utilisateurs non connectés (présentation de l'application) */}
       {!user && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}

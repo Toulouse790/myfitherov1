@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { LogIn, User, Dumbbell } from "lucide-react";
+import { LogIn, Dumbbell } from "lucide-react";
 
 export const AuthenticationStatus = () => {
   const { user } = useAuth();
@@ -36,30 +36,5 @@ export const AuthenticationStatus = () => {
     );
   }
 
-  // Extract username from email or metadata
-  const username = user.user_metadata?.username || 
-                  user.user_metadata?.name || 
-                  user.email?.split('@')[0] || 
-                  "Sportif";
-
-  return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">
-            {t("auth.welcomeBack", { fallback: `Bon retour, ${username}!` })}
-          </h2>
-          <p className="text-muted-foreground">
-            {user.email}
-          </p>
-        </div>
-        <Link to="/profile">
-          <Button variant="outline" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            {t("profile.viewProfile", { fallback: "Voir le profil" })}
-          </Button>
-        </Link>
-      </div>
-    </Card>
-  );
+  return null; // Ne plus afficher de message pour les utilisateurs connectés
 };

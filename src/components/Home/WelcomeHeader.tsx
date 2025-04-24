@@ -22,6 +22,8 @@ export const WelcomeHeader = () => {
     enabled: !!user
   });
 
+  if (!user) return null;
+
   const username = profile?.username || user?.email?.split('@')[0] || 'Fitness Hero';
   const greeting = getGreeting();
   
