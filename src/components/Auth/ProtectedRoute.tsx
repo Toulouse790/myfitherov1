@@ -2,7 +2,7 @@
 import { useEffect, ReactNode } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { debugLogger } from "@/utils/debug-logger";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProtectedRouteProps {
   children?: ReactNode;
@@ -20,7 +20,6 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     });
   }, [user, loading, location]);
 
-  // Afficher un spinner pendant le chargement
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -29,7 +28,6 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // Rediriger vers la page de connexion si non authentifié
   if (!user) {
     debugLogger.warn("ProtectedRoute", "Utilisateur non authentifié, redirection vers la connexion", {
       from: location.pathname
@@ -37,7 +35,6 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
   }
 
-  // Rendre les routes enfants si authentifié
   debugLogger.log("ProtectedRoute", "Utilisateur authentifié, accès autorisé");
   return children ? <>{children}</> : <Outlet />;
 };
