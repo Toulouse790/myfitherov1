@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useFoodEntries } from "@/hooks/use-food-entries";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const MealSection = ({
   type,
@@ -15,12 +16,14 @@ export const MealSection = ({
   mealEntries,
   generatedMeal,
   isExpanded,
-  onToggle
+  onToggle,
+  onAddFood
 }: MealSectionProps) => {
   const [mealStatus, setMealStatus] = useState<'taken' | 'skipped' | null>(null);
   const { toast } = useToast();
   const { refetchEntries } = useFoodEntries();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
 
   const handleMealStatus = async (status: 'taken' | 'skipped') => {
     try {
@@ -61,7 +64,8 @@ export const MealSection = ({
           throw new Error(t("nutrition.errors.noDataReturned"));
         }
 
-        await refetchEntries();
+        // Mise à jour optimiste de l'interface
+        await queryClient.invalidateQueries({ queryKey: ['food-journal-today'] });
 
         toast({
           title: t("nutrition.mealValidated"),
@@ -96,9 +100,8 @@ export const MealSection = ({
       {isExpanded && (
         <MealContent
           mealEntries={mealEntries}
-          generatedMeal={generatedMeal}
-          onMealStatus={handleMealStatus}
-          mealType={type}
+          type={type}
+          onAddFood={() => onAddFood && onAddFood()}
         />
       )}
     </Card>

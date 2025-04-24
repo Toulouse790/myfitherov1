@@ -1,19 +1,20 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { FoodEntry } from "@/types/food";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const useFoodEntries = () => {
   const [entries, setEntries] = useState<FoodEntry[]>([]);
 
-  const { refetch } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['food-journal-today'],
     queryFn: async () => {
       console.log("Fetching food entries...");
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         console.log("No user found, skipping fetch");
-        return;
+        return [];
       }
 
       // Get today's date at midnight (start of day)
@@ -40,7 +41,7 @@ export const useFoodEntries = () => {
 
       if (error) {
         console.error('Error fetching entries:', error);
-        return;
+        throw error;
       }
 
       console.log("Fetched entries:", data);
@@ -55,14 +56,17 @@ export const useFoodEntries = () => {
         mealType: entry.meal_type
       }));
 
-      console.log("Mapped entries:", mappedEntries);
-      setEntries(mappedEntries);
       return mappedEntries;
     },
-    refetchOnWindowFocus: true,
-    staleTime: 0, // Toujours revalider les données
-    gcTime: 0 // Ne pas mettre en cache les données
+    refetchOnWindowFocus: false, // Désactiver le refetch automatique au focus
+    staleTime: 30000, // 30 secondes avant de considérer les données comme périmées
   });
+
+  useEffect(() => {
+    if (data) {
+      setEntries(data);
+    }
+  }, [data]);
 
   const entriesByMealType = entries.reduce((acc, entry) => {
     if (!acc[entry.mealType]) {
@@ -77,6 +81,8 @@ export const useFoodEntries = () => {
   return {
     entries,
     entriesByMealType,
-    refetchEntries: refetch
+    refetchEntries: refetch,
+    isLoading,
+    error
   };
 };

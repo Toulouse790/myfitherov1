@@ -14,13 +14,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { addFoodEntry, checkDuplicateEntry } from "@/hooks/food-journal/database";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const DailyMeals = () => {
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
   const [isCheatMealOpen, setIsCheatMealOpen] = useState(false);
   const [isAddMealOpen, setIsAddMealOpen] = useState(false);
+  const [currentMealType, setCurrentMealType] = useState<string>("");
   const { mealPlan } = useDailyTargets();
-  const { entriesByMealType, refetchEntries } = useFoodEntries();
+  const { entriesByMealType, refetchEntries, isLoading } = useFoodEntries();
   const { toast } = useToast();
   const { t } = useLanguage();
   const [newFood, setNewFood] = useState("");
@@ -30,6 +32,7 @@ export const DailyMeals = () => {
   const [fats, setFats] = useState("");
   const [weight, setWeight] = useState("");
   const [notes, setNotes] = useState("");
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const checkMealValidations = async () => {
@@ -79,11 +82,31 @@ export const DailyMeals = () => {
       refetchEntries();
     }
   };
+  
+  const openAddFoodDialog = (mealType: string) => {
+    setCurrentMealType(mealType);
+    setIsAddMealOpen(true);
+  };
 
   const handleAddEntry = async (mealType: string, isComposite?: boolean, ingredients?: Array<{ name: string; portion: string }>) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      // Vérifier les doublons
+      const isDuplicate = await checkDuplicateEntry(newFood, mealType);
+      if (isDuplicate) {
+        toast({
+          title: t("nutrition.attention", { fallback: "Attention" }),
+          description: t("nutrition.foodAlreadyAdded", { fallback: `${newFood} a déjà été ajouté à ${t(`nutrition.mealTypes.${mealType}`)} aujourd'hui` }),
+          variant: "default",
+        });
+
+        // L'utilisateur peut quand même l'ajouter s'il le souhaite
+        if (!confirm(t("nutrition.addAnyway", { fallback: "Voulez-vous quand même ajouter cet aliment ?" }))) {
+          return;
+        }
+      }
 
       await addFoodEntry({
         name: newFood,
@@ -91,10 +114,13 @@ export const DailyMeals = () => {
         proteins: parseInt(proteins),
         carbs: parseInt(carbs || '0'),
         fats: parseInt(fats || '0'),
-        mealType: mealType,
+        mealType: mealType || currentMealType,
         notes: notes,
         components: ingredients || []
       });
+
+      // Mise à jour optimiste de l'interface
+      await queryClient.invalidateQueries({ queryKey: ['food-journal-today'] });
 
       toast({
         title: t("nutrition.mealAdded"),
@@ -102,7 +128,6 @@ export const DailyMeals = () => {
       });
 
       setIsAddMealOpen(false);
-      refetchEntries();
       
       // Reset form
       setNewFood("");
@@ -111,6 +136,7 @@ export const DailyMeals = () => {
       setCarbs("");
       setFats("");
       setWeight("");
+      setNotes("");
     } catch (error) {
       console.error('Error adding food entry:', error);
       toast({
@@ -120,6 +146,22 @@ export const DailyMeals = () => {
       });
     }
   };
+
+  if (isLoading) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-4">
+          <div className="animate-pulse space-y-4">
+            <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+            <div className="space-y-2">
+              <div className="h-24 bg-gray-200 rounded"></div>
+              <div className="h-24 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full">
@@ -161,6 +203,7 @@ export const DailyMeals = () => {
               } : undefined}
               isExpanded={expandedMeal === type}
               onToggle={() => setExpandedMeal(expandedMeal === type ? null : type)}
+              onAddFood={() => openAddFoodDialog(type)}
             />
           ))}
         </div>
@@ -174,7 +217,11 @@ export const DailyMeals = () => {
       <Dialog open={isAddMealOpen} onOpenChange={setIsAddMealOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("nutrition.addMeal")}</DialogTitle>
+            <DialogTitle>
+              {currentMealType ? 
+                t("nutrition.addFoodTo", { mealType: t(`nutrition.mealTypes.${currentMealType}`), fallback: `Ajouter un aliment à ${t(`nutrition.mealTypes.${currentMealType}`)}` }) : 
+                t("nutrition.addMeal")}
+            </DialogTitle>
           </DialogHeader>
           <FoodEntryForm
             newFood={newFood}
@@ -193,7 +240,8 @@ export const DailyMeals = () => {
             onFatsChange={setFats}
             onWeightChange={setWeight}
             onNotesChange={setNotes}
-            onAddEntry={handleAddEntry}
+            onAddEntry={(mealType, isComposite, ingredients) => 
+              handleAddEntry(mealType || currentMealType, isComposite, ingredients)}
           />
         </DialogContent>
       </Dialog>

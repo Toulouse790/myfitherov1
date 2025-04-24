@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -6,6 +7,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface MealContentProps {
   mealEntries: FoodEntry[];
@@ -17,10 +19,13 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   
   const handleDeleteEntry = async (id: string) => {
     try {
       setIsDeleting(true);
+      setDeletingId(id);
       
       const { error } = await supabase
         .from('food_journal_entries')
@@ -29,14 +34,13 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
       
       if (error) throw error;
       
+      // Mise à jour optimiste de l'UI en invalidant la requête
+      await queryClient.invalidateQueries({ queryKey: ['food-journal-today'] });
+      
       toast({
         title: t("nutrition.deletedSuccessfully"),
         description: t("nutrition.foodEntryRemoved"),
       });
-      
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
       
     } catch (error) {
       console.error("Error deleting food entry:", error);
@@ -47,6 +51,7 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
       });
     } finally {
       setIsDeleting(false);
+      setDeletingId(null);
     }
   };
   
@@ -78,10 +83,10 @@ export const MealContent = ({ mealEntries, onAddFood, type }: MealContentProps) 
                 size="sm"
                 className="text-red-500 hover:text-red-700 hover:bg-red-50"
                 onClick={() => handleDeleteEntry(entry.id)}
-                disabled={isDeleting}
+                disabled={isDeleting && deletingId === entry.id}
                 type="button"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className={`h-4 w-4 ${isDeleting && deletingId === entry.id ? 'animate-pulse' : ''}`} />
                 <span className="sr-only">{t("common.delete")}</span>
               </Button>
             </div>

@@ -10,6 +10,7 @@ export const nutrition = {
   addMeal: "Ajouter un repas",
   addFood: "Ajouter un aliment",
   addAnotherFood: "Ajouter un autre aliment",
+  addFoodTo: "Ajouter un aliment à {mealType}",
   scan: "Scanner",
   cheatMeal: "Repas libre",
   mealAdded: "Repas ajouté",
@@ -37,8 +38,12 @@ export const nutrition = {
   dietary: {
     preferences: "Préférences alimentaires",
     restrictions: "Restrictions alimentaires",
-    allergies: "Allergies"
+    allergies: "Allergies",
+    ingredients: "Ingrédients"
   },
+  attention: "Attention",
+  foodAlreadyAdded: "{foodName} a déjà été ajouté à {mealType} aujourd'hui",
+  addAnyway: "Voulez-vous quand même ajouter cet aliment ?",
   deletedSuccessfully: "Supprimé avec succès",
   foodEntryRemoved: "L'entrée alimentaire a été supprimée",
   errorDeletingEntry: "Erreur lors de la suppression de l'entrée",
