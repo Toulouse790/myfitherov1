@@ -1,5 +1,8 @@
 
 export const profile = {
+  title: "Mon Profil",
+  unavailable: "Profil non disponible",
+  myInformation: "Mes informations",
   training: {
     title: "Préférences d'entraînement",
     objective: {
@@ -41,5 +44,12 @@ export const profile = {
       update: "Vos préférences ont été mises à jour",
       reminder: "Le temps de rappel a été mis à jour"
     }
+  },
+  stats: {
+    workoutsCompleted: "Séances terminées",
+    totalWorkoutMinutes: "Minutes d'entraînement",
+    streakDays: "Jours consécutifs",
+    points: "Points",
+    level: "Niveau"
   }
 };

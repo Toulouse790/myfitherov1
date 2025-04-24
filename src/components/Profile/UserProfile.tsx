@@ -14,7 +14,6 @@ import { ProfileCompletion } from "./Sections/ProfileCompletion";
 import { ProfileNavigation } from "./Sections/Navigation/ProfileNavigation";
 import { UserInfo } from "./Sections/UserInfo";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import { LanguageSelector } from "@/components/Language/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -125,8 +124,8 @@ export const UserProfile = () => {
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger le profil",
+        title: t("common.error", { fallback: "Erreur" }),
+        description: t("profile.unavailable", { fallback: "Impossible de charger le profil" }),
         variant: "destructive",
       });
     } finally {
@@ -172,7 +171,9 @@ export const UserProfile = () => {
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
           <User2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">{t("profile.unavailable", { fallback: "Profil non disponible" })}</p>
+          <p className="text-muted-foreground">
+            {t("profile.unavailable", { fallback: "Profil non disponible" })}
+          </p>
         </div>
       </div>
     );
@@ -190,19 +191,23 @@ export const UserProfile = () => {
           profile={profile} 
           onProfileUpdate={(updatedProfile) => {
             setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
-            fetchProfile(); // Refresh all profile data after update
+            fetchProfile();
           }}
         />
 
         <ProfileStats stats={profile.stats} />
         
         <Card className="p-6 overflow-hidden">
-          <h3 className="text-lg font-semibold mb-4">{t("profile.myInformation", { fallback: "Mes informations" })}</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            {t("profile.myInformation", { fallback: "Mes informations" })}
+          </h3>
           <UserInfo profile={profile} onUpdate={fetchProfile} />
         </Card>
         
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">{t("settings.language", { fallback: "Langue" })}</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            {t("settings.language", { fallback: "Langue" })}
+          </h3>
           <LanguageSelector />
         </Card>
         

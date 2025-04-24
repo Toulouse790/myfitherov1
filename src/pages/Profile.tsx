@@ -1,7 +1,7 @@
 
 import { Header } from "@/components/Layout/Header";
 import { motion } from "framer-motion";
-import { ProfilePage } from "@/components/Profile";
+import { UserProfile } from "@/components/Profile";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Profile = () => {
@@ -16,8 +16,10 @@ const Profile = () => {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-6 pb-24"
       >
-        <h1 className="text-2xl font-bold mb-6">{t("profile.title", { fallback: "Mon Profil" })}</h1>
-        <ProfilePage />
+        <h1 className="text-2xl font-bold mb-6">
+          {t("profile.title", { fallback: "Mon Profil" })}
+        </h1>
+        <UserProfile />
       </motion.div>
     </>
   );

@@ -1,6 +1,6 @@
 
-import { ProfilePage } from "./ProfilePage";
+import { UserProfile } from "./UserProfile";
 
-export { ProfilePage };
+export { UserProfile };
 
-export default ProfilePage;
+export default UserProfile;
