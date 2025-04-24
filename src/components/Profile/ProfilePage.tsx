@@ -10,11 +10,14 @@ import { ProfileHeader } from "./Sections/ProfileHeader";
 import { ProfileSections } from "./ProfileSections";
 import { ProfileSkeleton } from "./Sections/ProfileSkeleton";
 import { useUserProfileData } from "@/hooks/use-user-profile";
+import { LanguageSelector } from "@/components/Language/LanguageSelector";
+import { Card } from "../ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const ProfilePage = () => {
   const { profile, loading, error, refreshProfile } = useUserProfileData();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (error) {
@@ -35,7 +38,7 @@ export const ProfilePage = () => {
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
           <User2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">Profil non disponible</p>
+          <p className="text-muted-foreground">{t("profile.unavailable", { fallback: "Profil non disponible" })}</p>
         </div>
       </div>
     );
@@ -54,6 +57,11 @@ export const ProfilePage = () => {
           refreshProfile();
         }}
       />
+      
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">{t("settings.language", { fallback: "Langue" })}</h3>
+        <LanguageSelector />
+      </Card>
       
       <ProfileSections profile={profile} refreshProfile={refreshProfile} />
     </motion.div>

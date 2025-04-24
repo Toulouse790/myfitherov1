@@ -1,7 +1,7 @@
 
 import { Header } from "@/components/Layout/Header";
 import { motion } from "framer-motion";
-import ProfilePage from "@/components/Profile";
+import { ProfilePage } from "@/components/Profile";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Profile = () => {

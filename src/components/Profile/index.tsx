@@ -1,8 +1,6 @@
 
-import { UserProfile } from "./UserProfile";
+import { ProfilePage } from "./ProfilePage";
 
-const ProfilePage = () => {
-  return <UserProfile />;
-};
+export { ProfilePage };
 
 export default ProfilePage;
