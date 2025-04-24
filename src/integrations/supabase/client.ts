@@ -21,7 +21,8 @@ export const supabase = createClient(
       persistSession: true,
       detectSessionInUrl: true,
       storage: localStorage,
-      storageKey: 'myfithero-auth'
+      storageKey: 'myfithero-auth',
+      flowType: 'pkce' // Utiliser PKCE pour une sécurité accrue
     },
     global: {
       headers: {
@@ -43,13 +44,8 @@ supabase.auth.onAuthStateChange((event, session) => {
   
   if (event === 'SIGNED_OUT') {
     debugLogger.log('Auth', 'Utilisateur déconnecté, nettoyage des données d\'authentification');
-    localStorage.removeItem('myfithero-auth');
   } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
     debugLogger.log('Auth', 'Utilisateur connecté ou token rafraîchi');
-    if (session) {
-      debugLogger.log('Auth', 'Session stockée dans localStorage');
-      localStorage.setItem('myfithero-auth', JSON.stringify(session));
-    }
   } else if (event === 'USER_UPDATED') {
     debugLogger.log('Auth', 'Profil utilisateur mis à jour');
   }

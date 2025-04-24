@@ -16,49 +16,57 @@ export const useAuth = () => {
     const initializeAuth = async () => {
       try {
         debugLogger.log("Auth", "Initialisation de l'authentification...");
-        const { data: { session } } = await supabase.auth.getSession();
         
-        if (session) {
+        // Établissement de l'écouteur AVANT de vérifier la session existante
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
+          debugLogger.log("Auth", `Changement d'état d'authentification: ${event}`, { hasSession: !!newSession });
+          
+          // Mettre à jour synchroniquement les états
+          setSession(newSession);
+          setUser(newSession?.user ?? null);
+          
+          // Actions supplémentaires à effectuer après délai pour éviter deadlock
+          if (event === 'SIGNED_IN' && newSession) {
+            setTimeout(() => {
+              toast({
+                title: "Connexion réussie",
+                description: `Bienvenue ${newSession.user.email?.split('@')[0] || ''}!`,
+              });
+            }, 0);
+          } else if (event === 'SIGNED_OUT') {
+            setTimeout(() => {
+              toast({
+                title: "Déconnexion réussie",
+                description: "À bientôt !",
+              });
+            }, 0);
+          }
+        });
+        
+        // Vérifier ensuite s'il existe une session active
+        const { data: { session: existingSession } } = await supabase.auth.getSession();
+        if (existingSession) {
           debugLogger.log("Auth", "Session existante trouvée");
-          setSession(session);
-          setUser(session.user);
+          setSession(existingSession);
+          setUser(existingSession.user);
         } else {
           debugLogger.log("Auth", "Aucune session existante");
-          setUser(null);
-          setSession(null);
         }
+        
+        setLoading(false);
+        
+        // Nettoyer l'abonnement à la désinscription
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
         debugLogger.error("Auth", "Erreur lors de l'initialisation de l'authentification:", error);
-      } finally {
         setLoading(false);
       }
     };
 
-    // Configurer l'écouteur d'événements d'authentification
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, newSession) => {
-      debugLogger.log("Auth", "Changement d'état d'authentification:", event);
-      
-      if (event === 'SIGNED_OUT') {
-        setUser(null);
-        setSession(null);
-        debugLogger.log("Auth", "Utilisateur déconnecté");
-      } else if (newSession) {
-        setSession(newSession);
-        setUser(newSession.user);
-        debugLogger.log("Auth", "Utilisateur connecté ou token rafraîchi");
-      }
-    });
-
-    // Initialiser l'authentification
     initializeAuth();
-
-    // Nettoyer l'abonnement
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+  }, [toast]);
 
   // Fonctions utilitaires pour l'authentification
   const signIn = async (email: string, password: string) => {
@@ -70,13 +78,6 @@ export const useAuth = () => {
       });
       
       if (error) throw error;
-
-      if (data.user) {
-        toast({
-          title: "Connexion réussie",
-          description: `Bienvenue ${data.user.email?.split('@')[0] || ''}!`,
-        });
-      }
       
       return { data, error: null };
     } catch (error: any) {

@@ -64,11 +64,7 @@ export const useSignIn = () => {
         hasSession: !!data.session 
       });
 
-      toast({
-        title: "Connexion réussie",
-        description: "Bienvenue sur MyFitHero !",
-      });
-
+      // On ne fait pas de toast ici car il sera fait dans le hook useAuth via l'événement onAuthStateChange
       return true;
 
     } catch (err) {

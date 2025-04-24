@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { debugLogger } from "@/utils/debug-logger";
 import Home from "./Home";
@@ -8,9 +8,10 @@ import { VerifyConnection } from "@/components/Workouts/VerifyConnection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { AuthenticationStatus } from "@/components/Home/AuthenticationStatus";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { LogIn, UserPlus } from "lucide-react";
 
 export default function Index() {
-  const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { t } = useLanguage();
 
@@ -78,6 +79,22 @@ export default function Index() {
               <h3 className="font-medium mb-2">Nutrition personnalisée</h3>
               <p className="text-sm text-muted-foreground">Des conseils adaptés à votre activité</p>
             </div>
+          </div>
+          
+          {/* Boutons d'action pour se connecter ou s'inscrire */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <Link to="/signin">
+              <Button size="lg" className="flex items-center gap-2 w-full sm:w-auto">
+                <LogIn className="h-4 w-4" />
+                {t("auth.signIn", { fallback: "Connexion" })}
+              </Button>
+            </Link>
+            <Link to="/signup">
+              <Button variant="outline" size="lg" className="flex items-center gap-2 w-full sm:w-auto">
+                <UserPlus className="h-4 w-4" />
+                {t("auth.signUp", { fallback: "Inscription" })}
+              </Button>
+            </Link>
           </div>
         </motion.div>
       )}

@@ -1,10 +1,11 @@
 
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { BottomNav } from "@/components/Layout/BottomNav";
 import { Button } from "@/components/ui/button";
 import { ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
+import { debugLogger } from "@/utils/debug-logger";
 
 export const RootLayout = () => {
   const location = useLocation();
@@ -20,9 +21,12 @@ export const RootLayout = () => {
       setShowScrollTop(window.scrollY > 100);
     };
 
+    // Log pour debug des transitions de page
+    debugLogger.log("Navigation", "Page changée", { path: location.pathname });
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [location]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

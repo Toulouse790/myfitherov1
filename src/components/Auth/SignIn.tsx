@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSignIn } from "@/hooks/use-signin";
 import { SignInHeader } from "./SignInForm/SignInHeader";
@@ -11,6 +11,7 @@ import { SubmitButton } from "@/components/Auth/SignInForm/SubmitButton";
 import { useNavigate, useLocation } from "react-router-dom";
 import { debugLogger } from "@/utils/debug-logger";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/hooks/use-auth";
 
 export const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -20,8 +21,18 @@ export const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
+  const { user } = useAuth();
   
+  // Obtenir l'URL de redirection depuis les paramètres d'état ou la page d'accueil par défaut
   const from = (location.state as any)?.from || "/";
+  
+  // Si déjà connecté, rediriger automatiquement
+  useEffect(() => {
+    if (user) {
+      debugLogger.log("SignIn", "Utilisateur déjà connecté, redirection vers", from);
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
   
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +43,7 @@ export const SignIn = () => {
     
     if (success) {
       debugLogger.log("SignIn", "Connexion réussie, redirection vers", from);
-      navigate(from);
+      navigate(from, { replace: true });
     }
   };
 

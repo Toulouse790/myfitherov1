@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { debugLogger } from "@/utils/debug-logger";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { Loader } from "@/components/ui/loader";
 
 export const ProtectedRoute = () => {
@@ -10,7 +10,7 @@ export const ProtectedRoute = () => {
   const location = useLocation();
 
   useEffect(() => {
-    debugLogger.log("ProtectedRoute", "Route protection check", { 
+    debugLogger.log("ProtectedRoute", "Vérification de l'accès", { 
       isAuthenticated: !!user, 
       hasValidSession: !!session,
       isLoading: loading,
@@ -18,7 +18,7 @@ export const ProtectedRoute = () => {
     });
 
     if (!loading && !user && !session) {
-      debugLogger.warn("ProtectedRoute", "Non authentifié, redirection vers connexion", {
+      debugLogger.warn("ProtectedRoute", "Accès non autorisé, redirection vers connexion", {
         from: location.pathname
       });
     }
@@ -33,9 +33,12 @@ export const ProtectedRoute = () => {
     );
   }
 
+  // Si pas d'utilisateur authentifié, rediriger vers la page de connexion
+  // en gardant l'URL actuelle en paramètre pour revenir après connexion
   if (!user || !session) {
     return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
   }
 
+  // Si authentifié, autoriser l'accès aux routes protégées
   return <Outlet />;
 };
