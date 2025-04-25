@@ -46,6 +46,10 @@ export const useLanguageManagement = () => {
     // Sauvegarder la préférence
     try {
       localStorage.setItem('userLanguage', value);
+      
+      // Déclencher un événement pour informer l'application du changement de langue
+      const languageChangeEvent = new CustomEvent('languageChanged', { detail: { language: value } });
+      window.dispatchEvent(languageChangeEvent);
     } catch (error) {
       debugLogger.error('LanguageManagement', "Erreur lors de la sauvegarde de la préférence de langue", error);
     }

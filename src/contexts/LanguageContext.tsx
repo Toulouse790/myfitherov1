@@ -32,6 +32,7 @@ const availableLanguages = [
   { code: 'de' as Language, name: 'Deutsch' },
 ];
 
+// Fonction utilitaire pour récupérer une valeur imbriquée dans un objet
 const getNestedValue = (obj: any, path: string): string | undefined => {
   if (!obj || !path) return undefined;
   

@@ -5,15 +5,29 @@ import { debugLogger } from "@/utils/debug-logger";
 
 export const useToastWithTranslation = () => {
   const { toast: baseToast } = useToastBase();
+  
   // Utiliser un try/catch pour gérer le cas où le contexte de langue n'est pas disponible
   let t: (key: string, options?: { fallback?: string }) => string;
+  let language: string = 'fr';
+  
   try {
-    const { t: translate } = useLanguage();
+    const { t: translate, language: currentLanguage } = useLanguage();
     t = translate;
+    language = currentLanguage;
   } catch (error) {
     debugLogger.warn('useToastWithTranslation', 'Le contexte de langue n\'est pas disponible', error);
     // Fonction de fallback qui renvoie simplement le fallback ou la clé
     t = (key: string, options?: { fallback?: string }) => options?.fallback || key;
+    
+    // Récupérer la langue du localStorage si possible
+    try {
+      const storedLanguage = localStorage.getItem('userLanguage');
+      if (storedLanguage) {
+        language = storedLanguage;
+      }
+    } catch (e) {
+      // Ignorer les erreurs de localStorage
+    }
   }
 
   const toast = (props: {
@@ -95,7 +109,8 @@ export const useToastWithTranslation = () => {
 
   return {
     toast,
-    toastFromKey
+    toastFromKey,
+    language
   };
 };
 

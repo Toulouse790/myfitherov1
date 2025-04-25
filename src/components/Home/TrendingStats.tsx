@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -5,10 +6,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChartBar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const TrendingStats = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   const handleStatsClick = () => {
     navigate('/stats');
@@ -74,18 +77,18 @@ export const TrendingStats = () => {
       </div>
       
       <div className="text-center">
-        <h3 className="text-lg sm:text-xl font-semibold">Statistiques</h3>
+        <h3 className="text-lg sm:text-xl font-semibold">{t('dashboard.statistics', { fallback: 'Statistiques' })}</h3>
         {data && (
           <div className="mt-2 space-y-1">
-            <p className="text-sm font-medium">{data.streak}/7 jours d'activité</p>
+            <p className="text-sm font-medium">{data.streak}/7 {t('common.days', { fallback: "jours d'activité" })}</p>
             <p className="text-xs text-muted-foreground">
-              {data.workoutCount} entraînements cette semaine
+              {data.workoutCount} {t('workouts.workoutsThisWeek', { fallback: "entraînements cette semaine" })}
             </p>
           </div>
         )}
         {!data && (
           <p className="text-xs sm:text-sm text-center text-muted-foreground mt-1 sm:mt-2">
-            Consultez vos performances et progression
+            {t('dashboard.checkProgress', { fallback: "Consultez vos performances et progression" })}
           </p>
         )}
       </div>

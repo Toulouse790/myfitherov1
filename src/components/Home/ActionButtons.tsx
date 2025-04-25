@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export function ActionButtons() {
   const navigate = useNavigate();
   const { handleCreateSession, handleAIGeneration, isLoading } = useHomeActions();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">

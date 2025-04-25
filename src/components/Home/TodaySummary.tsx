@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const TodaySummary = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   return (
     <Card className="p-4">

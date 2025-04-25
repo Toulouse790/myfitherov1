@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export const WelcomeHeader = () => {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Extraire le prénom de l'utilisateur s'il existe
   const firstName = user?.user_metadata?.first_name || user?.user_metadata?.name?.split(' ')[0] || '';
