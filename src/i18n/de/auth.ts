@@ -1,3 +1,4 @@
+
 export const auth = {
   signIn: "Anmelden",
   signUp: "Registrieren",
@@ -44,7 +45,9 @@ export const auth = {
   logoutError: "Fehler bei der Abmeldung",
   logoutErrorMessage: "Bei der Abmeldung ist ein Fehler aufgetreten",
   loginSuccess: "Erfolgreich angemeldet",
-  loginMessage: "Sie sind jetzt angemeldet",
+  loginMessage: "Willkommen zurück!",
+  loginError: "Anmeldefehler",
   registerSuccess: "Registrierung erfolgreich",
-  registerMessage: "Ihr Konto wurde erfolgreich erstellt"
+  registerMessage: "Ihr Konto wurde erfolgreich erstellt",
+  registerError: "Registrierungsfehler"
 };

@@ -1,13 +1,13 @@
 
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useToastWithTranslation } from "@/hooks/use-toast-with-translation";
 import { debugLogger } from "@/utils/debug-logger";
 
 export const useSignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
+  const { toastFromKey } = useToastWithTranslation();
 
   const handleSignIn = async (email: string, password: string) => {
     try {
@@ -71,11 +71,7 @@ export const useSignIn = () => {
       debugLogger.error("SignIn", "Erreur lors de la connexion:", err);
       const errorMessage = err instanceof Error ? err.message : "Email ou mot de passe incorrect";
       setError(errorMessage);
-      toast({
-        variant: "destructive",
-        title: "Erreur de connexion",
-        description: errorMessage,
-      });
+      toastFromKey('auth.loginError', 'auth.errors.invalidCredentials', { variant: "destructive" });
       return false;
     } finally {
       setIsLoading(false);

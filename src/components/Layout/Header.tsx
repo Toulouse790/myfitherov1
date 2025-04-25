@@ -1,9 +1,10 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LogIn, LogOut, User } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToastWithTranslation } from "@/hooks/use-toast-with-translation";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -12,21 +13,14 @@ interface HeaderProps {
 export const Header = ({ children }: HeaderProps) => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
-  const { toast } = useToast();
+  const { toastFromKey } = useToastWithTranslation();
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast({
-        title: t("auth.logoutSuccess"),
-        description: t("auth.logoutMessage")
-      });
+      // Le toast sera affiché automatiquement par l'event handler dans AuthContext
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: t("auth.logoutError"),
-        description: t("auth.logoutErrorMessage")
-      });
+      toastFromKey("auth.logoutError", "auth.logoutErrorMessage", { variant: "destructive" });
     }
   };
 
@@ -48,7 +42,7 @@ export const Header = ({ children }: HeaderProps) => {
             {user ? (
               <>
                 <span className="text-sm hidden md:inline-block">
-                  {username && `Bonjour, ${username}`}
+                  {username && `${t("common.hello", { fallback: "Bonjour" })}, ${username}`}
                 </span>
                 <Link to="/profile">
                   <Button variant="ghost" size="icon">
@@ -61,14 +55,14 @@ export const Header = ({ children }: HeaderProps) => {
                   className="flex items-center gap-2"
                 >
                   <LogOut className="h-4 w-4" />
-                  {t("auth.signOut", { fallback: "Déconnexion" })}
+                  {t("auth.signOut")}
                 </Button>
               </>
             ) : (
               <Link to="/signin">
                 <Button className="flex items-center gap-2">
                   <LogIn className="h-4 w-4" />
-                  {t("auth.signIn", { fallback: "Connexion" })}
+                  {t("auth.signIn")}
                 </Button>
               </Link>
             )}

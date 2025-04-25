@@ -1,3 +1,4 @@
+
 export const auth = {
   signIn: "Sign In",
   signUp: "Sign Up",
@@ -44,7 +45,9 @@ export const auth = {
   logoutError: "Logout error",
   logoutErrorMessage: "An error occurred during logout",
   loginSuccess: "Successfully logged in",
-  loginMessage: "You are now logged in",
+  loginMessage: "Welcome back!",
+  loginError: "Login error",
   registerSuccess: "Registration successful",
-  registerMessage: "Your account has been created successfully"
+  registerMessage: "Your account has been created successfully",
+  registerError: "Registration error"
 };

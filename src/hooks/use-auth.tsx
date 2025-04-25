@@ -3,13 +3,15 @@ import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 import { debugLogger } from '@/utils/debug-logger';
-import { useToast } from '@/hooks/use-toast';
+import { useToastWithTranslation } from '@/hooks/use-toast-with-translation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  const { toastFromKey } = useToastWithTranslation();
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Vérifier l'état de l'authentification initiale
@@ -28,17 +30,11 @@ export const useAuth = () => {
           // Actions supplémentaires à effectuer après délai pour éviter deadlock
           if (event === 'SIGNED_IN' && newSession) {
             setTimeout(() => {
-              toast({
-                title: "Connexion réussie",
-                description: `Bienvenue ${newSession.user.email?.split('@')[0] || ''}!`,
-              });
+              toastFromKey('auth.loginSuccess', 'auth.loginMessage');
             }, 0);
           } else if (event === 'SIGNED_OUT') {
             setTimeout(() => {
-              toast({
-                title: "Déconnexion réussie",
-                description: "À bientôt !",
-              });
+              toastFromKey('auth.logoutSuccess', 'auth.logoutMessage');
             }, 0);
           }
         });
@@ -66,7 +62,7 @@ export const useAuth = () => {
     };
 
     initializeAuth();
-  }, [toast]);
+  }, [toastFromKey]);
 
   // Fonctions utilitaires pour l'authentification
   const signIn = async (email: string, password: string) => {
@@ -83,11 +79,7 @@ export const useAuth = () => {
     } catch (error: any) {
       debugLogger.error("Auth", "Erreur de connexion:", error);
       
-      toast({
-        variant: "destructive",
-        title: "Erreur de connexion",
-        description: error.message || "Identifiants incorrects",
-      });
+      toastFromKey('auth.invalidCredentials', 'auth.errors.invalidCredentials', { variant: "destructive" });
       
       return { data: null, error };
     }

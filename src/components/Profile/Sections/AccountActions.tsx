@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const AccountActions = () => {
-  const { toast, toastFromKey } = useToastWithTranslation();
+  const { toastFromKey } = useToastWithTranslation();
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -17,7 +17,7 @@ export const AccountActions = () => {
       
       if (error) throw error;
       
-      toastFromKey('auth.logoutSuccess', 'auth.logoutMessage');
+      // Le toast sera géré par l'événement onAuthStateChange
       
       navigate('/login', { replace: true });
     } catch (error) {
@@ -34,7 +34,7 @@ export const AccountActions = () => {
         onClick={handleLogout}
       >
         <LogOut className="h-4 w-4" />
-        <span>{t('common.logout')}</span>
+        <span>{t('auth.signOut')}</span>
       </Button>
       
       <Button 

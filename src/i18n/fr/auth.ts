@@ -1,3 +1,4 @@
+
 export const auth = {
   // Sign In
   signIn: "Connexion",
@@ -28,6 +29,7 @@ export const auth = {
   // Actions
   submit: "Soumettre",
   continue: "Continuer",
+  signOut: "Déconnexion",
   
   // Account
   dontHaveAccount: "Vous n'avez pas de compte ?",
@@ -54,5 +56,28 @@ export const auth = {
   logoutSuccess: "Déconnexion réussie",
   logoutMessage: "À bientôt !",
   logoutError: "Erreur lors de la déconnexion",
-  logoutErrorMessage: "Une erreur est survenue lors de la déconnexion"
+  logoutErrorMessage: "Une erreur est survenue lors de la déconnexion",
+  
+  // Login
+  loginSuccess: "Connexion réussie",
+  loginMessage: "Bienvenue !",
+  loginError: "Erreur de connexion",
+  
+  // Register
+  registerSuccess: "Inscription réussie",
+  registerMessage: "Votre compte a été créé avec succès",
+  registerError: "Erreur lors de l'inscription",
+  
+  // Errors
+  errors: {
+    emailRequired: "L'email est requis",
+    invalidEmail: "Veuillez entrer un email valide",
+    passwordRequired: "Le mot de passe est requis",
+    passwordLength: "Le mot de passe doit contenir au moins 6 caractères",
+    passwordMatch: "Les mots de passe ne correspondent pas",
+    nameRequired: "Le nom est requis",
+    invalidCredentials: "Email ou mot de passe incorrect",
+    userExists: "Un utilisateur avec cet email existe déjà",
+    unknown: "Une erreur s'est produite. Veuillez réessayer."
+  }
 };

@@ -12,6 +12,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { debugLogger } from "@/utils/debug-logger";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/use-auth";
+import { useToastWithTranslation } from "@/hooks/use-toast-with-translation";
 
 export const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ export const SignIn = () => {
   const location = useLocation();
   const { t } = useLanguage();
   const { user } = useAuth();
+  const { toastFromKey } = useToastWithTranslation();
   
   // Obtenir l'URL de redirection depuis les paramètres d'état ou la page d'accueil par défaut
   const from = (location.state as any)?.from || "/";
@@ -38,6 +40,11 @@ export const SignIn = () => {
     e.preventDefault();
     
     debugLogger.log("SignIn", "Tentative de connexion", { email });
+    
+    if (!email || !password) {
+      toastFromKey('auth.loginError', 'auth.errors.invalidCredentials', { variant: "destructive" });
+      return;
+    }
     
     const success = await handleSignIn(email, password);
     

@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { authLogger } from "@/utils/auth-logger";
-import { useToast } from "@/hooks/use-toast";
+import { useToastWithTranslation } from "@/hooks/use-toast-with-translation";
 import { debugLogger } from "@/utils/debug-logger";
 
 interface AuthContextType {
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  const { toastFromKey } = useToastWithTranslation();
 
   const refreshSession = useCallback(async () => {
     try {
@@ -56,18 +56,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) throw error;
 
-      toast({
-        title: "Connexion réussie",
-        description: "Bienvenue !",
-      });
-
+      // Le toast sera géré par onAuthStateChange
       return { error: null };
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Erreur de connexion",
-        description: error.message || "Erreur inattendue",
-      });
+      toastFromKey('auth.loginError', 'auth.errors.invalidCredentials', { variant: "destructive" });
       return { error };
     }
   };
@@ -86,18 +78,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) throw error;
 
-      toast({
-        title: "Inscription réussie",
-        description: "Vérifiez votre email pour confirmer votre compte",
-      });
+      toastFromKey('auth.registerSuccess', 'auth.registerMessage');
 
       return { error: null };
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Erreur d'inscription",
-        description: error.message || "Erreur inattendue",
-      });
+      toastFromKey('auth.registerError', 'auth.errors.userExists', { variant: "destructive" });
       return { error };
     }
   };
@@ -111,19 +96,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       setSession(null);
       
-      toast({
-        title: "Déconnexion réussie",
-        description: "À bientôt !",
-      });
+      // Le toast sera géré par onAuthStateChange
     } catch (error: any) {
       authLogger.error("Logout error:", error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Erreur lors de la déconnexion",
-      });
+      toastFromKey('auth.logoutError', 'auth.logoutErrorMessage', { variant: "destructive" });
     }
-  }, [toast]);
+  }, [toastFromKey]);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -148,9 +126,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (newSession) {
         setSession(newSession);
         setUser(newSession.user);
+        
+        if (event === 'SIGNED_IN') {
+          setTimeout(() => {
+            toastFromKey('auth.loginSuccess', 'auth.loginMessage');
+          }, 0);
+        }
       } else {
         setSession(null);
         setUser(null);
+        
+        if (event === 'SIGNED_OUT') {
+          setTimeout(() => {
+            toastFromKey('auth.logoutSuccess', 'auth.logoutMessage');
+          }, 0);
+        }
       }
     });
 
@@ -159,7 +149,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [toastFromKey]);
 
   return (
     <AuthContext.Provider value={{ 
