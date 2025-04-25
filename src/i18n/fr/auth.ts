@@ -1,4 +1,3 @@
-
 export const auth = {
   // Sign In
   signIn: "Connexion",
@@ -53,7 +52,7 @@ export const auth = {
   
   // Logout
   logoutSuccess: "Déconnexion réussie",
-  logoutMessage: "Vous avez été déconnecté avec succès",
-  logoutError: "Erreur de déconnexion",
-  logoutErrorMessage: "Une erreur s'est produite lors de la déconnexion"
+  logoutMessage: "À bientôt !",
+  logoutError: "Erreur lors de la déconnexion",
+  logoutErrorMessage: "Une erreur est survenue lors de la déconnexion"
 };

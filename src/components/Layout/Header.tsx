@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -19,19 +18,18 @@ export const Header = ({ children }: HeaderProps) => {
     try {
       await signOut();
       toast({
-        title: t("auth.signOutSuccess", { fallback: "Déconnexion réussie" }),
-        description: t("auth.signOutMessage", { fallback: "À bientôt !" })
+        title: t("auth.logoutSuccess"),
+        description: t("auth.logoutMessage")
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: t("auth.signOutError", { fallback: "Erreur de déconnexion" }),
-        description: t("auth.signOutErrorMessage", { fallback: "Une erreur est survenue" })
+        title: t("auth.logoutError"),
+        description: t("auth.logoutErrorMessage")
       });
     }
   };
 
-  // Get username from metadata if available
   const username = user?.user_metadata?.username || 
                   user?.user_metadata?.name || 
                   user?.email?.split('@')[0];

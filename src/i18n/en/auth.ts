@@ -1,4 +1,3 @@
-
 export const auth = {
   signIn: "Sign In",
   signUp: "Sign Up",
@@ -41,7 +40,7 @@ export const auth = {
     unknown: "An error occurred. Please try again."
   },
   logoutSuccess: "Successfully logged out",
-  logoutMessage: "You have been successfully logged out",
+  logoutMessage: "See you soon!",
   logoutError: "Logout error",
   logoutErrorMessage: "An error occurred during logout",
   loginSuccess: "Successfully logged in",

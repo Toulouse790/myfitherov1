@@ -1,4 +1,3 @@
-
 export const auth = {
   signIn: "Iniciar sesión",
   signUp: "Registrarse",
@@ -41,7 +40,7 @@ export const auth = {
     unknown: "Ocurrió un error. Por favor intente de nuevo."
   },
   logoutSuccess: "Sesión cerrada con éxito",
-  logoutMessage: "Has cerrado sesión correctamente",
+  logoutMessage: "¡Hasta pronto!",
   logoutError: "Error al cerrar sesión",
   logoutErrorMessage: "Ocurrió un error al cerrar la sesión",
   loginSuccess: "Inicio de sesión exitoso",
