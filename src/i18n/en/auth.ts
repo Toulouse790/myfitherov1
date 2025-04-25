@@ -16,6 +16,8 @@ export const auth = {
   createAccount: "Create an account",
   letsStart: "Let's get started!",
   welcomeBack: "Welcome back!",
+  welcomeGuest: "Welcome to MyFitHero",
+  loginPrompt: "Sign in to start your fitness journey",
   enterCredentials: "Enter your credentials to sign in",
   enterEmail: "Enter your email to reset your password",
   enterNewPassword: "Enter your new password",
@@ -49,5 +51,13 @@ export const auth = {
   loginError: "Login error",
   registerSuccess: "Registration successful",
   registerMessage: "Your account has been created successfully",
-  registerError: "Registration error"
+  registerError: "Registration error",
+  deleteAccountTitle: "Delete your account?",
+  deleteAccountWarning: "This action cannot be undone. All your data will be permanently deleted.",
+  deleting: "Deleting...",
+  confirmDelete: "Confirm deletion",
+  accountDeleted: "Account deleted",
+  accountDeletedMessage: "Your account and all your data have been successfully deleted",
+  deleteError: "Deletion error",
+  deleteErrorMessage: "An error occurred while deleting your account"
 };

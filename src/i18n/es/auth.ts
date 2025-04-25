@@ -16,6 +16,8 @@ export const auth = {
   createAccount: "Crear una cuenta",
   letsStart: "¡Comencemos!",
   welcomeBack: "¡Bienvenido de nuevo!",
+  welcomeGuest: "Bienvenido a MyFitHero",
+  loginPrompt: "Inicie sesión para comenzar su viaje fitness",
   enterCredentials: "Ingrese sus credenciales para iniciar sesión",
   enterEmail: "Ingrese su correo electrónico para restablecer su contraseña",
   enterNewPassword: "Ingrese su nueva contraseña",
@@ -49,5 +51,13 @@ export const auth = {
   loginError: "Error de inicio de sesión",
   registerSuccess: "Registro exitoso",
   registerMessage: "Su cuenta ha sido creada con éxito",
-  registerError: "Error en el registro"
+  registerError: "Error en el registro",
+  deleteAccountTitle: "¿Eliminar su cuenta?",
+  deleteAccountWarning: "Esta acción no se puede deshacer. Todos sus datos serán eliminados permanentemente.",
+  deleting: "Eliminando...",
+  confirmDelete: "Confirmar eliminación",
+  accountDeleted: "Cuenta eliminada",
+  accountDeletedMessage: "Su cuenta y todos sus datos han sido eliminados con éxito",
+  deleteError: "Error de eliminación",
+  deleteErrorMessage: "Ocurrió un error al eliminar su cuenta"
 };

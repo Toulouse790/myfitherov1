@@ -29,13 +29,13 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <LanguageProvider>
         <ThemeProvider>
-          <LanguageProvider>
+          <AuthProvider>
             <RouterProvider router={router} />
-          </LanguageProvider>
+          </AuthProvider>
         </ThemeProvider>
-      </AuthProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 )

@@ -1,83 +1,63 @@
 
 export const auth = {
-  // Sign In
-  signIn: "Connexion",
-  signInWith: "Se connecter avec {0}",
-  signInWithGoogle: "Se connecter avec Google",
-  signInWithApple: "Se connecter avec Apple",
-  signInWithFacebook: "Se connecter avec Facebook",
-  signInByEmail: "Se connecter par email",
-  orContinueWith: "Ou continuer avec",
-
-  // Sign Up
-  signUp: "Créer un compte",
-  signUpWith: "Créer un compte avec {0}",
-  signUpWithGoogle: "Créer un compte avec Google",
-  signUpWithApple: "Créer un compte avec Apple",
-  signUpWithFacebook: "Créer un compte avec Facebook",
-  signUpWithEmail: "Créer un compte avec un email",
-  
-  // Form fields
+  signIn: "Se connecter",
+  signUp: "S'inscrire",
+  signOut: "Se déconnecter",
+  forgotPassword: "Mot de passe oublié ?",
+  resetPassword: "Réinitialiser le mot de passe",
   email: "Email",
   password: "Mot de passe",
+  confirmPassword: "Confirmer le mot de passe",
+  name: "Nom",
+  username: "Nom d'utilisateur",
   rememberMe: "Se souvenir de moi",
-  forgotPassword: "Mot de passe oublié ?",
-  enterEmail: "Entrez votre email",
-  enterPassword: "Entrez votre mot de passe",
-  confirmPassword: "Confirmez votre mot de passe",
-  
-  // Actions
-  submit: "Soumettre",
-  continue: "Continuer",
-  signOut: "Déconnexion",
-  
-  // Account
-  dontHaveAccount: "Vous n'avez pas de compte ?",
   alreadyHaveAccount: "Vous avez déjà un compte ?",
-  
-  // Success/Error messages
-  accountCreated: "Compte créé avec succès",
-  checkEmail: "Vérifiez votre email pour confirmer votre compte",
-  invalidCredentials: "Email ou mot de passe invalide",
-  errorOccurred: "Une erreur s'est produite",
-  
-  // Password reset
-  resetPassword: "Réinitialiser le mot de passe",
-  resetPasswordInstructions: "Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe",
-  resetPasswordSent: "Un email a été envoyé avec les instructions de réinitialisation",
-  
-  // Email verification
-  verifyEmail: "Vérifier l'email",
-  verifyEmailInstructions: "Un email de vérification a été envoyé à votre adresse email",
-  resendVerificationEmail: "Renvoyer l'email de vérification",
-  verificationEmailResent: "Email de vérification renvoyé",
-  
-  // Logout
-  logoutSuccess: "Déconnexion réussie",
-  logoutMessage: "À bientôt !",
-  logoutError: "Erreur lors de la déconnexion",
-  logoutErrorMessage: "Une erreur est survenue lors de la déconnexion",
-  
-  // Login
-  loginSuccess: "Connexion réussie",
-  loginMessage: "Bienvenue !",
-  loginError: "Erreur de connexion",
-  
-  // Register
-  registerSuccess: "Inscription réussie",
-  registerMessage: "Votre compte a été créé avec succès",
-  registerError: "Erreur lors de l'inscription",
-  
-  // Errors
+  dontHaveAccount: "Vous n'avez pas de compte ?",
+  createAccount: "Créer un compte",
+  letsStart: "Commençons !",
+  welcomeBack: "Bon retour !",
+  welcomeGuest: "Bienvenue sur MyFitHero",
+  loginPrompt: "Connectez-vous pour commencer votre parcours fitness",
+  enterCredentials: "Entrez vos identifiants pour vous connecter",
+  enterEmail: "Entrez votre email pour réinitialiser votre mot de passe",
+  enterNewPassword: "Entrez votre nouveau mot de passe",
+  resetSent: "Instructions de réinitialisation envoyées",
+  resetSuccessful: "Réinitialisation du mot de passe réussie",
+  checkEmail: "Vérifiez votre email pour continuer",
+  continueWithGoogle: "Continuer avec Google",
+  continueWithApple: "Continuer avec Apple",
+  continueWithFacebook: "Continuer avec Facebook",
+  orContinueWith: "Ou continuer avec",
+  privacyPolicy: "Politique de confidentialité",
+  termsOfService: "Conditions d'utilisation",
+  agreeTo: "En vous inscrivant, vous acceptez nos",
   errors: {
     emailRequired: "L'email est requis",
     invalidEmail: "Veuillez entrer un email valide",
     passwordRequired: "Le mot de passe est requis",
-    passwordLength: "Le mot de passe doit contenir au moins 6 caractères",
+    passwordLength: "Le mot de passe doit comporter au moins 6 caractères",
     passwordMatch: "Les mots de passe ne correspondent pas",
     nameRequired: "Le nom est requis",
-    invalidCredentials: "Email ou mot de passe incorrect",
+    invalidCredentials: "Email ou mot de passe invalide",
     userExists: "Un utilisateur avec cet email existe déjà",
     unknown: "Une erreur s'est produite. Veuillez réessayer."
-  }
+  },
+  logoutSuccess: "Déconnexion réussie",
+  logoutMessage: "À bientôt !",
+  logoutError: "Erreur de déconnexion",
+  logoutErrorMessage: "Une erreur s'est produite lors de la déconnexion",
+  loginSuccess: "Connexion réussie",
+  loginMessage: "Bon retour !",
+  loginError: "Erreur de connexion",
+  registerSuccess: "Inscription réussie",
+  registerMessage: "Votre compte a été créé avec succès",
+  registerError: "Erreur d'inscription",
+  deleteAccountTitle: "Supprimer votre compte ?",
+  deleteAccountWarning: "Cette action est irréversible. Toutes vos données seront définitivement supprimées.",
+  deleting: "Suppression en cours...",
+  confirmDelete: "Confirmer la suppression",
+  accountDeleted: "Compte supprimé",
+  accountDeletedMessage: "Votre compte et toutes vos données ont été supprimés avec succès",
+  deleteError: "Erreur de suppression",
+  deleteErrorMessage: "Une erreur s'est produite lors de la suppression de votre compte"
 };
