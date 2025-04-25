@@ -2,7 +2,6 @@
 import { common } from "./common";
 import { settings, theme } from "./settings";
 import { auth } from "./auth";
-import { questionnaire } from "./questionnaire";
 import { profile } from "./profile";
 import { workouts } from "./workouts";
 import { nutrition } from "./nutrition";
@@ -12,13 +11,14 @@ import { premium } from "./premium";
 import { community } from "./community";
 import { analytics } from "./analytics";
 import { wearables } from "./wearables";
+import { dashboard } from "./dashboard";
+import { navigation } from "./navigation";
 
 export const es = {
   common,
   settings,
   theme,
   auth,
-  questionnaire,
   profile,
   workouts,
   nutrition,
@@ -29,5 +29,7 @@ export const es = {
   premium,
   community,
   analytics,
-  wearables
+  wearables,
+  dashboard,
+  navigation
 };

@@ -34,10 +34,22 @@ const languageSpecificWords: Record<Language, string[]> = {
 };
 
 // Ajouter plus de mots pour renforcer la détection
-languageSpecificWords.fr.push(...['votre', 'vous', 'voir', 'favoris', 'générer', 'programme']);
-languageSpecificWords.en.push(...['your', 'you', 'see', 'favorites', 'generate', 'program']);
-languageSpecificWords.es.push(...['tu', 'usted', 'ver', 'favoritos', 'generar', 'programa']);
-languageSpecificWords.de.push(...['Ihre', 'Sie', 'sehen', 'Favoriten', 'generieren', 'Programm']);
+languageSpecificWords.fr.push(...['votre', 'vous', 'voir', 'favoris', 'générer', 'programme', 'résumé', 'aujourd\'hui', 'pas', 'encore', 'sommeil']);
+languageSpecificWords.en.push(...['your', 'you', 'see', 'favorites', 'generate', 'program', 'summary', 'today', 'no', 'yet', 'sleep']);
+languageSpecificWords.es.push(...['tu', 'usted', 'ver', 'favoritos', 'generar', 'programa', 'resumen', 'hoy', 'no', 'aún', 'sueño']);
+languageSpecificWords.de.push(...['Ihre', 'Sie', 'sehen', 'Favoriten', 'generieren', 'Programm', 'Zusammenfassung', 'heute', 'kein', 'noch', 'Schlaf']);
+
+// Pour les mots de la navigation
+languageSpecificWords.fr.push(...['entraînements', 'nutrition', 'sommeil', 'profil', 'statistiques']);
+languageSpecificWords.en.push(...['workouts', 'nutrition', 'sleep', 'profile', 'statistics']);
+languageSpecificWords.es.push(...['entrenamientos', 'nutrición', 'sueño', 'perfil', 'estadísticas']);
+languageSpecificWords.de.push(...['Trainingseinheiten', 'Ernährung', 'Schlaf', 'Profil', 'Statistiken']);
+
+// Pour les mots de repas
+languageSpecificWords.fr.push(...['repas', 'petit-déjeuner', 'déjeuner', 'dîner', 'collation']);
+languageSpecificWords.en.push(...['meal', 'breakfast', 'lunch', 'dinner', 'snack']);
+languageSpecificWords.es.push(...['comida', 'desayuno', 'almuerzo', 'cena', 'merienda']);
+languageSpecificWords.de.push(...['Mahlzeit', 'Frühstück', 'Mittagessen', 'Abendessen', 'Snack']);
 
 const getAllKeys = (obj: any, path: string = ''): string[] => {
   let keys: string[] = [];
@@ -73,7 +85,9 @@ const detectPotentialLanguageMix = (
   
   // Vérifier si des mots d'autres langues sont présents dans la valeur
   for (const word of otherLanguageWords) {
-    if (value.toLowerCase().includes(word.toLowerCase())) {
+    // Vérifier avec une regex qui cherche le mot entier (pas comme sous-chaîne d'un autre mot)
+    const regex = new RegExp(`\\b${word}\\b`, 'i');
+    if (regex.test(value.toLowerCase())) {
       const languageOfWord = Object.entries(languageSpecificWords).find(
         ([_, words]) => words.map(w => w.toLowerCase()).includes(word.toLowerCase())
       )?.[0];

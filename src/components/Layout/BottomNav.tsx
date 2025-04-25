@@ -8,11 +8,11 @@ export const BottomNav = () => {
   const { t } = useLanguage();
 
   const navItems = [
-    { icon: LayoutDashboard, label: t("common.home", { fallback: "Accueil" }), path: "/" },
-    { icon: Dumbbell, label: t("workouts.title", { fallback: "Entraînements" }), path: "/workouts" },
-    { icon: Moon, label: t("sleep.title", { fallback: "Sommeil" }), path: "/sleep" },
-    { icon: Apple, label: t("nutrition.title", { fallback: "Nutrition" }), path: "/nutrition" },
-    { icon: User, label: t("profile.title", { fallback: "Profil" }), path: "/profile" }
+    { icon: LayoutDashboard, label: t("navigation.home", { fallback: "Accueil" }), path: "/" },
+    { icon: Dumbbell, label: t("navigation.workouts", { fallback: "Entraînements" }), path: "/workouts" },
+    { icon: Moon, label: t("navigation.sleep", { fallback: "Sommeil" }), path: "/sleep" },
+    { icon: Apple, label: t("navigation.nutrition", { fallback: "Nutrition" }), path: "/nutrition" },
+    { icon: User, label: t("navigation.profile", { fallback: "Profil" }), path: "/profile" }
   ];
 
   return (

@@ -16,6 +16,7 @@ import { analytics } from "./analytics";
 import { premium } from "./premium";
 import { community } from "./community";
 import { wearables } from "./wearables";
+import { navigation } from "./navigation";
 
 export const fr = {
   sports,
@@ -36,5 +37,6 @@ export const fr = {
   premium,
   community,
   wearables,
-  locations
+  locations,
+  navigation
 };

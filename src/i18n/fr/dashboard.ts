@@ -1,18 +1,13 @@
 
 export const dashboard = {
-  title: "Tableau de bord",
-  welcome: "Bienvenue",
-  overview: "Aperçu",
-  recentWorkouts: "Entraînements récents",
-  recentMeals: "Repas récents",
-  todayStats: "Statistiques du jour",
-  caloriesBurned: "Calories brûlées",
-  caloriesConsumed: "Calories consommées",
-  netCalories: "Calories nettes",
-  steps: "Pas",
+  todaySummary: "Résumé d'aujourd'hui",
+  workout: "Entraînement",
+  nutrition: "Nutrition",
   sleep: "Sommeil",
-  water: "Eau",
-  goals: "Objectifs",
-  progress: "Progrès",
-  viewAll: "Voir tout"
+  noWorkoutToday: "Pas encore d'entraînement aujourd'hui",
+  noMealToday: "Pas encore de repas enregistré aujourd'hui",
+  noSleepData: "Pas de données de sommeil aujourd'hui",
+  statistics: "Statistiques",
+  viewAllStats: "Voir toutes les statistiques",
+  checkProgress: "Consultez vos performances et progression"
 };

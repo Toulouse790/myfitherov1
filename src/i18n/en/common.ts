@@ -1,3 +1,4 @@
+
 export const common = {
   welcome: "Hello",
   fitnessJourney: "Your fitness journey starts here",

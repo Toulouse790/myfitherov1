@@ -60,7 +60,7 @@ const Nutrition = () => {
     <div className="container mx-auto px-2 sm:px-4 pb-24 animate-fade-up max-w-full sm:max-w-[95%] lg:max-w-[1280px]">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{t("nutrition.title")}</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{t("nutrition.title", { fallback: "Nutrition" })}</h1>
           <Button 
             size="sm" 
             variant="ghost" 
@@ -79,7 +79,7 @@ const Nutrition = () => {
             className="flex items-center gap-1"
           >
             <PieChart className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("nutrition.overview")}</span>
+            <span className="hidden sm:inline">{t("nutrition.overview", { fallback: "Aperçu" })}</span>
           </Button>
           <Button 
             variant={activeTab === "meal-plan" ? "default" : "outline"} 
@@ -88,7 +88,7 @@ const Nutrition = () => {
             className="flex items-center gap-1"
           >
             <Utensils className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("nutrition.mealPlan")}</span>
+            <span className="hidden sm:inline">{t("nutrition.mealPlan", { fallback: "Plan de repas" })}</span>
           </Button>
           <Button 
             variant={activeTab === "tracking" ? "default" : "outline"} 
@@ -97,7 +97,7 @@ const Nutrition = () => {
             className="flex items-center gap-1"
           >
             <BarChart className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("nutrition.tracking")}</span>
+            <span className="hidden sm:inline">{t("nutrition.tracking", { fallback: "Suivi" })}</span>
           </Button>
           <Button 
             variant={activeTab === "suggestions" ? "default" : "outline"} 
@@ -106,7 +106,7 @@ const Nutrition = () => {
             className="flex items-center gap-1"
           >
             <BookOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("nutrition.suggestions")}</span>
+            <span className="hidden sm:inline">{t("nutrition.suggestions", { fallback: "Suggestions" })}</span>
           </Button>
         </div>
       </div>
@@ -124,25 +124,25 @@ const Nutrition = () => {
               value="overview" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              {t("nutrition.overview")}
+              {t("nutrition.overview", { fallback: "Aperçu" })}
             </TabsTrigger>
             <TabsTrigger 
               value="meal-plan" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              {t("nutrition.mealPlan")}
+              {t("nutrition.mealPlan", { fallback: "Plan de repas" })}
             </TabsTrigger>
             <TabsTrigger 
               value="tracking" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              {t("nutrition.weeklyTracking")}
+              {t("nutrition.weeklyTracking", { fallback: "Suivi hebdomadaire" })}
             </TabsTrigger>
             <TabsTrigger 
               value="suggestions" 
               className="text-[11px] sm:text-sm whitespace-nowrap px-2.5 sm:px-4 py-1.5 sm:py-2"
             >
-              {t("nutrition.suggestions")}
+              {t("nutrition.suggestions", { fallback: "Suggestions" })}
             </TabsTrigger>
           </TabsList>
         </div>

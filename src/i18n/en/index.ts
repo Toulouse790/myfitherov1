@@ -12,6 +12,8 @@ import { premium } from "./premium";
 import { community } from "./community";
 import { analytics } from "./analytics";
 import { wearables } from "./wearables";
+import { dashboard } from "./dashboard";
+import { navigation } from "./navigation";
 
 export const en = {
   common,
@@ -29,5 +31,7 @@ export const en = {
   premium,
   community,
   analytics,
-  wearables
+  wearables,
+  dashboard,
+  navigation
 };
