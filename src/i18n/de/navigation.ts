@@ -1,14 +1,19 @@
 
 export const navigation = {
   home: "Startseite",
-  workouts: "Trainingseinheiten",
+  workouts: "Training",
   sleep: "Schlaf",
   nutrition: "Ernährung",
-  profile: "Mein Profil",
+  profile: "Profil",
   statistics: "Statistiken",
   settings: "Einstellungen",
-  admin: "Administration",
+  admin: "Admin",
   goalTracker: "Ziele",
   achievements: "Erfolge",
-  logout: "Abmelden"
+  logout: "Abmelden",
+  startseite: "Startseite",
+  trainingseinheiten: "Trainingseinheiten",
+  schlaf: "Schlaf",
+  ernährung: "Ernährung",
+  meinProfil: "Mein Profil"
 };

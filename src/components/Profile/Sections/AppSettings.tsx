@@ -70,7 +70,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
       debugLogger.error('AppSettings', "Erreur lors de la sauvegarde de la préférence de langue", error);
     }
     
-    // Messages de confirmation dans la langue sélectionnée
+    // Préparer des messages de confirmation dans la langue sélectionnée
     const confirmMessages: Record<string, { title: string, description: string }> = {
       fr: { title: "Langue mise à jour", description: "La langue a été changée en Français" },
       en: { title: "Language updated", description: "Language has been changed to English" },
@@ -78,10 +78,14 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
       de: { title: "Sprache aktualisiert", description: "Die Sprache wurde auf Deutsch geändert" }
     };
     
-    toast({
-      title: confirmMessages[value]?.title || "Langue mise à jour",
-      description: confirmMessages[value]?.description || `La langue a été changée en ${getLanguageDisplayName(value)}`,
-    });
+    // Un court délai pour s'assurer que la langue est déjà mise à jour
+    setTimeout(() => {
+      toast({
+        title: confirmMessages[value]?.title || t('settings.languageUpdated', { fallback: "Langue mise à jour" }),
+        description: confirmMessages[value]?.description || 
+                    t('settings.languageChangedTo', { fallback: `La langue a été changée en ${getLanguageDisplayName(value)}` }),
+      });
+    }, 100);
   };
 
   // Si chargement, afficher un indicateur

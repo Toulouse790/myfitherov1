@@ -7,8 +7,13 @@ export const navigation = {
   profile: "Profil",
   statistics: "Statistiques",
   settings: "Paramètres",
-  admin: "Administration",
+  admin: "Admin",
   goalTracker: "Objectifs",
-  achievements: "Succès",
-  logout: "Déconnexion"
+  achievements: "Réussites",
+  logout: "Déconnexion",
+  startseite: "Accueil",
+  trainingseinheiten: "Entraînements",
+  schlaf: "Sommeil",
+  ernährung: "Nutrition",
+  meinProfil: "Mon profil"
 };

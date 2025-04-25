@@ -27,24 +27,21 @@ export function useTheme() {
   };
 
   const showThemeToast = (newTheme: Theme) => {
-    const messages: ThemeMessages = {
-      light: {
-        title: t("theme.lightEnabled"),
-        description: t("theme.lightDescription"),
-      },
-      dark: {
-        title: t("theme.darkEnabled"),
-        description: t("theme.darkDescription"),
-      },
-      system: {
-        title: t("theme.systemEnabled"),
-        description: t("theme.systemDescription"),
-      },
-    };
-
+    // Utiliser directement les clés de traduction
+    const titleKey = `theme.${newTheme}Enabled`;
+    const descriptionKey = `theme.${newTheme}Description`;
+    
     toast({
-      title: messages[newTheme].title,
-      description: messages[newTheme].description,
+      title: t(titleKey, { 
+        fallback: newTheme === 'light' ? "Mode clair activé" : 
+                 newTheme === 'dark' ? "Mode sombre activé" : 
+                 "Mode système activé" 
+      }),
+      description: t(descriptionKey, {
+        fallback: newTheme === 'light' ? "L'interface utilise maintenant des couleurs claires" : 
+                 newTheme === 'dark' ? "L'interface utilise maintenant des couleurs sombres" : 
+                 "L'interface suit les préférences de votre système"
+      }),
     });
   };
 

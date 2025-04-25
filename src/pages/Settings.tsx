@@ -124,7 +124,7 @@ const Settings = () => {
             </div>
             
             <Button variant="destructive">
-              {t('settings.deleteAccount')}
+              {t('common.deleteAccount')}
             </Button>
           </div>
         </Card>
