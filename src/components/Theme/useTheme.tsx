@@ -4,13 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Theme } from "./ThemeContext";
 
-interface ThemeMessages {
-  [key: string]: {
-    title: string;
-    description: string;
-  };
-}
-
 export function useTheme() {
   const { theme, setTheme } = useThemeContext();
   const { toast } = useToast();
@@ -32,16 +25,8 @@ export function useTheme() {
     const descriptionKey = `theme.${newTheme}Description`;
     
     toast({
-      title: t(titleKey, { 
-        fallback: newTheme === 'light' ? "Mode clair activé" : 
-                 newTheme === 'dark' ? "Mode sombre activé" : 
-                 "Mode système activé" 
-      }),
-      description: t(descriptionKey, {
-        fallback: newTheme === 'light' ? "L'interface utilise maintenant des couleurs claires" : 
-                 newTheme === 'dark' ? "L'interface utilise maintenant des couleurs sombres" : 
-                 "L'interface suit les préférences de votre système"
-      }),
+      title: t(titleKey),
+      description: t(descriptionKey),
     });
   };
 

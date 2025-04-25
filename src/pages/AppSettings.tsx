@@ -31,7 +31,7 @@ const AppSettings = () => {
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-2xl font-bold">
-            {t('settings.appSettings', { fallback: "Paramètres de l'application" })}
+            {t('settings.appSettings')}
           </h1>
         </div>
 

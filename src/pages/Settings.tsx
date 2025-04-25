@@ -92,8 +92,8 @@ const Settings = () => {
           
           <Card className="p-8 border border-border shadow-sm">
             <ErrorState 
-              title={t('settings.somethingWentWrong', { fallback: "Une erreur est survenue" })}
-              message={t('settings.errorLoadingPreferences', { fallback: "Impossible de charger vos préférences" })}
+              title={t('settings.somethingWentWrong')}
+              message={t('settings.errorLoadingPreferences')}
               onRetry={() => refetch()}
             />
           </Card>

@@ -14,7 +14,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/components/Theme/useTheme";
 
 export const SettingsSheet = () => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const { theme } = useTheme();
   
   return (
@@ -29,7 +29,7 @@ export const SettingsSheet = () => {
           <SheetTitle>{t('settings.appSettings')}</SheetTitle>
         </SheetHeader>
         <div className="space-y-6 py-6">
-          <AppSettings language={language} />
+          <AppSettings />
           <AccountActions />
         </div>
       </SheetContent>

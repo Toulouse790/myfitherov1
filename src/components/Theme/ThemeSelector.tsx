@@ -50,7 +50,7 @@ export const ThemeSelector = ({
         variant="ghost"
         size="icon"
         onClick={() => handleThemeChange(theme === "light" ? "dark" : "light")}
-        aria-label={theme === "light" ? t("theme.switchToDark") : t("theme.switchToLight")}
+        aria-label={theme === "light" ? t("theme.darkMode") : t("theme.lightMode")}
       >
         {theme === "light" ? (
           <Moon className="h-4 w-4" />

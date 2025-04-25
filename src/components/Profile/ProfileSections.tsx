@@ -6,7 +6,6 @@ import { UserInfo } from "./Sections/UserInfo";
 import { ProfileCompletion } from "./Sections/ProfileCompletion";
 import { ProfileNavigation } from "./Sections/Navigation/ProfileNavigation";
 import { AccountActions } from "./Sections/AccountActions";
-import { MeasurementsSection } from "./Sections/MeasurementsSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
@@ -58,11 +57,11 @@ export const ProfileSections = ({ profile, refreshProfile }: ProfileSectionsProp
                 onClick={handleNavigateToStats}
                 className="flex items-center text-primary"
               >
-                {t("common.seeAll", { fallback: "Voir tout" })} <ChevronRight className="h-4 w-4 ml-1" />
+                {t("common.seeAll")} <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </div>
             <p className="text-muted-foreground mt-1">
-              {t("profile.stats.description", { fallback: "Accédez à vos performances et à votre progression" })}
+              {t("profile.stats.description")}
             </p>
           </Card>
         </TabsContent>

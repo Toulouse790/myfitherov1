@@ -63,8 +63,8 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
   if (error) {
     return (
       <ErrorState 
-        title={t('settings.somethingWentWrong', { fallback: "Une erreur est survenue" })}
-        message={t('settings.errorLoadingPreferences', { fallback: "Impossible de charger vos préférences" })}
+        title={t('settings.somethingWentWrong')}
+        message={t('settings.errorLoadingPreferences')}
         onRetry={() => refetch()}
       />
     );
@@ -76,7 +76,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
       <div className="space-y-6 py-4 flex items-center justify-center">
         <div className="text-center">
           <Loader className="mx-auto h-8 w-8 mb-2" />
-          <p className="text-sm text-muted-foreground">{t('common.loadingPreferences', { fallback: "Chargement des préférences..." })}</p>
+          <p className="text-sm text-muted-foreground">{t('common.loadingPreferences')}</p>
         </div>
       </div>
     );
