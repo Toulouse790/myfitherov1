@@ -11,18 +11,66 @@ import { ThemeSelector } from "@/components/Theme/ThemeSelector";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/components/Theme/useTheme";
 import { useUserPreferences } from "@/hooks/use-user-preferences";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { AppSettings } from "@/components/Profile/Sections/AppSettings";
+import { debugLogger } from "@/utils/debug-logger";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { theme } = useTheme();
-  const { preferences, isLoading } = useUserPreferences();
+  const { preferences, isLoading, updatePreferences } = useUserPreferences();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Log pour déboggage
-    console.log("Page Settings chargée", { preferences });
+    // Initialisation et debug
+    debugLogger.log("Settings", "Page Settings chargée", { preferences });
+    
+    // Définir un délai court pour s'assurer que les préférences sont chargées
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
   }, [preferences]);
+
+  // Si les préférences sont en cours de chargement, afficher un indicateur de chargement
+  if (isLoading || loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="container max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24"
+        >
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="hover:bg-muted"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-2xl font-bold">
+              {t('settings.title', { fallback: 'Paramètres' })}
+            </h1>
+          </div>
+          
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-pulse space-y-4">
+              <div className="h-4 bg-muted rounded w-1/3 mx-auto"></div>
+              <div className="h-10 bg-muted rounded w-48 mx-auto"></div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,45 +96,9 @@ const Settings = () => {
           </h1>
         </div>
 
+        {/* Utilisation du composant AppSettings pour afficher les paramètres de l'application */}
         <Card className="p-6 border border-border shadow-sm">
-          <div className="space-y-6">
-            <div className="space-y-1.5">
-              <h2 className="text-xl font-semibold">
-                {t('settings.themeSettings', { fallback: 'Thème' })}
-              </h2>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">
-                  {t('settings.theme', { fallback: 'Thème' })}
-                </label>
-                <Badge variant="outline" className="text-xs font-normal">
-                  {theme === 'light' 
-                    ? t('theme.lightMode', { fallback: 'Mode clair' }) 
-                    : theme === 'dark' 
-                      ? t('theme.darkMode', { fallback: 'Mode sombre' }) 
-                      : t('theme.systemMode', { fallback: 'Mode système' })}
-                </Badge>
-              </div>
-              <ThemeSelector />
-              <p className="text-xs text-muted-foreground mt-1">
-                {t('settings.themeDescription', { fallback: 'Choisissez le thème qui vous convient le mieux' })}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-6 border border-border shadow-sm">
-          <div className="space-y-6">
-            <div className="space-y-1.5">
-              <h2 className="text-xl font-semibold">
-                {t('settings.language', { fallback: 'Langue' })}
-              </h2>
-            </div>
-            
-            <LanguageSelector />
-          </div>
+          <AppSettings />
         </Card>
 
         <Card className="p-6 border border-border shadow-sm">
