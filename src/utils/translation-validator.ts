@@ -27,11 +27,17 @@ const translations = { fr, en, es, de };
 
 // Liste de mots spécifiques à chaque langue pour détecter les mélanges
 const languageSpecificWords: Record<Language, string[]> = {
-  fr: ['paramètres', 'langue', 'thème', 'utilisateur', 'profil', 'entraînement'],
-  en: ['settings', 'language', 'theme', 'user', 'profile', 'workout'],
-  es: ['ajustes', 'idioma', 'tema', 'usuario', 'perfil', 'entrenamiento'],
-  de: ['Einstellungen', 'Sprache', 'Thema', 'Benutzer', 'Profil', 'Training']
+  fr: ['paramètres', 'langue', 'thème', 'utilisateur', 'profil', 'entraînement', 'bonjour', 'accueil', 'commencer'],
+  en: ['settings', 'language', 'theme', 'user', 'profile', 'workout', 'hello', 'home', 'start'],
+  es: ['ajustes', 'idioma', 'tema', 'usuario', 'perfil', 'entrenamiento', 'hola', 'inicio', 'comenzar'],
+  de: ['Einstellungen', 'Sprache', 'Thema', 'Benutzer', 'Profil', 'Training', 'Hallo', 'Startseite', 'starten']
 };
+
+// Ajouter plus de mots pour renforcer la détection
+languageSpecificWords.fr.push(...['votre', 'vous', 'voir', 'favoris', 'générer', 'programme']);
+languageSpecificWords.en.push(...['your', 'you', 'see', 'favorites', 'generate', 'program']);
+languageSpecificWords.es.push(...['tu', 'usted', 'ver', 'favoritos', 'generar', 'programa']);
+languageSpecificWords.de.push(...['Ihre', 'Sie', 'sehen', 'Favoriten', 'generieren', 'Programm']);
 
 const getAllKeys = (obj: any, path: string = ''): string[] => {
   let keys: string[] = [];

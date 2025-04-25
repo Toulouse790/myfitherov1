@@ -1,169 +1,221 @@
-
 export const workouts = {
   title: "Entrenamientos",
+  createSession: "Crear sesión",
+  createCustomSession: "Crea una sesión de entrenamiento personalizada",
+  generateSession: "Generar sesión",
+  aiGeneratedSession: "Obtén una sesión generada por IA adaptada a tus necesidades",
+  sportSpecific: "Específico para deportes",
+  programsForYourSport: "Programas adaptados a tu deporte y posición",
+  recentPerformances: "Rendimientos recientes",
+  trackProgressDescription: "Sigue tu progreso y mejora tu rendimiento",
+  createMySession: "Crear mi sesión",
+  generateMySession: "Generar mi sesión",
+  sportPrograms: "Programas deportivos",
+  viewMyProgress: "Ver mi progreso",
   startWorkout: "Comenzar entrenamiento",
-  history: "Historial",
-  historyDescription: "Ver tus sesiones de entrenamiento anteriores",
-  upperBodyTraining: "Entrenamiento de la parte superior del cuerpo",
-  lowerBodyTraining: "Entrenamiento de la parte inferior del cuerpo",
-  cardioHIIT: "Cardio HIIT",
-  legDay: "Día de piernas",
-  fullBodyWorkout: "Entrenamiento de cuerpo completo",
-  coreTraining: "Entrenamiento de core",
-  min: "min",
-  kcal: "kcal",
-  noHistory: "No hay historial de entrenamiento",
-  startFirstWorkout: "Inicia tu primer entrenamiento",
-  editExercise: "Editar ejercicio",
-  addExercise: "Añadir ejercicio",
-  removeExercise: "Eliminar ejercicio",
-  confirmRemoval: "Confirmar eliminación",
-  removeExerciseConfirm: "¿Estás seguro de que quieres eliminar este ejercicio?",
-  completeSet: "Serie completada",
-  skipSet: "Saltar serie",
-  nextExercise: "Siguiente ejercicio",
-  prevExercise: "Ejercicio anterior",
-  completeWorkout: "Completar entrenamiento",
-  cancelWorkout: "Cancelar entrenamiento",
-  workoutComplete: "¡Entrenamiento completado!",
-  workoutCanceled: "Entrenamiento cancelado",
-  workoutSummary: "Resumen del entrenamiento",
-  totalDuration: "Duración total",
-  totalCalories: "Calorías totales",
-  totalSets: "Series totales",
-  musclesWorked: "Músculos trabajados",
-  feedback: "Comentarios",
-  howWasWorkout: "¿Cómo fue tu entrenamiento?",
-  difficultyRating: "Nivel de dificultad",
-  saveWorkout: "Guardar entrenamiento",
-  discardWorkout: "Descartar entrenamiento",
-  saveAsTemplate: "Guardar como plantilla",
-  workoutName: "Nombre del entrenamiento",
-  enterWorkoutName: "Introduce un nombre para tu entrenamiento",
-  easy: "Fácil",
-  moderate: "Moderado",
-  hard: "Difícil",
-  veryHard: "Muy difícil",
-  yourWorkouts: "Tus entrenamientos",
-  createdWorkouts: "Entrenamientos creados",
-  noCreatedWorkouts: "Aún no has creado ningún entrenamiento",
-  createFirstWorkout: "Crea tu primer entrenamiento",
-  targetMuscles: "Músculos objetivo",
-  selectTargetMuscles: "Selecciona los músculos objetivo",
-  wouldYouRather: "¿Prefieres",
-  workoutDuration: "Duración del entrenamiento",
-  short: "Corto (15-30 min)",
-  medium: "Medio (30-45 min)",
-  long: "Largo (45-60 min)",
-  veryLong: "Muy largo (60+ min)",
-  selectEquipment: "Selecciona equipamiento",
-  generateWorkout: "Generar entrenamiento",
-  recommendedWorkouts: "Entrenamientos recomendados",
-  browseExerciseDatabase: "Explorar base de datos de ejercicios",
+  generateProgram: "Generar programa",
   muscleGroups: {
-    chest: "Pecho",
-    back: "Espalda",
-    shoulders: "Hombros",
+    pectorals: "Pectorales",
     biceps: "Bíceps",
     triceps: "Tríceps",
+    shoulders: "Hombros",
+    back: "Espalda",
     legs: "Piernas",
-    glutes: "Glúteos",
     abs: "Abdominales",
-    fullBody: "Cuerpo completo",
-    cardio: "Cardio"
+    glutes: "Glúteos"
   },
-  startingSession: "Iniciando sesión...",
-  startSession: "Iniciar sesión",
-  startSessionLoading: "Iniciando...",
-  validateSet: "Validar serie",
-  set: "Serie",
-  noExercisesAvailable: "No hay ejercicios disponibles",
-  exerciseProgress: "Ejercicio {current} de {total}",
-  allMuscleGroups: "Todos los grupos musculares",
-  trainingOf: "Entrenamiento de",
-  exercises: "ejercicios",
-  kcal: "kcal",
-  sportPrograms: "Programas deportivos",
-  sportSpecific: "Programa específico para deportes",
-  programsForYourSport: "Programas de entrenamiento adaptados a tu deporte y posición",
-  sportSpecificDescription: "Programas de entrenamiento adaptados a tu deporte y posición",
-  generator: "Generador de entrenamiento",
-  generatorDescription: "Crea un entrenamiento personalizado basado en tus preferencias",
-  duration: "Duración",
-  intensity: "Intensidad",
-  todayDate: "Hoy",
-  generateWorkout: "Generar entrenamiento",
-  generationLoading: "Generando...",
-  generateWorkoutTitle: "Generar entrenamiento",
-  generating: "Generando...",
-  regenerate: "Regenerar",
-  of: "de",
-  trackProgressDescription: "Sigue tu progreso y mejora tu rendimiento",
-  activeSession: "Sesión activa",
-  continueSession: "Continuar sesión",
-  close: "Cerrar",
-  restBeforeNextExercise: "Descanso antes del siguiente ejercicio",
-  caloriesBurned: "Has quemado {calories} calorías",
-  sessionCompleted: "Sesión completada",
-  exerciseCompleted: "Ejercicio completado",
-  setCompleted: "Serie completada",
-  moveToNextExercise: "Pasar al siguiente ejercicio",
-  sessionCompletedDetails: "¡Buen trabajo! Has quemado aproximadamente {calories} calorías en {duration} minutos.",
-  statsRecorded: "Tus estadísticas han sido registradas.",
-  authRequiredForSet: "Necesitas iniciar sesión para añadir una serie",
-  statsUpdateError: "No se pudieron guardar las estadísticas",
-  setValidated: "Serie validada con {weight}kg",
-  newPersonalRecord: "¡Nuevo récord personal: {weight}kg!",
-  sets: "series",
-  reps: "repeticiones",
-  personalisedSession: "Sesión personalizada",
-  noExercisesFound: "No se encontraron ejercicios",
-  errors: {
-    sessionCreationFailed: "Error al crear la sesión de entrenamiento. Por favor, inténtalo de nuevo.",
-    loginRequired: "Necesitas iniciar sesión para realizar esta acción.",
-    sessionCreationError: "Ocurrió un error al crear la sesión.",
-    startSessionErrorDescription: "Error al iniciar la sesión de entrenamiento. Por favor, inténtalo de nuevo.",
-    setSaveFailed: "Error al guardar la serie de ejercicio.",
-    statsInsertFailed: "Error al insertar estadísticas de entrenamiento.",
-    weightUpdateFailed: "Error al actualizar el peso del ejercicio.",
-    statsSaveFailed: "Error al guardar estadísticas de entrenamiento.",
-    noDataReturned: "No se recibieron datos del servidor.",
-    saveWeightFailed: "No se pudo guardar la información de peso.",
-    sessionGenerationError: "No se pudo generar la sesión.",
-    noExercisesSelected: "No se seleccionaron ejercicios para esta sesión.",
-    sessionStartError: "No se pudo iniciar la sesión."
+  workoutTypes: {
+    strength: "Fuerza",
+    cardio: "Cardio",
+    hiit: "HIIT",
+    yoga: "Yoga",
+    pilates: "Pilates",
+    stretching: "Estiramientos"
   },
-  sessionNotFound: "Sesión no encontrada",
-  sessionEmptyDesc: "Esta sesión de entrenamiento no existe o no contiene ejercicios.",
-  createWorkout: "Crear entrenamiento",
-  backToWorkouts: "Volver a entrenamientos",
-  personalizedRecommendation: "Recomendación personalizada",
-  confident: "confianza",
+  equipment: {
+    none: "Ninguno",
+    dumbbells: "Mancuernas",
+    barbell: "Barra",
+    kettlebell: "Pesa rusa",
+    resistanceBands: "Bandas de resistencia",
+    machines: "Máquinas"
+  },
   intensity: {
-    low: "Intensidad baja",
-    moderate: "Intensidad moderada",
-    high: "Intensidad alta"
+    low: "Baja",
+    medium: "Media",
+    high: "Alta"
   },
-  suggestion_chest: "Entrenamiento de pecho recomendado",
-  suggestion_back: "Entrenamiento de espalda recomendado",
-  suggestion_shoulders: "Entrenamiento de hombros recomendado",
-  suggestion_legs: "Entrenamiento de piernas recomendado",
-  suggestion_biceps: "Entrenamiento de bíceps recomendado",
-  suggestion_triceps: "Entrenamiento de tríceps recomendado",
-  suggestion_abs: "Entrenamiento de abdominales recomendado",
-  startAdaptedSession: "Iniciar sesión adaptada",
-  createSession: "Crear entrenamiento",
-  createCustomSession: "Diseña tu entrenamiento seleccionando grupos musculares",
-  createMySession: "Crear mi entrenamiento",
-  generateSession: "Generar entrenamiento",
-  generateMySession: "Generar mi entrenamiento",
-  aiGeneratedSession: "Deja que la IA cree el entrenamiento perfecto para ti",
-  selectMuscleGroupFirst: "Por favor, selecciona primero un grupo muscular",
-  createSessionWithSelectedMuscles: "Crear entrenamiento con los músculos seleccionados",
-  selectExercisesToStart: "Por favor, selecciona ejercicios para comenzar",
-  startTest: "Iniciar prueba",
-  clickToStartTest: "Haz clic en el botón de abajo para comenzar una sesión de prueba",
-  beginTest: "Comenzar prueba",
-  quickAccessSection: "Acceso rápido",
-  recommendedForYou: "Recomendado para ti"
+  duration: {
+    short: "Corta (15-30 min)",
+    medium: "Media (30-45 min)",
+    long: "Larga (45-60 min)"
+  },
+  objectives: {
+    weightLoss: "Pérdida de peso",
+    muscleGain: "Ganancia muscular",
+    endurance: "Resistencia",
+    flexibility: "Flexibilidad",
+    overallFitness: "Fitness general"
+  },
+  form: {
+    good: "Buena",
+    moderate: "Moderada",
+    bad: "Mala"
+  },
+  session: {
+    active: "Sesión activa",
+    completed: "Completada",
+    missed: "Perdida"
+  },
+  actions: {
+    start: "Comenzar",
+    pause: "Pausar",
+    resume: "Reanudar",
+    finish: "Finalizar",
+    cancel: "Cancelar",
+    edit: "Editar",
+    delete: "Eliminar"
+  },
+  messages: {
+    startSession: "¿Comenzar sesión?",
+    endSession: "¿Finalizar sesión?",
+    cancelSession: "¿Cancelar sesión?",
+    deleteSession: "¿Eliminar sesión?",
+    sessionStarted: "Sesión iniciada",
+    sessionEnded: "Sesión finalizada",
+    sessionCancelled: "Sesión cancelada",
+    sessionDeleted: "Sesión eliminada"
+  },
+  hints: {
+    adjustReps: "Ajusta las repeticiones según tu nivel",
+    focusForm: "Concéntrate en la forma correcta",
+    stayHydrated: "Mantente hidratado"
+  },
+  labels: {
+    reps: "Repeticiones",
+    sets: "Series",
+    weight: "Peso",
+    rest: "Descanso",
+    exercise: "Ejercicio",
+    workout: "Entrenamiento",
+    time: "Tiempo",
+    calories: "Calorías",
+    distance: "Distancia",
+    speed: "Velocidad",
+    heartRate: "Frecuencia cardíaca"
+  },
+  placeholders: {
+    searchExercise: "Buscar ejercicio",
+    addNote: "Añadir nota"
+  },
+  tooltips: {
+    editExercise: "Editar ejercicio",
+    deleteExercise: "Eliminar ejercicio",
+    addSet: "Añadir serie",
+    deleteSet: "Eliminar serie"
+  },
+  filters: {
+    muscleGroup: "Grupo muscular",
+    workoutType: "Tipo de entrenamiento",
+    equipment: "Equipo",
+    intensity: "Intensidad",
+    duration: "Duración",
+    objective: "Objetivo"
+  },
+  sort: {
+    nameAsc: "Nombre (A-Z)",
+    nameDesc: "Nombre (Z-A)",
+    dateAsc: "Fecha (Más antigua)",
+    dateDesc: "Fecha (Más reciente)"
+  },
+  progress: {
+    title: "Progreso del entrenamiento",
+    description: "Sigue tu progreso a lo largo del tiempo",
+    charts: {
+      volume: "Volumen total",
+      exercises: "Ejercicios completados",
+      duration: "Duración promedio"
+    },
+    labels: {
+      volume: "Volumen",
+      exercises: "Ejercicios",
+      duration: "Duración"
+    }
+  },
+  create: {
+    title: "Crear entrenamiento",
+    description: "Crea tu propio entrenamiento personalizado",
+    steps: {
+      selectExercises: "Seleccionar ejercicios",
+      arrangeExercises: "Organizar ejercicios",
+      customizeDetails: "Personalizar detalles"
+    },
+    labels: {
+      exerciseName: "Nombre del ejercicio",
+      setsRepsWeight: "Series, repeticiones y peso",
+      restTime: "Tiempo de descanso"
+    },
+    placeholders: {
+      exerciseName: "Buscar o añadir ejercicio",
+      sets: "Series",
+      reps: "Repeticiones",
+      weight: "Peso (kg)",
+      rest: "Tiempo (segundos)"
+    },
+    buttons: {
+      addExercise: "Añadir ejercicio",
+      removeExercise: "Eliminar ejercicio",
+      addSet: "Añadir serie",
+      removeSet: "Eliminar serie",
+      saveWorkout: "Guardar entrenamiento"
+    },
+    messages: {
+      workoutCreated: "Entrenamiento creado con éxito",
+      workoutUpdated: "Entrenamiento actualizado con éxito",
+      workoutDeleted: "Entrenamiento eliminado con éxito"
+    }
+  },
+  generate: {
+    title: "Generar entrenamiento",
+    description: "Genera un entrenamiento personalizado con IA",
+    labels: {
+      muscleGroups: "Grupos musculares",
+      workoutType: "Tipo de entrenamiento",
+      equipment: "Equipo",
+      intensity: "Intensidad",
+      duration: "Duración",
+      objective: "Objetivo"
+    },
+    placeholders: {
+      selectMuscleGroups: "Seleccionar grupos musculares",
+      selectWorkoutType: "Seleccionar tipo de entrenamiento",
+      selectEquipment: "Seleccionar equipo",
+      selectIntensity: "Seleccionar intensidad",
+      selectDuration: "Seleccionar duración",
+      selectObjective: "Seleccionar objetivo"
+    },
+    buttons: {
+      generateWorkout: "Generar entrenamiento",
+      regenerateWorkout: "Regenerar entrenamiento"
+    },
+    messages: {
+      workoutGenerated: "Entrenamiento generado con éxito",
+      workoutRegenerated: "Entrenamiento regenerado con éxito"
+    }
+  },
+  sportProgramsSection: {
+    title: "Programas deportivos",
+    description: "Programas adaptados a tu deporte y posición",
+    labels: {
+      sport: "Deporte",
+      position: "Posición"
+    },
+    placeholders: {
+      selectSport: "Seleccionar deporte",
+      selectPosition: "Seleccionar posición"
+    },
+    buttons: {
+      viewProgram: "Ver programa"
+    }
+  }
 };

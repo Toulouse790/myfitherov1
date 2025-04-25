@@ -1,7 +1,6 @@
 
 import { WorkoutSuggestions } from "@/components/Dashboard/WorkoutSuggestions";
 import { ActionButtons } from "@/components/Home/ActionButtons";
-import { useHomeActions } from "@/hooks/use-home-actions";
 import { WelcomeHeader } from "@/components/Home/WelcomeHeader";
 import { TodaySummary } from "@/components/Home/TodaySummary";
 import { TrendingStats } from "@/components/Home/TrendingStats";
@@ -36,7 +35,7 @@ const Home = () => {
           <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
             <Zap className="h-5 w-5 text-blue-600 dark:text-blue-300" />
           </div>
-          <h2 className="text-xl font-bold">Recommandé pour vous</h2>
+          <h2 className="text-xl font-bold">{t('common.recommendations', { fallback: 'Recommandé pour vous' })}</h2>
         </div>
         <WorkoutSuggestions showAllSuggestions={false} />
       </Card>
@@ -48,14 +47,14 @@ const Home = () => {
         </div>
         {/* Remplacé TrendingStats par un bouton pour rediriger vers Stats */}
         <Card className="flex flex-col justify-center p-4">
-          <h3 className="text-lg font-medium mb-2">Vos statistiques</h3>
-          <p className="text-sm text-muted-foreground mb-4">Consultez vos performances et progression</p>
+          <h3 className="text-lg font-medium mb-2">{t('profile.stats.title', { fallback: 'Vos statistiques' })}</h3>
+          <p className="text-sm text-muted-foreground mb-4">{t('profile.stats.description', { fallback: 'Consultez vos performances et progression' })}</p>
           <Button 
             onClick={() => navigate('/stats')} 
             className="mt-auto"
             variant="outline"
           >
-            Voir toutes les statistiques
+            {t('profile.stats.viewAll', { fallback: 'Voir toutes les statistiques' })}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </Card>
@@ -77,13 +76,13 @@ const Home = () => {
               <Crown className="h-6 w-6 text-indigo-600 dark:text-indigo-300" />
             </div>
             <div>
-              <h3 className="font-bold text-lg">Découvrez MyFitHero Premium</h3>
-              <p className="text-sm text-muted-foreground">Débloquez toutes les fonctionnalités et atteignez vos objectifs plus rapidement</p>
+              <h3 className="font-bold text-lg">{t('premium.discoverPremium', { fallback: 'Découvrez MyFitHero Premium' })}</h3>
+              <p className="text-sm text-muted-foreground">{t('premium.unlockFeatures', { fallback: 'Débloquez toutes les fonctionnalités et atteignez vos objectifs plus rapidement' })}</p>
             </div>
           </div>
           <Button onClick={() => navigate('/subscription-plans')} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
             <span className="flex items-center gap-2">
-              Voir les plans
+              {t('premium.viewPlans', { fallback: 'Voir les plans' })}
               <ArrowRight className="h-4 w-4" />
             </span>
           </Button>
