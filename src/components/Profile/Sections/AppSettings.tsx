@@ -1,55 +1,50 @@
 
 import { ThemeSelector } from "@/components/Theme/ThemeSelector";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/components/Theme/useTheme";
 import { debugLogger } from "@/utils/debug-logger";
 import { useUserPreferences } from "@/hooks/use-user-preferences";
+import { Loader } from "@/components/ui/loader";
+import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface AppSettingsProps {
   language?: string;
 }
 
 export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => {
-  const { toast } = useToast();
-  const { language: contextLanguage, setLanguage: setContextLanguage, t, availableLanguages } = useLanguage();
+  const { language: contextLanguage, t, availableLanguages } = useLanguage();
   const { theme } = useTheme();
   const [selectedLanguage, setSelectedLanguage] = useState<string>(initialLanguage || contextLanguage);
-  const { preferences, updatePreferences, isLoading } = useUserPreferences();
+  const { preferences, updatePreferences, isLoading, error, refetch } = useUserPreferences();
 
-  // Synchroniser l'état local avec le contexte et les préférences
+  // Synchroniser l'état local avec les préférences récupérées
   useEffect(() => {
     if (preferences?.language) {
       debugLogger.log('AppSettings', `Setting language from preferences: ${preferences.language}`);
       setSelectedLanguage(preferences.language);
-      
-      if (preferences.language !== contextLanguage) {
-        setContextLanguage(preferences.language as "fr" | "en" | "es" | "de");
-      }
+    } else if (initialLanguage && initialLanguage !== selectedLanguage) {
+      debugLogger.log('AppSettings', `Setting language from prop: ${initialLanguage}`);
+      setSelectedLanguage(initialLanguage);
     } else if (contextLanguage !== selectedLanguage) {
       debugLogger.log('AppSettings', `Setting language from context: ${contextLanguage}`);
       setSelectedLanguage(contextLanguage);
     }
-  }, [preferences, contextLanguage, setContextLanguage, selectedLanguage]);
+  }, [preferences?.language, contextLanguage, initialLanguage, selectedLanguage]);
 
   const getLanguageDisplayName = (code: string): string => {
-    const languageMap: Record<string, string> = {
-      fr: 'Français',
-      en: 'English',
-      es: 'Español',
-      de: 'Deutsch'
-    };
-    return languageMap[code] || code;
+    const language = availableLanguages.find(lang => lang.code === code);
+    return language ? language.name : code;
   };
 
   const handleLanguageChange = (value: string) => {
     debugLogger.log('AppSettings', `Changement de langue vers: ${value}`);
     
     // Vérifier si la langue est valide
-    if (!['fr', 'en', 'es', 'de'].includes(value)) {
+    if (!availableLanguages.some(lang => lang.code === value)) {
       debugLogger.error('AppSettings', `Langue non supportée: ${value}`);
       return;
     }
@@ -57,44 +52,31 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
     // Mettre à jour l'état local
     setSelectedLanguage(value);
     
-    // Mettre à jour le contexte global
-    setContextLanguage(value as "fr" | "en" | "es" | "de");
-    
-    // Sauvegarder dans la base de données
+    // Sauvegarder les préférences utilisateur
     updatePreferences({ language: value });
-    
-    // Sauvegarder la préférence locale
-    try {
-      localStorage.setItem('userLanguage', value);
-    } catch (error) {
-      debugLogger.error('AppSettings', "Erreur lors de la sauvegarde de la préférence de langue", error);
-    }
-    
-    // Préparer des messages de confirmation dans la langue sélectionnée
-    const confirmMessages: Record<string, { title: string, description: string }> = {
-      fr: { title: "Langue mise à jour", description: "La langue a été changée en Français" },
-      en: { title: "Language updated", description: "Language has been changed to English" },
-      es: { title: "Idioma actualizado", description: "El idioma ha sido cambiado a Español" },
-      de: { title: "Sprache aktualisiert", description: "Die Sprache wurde auf Deutsch geändert" }
-    };
-    
-    // Un court délai pour s'assurer que la langue est déjà mise à jour
-    setTimeout(() => {
-      toast({
-        title: confirmMessages[value]?.title || t('settings.languageUpdated', { fallback: "Langue mise à jour" }),
-        description: confirmMessages[value]?.description || 
-                    t('settings.languageChangedTo', { fallback: `La langue a été changée en ${getLanguageDisplayName(value)}` }),
-      });
-    }, 100);
   };
+
+  // Si erreur de chargement, afficher un message d'erreur avec option de réessayer
+  if (error) {
+    return (
+      <div className="space-y-4 py-4 text-center">
+        <AlertCircle className="mx-auto h-10 w-10 text-destructive" />
+        <p className="text-sm text-muted-foreground">{t('settings.errorLoadingPreferences', { fallback: "Erreur lors du chargement des préférences" })}</p>
+        <Button onClick={() => refetch()} variant="outline" className="mt-2">
+          {t('common.retry', { fallback: "Réessayer" })}
+        </Button>
+      </div>
+    );
+  }
 
   // Si chargement, afficher un indicateur
   if (isLoading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-4 bg-muted rounded w-1/3 mb-6"></div>
-        <div className="h-10 bg-muted rounded w-full mb-4"></div>
-        <div className="h-6 bg-muted rounded w-2/3"></div>
+      <div className="space-y-6 py-4 flex items-center justify-center">
+        <div className="text-center">
+          <Loader className="mx-auto h-8 w-8 mb-2" />
+          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+        </div>
       </div>
     );
   }

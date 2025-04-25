@@ -28,7 +28,11 @@ export const settings = {
   feedback: "Commentaires",
   feedbackDescription: "Nous aider à améliorer l'application",
   sendFeedback: "Envoyer des commentaires",
-  reportBug: "Signaler un bug"
+  reportBug: "Signaler un bug",
+  languageUpdated: "Langue mise à jour",
+  languageChangedTo: "La langue a été changée en {0}",
+  errorSavingPreferences: "Erreur lors de l'enregistrement de vos préférences",
+  preferencesUpdated: "Préférences mises à jour"
 };
 
 export const theme = {

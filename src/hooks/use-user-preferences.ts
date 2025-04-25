@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
-import { useToast } from "./use-toast";
+import { useToastWithTranslation } from "./use-toast-with-translation";
 import { debugLogger } from "@/utils/debug-logger";
 import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -20,14 +20,17 @@ export interface UserPreferences {
 
 export const useUserPreferences = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const { toastFromKey } = useToastWithTranslation();
   const queryClient = useQueryClient();
   const { language: contextLanguage, setLanguage: setContextLanguage } = useLanguage();
 
-  const { data: preferences, isLoading, error } = useQuery({
+  const { data: preferences, isLoading, error, refetch } = useQuery({
     queryKey: ['user-preferences', user?.id],
     queryFn: async () => {
-      if (!user) return null;
+      if (!user) {
+        debugLogger.log("useUserPreferences", "User not authenticated, returning null");
+        return null;
+      }
       
       debugLogger.log("useUserPreferences", "Fetching preferences for user:", user.id);
       
@@ -84,8 +87,8 @@ export const useUserPreferences = () => {
             
             return newData;
           } catch (err) {
-            debugLogger.error("useUserPreferences", "RLS error, returning default preferences without saving", err);
-            // En cas d'erreur RLS, retourner les préférences par défaut sans les sauvegarder
+            debugLogger.error("useUserPreferences", "RLS error or insertion error, returning default preferences without saving", err);
+            // En cas d'erreur, retourner les préférences par défaut sans les sauvegarder
             return defaultPreferences;
           }
         }
@@ -117,7 +120,7 @@ export const useUserPreferences = () => {
       }
     },
     enabled: !!user,
-    retry: 1,
+    retry: 2,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
@@ -181,6 +184,9 @@ export const useUserPreferences = () => {
           setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
           localStorage.setItem('userLanguage', newPreferences.language);
         }
+
+        // Retourner les préférences mises à jour pour une meilleure UX
+        return { success: true };
       } catch (error) {
         debugLogger.error("useUserPreferences", "Error in updating preferences:", error);
         // Mettre à jour seulement le contexte local en cas d'erreur de mise à jour
@@ -188,20 +194,19 @@ export const useUserPreferences = () => {
           setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
           localStorage.setItem('userLanguage', newPreferences.language);
         }
+        throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-preferences', user?.id] });
-      toast({
-        title: "Succès",
-        description: "Vos préférences ont été mises à jour.",
+      toastFromKey('settings.preferencesUpdated', 'settings.preferencesUpdated', {
+        variant: "default"
       });
+      refetch(); // Rafraîchir les préférences après la mise à jour
     },
     onError: (error) => {
       debugLogger.error("useUserPreferences", "Error in mutation:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour vos préférences dans la base de données, mais les changements sont appliqués localement.",
+      toastFromKey('settings.errorSavingPreferences', 'settings.errorSavingPreferences', {
         variant: "destructive",
       });
     },
@@ -212,5 +217,6 @@ export const useUserPreferences = () => {
     isLoading,
     error,
     updatePreferences,
+    refetch
   };
 };

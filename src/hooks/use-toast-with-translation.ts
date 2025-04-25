@@ -43,18 +43,34 @@ export const useToastWithTranslation = () => {
   // Ajout d'une fonction pour créer des toasts à partir de clés de traduction uniquement
   const toastFromKey = (
     titleKey: string, 
-    descriptionKey: string, 
+    descriptionKey?: string, 
     options?: { 
       variant?: "default" | "destructive",
       duration?: number,
       action?: React.ReactNode
     }
   ) => {
-    toast({
-      titleTranslationKey: titleKey,
-      descriptionTranslationKey: descriptionKey,
-      ...options
-    });
+    try {
+      const title = t(titleKey, { fallback: titleKey.split('.').pop() || titleKey });
+      const description = descriptionKey 
+        ? t(descriptionKey, { fallback: descriptionKey.split('.').pop() || descriptionKey }) 
+        : undefined;
+      
+      baseToast({
+        title,
+        description,
+        ...options
+      });
+    } catch (error) {
+      debugLogger.error('toastFromKey', `Error showing toast from keys: ${titleKey}, ${descriptionKey}`, error);
+      
+      // Fallback en cas d'erreur
+      baseToast({
+        title: titleKey.split('.').pop() || titleKey,
+        description: descriptionKey ? (descriptionKey.split('.').pop() || descriptionKey) : undefined,
+        ...options
+      });
+    }
   };
 
   return {
@@ -76,7 +92,7 @@ export const toastWithTranslation = (props: {
   // Utilisation de la fonction importée directement
   const { toast } = useToastBase();
   
-  // Récupérer la langue actuelle du localStorage
+  // Récupérer la langue actuelle du localStorage pour le fallback
   let currentLanguage;
   try {
     currentLanguage = localStorage.getItem('userLanguage') || 'fr';
@@ -84,7 +100,12 @@ export const toastWithTranslation = (props: {
     currentLanguage = 'fr';
   }
   
-  // Tenter d'importer dynamiquement les traductions
-  // Note: Ceci est une solution simplifiée, mieux vaut utiliser le hook dans les composants
-  toast(props);
+  // Fallback simple en cas d'appel direct
+  toast({
+    title: props.title || props.titleTranslationKey,
+    description: props.description || props.descriptionTranslationKey,
+    variant: props.variant,
+    duration: props.duration,
+    action: props.action
+  });
 };

@@ -91,11 +91,17 @@ const findTranslation = (
 
   // 5. Utiliser le fallback fourni ou la clé
   if (fallbackText !== undefined) {
-    debugLogger.error('Translation', `[${currentLanguage.toUpperCase()}] Using fallback for key: ${key}`);
+    debugLogger.warn('Translation', `[${currentLanguage.toUpperCase()}] Using fallback for key: ${key}`);
     return fallbackText;
   }
 
-  debugLogger.error('Translation', `[${currentLanguage.toUpperCase()}] No translation found for key: ${key}`);
+  // 6. Logging plus visible pour les clés manquantes en développement
+  if (process.env.NODE_ENV === 'development') {
+    console.warn(`🔴 MISSING TRANSLATION: [${currentLanguage.toUpperCase()}] Key: ${key}`);
+  } else {
+    debugLogger.error('Translation', `[${currentLanguage.toUpperCase()}] No translation found for key: ${key}`);
+  }
+
   // Afficher la clé sous forme lisible plutôt que la clé brute
   const lastPart = key.split('.').pop() || key;
   const readable = lastPart.replace(/([A-Z])/g, ' $1')
@@ -153,7 +159,20 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       return options?.fallback || key;
     }
     
-    return findTranslation(key, language, options?.fallback);
+    // Si key contient un paramètre {0}, {1}, etc., le remplacer par les paramètres options?.params
+    const translation = findTranslation(key, language, options?.fallback);
+    
+    // Si les options contiennent des paramètres à substituer
+    if (options?.params) {
+      return translation.replace(/\{(\d+)\}/g, (_, index) => {
+        const paramIndex = parseInt(index, 10);
+        return options.params && options.params[paramIndex] !== undefined 
+          ? String(options.params[paramIndex]) 
+          : `{${index}}`;
+      });
+    }
+    
+    return translation;
   };
 
   const getNestedTranslation = (key: string): any => {

@@ -1,51 +1,59 @@
 
 export const auth = {
+  // Sign In
   signIn: "Connexion",
-  signUp: "Inscription",
-  signOut: "Déconnexion",
-  forgotPassword: "Mot de passe oublié ?",
-  resetPassword: "Réinitialiser le mot de passe",
+  signInWith: "Se connecter avec {0}",
+  signInWithGoogle: "Se connecter avec Google",
+  signInWithApple: "Se connecter avec Apple",
+  signInWithFacebook: "Se connecter avec Facebook",
+  signInByEmail: "Se connecter par email",
+  orContinueWith: "Ou continuer avec",
+
+  // Sign Up
+  signUp: "Créer un compte",
+  signUpWith: "Créer un compte avec {0}",
+  signUpWithGoogle: "Créer un compte avec Google",
+  signUpWithApple: "Créer un compte avec Apple",
+  signUpWithFacebook: "Créer un compte avec Facebook",
+  signUpWithEmail: "Créer un compte avec un email",
+  
+  // Form fields
   email: "Email",
   password: "Mot de passe",
-  confirmPassword: "Confirmer le mot de passe",
-  name: "Nom",
-  username: "Nom d'utilisateur",
   rememberMe: "Se souvenir de moi",
-  alreadyHaveAccount: "Vous avez déjà un compte ?",
+  forgotPassword: "Mot de passe oublié ?",
+  enterEmail: "Entrez votre email",
+  enterPassword: "Entrez votre mot de passe",
+  confirmPassword: "Confirmez votre mot de passe",
+  
+  // Actions
+  submit: "Soumettre",
+  continue: "Continuer",
+  
+  // Account
   dontHaveAccount: "Vous n'avez pas de compte ?",
-  createAccount: "Créer un compte",
-  letsStart: "Commençons !",
-  welcomeBack: "Bon retour !",
-  enterCredentials: "Entrez vos identifiants pour vous connecter",
-  enterEmail: "Entrez votre email pour réinitialiser votre mot de passe",
-  enterNewPassword: "Entrez votre nouveau mot de passe",
-  resetSent: "Instructions de réinitialisation envoyées",
-  resetSuccessful: "Mot de passe réinitialisé avec succès",
-  checkEmail: "Vérifiez votre email pour continuer",
-  continueWithGoogle: "Continuer avec Google",
-  continueWithApple: "Continuer avec Apple",
-  continueWithFacebook: "Continuer avec Facebook",
-  orContinueWith: "Ou continuer avec",
-  privacyPolicy: "Politique de confidentialité",
-  termsOfService: "Conditions d'utilisation",
-  agreeTo: "En vous inscrivant, vous acceptez notre",
-  errors: {
-    emailRequired: "L'email est requis",
-    invalidEmail: "Veuillez entrer un email valide",
-    passwordRequired: "Le mot de passe est requis",
-    passwordLength: "Le mot de passe doit contenir au moins 6 caractères",
-    passwordMatch: "Les mots de passe ne correspondent pas",
-    nameRequired: "Le nom est requis",
-    invalidCredentials: "Email ou mot de passe incorrect",
-    userExists: "Un utilisateur avec cet email existe déjà",
-    unknown: "Une erreur est survenue. Veuillez réessayer."
-  },
+  alreadyHaveAccount: "Vous avez déjà un compte ?",
+  
+  // Success/Error messages
+  accountCreated: "Compte créé avec succès",
+  checkEmail: "Vérifiez votre email pour confirmer votre compte",
+  invalidCredentials: "Email ou mot de passe invalide",
+  errorOccurred: "Une erreur s'est produite",
+  
+  // Password reset
+  resetPassword: "Réinitialiser le mot de passe",
+  resetPasswordInstructions: "Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+  resetPasswordSent: "Un email a été envoyé avec les instructions de réinitialisation",
+  
+  // Email verification
+  verifyEmail: "Vérifier l'email",
+  verifyEmailInstructions: "Un email de vérification a été envoyé à votre adresse email",
+  resendVerificationEmail: "Renvoyer l'email de vérification",
+  verificationEmailResent: "Email de vérification renvoyé",
+  
+  // Logout
   logoutSuccess: "Déconnexion réussie",
   logoutMessage: "Vous avez été déconnecté avec succès",
   logoutError: "Erreur de déconnexion",
-  logoutErrorMessage: "Une erreur est survenue lors de la déconnexion",
-  loginSuccess: "Connexion réussie",
-  loginMessage: "Vous êtes maintenant connecté",
-  registerSuccess: "Inscription réussie",
-  registerMessage: "Votre compte a été créé avec succès"
+  logoutErrorMessage: "Une erreur s'est produite lors de la déconnexion"
 };

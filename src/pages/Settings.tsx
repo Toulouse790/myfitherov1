@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Layout/Header";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -10,11 +10,12 @@ import { AppSettings } from "@/components/Profile/Sections/AppSettings";
 import { debugLogger } from "@/utils/debug-logger";
 import { useState, useEffect } from "react";
 import { useUserPreferences } from "@/hooks/use-user-preferences";
+import { Loader } from "@/components/ui/loader";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { preferences, isLoading } = useUserPreferences();
+  const { preferences, isLoading, error, refetch } = useUserPreferences();
   const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
@@ -25,13 +26,14 @@ const Settings = () => {
     const timer = setTimeout(() => {
       setPageLoading(false);
       debugLogger.log("Settings", "Settings page ready", { 
-        preferences: preferences || "No preferences yet",
-        loading: isLoading
+        preferences: preferences ? "Preferences loaded" : "No preferences yet",
+        loading: isLoading,
+        error: error ? "Error loading preferences" : "No error"
       });
-    }, 500);
+    }, 300);
     
     return () => clearTimeout(timer);
-  }, [preferences, isLoading]);
+  }, [preferences, isLoading, error]);
 
   // État de chargement
   if (isLoading || pageLoading) {
@@ -58,11 +60,48 @@ const Settings = () => {
             </h1>
           </div>
           
-          <div className="animate-pulse space-y-8">
-            <div className="h-16 bg-muted rounded"></div>
-            <div className="h-48 bg-muted rounded"></div>
-            <div className="h-32 bg-muted rounded"></div>
+          <div className="h-60 flex items-center justify-center">
+            <div className="text-center">
+              <Loader className="h-10 w-10 mx-auto mb-4" />
+              <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+            </div>
           </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // État d'erreur
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="container max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24"
+        >
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="hover:bg-muted"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-2xl font-bold">
+              {t('settings.title')}
+            </h1>
+          </div>
+          
+          <Card className="p-8 border border-border shadow-sm text-center">
+            <AlertCircle className="h-12 w-12 mx-auto text-destructive mb-4" />
+            <h2 className="text-xl font-semibold mb-2">{t('common.error', { fallback: "Erreur" })}</h2>
+            <p className="text-muted-foreground mb-6">{t('settings.errorLoadingPreferences', { fallback: "Impossible de charger vos préférences" })}</p>
+            <Button onClick={() => refetch()}>{t('common.retry', { fallback: "Réessayer" })}</Button>
+          </Card>
         </motion.div>
       </div>
     );

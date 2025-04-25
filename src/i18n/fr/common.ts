@@ -66,5 +66,6 @@ export const common = {
   profile: "Profil",
   training: "Entraînement",
   nutrition: "Nutrition",
-  sleep: "Sommeil"
+  sleep: "Sommeil",
+  retry: "Réessayer"
 };
