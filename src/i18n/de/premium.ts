@@ -1,3 +1,4 @@
+
 export const premium = {
   title: "Premium",
   discoverPremium: "Entdecken Sie MyFitHero Premium",
@@ -33,5 +34,12 @@ export const premium = {
     yearly: "Jährlich",
     lifetime: "Lebenslang",
     discount: "Sparen Sie {percent}%"
-  }
+  },
+  specialLaunchOffer: "Sonderangebot zum Start",
+  discountMessage: "Nutzen Sie",
+  discount: "Rabatt",
+  discountDetails: "auf das Jahresabo für begrenzte Zeit! Schalten Sie alle Premium-Funktionen frei und verwandeln Sie Ihr Fitness-Erlebnis.",
+  claimOffer: "Angebot nutzen",
+  offerHidden: "Angebot ausgeblendet",
+  stillAccessible: "Sie können immer noch über die Abonnement-Seite darauf zugreifen"
 };

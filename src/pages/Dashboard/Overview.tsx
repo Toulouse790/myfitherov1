@@ -11,10 +11,12 @@ import { DashboardStats } from "@/components/Dashboard/DashboardStats";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DashboardOverview() {
   const { user } = useAuth();
   const { data: wellnessScore, isLoading: isLoadingWellness } = useWellnessScore();
+  const { t } = useLanguage();
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ['dashboard-overview', user?.id],
@@ -53,21 +55,21 @@ export default function DashboardOverview() {
   return (
     <Header>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Tableau de bord</h1>
+        <h1 className="text-3xl font-bold mb-8">{t('dashboard.title', { fallback: 'Tableau de bord' })}</h1>
         
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Séries en cours</h2>
-            <p>{stats?.streaks.length || 0} séries actives</p>
+            <h2 className="text-xl font-semibold mb-4">{t('dashboard.currentStreaks', { fallback: 'Séries en cours' })}</h2>
+            <p>{stats?.streaks.length || 0} {t('dashboard.activeStreaks', { fallback: 'séries actives' })}</p>
           </Card>
 
           <Card className="p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Objectifs</h2>
+              <h2 className="text-xl font-semibold">{t('dashboard.goals', { fallback: 'Objectifs' })}</h2>
               <Link to="/goals/weekly">
                 <Button variant="ghost" size="sm" className="flex items-center gap-1">
                   <Target className="h-4 w-4" />
-                  <span className="hidden sm:inline">Voir tous</span>
+                  <span className="hidden sm:inline">{t('common.viewAll', { fallback: 'Voir tous' })}</span>
                 </Button>
               </Link>
             </div>
@@ -77,7 +79,7 @@ export default function DashboardOverview() {
                   <div className="text-sm">
                     <div className="flex items-center gap-1 mb-1">
                       <Calendar className="h-3 w-3" /> 
-                      <span>Hebdomadaires: {weeklyGoals.length}</span>
+                      <span>{t('dashboard.weekly', { fallback: 'Hebdomadaires' })}: {weeklyGoals.length}</span>
                     </div>
                     {weeklyGoals.slice(0, 1).map(goal => (
                       <div key={goal.id} className="pl-4 mt-1">
@@ -93,7 +95,7 @@ export default function DashboardOverview() {
                   <div className="text-sm">
                     <div className="flex items-center gap-1 mb-1">
                       <Calendar className="h-3 w-3" /> 
-                      <span>Mensuels: {monthlyGoals.length}</span>
+                      <span>{t('dashboard.monthly', { fallback: 'Mensuels' })}: {monthlyGoals.length}</span>
                     </div>
                     {monthlyGoals.slice(0, 1).map(goal => (
                       <div key={goal.id} className="pl-4 mt-1">
@@ -107,16 +109,16 @@ export default function DashboardOverview() {
                 )}
               </div>
             ) : (
-              <p className="text-muted-foreground text-sm">Aucun objectif défini</p>
+              <p className="text-muted-foreground text-sm">{t('dashboard.noGoals', { fallback: 'Aucun objectif défini' })}</p>
             )}
           </Card>
 
           <Card className="p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Succès</h2>
+              <h2 className="text-xl font-semibold">{t('dashboard.achievements', { fallback: 'Succès' })}</h2>
               <Trophy className="h-5 w-5 text-yellow-500" />
             </div>
-            <p>{stats?.achievements.length || 0} succès débloqués</p>
+            <p>{stats?.achievements.length || 0} {t('dashboard.achievementsUnlocked', { fallback: 'succès débloqués' })}</p>
           </Card>
         </div>
         

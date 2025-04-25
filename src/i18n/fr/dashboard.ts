@@ -9,5 +9,14 @@ export const dashboard = {
   noSleepData: "Pas de données de sommeil aujourd'hui",
   statistics: "Statistiques",
   viewAllStats: "Voir toutes les statistiques",
-  checkProgress: "Consultez vos performances et progression"
+  checkProgress: "Consultez vos performances et progression",
+  title: "Tableau de bord",
+  currentStreaks: "Séries en cours",
+  activeStreaks: "séries actives",
+  goals: "Objectifs",
+  weekly: "Hebdomadaires",
+  monthly: "Mensuels",
+  noGoals: "Aucun objectif défini",
+  achievements: "Succès",
+  achievementsUnlocked: "succès débloqués"
 };

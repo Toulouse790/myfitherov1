@@ -1,3 +1,4 @@
+
 export const premium = {
   title: "Premium",
   discoverPremium: "Découvrez MyFitHero Premium",
@@ -9,7 +10,36 @@ export const premium = {
   annual: "Annuel",
   lifetime: "À vie",
   subscribe: "S'abonner",
-  currentPlan: "Votre plan actuel",
-  upgrade: "Mettre à niveau",
+  currentPlan: "Votre forfait actuel",
+  upgrade: "Améliorer",
   discount: "Économisez {percentage}%",
+  limitReached: "Limite atteinte",
+  unlimitedAccess: "Accès illimité avec Premium",
+  freeTrial: "Essai gratuit",
+  daysRemaining: "Jours restants : {days}",
+  cancelAnytime: "Annulez quand vous voulez",
+  benefits: {
+    aiCoaching: "Coaching IA avancé",
+    unlimitedWorkouts: "Programmes d'entraînement illimités",
+    videoAnalysis: "Analyse vidéo de technique",
+    advancedStats: "Statistiques avancées",
+    prioritySupport: "Support prioritaire",
+    noAds: "Expérience sans publicités",
+    exclusiveContent: "Contenu exclusif",
+    mealPlans: "Plans nutritionnels personnalisés",
+    sleepAnalysis: "Analyse détaillée du sommeil"
+  },
+  membership: {
+    monthly: "Mensuel",
+    yearly: "Annuel",
+    lifetime: "À vie",
+    discount: "Économisez {percent}%"
+  },
+  specialLaunchOffer: "Offre spéciale de lancement",
+  discountMessage: "Profitez de",
+  discount: "de réduction",
+  discountDetails: "sur l'abonnement annuel pendant une durée limitée ! Débloquez toutes les fonctionnalités premium et transformez votre expérience fitness.",
+  claimOffer: "Profiter de l'offre",
+  offerHidden: "Offre masquée",
+  stillAccessible: "Vous pouvez toujours y accéder depuis la page d'abonnement"
 };
