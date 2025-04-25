@@ -8,8 +8,7 @@ import { useTheme } from "@/components/Theme/useTheme";
 import { debugLogger } from "@/utils/debug-logger";
 import { useUserPreferences } from "@/hooks/use-user-preferences";
 import { Loader } from "@/components/ui/loader";
-import { AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ErrorState } from "./ErrorState";
 
 interface AppSettingsProps {
   language?: string;
@@ -41,31 +40,33 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
   };
 
   const handleLanguageChange = (value: string) => {
-    debugLogger.log('AppSettings', `Changement de langue vers: ${value}`);
-    
-    // Vérifier si la langue est valide
-    if (!availableLanguages.some(lang => lang.code === value)) {
-      debugLogger.error('AppSettings', `Langue non supportée: ${value}`);
-      return;
+    try {
+      debugLogger.log('AppSettings', `Changement de langue vers: ${value}`);
+      
+      // Vérifier si la langue est valide
+      if (!availableLanguages.some(lang => lang.code === value)) {
+        debugLogger.error('AppSettings', `Langue non supportée: ${value}`);
+        return;
+      }
+      
+      // Mettre à jour l'état local
+      setSelectedLanguage(value);
+      
+      // Sauvegarder les préférences utilisateur
+      updatePreferences({ language: value });
+    } catch (error) {
+      debugLogger.error('AppSettings', `Erreur lors du changement de langue: ${error}`);
     }
-    
-    // Mettre à jour l'état local
-    setSelectedLanguage(value);
-    
-    // Sauvegarder les préférences utilisateur
-    updatePreferences({ language: value });
   };
 
   // Si erreur de chargement, afficher un message d'erreur avec option de réessayer
   if (error) {
     return (
-      <div className="space-y-4 py-4 text-center">
-        <AlertCircle className="mx-auto h-10 w-10 text-destructive" />
-        <p className="text-sm text-muted-foreground">{t('settings.errorLoadingPreferences', { fallback: "Erreur lors du chargement des préférences" })}</p>
-        <Button onClick={() => refetch()} variant="outline" className="mt-2">
-          {t('common.retry', { fallback: "Réessayer" })}
-        </Button>
-      </div>
+      <ErrorState 
+        title={t('settings.somethingWentWrong', { fallback: "Une erreur est survenue" })}
+        message={t('settings.errorLoadingPreferences', { fallback: "Impossible de charger vos préférences" })}
+        onRetry={() => refetch()}
+      />
     );
   }
 
@@ -75,7 +76,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
       <div className="space-y-6 py-4 flex items-center justify-center">
         <div className="text-center">
           <Loader className="mx-auto h-8 w-8 mb-2" />
-          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+          <p className="text-sm text-muted-foreground">{t('common.loadingPreferences', { fallback: "Chargement des préférences..." })}</p>
         </div>
       </div>
     );

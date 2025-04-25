@@ -67,5 +67,10 @@ export const common = {
   training: "Entraînement",
   nutrition: "Nutrition",
   sleep: "Sommeil",
-  retry: "Réessayer"
+  retry: "Réessayer",
+  errorOccurred: "Une erreur s'est produite",
+  dataLoadError: "Impossible de charger les données",
+  tryAgainLater: "Veuillez réessayer ultérieurement",
+  connectionError: "Problème de connexion",
+  loadingPreferences: "Chargement des préférences..."
 };

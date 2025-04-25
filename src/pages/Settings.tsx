@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Layout/Header";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, AlertCircle } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -11,6 +11,7 @@ import { debugLogger } from "@/utils/debug-logger";
 import { useState, useEffect } from "react";
 import { useUserPreferences } from "@/hooks/use-user-preferences";
 import { Loader } from "@/components/ui/loader";
+import { ErrorState } from "@/components/Profile/Sections/ErrorState";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -35,6 +36,23 @@ const Settings = () => {
     return () => clearTimeout(timer);
   }, [preferences, isLoading, error]);
 
+  const renderHeader = () => (
+    <div className="flex items-center gap-4 sticky top-14 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 py-3">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate(-1)}
+        className="hover:bg-muted"
+        aria-label={t('common.back')}
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </Button>
+      <h1 className="text-2xl font-bold">
+        {t('settings.title')}
+      </h1>
+    </div>
+  );
+
   // État de chargement
   if (isLoading || pageLoading) {
     return (
@@ -46,19 +64,7 @@ const Settings = () => {
           transition={{ duration: 0.3 }}
           className="container max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24"
         >
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="hover:bg-muted"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-2xl font-bold">
-              {t('settings.title')}
-            </h1>
-          </div>
+          {renderHeader()}
           
           <div className="h-60 flex items-center justify-center">
             <div className="text-center">
@@ -82,25 +88,14 @@ const Settings = () => {
           transition={{ duration: 0.3 }}
           className="container max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24"
         >
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="hover:bg-muted"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-2xl font-bold">
-              {t('settings.title')}
-            </h1>
-          </div>
+          {renderHeader()}
           
-          <Card className="p-8 border border-border shadow-sm text-center">
-            <AlertCircle className="h-12 w-12 mx-auto text-destructive mb-4" />
-            <h2 className="text-xl font-semibold mb-2">{t('common.error', { fallback: "Erreur" })}</h2>
-            <p className="text-muted-foreground mb-6">{t('settings.errorLoadingPreferences', { fallback: "Impossible de charger vos préférences" })}</p>
-            <Button onClick={() => refetch()}>{t('common.retry', { fallback: "Réessayer" })}</Button>
+          <Card className="p-8 border border-border shadow-sm">
+            <ErrorState 
+              title={t('settings.somethingWentWrong', { fallback: "Une erreur est survenue" })}
+              message={t('settings.errorLoadingPreferences', { fallback: "Impossible de charger vos préférences" })}
+              onRetry={() => refetch()}
+            />
           </Card>
         </motion.div>
       </div>
@@ -116,20 +111,7 @@ const Settings = () => {
         transition={{ duration: 0.3 }}
         className="container max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24"
       >
-        <div className="flex items-center gap-4 sticky top-14 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 py-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="hover:bg-muted"
-            aria-label={t('common.back')}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-2xl font-bold">
-            {t('settings.title')}
-          </h1>
-        </div>
+        {renderHeader()}
 
         {/* Paramètres de l'application */}
         <Card className="p-6 border border-border shadow-sm">

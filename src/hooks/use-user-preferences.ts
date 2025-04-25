@@ -35,6 +35,7 @@ export const useUserPreferences = () => {
       debugLogger.log("useUserPreferences", "Fetching preferences for user:", user.id);
       
       try {
+        // Vérifier d'abord si les préférences existent
         const { data, error } = await supabase
           .from('user_preferences')
           .select('*')
@@ -56,7 +57,7 @@ export const useUserPreferences = () => {
             ? storedLanguage 
             : contextLanguage || 'fr';
             
-          const defaultPreferences = {
+          const defaultPreferences: UserPreferences = {
             user_id: user.id,
             theme: 'system',
             language: defaultLanguage,
@@ -65,14 +66,23 @@ export const useUserPreferences = () => {
           };
           
           try {
+            // Essayer de créer les préférences dans la base de données
             const { data: newData, error: insertError } = await supabase
               .from('user_preferences')
-              .insert(defaultPreferences)
+              .insert([defaultPreferences])
               .select()
               .single();
               
             if (insertError) {
+              // Gestion spécifique des erreurs d'insertion 
               debugLogger.error("useUserPreferences", "Error creating default preferences:", insertError);
+              
+              // Si l'erreur est liée à RLS, on utilise les préférences locales
+              if (insertError.code === '42501') {
+                debugLogger.warn("useUserPreferences", "RLS error detected, using local preferences only");
+                return defaultPreferences;
+              }
+              
               throw insertError;
             }
             
@@ -103,25 +113,36 @@ export const useUserPreferences = () => {
         debugLogger.log("useUserPreferences", "Fetched preferences:", data);
         return data;
       } catch (catchError) {
+        // Gestion des erreurs génériques
         debugLogger.error("useUserPreferences", "Exception in fetching preferences:", catchError);
-        // En cas d'erreur, retourner un objet de préférences par défaut
+        
+        // Retourner des préférences par défaut en cas d'erreur
         const storedLanguage = localStorage.getItem('userLanguage');
         const defaultLanguage = storedLanguage && ['fr', 'en', 'es', 'de'].includes(storedLanguage) 
           ? storedLanguage 
           : contextLanguage || 'fr';
           
-        return {
+        const fallbackPreferences: UserPreferences = {
           user_id: user.id,
           theme: 'system',
           language: defaultLanguage,
           notifications_enabled: true,
           measurement_unit: 'metric',
         };
+        
+        // Synchroniser la langue en cas d'utilisation de valeurs par défaut
+        if (defaultLanguage !== contextLanguage) {
+          debugLogger.log("useUserPreferences", `Using fallback language: ${defaultLanguage}`);
+          setContextLanguage(defaultLanguage as "fr" | "en" | "es" | "de");
+        }
+        
+        return fallbackPreferences;
       }
     },
     enabled: !!user,
     retry: 2,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   // Effet pour synchroniser la langue lors des changements
@@ -152,7 +173,22 @@ export const useUserPreferences = () => {
             .eq('user_id', user.id);
 
           if (error) {
+            // Gestion spécifique des erreurs de mise à jour
             debugLogger.error("useUserPreferences", "Error updating preferences:", error);
+            
+            // Si l'erreur est liée à RLS, mettre à jour localement seulement
+            if (error.code === '42501') {
+              debugLogger.warn("useUserPreferences", "RLS error detected, updating local preferences only");
+              
+              // Mettre à jour seulement le contexte local en cas d'erreur RLS
+              if (newPreferences.language) {
+                setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
+                localStorage.setItem('userLanguage', newPreferences.language);
+              }
+              
+              return { localUpdateOnly: true };
+            }
+            
             throw error;
           }
         } 
@@ -173,7 +209,22 @@ export const useUserPreferences = () => {
             });
 
           if (error) {
+            // Gestion spécifique des erreurs d'insertion
             debugLogger.error("useUserPreferences", "Error inserting preferences:", error);
+            
+            // Si l'erreur est liée à RLS, mettre à jour localement seulement
+            if (error.code === '42501') {
+              debugLogger.warn("useUserPreferences", "RLS error detected, updating local preferences only");
+              
+              // Mettre à jour seulement le contexte local en cas d'erreur RLS
+              if (newPreferences.language) {
+                setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
+                localStorage.setItem('userLanguage', newPreferences.language);
+              }
+              
+              return { localUpdateOnly: true };
+            }
+            
             throw error;
           }
         }
@@ -189,24 +240,40 @@ export const useUserPreferences = () => {
         return { success: true };
       } catch (error) {
         debugLogger.error("useUserPreferences", "Error in updating preferences:", error);
+        
         // Mettre à jour seulement le contexte local en cas d'erreur de mise à jour
         if (newPreferences.language) {
+          debugLogger.warn("useUserPreferences", `Falling back to local language update: ${newPreferences.language}`);
           setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
           localStorage.setItem('userLanguage', newPreferences.language);
+          
+          return { localUpdateOnly: true, error };
         }
+        
         throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-preferences', user?.id] });
-      toastFromKey('settings.preferencesUpdated', 'settings.preferencesUpdated', {
+    onSuccess: (result) => {
+      // Invalidation conditionnelle en fonction du résultat
+      if (!result?.localUpdateOnly) {
+        queryClient.invalidateQueries({ queryKey: ['user-preferences', user?.id] });
+      }
+      
+      // Afficher une notification de succès
+      toastFromKey('settings.preferencesUpdated', undefined, {
         variant: "default"
       });
-      refetch(); // Rafraîchir les préférences après la mise à jour
+      
+      // Rafraîchir les préférences si la mise à jour a été faite en DB
+      if (!result?.localUpdateOnly) {
+        refetch();
+      }
     },
     onError: (error) => {
       debugLogger.error("useUserPreferences", "Error in mutation:", error);
-      toastFromKey('settings.errorSavingPreferences', 'settings.errorSavingPreferences', {
+      
+      // Afficher une notification d'erreur plus précise
+      toastFromKey('settings.errorSavingPreferences', undefined, {
         variant: "destructive",
       });
     },

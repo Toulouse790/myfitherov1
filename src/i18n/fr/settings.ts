@@ -32,7 +32,13 @@ export const settings = {
   languageUpdated: "Langue mise à jour",
   languageChangedTo: "La langue a été changée en {0}",
   errorSavingPreferences: "Erreur lors de l'enregistrement de vos préférences",
-  preferencesUpdated: "Préférences mises à jour"
+  preferencesUpdated: "Préférences mises à jour",
+  errorLoadingPreferences: "Impossible de charger vos préférences",
+  noPreferencesFound: "Aucune préférence trouvée",
+  serverConnectionError: "Erreur de connexion au serveur",
+  tryAgain: "Veuillez réessayer",
+  somethingWentWrong: "Une erreur est survenue",
+  generalError: "Erreur lors du chargement des préférences"
 };
 
 export const theme = {

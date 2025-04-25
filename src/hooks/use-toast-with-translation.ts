@@ -19,11 +19,11 @@ export const useToastWithTranslation = () => {
     try {
       // Si des clés de traduction sont fournies, les utiliser
       const title = props.titleTranslationKey 
-        ? t(props.titleTranslationKey, { fallback: props.title })
+        ? t(props.titleTranslationKey, { fallback: props.title || props.titleTranslationKey.split('.').pop() })
         : props.title;
       
       const description = props.descriptionTranslationKey
-        ? t(props.descriptionTranslationKey, { fallback: props.description })
+        ? t(props.descriptionTranslationKey, { fallback: props.description || props.descriptionTranslationKey.split('.').pop() })
         : props.description;
       
       // Appeler le toast de base avec les traductions
@@ -51,20 +51,31 @@ export const useToastWithTranslation = () => {
     }
   ) => {
     try {
-      const title = t(titleKey, { fallback: titleKey.split('.').pop() || titleKey });
+      // Extraction d'une partie de la clé comme fallback plus lisible
+      const extractReadableName = (key: string) => {
+        const lastPart = key.split('.').pop() || key;
+        return lastPart
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, str => str.toUpperCase())
+          .replace(/[_.]/g, ' ')
+          .trim();
+      };
+      
+      const title = t(titleKey, { fallback: extractReadableName(titleKey) });
       const description = descriptionKey 
-        ? t(descriptionKey, { fallback: descriptionKey.split('.').pop() || descriptionKey }) 
+        ? t(descriptionKey, { fallback: extractReadableName(descriptionKey) }) 
         : undefined;
       
       baseToast({
         title,
         description,
-        ...options
+        ...options,
+        duration: options?.duration || 3000 // Durée par défaut réduite
       });
     } catch (error) {
       debugLogger.error('toastFromKey', `Error showing toast from keys: ${titleKey}, ${descriptionKey}`, error);
       
-      // Fallback en cas d'erreur
+      // Fallback en cas d'erreur avec des clés plus lisibles
       baseToast({
         title: titleKey.split('.').pop() || titleKey,
         description: descriptionKey ? (descriptionKey.split('.').pop() || descriptionKey) : undefined,
@@ -105,7 +116,7 @@ export const toastWithTranslation = (props: {
     title: props.title || props.titleTranslationKey,
     description: props.description || props.descriptionTranslationKey,
     variant: props.variant,
-    duration: props.duration,
+    duration: props.duration || 3000, // Durée par défaut réduite
     action: props.action
   });
 };
