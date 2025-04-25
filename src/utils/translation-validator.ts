@@ -13,11 +13,25 @@ type TranslationReport = {
     languages: Language[];
     values: Record<Language, string>;
   }>;
+  potentialMixedLanguageIssues: Array<{
+    key: string;
+    language: Language;
+    value: string;
+    potentialIssue: string;
+  }>;
   totalKeys: number;
   coverage: Record<Language, number>;
 };
 
 const translations = { fr, en, es, de };
+
+// Liste de mots spécifiques à chaque langue pour détecter les mélanges
+const languageSpecificWords: Record<Language, string[]> = {
+  fr: ['paramètres', 'langue', 'thème', 'utilisateur', 'profil', 'entraînement'],
+  en: ['settings', 'language', 'theme', 'user', 'profile', 'workout'],
+  es: ['ajustes', 'idioma', 'tema', 'usuario', 'perfil', 'entrenamiento'],
+  de: ['Einstellungen', 'Sprache', 'Thema', 'Benutzer', 'Profil', 'Training']
+};
 
 const getAllKeys = (obj: any, path: string = ''): string[] => {
   let keys: string[] = [];
@@ -35,11 +49,42 @@ const getAllKeys = (obj: any, path: string = ''): string[] => {
   return keys;
 };
 
+// Fonction pour détecter les mélanges potentiels de langues
+const detectPotentialLanguageMix = (
+  key: string,
+  language: Language,
+  value: string
+): string | null => {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  
+  // Liste de tous les mots à vérifier sauf ceux de la langue actuelle
+  const otherLanguageWords: string[] = [];
+  for (const [lang, words] of Object.entries(languageSpecificWords)) {
+    if (lang !== language) {
+      otherLanguageWords.push(...words);
+    }
+  }
+  
+  // Vérifier si des mots d'autres langues sont présents dans la valeur
+  for (const word of otherLanguageWords) {
+    if (value.toLowerCase().includes(word.toLowerCase())) {
+      const languageOfWord = Object.entries(languageSpecificWords).find(
+        ([_, words]) => words.map(w => w.toLowerCase()).includes(word.toLowerCase())
+      )?.[0];
+      
+      return `Contains ${languageOfWord} word "${word}" in ${language} translation`;
+    }
+  }
+  
+  return null;
+};
+
 const validateTranslations = (): TranslationReport => {
   const allKeys = new Set<string>();
   const report: TranslationReport = {
     missingKeys: { fr: [], en: [], es: [], de: [] },
     inconsistentKeys: [],
+    potentialMixedLanguageIssues: [],
     totalKeys: 0,
     coverage: { fr: 0, en: 0, es: 0, de: 0 }
   };
@@ -76,6 +121,19 @@ const validateTranslations = (): TranslationReport => {
       if (value !== undefined && typeof value !== 'string') {
         hasInconsistency = true;
       }
+
+      // Vérifier les mélanges potentiels de langues
+      if (typeof value === 'string') {
+        const potentialIssue = detectPotentialLanguageMix(key, lang, value);
+        if (potentialIssue) {
+          report.potentialMixedLanguageIssues.push({
+            key,
+            language: lang,
+            value,
+            potentialIssue
+          });
+        }
+      }
     });
 
     if (hasInconsistency) {
@@ -110,6 +168,11 @@ export const checkTranslations = () => {
     if (report.inconsistentKeys.length > 0) {
       debugLogger.warn('TranslationValidator', 'Incohérences détectées:');
       console.table(report.inconsistentKeys);
+    }
+
+    if (report.potentialMixedLanguageIssues.length > 0) {
+      debugLogger.error('TranslationValidator', 'Mélanges potentiels de langues détectés:');
+      console.table(report.potentialMixedLanguageIssues);
     }
 
     debugLogger.log('TranslationValidator', 'Couverture des traductions:');

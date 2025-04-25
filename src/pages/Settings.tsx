@@ -6,38 +6,35 @@ import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { LanguageSelector } from "@/components/Language/LanguageSelector";
-import { ThemeSelector } from "@/components/Theme/ThemeSelector";
-import { Badge } from "@/components/ui/badge";
-import { useTheme } from "@/components/Theme/useTheme";
-import { useUserPreferences } from "@/hooks/use-user-preferences";
-import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/components/Profile/Sections/AppSettings";
 import { debugLogger } from "@/utils/debug-logger";
+import { useState, useEffect } from "react";
+import { useUserPreferences } from "@/hooks/use-user-preferences";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { theme } = useTheme();
-  const { preferences, isLoading, updatePreferences } = useUserPreferences();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
+  const { preferences, isLoading } = useUserPreferences();
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
-    // Initialisation et debug
-    debugLogger.log("Settings", "Page Settings chargée", { preferences });
+    // Log lors du chargement initial
+    debugLogger.log("Settings", "Settings page loaded");
     
-    // Définir un délai court pour s'assurer que les préférences sont chargées
+    // Un court délai pour s'assurer que les préférences sont chargées
     const timer = setTimeout(() => {
-      setLoading(false);
+      setPageLoading(false);
+      debugLogger.log("Settings", "Settings page ready", { 
+        preferences: preferences || "No preferences yet",
+        loading: isLoading
+      });
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [preferences]);
+  }, [preferences, isLoading]);
 
-  // Si les préférences sont en cours de chargement, afficher un indicateur de chargement
-  if (isLoading || loading) {
+  // État de chargement
+  if (isLoading || pageLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -61,11 +58,10 @@ const Settings = () => {
             </h1>
           </div>
           
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-pulse space-y-4">
-              <div className="h-4 bg-muted rounded w-1/3 mx-auto"></div>
-              <div className="h-10 bg-muted rounded w-48 mx-auto"></div>
-            </div>
+          <div className="animate-pulse space-y-8">
+            <div className="h-16 bg-muted rounded"></div>
+            <div className="h-48 bg-muted rounded"></div>
+            <div className="h-32 bg-muted rounded"></div>
           </div>
         </motion.div>
       </div>
@@ -87,7 +83,7 @@ const Settings = () => {
             size="icon"
             onClick={() => navigate(-1)}
             className="hover:bg-muted"
-            aria-label={t('common.back')}
+            aria-label={t('common.back', { fallback: 'Retour' })}
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -96,11 +92,12 @@ const Settings = () => {
           </h1>
         </div>
 
-        {/* Utilisation du composant AppSettings pour afficher les paramètres de l'application */}
+        {/* Paramètres de l'application */}
         <Card className="p-6 border border-border shadow-sm">
           <AppSettings />
         </Card>
 
+        {/* Confidentialité */}
         <Card className="p-6 border border-border shadow-sm">
           <div className="space-y-6">
             <div className="space-y-1.5">
@@ -114,6 +111,7 @@ const Settings = () => {
           </div>
         </Card>
 
+        {/* Suppression de compte */}
         <Card className="p-6 border border-border shadow-sm mb-16">
           <div className="space-y-6">
             <div className="space-y-1.5">

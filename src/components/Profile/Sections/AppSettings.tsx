@@ -15,23 +15,35 @@ interface AppSettingsProps {
 
 export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => {
   const { toast } = useToast();
-  const { language: contextLanguage, setLanguage: setContextLanguage, t } = useLanguage();
+  const { language: contextLanguage, setLanguage: setContextLanguage, t, availableLanguages } = useLanguage();
   const { theme } = useTheme();
-  const [language, setLanguage] = useState<string>(initialLanguage || contextLanguage);
-  const { preferences, updatePreferences } = useUserPreferences();
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(initialLanguage || contextLanguage);
+  const { preferences, updatePreferences, isLoading } = useUserPreferences();
 
-  // Synchroniser l'état local avec le contexte au chargement
-  useEffect(() => {
-    setLanguage(contextLanguage);
-  }, [contextLanguage]);
-
-  // Synchroniser avec les préférences de la base de données
+  // Synchroniser l'état local avec le contexte et les préférences
   useEffect(() => {
     if (preferences?.language) {
-      setLanguage(preferences.language);
-      setContextLanguage(preferences.language as "fr" | "en" | "es" | "de");
+      debugLogger.log('AppSettings', `Setting language from preferences: ${preferences.language}`);
+      setSelectedLanguage(preferences.language);
+      
+      if (preferences.language !== contextLanguage) {
+        setContextLanguage(preferences.language as "fr" | "en" | "es" | "de");
+      }
+    } else if (contextLanguage !== selectedLanguage) {
+      debugLogger.log('AppSettings', `Setting language from context: ${contextLanguage}`);
+      setSelectedLanguage(contextLanguage);
     }
-  }, [preferences, setContextLanguage]);
+  }, [preferences, contextLanguage, setContextLanguage, selectedLanguage]);
+
+  const getLanguageDisplayName = (code: string): string => {
+    const languageMap: Record<string, string> = {
+      fr: 'Français',
+      en: 'English',
+      es: 'Español',
+      de: 'Deutsch'
+    };
+    return languageMap[code] || code;
+  };
 
   const handleLanguageChange = (value: string) => {
     debugLogger.log('AppSettings', `Changement de langue vers: ${value}`);
@@ -42,8 +54,10 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
       return;
     }
     
-    // Mettre à jour l'état local et le contexte global
-    setLanguage(value);
+    // Mettre à jour l'état local
+    setSelectedLanguage(value);
+    
+    // Mettre à jour le contexte global
     setContextLanguage(value as "fr" | "en" | "es" | "de");
     
     // Sauvegarder dans la base de données
@@ -66,9 +80,20 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
     
     toast({
       title: confirmMessages[value]?.title || "Langue mise à jour",
-      description: confirmMessages[value]?.description || `La langue a été changée en ${value}`,
+      description: confirmMessages[value]?.description || `La langue a été changée en ${getLanguageDisplayName(value)}`,
     });
   };
+
+  // Si chargement, afficher un indicateur
+  if (isLoading) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="h-4 bg-muted rounded w-1/3 mb-6"></div>
+        <div className="h-10 bg-muted rounded w-full mb-4"></div>
+        <div className="h-6 bg-muted rounded w-2/3"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -107,21 +132,17 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
               {t('settings.language', { fallback: 'Langue' })}
             </label>
             <Badge variant="outline" className="text-xs font-normal">
-              {language === 'fr' ? 'Français' : 
-               language === 'en' ? 'English' : 
-               language === 'es' ? 'Español' : 
-               language === 'de' ? 'Deutsch' : 'Français'}
+              {getLanguageDisplayName(selectedLanguage)}
             </Badge>
           </div>
-          <Select value={language} onValueChange={handleLanguageChange}>
+          <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder={t('settings.selectLanguage', { fallback: 'Sélectionner une langue' })} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="fr">Français</SelectItem>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="es">Español</SelectItem>
-              <SelectItem value="de">Deutsch</SelectItem>
+              {availableLanguages.map(({ code, name }) => (
+                <SelectItem key={code} value={code}>{name}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground mt-1">

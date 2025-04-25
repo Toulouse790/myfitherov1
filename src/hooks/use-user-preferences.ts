@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { useToast } from "./use-toast";
 import { debugLogger } from "@/utils/debug-logger";
+import { useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface UserPreferences {
   id?: string;
@@ -20,6 +22,7 @@ export const useUserPreferences = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { language: contextLanguage, setLanguage: setContextLanguage } = useLanguage();
 
   const { data: preferences, isLoading, error } = useQuery({
     queryKey: ['user-preferences', user?.id],
@@ -44,10 +47,16 @@ export const useUserPreferences = () => {
         if (!data) {
           debugLogger.log("useUserPreferences", "No preferences found, creating default preferences");
           
+          // Utiliser la langue du contexte comme langue par défaut
+          const storedLanguage = localStorage.getItem('userLanguage');
+          const defaultLanguage = storedLanguage && ['fr', 'en', 'es', 'de'].includes(storedLanguage) 
+            ? storedLanguage 
+            : contextLanguage || 'fr';
+            
           const defaultPreferences = {
             user_id: user.id,
             theme: 'system',
-            language: 'fr',
+            language: defaultLanguage,
             notifications_enabled: true,
             measurement_unit: 'metric',
           };
@@ -64,7 +73,22 @@ export const useUserPreferences = () => {
           }
           
           debugLogger.log("useUserPreferences", "Created default preferences:", newData);
+          
+          // Synchroniser immédiatement avec le contexte de langue
+          if (newData && newData.language && newData.language !== contextLanguage) {
+            debugLogger.log("useUserPreferences", `Synchronizing language context from default preferences: ${newData.language}`);
+            setContextLanguage(newData.language as "fr" | "en" | "es" | "de");
+            localStorage.setItem('userLanguage', newData.language);
+          }
+          
           return newData;
+        }
+
+        // Synchroniser la langue du contexte avec celle des préférences utilisateur
+        if (data && data.language && data.language !== contextLanguage) {
+          debugLogger.log("useUserPreferences", `Synchronizing language context from DB: ${data.language}`);
+          setContextLanguage(data.language as "fr" | "en" | "es" | "de");
+          localStorage.setItem('userLanguage', data.language);
         }
 
         debugLogger.log("useUserPreferences", "Fetched preferences:", data);
@@ -78,6 +102,15 @@ export const useUserPreferences = () => {
     retry: 2,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
+  // Effet pour synchroniser la langue lors des changements
+  useEffect(() => {
+    if (preferences?.language && preferences.language !== contextLanguage) {
+      debugLogger.log("useUserPreferences", `Synchronizing language on preferences change: ${preferences.language}`);
+      setContextLanguage(preferences.language as "fr" | "en" | "es" | "de");
+      localStorage.setItem('userLanguage', preferences.language);
+    }
+  }, [preferences?.language, contextLanguage, setContextLanguage]);
 
   const { mutate: updatePreferences } = useMutation({
     mutationFn: async (newPreferences: Partial<UserPreferences>) => {
@@ -103,12 +136,15 @@ export const useUserPreferences = () => {
       } 
       // Sinon, créer de nouvelles préférences
       else {
+        const storedLanguage = localStorage.getItem('userLanguage');
+        const defaultLanguage = storedLanguage || contextLanguage || 'fr';
+
         const { error } = await supabase
           .from('user_preferences')
           .insert({
             user_id: user.id,
             theme: 'system',
-            language: 'fr',
+            language: defaultLanguage,
             notifications_enabled: true,
             measurement_unit: 'metric',
             ...newPreferences
@@ -118,6 +154,13 @@ export const useUserPreferences = () => {
           debugLogger.error("useUserPreferences", "Error inserting preferences:", error);
           throw error;
         }
+      }
+      
+      // Si la langue est mise à jour, synchroniser immédiatement avec le contexte
+      if (newPreferences.language && newPreferences.language !== contextLanguage) {
+        debugLogger.log("useUserPreferences", `Immediately updating language context: ${newPreferences.language}`);
+        setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
+        localStorage.setItem('userLanguage', newPreferences.language);
       }
     },
     onSuccess: () => {

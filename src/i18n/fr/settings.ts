@@ -13,12 +13,14 @@ export const settings = {
   contactUs: "Nous contacter",
   logout: "Déconnexion",
   deleteAccount: "Supprimer le compte",
+  deleteAccountDescription: "Supprimer définitivement votre compte",
   version: "Version",
   buildNumber: "Numéro de build",
   termsOfService: "Conditions d'utilisation",
   privacyPolicy: "Politique de confidentialité",
   helpCenter: "Centre d'aide",
   appSettings: "Paramètres de l'application",
+  configureAppearance: "Configurez l'apparence de l'application",
   saveChanges: "Enregistrer les modifications",
   resetToDefaults: "Réinitialiser par défaut",
   metricSystem: "Système métrique",
@@ -40,7 +42,13 @@ export const settings = {
   shareActivity: "Partager l'activité",
   dataCollection: "Collecte de données",
   cookieSettings: "Paramètres des cookies",
-  analytics: "Analyse"
+  analytics: "Analyse",
+  theme: "Thème",
+  customizeAppearance: "Personnaliser l'apparence",
+  themeDescription: "Choisissez le thème qui vous convient le mieux",
+  selectLanguage: "Sélectionner une langue",
+  languageDescription: "Choisissez la langue de l'interface",
+  security: "Sécurité"
 };
 
 export const theme = {
@@ -50,5 +58,11 @@ export const theme = {
   toggleTheme: "Changer de thème",
   lightMode: "Mode clair",
   darkMode: "Mode sombre",
-  systemMode: "Mode système"
+  systemMode: "Mode système",
+  lightEnabled: "Mode clair activé",
+  darkEnabled: "Mode sombre activé",
+  systemEnabled: "Mode système activé",
+  lightDescription: "Interface claire pour l'application",
+  darkDescription: "Interface sombre pour l'application",
+  systemDescription: "L'application suit les paramètres système"
 };
