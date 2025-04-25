@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSleepTracking } from "@/hooks/use-sleep-tracking";
-import { SleepRecommendation } from "@/types/sleep";
 import { ManualTracking } from "./ManualTracking";
 import { AutomaticTracking } from "./AutomaticTracking";
 
@@ -24,7 +23,7 @@ export const SleepTracker = () => {
     isLoading
   } = useSleepTracking();
   
-  const [recommendedSleep, setRecommendedSleep] = useState<string>("7-8 heures");
+  const [recommendedSleep, setRecommendedSleep] = useState<string>("7h30");
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -33,8 +32,6 @@ export const SleepTracker = () => {
 
   const fetchUserActivityAndCalculateSleep = async () => {
     try {
-      // Cette fonction est laissée intacte car elle est spécifique à ce composant
-      // et contient la logique principale pour calculer le sommeil recommandé
       await fetchUserData();
     } catch (error) {
       console.error('Error calculating recommended sleep:', error);
@@ -82,16 +79,16 @@ export const SleepTracker = () => {
       <CardContent className="p-6">
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-bold text-blue-600">{t("sleep.tracking")}</h2>
+            <h2 className="text-2xl font-bold text-blue-600">{t("sleep.sleepTracking")}</h2>
             <p className="text-muted-foreground">
-              {t("sleep.recommendedTime")}: <span className="text-blue-500 font-medium">{recommendedSleep}</span>
+              {t("sleep.sleepTimeRecommended")}: <span className="text-blue-500 font-medium">{recommendedSleep}</span>
             </p>
           </div>
 
           <Tabs defaultValue="manual" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="manual" className="data-[state=active]:bg-blue-500">{t("sleep.manualEntry")}</TabsTrigger>
-              <TabsTrigger value="auto" className="data-[state=active]:bg-blue-500">{t("sleep.autoTracking")}</TabsTrigger>
+              <TabsTrigger value="manual" className="data-[state=active]:bg-blue-500">{t("sleep.manualInput")}</TabsTrigger>
+              <TabsTrigger value="auto" className="data-[state=active]:bg-blue-500">{t("sleep.automaticInput")}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="manual" className="space-y-4 mt-4">

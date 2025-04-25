@@ -19,7 +19,7 @@ const Sleep = () => {
         <div className="flex items-center gap-3 mb-6">
           <Moon className="w-6 h-6 text-blue-500" />
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-            {t("sleep.title", { fallback: "Sommeil" })}
+            {t("sleep.title")}
           </h1>
         </div>
 
@@ -31,7 +31,7 @@ const Sleep = () => {
             >
               <div className="flex items-center gap-2 truncate">
                 <Moon className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{t("sleep.tracking", { fallback: "Suivi du sommeil" })}</span>
+                <span className="truncate">{t("sleep.tracking")}</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
@@ -40,7 +40,7 @@ const Sleep = () => {
             >
               <div className="flex items-center gap-2 truncate">
                 <History className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{t("sleep.history", { fallback: "Historique" })}</span>
+                <span className="truncate">{t("sleep.history")}</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
@@ -49,7 +49,7 @@ const Sleep = () => {
             >
               <div className="flex items-center gap-2 truncate">
                 <TrendingUp className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{t("sleep.analysis", { fallback: "Analyse" })}</span>
+                <span className="truncate">{t("sleep.analysis")}</span>
               </div>
             </TabsTrigger>
           </TabsList>
@@ -72,21 +72,21 @@ const Sleep = () => {
           <TabsContent value="insights" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="flex flex-col space-y-4">
-                <h3 className="text-lg font-medium text-blue-500">{t("sleep.trends", { fallback: "Tendances" })}</h3>
+                <h3 className="text-lg font-medium text-blue-500">{t("sleep.trends")}</h3>
                 <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border border-blue-200 dark:border-blue-700/30 rounded-lg p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300">
                   <div className="text-muted-foreground flex flex-col items-center">
                     <BarChart className="h-16 w-16 mb-2 opacity-50 text-blue-400" />
-                    <p>{t("sleep.trendChartsComing", { fallback: "Graphiques de tendances à venir" })}</p>
+                    <p>{t("sleep.trendChartsComing")}</p>
                   </div>
                 </div>
               </div>
               
               <div className="flex flex-col space-y-4">
-                <h3 className="text-lg font-medium text-blue-500">{t("sleep.correlations", { fallback: "Corrélations" })}</h3>
+                <h3 className="text-lg font-medium text-blue-500">{t("sleep.correlations")}</h3>
                 <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border border-blue-200 dark:border-blue-700/30 rounded-lg p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300">
                   <div className="text-muted-foreground flex flex-col items-center">
                     <Target className="h-16 w-16 mb-2 opacity-50 text-blue-400" />
-                    <p>{t("sleep.exerciseImpact", { fallback: "Impact de l'exercice sur le sommeil" })}</p>
+                    <p>{t("sleep.exerciseImpact")}</p>
                   </div>
                 </div>
               </div>

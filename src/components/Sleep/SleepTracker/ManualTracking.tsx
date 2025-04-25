@@ -64,7 +64,7 @@ const SleepTypeToggle = ({ isNap, setIsNap }: SleepTypeToggleProps) => {
     <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
       <Label htmlFor="is-nap" className="flex items-center gap-2">
         <Moon className="h-4 w-4 text-blue-500" />
-        <span>{t("sleep.sleepType")}</span>
+        <span>{t("sleep.sleepTypeLabel")}</span>
       </Label>
       <div className="flex items-center space-x-2">
         <Switch
@@ -143,7 +143,7 @@ const QualitySlider = ({ sleepQuality, setSleepQuality }: QualitySliderProps) =>
     <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
       <Label className="flex items-center gap-2 mb-2 text-blue-700 dark:text-blue-300">
         <Sun className="h-4 w-4 text-amber-500" />
-        <span>{t("sleep.quality")} (1-10)</span>
+        <span>{t("sleep.sleepQualityRange")}</span>
       </Label>
       <input
         type="range"

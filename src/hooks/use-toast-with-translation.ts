@@ -40,8 +40,26 @@ export const useToastWithTranslation = () => {
     }
   };
 
+  // Ajout d'une fonction pour créer des toasts à partir de clés de traduction uniquement
+  const toastFromKey = (
+    titleKey: string, 
+    descriptionKey: string, 
+    options?: { 
+      variant?: "default" | "destructive",
+      duration?: number,
+      action?: React.ReactNode
+    }
+  ) => {
+    toast({
+      titleTranslationKey: titleKey,
+      descriptionTranslationKey: descriptionKey,
+      ...options
+    });
+  };
+
   return {
     toast,
+    toastFromKey
   };
 };
 

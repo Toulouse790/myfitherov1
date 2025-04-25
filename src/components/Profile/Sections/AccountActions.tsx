@@ -2,12 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useToastWithTranslation } from "@/hooks/use-toast-with-translation";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const AccountActions = () => {
-  const { toast } = useToast();
+  const { toast, toastFromKey } = useToastWithTranslation();
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -17,19 +17,12 @@ export const AccountActions = () => {
       
       if (error) throw error;
       
-      toast({
-        title: t('auth.logoutSuccess', { fallback: "Déconnexion réussie" }),
-        description: t('auth.logoutMessage', { fallback: "Vous avez été déconnecté avec succès" }),
-      });
+      toastFromKey('auth.logoutSuccess', 'auth.logoutMessage');
       
       navigate('/login', { replace: true });
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
-      toast({
-        title: t('auth.logoutError', { fallback: "Erreur de déconnexion" }),
-        description: t('auth.logoutErrorMessage', { fallback: "Une erreur est survenue lors de la déconnexion" }),
-        variant: "destructive",
-      });
+      toastFromKey('auth.logoutError', 'auth.logoutErrorMessage', { variant: "destructive" });
     }
   };
 

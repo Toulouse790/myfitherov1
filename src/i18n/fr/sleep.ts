@@ -29,7 +29,6 @@ export const sleep = {
   sleepEntryDeleted: "Entrée de sommeil supprimée",
   noDataAvailable: "Aucune donnée disponible",
   
-  // Ajout des nouvelles clés manquantes
   title: "Sommeil",
   tracking: "Suivi du sommeil",
   history: "Historique",
@@ -58,5 +57,23 @@ export const sleep = {
   trends: "Tendances de sommeil",
   correlations: "Corrélations de sommeil",
   trendChartsComing: "Graphiques de tendances de sommeil à venir",
-  exerciseImpact: "Analyse de l'impact des exercices à venir"
+  exerciseImpact: "Analyse de l'impact des exercices à venir",
+  
+  // Nouvelles traductions pour les éléments manquants identifiés sur l'interface
+  sleepTracking: "Suivi du sommeil",
+  manualInput: "Saisie manuelle",
+  automaticInput: "Suivi automatique",
+  sleepTypeLabel: "Type de sommeil",
+  scoreTitle: "Score de sommeil",
+  recommended: "recommandé",
+  regularityScore: "Régularité",
+  sleepTimeRecommended: "Temps de sommeil recommandé",
+  startseite: "Accueil",
+  trainingNav: "Entraînement",
+  schlafNav: "Sommeil",
+  ernährungNav: "Nutrition",
+  profilNav: "Profil",
+  sleepValueHours: "h",
+  sleepValueMinutes: "m",
+  sleepQualityRange: "Qualité (1-10)"
 };

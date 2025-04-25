@@ -4,15 +4,17 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useSleepTracking } from "@/hooks/use-sleep-tracking";
 import { Watch, Trash2, BatteryFull, RefreshCw, PlusCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const ConnectedDevices = () => {
   const { connectedDevices, connectDevice, disconnectDevice, syncDevice } = useSleepTracking();
+  const { t } = useLanguage();
 
   const formatLastSync = (dateString?: string) => {
-    if (!dateString) return "Jamais";
+    if (!dateString) return t("common.never", { fallback: "Jamais" });
     
     const date = new Date(dateString);
-    return date.toLocaleString('fr-FR', {
+    return date.toLocaleString(t("common.locale", { fallback: 'fr-FR' }), {
       day: '2-digit',
       month: '2-digit',
       hour: '2-digit',
@@ -40,7 +42,7 @@ export const ConnectedDevices = () => {
       <CardHeader className="bg-gradient-to-r from-blue-600/90 to-blue-400/90 text-white p-4">
         <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
           <Watch className="w-5 h-5" />
-          Appareils connectés
+          {t("sleep.connectedDevices")}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
@@ -65,7 +67,7 @@ export const ConnectedDevices = () => {
                     <div>
                       <p className="font-medium text-blue-700 dark:text-blue-300 text-sm truncate">{device.name}</p>
                       <p className="text-xs text-muted-foreground truncate">
-                        Dernière synchronisation: {formatLastSync(device.lastSync)}
+                        {t("common.lastSync", { fallback: "Dernière synchronisation" })}: {formatLastSync(device.lastSync)}
                       </p>
                     </div>
                   </div>
@@ -73,7 +75,7 @@ export const ConnectedDevices = () => {
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      title="Synchroniser"
+                      title={t("common.sync", { fallback: "Synchroniser" })}
                       onClick={() => syncDevice(device.id)}
                       className="h-8 w-8 rounded-full hover:bg-blue-100 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-300"
                     >
@@ -82,7 +84,7 @@ export const ConnectedDevices = () => {
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      title="Batterie"
+                      title={t("common.battery", { fallback: "Batterie" })}
                       className="h-8 w-8 rounded-full hover:bg-blue-100 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-300"
                     >
                       <BatteryFull className="w-4 h-4" />
@@ -90,7 +92,7 @@ export const ConnectedDevices = () => {
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      title="Supprimer"
+                      title={t("common.delete", { fallback: "Supprimer" })}
                       onClick={() => disconnectDevice(device.id)}
                       className="h-8 w-8 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500"
                     >
@@ -104,7 +106,7 @@ export const ConnectedDevices = () => {
             <div className="text-center bg-blue-50/50 dark:bg-blue-900/20 p-6 rounded-lg border border-dashed border-blue-200 dark:border-blue-800/30">
               <Watch className="w-12 h-12 mx-auto mb-3 text-blue-300" />
               <p className="text-sm text-muted-foreground mb-4">
-                Aucun appareil connecté
+                {t("common.noConnectedDevices", { fallback: "Aucun appareil connecté" })}
               </p>
             </div>
           )}
@@ -116,13 +118,15 @@ export const ConnectedDevices = () => {
           >
             <PlusCircle className="w-4 h-4 mr-2" />
             <span className="truncate">
-              {connectedDevices.length > 0 ? "Connecter un autre appareil" : "Connecter un appareil"}
+              {connectedDevices.length > 0 
+                ? t("common.connectAnotherDevice", { fallback: "Connecter un autre appareil" })
+                : t("common.connectDevice", { fallback: "Connecter un appareil" })}
             </span>
           </Button>
           
           {connectedDevices.length > 0 && (
             <p className="text-xs text-muted-foreground text-center mt-2">
-              Les données de vos appareils seront automatiquement synchronisées
+              {t("common.deviceSyncInfo", { fallback: "Les données de vos appareils seront automatiquement synchronisées" })}
             </p>
           )}
         </motion.div>

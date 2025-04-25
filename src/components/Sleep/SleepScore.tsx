@@ -1,100 +1,60 @@
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useState, useEffect } from "react";
-import { calculateSleepScore } from "@/utils/wellness/sleep-score-calculator";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { SleepSession } from "@/types/sleep";
+import { useSleepTracking } from "@/hooks/use-sleep-tracking";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const SleepScore = () => {
-  const [sleepScore, setSleepScore] = useState(0);
-  const { user } = useAuth();
+  const { sleepScore, sleepDuration } = useSleepTracking();
   const { t } = useLanguage();
   
-  const { data: sleepSessions } = useQuery({
-    queryKey: ['sleep-sessions'],
-    queryFn: async () => {
-      if (!user) {
-        return [];
-      }
-      
-      const { data, error } = await supabase
-        .from('sleep_sessions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('start_time', { ascending: false })
-        .limit(7);
-        
-      if (error) {
-        throw error;
-      }
-      
-      return data as SleepSession[];
-    },
-    enabled: !!user
-  });
-
-  useEffect(() => {
-    if (sleepSessions && sleepSessions.length > 0) {
-      const calculatedScore = calculateSleepScore(sleepSessions);
-      setSleepScore(calculatedScore);
-    }
-  }, [sleepSessions]);
-
-  // Calculer les informations de sommeil
-  const calculateSleepDuration = () => {
-    if (!sleepSessions || sleepSessions.length === 0) return "7h 0m";
-    
-    const totalMinutes = sleepSessions.reduce((sum, session) => {
-      return sum + (session.total_duration_minutes || 0);
-    }, 0) / sleepSessions.length;
-    
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.floor(totalMinutes % 60);
-    
-    return `${hours}h ${minutes}m`;
-  };
-
-  const calculateSleepConsistency = () => {
-    if (!sleepSessions || sleepSessions.length < 3) return "7/10";
-    
-    // Logique de calcul de cohérence basée sur la régularité des heures de coucher/lever
-    return "8/10";
-  };
-
+  // Formater la durée de sommeil
+  const formattedHours = Math.floor(sleepDuration / 60);
+  const formattedMinutes = sleepDuration % 60;
+  const formattedDuration = `${formattedHours}${t('sleep.sleepValueHours')} ${formattedMinutes}${t('sleep.sleepValueMinutes')}`;
+  
+  // Calculer la régularité (exemple simple)
+  const regularityScore = 7;
+  
   return (
-    <Card className="overflow-hidden border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10 shadow-md hover:shadow-lg transition-all duration-300">
+    <Card className="overflow-hidden h-full border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-white to-blue-50 dark:from-blue-950/20 dark:to-blue-900/10 shadow-md hover:shadow-lg transition-all duration-300">
       <CardContent className="p-6">
-        <div className="flex flex-col items-center gap-6">
-          <h2 className="text-2xl font-bold text-blue-600">{t("sleep.sleepScore")}</h2>
-          
-          <div style={{ width: 180, height: 180 }}>
+        <div className="flex flex-col items-center mb-6">
+          <h3 className="text-lg font-semibold text-blue-700 mb-4">
+            {t('sleep.scoreTitle')}
+          </h3>
+          <div className="w-36 h-36">
             <CircularProgressbar
               value={sleepScore}
-              text={`${Math.round(sleepScore)}`}
+              text={String(sleepScore)}
+              strokeWidth={12}
               styles={buildStyles({
-                textSize: '30px',
-                pathColor: `rgba(62, 152, 199, ${sleepScore / 100})`,
-                textColor: '#3e98c7',
-                trailColor: '#d6d6d6',
-                pathTransitionDuration: 0.5,
+                textSize: '24px',
+                textColor: 'var(--blue-600)',
+                pathColor: `rgba(59, 130, 246, ${sleepScore / 100})`,
+                trailColor: '#E2E8F0'
               })}
             />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">{t('sleep.sleepDuration')}</span>
+              <span className="font-semibold text-blue-600">{formattedDuration}</span>
+            </div>
+            <Progress value={sleepDuration / (8 * 60) * 100} className="h-2" />
+          </div>
           
-          <div className="grid grid-cols-2 gap-8 w-full">
-            <div className="bg-blue-50/70 dark:bg-blue-900/20 p-4 rounded-lg text-center">
-              <p className="text-sm text-muted-foreground mb-1">{t("sleep.sleepDuration")}</p>
-              <p className="text-xl font-semibold text-blue-600">{calculateSleepDuration()}</p>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">{t('sleep.regularityScore')}</span>
+              <span className="font-semibold text-blue-600">{regularityScore}/10</span>
             </div>
-            <div className="bg-blue-50/70 dark:bg-blue-900/20 p-4 rounded-lg text-center">
-              <p className="text-sm text-muted-foreground mb-1">{t("sleep.consistency")}</p>
-              <p className="text-xl font-semibold text-blue-600">{calculateSleepConsistency()}</p>
-            </div>
+            <Progress value={regularityScore * 10} className="h-2" />
           </div>
         </div>
       </CardContent>

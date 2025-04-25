@@ -50,5 +50,21 @@ export const common = {
   noSleepDataToday: "Aucune donnée de sommeil aujourd'hui",
   yourPerformance: "Vos performances et progression",
   completedWorkouts: "Entraînements terminés",
-  streakDays: "Jours consécutifs"
+  streakDays: "Jours consécutifs",
+  
+  // Nouvelles traductions
+  never: "Jamais",
+  locale: "fr-FR",
+  lastSync: "Dernière synchronisation",
+  sync: "Synchroniser",
+  battery: "Batterie",
+  noConnectedDevices: "Aucun appareil connecté",
+  connectAnotherDevice: "Connecter un autre appareil",
+  connectDevice: "Connecter un appareil",
+  deviceSyncInfo: "Les données de vos appareils seront automatiquement synchronisées",
+  home: "Accueil",
+  profile: "Profil",
+  training: "Entraînement",
+  nutrition: "Nutrition",
+  sleep: "Sommeil"
 };
