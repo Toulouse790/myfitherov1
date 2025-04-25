@@ -77,18 +77,18 @@ export const TrendingStats = () => {
       </div>
       
       <div className="text-center">
-        <h3 className="text-lg sm:text-xl font-semibold">{t('dashboard.statistics', { fallback: 'Statistiques' })}</h3>
+        <h3 className="text-lg sm:text-xl font-semibold">{t('dashboard.statistics')}</h3>
         {data && (
           <div className="mt-2 space-y-1">
-            <p className="text-sm font-medium">{data.streak}/7 {t('common.days', { fallback: "jours d'activité" })}</p>
+            <p className="text-sm font-medium">{data.streak}/7 {t('common.days')}</p>
             <p className="text-xs text-muted-foreground">
-              {data.workoutCount} {t('workouts.workoutsThisWeek', { fallback: "entraînements cette semaine" })}
+              {data.workoutCount} {t('workouts.workoutsThisWeek')}
             </p>
           </div>
         )}
         {!data && (
           <p className="text-xs sm:text-sm text-center text-muted-foreground mt-1 sm:mt-2">
-            {t('dashboard.checkProgress', { fallback: "Consultez vos performances et progression" })}
+            {t('dashboard.checkProgress')}
           </p>
         )}
       </div>
