@@ -61,27 +61,33 @@ export const useUserPreferences = () => {
             measurement_unit: 'metric',
           };
           
-          const { data: newData, error: insertError } = await supabase
-            .from('user_preferences')
-            .insert(defaultPreferences)
-            .select()
-            .single();
+          try {
+            const { data: newData, error: insertError } = await supabase
+              .from('user_preferences')
+              .insert(defaultPreferences)
+              .select()
+              .single();
+              
+            if (insertError) {
+              debugLogger.error("useUserPreferences", "Error creating default preferences:", insertError);
+              throw insertError;
+            }
             
-          if (insertError) {
-            debugLogger.error("useUserPreferences", "Error creating default preferences:", insertError);
-            throw insertError;
+            debugLogger.log("useUserPreferences", "Created default preferences:", newData);
+            
+            // Synchroniser immédiatement avec le contexte de langue
+            if (newData && newData.language && newData.language !== contextLanguage) {
+              debugLogger.log("useUserPreferences", `Synchronizing language context from default preferences: ${newData.language}`);
+              setContextLanguage(newData.language as "fr" | "en" | "es" | "de");
+              localStorage.setItem('userLanguage', newData.language);
+            }
+            
+            return newData;
+          } catch (err) {
+            debugLogger.error("useUserPreferences", "RLS error, returning default preferences without saving", err);
+            // En cas d'erreur RLS, retourner les préférences par défaut sans les sauvegarder
+            return defaultPreferences;
           }
-          
-          debugLogger.log("useUserPreferences", "Created default preferences:", newData);
-          
-          // Synchroniser immédiatement avec le contexte de langue
-          if (newData && newData.language && newData.language !== contextLanguage) {
-            debugLogger.log("useUserPreferences", `Synchronizing language context from default preferences: ${newData.language}`);
-            setContextLanguage(newData.language as "fr" | "en" | "es" | "de");
-            localStorage.setItem('userLanguage', newData.language);
-          }
-          
-          return newData;
         }
 
         // Synchroniser la langue du contexte avec celle des préférences utilisateur
@@ -95,11 +101,23 @@ export const useUserPreferences = () => {
         return data;
       } catch (catchError) {
         debugLogger.error("useUserPreferences", "Exception in fetching preferences:", catchError);
-        throw catchError;
+        // En cas d'erreur, retourner un objet de préférences par défaut
+        const storedLanguage = localStorage.getItem('userLanguage');
+        const defaultLanguage = storedLanguage && ['fr', 'en', 'es', 'de'].includes(storedLanguage) 
+          ? storedLanguage 
+          : contextLanguage || 'fr';
+          
+        return {
+          user_id: user.id,
+          theme: 'system',
+          language: defaultLanguage,
+          notifications_enabled: true,
+          measurement_unit: 'metric',
+        };
       }
     },
     enabled: !!user,
-    retry: 2,
+    retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
@@ -119,48 +137,57 @@ export const useUserPreferences = () => {
       debugLogger.log("useUserPreferences", "Updating preferences for user:", user.id);
       debugLogger.log("useUserPreferences", "New preferences:", newPreferences);
 
-      // Si les préférences existent, mettre à jour
-      if (preferences) {
-        const { error } = await supabase
-          .from('user_preferences')
-          .update({
-            ...newPreferences,
-            updated_at: new Date().toISOString()
-          })
-          .eq('user_id', user.id);
+      try {
+        // Si les préférences existent, mettre à jour
+        if (preferences?.id) {
+          const { error } = await supabase
+            .from('user_preferences')
+            .update({
+              ...newPreferences,
+              updated_at: new Date().toISOString()
+            })
+            .eq('user_id', user.id);
 
-        if (error) {
-          debugLogger.error("useUserPreferences", "Error updating preferences:", error);
-          throw error;
+          if (error) {
+            debugLogger.error("useUserPreferences", "Error updating preferences:", error);
+            throw error;
+          }
+        } 
+        // Sinon, créer de nouvelles préférences
+        else {
+          const storedLanguage = localStorage.getItem('userLanguage');
+          const defaultLanguage = storedLanguage || contextLanguage || 'fr';
+
+          const { error } = await supabase
+            .from('user_preferences')
+            .insert({
+              user_id: user.id,
+              theme: 'system',
+              language: defaultLanguage,
+              notifications_enabled: true,
+              measurement_unit: 'metric',
+              ...newPreferences
+            });
+
+          if (error) {
+            debugLogger.error("useUserPreferences", "Error inserting preferences:", error);
+            throw error;
+          }
         }
-      } 
-      // Sinon, créer de nouvelles préférences
-      else {
-        const storedLanguage = localStorage.getItem('userLanguage');
-        const defaultLanguage = storedLanguage || contextLanguage || 'fr';
-
-        const { error } = await supabase
-          .from('user_preferences')
-          .insert({
-            user_id: user.id,
-            theme: 'system',
-            language: defaultLanguage,
-            notifications_enabled: true,
-            measurement_unit: 'metric',
-            ...newPreferences
-          });
-
-        if (error) {
-          debugLogger.error("useUserPreferences", "Error inserting preferences:", error);
-          throw error;
+        
+        // Si la langue est mise à jour, synchroniser immédiatement avec le contexte
+        if (newPreferences.language && newPreferences.language !== contextLanguage) {
+          debugLogger.log("useUserPreferences", `Immediately updating language context: ${newPreferences.language}`);
+          setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
+          localStorage.setItem('userLanguage', newPreferences.language);
         }
-      }
-      
-      // Si la langue est mise à jour, synchroniser immédiatement avec le contexte
-      if (newPreferences.language && newPreferences.language !== contextLanguage) {
-        debugLogger.log("useUserPreferences", `Immediately updating language context: ${newPreferences.language}`);
-        setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
-        localStorage.setItem('userLanguage', newPreferences.language);
+      } catch (error) {
+        debugLogger.error("useUserPreferences", "Error in updating preferences:", error);
+        // Mettre à jour seulement le contexte local en cas d'erreur de mise à jour
+        if (newPreferences.language) {
+          setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
+          localStorage.setItem('userLanguage', newPreferences.language);
+        }
       }
     },
     onSuccess: () => {
@@ -174,7 +201,7 @@ export const useUserPreferences = () => {
       debugLogger.error("useUserPreferences", "Error in mutation:", error);
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour vos préférences.",
+        description: "Impossible de mettre à jour vos préférences dans la base de données, mais les changements sont appliqués localement.",
         variant: "destructive",
       });
     },

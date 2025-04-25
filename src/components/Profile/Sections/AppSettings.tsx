@@ -99,10 +99,10 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
     <div className="space-y-6">
       <div className="flex flex-col space-y-1.5">
         <h2 className="text-xl font-semibold">
-          {t('settings.appSettings', { fallback: 'Paramètres de l\'application' })}
+          {t('settings.appSettings')}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {t('settings.configureAppearance', { fallback: 'Configurez l\'apparence de l\'application' })}
+          {t('settings.configureAppearance')}
         </p>
       </div>
       
@@ -110,26 +110,26 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">
-              {t('settings.theme', { fallback: 'Thème' })}
+              {t('settings.theme')}
             </label>
             <Badge variant="outline" className="text-xs font-normal">
               {theme === 'light' 
-                ? t('theme.lightMode', { fallback: 'Mode clair' }) 
+                ? t('theme.lightMode') 
                 : theme === 'dark' 
-                  ? t('theme.darkMode', { fallback: 'Mode sombre' }) 
-                  : t('theme.systemMode', { fallback: 'Mode système' })}
+                  ? t('theme.darkMode') 
+                  : t('theme.systemMode')}
             </Badge>
           </div>
           <ThemeSelector />
           <p className="text-xs text-muted-foreground mt-1">
-            {t('settings.themeDescription', { fallback: 'Choisissez le thème qui vous convient le mieux' })}
+            {t('settings.themeDescription')}
           </p>
         </div>
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">
-              {t('settings.language', { fallback: 'Langue' })}
+              {t('settings.language')}
             </label>
             <Badge variant="outline" className="text-xs font-normal">
               {getLanguageDisplayName(selectedLanguage)}
@@ -137,7 +137,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
           </div>
           <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={t('settings.selectLanguage', { fallback: 'Sélectionner une langue' })} />
+              <SelectValue placeholder={t('settings.selectLanguage')} />
             </SelectTrigger>
             <SelectContent>
               {availableLanguages.map(({ code, name }) => (
@@ -146,7 +146,7 @@ export const AppSettings = ({ language: initialLanguage }: AppSettingsProps) => 
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground mt-1">
-            {t('settings.languageDescription', { fallback: 'Choisissez la langue de l\'interface' })}
+            {t('settings.languageDescription')}
           </p>
         </div>
       </div>

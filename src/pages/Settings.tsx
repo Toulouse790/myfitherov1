@@ -54,7 +54,7 @@ const Settings = () => {
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-2xl font-bold">
-              {t('settings.title', { fallback: 'Paramètres' })}
+              {t('settings.title')}
             </h1>
           </div>
           
@@ -83,12 +83,12 @@ const Settings = () => {
             size="icon"
             onClick={() => navigate(-1)}
             className="hover:bg-muted"
-            aria-label={t('common.back', { fallback: 'Retour' })}
+            aria-label={t('common.back')}
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-2xl font-bold">
-            {t('settings.title', { fallback: 'Paramètres' })}
+            {t('settings.title')}
           </h1>
         </div>
 
@@ -102,10 +102,10 @@ const Settings = () => {
           <div className="space-y-6">
             <div className="space-y-1.5">
               <h2 className="text-xl font-semibold">
-                {t('settings.privacy', { fallback: 'Confidentialité' })}
+                {t('settings.privacy')}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {t('settings.privacyPolicy', { fallback: 'Politique de confidentialité' })}
+                {t('settings.privacyPolicy')}
               </p>
             </div>
           </div>
@@ -116,15 +116,15 @@ const Settings = () => {
           <div className="space-y-6">
             <div className="space-y-1.5">
               <h2 className="text-xl font-semibold text-destructive">
-                {t('settings.deleteAccount', { fallback: 'Supprimer le compte' })}
+                {t('settings.deleteAccount')}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {t('settings.deleteAccountDescription', { fallback: 'Supprimer définitivement votre compte' })}
+                {t('settings.deleteAccountDescription')}
               </p>
             </div>
             
             <Button variant="destructive">
-              {t('settings.deleteAccount', { fallback: 'Supprimer le compte' })}
+              {t('settings.deleteAccount')}
             </Button>
           </div>
         </Card>
