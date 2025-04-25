@@ -2,6 +2,7 @@
 import { common } from "./common";
 import { settings, theme } from "./settings";
 import { auth } from "./auth";
+import { questionnaire } from "./questionnaire";
 import { profile } from "./profile";
 import { workouts } from "./workouts";
 import { nutrition } from "./nutrition";
@@ -19,6 +20,7 @@ export const es = {
   settings,
   theme,
   auth,
+  questionnaire,
   profile,
   workouts,
   nutrition,

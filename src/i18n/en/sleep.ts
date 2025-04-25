@@ -29,11 +29,10 @@ export const sleep = {
   sleepEntryDeleted: "Sleep entry deleted",
   noDataAvailable: "No data available",
   
-  // Ajouter les nouvelles clés manquantes
   title: "Sleep",
   tracking: "Sleep Tracking",
-  history: "Sleep History",
-  analysis: "Sleep Analysis",
+  history: "History",
+  analysis: "Analysis",
   recommendedTime: "Recommended Sleep Time",
   manualEntry: "Manual Entry",
   autoTracking: "Automatic Tracking",
@@ -46,7 +45,7 @@ export const sleep = {
   quality: "Quality",
   poor: "Poor",
   excellent: "Excellent",
-  save: "Save Entry",
+  save: "Save",
   week: "Week",
   month: "Month",
   connectDevice: "Connect a sleep tracking device to enable automatic tracking",
@@ -58,5 +57,18 @@ export const sleep = {
   trends: "Sleep Trends",
   correlations: "Sleep Correlations",
   trendChartsComing: "Sleep trend charts coming soon",
-  exerciseImpact: "Exercise impact analysis coming soon"
+  exerciseImpact: "Exercise impact analysis coming soon",
+  
+  // Interface elements
+  sleepTracking: "Sleep Tracking",
+  manualInput: "Manual Input",
+  automaticInput: "Automatic Input",
+  sleepTypeLabel: "Sleep Type",
+  scoreTitle: "Sleep Score",
+  recommended: "recommended",
+  regularityScore: "Regularity",
+  sleepTimeRecommended: "Recommended Sleep Time",
+  sleepValueHours: "h",
+  sleepValueMinutes: "m",
+  sleepQualityRange: "Quality (1-10)"
 };

@@ -1,9 +1,10 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Moon, Sun } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ManualTrackingProps {
@@ -29,134 +30,100 @@ export const ManualTracking = ({
   setIsNap,
   addSleepSession
 }: ManualTrackingProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { t } = useLanguage();
-  
-  return (
-    <div className="grid gap-4">
-      <SleepTypeToggle isNap={isNap} setIsNap={setIsNap} />
-      <DurationInputs 
-        sleepHours={sleepHours}
-        sleepMinutes={sleepMinutes}
-        setSleepHours={setSleepHours}
-        setSleepMinutes={setSleepMinutes}
-      />
-      <QualitySlider sleepQuality={sleepQuality} setSleepQuality={setSleepQuality} />
-      <Button
-        onClick={addSleepSession}
-        className="w-full bg-blue-500 hover:bg-blue-600"
-        size="lg"
-      >
-        {t("sleep.save")}
-      </Button>
-    </div>
-  );
-};
 
-interface SleepTypeToggleProps {
-  isNap: boolean;
-  setIsNap: (isNap: boolean) => void;
-}
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      await addSleepSession();
+    } catch (error) {
+      console.error('Error submitting sleep data:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-const SleepTypeToggle = ({ isNap, setIsNap }: SleepTypeToggleProps) => {
-  const { t } = useLanguage();
-  
   return (
-    <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-      <Label htmlFor="is-nap" className="flex items-center gap-2">
-        <Moon className="h-4 w-4 text-blue-500" />
-        <span>{t("sleep.sleepTypeLabel")}</span>
-      </Label>
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="is-nap"
-          checked={isNap}
-          onCheckedChange={setIsNap}
-          className="data-[state=checked]:bg-blue-500"
-        />
-        <span className="text-sm">{isNap ? t("sleep.nap") : t("sleep.night")}</span>
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <Label htmlFor="sleepType">{t("sleep.sleepTypeLabel")}</Label>
+        <div className="flex items-center justify-between">
+          <span className="text-sm">{isNap ? t("sleep.nap") : t("sleep.night")}</span>
+          <Switch
+            id="sleepType"
+            checked={isNap}
+            onCheckedChange={setIsNap}
+          />
+        </div>
       </div>
-    </div>
-  );
-};
 
-interface DurationInputsProps {
-  sleepHours: number;
-  sleepMinutes: number;
-  setSleepHours: (hours: number) => void;
-  setSleepMinutes: (minutes: number) => void;
-}
-
-const DurationInputs = ({ 
-  sleepHours, 
-  sleepMinutes, 
-  setSleepHours, 
-  setSleepMinutes 
-}: DurationInputsProps) => {
-  const { t } = useLanguage();
-  
-  return (
-    <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
-      <Label className="block text-sm font-medium mb-2 text-blue-700 dark:text-blue-300">
-        {t("sleep.duration")}
-      </Label>
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <div className="flex items-center">
+      <div className="space-y-1">
+        <Label>{t("sleep.duration")}</Label>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label htmlFor="hours" className="text-xs text-muted-foreground">{t("sleep.hours")}</Label>
             <Input
+              id="hours"
               type="number"
               value={sleepHours}
-              onChange={(e) => setSleepHours(Number(e.target.value))}
+              onChange={(e) => setSleepHours(parseInt(e.target.value) || 0)}
               min={0}
               max={24}
-              className="w-full border-blue-200 dark:border-blue-700 focus:ring-blue-500"
+              step={1}
             />
-            <span className="ml-2">{t("sleep.hours")}</span>
           </div>
-        </div>
-        <div className="flex-1">
-          <div className="flex items-center">
+          <div className="space-y-1">
+            <Label htmlFor="minutes" className="text-xs text-muted-foreground">{t("sleep.minutes")}</Label>
             <Input
+              id="minutes"
               type="number"
               value={sleepMinutes}
-              onChange={(e) => setSleepMinutes(Number(e.target.value))}
+              onChange={(e) => setSleepMinutes(parseInt(e.target.value) || 0)}
               min={0}
               max={59}
-              className="w-full border-blue-200 dark:border-blue-700 focus:ring-blue-500"
+              step={5}
             />
-            <span className="ml-2">{t("sleep.minutes")}</span>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
 
-interface QualitySliderProps {
-  sleepQuality: number;
-  setSleepQuality: (quality: number) => void;
-}
-
-const QualitySlider = ({ sleepQuality, setSleepQuality }: QualitySliderProps) => {
-  const { t } = useLanguage();
-  
-  return (
-    <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-lg">
-      <Label className="flex items-center gap-2 mb-2 text-blue-700 dark:text-blue-300">
-        <Sun className="h-4 w-4 text-amber-500" />
-        <span>{t("sleep.sleepQualityRange")}</span>
-      </Label>
-      <input
-        type="range"
-        value={sleepQuality}
-        onChange={(e) => setSleepQuality(Number(e.target.value))}
-        min={1}
-        max={10}
-        className="w-full accent-blue-500"
-      />
-      <div className="flex justify-between text-sm text-muted-foreground mt-1">
-        <span>{t("sleep.poor")}</span>
-        <span>{t("sleep.excellent")}</span>
+      <div className="space-y-1">
+        <div className="flex justify-between">
+          <Label htmlFor="quality">{t("sleep.sleepQualityRange")}</Label>
+          <span className="text-sm font-medium">{sleepQuality}/10</span>
+        </div>
+        <div className="py-2">
+          <Slider
+            id="quality"
+            value={[sleepQuality]}
+            onValueChange={(values) => setSleepQuality(values[0])}
+            max={10}
+            min={1}
+            step={1}
+          />
+        </div>
+        <div className="flex justify-between text-xs text-muted-foreground">
+          <span>{t("sleep.poor")}</span>
+          <span>{t("sleep.excellent")}</span>
+        </div>
       </div>
+
+      <Button 
+        onClick={handleSubmit} 
+        className="w-full bg-blue-600 hover:bg-blue-700" 
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 
+          <span className="flex items-center justify-center">
+            <span className="animate-spin mr-2">◌</span>
+            {t("common.loading")}
+          </span> : 
+          t("sleep.save")
+        }
+      </Button>
     </div>
   );
 };

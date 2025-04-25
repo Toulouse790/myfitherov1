@@ -7,9 +7,13 @@ import { useSleepDevices } from "./use-sleep-devices";
 import { useSleepSubmission } from "./use-sleep-submission";
 import { useSleepStats } from "./use-sleep-stats";
 import { SleepSession } from "@/types/sleep";
+import { useToastWithTranslation } from "@/hooks/use-toast-with-translation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useSleepTracking = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
+  const { toastFromKey } = useToastWithTranslation();
   
   // État de base pour le suivi du sommeil
   const [sleepHours, setSleepHours] = useState<number>(7);
@@ -20,6 +24,11 @@ export const useSleepTracking = () => {
   const [lightLevel, setLightLevel] = useState<number>(2);
   const [isNap, setIsNap] = useState<boolean>(false);
   
+  // Données calculées
+  // Pour la démonstration, on calcule un score basé sur des valeurs fixes
+  const sleepScore = 85;
+  const sleepDuration = sleepHours * 60 + sleepMinutes;
+  
   // Utilisation des hooks spécialisés
   const { 
     connectedDevices, 
@@ -29,7 +38,7 @@ export const useSleepTracking = () => {
   } = useSleepDevices();
 
   const {
-    addSleepSession,
+    addSleepSession: submitSleepSession,
     isSubmitting
   } = useSleepSubmission({
     sleepHours,
@@ -45,6 +54,17 @@ export const useSleepTracking = () => {
     sleepStats,
     calculateRecommendedSleep
   } = useSleepStats();
+  
+  // Wrapper pour addSleepSession avec toast de notification
+  const addSleepSession = async () => {
+    try {
+      await submitSleepSession();
+      toastFromKey('sleep.sleepEntryAdded', undefined, { variant: 'default' });
+    } catch (error) {
+      console.error('Error adding sleep session:', error);
+      toastFromKey('common.error', 'common.tryAgainLater', { variant: 'destructive' });
+    }
+  };
 
   // Récupérer toutes les sessions de sommeil de l'utilisateur
   const { 
@@ -85,6 +105,10 @@ export const useSleepTracking = () => {
     isNap,
     connectedDevices,
     isSubmitting,
+    
+    // Données calculées
+    sleepScore,
+    sleepDuration,
     
     // Setters
     setSleepHours,
