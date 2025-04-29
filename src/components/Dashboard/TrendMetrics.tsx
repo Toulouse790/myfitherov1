@@ -6,7 +6,7 @@ import { MetricHistoryDialog } from "./MetricHistoryDialog";
 import { MetricHeader } from "./TrendMetrics/MetricHeader";
 import { MetricGrid } from "./TrendMetrics/MetricGrid";
 import type { MetricData } from "./TrendMetrics/types";
-import { Activity, Dumbbell, Target, Timer, Flame, ArrowUpRight, Barbell, Medal } from "lucide-react";
+import { Activity, Dumbbell, Target, Timer, Flame, ArrowUpRight, Medal } from "lucide-react";
 
 export const TrendMetrics = () => {
   const [selectedMetric, setSelectedMetric] = useState<MetricData | null>(null);
@@ -127,7 +127,7 @@ export const TrendMetrics = () => {
           value: avgWeightPerSession.toString(),
           color: "text-cyan-500",
           unit: "kg",
-          icon: <Barbell className="w-4 h-4" />,
+          icon: <Dumbbell className="w-4 h-4" />,
           history: { daily: [], weekly: [], monthly: [] },
           importance: "tertiary",
           description: "Poids moyen soulevé par séance"

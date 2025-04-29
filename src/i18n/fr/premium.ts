@@ -37,7 +37,7 @@ export const premium = {
   },
   specialLaunchOffer: "Offre spéciale de lancement",
   discountMessage: "Profitez de",
-  discount: "de réduction",
+  discountOffer: "de réduction",
   discountDetails: "sur l'abonnement annuel pendant une durée limitée ! Débloquez toutes les fonctionnalités premium et transformez votre expérience fitness.",
   claimOffer: "Profiter de l'offre",
   offerHidden: "Offre masquée",
