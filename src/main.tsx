@@ -1,8 +1,7 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider } from 'react-router-dom'
-import { router } from './routes'
+import { App } from './App'
 import './styles/index.css'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { AuthProvider } from './contexts/AuthContext'
@@ -11,9 +10,8 @@ import { debugLogger } from './utils/debug-logger'
 import { ThemeProvider } from './components/Theme/ThemeProvider'
 
 // Activer le mode debug pour faciliter le débogage
-// On utilise maintenant la nouvelle méthode enable plutôt que enableDebugMode
 debugLogger.enable(true);
-debugLogger.log("Application", "Initialisation de l'application avec le routeur centralisé");
+debugLogger.log("Application", "Initialisation de l'application");
 
 // Créer une instance de QueryClient avec une configuration optimisée
 const queryClient = new QueryClient({
@@ -32,7 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <LanguageProvider>
         <ThemeProvider>
           <AuthProvider>
-            <RouterProvider router={router} />
+            <App />
           </AuthProvider>
         </ThemeProvider>
       </LanguageProvider>
