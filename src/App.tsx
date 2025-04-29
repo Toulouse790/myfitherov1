@@ -1,30 +1,56 @@
 
-import { Suspense, useEffect } from "react";
-import { ErrorBoundary } from "./components/ErrorBoundary";
-import { debugLogger } from "./utils/debug-logger";
+import React, { useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { AppRoutes } from './AppRoutes';
+import { Toaster } from './components/ui/toaster';
+import { ThemeProvider } from './components/Theme/ThemeProvider'; 
+import { LanguageProvider } from './contexts/LanguageContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useUserDataIntegrity } from './hooks/use-user-data-integrity';
+import { useAuth } from './hooks/use-auth';
+import { debugLogger } from './utils/debug-logger';
 
-// Ce fichier n'est plus utilisé pour le routage
-// Le routage est maintenant centralisé dans src/routes/index.tsx
-// Voir le fichier main.tsx pour l'utilisation du routeur
-
-export default function App() {
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      import('./utils/translation-validator').then(({ checkTranslations }) => {
-        checkTranslations();
-      });
+// Création du client React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1
     }
-  }, []);
+  }
+});
 
-  debugLogger.log("App", "Composant App rendu, mais n'est plus utilisé pour le routage");
-  
+function AppContent() {
+  const { user, isLoading: authLoading } = useAuth();
+  const { isVerifying, integrityVerified } = useUserDataIntegrity();
+
+  // Journalisation du statut de l'intégrité des données
+  useEffect(() => {
+    if (user && !isVerifying) {
+      debugLogger.log("App", `Statut de l'intégrité des données utilisateur: ${integrityVerified ? "Vérifié" : "Problème détecté"}`);
+    }
+  }, [user, isVerifying, integrityVerified]);
+
   return (
-    <ErrorBoundary>
-      <Suspense fallback={<div>Chargement...</div>}>
-        <div className="flex items-center justify-center h-screen p-4 text-center">
-          <p>Cette application utilise désormais le routeur dans src/routes/index.tsx</p>
-        </div>
-      </Suspense>
-    </ErrorBoundary>
+    <>
+      <AppRoutes />
+      <Toaster />
+    </>
   );
 }
+
+export function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <LanguageProvider>
+        <ThemeProvider>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </ThemeProvider>
+      </LanguageProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;

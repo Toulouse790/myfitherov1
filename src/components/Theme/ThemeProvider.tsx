@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useEffect } from "react";
 import { ThemeContext, Theme } from "./ThemeContext";
+import { debugLogger } from "@/utils/debug-logger";
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -31,6 +32,12 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     
     // Sauvegarder le thème dans le localStorage
     localStorage.setItem("theme", theme);
+    
+    // Émettre un événement pour la synchronisation
+    const event = new CustomEvent('themeChanged', { detail: { theme } });
+    window.dispatchEvent(event);
+    
+    debugLogger.log("ThemeProvider", `Thème changé à: ${theme}`);
   }, [theme]);
 
   // Observer les changements de préférence système
@@ -39,6 +46,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     
     const handleChange = () => {
       if (theme === "system") {
+        debugLogger.log("ThemeProvider", "Préférence système modifiée");
         if (mediaQuery.matches) {
           document.documentElement.classList.add("dark");
         } else {
@@ -48,11 +56,18 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     };
     
     mediaQuery.addEventListener("change", handleChange);
+    
+    // Appliquer immédiatement si le thème est "system"
+    if (theme === "system") {
+      handleChange();
+    }
+    
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme]);
 
   // Fonction pour changer le thème
   const changeTheme = (newTheme: Theme) => {
+    debugLogger.log("ThemeProvider", `Changement de thème: ${theme} => ${newTheme}`);
     setTheme(newTheme);
   };
 

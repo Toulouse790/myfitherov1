@@ -147,6 +147,11 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       // Mettre à jour l'état et le stockage local
       setLanguage(lang);
       localStorage.setItem('userLanguage', lang);
+      
+      // Synchronisation avec la base de données via un événement personnalisé
+      // Cela permet d'éviter une dépendance circulaire entre LanguageContext et Supabase
+      const event = new CustomEvent('languageChanged', { detail: { language: lang } });
+      window.dispatchEvent(event);
     } catch (error) {
       debugLogger.error('LanguageContext', "Erreur lors du changement de langue", error);
     }

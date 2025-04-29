@@ -24,6 +24,37 @@ export const useUserPreferences = () => {
   const queryClient = useQueryClient();
   const { language: contextLanguage, setLanguage: setContextLanguage } = useLanguage();
 
+  // Écouter les événements de changement de langue depuis le contexte
+  useEffect(() => {
+    const handleLanguageChange = (event: CustomEvent) => {
+      const newLanguage = event.detail?.language;
+      if (newLanguage && user) {
+        // Mettre à jour la langue dans la base de données
+        updatePreferences({ language: newLanguage });
+      }
+    };
+
+    window.addEventListener('languageChanged', handleLanguageChange as EventListener);
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange as EventListener);
+    };
+  }, [user]);
+
+  // Écouter les événements de changement de thème depuis le localStorage
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'theme' && user && event.newValue) {
+        // Mettre à jour le thème dans la base de données
+        updatePreferences({ theme: event.newValue });
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [user]);
+
   const { data: preferences, isLoading, error, refetch } = useQuery({
     queryKey: ['user-preferences', user?.id],
     queryFn: async () => {
@@ -56,10 +87,16 @@ export const useUserPreferences = () => {
           const defaultLanguage = storedLanguage && ['fr', 'en', 'es', 'de'].includes(storedLanguage) 
             ? storedLanguage 
             : contextLanguage || 'fr';
+          
+          // Utiliser le thème stocké localement s'il existe
+          const storedTheme = localStorage.getItem('theme');
+          const defaultTheme = storedTheme && ['light', 'dark', 'system'].includes(storedTheme)
+            ? storedTheme
+            : 'system';
             
           const defaultPreferences: UserPreferences = {
             user_id: user.id,
-            theme: 'system',
+            theme: defaultTheme,
             language: defaultLanguage,
             notifications_enabled: true,
             measurement_unit: 'metric',
@@ -95,6 +132,11 @@ export const useUserPreferences = () => {
               localStorage.setItem('userLanguage', newData.language);
             }
             
+            // Synchroniser aussi le thème avec localStorage
+            if (newData && newData.theme && newData.theme !== storedTheme) {
+              localStorage.setItem('theme', newData.theme);
+            }
+            
             return newData;
           } catch (err) {
             debugLogger.error("useUserPreferences", "RLS error or insertion error, returning default preferences without saving", err);
@@ -109,6 +151,15 @@ export const useUserPreferences = () => {
           setContextLanguage(data.language as "fr" | "en" | "es" | "de");
           localStorage.setItem('userLanguage', data.language);
         }
+        
+        // Synchroniser le thème du localStorage avec celui des préférences utilisateur
+        if (data && data.theme) {
+          const storedTheme = localStorage.getItem('theme');
+          if (storedTheme !== data.theme) {
+            debugLogger.log("useUserPreferences", `Synchronizing theme from DB: ${data.theme}`);
+            localStorage.setItem('theme', data.theme);
+          }
+        }
 
         debugLogger.log("useUserPreferences", "Fetched preferences:", data);
         return data;
@@ -121,10 +172,15 @@ export const useUserPreferences = () => {
         const defaultLanguage = storedLanguage && ['fr', 'en', 'es', 'de'].includes(storedLanguage) 
           ? storedLanguage 
           : contextLanguage || 'fr';
+        
+        const storedTheme = localStorage.getItem('theme');
+        const defaultTheme = storedTheme && ['light', 'dark', 'system'].includes(storedTheme) 
+          ? storedTheme
+          : 'system';
           
         const fallbackPreferences: UserPreferences = {
           user_id: user.id,
-          theme: 'system',
+          theme: defaultTheme,
           language: defaultLanguage,
           notifications_enabled: true,
           measurement_unit: 'metric',
@@ -180,10 +236,15 @@ export const useUserPreferences = () => {
             if (error.code === '42501') {
               debugLogger.warn("useUserPreferences", "RLS error detected, updating local preferences only");
               
-              // Mettre à jour seulement le contexte local en cas d'erreur RLS
+              // Mettre à jour le contexte local en cas d'erreur RLS
               if (newPreferences.language) {
                 setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
                 localStorage.setItem('userLanguage', newPreferences.language);
+              }
+              
+              // Mettre à jour le thème local
+              if (newPreferences.theme) {
+                localStorage.setItem('theme', newPreferences.theme);
               }
               
               return { localUpdateOnly: true };
@@ -197,11 +258,14 @@ export const useUserPreferences = () => {
           const storedLanguage = localStorage.getItem('userLanguage');
           const defaultLanguage = storedLanguage || contextLanguage || 'fr';
 
+          const storedTheme = localStorage.getItem('theme');
+          const defaultTheme = storedTheme || 'system';
+
           const { error } = await supabase
             .from('user_preferences')
             .insert({
               user_id: user.id,
-              theme: 'system',
+              theme: defaultTheme,
               language: defaultLanguage,
               notifications_enabled: true,
               measurement_unit: 'metric',
@@ -216,10 +280,15 @@ export const useUserPreferences = () => {
             if (error.code === '42501') {
               debugLogger.warn("useUserPreferences", "RLS error detected, updating local preferences only");
               
-              // Mettre à jour seulement le contexte local en cas d'erreur RLS
+              // Mettre à jour le contexte local en cas d'erreur RLS
               if (newPreferences.language) {
                 setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
                 localStorage.setItem('userLanguage', newPreferences.language);
+              }
+              
+              // Mettre à jour le thème local
+              if (newPreferences.theme) {
+                localStorage.setItem('theme', newPreferences.theme);
               }
               
               return { localUpdateOnly: true };
@@ -235,6 +304,11 @@ export const useUserPreferences = () => {
           setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
           localStorage.setItem('userLanguage', newPreferences.language);
         }
+        
+        // Si le thème est mis à jour, synchroniser immédiatement avec localStorage
+        if (newPreferences.theme) {
+          localStorage.setItem('theme', newPreferences.theme);
+        }
 
         // Retourner les préférences mises à jour pour une meilleure UX
         return { success: true };
@@ -246,11 +320,14 @@ export const useUserPreferences = () => {
           debugLogger.warn("useUserPreferences", `Falling back to local language update: ${newPreferences.language}`);
           setContextLanguage(newPreferences.language as "fr" | "en" | "es" | "de");
           localStorage.setItem('userLanguage', newPreferences.language);
-          
-          return { localUpdateOnly: true, error };
         }
         
-        throw error;
+        // Mettre à jour seulement le thème local en cas d'erreur
+        if (newPreferences.theme) {
+          localStorage.setItem('theme', newPreferences.theme);
+        }
+        
+        return { localUpdateOnly: true, error };
       }
     },
     onSuccess: (result) => {
