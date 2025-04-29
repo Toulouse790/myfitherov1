@@ -13,7 +13,7 @@ export const workouts = {
   generateMySession: "Meine Einheit generieren",
   sportPrograms: "Sportprogramme",
   viewMyProgress: "Meine Fortschritte ansehen",
-  startTraining: "Training starten",
+  startWorkoutAction: "Training starten",
   generateProgram: "Programm generieren",
   muscleGroups: {
     biceps: "Bizeps",
