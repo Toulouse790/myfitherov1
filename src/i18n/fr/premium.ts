@@ -12,7 +12,7 @@ export const premium = {
   subscribe: "S'abonner",
   currentPlan: "Votre forfait actuel",
   upgrade: "Améliorer",
-  discount: "Économisez {percentage}%",
+  discount: "{percentage}%",
   limitReached: "Limite atteinte",
   unlimitedAccess: "Accès illimité avec Premium",
   freeTrial: "Essai gratuit",

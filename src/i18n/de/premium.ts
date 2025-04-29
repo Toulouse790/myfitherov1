@@ -12,7 +12,7 @@ export const premium = {
   subscribe: "Abonnieren",
   currentPlan: "Ihr aktueller Plan",
   upgrade: "Upgrade",
-  discount: "Sparen Sie {percentage}%",
+  discount: "{percentage}%",
   limitReached: "Limit erreicht",
   unlimitedAccess: "Unbegrenzter Zugriff mit Premium",
   freeTrial: "Kostenlose Testversion",
@@ -33,7 +33,7 @@ export const premium = {
     monthly: "Monatlich",
     yearly: "Jährlich",
     lifetime: "Lebenslang",
-    discount: "Sparen Sie {percent}%"
+    discountPercent: "Sparen Sie {percent}%"
   },
   specialLaunchOffer: "Sonderangebot zum Start",
   discountMessage: "Nutzen Sie",
